@@ -33,9 +33,9 @@ class ImageController extends AbstractRestController
             throw $this->createNotFoundException(sprintf('Thumbnail "%s" doesn\'t exist', htmlentities($id)));
         }
 
-        return $this->createSuccessResponse([
-            'data' => $config->getForWebserviceExport()
-        ]);
+        $data = $config->getForWebserviceExport();
+
+        return $this->createSuccessResponse($data);
     }
 
     /**
@@ -58,8 +58,6 @@ class ImageController extends AbstractRestController
             ];
         }
 
-        return $this->createSuccessResponse([
-            'data' => $thumbnails
-        ]);
+        return $this->createCollectionSuccessResponse($thumbnails);
     }
 }

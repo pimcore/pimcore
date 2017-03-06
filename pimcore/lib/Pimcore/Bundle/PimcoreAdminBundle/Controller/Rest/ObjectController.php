@@ -2,15 +2,14 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
 use Pimcore\Model\Webservice\Data\Object\Folder\In as WebserviceFolderIn;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -78,8 +77,8 @@ class ObjectController extends AbstractRestController
      *
      *                    }
      *
-     * @param Request $request
-     * @param int     $id
+     * @param Request  $request
+     * @param int|null $id
      *
      * @return JsonResponse
      * @throws ResponseException
@@ -125,9 +124,7 @@ class ObjectController extends AbstractRestController
             $stopwatch->stop('ws');
         }
 
-        $data = $this->createSuccessData([
-            'data' => $object
-        ]);
+        $data = $this->createSuccessData($object);
 
         if ($profile) {
             $data['profiling'] = $this->getProfilingData($profileName);
@@ -305,8 +302,8 @@ class ObjectController extends AbstractRestController
      *                      "id": 66
      *                    }
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request  $request
+     * @param int|null $id
      *
      * @return JsonResponse
      */
@@ -329,9 +326,9 @@ class ObjectController extends AbstractRestController
      * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Route("/object")
      *
-     * @api {delete} /object/id/{id} Delete object
-     * @apiName Delete object
-     * @apiGroup Object
+     * @api              {delete} /object/id/{id} Delete object
+     * @apiName          Delete object
+     * @apiGroup         Object
      * @apiSampleRequest off
      * @apiParam {int} id an object id
      * @apiParam {string} apikey your access token
@@ -350,10 +347,11 @@ class ObjectController extends AbstractRestController
      *                      "success": true,
      *                    }
      *
-     * @param Request $request
-     * @param int $id
+     * @param Request  $request
+     * @param int|null $id
      *
      * @return JsonResponse
+     * @throws ResponseException
      */
     public function deleteAction(Request $request, $id = null)
     {
@@ -411,9 +409,7 @@ class ObjectController extends AbstractRestController
 
         $result = $this->service->getObjectList($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
 
-        return $this->createSuccessResponse([
-            'data' => $result
-        ]);
+        return $this->createCollectionSuccessResponse($result);
     }
 
     /**
@@ -425,6 +421,10 @@ class ObjectController extends AbstractRestController
      *  GET http://[YOUR-DOMAIN]/webservice/rest/object-meta/id/1281?apikey=[API-KEY]
      *      returns the json-encoded class definition for the given object
      *
+     * @param int $id
+     *
+     * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
+     * @throws ResponseException
      */
     public function objectMetaAction($id)
     {
@@ -435,9 +435,7 @@ class ObjectController extends AbstractRestController
             throw $this->createNotFoundException();
         }
 
-        return $this->createSuccessResponse([
-            'data' => $class
-        ]);
+        return $this->createSuccessResponse($class);
     }
 
     /**
@@ -493,9 +491,7 @@ class ObjectController extends AbstractRestController
         $count = $listClassName::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'data' => [
-                'totalCount' => $count
-            ]
+            'totalCount' => $count
         ]);
     }
 
@@ -547,7 +543,7 @@ class ObjectController extends AbstractRestController
         if (null !== $id) {
             return $this->createSuccessResponse([
                 'id' => $id
-            ]);
+            ], false);
         } else {
             return $this->createErrorResponse();
         }

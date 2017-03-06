@@ -100,10 +100,18 @@ abstract class AbstractRestController extends AdminController
 
     /**
      * @param array|string $data
+     * @param bool         $wrapInDataProperty
+     *
      * @return array
      */
-    protected function createSuccessData($data = null)
+    protected function createSuccessData($data = null, $wrapInDataProperty = true)
     {
+        if ($wrapInDataProperty) {
+            $data = [
+                'data' => $data
+            ];
+        }
+
         return array_merge(['success' => true], $this->normalizeResponseData($data));
     }
 
@@ -133,16 +141,31 @@ abstract class AbstractRestController extends AdminController
 
     /**
      * @param array|string $data
-     * @param int|null $status
+     * @param bool         $wrapInDataProperty
+     * @param int|null     $status
      *
      * @return JsonResponse
      */
-    protected function createSuccessResponse($data = null, $status = Response::HTTP_OK)
+    protected function createSuccessResponse($data = null, $wrapInDataProperty = true, $status = Response::HTTP_OK)
     {
         return $this->json(
-            $this->createSuccessData($data),
+            $this->createSuccessData($data, $wrapInDataProperty),
             $status
         );
+    }
+
+    /**
+     * @param array $data
+     * @param int   $status
+     *
+     * @return JsonResponse
+     */
+    protected function createCollectionSuccessResponse(array $data = [], $status = Response::HTTP_OK)
+    {
+        return $this->createSuccessResponse([
+            'total' => count($data),
+            'data'  => $data,
+        ], false, $status);
     }
 
     /**

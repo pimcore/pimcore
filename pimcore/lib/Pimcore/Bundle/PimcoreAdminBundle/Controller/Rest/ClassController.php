@@ -9,12 +9,39 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * Contains actions to gather information about the API. The /info/user endpoint
- * is used in tests.
- */
 class ClassController extends AbstractRestController
 {
+    /**
+     * @Method("GET")
+     * @Route("/class/id/{id}", requirements={"id": "\d+"})
+     *
+     * end point for the class definition
+     *
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/class/id/1281?apikey=[API-KEY]
+     *      returns the class definition for the given class
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     * @throws ResponseException
+     */
+    public function classAction($id)
+    {
+        $this->checkPermission('classes');
+
+        $e = null;
+
+        try {
+            $class = $this->service->getClassById($id);
+
+            return $this->createSuccessResponse($class);
+        } catch (\Exception $e) {
+            $this->getLogger()->error($e);
+        }
+
+        throw $this->createNotFoundException(sprintf('Class %d does not exist', $id), $e);
+    }
+
     /**
      * @Method("GET")
      * @Route("/classes")
@@ -39,42 +66,7 @@ class ClassController extends AbstractRestController
             $result[] = $item;
         }
 
-        return $this->createSuccessResponse([
-            'data' => $result
-        ]);
-    }
-
-    /**
-     * @Method("GET")
-     * @Route("/class/id/{id}", requirements={"id": "\d+"})
-     *
-     * end point for the class definition
-     *
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/class/id/1281?apikey=[API-KEY]
-     *      returns the class definition for the given class
-     *
-     * @param int $id
-     *
-     * @return JsonResponse
-     * @throws ResponseException
-     */
-    public function classAction($id)
-    {
-        $this->checkPermission('classes');
-
-        $e = null;
-
-        try {
-            $class = $this->service->getClassById($id);
-
-            return $this->createSuccessResponse([
-                'data' => $class
-            ]);
-        } catch (\Exception $e) {
-            $this->getLogger()->error($e);
-        }
-
-        throw $this->createNotFoundException(sprintf('Class %d does not exist', $id), $e);
+        return $this->createCollectionSuccessResponse($result);
     }
 
     /**
@@ -100,9 +92,7 @@ class ClassController extends AbstractRestController
         try {
             $definition = Object\Objectbrick\Definition::getByKey($id);
 
-            return $this->createSuccessResponse([
-                'data' => $definition
-            ]);
+            return $this->createSuccessResponse($definition);
         } catch (\Exception $e) {
             $this->getLogger()->error($e);
         }
@@ -135,9 +125,7 @@ class ClassController extends AbstractRestController
             $result[] = $item;
         }
 
-        return $this->createSuccessResponse([
-            'data' => $result
-        ]);
+        return $this->createCollectionSuccessResponse($result);
     }
 
     /**
@@ -163,9 +151,7 @@ class ClassController extends AbstractRestController
         try {
             $definition = Object\Fieldcollection\Definition::getByKey($id);
 
-            return $this->createSuccessResponse([
-                'data' => $definition
-            ]);
+            return $this->createSuccessResponse($definition);
         } catch (\Exception $e) {
             $this->getLogger()->error($e);
         }
@@ -198,9 +184,7 @@ class ClassController extends AbstractRestController
             $result[] = $item;
         }
 
-        return $this->createSuccessResponse([
-            'data' => $result
-        ]);
+        return $this->createCollectionSuccessResponse($result);
     }
 
     /**
@@ -233,9 +217,7 @@ class ClassController extends AbstractRestController
             $units[] = $item->getObjectVars();
         }
 
-        return $this->createSuccessResponse([
-            'data' => $units
-        ]);
+        return $this->createCollectionSuccessResponse($units);
     }
 
     /**
@@ -339,8 +321,6 @@ class ClassController extends AbstractRestController
         }
         $definition["groups2keys"] = $relations;
 
-        return $this->createSuccessResponse([
-            'data' => $definition
-        ]);
+        return $this->createSuccessResponse($definition);
     }
 }
