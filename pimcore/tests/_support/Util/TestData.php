@@ -2,6 +2,13 @@
 
 namespace Pimcore\Tests\Util;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+use Pimcore\Model\Property;
+use Pimcore\Model\User;
+use Pimcore\Tool\Authentication;
+
 class TestData
 {
     const IMAGE = "sampleimage.jpg";
@@ -17,14 +24,19 @@ class TestData
         $property->setType("object");
         $property->setName("object");
         $property->setInheritable(true);
-        $properties["bla"] = $property;
     }
 
+    /**
+     * @param null $condition
+     *
+     * @return Object\Concrete[]
+     */
     private static function getObjectList($condition = null)
     {
-        $list = new Object_List();
+        $list = new Object\Listing();
         $list->setOrderKey("o_id");
         $list->setCondition($condition);
+
         $objects = $list->load();
 
         return $objects;
@@ -183,7 +195,7 @@ class TestData
 
         $asset = Asset::getByPath("/" . self::IMAGE);
         if (!$asset) {
-            $asset = Test_Tool::createImageAsset("", null, false);
+            $asset = TestHelper::createImageAsset("", null, false);
             $asset->setFilename(self::IMAGE);
             $asset->save();
         }
@@ -207,14 +219,16 @@ class TestData
 
     private static function createHotspots()
     {
-        $result          = [];
-        $hotspot         = new stdClass();
+        $result = [];
+
+        $hotspot         = new \stdClass();
         $hotspot->name   = "hotspot1";
         $hotspot->width  = "10";
         $hotspot->height = "20";
         $hotspot->top    = "30";
         $hotspot->left   = "40";
         $result[]        = $hotspot;
+
         $hotspot->width  = "10";
         $hotspot->height = "50";
         $hotspot->top    = "20";
@@ -230,13 +244,13 @@ class TestData
 
         $asset = Asset::getByPath("/" . self::HOTSPOT_IMAGE);
         if (!$asset) {
-            $asset = Test_Tool::createImageAsset("", null, false);
+            $asset = TestHelper::createImageAsset("", null, false);
             $asset->setFilename(self::HOTSPOT_IMAGE);
             $asset->save();
         }
 
         $hotspots     = self::createHotspots();
-        $hotspotImage = new Object_Data_Hotspotimage($asset, $hotspots);
+        $hotspotImage = new Object\Data\Hotspotimage($asset, $hotspots);
         $object->$setter($hotspotImage);
     }
 
@@ -245,17 +259,19 @@ class TestData
         $getter   = "get" . ucfirst($field);
         $value    = $object->$getter();
         $hotspots = $value->getHotspots();
+
         if (count($hotspots) != 2) {
             print("hotspot count is " . count($hotspots));
 
             return false;
         }
+
         $asset    = Asset::getByPath("/" . self::HOTSPOT_IMAGE);
         $hotspots = self::createHotspots();
-        $expected = new Object_Data_Hotspotimage($asset, $hotspots);
+        $expected = new Object\Data\Hotspotimage($asset, $hotspots);
 
-        $value    = Test_Tool::createAssetComparisonString($value->getImage());
-        $expected = Test_Tool::createAssetComparisonString($expected->getImage());
+        $value    = TestHelper::createAssetComparisonString($value->getImage());
+        $expected = TestHelper::createAssetComparisonString($expected->getImage());
 
         if ($expected != $value) {
             print("   expected " . $expected . " but was " . $value);
@@ -380,12 +396,14 @@ class TestData
         $user     = User::getByName($username);
 
         if (!$user) {
+            /** @var User $user */
             $user = User::create([
                 "parentId" => 0,
                 "username" => $username,
-                "password" => Pimcore_Tool_Authentication::getPasswordHash($username, $username),
+                "password" => Authentication::getPasswordHash($username, $username),
                 "active"   => true
             ]);
+
             $user->setAdmin(true);
             $user->save();
         }
@@ -525,7 +543,7 @@ class TestData
 
         $longitude = 2.2008440814678;
         $latitude  = 102.25112915039;
-        $point     = new Object_Data_Geopoint($longitude, $latitude);
+        $point     = new Object\Data\Geopoint($longitude, $latitude);
         $object->$setter($point);
     }
 
@@ -536,7 +554,7 @@ class TestData
 
         $longitude = 2.2008440814678;
         $latitude  = 102.25112915039;
-        $expected  = new Object_Data_Geopoint($longitude, $latitude);
+        $expected  = new Object\Data\Geopoint($longitude, $latitude);
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
@@ -550,16 +568,18 @@ class TestData
     public static function fillGeobounds($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $bounds = new Object_Data_Geobounds(new Object_Data_Geopoint(150.96588134765625, -33.704920213014425), new Object_Data_Geopoint(150.60333251953125, -33.893217379440884));
+        $bounds = new Object\Data\Geobounds(
+            new Object\Data\Geopoint(150.96588134765625, -33.704920213014425),
+            new Object\Data\Geopoint(150.60333251953125, -33.893217379440884)
+        );
         $object->$setter($bounds);
     }
 
-    public static function assertGeobounds($object, $field, $comparisonObject, $seed = 1)
+    public static function assertGeobounds(Object\Concrete $object, $field, $comparisonObject, $seed = 1)
     {
         $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = Test_Tool::getComparisonDataForField($field, $fd, $object);
-        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
-
+        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
@@ -573,15 +593,20 @@ class TestData
     public static function fillGeopolygon($object, $field, $seed = 1)
     {
         $setter  = "set" . ucfirst($field);
-        $polygon = [new Object_Data_Geopoint(150.54428100585938, -33.464671118242684), new Object_Data_Geopoint(150.73654174804688, -33.913733814316245), new Object_Data_Geopoint(151.2542724609375, -33.9946115848146)];
+        $polygon = [
+            new Object\Data\Geopoint(150.54428100585938, -33.464671118242684),
+            new Object\Data\Geopoint(150.73654174804688, -33.913733814316245),
+            new Object\Data\Geopoint(151.2542724609375, -33.9946115848146)
+        ];
+
         $object->$setter($polygon);
     }
 
-    public static function assertGeopolygon($object, $field, $comparisonObject, $seed = 1)
+    public static function assertGeopolygon(Object\Concrete $object, $field, $comparisonObject, $seed = 1)
     {
         $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = Test_Tool::getComparisonDataForField($field, $fd, $object);
-        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
@@ -599,11 +624,11 @@ class TestData
         $object->$setter($tabledata);
     }
 
-    public static function assertTable($object, $field, $comparisonObject, $seed = 1)
+    public static function assertTable(Object\Concrete $object, $field, $comparisonObject, $seed = 1)
     {
         $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = Test_Tool::getComparisonDataForField($field, $fd, $object);
-        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($value != $expected) {
             $getter = "get" . ucfirst($field);
@@ -615,16 +640,14 @@ class TestData
         return true;
     }
 
-
     public static function fillLink($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
 
-
         $doc = Document::getByPath("/" . self::DOCUMENT . $seed);
 
         if (!$doc) {
-            $doc = Test_Tool::createEmptyDocumentPage(null, false);
+            $doc = TestHelper::createEmptyDocumentPage(null, false);
             $doc->setProperties(self::createRandomProperties());
             $doc->setKey(self::DOCUMENT . $seed);
             $doc->setParentId(1);
@@ -666,20 +689,21 @@ class TestData
     {
         $setter = "set" . ucfirst($field);
 
-        $data      = new Object_Data_StructuredTable();
+        $data      = new Object\Data\StructuredTable();
         $tabledata = self::getStructuredTableData($seed);
+
         $data->setData($tabledata);
         $object->$setter($data);
     }
 
-    public static function assertStructuredTable($object, $field, $comparisonObject, $seed = 1)
+    public static function assertStructuredTable(Object\Concrete $object, $field, $comparisonObject, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value  = $object->$getter();
 
         $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = Test_Tool::getComparisonDataForField($field, $fd, $object);
-        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
@@ -694,6 +718,7 @@ class TestData
     {
         $setter  = "set" . ucfirst($field);
         $objects = self::getObjectList("o_type = 'object'");
+
         if ($language) {
             if ($language == "de") {
                 $objects = array_slice($objects, 0, 6);
@@ -749,7 +774,7 @@ class TestData
 
         $metaobjects = [];
         foreach ($objects as $o) {
-            $mo = new Object_Data_ObjectMetadata($field, ["meta1", "meta2"], $o);
+            $mo = new Object\Data\ObjectMetadata($field, ["meta1", "meta2"], $o);
             $mo->setMeta1("value1" . $seed);
             $mo->setMeta2("value2" . $seed);
             $metaobjects[] = $mo;
@@ -758,14 +783,14 @@ class TestData
         $object->$setter($metaobjects);
     }
 
-    public static function assertObjectsWithMetadata($object, $field, $comparisonObject, $seed = 1)
+    public static function assertObjectsWithMetadata(Object\Concrete $object, $field, $comparisonObject, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value  = $object->$getter();
 
         $fd            = $object->getClass()->getFieldDefinition($field);
-        $valueForField = Test_Tool::getComparisonDataForField($field, $fd, $object);
-        $expected      = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+        $valueForField = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expected      = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
 
         if ($valueForField != $expected) {
             print("   expected " . $expected . " but was " . $valueForField);
@@ -784,109 +809,29 @@ class TestData
         return true;
     }
 
-    private static function setupKeyValueConig()
-    {
-        if (!Object_KeyValue_KeyConfig::getByName("unittest_key1")) {
-            $config = new Object_KeyValue_KeyConfig();
-            $config->setName("unittest_key1");
-            $config->setType("text");
-            $config->save();
-        }
-
-        if (!Object_KeyValue_KeyConfig::getByName("unittest_key2")) {
-            $config = new Object_KeyValue_KeyConfig();
-            $config->setName("unittest_key2");
-            $config->setType("select");
-
-            $options = [
-                ["key" => "option1", "value" => "1"],
-                ["key" => "option2", "value" => "2"]
-            ];
-            $config->setPossibleValues(json_encode($options));
-
-            $config->save();
-        }
-    }
-
-    private static function createPairs($seed = 1)
-    {
-        $keyConfig1 = Object_KeyValue_KeyConfig::getByName("unittest_key1");
-        $keyConfig2 = Object_KeyValue_KeyConfig::getByName("unittest_key2");
-
-        $pair             = [];
-        $pair["key"]      = $keyConfig1->getId();
-        $pair["value"]    = "text1_" . $seed;
-        $pair["metadata"] = "meta1_" . $seed;
-        $pairs[]          = $pair;
-
-        $pair             = [];
-        $pair["key"]      = $keyConfig2->getId();
-        $pair["value"]    = 1 + ($seed % 2);
-        $pair["metadata"] = "metda" . (1 + ($seed % 2));
-
-
-        $pairs[] = $pair;
-
-        return $pairs;
-    }
-
-    public static function fillKeyValue($object, $field, $seed = 1)
-    {
-        $setter = "set" . ucfirst($field);
-        self::setupKeyValueConig();
-
-        $keyvalue = new Object_Data_KeyValue();
-        $pairs    = self::createPairs();
-        $keyvalue->setProperties($pairs);
-        $keyvalue->setObjectId($object->getId());
-        $object->$setter($keyvalue);
-    }
-
-    public static function assertKeyValue($object, $field, $seed = 1)
+    public static function fillBricks($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
 
-        $value    = $object->$getter();
-        $expected = self::createPairs($seed);
-
-        $properties = $value->getProperties();
-
-        if (count($expected) != count($properties)) {
-            print("    number of properties do not match\n");
-
-            return false;
-        }
-
-        for ($i = 0; $i < count($expected); $i++) {
-            $p1 = $expected[i];
-            $p2 = $properties[i];
-            if ($p1["key"] != $p2["key"] || $p1["value"] != $p2["value"] || $p1["metadata"] != $p2["metadata"]) {
-                print("    property does not match\n");
-
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
-    public static function fillBricks($object, $field, $seed = 1)
-    {
-        $setter = "get" . ucfirst($field);
-
-        $brick = new Object_Objectbrick_Data_UnittestBrick($object);
+        $brick = new Object\Objectbrick\Data\UnittestBrick($object);
         $brick->setBrickInput("brickinput" . $seed);
-        $objectbricks = $object->$setter();
+
+        /** @var Object\Unittest\Mybricks $objectbricks */
+        $objectbricks = $object->$getter();
         $objectbricks->setUnittestBrick($brick);
     }
 
     public static function assertBricks($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
-        $value  = $object->$getter();
-        $value  = $value->getUnittestBrick();
-        $value  = $value->getBrickinput();
+
+        $value = $object->$getter();
+
+        /** @var Object\Unittest\Mybricks $value */
+        $value = $value->getUnittestBrick();
+
+        /** @var Object\Objectbrick\Data\UnittestBrick $value */
+        $value = $value->getBrickinput();
 
         $expected = "brickinput" . $seed;
 
@@ -899,23 +844,24 @@ class TestData
         return true;
     }
 
-
     public static function fillFieldCollection($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
 
-        $fc = new Object_Fieldcollection_Data_Unittestfieldcollection();
+        $fc = new Object\Fieldcollection\Data\Unittestfieldcollection();
         $fc->setFieldinput1("field1" . $seed);
         $fc->setFieldinput2("field2" . $seed);
 
-        $items = new Object_Fieldcollection([$fc], $field);
+        $items = new Object\Fieldcollection([$fc], $field);
         $object->$setter($items);
     }
 
     public static function assertFieldCollection($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
-        $value  = $object->$getter();
+
+        /** @var Object\Fieldcollection $value */
+        $value = $object->$getter();
 
         if ($value->getCount() != 1) {
             print("    expected 1 item");
@@ -924,7 +870,10 @@ class TestData
         }
 
         $value = $value->getItems();
+
+        /** @var Object\Fieldcollection\Data\Unittestfieldcollection $value */
         $value = $value[0];
+
         if ($value->getFieldinput1() != "field1" . $seed) {
             print("field1" . $seed . " but was " . $value->getFieldInput1());
 
@@ -936,7 +885,6 @@ class TestData
 
             return false;
         }
-
 
         return true;
     }
