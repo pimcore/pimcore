@@ -117,7 +117,8 @@
       "pimcore/lib/Pimcore.php"
     ],
     "exclude-from-classmap": [
-      "pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/install-profiles"
+      "pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/install-profiles",
+      "legacy/bundle/src/PimcoreLegacyBundle/Resources/deprecated-class-names.php"
     ]
   },
   "scripts": {
