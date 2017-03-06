@@ -7,6 +7,8 @@ use Codeception\TestInterface;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tool\Authentication;
+use Symfony\Component\BrowserKit\Request;
+use Symfony\Component\BrowserKit\Response;
 
 class PimcoreRest extends REST
 {
@@ -29,6 +31,13 @@ class PimcoreRest extends REST
 
         $this->initializeUser('rest', true);
     }
+
+    public function _parts()
+    {
+        // only support json
+        return ['json'];
+    }
+
 
     public function _before(TestInterface $test)
     {
@@ -59,14 +68,56 @@ class PimcoreRest extends REST
     }
 
     /**
+     * @param string $method     The request method
+     * @param string $uri        The URI to fetch
+     * @param array  $parameters The Request parameters
+     * @param array  $files      The files
+     * @param array  $server     The server parameters (HTTP headers are referenced with a HTTP_ prefix as PHP does)
+     * @param string $content    The raw body data
+     *
+     * @return Response
+     */
+    public function executeDirect($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null)
+    {
+        // add configured url prefix
+        if ($this->config['url']) {
+            $uri = $this->config['url'] . $uri;
+        }
+
+        // add global parameters to request
+        $parameters = array_merge($this->globalParams, $parameters);
+
+        $this->connectionModule->_request($method, $uri, $parameters, $files, $server, $content);
+    }
+
+    /**
+     * @return Response|null
+     */
+    public function grabResponseObject()
+    {
+        return $this->getRunningClient()->getInternalResponse();
+    }
+
+    /**
+     * @return Request|null
+     */
+    public function grabRequestObject()
+    {
+        return $this->getRunningClient()->getInternalRequest();
+    }
+
+    /**
      * Add API key param for username
      *
      * @param string $username
      */
     public function addApiKeyParam($username = 'rest')
     {
+        $apiKey = $this->getRestApiKey($username);
+
+        // add API key to global params when using the REST module directly
         $this->globalParams = array_merge($this->globalParams, [
-            'apikey' => $this->getRestApiKey($username)
+            'apikey' => $apiKey
         ]);
     }
 
