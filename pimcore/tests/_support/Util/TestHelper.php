@@ -437,11 +437,12 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool $save
+     * @param bool   $save
+     * @param bool   $publish
      *
      * @return Unittest
      */
-    public static function createEmptyObject($keyPrefix = '', $save = true)
+    public static function createEmptyObject($keyPrefix = '', $save = true, $publish = true)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -454,6 +455,10 @@ class TestHelper
         $emptyObject->setUserModification(1);
         $emptyObject->setCreationDate(time());
         $emptyObject->setKey($keyPrefix . uniqid() . rand(10, 99));
+
+        if ($publish) {
+            $emptyObject->setPublished(true);
+        }
 
         if ($save) {
             $emptyObject->save();

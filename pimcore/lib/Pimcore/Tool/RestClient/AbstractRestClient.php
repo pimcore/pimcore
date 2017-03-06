@@ -759,7 +759,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getAssetCount($condition = null, $groupBy = null)
     {
-        $params = $this->buildRestParameters($condition, null, null, null, null, $groupBy, null);
+        $params = $this->buildRestParameters([], $condition, null, null, null, null, $groupBy, null);
 
         $response = $this->getJsonResponse('GET', '/asset-count', $params);
         $response = (array)$response;
@@ -780,7 +780,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getDocumentCount($condition = null, $groupBy = null)
     {
-        $params = $this->buildRestParameters($condition, null, null, null, null, $groupBy, null);
+        $params = $this->buildRestParameters([], $condition, null, null, null, null, $groupBy, null);
 
         $response = $this->getJsonResponse('GET', '/document-count', $params);
         $response = (array)$response;
@@ -802,7 +802,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getObjectCount($condition = null, $groupBy = null, $objectClass = null)
     {
-        $params = $this->buildRestParameters($condition, null, null, null, null, $groupBy, $objectClass);
+        $params = $this->buildRestParameters([], $condition, null, null, null, null, $groupBy, $objectClass);
 
         $response = $this->getJsonResponse('GET', '/object-count', $params);
         $response = (array)$response;

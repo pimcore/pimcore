@@ -2,7 +2,8 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Pimcore\Tests\Rest\RestClient;
+use Codeception\Util\Debug;
+use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -53,10 +54,17 @@ class ObjectTest extends RestTestCase
         $emptyObject = TestHelper::createEmptyObject();
         $id          = $emptyObject->getId();
 
-        $this->assertTrue(TestHelper::getObjectCount() === ($originalCount + 1));
+        $newLocalCount = TestHelper::getObjectCount();
+        $newApiCount   = $this->restClient->getObjectCount();
+        $expectedCount = $originalCount + 1;
+
+        $this->assertEquals($expectedCount, $newLocalCount);
+        $this->assertEquals($expectedCount, $newApiCount);
+
         $object = $this->restClient->getObjectById($id);
 
         $this->assertNotNull($object, "expected new object");
+        $this->assertInstanceOf(Unittest::class, $object);
         $this->assertEquals($emptyObject->getId(), $object->getId());
         $this->assertEquals($emptyObject->getFullPath(), $object->getFullPath());
     }

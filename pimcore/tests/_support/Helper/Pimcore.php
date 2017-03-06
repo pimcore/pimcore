@@ -106,13 +106,26 @@ class Pimcore extends Module\Symfony
     {
         parent::_before($test);
 
-        $this->initPimcoreState();
+        // default pimcore state is non-admin
+        $this->unsetAdminMode();
     }
 
     /**
-     * Set default pimcore object state
+     * Set pimcore into admin state
      */
-    protected function initPimcoreState()
+    public function setAdminMode()
+    {
+        \Pimcore::setAdminMode();
+        Document::setHideUnpublished(false);
+        Object\AbstractObject::setHideUnpublished(false);
+        Object\AbstractObject::setGetInheritedValues(false);
+        Object\Localizedfield::setGetFallbackValues(false);
+    }
+
+    /**
+     * Set pimcore into non-admin state
+     */
+    public function unsetAdminMode()
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);

@@ -7,6 +7,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
 use Pimcore\Model\Webservice\Data\Object\Folder\In as WebserviceFolderIn;
 use Pimcore\Model\Webservice\Service;
+use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -400,6 +401,10 @@ class ObjectController extends AbstractRestController
      *      - group by key
      *      - objectClass the name of the object class (without "Object_"). If the class does
      *          not exist the filter criteria will be ignored!
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function listAction(Request $request)
     {
@@ -417,6 +422,65 @@ class ObjectController extends AbstractRestController
 
         return $this->createSuccessResponse([
             'data' => $result
+        ]);
+    }
+
+    /**
+     * @Route("/object-count")
+     * @Method("GET")
+     *
+     * Returns the total number of objects matching the given condition
+     *  Example:
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *
+     * Parameters:
+     *      - condition
+     *      - group by key
+     *      - objectClass the name of the object class (without "Object_"). If the class does
+     *          not exist the filter criteria will be ignored!
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function countAction(Request $request)
+    {
+        $this->checkPermission('objects');
+
+        $condition   = urldecode($request->get('condition'));
+        $groupBy     = $request->get('groupBy');
+        $objectClass = $request->get('objectClass');
+
+        $params = [
+            'objectTypes' => [
+                Object\AbstractObject::OBJECT_TYPE_FOLDER,
+                Object\AbstractObject::OBJECT_TYPE_OBJECT,
+                Object\AbstractObject::OBJECT_TYPE_VARIANT
+            ]
+        ];
+
+        if (!empty($condition)) {
+            $params['condition'] = $condition;
+        }
+
+        if (!empty($groupBy)) {
+            $params['groupBy'] = $groupBy;
+        }
+
+        $listClassName = Object\AbstractObject::class;
+        if (!empty($objectClass)) {
+            $listClassName = '\\Pimcore\\Model\\Object\\' . ucfirst($objectClass);
+            if (!Tool::classExists($listClassName)) {
+                $listClassName = Object\AbstractObject::class;
+            }
+        }
+
+        $count = $listClassName::getTotalCount($params);
+
+        return $this->createSuccessResponse([
+            'data' => [
+                'totalCount' => $count
+            ]
         ]);
     }
 
