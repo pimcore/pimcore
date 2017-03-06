@@ -2,7 +2,8 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Codeception\Util\Debug;
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\Folder;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Test\RestTestCase;
@@ -71,78 +72,77 @@ class ObjectTest extends RestTestCase
 
     public function testCreateObjectConcrete()
     {
-        $this->printTestName();
-        $this->assertEquals(1, Test_Tool::getObjectCount());
+        $this->assertEquals(1, TestHelper::getObjectCount());
 
-        $unsavedObject = Test_Tool::createEmptyObject("", false);
+        $unsavedObject = TestHelper::createEmptyObject('', false);
+
         // object not saved, object count must still be one
-        $this->assertEquals(1, Test_Tool::getObjectCount());
+        $this->assertEquals(1, TestHelper::getObjectCount());
 
         $time = time();
 
-        $result = self::getRestClient()->createObjectConcrete($unsavedObject);
-//        var_dump($result);
+        $result = $this->restClient->createObjectConcrete($unsavedObject);
+
         $this->assertTrue($result->success, "request not successful . " . $result->msg);
-        $this->assertEquals(2, Test_Tool::getObjectCount());
+        $this->assertEquals(2, TestHelper::getObjectCount());
 
         $id = $result->id;
         $this->assertTrue($id > 1, "id must be greater than 1");
 
-        $objectDirect = Object_Abstract::getById($id);
+        $objectDirect = AbstractObject::getById($id);
         $creationDate = $objectDirect->getCreationDate();
+
         $this->assertTrue($creationDate >= $time, "wrong creation date");
 
         // as the object key is unique there must be exactly one object with that key
-        $list = self::getRestClient()->getObjectList("o_key = '" . $unsavedObject->getKey() . "'");
+        $list = $this->restClient->getObjectList("o_key = '" . $unsavedObject->getKey() . "'");
         $this->assertEquals(1, count($list));
     }
 
     public function testDelete()
     {
-        $this->printTestName();
+        $savedObject = TestHelper::createEmptyObject();
 
-        $savedObject = Test_Tool::createEmptyObject();
-
-        $savedObject = Object_Abstract::getById($savedObject->getId());
+        $savedObject = AbstractObject::getById($savedObject->getId());
         $this->assertNotNull($savedObject);
 
-        $response = self::getRestClient()->deleteObject($savedObject->getId());
+        $response = $this->restClient->deleteObject($savedObject->getId());
         $this->assertTrue($response->success, "request wasn't successful");
 
         // this will wipe our local cache
-        Pimcore::collectGarbage();
+        \Pimcore::collectGarbage();
 
-        $savedObject = Object_Abstract::getById($savedObject->getId());
-        $this->assertTrue($savedObject == null, "object still exists");
+        $savedObject = AbstractObject::getById($savedObject->getId());
+        $this->assertNull($savedObject, "object still exists");
     }
 
     public function testFolder()
     {
-        $this->printTestName();
-
         // create folder but don't save it
-        $folder = Test_Tool::createEmptyObject("myfolder", false);
-        $folder->setType("folder");
+        /** @var Folder $folder */
+        $folder = TestHelper::createEmptyFolder("myfolder", false);
+        $folder->setType('folder');
 
-        $fitem = Object_Abstract::getById($folder->getId());
+        $fitem = AbstractObject::getById($folder->getId());
         $this->assertNull($fitem);
 
-        $response = self::getRestClient()->createObjectFolder($folder);
+        $response = $this->restClient->createObjectFolder($folder);
         $this->assertTrue($response->success, "request wasn't successful");
 
         $id = $response->id;
         $this->assertTrue($id > 1, "id not set");
 
-        $folderDirect = Object_Abstract::getById($id);
-        $this->assertTrue($folderDirect->getType() == "folder");
+        $folderDirect = AbstractObject::getById($id);
+        $this->assertEquals('folder', $folderDirect->getType());
 
-        $folderRest = self::getRestClient()->getObjectById($id);
-        $this->assertTrue(Test_Tool::objectsAreEqual($folderRest, $folderDirect, false), "objects are not equal");
+        $folderRest = $this->restClient->getObjectById($id);
+        $this->assertTrue(TestHelper::objectsAreEqual($folderRest, $folderDirect, false), "objects are not equal");
 
-        self::getRestClient()->deleteObject($id);
+        $this->restClient->deleteObject($id);
 
-        Pimcore::collectGarbage();
-        $folderDirect = Object_Abstract::getById($id);
+        \Pimcore::collectGarbage();
+
+        $folderDirect = AbstractObject::getById($id);
         $this->assertNull($folderDirect, "folder still exists");
     }
 }

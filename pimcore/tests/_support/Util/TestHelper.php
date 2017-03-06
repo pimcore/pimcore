@@ -439,16 +439,22 @@ class TestHelper
      * @param string $keyPrefix
      * @param bool   $save
      * @param bool   $publish
+     * @param null   $type
      *
-     * @return Unittest
+     * @return Concrete|Unittest
      */
-    public static function createEmptyObject($keyPrefix = '', $save = true, $publish = true)
+    public static function createEmptyObject($keyPrefix = '', $save = true, $publish = true, $type = null)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
         }
 
-        $emptyObject = new Unittest();
+        if (null === $type) {
+            $type = Unittest::class;
+        }
+
+        /** @var Concrete $emptyObject */
+        $emptyObject = new $type();
         $emptyObject->setOmitMandatoryCheck(true);
         $emptyObject->setParentId(1);
         $emptyObject->setUserOwner(1);
@@ -459,6 +465,32 @@ class TestHelper
         if ($publish) {
             $emptyObject->setPublished(true);
         }
+
+        if ($save) {
+            $emptyObject->save();
+        }
+
+        return $emptyObject;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param bool   $save
+     *
+     * @return ObjectModel\Folder
+     */
+    public static function createEmptyFolder($keyPrefix = '', $save = true)
+    {
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
+        }
+
+        $emptyObject = new ObjectModel\Folder();
+        $emptyObject->setParentId(1);
+        $emptyObject->setUserOwner(1);
+        $emptyObject->setUserModification(1);
+        $emptyObject->setCreationDate(time());
+        $emptyObject->setKey($keyPrefix . uniqid() . rand(10, 99));
 
         if ($save) {
             $emptyObject->save();
