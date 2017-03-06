@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests;
+namespace Pimcore\Tests\Rest;
 
 use Pimcore\Tests\Test\TestCase;
 

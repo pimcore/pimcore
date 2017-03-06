@@ -1,43 +1,43 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Michi
- * Date: 11.11.2010
- * Time: 10:35:07
- */
 
+namespace Pimcore\Tests\Rest;
 
-class TestSuite_Rest_ObjectTest extends Test_BaseRest
+use Pimcore\Tests\Rest\RestClient;
+use Pimcore\Tests\RestTester;
+use Pimcore\Tests\Test\RestTestCase;
+use Pimcore\Tests\Util\TestHelper;
+
+class ObjectTest extends RestTestCase
 {
-    public function setUp()
-    {
-        // every single rest test assumes a clean database
-        Test_Tool::cleanUp();
-        parent::setUp();
-    }
+    /**
+     * @var RestTester
+     */
+    protected $tester;
 
     /**
-     * creates a class called "unittest" containing all Object_Class_Data Types currently available.
-     * @return void
+     * @var RestClient
      */
+    protected $restClient;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        // every single rest test assumes a clean database
+        TestHelper::cleanUp();
+
+        // authenticate as rest user
+        $this->tester->addApiKeyParam('rest');
+
+        // setup test rest client
+        $this->restClient = new RestClient($this->tester);
+    }
+
     public function testObjectList()
     {
-        $this->printTestName();
-        $list = self::getRestClient()->getObjectList();
-//        if (count($list) > 1) {
-////            var_dump($list);
-//            $id1 = $list[0]->getId();
-//            $id2 = $list[1]->getId();
-////            print($id1 . "\n");
-////            print($id2 . "\n");
-//            $object1 = Object_Abstract::getById($id1);
-//            $object2 = Object_Abstract::getById($id2);
-////            print($object1->getKey() . "\n");
-////            print($object2->getKey() . "\n");
-////            die("check the db!");
-//        }
-        $this->assertEquals(1, count($list), "expected 1 list item");
+        $list = $this->restClient->getObjectList();
 
+        $this->assertEquals(1, count($list), "expected 1 list item");
         $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
     }
 
@@ -51,7 +51,7 @@ class TestSuite_Rest_ObjectTest extends Test_BaseRest
         $originalCount = Test_Tool::getObjectCount();
 
         $emptyObject = Test_Tool::createEmptyObject();
-        $id = $emptyObject->getId();
+        $id          = $emptyObject->getId();
         $this->assertTrue(Test_Tool::getObjectCount() == $originalCount + 1);
         $object = self::getRestClient()->getObjectById($id);
         $this->assertNotNull($object, "expected new object");
