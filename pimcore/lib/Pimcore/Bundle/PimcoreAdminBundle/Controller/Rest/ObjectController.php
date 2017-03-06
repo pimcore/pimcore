@@ -40,9 +40,9 @@ class ObjectController extends AbstractRestController
      * @Route("/object")
      *
      *
-     * @api              {get} /object Get object data
-     * @apiName          Get object by id
-     * @apiGroup         Object
+     * @api {get} /object Get object data
+     * @apiName Get object by id
+     * @apiGroup Object
      * @apiSampleRequest off
      * @apiParam {int} id an object id
      * @apiParam {string} apikey your access token
@@ -326,9 +326,9 @@ class ObjectController extends AbstractRestController
      * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Route("/object")
      *
-     * @api              {delete} /object/id/{id} Delete object
-     * @apiName          Delete object
-     * @apiGroup         Object
+     * @api {delete} /object/id/{id} Delete object
+     * @apiName Delete object
+     * @apiGroup Object
      * @apiSampleRequest off
      * @apiParam {int} id an object id
      * @apiParam {string} apikey your access token
