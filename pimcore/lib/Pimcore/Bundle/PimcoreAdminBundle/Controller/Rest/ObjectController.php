@@ -6,7 +6,6 @@ use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
 use Pimcore\Model\Webservice\Data\Object\Folder\In as WebserviceFolderIn;
-use Pimcore\Model\Webservice\Service;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,22 +36,14 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class ObjectController extends AbstractRestController
 {
     /**
-     * @var Service
-     */
-    protected $service;
-
-    public function __construct()
-    {
-        $this->service = new Service();
-    }
-
-    /**
-     * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Method("GET")
+     * @Route("/object/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object")
      *
-     * @api {get} /object Get object data
-     * @apiName Get object by id
-     * @apiGroup Object
+     *
+     * @api              {get} /object Get object data
+     * @apiName          Get object by id
+     * @apiGroup         Object
      * @apiSampleRequest off
      * @apiParam {int} id an object id
      * @apiParam {string} apikey your access token
@@ -88,12 +79,15 @@ class ObjectController extends AbstractRestController
      *                    }
      *
      * @param Request $request
-     * @param int $id
+     * @param int     $id
      *
      * @return JsonResponse
+     * @throws ResponseException
      */
-    public function getAction(Request $request, $id)
+    public function getAction(Request $request, $id = null)
     {
+        $id = $this->resolveId($request, $id);
+
         $profile     = $request->get('profiling');
         $profileName = 'rest_object_get';
 
@@ -106,10 +100,7 @@ class ObjectController extends AbstractRestController
 
         $object = Object::getById($id);
         if (!$object) {
-            return $this->createErrorResponse([
-                "msg"  => "Object does not exist",
-                "code" => static::ELEMENT_DOES_NOT_EXIST
-            ], Response::HTTP_NOT_FOUND);
+            throw $this->createNotFoundException('Object does not exist');
         }
 
         if ($profile) {
@@ -146,8 +137,8 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/object")
      * @Method({"POST", "PUT"})
+     * @Route("/object")
      *
      * @api {post} /object Create a new object
      * @apiName Create a new object
@@ -241,8 +232,8 @@ class ObjectController extends AbstractRestController
     }
 
     /**
+     * @Method({"POST", "PUT"})
      * @Route("/object/id/{id}", requirements={"id": "\d+"})
-     * @Method("PUT")
      *
      * @api {put} /object/id/{id} Update an object
      * @apiName Create a new object
@@ -319,16 +310,14 @@ class ObjectController extends AbstractRestController
      *
      * @return JsonResponse
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $id = null)
     {
+        $id = $this->resolveId($request, $id);
+
         $data = $this->getJsonData($request);
 
         // get and normalize type
         $type = $data['type'] = isset($data['type']) ? $data['type'] : 'object';
-
-        if (!$id) {
-            return $this->createErrorResponse('Missing ID');
-        }
 
         $object = $this->loadObject($id);
 
@@ -336,8 +325,9 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Method("DELETE")
+     * @Route("/object/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object")
      *
      * @api {delete} /object/id/{id} Delete object
      * @apiName Delete object
@@ -365,14 +355,15 @@ class ObjectController extends AbstractRestController
      *
      * @return JsonResponse
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, $id = null)
     {
+        $id = $this->resolveId($request, $id);
         $object = Object::getById($id);
 
         if ($object) {
             $this->checkElementPermission($object, 'delete');
         } else {
-            return $this->createErrorResponse(Response::$statusTexts[Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
+            throw $this->createNotFoundException();
         }
 
         $success = $this->service->deleteObject($id);
@@ -385,8 +376,8 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/object-list")
      * @Method("GET")
+     * @Route("/object-list")
      *
      * Returns a list of object id/type pairs matching the given criteria.
      *  Example:
@@ -426,8 +417,8 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/object-meta/id/{id}", requirements={"id": "\d+"})
      * @Method("GET")
+     * @Route("/object-meta/id/{id}", requirements={"id": "\d+"})
      *
      * end point for object metadata
      *  Example:
@@ -441,10 +432,7 @@ class ObjectController extends AbstractRestController
 
         $class = $this->service->getObjectMetadataById($id);
         if (!$class) {
-            throw new ResponseException($this->createErrorResponse(
-                Response::$statusTexts[Response::HTTP_NOT_FOUND],
-                Response::HTTP_NOT_FOUND
-            ));
+            throw $this->createNotFoundException();
         }
 
         return $this->createSuccessResponse([
@@ -453,8 +441,8 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/object-count")
      * @Method("GET")
+     * @Route("/object-count")
      *
      * Returns the total number of objects matching the given condition
      *  Example:
@@ -526,10 +514,7 @@ class ObjectController extends AbstractRestController
             return $object;
         }
 
-        throw new ResponseException($this->createErrorResponse(
-            Response::$statusTexts[Response::HTTP_NOT_FOUND],
-            Response::HTTP_NOT_FOUND
-        ));
+        throw $this->createNotFoundException();
     }
 
     /**

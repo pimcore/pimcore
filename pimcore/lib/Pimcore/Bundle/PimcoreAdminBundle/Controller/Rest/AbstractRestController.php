@@ -160,6 +160,17 @@ abstract class AbstractRestController extends AdminController
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function createNotFoundException($message = null, \Exception $previous = null)
+    {
+        return new ResponseException($this->createErrorResponse(
+            $message ?: Response::$statusTexts[Response::HTTP_NOT_FOUND],
+            Response::HTTP_NOT_FOUND
+        ), $previous);
+    }
+
+    /**
      * Get decoded JSON request data
      *
      * @param Request $request
@@ -195,6 +206,28 @@ abstract class AbstractRestController extends AdminController
         }
 
         return $data;
+    }
+
+    /**
+     * Get ID either as parameter or from request
+     *
+     * @param Request $request
+     * @param null    $id
+     *
+     * @return mixed|null
+     * @throws ResponseException
+     */
+    protected function resolveId(Request $request, $id = null)
+    {
+        if (null !== $id) {
+            return $id;
+        }
+
+        if ($id = $request->get('id')) {
+            return $id;
+        }
+
+        throw new ResponseException($this->createErrorResponse('Missing ID'));
     }
 
     /**

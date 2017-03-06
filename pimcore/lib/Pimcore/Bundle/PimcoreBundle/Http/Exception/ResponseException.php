@@ -12,10 +12,13 @@ class ResponseException extends \Exception
     protected $response;
 
     /**
-     * @param Response $response
+     * @param Response   $response
+     * @param \Exception $previous
      */
-    public function __construct(Response $response)
+    public function __construct(Response $response, \Exception $previous = null)
     {
+        parent::__construct('', 0, $previous);
+
         $this->response = $response;
     }
 
