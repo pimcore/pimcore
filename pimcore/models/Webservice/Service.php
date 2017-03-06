@@ -25,7 +25,6 @@ use Pimcore\Logger;
 
 class Service
 {
-
     /**
      * @return User
      * @throws \Exception

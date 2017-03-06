@@ -104,3 +104,10 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore_admin.security.encoder_factory.inner']
         public: false
+
+    #
+    # API
+    #
+
+    pimcore_admin.webservice.service:
+        class: Pimcore\Model\Webservice\Service
