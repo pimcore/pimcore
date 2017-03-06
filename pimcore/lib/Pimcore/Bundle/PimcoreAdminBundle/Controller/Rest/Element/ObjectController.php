@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
@@ -32,7 +32,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  *      body: same as for create object. object id can be either in URI or as request payload
  *      returns json encoded success value
  */
-class ObjectController extends AbstractRestController
+class ObjectController extends AbstractElementController
 {
     /**
      * @Method("GET")
@@ -355,7 +355,7 @@ class ObjectController extends AbstractRestController
      */
     public function deleteAction(Request $request, $id = null)
     {
-        $id = $this->resolveId($request, $id);
+        $id     = $this->resolveId($request, $id);
         $object = Object::getById($id);
 
         if ($object) {
@@ -493,6 +493,29 @@ class ObjectController extends AbstractRestController
         return $this->createSuccessResponse([
             'totalCount' => $count
         ]);
+    }
+
+    /**
+     * @Method({"GET", "POST"})
+     * @Route("/object-inquire")
+     *
+     * Checks for existence of the given object IDs
+     *
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-inquire?apikey=[API-KEY]
+     *
+     * Parameters:
+     *      - id single object ID
+     *      - ids comma separated list of object IDs
+     * Returns:
+     *      - List with true or false for each ID
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function inquireAction(Request $request)
+    {
+        return $this->inquire($request, 'object');
     }
 
     /**
