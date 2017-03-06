@@ -228,7 +228,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param bool $decode
      * @param null $objectClass
      *
-     * @return array
+     * @return Object[]
      * @throws Exception
      */
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true, $objectClass = null)
@@ -265,7 +265,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param null $groupBy
      * @param bool $decode
      *
-     * @return array
+     * @return Asset[]
      * @throws Exception
      */
     public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true)
@@ -304,7 +304,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param null $groupBy
      * @param bool $decode
      *
-     * @return array
+     * @return Document[]
      * @throws Exception
      */
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true)
@@ -349,17 +349,19 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getObjectById($id, $decode = true, $idMapper = null)
     {
-        $url = $this->buildEndpointUrl("object/id/" . $id);
+        $params = [];
+
         if ($this->getEnableProfiling()) {
             $this->profilingInfo = null;
-            $url .= "&profiling=1";
+            $params['profiling'] = 1;
         }
 
         if ($this->getCondense()) {
-            $url .= "&condense=1";
+            $params['condense'] = 1;
         }
 
-        $response = $this->doRequest($url, "GET");
+        $response = $this->getJsonResponse('GET', sprintf('/object/id/%d', $id), $params);
+
         if ($this->getEnableProfiling()) {
             $this->profilingInfo = $response->profiling;
         }
@@ -408,10 +410,10 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getDocumentById($id, $decode = true, $idMapper = null)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("document/id/" . $id), "GET");
+        $response = $this->getJsonResponse('GET', sprintf('/document/id/%d', $id));
         $response = $response->data;
 
-        if ($response->type == "folder") {
+        if ($response->type === "folder") {
             $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Document\\Folder\\In", $response);
             if (!$decode) {
                 return $wsDocument;
@@ -440,6 +442,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
+     * TODO
+     *
      * @param        $id
      * @param bool   $decode
      * @param null   $idMapper
@@ -453,14 +457,15 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null, $tolerant = false, $protocol = "http://")
     {
-        $uri = $this->buildEndpointUrl("asset/id/" . $id);
+        $params = [];
         if ($light) {
-            $uri .= "&light=1";
+            $params['light'] = 1;
         }
-        $response = $this->doRequest($uri, "GET");
+
+        $response = $this->getJsonResponse('GET', sprintf('/asset/id/%d', $id), $params);
         $response = $response->data;
 
-        if ($response->type == "folder") {
+        if ($response->type === "folder") {
             $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\In", $response);
             if (!$decode) {
                 return $wsDocument;
@@ -482,6 +487,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                     throw new Exception("Asset class " . $type . " does not exist");
                 }
 
+                /** @var Asset $asset */
                 $asset = new $type();
                 $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
 
@@ -553,11 +559,11 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Creates a new document.
      *
-     * @param $document
+     * @param Document $document
      *
      * @return mixed json encoded success value and id
      */
-    public function createDocument($document)
+    public function createDocument(Document $document)
     {
         $type      = $document->getType();
         $typeUpper = ucfirst($type);
@@ -565,7 +571,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
         $wsDocument  = Webservice\Data\Mapper::map($document, $className, "out");
         $encodedData = json_encode($wsDocument);
-        $response    = $this->doRequest($this->buildEndpointUrl("document/"), "PUT", $encodedData);
+
+        $response = $this->getJsonResponse('POST', '/document', [], [], [], $encodedData);
 
         return $response;
     }
@@ -573,42 +580,46 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Creates a new object.
      *
-     * @param $object
+     * @param Object\AbstractObject $object
      *
      * @return mixed json encoded success value and id
      */
-    public function createObjectConcrete($object)
+    public function createObjectConcrete(Object\AbstractObject $object)
     {
-        if ($object->getType() == "folder") {
+        if ($object->getType() === "folder") {
             $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\Out";
         } else {
             $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\Out";
         }
+
         $wsDocument  = Webservice\Data\Mapper::map($object, $documentType, "out");
         $encodedData = json_encode($wsDocument);
-        $response    = $this->doRequest($this->buildEndpointUrl("object/"), "PUT", $encodedData);
+
+        $response = $this->getJsonResponse('POST', '/object', [], [], [], $encodedData);
 
         return $response;
     }
 
     /**
-     * @param $asset
+     * @param Asset $asset
      *
      * @return mixed|null|string
      * @throws Exception
      * @throws \Exception
      */
-    public function createAsset($asset)
+    public function createAsset(Asset $asset)
     {
-        if ($asset->getType() == "folder") {
+        if ($asset->getType() === "folder") {
             $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\Folder\\Out";
         } else {
             $documentType = "\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\Out";
         }
+
         $wsDocument  = Webservice\Data\Mapper::map($asset, $documentType, "out");
         $encodedData = json_encode($wsDocument);
-        $response    = $this->doRequest($this->buildEndpointUrl("asset/"), "PUT", $encodedData);
-        $response    = $response->data;
+
+        $response = $this->getJsonResponse('POST', '/asset', [], [], [], $encodedData);
+        $response = $response->data;
 
         return $response;
     }
@@ -622,7 +633,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function deleteObject($objectId)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("object/id/" . $objectId), "DELETE");
+        $response = $this->getJsonResponse('DELETE', sprintf('/object/id/%s', $objectId));
 
         return $response;
     }
@@ -636,7 +647,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function deleteAsset($assetId)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("asset/id/" . $assetId), "DELETE");
+        $response = $this->getJsonResponse('DELETE', sprintf('/asset/id/%s', $assetId));
 
         return $response;
     }
@@ -650,7 +661,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function deleteDocument($documentId)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("document/id/" . $documentId), "DELETE");
+        $response = $this->getJsonResponse('DELETE', sprintf('/document/id/%s', $documentId));
 
         return $response;
     }
@@ -658,36 +669,35 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Creates a new object folder.
      *
-     * @param $objectFolder object folder.
+     * @param Object\Folder $objectFolder object folder.
      *
      * @return mixed
      */
-    public function createObjectFolder($objectFolder)
+    public function createObjectFolder(Object\Folder $objectFolder)
     {
         return $this->createObjectConcrete($objectFolder);
     }
 
-
     /**
      * Creates a new document folder.
      *
-     * @param $documentFolder document folder.
+     * @param Document\Folder $documentFolder document folder.
      *
      * @return mixed
      */
-    public function createDocumentFolder($documentFolder)
+    public function createDocumentFolder(Document\Folder $documentFolder)
     {
         return $this->createDocument($documentFolder);
     }
 
-
-    /** Creates a new asset folder.
+    /**
+     * Creates a new asset folder.
      *
-     * @param $assetFolder document folder.
+     * @param Asset\Folder $assetFolder document folder.
      *
      * @return mixed
      */
-    public function createAssetFolder($assetFolder)
+    public function createAssetFolder(Asset\Folder $assetFolder)
     {
         return $this->createAsset($assetFolder);
     }
@@ -701,7 +711,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getClassById($id, $decode = true)
     {
-        $response     = $this->doRequest($this->buildEndpointUrl("class/id/" . $id), "GET");
+        $response     = $this->getJsonResponse('GET', sprintf('/class/id/%d', $id));
         $responseData = $response->data;
 
         if (!$decode) {
@@ -725,7 +735,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getObjectMetaById($id, $decode = true)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("object-meta/id/" . $id), "GET");
+        $response = $this->getJsonResponse('GET', sprintf('/object-meta/id/%d', $id));
         $response = $response->data;
 
         $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\In", $response);
@@ -740,18 +750,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         return $class;
     }
 
-    /** Returns the key value definition
-     *
-     * @return mixed
-     */
-    public function getKeyValueDefinition()
-    {
-        $response = $this->doRequest($this->buildEndpointUrl("key-value-definition"), "GET");
-        $response = $response->data;
-
-        return $response;
-    }
-
     /**
      * @param null $condition
      * @param null $groupBy
@@ -763,7 +761,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     {
         $params = $this->buildRestParameters($condition, null, null, null, null, $groupBy, null);
 
-        $response = (array)$this->doRequest($this->buildEndpointUrl("asset-count") . $params, "GET");
+        $response = $this->getJsonResponse('GET', '/asset-count', $params);
+        $response = (array)$response;
 
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve asset count");
@@ -783,7 +782,9 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     {
         $params = $this->buildRestParameters($condition, null, null, null, null, $groupBy, null);
 
-        $response = (array)$this->doRequest($this->buildEndpointUrl("document-count") . $params, "GET");
+        $response = $this->getJsonResponse('GET', '/document-count', $params);
+        $response = (array)$response;
+
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve document count");
         }
@@ -803,7 +804,9 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     {
         $params = $this->buildRestParameters($condition, null, null, null, null, $groupBy, $objectClass);
 
-        $response = (array)$this->doRequest($this->buildEndpointUrl("object-count") . $params, "GET");
+        $response = $this->getJsonResponse('GET', '/object-count', $params);
+        $response = (array)$response;
+
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve object count");
         }
@@ -811,13 +814,14 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         return $response["data"]->totalCount;
     }
 
-    /** Returns the current user
+    /**
+     * Returns the current user
      *
      * @return mixed
      */
     public function getUser()
     {
-        $response = $this->doRequest($this->buildEndpointUrl("user"), "GET");
+        $response = $this->getJsonResponse('GET', '/user');
         $response = ["success" => true, "data" => $response->data];
 
         return $response;
@@ -829,7 +833,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getFieldCollections()
     {
-        $response = $this->doRequest($this->buildEndpointUrl("field-collections"), "GET");
+        $response = $this->getJsonResponse('GET', '/field-collections');
 
         return $response;
     }
@@ -842,34 +846,37 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getFieldCollection($id)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("field-collection/id/" . $id), "GET");
+        $response = $this->getJsonResponse('GET', sprintf('/field-collection/id/%d', $id));
 
         return $response;
     }
 
-    /** Returns a list of defined classes
+    /**
+     * Returns a list of defined classes
      *
      * @return mixed
      */
     public function getClasses()
     {
-        $response = $this->doRequest($this->buildEndpointUrl("classes"), "GET");
+        $response = $this->getJsonResponse('GET', '/classes');
 
         return $response;
     }
 
-    /** Returns a list of defined object bricks
+    /**
+     * Returns a list of defined object bricks
      *
      * @return mixed
      */
     public function getObjectBricks()
     {
-        $response = $this->doRequest($this->buildEndpointUrl("object-bricks"), "GET");
+        $response = $this->getJsonResponse('GET', '/object-bricks');
 
         return $response;
     }
 
-    /** Returns the given object brick definition
+    /**
+     * Returns the given object brick definition
      *
      * @param $id
      *
@@ -877,34 +884,37 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getObjectBrick($id)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("object-brick/id/" . $id), "GET");
+        $response = $this->getJsonResponse('GET', sprintf('/object-brick/id/%d', $id));
 
         return $response;
     }
 
-    /** Returns the current server time
+    /**
+     * Returns the current server time
      *
      * @return mixed
      */
     public function getCurrentTime()
     {
-        $response = $this->doRequest($this->buildEndpointUrl("system-clock"), "GET");
+        $response = $this->getJsonResponse('GET', '/system-clock');
 
         return $response;
     }
 
-    /** Returns a list of image thumbnail configurations.
+    /**
+     * Returns a list of image thumbnail configurations.
      *
      * @return mixed
      */
     public function getImageThumbnails()
     {
-        $response = $this->doRequest($this->buildEndpointUrl("image-thumbnails"), "GET");
+        $response = $this->getJsonResponse('GET', '/image-thumbnails');
 
         return $response;
     }
 
-    /** Returns the image thumbnail configuration with the given ID.
+    /**
+     * Returns the image thumbnail configuration with the given ID.
      *
      * @param $id
      *
@@ -912,7 +922,11 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getImageThumbnail($id)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("image-thumbnail?id=" . $id), "GET");
+        $params = [
+            'id' => $id
+        ];
+
+        $response = $this->getJsonResponse('GET', '/image-thumbnail', $params);
 
         return $response;
     }
@@ -924,8 +938,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getServerInfo()
     {
-        $url      = $this->buildEndpointUrl("server-info");
-        $response = $this->doRequest($this->buildEndpointUrl("server-info"), "GET");
+        $response = $this->getJsonResponse('GET', '/server-info');
 
         return $response;
     }
