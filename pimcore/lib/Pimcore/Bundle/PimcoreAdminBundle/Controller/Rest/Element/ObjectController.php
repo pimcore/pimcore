@@ -351,13 +351,9 @@ class ObjectController extends AbstractElementController
     public function deleteAction(Request $request, $id = null)
     {
         $id     = $this->resolveId($request, $id);
-        $object = Object::getById($id);
+        $object = $this->loadObject($id);
 
-        if ($object) {
-            $this->checkElementPermission($object, 'delete');
-        } else {
-            throw $this->createNotFoundException();
-        }
+        $this->checkElementPermission($object, 'delete');
 
         $success = $this->service->deleteObject($id);
         if ($success) {
@@ -418,7 +414,7 @@ class ObjectController extends AbstractElementController
      *
      * @param int $id
      *
-     * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws ResponseException
      */
     public function objectMetaAction($id)

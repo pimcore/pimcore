@@ -642,6 +642,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                  *       "apikey": '2132sdf2321rwefdcvvce22'
                  *     }
                  * @apiName getAssetFileById
+                 * @apiName getAssetFileById
                  * @apiSampleRequest off
                  * @apiGroup Asset
                  * @apiParam {int} id The id of asset you search

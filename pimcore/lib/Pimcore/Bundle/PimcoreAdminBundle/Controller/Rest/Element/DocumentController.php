@@ -28,8 +28,6 @@ use Symfony\Component\Routing\Annotation\Route;
  *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/document?apikey=[API-KEY]
  *      body: same as for create document but with object id
  *      returns json encoded success value
- *
- * @throws \Exception
  */
 class DocumentController extends AbstractElementController
 {
@@ -212,13 +210,9 @@ class DocumentController extends AbstractElementController
     public function deleteAction(Request $request, $id = null)
     {
         $id       = $this->resolveId($request, $id);
-        $document = Document::getById($id);
+        $document = $this->loadDocument($id);
 
-        if ($document) {
-            $this->checkElementPermission($document, 'delete');
-        } else {
-            throw $this->createNotFoundException();
-        }
+        $this->checkElementPermission($document, 'delete');
 
         $success = $this->service->deleteDocument($id);
         if ($success) {
@@ -244,6 +238,10 @@ class DocumentController extends AbstractElementController
      *      - offset
      *      - limit
      *      - group by key
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
      */
     public function listAction(Request $request)
     {
@@ -345,6 +343,8 @@ class DocumentController extends AbstractElementController
     }
 
     /**
+     * Create a new document
+     *
      * @param string $type
      * @param array  $data
      *
@@ -377,6 +377,8 @@ class DocumentController extends AbstractElementController
     }
 
     /**
+     * Update an existing document
+     *
      * @param Document $document
      * @param string   $type
      * @param array    $data
@@ -386,6 +388,8 @@ class DocumentController extends AbstractElementController
     protected function updateDocument(Document $document, $type, array $data)
     {
         $this->checkElementPermission($document, 'update');
+
+        $data['id'] = $document->getId();
 
         $typeUpper = ucfirst($type);
         $className = $this->getWebserviceInClassName($type);
