@@ -25,6 +25,10 @@ class PimcoreLegacyBundle extends Bundle
 
         $this->defineConstants();
 
+        if(php_sapi_name() == "cli") {
+            $this->setupCliEnvironment();
+        }
+
         \Zend_Registry::_unsetInstance();
         \Zend_Registry::setClassName("\\PimcoreLegacyBundle\\Zend\\Registry\\Proxy");
     }
@@ -79,5 +83,19 @@ class PimcoreLegacyBundle extends Bundle
              */
             define('PIMCORE_LOG_DEBUG', PIMCORE_LOG_DIRECTORY . '/debug.log');
         }
+    }
+
+    protected function setupCliEnvironment() {
+        // CLI \Zend_Controller_Front Setup, this is required to make it possible to make use of all rendering features
+        // this includes $this->action() in templates, ...
+        $front = \Zend_Controller_Front::getInstance();
+        \Pimcore\Legacy::initControllerFront($front);
+
+        $request = new \Zend_Controller_Request_Http();
+        $request->setModuleName(PIMCORE_FRONTEND_MODULE);
+        $request->setControllerName('default');
+        $request->setActionName('default');
+        $front->setRequest($request);
+        $front->setResponse(new \Zend_Controller_Response_Cli());
     }
 }
