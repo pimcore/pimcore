@@ -3,11 +3,13 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest\AbstractRestController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractElementController extends AbstractRestController
 {
+    const ELEMENT_DOES_NOT_EXIST = -1;
+
     /**
      * @param Request $request
      * @param string  $type

@@ -39,7 +39,6 @@ class ObjectController extends AbstractElementController
      * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Route("/object")
      *
-     *
      * @api {get} /object Get object data
      * @apiName Get object by id
      * @apiGroup Object
@@ -97,10 +96,7 @@ class ObjectController extends AbstractElementController
             $stopwatch->start('get', $profileName);
         }
 
-        $object = Object::getById($id);
-        if (!$object) {
-            throw $this->createNotFoundException('Object does not exist');
-        }
+        $object = $this->loadObject($id);
 
         if ($profile) {
             $stopwatch->stop('get');
@@ -307,10 +303,9 @@ class ObjectController extends AbstractElementController
      *
      * @return JsonResponse
      */
-    public function updateAction(Request $request, $id = null)
+    public function updateAction(Request $request, $id)
     {
-        $id = $this->resolveId($request, $id);
-
+        $id   = $this->resolveId($request, $id);
         $data = $this->getJsonData($request);
 
         // get and normalize type
@@ -511,7 +506,7 @@ class ObjectController extends AbstractElementController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function inquireAction(Request $request)
     {
@@ -523,7 +518,7 @@ class ObjectController extends AbstractElementController
      * @return Object\AbstractObject
      *
      * @throws ResponseException
-     *      if no object was found
+     *      if object was not found
      */
     protected function loadObject($id)
     {
@@ -533,7 +528,10 @@ class ObjectController extends AbstractElementController
             return $object;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException([
+            'msg'  => sprintf('Object %d does not exist', (int)$id),
+            'code' => static::ELEMENT_DOES_NOT_EXIST
+        ]);
     }
 
     /**
@@ -583,6 +581,8 @@ class ObjectController extends AbstractElementController
      */
     protected function updateObject(Object\AbstractObject $object, $type, array $data)
     {
+        $this->checkElementPermission($object, 'update');
+
         $data['id'] = $object->getId();
 
         $success = false;
