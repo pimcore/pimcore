@@ -426,6 +426,33 @@ class ObjectController extends AbstractRestController
     }
 
     /**
+     * @Route("/object-meta/id/{id}", requirements={"id": "\d+"})
+     * @Method("GET")
+     *
+     * end point for object metadata
+     *  Example:
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-meta/id/1281?apikey=[API-KEY]
+     *      returns the json-encoded class definition for the given object
+     *
+     */
+    public function objectMetaAction($id)
+    {
+        $this->checkPermission("classes");
+
+        $class = $this->service->getObjectMetadataById($id);
+        if (!$class) {
+            throw new ResponseException($this->createErrorResponse(
+                Response::$statusTexts[Response::HTTP_NOT_FOUND],
+                Response::HTTP_NOT_FOUND
+            ));
+        }
+
+        return $this->createSuccessResponse([
+            'data' => $class
+        ]);
+    }
+
+    /**
      * @Route("/object-count")
      * @Method("GET")
      *
