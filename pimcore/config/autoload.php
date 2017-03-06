@@ -19,7 +19,7 @@ $includePaths = [
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
 // composer autoloader
-$composerLoader = require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+$composerLoader = require PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 
 // the following code is out of `app/autoload.php`
 // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
