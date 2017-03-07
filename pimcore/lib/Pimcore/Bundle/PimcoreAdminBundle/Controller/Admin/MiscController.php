@@ -110,11 +110,12 @@ class MiscController extends AdminController
         }
 
         $lifetime = 86400;
+
         $response = new Response($scriptsContent);
         $response->headers->set("Cache-Control", "max-age=" . $lifetime);
-        $this->getResponse()->setHeader("Pragma", "");
-        $this->getResponse()->setHeader("Content-Type", $contentType);
-        $this->getResponse()->setHeader("Expires", gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+        $response->headers->set("Pragma", "");
+        $response->headers->set("Content-Type", $contentType);
+        $response->headers->set("Expires", gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
 
         return $response;
     }
