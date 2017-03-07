@@ -29,9 +29,15 @@ env:
 
 before_install:
   - mysql -e "CREATE DATABASE $PIMCORE_TEST_DB_DBNAME;"
+  - mysql -e "SHOW DATABASES"
 
 install:
-  - composer install --no-scripts
+  # add config template
+  - mkdir -p var/config
+  - cp .travis/system.template.php var/config/system.php
+
+  # install composer
+  - composer install
 
 before_script:
   # install apache
