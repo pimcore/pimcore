@@ -44,7 +44,7 @@ services:
         tags:
             - { name: templating.helper, alias: action }
 
-    pimcore.templating.view_helper.getParam:
+    pimcore.templating.view_helper.get_param:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\GetParam
         arguments:
             - '@pimcore.http.request_helper'
@@ -65,43 +65,43 @@ services:
         tags:
             - { name: templating.helper, alias: inc }
 
-    pimcore.templating.view_helper.pimcoreUrl:
+    pimcore.templating.view_helper.pimcore_url:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\PimcoreUrl
         arguments: ['@router', '@pimcore.http.request_helper']
         tags:
             - { name: templating.helper, alias: pimcoreUrl }
 
-    pimcore.templating.view_helper.headTitle:
+    pimcore.templating.view_helper.head_title:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadTitle
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: headTitle }
 
-    pimcore.templating.view_helper.headLink:
+    pimcore.templating.view_helper.head_link:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadLink
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: headLink }
 
-    pimcore.templating.view_helper.headScript:
+    pimcore.templating.view_helper.head_script:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadScript
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: headScript }
 
-    pimcore.templating.view_helper.inlineScript:
+    pimcore.templating.view_helper.inline_script:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\InlineScript
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: inlineScript }
 
-    pimcore.templating.view_helper.headStyle:
+    pimcore.templating.view_helper.head_style:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadStyle
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: headStyle }
 
-    pimcore.templating.view_helper.headMeta:
+    pimcore.templating.view_helper.head_meta:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
@@ -126,7 +126,7 @@ services:
       calls:
         - [setDomain, ['messages']]
 
-    pimcore.templating.view_helper.translateAdmin:
+    pimcore.templating.view_helper.translate_admin:
       class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Translate
       arguments: ['@pimcore.translator']
       tags:
