@@ -446,7 +446,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     Logger::debug("prevented renaming document because of missing permissions ");
                 }
 
-                foreach ($this->getAllParams() as $key => $value) {
+                $updateData = array_merge($request->request->all(), $request->query->all());
+
+                foreach ($updateData as $key => $value) {
                     if (!in_array($key, $blockedVars)) {
                         $document->setValue($key, $value);
                     }
