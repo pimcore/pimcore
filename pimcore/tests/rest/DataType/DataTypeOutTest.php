@@ -4,7 +4,6 @@ namespace Pimcore\Tests\Rest\DataType;
 
 use Codeception\Util\Debug;
 use Pimcore\Model\Object\Unittest;
-use Pimcore\Tests\Test\AbstractDataTypeTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
 class DataTypeOutTest extends AbstractDataTypeTestCase

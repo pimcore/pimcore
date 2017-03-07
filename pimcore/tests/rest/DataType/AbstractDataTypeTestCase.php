@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Test;
+namespace Pimcore\Tests\Rest\DataType;
 
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Unittest;
