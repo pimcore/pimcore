@@ -290,6 +290,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     if(responseJson.success) {
                         this.store.reload();
                         pimcore.helpers.openObject(responseJson.id, responseJson.type);
+
+                        pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error",
                                                          t(responseJson.message));
@@ -324,6 +326,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error");
                     }
                     this.store.reload();
+                    pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);
                 }.bind(this)
             });
         }
