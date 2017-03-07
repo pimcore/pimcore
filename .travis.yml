@@ -9,17 +9,28 @@ php:
   - 7
   # - hhvm
 
+services:
+  - mysql
+
 #matrix:
 #  allow_failures:
 #    - php: hhvm
 
 cache:
-    directories:
-        - vendor
+  directories:
+    - vendor
+
+env:
+  - PIMCORE_TEST_DB_USERNAME=root
+  - PIMCORE_TEST_DB_PASSWORD=
+  - PIMCORE_TEST_DB_DBNAME=pimcore_test
 
 #before_install:
 #  # analyze ZF usage before running anything else
 #  - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
+
+before_install:
+  - mysql -e "CREATE DATABASE $PIMCORE_TEST_DB_DBNAME;"
 
 install:
   - composer install
@@ -29,19 +40,22 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install apache2 libapache2-mod-fastcgi
   - sudo a2enmod rewrite actions fastcgi alias
+
   # customize php settings
   - sudo chmod 0755 .travis/setup-fpm.sh .travis/setup-hhvm.sh
   - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then .travis/setup-fpm.sh; fi
   - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then .travis/setup-hhvm.sh; fi
+
   # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM/HHVM)
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
+
   # make tests executable
   #- cd tests
   #- sudo chmod 0755 alltests.sh hhvm-all.sh
 
 script:
-  - vendor/bin/codecept run -c pimcore
+  - vendor/bin/codecept run -c pimcore model
   # - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
   # - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then ./hhvm-all.sh; fi
 
@@ -51,4 +65,3 @@ after_script:
   #- cat $TRAVIS_BUILD_DIR/apache-error.log
   #- cat $TRAVIS_BUILD_DIR/apache-access.log
   #- cat /tmp/hhvm.log
-
