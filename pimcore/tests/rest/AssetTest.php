@@ -2,34 +2,14 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
 class AssetTest extends RestTestCase
 {
-    /**
-     * @var RestTester
-     */
-    protected $tester;
-
-    /**
-     * @var RestClient
-     */
-    protected $restClient;
-
     public function setUp()
     {
-        parent::setUp();
-
-        // every single rest test assumes a clean database
-        TestHelper::cleanUp();
-
-        // authenticate as rest user
-        $this->tester->addApiKeyParam('rest');
-
-        // setup test rest client
-        $this->restClient = new RestClient($this->tester);
+        $this->markTestSkipped('Not implemented yet');
     }
 
     public function testCreateAssetFile()

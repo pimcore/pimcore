@@ -10,6 +10,8 @@ class DocumentTest extends RestTestCase
 {
     public function setUp()
     {
+        $this->markTestSkipped('Not implemented yet');
+
         //        // every single rest test assumes a clean database
         TestHelper::cleanUp();
         parent::setUp();

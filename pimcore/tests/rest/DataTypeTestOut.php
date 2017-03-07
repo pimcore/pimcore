@@ -30,7 +30,7 @@ class DataTypeTestOut extends RestTestCase
 
     public function setUp()
     {
-        parent::setUp();
+        $this->markTestSkipped('Not implemented yet');
     }
 
     public function testInput()

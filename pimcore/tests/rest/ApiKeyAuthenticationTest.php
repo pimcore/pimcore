@@ -2,14 +2,12 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\RestTester;
+use Pimcore\Tests\Test\RestTestCase;
 
-class ApiKeyAuthenticationTest extends TestCase
+class ApiKeyAuthenticationTest extends RestTestCase
 {
-    /**
-     * @var \Pimcore\Tests\RestTester
-     */
-    protected $tester;
+    protected $authenticateUser = false;
 
     public function testUnauthenticatedConnection()
     {
