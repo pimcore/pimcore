@@ -12,9 +12,9 @@ php:
 services:
   - mysql
 
-#matrix:
-#  allow_failures:
-#    - php: hhvm
+matrix:
+  allow_failures:
+    - php: hhvm
 
 cache:
   directories:
@@ -53,14 +53,9 @@ before_script:
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
 
-  # make tests executable
-  #- cd tests
-  #- sudo chmod 0755 alltests.sh hhvm-all.sh
-
 script:
-  - vendor/bin/codecept run -c pimcore model
-  # - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
-  # - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then ./hhvm-all.sh; fi
+  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then php  vendor/bin/codecept run --json -c pimcore model; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then hhvm vendor/bin/codecept run --json -c pimcore model; fi
 
 after_script:
   #- cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
