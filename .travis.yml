@@ -31,7 +31,7 @@ before_install:
   - mysql -e "CREATE DATABASE $PIMCORE_TEST_DB_DBNAME;"
 
 install:
-  - composer install
+  - composer install --no-scripts
 
 before_script:
   # install apache
