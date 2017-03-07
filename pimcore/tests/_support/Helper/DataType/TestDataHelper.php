@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Helper\Datatype;
+namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
 use Codeception\Util\Debug;
@@ -15,7 +15,7 @@ use Pimcore\Model\User;
 use Pimcore\Tests\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 
-class TestData extends Module
+class TestDataHelper extends Module
 {
     const IMAGE = "sampleimage.jpg";
     const DOCUMENT = "sampledocument.txt";

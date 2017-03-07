@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Util;
 
-use Codeception\Util\Debug;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
@@ -14,7 +13,7 @@ use Pimcore\Model\Object\Unittest;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
-use Pimcore\Tests\Helper\Datatype\TestData;
+use Pimcore\Tests\Helper\DataType\TestDataHelper;
 
 class TestHelper
 {
@@ -477,15 +476,15 @@ class TestHelper
     }
 
     /**
-     * @param TestData $testDataHelper
-     * @param string   $keyPrefix
-     * @param bool     $save
-     * @param bool     $publish
-     * @param int      $seed
+     * @param TestDataHelper $testDataHelper
+     * @param string         $keyPrefix
+     * @param bool           $save
+     * @param bool           $publish
+     * @param int            $seed
      *
      * @return Unittest
      */
-    public static function createFullyFledgedObject(TestData $testDataHelper, $keyPrefix = '', $save = true, $publish = true, $seed = 1)
+    public static function createFullyFledgedObject(TestDataHelper $testDataHelper, $keyPrefix = '', $save = true, $publish = true, $seed = 1)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';

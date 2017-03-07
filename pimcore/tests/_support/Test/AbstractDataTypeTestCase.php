@@ -1,21 +1,19 @@
 <?php
 
-namespace Pimcore\Tests\Rest;
+namespace Pimcore\Tests\Test;
 
-use Codeception\Util\Debug;
-use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Unittest;
-use Pimcore\Tests\Helper\Datatype\TestData;
+use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
-class DataTypeInTest extends RestTestCase
+abstract class AbstractDataTypeTestCase extends RestTestCase
 {
     /**
-     * @var TestData
+     * @var TestDataHelper
      */
-    protected $testData;
+    protected $testDataHelper;
 
     /**
      * @var int
@@ -32,9 +30,12 @@ class DataTypeInTest extends RestTestCase
      */
     protected $comparisonObject;
 
-    public function _inject(TestData $testData)
+    /**
+     * @param TestDataHelper $testData
+     */
+    public function _inject(TestDataHelper $testData)
     {
-        $this->testData = $testData;
+        $this->testDataHelper = $testData;
     }
 
     /**
@@ -42,31 +43,7 @@ class DataTypeInTest extends RestTestCase
      *
      * @return Unittest
      */
-    protected function createTestObject($fields = [])
-    {
-        Debug::debug('CREATING TEST OBJECT: ' . json_encode($fields, true));
-
-        $object = TestHelper::createEmptyObject('local', false, true);
-        $this->fillObject($object, $fields);
-
-        $response = $this->restClient->createObjectConcrete($object);
-
-        $this->assertTrue($response->success);
-
-        /** @var Unittest $localObject */
-        $localObject = AbstractObject::getById($response->id);
-
-        $this->assertNotNull($localObject);
-        $this->assertInstanceOf(Concrete::class, $localObject);
-
-        Debug::debug('TEST OBJECT: ' . $localObject->getId());
-        Debug::debug('COMPARISON OBJECT: ' . json_encode($response, true));
-
-        $this->testObject       = $localObject;
-        $this->comparisonObject = $object;
-
-        return $this->testObject;
-    }
+    abstract protected function createTestObject($fields = []);
 
     /**
      * Calls fill* methods on the object as needed in test
@@ -97,7 +74,7 @@ class DataTypeInTest extends RestTestCase
                 throw new \InvalidArgumentException(sprintf('Need a method to call'));
             }
 
-            if (!method_exists($this->testData, $method)) {
+            if (!method_exists($this->testDataHelper, $method)) {
                 throw new \InvalidArgumentException(sprintf('Method %s does not exist', $method));
             }
 
@@ -108,7 +85,7 @@ class DataTypeInTest extends RestTestCase
                 $methodArguments[] = $aa;
             }
 
-            call_user_func_array([$this->testData, $method], $methodArguments);
+            call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
     }
 
@@ -119,28 +96,28 @@ class DataTypeInTest extends RestTestCase
     {
         $this->createTestObject('input');
 
-        $this->testData->assertInput($this->testObject, "input", $this->seed);
+        $this->testDataHelper->assertInput($this->testObject, "input", $this->seed);
     }
 
     public function testNumber()
     {
         $this->createTestObject('number');
 
-        $this->testData->assertNumber($this->testObject, "number", $this->seed);
+        $this->testDataHelper->assertNumber($this->testObject, "number", $this->seed);
     }
 
     public function testTextarea()
     {
         $this->createTestObject('textarea');
 
-        $this->testData->assertTextarea($this->testObject, "textarea", $this->seed);
+        $this->testDataHelper->assertTextarea($this->testObject, "textarea", $this->seed);
     }
 
     public function testSlider()
     {
         $this->createTestObject('slider');
 
-        $this->testData->assertSlider($this->testObject, "slider", $this->seed);
+        $this->testDataHelper->assertSlider($this->testObject, "slider", $this->seed);
     }
 
     public function testHref()
@@ -150,7 +127,7 @@ class DataTypeInTest extends RestTestCase
         TestHelper::createEmptyObjects();
         $this->createTestObject('href');
 
-        $this->testData->assertHref($this->testObject, "href", $this->seed);
+        $this->testDataHelper->assertHref($this->testObject, "href", $this->seed);
     }
 
     public function testMultiHref()
@@ -160,7 +137,7 @@ class DataTypeInTest extends RestTestCase
         TestHelper::createEmptyObjects();
         $this->createTestObject('multihref');
 
-        $this->testData->assertMultihref($this->testObject, "multihref", $this->seed);
+        $this->testDataHelper->assertMultihref($this->testObject, "multihref", $this->seed);
     }
 
     public function testImage()
@@ -172,7 +149,7 @@ class DataTypeInTest extends RestTestCase
         $this->assertNotNull($this->testObject->getImage());
         $this->assertNotNull($this->comparisonObject->getImage());
 
-        $this->testData->assertImage($this->testObject, "image", $this->seed);
+        $this->testDataHelper->assertImage($this->testObject, "image", $this->seed);
     }
 
     public function testHotspotImage()
@@ -189,7 +166,7 @@ class DataTypeInTest extends RestTestCase
         $this->assertNotNull($this->testObject->getHotspotImage());
         $this->assertNotNull($this->comparisonObject->getHotspotImage());
 
-        $this->testData->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
+        $this->testDataHelper->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
     }
 
     public function testLanguage()
@@ -201,21 +178,21 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertLanguage($this->testObject, "languagex", $this->seed);
+        $this->testDataHelper->assertLanguage($this->testObject, "languagex", $this->seed);
     }
 
     public function testCountry()
     {
         $this->createTestObject('country');
 
-        $this->testData->assertCountry($this->testObject, "country", $this->seed);
+        $this->testDataHelper->assertCountry($this->testObject, "country", $this->seed);
     }
 
     public function testDate()
     {
         $this->createTestObject('date');
 
-        $this->testData->assertDate($this->testObject, "date", $this->seed);
+        $this->testDataHelper->assertDate($this->testObject, "date", $this->seed);
     }
 
     public function testDateTime()
@@ -227,21 +204,21 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertDate($this->testObject, "datetime", $this->seed);
+        $this->testDataHelper->assertDate($this->testObject, "datetime", $this->seed);
     }
 
     public function testTime()
     {
         $this->createTestObject('time');
 
-        $this->testData->assertTime($this->testObject, "time", $this->seed);
+        $this->testDataHelper->assertTime($this->testObject, "time", $this->seed);
     }
 
     public function testSelect()
     {
         $this->createTestObject('select');
 
-        $this->testData->assertSelect($this->testObject, "select", $this->seed);
+        $this->testDataHelper->assertSelect($this->testObject, "select", $this->seed);
     }
 
     public function testMultiSelect()
@@ -253,35 +230,35 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertMultiSelect($this->testObject, "multiselect", $this->seed);
+        $this->testDataHelper->assertMultiSelect($this->testObject, "multiselect", $this->seed);
     }
 
     public function testUser()
     {
         $this->createTestObject('user');
 
-        $this->testData->assertUser($this->testObject, "user", $this->seed);
+        $this->testDataHelper->assertUser($this->testObject, "user", $this->seed);
     }
 
     public function testCheckbox()
     {
         $this->createTestObject('checkbox');
 
-        $this->testData->assertCheckbox($this->testObject, "checkbox", $this->seed);
+        $this->testDataHelper->assertCheckbox($this->testObject, "checkbox", $this->seed);
     }
 
     public function testWysiwyg()
     {
         $this->createTestObject('wysiwyg');
 
-        $this->testData->assertWysiwyg($this->testObject, "wysiwyg", $this->seed);
+        $this->testDataHelper->assertWysiwyg($this->testObject, "wysiwyg", $this->seed);
     }
 
     public function testPassword()
     {
         $this->createTestObject('password');
 
-        $this->testData->assertPassword($this->testObject, "password", $this->seed);
+        $this->testDataHelper->assertPassword($this->testObject, "password", $this->seed);
     }
 
     public function testCountryMultiSelect()
@@ -293,7 +270,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertCountryMultiSelect($this->testObject, "countries", $this->seed);
+        $this->testDataHelper->assertCountryMultiSelect($this->testObject, "countries", $this->seed);
     }
 
     public function testLanguageMultiSelect()
@@ -305,7 +282,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertCountryMultiSelect($this->testObject, "languages", $this->seed);
+        $this->testDataHelper->assertCountryMultiSelect($this->testObject, "languages", $this->seed);
     }
 
     public function testGeopoint()
@@ -317,7 +294,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertGeopoint($this->testObject, "point", $this->seed);
+        $this->testDataHelper->assertGeopoint($this->testObject, "point", $this->seed);
     }
 
     public function testGeobounds()
@@ -329,7 +306,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertGeobounds($this->testObject, "bounds", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertGeobounds($this->testObject, "bounds", $this->comparisonObject, $this->seed);
     }
 
     public function testGeopolygon()
@@ -341,14 +318,14 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertGeopolygon($this->testObject, "poly", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertGeopolygon($this->testObject, "poly", $this->comparisonObject, $this->seed);
     }
 
     public function testTable()
     {
         $this->createTestObject('table');
 
-        $this->testData->assertTable($this->testObject, "table", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertTable($this->testObject, "table", $this->comparisonObject, $this->seed);
     }
 
     public function testLink()
@@ -357,7 +334,7 @@ class DataTypeInTest extends RestTestCase
 
         $this->createTestObject('link');
 
-        $this->testData->assertLink($this->testObject, "link", $this->seed);
+        $this->testDataHelper->assertLink($this->testObject, "link", $this->seed);
     }
 
     public function testStructuredTable()
@@ -369,7 +346,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertStructuredTable($this->testObject, "structuredtable", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertStructuredTable($this->testObject, "structuredtable", $this->comparisonObject, $this->seed);
     }
 
     public function testObjects()
@@ -379,7 +356,7 @@ class DataTypeInTest extends RestTestCase
 
         $this->createTestObject('objects');
 
-        $this->testData->assertObjects($this->testObject, "objects", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertObjects($this->testObject, "objects", $this->comparisonObject, $this->seed);
     }
 
     public function testObjectsWithMetadata()
@@ -393,7 +370,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertObjectsWithmetadata($this->testObject, "objectswithmetadata", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, "objectswithmetadata", $this->comparisonObject, $this->seed);
     }
 
     public function testLInput()
@@ -413,8 +390,8 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertInput($this->testObject, "linput", $this->seed, "en");
-        $this->testData->assertInput($this->testObject, "linput", $this->seed, "de");
+        $this->testDataHelper->assertInput($this->testObject, "linput", $this->seed, "en");
+        $this->testDataHelper->assertInput($this->testObject, "linput", $this->seed, "de");
     }
 
     public function testLObjects()
@@ -434,8 +411,8 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "en");
-        $this->testData->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "de");
+        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "en");
+        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "de");
     }
 
     public function testBricks()
@@ -447,7 +424,7 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertBricks($this->testObject, "mybricks", $this->seed);
+        $this->testDataHelper->assertBricks($this->testObject, "mybricks", $this->seed);
     }
 
     public function testFieldCollection()
@@ -459,6 +436,6 @@ class DataTypeInTest extends RestTestCase
             ]
         ]);
 
-        $this->testData->assertFieldCollection($this->testObject, "myfieldcollection", $this->seed);
+        $this->testDataHelper->assertFieldCollection($this->testObject, "myfieldcollection", $this->seed);
     }
 }
