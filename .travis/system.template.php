@@ -116,6 +116,7 @@ return [
             ]
         ],
         "debug"  => [
+            "emailaddresses" => []
         ],
         "bounce" => [
             "type"    => "",

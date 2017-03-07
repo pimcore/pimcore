@@ -29,7 +29,6 @@ env:
 
 before_install:
   - mysql -e "CREATE DATABASE $PIMCORE_TEST_DB_DBNAME;"
-  - mysql -e "SHOW DATABASES"
 
 install:
   # add config template
