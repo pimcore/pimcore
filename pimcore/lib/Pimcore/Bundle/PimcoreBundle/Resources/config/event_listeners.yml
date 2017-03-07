@@ -69,7 +69,7 @@ services:
     # Adds Meta Data entries of document to HeadMeta view helper
     pimcore.event_listener.frontend.document_meta_data:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\DocumentMetaDataListener
-        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.templating.view_helper.headMeta']
+        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.templating.view_helper.head_meta']
         tags:
           - { name: kernel.event_subscriber }
 
