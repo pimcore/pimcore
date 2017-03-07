@@ -60,7 +60,7 @@ class DocumentTest extends RestTestCase
     public function testFolder()
     {
         // create folder but don't save it
-        $folder = TestHelper::createEmptyDocumentFolder("myfolder", false);
+        $folder = TestHelper::createDocumentFolder("myfolder", false);
 
         $fitem = Document::getById($folder->getId());
         $this->assertNull($fitem);
@@ -72,12 +72,13 @@ class DocumentTest extends RestTestCase
         $this->assertTrue($id > 1, "id not set");
 
         $folderDirect = Document::getById($id);
-        $this->assertTrue($folderDirect->getType() === "folder");
+        $this->assertEquals('folder', $folderDirect->getType());
         $this->assertInstanceOf(Document\Folder::class, $folderDirect);
 
         $folderRest = $this->restClient->getDocumentById($id);
-        $this->assertTrue(TestHelper::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
+        $this->assertEquals('folder', $folderRest->getType());
         $this->assertInstanceOf(Document\Folder::class, $folderRest);
+        $this->assertTrue(TestHelper::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
 
         $this->restClient->deleteDocument($id);
 

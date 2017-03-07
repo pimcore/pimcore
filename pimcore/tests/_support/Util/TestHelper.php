@@ -155,20 +155,6 @@ class TestHelper
             $a1Hash = self::createAssetComparisonString($asset1, $ignoreCopyDifferences);
             $a2Hash = self::createAssetComparisonString($asset2, $ignoreCopyDifferences);
 
-            if (!$id) {
-                $id = uniqid();
-            }
-
-            $myFile = TESTS_PATH . "/output/asset1-" . $id . ".txt";
-            $fh     = fopen($myFile, 'w');
-            fwrite($fh, $a1Hash);
-            fclose($fh);
-
-            $myFile = TESTS_PATH . "/output/asset2-" . $id . ".txt";
-            $fh     = fopen($myFile, 'w');
-            fwrite($fh, $a2Hash);
-            fclose($fh);
-
             return $a1Hash === $a2Hash ? true : false;
         } else {
             return false;
@@ -422,20 +408,6 @@ class TestHelper
     }
 
     /**
-     * resets the registry
-     * @static
-     * @return void
-     */
-    public static function resetRegistry()
-    {
-        $conf = \Pimcore\Cache\Runtime::get('pimcore_config_test');
-        \Pimcore\Cache\Runtime::_unsetInstance();
-        \Pimcore\Cache\Runtime::set('pimcore_config_test', $conf);
-        Pimcore::initConfiguration();
-        Pimcore\Legacy::initPlugins();
-    }
-
-    /**
      * @param string $keyPrefix
      * @param bool   $save
      * @param bool   $publish
@@ -479,7 +451,7 @@ class TestHelper
      *
      * @return ObjectModel\Folder
      */
-    public static function createEmptyObjectFolder($keyPrefix = '', $save = true)
+    public static function createObjectFolder($keyPrefix = '', $save = true)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -622,7 +594,7 @@ class TestHelper
      *
      * @return Document\Folder
      */
-    public static function createEmptyDocumentFolder($keyPrefix = '', $save = true)
+    public static function createDocumentFolder($keyPrefix = '', $save = true)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -686,6 +658,32 @@ class TestHelper
         }
 
         return $asset;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param bool   $save
+     *
+     * @return Asset\Folder
+     */
+    public static function createAssetFolder($keyPrefix = '', $save = true)
+    {
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
+        }
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setUserOwner(1);
+        $folder->setUserModification(1);
+        $folder->setCreationDate(time());
+        $folder->setFilename($keyPrefix . uniqid() . rand(10, 99));
+
+        if ($save) {
+            $folder->save();
+        }
+
+        return $folder;
     }
 
     /**
@@ -786,7 +784,7 @@ class TestHelper
      * @param string $path
      * @return string
      */
-    protected function resolveFilePath($path)
+    public static function resolveFilePath($path)
     {
         $path = __DIR__ . '/../Resources/' . ltrim($path, '/');
 

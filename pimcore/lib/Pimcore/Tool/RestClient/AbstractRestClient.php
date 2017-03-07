@@ -619,7 +619,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         $encodedData = json_encode($wsDocument);
 
         $response = $this->getJsonResponse('POST', '/asset', [], [], [], $encodedData);
-        $response = $response->data;
 
         return $response;
     }

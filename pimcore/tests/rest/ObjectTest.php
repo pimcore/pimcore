@@ -96,7 +96,7 @@ class ObjectTest extends RestTestCase
     {
         // create folder but don't save it
         /** @var Folder $folder */
-        $folder = TestHelper::createEmptyObjectFolder("myfolder", false);
+        $folder = TestHelper::createObjectFolder("myfolder", false);
         $folder->setType('folder');
 
         $fitem = AbstractObject::getById($folder->getId());
@@ -110,8 +110,11 @@ class ObjectTest extends RestTestCase
 
         $folderDirect = AbstractObject::getById($id);
         $this->assertEquals('folder', $folderDirect->getType());
+        $this->assertInstanceOf(Folder::class, $folderDirect);
 
         $folderRest = $this->restClient->getObjectById($id);
+        $this->assertEquals('folder', $folderRest->getType());
+        $this->assertInstanceOf(Folder::class, $folderRest);
         $this->assertTrue(TestHelper::objectsAreEqual($folderRest, $folderDirect, false), "objects are not equal");
 
         $this->restClient->deleteObject($id);
