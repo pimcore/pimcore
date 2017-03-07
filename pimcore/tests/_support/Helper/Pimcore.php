@@ -188,13 +188,18 @@ class Pimcore extends Module\Symfony
             return;
         }
 
-        $this->debug(sprintf('[DB] Initializing DB %s', $connection->getDatabase()));
+        $dbName = $connection->getDatabase();
+
+        $this->debug(sprintf('[DB] Initializing DB %s', $dbName));
 
         $connection
             ->getSchemaManager()
-            ->dropAndCreateDatabase($connection->getDatabase());
+            ->dropAndCreateDatabase($dbName);
 
-        $this->debug(sprintf('[DB] Successfully dropped and re-created DB %s', $connection->getDatabase()));
+        // make sure the connection used the newly created database
+        $connection->executeQuery('USE ' . $dbName);
+
+        $this->debug(sprintf('[DB] Successfully dropped and re-created DB %s', $dbName));
 
         /** @var Setup|Setup\Dao $setup */
         $setup = new Setup();
@@ -205,7 +210,7 @@ class Pimcore extends Module\Symfony
             'password' => microtime()
         ]);
 
-        $this->debug(sprintf('[DB] Set up the test DB %s', $connection->getDatabase()));
+        $this->debug(sprintf('[DB] Set up the test DB %s', $dbName));
 
         return true;
     }
