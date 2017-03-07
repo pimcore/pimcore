@@ -16,8 +16,6 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 abstract class AbstractRestController extends AdminController
 {
-    const TAG_DOES_NOT_EXIST = -1;
-
     /**
      * @var Stopwatch
      */
