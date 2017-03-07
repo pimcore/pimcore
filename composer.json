@@ -84,7 +84,6 @@
     "sensio/distribution-bundle": "^5.0",
     "sensio/framework-extra-bundle": "^3.0.2",
 
-    "maff/zf1-psr-7-bridge": "@dev",
     "symfony/psr-http-message-bridge": "^1.0",
     "php-di/symfony-bridge": "^2.0",
     "debril/rss-atom-bundle": "^3.0",

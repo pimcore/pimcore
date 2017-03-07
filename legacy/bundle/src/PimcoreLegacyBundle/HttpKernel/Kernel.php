@@ -4,11 +4,13 @@ namespace PimcoreLegacyBundle\HttpKernel;
 
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Legacy;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Kernel implements KernelInterface
@@ -65,7 +67,7 @@ class Kernel implements KernelInterface
             $this->initializePlugins();
 
             // prepare the ZF MVC stack - needed for more advanced view helpers like action()
-            \Pimcore\Legacy::prepareMvc(true);
+            Legacy::prepareMvc(true);
 
             // set a default request
             $front = \Zend_Controller_Front::getInstance();
@@ -81,7 +83,7 @@ class Kernel implements KernelInterface
      */
     protected function initializePlugins()
     {
-        \Pimcore\Legacy::initPlugins(); // TODO move somewhere else?
+        Legacy::initPlugins(); // TODO move somewhere else?
     }
 
     /**
@@ -96,34 +98,43 @@ class Kernel implements KernelInterface
     }
 
     /**
-     * Handles a Request to convert it to a Response.
-     *
-     * When $catch is true, the implementation must catch all exceptions
-     * and do its best to convert them to a Response instance.
-     *
-     * @param Request $request A Request instance
-     * @param int $type The type of the request
-     *                         (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
-     * @param bool $catch Whether to catch exceptions or not
-     *
-     * @return Response A Response instance
-     *
-     * @throws \Exception When an Exception occurs during processing
+     * @inheritdoc
      */
     public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true)
     {
-        throw new \RuntimeException('handle() is not yet implemented (see FallbackController for now)');
+        $this->boot();
+
+        $zendResponse = null;
+
+        try {
+            $zendRequest  = new \Zend_Controller_Request_Http();
+            $zendResponse = Legacy::run(true, $zendRequest);
+        } catch (\Zend_Controller_Router_Exception $e) {
+            if ($e->getMessage()) {
+                throw new NotFoundHttpException($e->getMessage(), $e);
+            } else {
+                throw new NotFoundHttpException('Not Found', $e);
+            }
+        }
+
+        $response = $this->transformZendResponse($zendResponse);
+
+        return $response;
     }
 
     /**
-     * @param \Zend_Controller_Request_Http|null $zendRequest
-     * @return \Zend_Controller_Response_Http
+     * @param \Zend_Controller_Response_Http $zendResponse
+     *
+     * @return Response
      */
-    public function run(\Zend_Controller_Request_Http $zendRequest = null)
+    public function transformZendResponse(\Zend_Controller_Response_Http $zendResponse)
     {
-        $this->boot();
+        $response = new Response($zendResponse->getBody(), $zendResponse->getHttpResponseCode());
+        foreach ($zendResponse->getHeaders() as $header) {
+            $response->headers->set($header['name'], $header['value']);
+        }
 
-        return \Pimcore\Legacy::run(true, $zendRequest);
+        return $response;
     }
 
     /**
