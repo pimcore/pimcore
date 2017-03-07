@@ -477,13 +477,15 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     * @param int $seed
+     * @param TestData $testDataHelper
+     * @param string   $keyPrefix
+     * @param bool     $save
+     * @param bool     $publish
+     * @param int      $seed
      *
      * @return Unittest
      */
-    public static function createFullyFledgedObject(TestData $testDataHelper, $keyPrefix = '', $save = true, $seed = 1)
+    public static function createFullyFledgedObject(TestData $testDataHelper, $keyPrefix = '', $save = true, $publish = true, $seed = 1)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -496,6 +498,10 @@ class TestHelper
         $object->setUserModification(1);
         $object->setCreationDate(time());
         $object->setKey($keyPrefix . uniqid() . rand(10, 99));
+
+        if ($publish) {
+            $object->setPublished(true);
+        }
 
         $testDataHelper->fillInput($object, "input", $seed);
         $testDataHelper->fillNumber($object, "number", $seed);

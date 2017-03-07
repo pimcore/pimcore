@@ -5,7 +5,6 @@ namespace Pimcore\Tests\Rest;
 use Codeception\Util\Debug;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Helper\Datatype\TestData;
 use Pimcore\Tests\Test\RestTestCase;
@@ -21,253 +20,445 @@ class DataTypeInTest extends RestTestCase
     /**
      * @var int
      */
-    protected static $seed = 1;
+    protected $seed = 1;
 
     /**
      * @var Unittest
      */
-    protected static $localObject;
+    protected $testObject;
 
     /**
      * @var Unittest
      */
-    protected static $restObject;
-
-    /**
-     * @var bool
-     */
-    protected $cleanupInSetup = false;
+    protected $comparisonObject;
 
     public function _inject(TestData $testData)
     {
         $this->testData = $testData;
     }
 
-    public static function setUpBeforeClass()
+    /**
+     * @param array|string $fields
+     *
+     * @return Unittest
+     */
+    protected function createTestObject($fields = [])
     {
-        Localizedfield::setStrictMode(true);
+        Debug::debug('CREATING TEST OBJECT: ' . json_encode($fields, true));
 
-        static::$seed        = 1;
-        static::$localObject = null;
-        static::$restObject  = null;
-    }
+        $object = TestHelper::createEmptyObject('local', false, true);
+        $this->fillObject($object, $fields);
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        // this will create a couple of objects which can be used for references
-        TestHelper::createEmptyObjects();
-
-        // only create object once per run
-        if (null === static::$localObject) {
-            $this->createTestObject();
-        }
-    }
-
-    protected function createTestObject()
-    {
-        Debug::debug('CREATING TEST OBJECT');
-
-        $restObject = TestHelper::createFullyFledgedObject($this->testData, "local", false, static::$seed);
-
-        $response = $this->restClient->createObjectConcrete($restObject);
+        $response = $this->restClient->createObjectConcrete($object);
 
         $this->assertTrue($response->success);
 
+        /** @var Unittest $localObject */
         $localObject = AbstractObject::getById($response->id);
 
         $this->assertNotNull($localObject);
         $this->assertInstanceOf(Concrete::class, $localObject);
 
-        static::$localObject = $localObject;
-        static::$restObject  = $restObject;
+        Debug::debug('TEST OBJECT: ' . $localObject->getId());
+        Debug::debug('COMPARISON OBJECT: ' . json_encode($response, true));
+
+        $this->testObject       = $localObject;
+        $this->comparisonObject = $object;
+
+        return $this->testObject;
     }
 
+    /**
+     * Calls fill* methods on the object as needed in test
+     *
+     * @param Concrete     $object
+     * @param array|string $fields
+     */
+    protected function fillObject(Concrete $object, $fields = [])
+    {
+        // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
+        if (!is_array($fields)) {
+            $fields = [
+                [
+                    'method' => 'fill' . ucfirst($fields),
+                    'field'  => $fields
+                ]
+            ];
+        }
+
+        if (!is_array($fields)) {
+            throw new \InvalidArgumentException('Fields needs to be an array');
+        }
+
+        foreach ($fields as $field) {
+            $method = $field['method'];
+
+            if (!$method) {
+                throw new \InvalidArgumentException(sprintf('Need a method to call'));
+            }
+
+            if (!method_exists($this->testData, $method)) {
+                throw new \InvalidArgumentException(sprintf('Method %s does not exist', $method));
+            }
+
+            $methodArguments = [$object, $field['field'], $this->seed];
+
+            $additionalArguments = isset($field['arguments']) ? $field['arguments'] : [];
+            foreach ($additionalArguments as $aa) {
+                $methodArguments[] = $aa;
+            }
+
+            call_user_func_array([$this->testData, $method], $methodArguments);
+        }
+    }
+
+    /**
+     * @group only
+     */
     public function testInput()
     {
-        $this->testData->assertInput(static::$localObject, "input", static::$seed);
+        $this->createTestObject('input');
+
+        $this->testData->assertInput($this->testObject, "input", $this->seed);
     }
 
     public function testNumber()
     {
-        $this->testData->assertNumber(static::$localObject, "number", static::$seed);
+        $this->createTestObject('number');
+
+        $this->testData->assertNumber($this->testObject, "number", $this->seed);
     }
 
     public function testTextarea()
     {
-        $this->testData->assertTextarea(static::$localObject, "textarea", static::$seed);
+        $this->createTestObject('textarea');
+
+        $this->testData->assertTextarea($this->testObject, "textarea", $this->seed);
     }
 
     public function testSlider()
     {
-        $this->testData->assertSlider(static::$localObject, "slider", static::$seed);
+        $this->createTestObject('slider');
+
+        $this->testData->assertSlider($this->testObject, "slider", $this->seed);
     }
 
     public function testHref()
     {
         $this->markTestIncomplete();
 
-        $this->testData->assertHref(static::$localObject, "href", static::$seed);
+        TestHelper::createEmptyObjects();
+        $this->createTestObject('href');
+
+        $this->testData->assertHref($this->testObject, "href", $this->seed);
     }
 
     public function testMultiHref()
     {
         $this->markTestIncomplete();
 
-        $this->testData->assertMultihref(static::$localObject, "multihref", static::$seed);
+        TestHelper::createEmptyObjects();
+        $this->createTestObject('multihref');
+
+        $this->testData->assertMultihref($this->testObject, "multihref", $this->seed);
     }
 
     public function testImage()
     {
         $this->markTestIncomplete();
 
-        $this->assertNotNull(static::$localObject->getImage());
-        $this->assertNotNull(static::$restObject->getImage());
+        $this->createTestObject('image');
 
-        $this->testData->assertImage(static::$localObject, "image", static::$seed);
+        $this->assertNotNull($this->testObject->getImage());
+        $this->assertNotNull($this->comparisonObject->getImage());
+
+        $this->testData->assertImage($this->testObject, "image", $this->seed);
     }
 
     public function testHotspotImage()
     {
         $this->markTestIncomplete();
 
-        $this->assertNotNull(static::$localObject->getHotspotImage());
-        $this->assertNotNull(static::$restObject->getHotspotImage());
+        $this->createTestObject([
+            [
+                'method'    => 'fillHotspotImage',
+                'field'     => 'hotspotimage'
+            ]
+        ]);
 
-        $this->testData->assertHotspotImage(static::$localObject, 'hotspotimage', static::$seed);
+        $this->assertNotNull($this->testObject->getHotspotImage());
+        $this->assertNotNull($this->comparisonObject->getHotspotImage());
+
+        $this->testData->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
     }
 
     public function testLanguage()
     {
-        $this->testData->assertLanguage(static::$localObject, "languagex", static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillLanguage',
+                'field'     => 'languagex'
+            ]
+        ]);
+
+        $this->testData->assertLanguage($this->testObject, "languagex", $this->seed);
     }
 
     public function testCountry()
     {
-        $this->testData->assertCountry(static::$localObject, "country", static::$seed);
+        $this->createTestObject('country');
+
+        $this->testData->assertCountry($this->testObject, "country", $this->seed);
     }
 
     public function testDate()
     {
-        $this->testData->assertDate(static::$localObject, "date", static::$seed);
+        $this->createTestObject('date');
+
+        $this->testData->assertDate($this->testObject, "date", $this->seed);
     }
 
     public function testDateTime()
     {
-        $this->testData->assertDate(static::$localObject, "datetime", static::$seed);
-    }
+        $this->createTestObject([
+            [
+                'method'    => 'fillDate',
+                'field'     => 'datetime'
+            ]
+        ]);
 
-    public function testSelect()
-    {
-        $this->testData->assertSelect(static::$localObject, "select", static::$seed);
-    }
-
-    public function testMultiSelect()
-    {
-        $this->testData->assertMultiSelect(static::$localObject, "multiselect", static::$seed);
-    }
-
-    public function testUser()
-    {
-        $this->testData->assertUser(static::$localObject, "user", static::$seed);
-    }
-
-    public function testCheckbox()
-    {
-        $this->testData->assertCheckbox(static::$localObject, "checkbox", static::$seed);
+        $this->testData->assertDate($this->testObject, "datetime", $this->seed);
     }
 
     public function testTime()
     {
-        $this->testData->assertTime(static::$localObject, "time", static::$seed);
+        $this->createTestObject('time');
+
+        $this->testData->assertTime($this->testObject, "time", $this->seed);
+    }
+
+    public function testSelect()
+    {
+        $this->createTestObject('select');
+
+        $this->testData->assertSelect($this->testObject, "select", $this->seed);
+    }
+
+    public function testMultiSelect()
+    {
+        $this->createTestObject([
+            [
+                'method'    => 'fillMultiSelect',
+                'field'     => 'multiselect'
+            ]
+        ]);
+
+        $this->testData->assertMultiSelect($this->testObject, "multiselect", $this->seed);
+    }
+
+    public function testUser()
+    {
+        $this->createTestObject('user');
+
+        $this->testData->assertUser($this->testObject, "user", $this->seed);
+    }
+
+    public function testCheckbox()
+    {
+        $this->createTestObject('checkbox');
+
+        $this->testData->assertCheckbox($this->testObject, "checkbox", $this->seed);
     }
 
     public function testWysiwyg()
     {
-        $this->testData->assertWysiwyg(static::$localObject, "wysiwyg", static::$seed);
+        $this->createTestObject('wysiwyg');
+
+        $this->testData->assertWysiwyg($this->testObject, "wysiwyg", $this->seed);
     }
 
     public function testPassword()
     {
-        $this->testData->assertPassword(static::$localObject, "password", static::$seed);
+        $this->createTestObject('password');
+
+        $this->testData->assertPassword($this->testObject, "password", $this->seed);
     }
 
     public function testCountryMultiSelect()
     {
-        $this->testData->assertCountryMultiSelect(static::$localObject, "countries", static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillMultiSelect',
+                'field'     => 'countries'
+            ]
+        ]);
+
+        $this->testData->assertCountryMultiSelect($this->testObject, "countries", $this->seed);
     }
 
     public function testLanguageMultiSelect()
     {
-        $this->testData->assertCountryMultiSelect(static::$localObject, "languages", static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillMultiSelect',
+                'field'     => 'languages'
+            ]
+        ]);
+
+        $this->testData->assertCountryMultiSelect($this->testObject, "languages", $this->seed);
     }
 
     public function testGeopoint()
     {
-        $this->testData->assertGeopoint(static::$localObject, "point", static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillGeopoint',
+                'field'     => 'point'
+            ]
+        ]);
+
+        $this->testData->assertGeopoint($this->testObject, "point", $this->seed);
     }
 
     public function testGeobounds()
     {
-        $this->testData->assertGeobounds(static::$localObject, "bounds", static::$restObject, static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillGeobounds',
+                'field'     => 'bounds'
+            ]
+        ]);
+
+        $this->testData->assertGeobounds($this->testObject, "bounds", $this->comparisonObject, $this->seed);
     }
 
     public function testGeopolygon()
     {
-        $this->testData->assertGeopolygon(static::$localObject, "poly", static::$restObject, static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillGeopolygon',
+                'field'     => 'poly'
+            ]
+        ]);
+
+        $this->testData->assertGeopolygon($this->testObject, "poly", $this->comparisonObject, $this->seed);
     }
 
     public function testTable()
     {
-        $this->testData->assertTable(static::$localObject, "table", static::$restObject, static::$seed);
+        $this->createTestObject('table');
+
+        $this->testData->assertTable($this->testObject, "table", $this->comparisonObject, $this->seed);
     }
 
     public function testLink()
     {
         $this->markTestSkipped();
 
-        $this->testData->assertLink(static::$localObject, "link", static::$seed);
+        $this->createTestObject('link');
+
+        $this->testData->assertLink($this->testObject, "link", $this->seed);
     }
 
     public function testStructuredTable()
     {
-        $this->testData->assertStructuredTable(static::$localObject, "structuredtable", static::$restObject, static::$seed);
+        $this->createTestObject([
+            [
+                'method'    => 'fillStructuredTable',
+                'field'     => 'structuredtable'
+            ]
+        ]);
+
+        $this->testData->assertStructuredTable($this->testObject, "structuredtable", $this->comparisonObject, $this->seed);
     }
 
     public function testObjects()
     {
-        $this->testData->assertObjects(static::$localObject, "objects", static::$restObject, static::$seed);
+        // // this will create a couple of objects which can be used for references
+        TestHelper::createEmptyObjects();
+
+        $this->createTestObject('objects');
+
+        $this->testData->assertObjects($this->testObject, "objects", $this->comparisonObject, $this->seed);
     }
 
     public function testObjectsWithMetadata()
     {
-        $this->testData->assertObjectsWithmetadata(static::$localObject, "objectswithmetadata", static::$restObject, static::$seed);
+        TestHelper::createEmptyObjects();
+
+        $this->createTestObject([
+            [
+                'method'    => 'fillObjectsWithMetadata',
+                'field'     => 'objectswithmetadata'
+            ]
+        ]);
+
+        $this->testData->assertObjectsWithmetadata($this->testObject, "objectswithmetadata", $this->comparisonObject, $this->seed);
     }
 
     public function testLInput()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Localized fields seem to have a bug');
 
-        $this->testData->assertInput(static::$localObject, "linput", static::$seed, "en");
-        $this->testData->assertInput(static::$localObject, "linput", static::$seed, "de");
+        $this->createTestObject([
+            [
+                'method'    => 'fillInput',
+                'field'     => 'linput',
+                'arguments' => ['de']
+            ],
+            [
+                'method'    => 'fillInput',
+                'field'     => 'linput',
+                'arguments' => ['en']
+            ]
+        ]);
+
+        $this->testData->assertInput($this->testObject, "linput", $this->seed, "en");
+        $this->testData->assertInput($this->testObject, "linput", $this->seed, "de");
     }
 
     public function testLObjects()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Localized fields seem to have a bug');
 
-        $this->testData->assertObjects(static::$localObject, "lobjects", static::$restObject, static::$seed, "en");
-        $this->testData->assertObjects(static::$localObject, "lobjects", static::$restObject, static::$seed, "de");
+        $this->createTestObject([
+            [
+                'method'    => 'fillObjects',
+                'field'     => 'lobjects',
+                'arguments' => ['de']
+            ],
+            [
+                'method'    => 'fillObjects',
+                'field'     => 'lobjects',
+                'arguments' => ['en']
+            ]
+        ]);
+
+        $this->testData->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "en");
+        $this->testData->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "de");
     }
 
     public function testBricks()
     {
-        $this->testData->assertBricks(static::$localObject, "mybricks", static::$seed);
+        $this->createTestObject([
+            [
+                'method' => 'fillBricks',
+                'field'  => 'mybricks'
+            ]
+        ]);
+
+        $this->testData->assertBricks($this->testObject, "mybricks", $this->seed);
     }
 
     public function testFieldCollection()
     {
-        $this->testData->assertFieldCollection(static::$localObject, "myfieldcollection", static::$seed);
+        $this->createTestObject([
+            [
+                'method' => 'fillFieldCollection',
+                'field'  => 'myfieldcollection'
+            ]
+        ]);
+
+        $this->testData->assertFieldCollection($this->testObject, "myfieldcollection", $this->seed);
     }
 }

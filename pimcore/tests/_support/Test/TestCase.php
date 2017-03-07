@@ -27,5 +27,7 @@ abstract class TestCase extends Test
         if ($this->needsDb()) {
             TestHelper::checkDbSupport();
         }
+
+        \Pimcore::collectGarbage();
     }
 }
