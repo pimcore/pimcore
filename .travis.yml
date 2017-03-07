@@ -2,12 +2,12 @@ language: php
 
 notifications:
   email:
-    # - travis-ci@pimcore.org
-    - mathias.geat@pimcore.org
+    - travis-ci@pimcore.org
 
 php:
   - 7
-  # - hhvm
+  - 7.1
+  - hhvm
 
 services:
   - mysql
