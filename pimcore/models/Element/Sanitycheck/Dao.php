@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("sanitycheck", $this->db->quoteInto("id = ?", $this->model->getId()) . " AND " . $this->db->quoteInto("type = ?", $this->model->getType()));
+        $this->db->delete("sanitycheck", ["id" => $this->model->getId(), "type" => $this->model->getType()]);
     }
 
     public function getNext()

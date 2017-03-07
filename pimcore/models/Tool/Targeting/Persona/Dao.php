@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("targeting_personas", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("targeting_personas", ["id" => $this->model->getId()]);
     }
 
     /**
@@ -78,6 +78,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             $type = get_object_vars($this->model);
+            $data = [];
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("targeting_personas"))) {
@@ -91,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update("targeting_personas", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("targeting_personas", $data, ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }

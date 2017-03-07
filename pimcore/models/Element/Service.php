@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -757,7 +758,7 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (\Zend_Db_Select $select) use ($cv, $childsList) {
+            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv, $childsList) {
                 $where = $cv["where"];
                 if ($where) {
                     $select->where($where);

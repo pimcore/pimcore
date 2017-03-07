@@ -113,6 +113,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         $class = get_object_vars($this->model);
+        $data = [];
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->validColumns)) {
@@ -125,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update(self::TABLE_NAME, $data, "id=" . $this->db->quote($this->model->getId()));
+        $this->db->update(self::TABLE_NAME, $data, ["id" => $this->model->getId()]);
     }
 
     /**
@@ -133,6 +134,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME, "id=" . $this->db->quote($this->model->getId()));
+        $this->db->delete(self::TABLE_NAME, ["id" => $this->model->getId()]);
     }
 }

@@ -34,21 +34,21 @@ class Dao extends UserRole\Dao
         // cleanup system
 
         // assets
-        $this->db->update("assets", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("assets", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
-        $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $userId));
+        $this->db->update("assets", ["userOwner" => null], ["userOwner" => $userId]);
+        $this->db->update("assets", ["userModification" => null], ["userModification" => $userId]);
+        $this->db->delete("users_workspaces_asset", ["userId" => $userId]);
 
         // documents
-        $this->db->update("documents", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("documents", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
-        $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $userId));
+        $this->db->update("documents", ["userOwner" => null], ["userOwner" => $userId]);
+        $this->db->update("documents", ["userModification" => null], ["userModification" => $userId]);
+        $this->db->delete("users_workspaces_document", ["userId" => $userId]);
 
         // objects
-        $this->db->update("objects", ["o_userOwner" => null], $this->db->quoteInto("o_userOwner = ?", $userId));
-        $this->db->update("objects", ["o_userModification" => null], $this->db->quoteInto("o_userModification = ?", $userId));
-        $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId= ?", $userId));
+        $this->db->update("objects", ["o_userOwner" => null], ["o_userOwner" => $userId]);
+        $this->db->update("objects", ["o_userModification" => null], ["o_userModification" => $userId]);
+        $this->db->delete("users_workspaces_object", ["userId" => $userId]);
 
         // versions
-        $this->db->update("versions", ["userId" => null], $this->db->quoteInto("userId = ?", $userId));
+        $this->db->update("versions", ["userId" => null], ["userId" => $userId]);
     }
 }

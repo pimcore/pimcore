@@ -83,7 +83,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function delete()
     {
         if ($this->model->getId() instanceof Model\Search\Backend\Data\Id) {
-            $this->db->delete("search_backend_data", "id='" . $this->model->getId()->getId() . "' AND maintype ='" .$this->model->getId()->getType() . "'");
+            $this->db->delete("search_backend_data", [
+                "id" => $this->model->getId()->getId(),
+                "maintype" => $this->model->getId()->getType()
+            ]);
         } else {
             Logger::alert("Cannot delete Search\\Backend\\Data, ID is empty");
         }

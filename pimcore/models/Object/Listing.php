@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
@@ -174,7 +175,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
             $this->groupBy = $groupBy;
 
             if (!$qoute) {
-                $this->groupBy = new \Zend_Db_Expr($groupBy);
+                $this->groupBy = new Expression($groupBy);
             }
         }
 

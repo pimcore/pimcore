@@ -59,7 +59,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // remove all relations
         try {
-            $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
+            $this->db->deleteWhere("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
         } catch (\Exception $e) {
             Logger::warning("Error during removing old relations: " . $e);
         }
@@ -211,16 +211,21 @@ class Dao extends Model\Dao\AbstractDao
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
-        $this->db->delete($storeTable, $this->db->quoteInto("o_id = ?", $object->getId()));
+        $this->db->delete($storeTable, ["o_id" => $object->getId()]);
 
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
         $oldData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE o_id = ?", $object->getId());
-        $this->db->delete($queryTable, $this->db->quoteInto("o_id = ?", $object->getId()));
+        $this->db->delete($queryTable, ["o_id" => $object->getId()]);
 
         //update data for relations table
-        $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND position = '" . $this->model->getType() . "'");
+        $this->db->delete("object_relations_" . $object->getClassId(), [
+            "src_id" => $object->getId(),
+            "ownertype" => "objectbrick",
+            "ownername" => $this->model->getFieldname(),
+            "position" => $this->model->getType()
+        ]);
 
         $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storeTable, $queryTable);
         $this->inheritanceHelper->resetFieldsToCheck();

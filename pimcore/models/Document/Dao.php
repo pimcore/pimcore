@@ -181,7 +181,7 @@ class Dao extends Model\Element\Dao
     public function delete()
     {
         try {
-            $this->db->delete("documents", $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete("documents", ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -190,13 +190,15 @@ class Dao extends Model\Element\Dao
     /**
      * Update document workspaces..
      *
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function updateWorkspaces()
     {
         $this->db->update("users_workspaces_document", [
             "cpath" => $this->model->getRealFullPath()
-        ], "cid = " . $this->model->getId());
+        ], [
+            "cid" => $this->model->getId()
+        ]);
     }
 
     /**
@@ -257,10 +259,10 @@ class Dao extends Model\Element\Dao
         $properties = [];
 
         if ($onlyDirect) {
-            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE cid = ? AND ctype='document'", $this->model->getId());
+            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE cid = ? AND ctype='document'", [$this->model->getId()]);
         } else {
             $parentIds = $this->getParentIds();
-            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", $this->model->getId());
+            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", [$this->model->getId()]);
         }
 
         // because this should be faster than mysql
@@ -310,7 +312,7 @@ class Dao extends Model\Element\Dao
      */
     public function deleteAllProperties()
     {
-        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'document'", $this->model->getId()));
+        $this->db->delete("properties", ["cid" => $this->model->getId(), "ctype" => "document"]);
     }
 
     /**
@@ -318,7 +320,7 @@ class Dao extends Model\Element\Dao
      */
     public function deleteAllPermissions()
     {
-        $this->db->delete("users_workspaces_document", $this->db->quoteInto("cid = ?", $this->model->getId()));
+        $this->db->delete("users_workspaces_document", ["cid" => $this->model->getId()]);
     }
 
     /**
@@ -326,7 +328,7 @@ class Dao extends Model\Element\Dao
      */
     public function deleteAllTasks()
     {
-        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='document'", $this->model->getId()));
+        $this->db->delete("schedule_tasks", ["cid" => $this->model->getId(), "ctype" => "document"]);
     }
 
     /**
@@ -407,12 +409,11 @@ class Dao extends Model\Element\Dao
     /**
      * Update the lock value for the document.
      *
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function updateLocks()
     {
-        // tree_locks
-        $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'document'");
+        $this->db->delete("tree_locks", ["id" => $this->model->getId(), "type" => "document"]);
         if ($this->model->getLocked()) {
             $this->db->insert("tree_locks", [
                 "id" => $this->model->getId(),
@@ -428,7 +429,7 @@ class Dao extends Model\Element\Dao
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol("SELECT id from documents WHERE path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR id = " . $this->model->getId());
-        $this->db->delete("tree_locks", "type = 'document' AND id IN (" . implode(",", $lockIds) . ")");
+        $this->db->deleteWhere("tree_locks", "type = 'document' AND id IN (" . implode(",", $lockIds) . ")");
 
         return $lockIds;
     }
@@ -488,11 +489,15 @@ class Dao extends Model\Element\Dao
      * Save the document index.
      *
      * @param $index
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function saveIndex($index)
     {
-        $this->db->update("documents", ["index" => $index], $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->update("documents", [
+            "index" => $index
+        ], [
+            "id" => $this->model->getId()
+        ]);
     }
 
     /**

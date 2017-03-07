@@ -541,7 +541,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 . " AND " . $db->quoteInto("position = ?", $position);
         }
 
-        $db->delete($table, $sql);
+        $db->deleteWhere($table, $sql);
 
         if (!empty($objectsMetadata)) {
             if ($object instanceof Object\Localizedfield || $object instanceof Object\Objectbrick\Data\AbstractData
@@ -615,13 +615,16 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             $index = $context["index"];
             $containerName = $context["fieldname"];
 
-            $db->delete("object_metadata_" . $object->getClassId(),
+            $db->deleteWhere("object_metadata_" . $object->getClassId(),
                 $db->quoteInto("o_id = ?", $object->getId()) . " AND ownertype = 'localizedfield' AND "
                 . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . "$index . /%")
                 . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
             );
         } else {
-            $db->delete("object_metadata_" . $object->getClassId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+            $db->delete("object_metadata_" . $object->getClassId(), [
+                "o_id" => $object->getId(),
+                "fieldname" => $this->getName()
+            ]);
         }
     }
 

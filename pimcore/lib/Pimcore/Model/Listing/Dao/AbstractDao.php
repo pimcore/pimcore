@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model\Listing\Dao;
 
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 
 abstract class AbstractDao extends Model\Dao\AbstractDao
@@ -100,11 +102,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder $select
      *
      * @return $this
      */
-    protected function addOrder(\Zend_DB_Select $select)
+    protected function addOrder(QueryBuilder $select)
     {
         $orderKey = $this->model->getOrderKey();
         $order = $this->model->getOrder();
@@ -127,18 +129,18 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
             }
 
             if (!empty($parts)) {
-                $select->order(new \Zend_Db_Expr(implode(", ", $parts)));
+                $select->order(new Expression(implode(", ", $parts)));
             }
         }
     }
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder
      *
      * @return $this
      */
-    protected function addGroupBy(\Zend_DB_Select $select)
+    protected function addGroupBy(QueryBuilder $select)
     {
         $groupBy = $this->model->getGroupBy();
         if ($groupBy) {
@@ -150,11 +152,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder $select
      *
      * @return $this
      */
-    protected function addLimit(\Zend_DB_Select $select)
+    protected function addLimit(QueryBuilder $select)
     {
         $select->limit($this->model->getLimit(), $this->model->getOffset());
 
@@ -163,11 +165,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder $select
      *
      * @return $this
      */
-    protected function addConditions(\Zend_DB_Select $select)
+    protected function addConditions(QueryBuilder $select)
     {
         $condition = $this->model->getCondition();
 

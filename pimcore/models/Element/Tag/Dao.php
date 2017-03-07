@@ -92,11 +92,11 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->beginTransaction();
         try {
-            $this->db->delete("tags_assignment", $this->db->quoteInto("tagid = ?", $this->model->getId()));
-            $this->db->delete("tags_assignment", $this->db->quoteInto("tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)", $this->model->getIdPath() . $this->model->getId() . "/%"));
+            $this->db->delete("tags_assignment", ["tagid" => $this->model->getId()]);
+            $this->db->deleteWhere("tags_assignment", $this->db->quoteInto("tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)", $this->model->getIdPath() . $this->model->getId() . "/%"));
 
-            $this->db->delete("tags", $this->db->quoteInto("id = ?", $this->model->getId()));
-            $this->db->delete("tags", $this->db->quoteInto("idPath LIKE ?", $this->model->getIdPath() . $this->model->getId() . "/%"));
+            $this->db->delete("tags", ["id" => $this->model->getId()]);
+            $this->db->deleteWhere("tags", $this->db->quoteInto("idPath LIKE ?", $this->model->getIdPath() . $this->model->getId() . "/%"));
 
             $this->db->commit();
         } catch (\Exception $e) {
@@ -158,8 +158,11 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function removeTagFromElement($cType, $cId)
     {
-        $this->db->delete("tags_assignment",
-            "tagid = " . $this->db->quote($this->model->getId()) . " AND ctype = " . $this->db->quote($cType) . " AND cid = " . $this->db->quote($cId));
+        $this->db->delete("tags_assignment", [
+            "tagid" => $this->model->getId(),
+            "ctype" => $cType,
+            "cid" => $cId
+        ]);
     }
 
     /**
@@ -172,7 +175,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->beginTransaction();
         try {
-            $this->db->delete("tags_assignment", "ctype = " . $this->db->quote($cType) . " AND cid = " . $this->db->quote($cId));
+            $this->db->delete("tags_assignment", ["ctype" => $cType, "cid" => $cId]);
 
             foreach ($tags as $tag) {
                 $this->doAddTagToElement($tag->getId(), $cType, $cId);
@@ -194,7 +197,7 @@ class Dao extends Model\Dao\AbstractDao
     public function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace)
     {
         if ($replace) {
-            $this->db->delete("tags_assignment", "ctype = " . $this->db->quote($cType) . " AND cid IN (" . implode(",", $cIds) . ")");
+            $this->db->deleteWhere("tags_assignment", "ctype = " . $this->db->quote($cType) . " AND cid IN (" . implode(",", $cIds) . ")");
         }
 
         foreach ($tagIds as $tagId) {

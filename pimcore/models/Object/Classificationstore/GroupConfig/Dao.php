@@ -106,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME_GROUPS, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete(self::TABLE_NAME_GROUPS, ["id" => $this->model->getId()]);
     }
 
     /**
@@ -118,6 +118,7 @@ class Dao extends Model\Dao\AbstractDao
             $ts = time();
             $this->model->setModificationDate($ts);
 
+            $data = [];
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -133,7 +134,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_GROUPS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update(self::TABLE_NAME_GROUPS, $data, ["id" => $this->model->getId()]);
 
             return $this->model;
         } catch (\Exception $e) {

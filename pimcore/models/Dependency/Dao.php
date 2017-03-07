@@ -82,8 +82,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $id) . " AND " . $this->db->quoteInto("sourcetype = ?", $type));
-            $this->db->delete("dependencies", $this->db->quoteInto("targetid = ?", $id) . " AND " . $this->db->quoteInto("targettype = ?", $type));
+            $this->db->delete("dependencies", ["sourceid" => $id, "sourcetype" => $type]);
+            $this->db->delete("dependencies", ["targetid" => $id, "targettype" => $type]);
         } catch (\Exception $e) {
             Logger::error($e);
         }
@@ -96,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
     public function clear()
     {
         try {
-            $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $this->model->getSourceId()) . " AND " . $this->db->quoteInto("sourcetype = ?", $this->model->getSourceType()));
+            $this->db->delete("dependencies", ["sourceid" => $this->model->getSourceId(), "sourcetype" => $this->model->getSourceType()]);
         } catch (\Exception $e) {
             Logger::error($e);
         }

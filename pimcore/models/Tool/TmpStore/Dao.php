@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete($id)
     {
-        $this->db->delete("tmp_store", "id = " . $this->db->quote($id));
+        $this->db->delete("tmp_store", ["id" => $id]);
     }
 
     /**
@@ -89,7 +89,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function cleanup()
     {
-        $this->db->delete("tmp_store", "expiryDate < " . time());
+        $this->db->deleteWhere("tmp_store", "expiryDate < " . time());
     }
 
     /**

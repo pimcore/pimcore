@@ -49,7 +49,6 @@ class Dao extends Model\Object\Fieldcollection\Dao
                 $results = [];
             }
 
-            //$allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getO_id(), $this->model->getFieldname()));
             $fieldDefinitions = $definition->getFieldDefinitions();
             $brickClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($type);
 
@@ -108,7 +107,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
             }
 
             $tableName = $definition->getTableName($object->getClass(), true);
-            $this->db->delete($tableName, "o_id = " . $object->getId());
+            $this->db->delete($tableName, ["o_id" => $object->getId()]);
         }
     }
 }

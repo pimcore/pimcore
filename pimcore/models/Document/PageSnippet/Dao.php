@@ -31,7 +31,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function deleteAllElements()
     {
-        $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId()));
+        $this->db->delete("documents_elements", ["documentId" => $this->model->getId()]);
     }
 
     /**
@@ -41,7 +41,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function getElements()
     {
-        $elementsRaw = $this->db->fetchAll("SELECT * FROM documents_elements WHERE documentId = ?", $this->model->getId());
+        $elementsRaw = $this->db->fetchAll("SELECT * FROM documents_elements WHERE documentId = ?", [$this->model->getId()]);
 
         $elements = [];
 
@@ -118,7 +118,7 @@ abstract class Dao extends Model\Document\Dao
     {
         try {
             parent::delete();
-            $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId()));
+            $this->db->delete("documents_elements", ["documentId" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }

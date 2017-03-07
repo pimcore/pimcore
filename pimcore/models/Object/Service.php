@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\Model\ObjectEvent;
 use Pimcore\Event\ObjectEvents;
 use Pimcore\Logger;
@@ -1423,7 +1424,7 @@ class Service extends Model\Element\Service
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $featureJoins, $class, $featureFilters, $requestedLanguage, $me) {
+            $list->onCreateQuery(function (QueryBuilder $select) use ($list, $featureJoins, $class, $featureFilters, $requestedLanguage, $me) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];

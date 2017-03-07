@@ -20,7 +20,7 @@ use Pimcore\Model\AbstractModel;
  * Class AbstractListing
  *
  * @package Pimcore\Model\Listing
- * @method \Zend_Db_Select getQuery()
+ * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
  */
 abstract class JsonListing extends AbstractModel
 {

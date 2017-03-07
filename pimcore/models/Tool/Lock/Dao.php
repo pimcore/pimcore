@@ -88,8 +88,7 @@ class Dao extends Model\Dao\AbstractDao
     public function release($key)
     {
         Logger::debug("Releasing: '" . $key . "'");
-
-        $this->db->delete("locks", "id = " . $this->db->quote($key));
+        $this->db->delete("locks", ["id" => $key]);
     }
 
     /**

@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\Listing\Concrete;
 
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
@@ -49,7 +51,7 @@ class Dao extends Model\Object\Listing\Dao
      * get select query
      * @param bool|false $forceNew
      *
-     * @return \Zend_Db_Select
+     * @return QueryBuilder
      * @throws \Exception
      */
     public function getQuery($forceNew = false)
@@ -62,7 +64,7 @@ class Dao extends Model\Object\Listing\Dao
         $field = $this->getTableName() . ".o_id";
         $select->from(
             [ $this->getTableName() ], [
-                new \Zend_Db_Expr(sprintf('%s as o_id', $this->getSelectPart($field, $field))), 'o_type'
+                new Expression(sprintf('%s as o_id', $this->getSelectPart($field, $field))), 'o_type'
             ]
         );
 
@@ -191,11 +193,11 @@ class Dao extends Model\Object\Listing\Dao
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder $select
      *
      * @return $this
      */
-    protected function addJoins(\Zend_DB_Select $select)
+    protected function addJoins(QueryBuilder $select)
     {
         // add fielcollection's
         $fieldCollections = $this->model->getFieldCollections();

@@ -75,6 +75,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("email_blacklist", $this->db->quoteInto("address = ?", $this->model->getAddress()));
+        $this->db->delete("email_blacklist", ["address" => $this->model->getAddress()]);
     }
 }

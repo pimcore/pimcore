@@ -30,7 +30,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function getByKey($key)
     {
-        $data = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . " WHERE `key` = ? ORDER BY `creationDate` ", $key);
+        $data = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . " WHERE `key` = ? ORDER BY `creationDate` ", [$key]);
         if (!empty($data)) {
             foreach ($data as $d) {
                 $this->model->addTranslation($d["language"], $d["text"]);
@@ -71,7 +71,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function delete()
     {
-        $this->db->delete(static::getTableName(), $this->db->quoteInto("`key`= ?", $this->model->getKey()));
+        $this->db->delete(static::getTableName(), ["key" => $this->model->getKey()]);
 
         $this->model->clearDependentCache();
     }

@@ -35,6 +35,7 @@ doctrine:
         default_connection: default
         connections:
             default:
+                wrapper_class: '\Pimcore\Db\Connection'
                 driver: pdo_mysql
                 host: '%pimcore_system_config.database.params.host%'
                 port: '%pimcore_system_config.database.params.port%'

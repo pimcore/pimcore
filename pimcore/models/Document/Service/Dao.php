@@ -114,13 +114,13 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function removeTranslation(Document $document)
     {
-        $this->db->delete("documents_translations", "id = " . $document->getId());
+        $this->db->delete("documents_translations", ["id" => $document->getId()]);
 
         // if $document is a source-document, we need to move them over to a new document
         $newSourceId = $this->db->fetchOne("SELECT id FROM documents_translations WHERE sourceId = ?", $document->getId());
         if ($newSourceId) {
-            $this->db->update("documents_translations", ["sourceId" => $newSourceId], "sourceId = " . $document->getId());
-            $this->db->delete("documents_translations", "id = " . $newSourceId);
+            $this->db->update("documents_translations", ["sourceId" => $newSourceId], ["sourceId" => $document->getId()]);
+            $this->db->delete("documents_translations", ["id" => $newSourceId]);
         }
     }
 }

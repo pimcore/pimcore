@@ -223,7 +223,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
             }
 
             if (!empty($preparedKeys)) {
-                $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
+                $this->db->deleteWhere(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
             }
         }
     }

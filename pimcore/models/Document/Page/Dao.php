@@ -84,7 +84,7 @@ class Dao extends Model\Document\PageSnippet\Dao
         try {
             $this->deleteAllProperties();
 
-            $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete("documents_page", ["id" => $this->model->getId()]);
             parent::delete();
         } catch (\Exception $e) {
             throw $e;

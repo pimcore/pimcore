@@ -61,9 +61,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME_RELATIONS,
-            $this->db->quoteInto("keyId = ? AND ", $this->model->getKeyId())
-            . $this->db->quoteInto("groupId = ? ", $this->model->getGroupId()));
+        $this->db->delete(self::TABLE_NAME_RELATIONS, [
+            "keyId" => $this->model->getKeyId(),
+            "groupId" => $this->model->getGroupId()
+        ]);
     }
 
     /**

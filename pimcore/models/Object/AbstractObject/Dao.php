@@ -89,7 +89,7 @@ class Dao extends Model\Element\Dao
 
     /**
      * @throws \Exception
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function update()
     {
@@ -122,7 +122,7 @@ class Dao extends Model\Element\Dao
         $this->db->insertOrUpdate("objects", $data);
 
         // tree_locks
-        $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'object'");
+        $this->db->delete("tree_locks", ["id" => $this->model->getId(), "type" => "object"]);
         if ($this->model->getLocked()) {
             $this->db->insert("tree_locks", [
                 "id" => $this->model->getId(),
@@ -139,7 +139,7 @@ class Dao extends Model\Element\Dao
      */
     public function delete()
     {
-        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
+        $this->db->delete("objects", ["o_id" => $this->model->getId()]);
     }
 
 
@@ -147,7 +147,9 @@ class Dao extends Model\Element\Dao
     {
         $this->db->update("users_workspaces_object", [
             "cpath" => $this->model->getRealFullPath()
-        ], "cid = " . $this->model->getId());
+        ], [
+            "cid" => $this->model->getId()
+        ]);
     }
 
     /**
@@ -191,7 +193,7 @@ class Dao extends Model\Element\Dao
      */
     public function deleteAllProperties()
     {
-        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
+        $this->db->delete("properties", ["cid" => $this->model->getId(), "ctype" => "object"]);
     }
 
     /**
@@ -222,7 +224,7 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='object'", $this->model->getId());
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='object'", [$this->model->getId()]);
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -268,7 +270,7 @@ class Dao extends Model\Element\Dao
 
     public function deleteAllPermissions()
     {
-        $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getId()));
+        $this->db->delete("users_workspaces_object", ["cid" => $this->model->getId()]);
     }
 
     /**
@@ -371,7 +373,7 @@ class Dao extends Model\Element\Dao
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol("SELECT o_id from objects WHERE o_path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR o_id = " . $this->model->getId());
-        $this->db->delete("tree_locks", "type = 'object' AND id IN (" . implode(",", $lockIds) . ")");
+        $this->db->deleteWhere("tree_locks", "type = 'object' AND id IN (" . implode(",", $lockIds) . ")");
 
         return $lockIds;
     }

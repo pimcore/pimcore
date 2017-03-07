@@ -388,7 +388,7 @@ class TranslationController extends AdminController
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
-            $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $joins, $tableName, $filters) {
+            $list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list, $joins, $tableName, $filters) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];

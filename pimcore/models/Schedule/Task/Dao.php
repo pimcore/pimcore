@@ -71,6 +71,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         $site = get_object_vars($this->model);
+        $data = [];
 
         foreach ($site as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("schedule_tasks"))) {
@@ -83,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update("schedule_tasks", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->update("schedule_tasks", $data, ["id" => $this->model->getId()]);
     }
 
     /**
@@ -91,6 +92,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("schedule_tasks", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("schedule_tasks", ["id" => $this->model->getId()]);
     }
 }

@@ -83,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @throws \Exception
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function update()
     {
@@ -96,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update("classes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->update("classes", $data, ["id" => $this->model->getId()]);
 
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -202,8 +202,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($datastoreColumnsToRemove as $value) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedDatastoreColumns))) {
                     $tableRelation = "object_relations_" . $this->model->getId();
-                    $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
-
+                    $this->db->delete($tableRelation, ["fieldname" => $value, "ownertype" => "object"]);
                     // @TODO: remove localized fields and fieldcollections
                 }
             }
@@ -237,7 +236,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("classes", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("classes", ["id" => $this->model->getId()]);
 
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -253,7 +252,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query('DROP VIEW `object_' . $this->model->getId() . '`');
 
         // delete data
-        $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
+        $this->db->delete("objects", ["o_classId" => $this->model->getId()]);
 
         // remove fieldcollection tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_collection\_%\_" . $this->model->getId() . "'");
@@ -292,11 +291,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function updateClassNameInObjects($newName)
     {
-        $this->db->update("objects", [
-            "o_className" => $newName
-        ], $this->db->quoteInto("o_classId = ?", $this->model->getId()));
+        $this->db->update("objects", ["o_className" => $newName], ["o_classId" => $this->model->getId()]);
 
-        $this->db->update("object_query_" . $this->model->getId(), [
+        $this->db->updateWhere("object_query_" . $this->model->getId(), [
             "oo_className" => $newName
         ]);
     }

@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Asset\Listing;
 
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 
 /**
@@ -55,7 +57,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @param $columns
-     * @return \Zend_Db_Select
+     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
     public function getQuery($columns)
     {
@@ -94,7 +96,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $select = (string) $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
+        $select = (string) $this->getQuery([new Expression('COUNT(*)')]);
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;
@@ -105,9 +107,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
-        $select->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $select->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
+        $select->reset(QueryBuilder::LIMIT_COUNT);
+        $select->reset(QueryBuilder::LIMIT_OFFSET);
         $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 

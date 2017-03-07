@@ -41,7 +41,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
     }
 
     /**
-     * @return \Zend_Db_Adapter_Abstract
+     * @return Db\Connection
      */
     protected function getDb()
     {
@@ -123,8 +123,8 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
         $this->getDb()->beginTransaction();
 
         try {
-            $this->getDb()->delete("cache", "id = " . $this->getDb()->quote($id));
-            $this->getDb()->delete("cache_tags", "id = '".$id."'");
+            $this->getDb()->delete("cache", ["id" => $id]);
+            $this->getDb()->delete("cache_tags", ["id" => $id]);
 
             $this->getDb()->commit();
         } catch (\Exception $e) {
@@ -158,7 +158,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
             $this->truncate();
         }
         if ($mode == \Zend_Cache::CLEANING_MODE_OLD) {
-            $this->getDb()->delete("cache", "expire < unix_timestamp() OR mtime < (unix_timestamp()-864000)");
+            $this->getDb()->deleteWhere("cache", "expire < unix_timestamp() OR mtime < (unix_timestamp()-864000)");
         }
         if ($mode == \Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
@@ -169,14 +169,14 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
 
                 try {
                     foreach ($items as $item) {
-                        // We call delete directly here because the ID in the cache is already specific for this site
+                        // We call deleteWhere directly here because the ID in the cache is already specific for this site
                         $quotedId = $this->getDb()->quote($item);
-                        $this->getDb()->delete("cache", "id = " . $quotedId);
+                        $this->getDb()->delete("cache", ["id" => $item]);
                         $quotedIds[] = $quotedId;
                     }
 
                     if (count($quotedIds) > 0) {
-                        $this->getDb()->delete("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
+                        $this->getDb()->deleteWhere("cache_tags", "id IN (" . implode(",", $quotedIds) . ")");
                     }
 
                     $this->getDb()->commit();
@@ -334,7 +334,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
         $data = $this->getDb()->fetchRow("SELECT mtime,expire FROM cache WHERE id = ?", $id);
         if ($data && isset($data["expire"]) && time() < $data["expire"]) {
             $lifetime = (int) ($data["expire"] - $data["mtime"]);
-            $this->getDb()->update("cache", ["expire" => (time() + $lifetime + (int) $extraLifetime)]);
+            $this->getDb()->updateWhere("cache", ["expire" => (time() + $lifetime + (int) $extraLifetime)]);
         }
 
         return true;

@@ -128,6 +128,7 @@ class Dao extends Model\Dao\AbstractDao
         $ts = time();
         $this->model->setModificationDate($ts);
 
+        $data = [];
         $site = get_object_vars($this->model);
 
         foreach ($site as $key => $value) {
@@ -142,7 +143,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update("sites", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->update("sites", $data, ["id" => $this->model->getId()]);
 
         $this->model->clearDependentCache();
     }
@@ -152,7 +153,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("sites", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("sites", ["id" => $this->model->getId()]);
 
         $this->model->clearDependentCache();
     }

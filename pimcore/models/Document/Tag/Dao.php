@@ -50,6 +50,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getDocumentId()) . " AND " . $this->db->quoteInto("name = ?", $this->model->getName()));
+        $this->db->delete("documents_elements", [
+            "documentId" => $this->model->getDocumentId(),
+            "name" => $this->model->getName()
+        ]);
     }
 }

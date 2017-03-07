@@ -25,6 +25,6 @@ class Dao extends Model\Dao\AbstractDao
 {
     public function flush()
     {
-        $this->db->delete("recyclebin");
+        $this->db->deleteWhere("recyclebin");
     }
 }

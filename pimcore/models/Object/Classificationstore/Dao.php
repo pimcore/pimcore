@@ -58,9 +58,7 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
-        $condition = $this->db->quoteInto("o_id = ?", $objectId)
-            . " AND " . $this->db->quoteInto("fieldname = ?", $fieldname);
-        $this->db->delete($dataTable, $condition);
+        $this->db->delete($dataTable, ["o_id" => $objectId, "fieldname" => $fieldname]);
 
         $items = $this->model->getItems();
 
@@ -103,9 +101,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $groupsTable = $this->getGroupsTableName();
 
-        $condition = $this->db->quoteInto("o_id = ?", $objectId)
-            . " AND " . $this->db->quoteInto("fieldname = ?", $fieldname);
-        $this->db->delete($groupsTable, $condition);
+        $this->db->delete($groupsTable, ["o_id" => $objectId, "fieldname" => $fieldname]);
 
         $activeGroups = $this->model->getActiveGroups();
         if (is_array($activeGroups)) {
@@ -132,11 +128,9 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
         $groupsTable = $this->getGroupsTableName();
 
-        $condition = $this->db->quoteInto("o_id = ?", $objectId);
-
         // remove relations
-        $this->db->delete($dataTable, $condition);
-        $this->db->delete($groupsTable, $condition);
+        $this->db->delete($dataTable, ["o_id" => $objectId]);
+        $this->db->delete($groupsTable, ["o_id" => $objectId]);
     }
 
     /**

@@ -79,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("edit_lock", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("edit_lock", ["id" => $this->model->getId()]);
     }
 
     /**
@@ -87,6 +87,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function clearSession($sessionId)
     {
-        $this->db->delete("edit_lock", $this->db->quoteInto("sessionId = ?", $sessionId));
+        $this->db->delete("edit_lock", ["sessionId" => $sessionId]);
     }
 }

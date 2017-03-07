@@ -93,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @throws \Exception
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function update()
     {
@@ -111,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update("custom_layouts", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->update("custom_layouts", $data, ["id" => $this->model->getId()]);
 
          // save definition as a serialized file
         $definitionFile = PIMCORE_CUSTOMLAYOUT_DIRECTORY."/custom_definition_". $this->model->getId() .".psf";
@@ -140,8 +140,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("custom_layouts", $this->db->quoteInto("id = ?", $this->model->getId()));
-
+        $this->db->delete("custom_layouts", ["id" => $this->model->getId()]);
         @unlink(PIMCORE_CUSTOMLAYOUT_DIRECTORY."/custom_definition_". $this->model->getId() .".psf");
     }
 }

@@ -68,6 +68,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("element_workflow_state", $this->db->quoteInto("cid = ?", $this->model->getCid()) . " AND " . $this->db->quoteInto("ctype = ?", $this->model->getCtype()));
+        $this->db->delete("element_workflow_state", [
+            "cid" => $this->model->getCid(),
+            "ctype" => $this->model->getCtype()
+        ]);
     }
 }

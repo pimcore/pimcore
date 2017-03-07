@@ -72,6 +72,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("recyclebin", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("recyclebin", ["id" => $this->model->getId()]);
     }
 }

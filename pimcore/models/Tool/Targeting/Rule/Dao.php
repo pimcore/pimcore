@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setName($name);
         }
 
-        $data = $this->db->fetchAll("SELECT id FROM targeting_rules WHERE name = ?", $this->model->getName());
+        $data = $this->db->fetchAll("SELECT id FROM targeting_rules WHERE name = ?", [$this->model->getName()]);
 
         if (count($data) === 1) {
             $this->getById($data[0]["id"]);
@@ -87,7 +87,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("targeting_rules", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("targeting_rules", ["id" => $this->model->getId()]);
     }
 
     /**
@@ -97,6 +97,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             $type = get_object_vars($this->model);
+            $data = [];
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("targeting_rules"))) {
@@ -110,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update("targeting_rules", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("targeting_rules", $data, ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }

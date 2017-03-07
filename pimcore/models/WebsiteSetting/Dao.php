@@ -82,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("website_settings", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("website_settings", ["id" => $this->model->getId()]);
         
         $this->model->clearDependentCache();
     }
@@ -97,6 +97,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setModificationDate($ts);
 
             $type = get_object_vars($this->model);
+            $data = [];
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("website_settings"))) {
@@ -104,8 +105,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-
-            $this->db->update("website_settings", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("website_settings", $data, ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }

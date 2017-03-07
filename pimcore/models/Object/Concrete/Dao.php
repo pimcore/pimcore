@@ -187,9 +187,12 @@ class Dao extends Model\Object\AbstractObject\Dao
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getId()));
+            $this->db->deleteWhere("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getId()));
         } else {
-            $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'", $this->model->getId()));
+            $this->db->delete("object_relations_" . $this->model->getClassId(), [
+                "src_id" => $this->model->getId(),
+                "ownertype" => "object"
+            ]);
         }
 
 
@@ -340,9 +343,9 @@ class Dao extends Model\Object\AbstractObject\Dao
      */
     public function delete()
     {
-        $this->db->delete("object_query_" . $this->model->getClassId(), $this->db->quoteInto("oo_id = ?", $this->model->getId()));
-        $this->db->delete("object_store_" . $this->model->getClassId(), $this->db->quoteInto("oo_id = ?", $this->model->getId()));
-        $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ?", $this->model->getId()));
+        $this->db->delete("object_query_" . $this->model->getClassId(), ["oo_id" => $this->model->getId()]);
+        $this->db->delete("object_store_" . $this->model->getClassId(), ["oo_id" => $this->model->getId()]);
+        $this->db->delete("object_relations_" . $this->model->getClassId(), ["src_id" => $this->model->getId()]);
 
         // delete fields wich have their own delete algorithm
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
@@ -396,7 +399,6 @@ class Dao extends Model\Object\AbstractObject\Dao
 
     public function deleteAllTasks()
     {
-        $this->db->delete("schedule_tasks", "cid='" . $this->model->getId() . "' AND ctype='object'");
-        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='object'", $this->model->getId()));
+        $this->db->delete("schedule_tasks", ["cid" => $this->model->getId(), "ctype" => "object"]);
     }
 }

@@ -294,13 +294,13 @@ class Dao extends Model\Dao\AbstractDao
             if ($deleteQuery) {
                 $id = $object->getId();
                 $tablename = $this->getTableName();
-                $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
+                $this->db->delete($tablename, ["ooo_id" => $id]);
 
                 if (!$container instanceof  Object\Fieldcollection\Definition) {
                     $validLanguages = Tool::getValidLanguages();
                     foreach ($validLanguages as $language) {
                         $queryTable = $this->getQueryTableName() . "_" . $language;
-                        $this->db->delete($queryTable, $this->db->quoteInto("ooo_id = ?", $id));
+                        $this->db->delete($queryTable, ["ooo_id" => $id]);
                     }
                 }
             }
@@ -335,9 +335,13 @@ class Dao extends Model\Dao\AbstractDao
                 . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%");
 
 
-            $this->db->delete("object_relations_" . $object->getClassId(), $sql);
+            $this->db->deleteWhere("object_relations_" . $object->getClassId(), $sql);
         } else {
-            $this->db->delete("object_relations_" . $this->model->getObject()->getClassId(), $this->db->quoteInto("ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = ?", $this->model->getObject()->getId()));
+            $this->db->delete("object_relations_" . $this->model->getObject()->getClassId(), [
+                "ownertype" => "localizedfield",
+                "ownername" => "localizedfield",
+                "src_id" => $this->model->getObject()->getId()
+            ]);
         }
     }
 
@@ -370,7 +374,7 @@ class Dao extends Model\Dao\AbstractDao
             );
         } else {
             $container = $this->model->getClass();
-            $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",", $validLanguages) . ")", $this->model->getObject()->getId());
+            $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",", $validLanguages) . ")", [$this->model->getObject()->getId()]);
         }
 
         foreach ($data as $row) {

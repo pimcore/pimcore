@@ -76,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("versions", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("versions", ["id" => $this->model->getId()]);
     }
 
     /**

@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\Listing;
 
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Prophecy\Comparator\ClosureComparator;
@@ -31,7 +33,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * get select query
      *
-     * @return \Zend_Db_Select
+     * @return QueryBuilder
      * @throws \Exception
      */
     public function getQuery()
@@ -97,10 +99,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $query = $this->getQuery();
-        $query->reset(\Zend_Db_Select::COLUMNS);
-        $query->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
-        $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(*)')]);
+        $query->reset(QueryBuilder::COLUMNS);
+        $query->reset(QueryBuilder::LIMIT_COUNT);
+        $query->reset(QueryBuilder::LIMIT_OFFSET);
+        $query->columns(['totalCount' => new Expression('COUNT(*)')]);
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
@@ -133,22 +135,22 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder $select
      *
      * @return $this
      */
-    protected function addJoins(\Zend_DB_Select $select)
+    protected function addJoins(QueryBuilder $select)
     {
         return $this;
     }
 
 
     /**
-     * @param \Zend_DB_Select $select
+     * @param QueryBuilder $select
      *
      * @return $this
      */
-    protected function addConditions(\Zend_DB_Select $select)
+    protected function addConditions(QueryBuilder $select)
     {
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();

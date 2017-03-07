@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object\Concrete\Dao;
 
+use Pimcore\Db\Connection;
 use Pimcore\Model\Object;
 
 class InheritanceHelper
@@ -47,7 +48,7 @@ class InheritanceHelper
     const ID_FIELD = "oo_id";
 
     /**
-     * @var mixed|\Zend_Db_Adapter_Abstract
+     * @var Connection
      */
     protected $db;
 
@@ -197,7 +198,7 @@ class InheritanceHelper
     /**
      * @param $oo_id
      * @param bool $createMissingChildrenRows
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function doUpdate($oo_id, $createMissingChildrenRows = false)
     {
@@ -348,7 +349,7 @@ class InheritanceHelper
         }
 
         if ($toBeRemovedItemIds) {
-            $this->db->delete($this->querytable, $this->idField . " IN (" . implode(",", $toBeRemovedItemIds) . ")");
+            $this->db->deleteWhere($this->querytable, $this->idField . " IN (" . implode(",", $toBeRemovedItemIds) . ")");
         }
     }
 
@@ -422,7 +423,7 @@ class InheritanceHelper
             return $node;
         }
 
-        $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $node->id);
+        $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node->id]);
 
         $objectRelations = [];
         if (!empty($objectRelationsResult)) {
@@ -518,13 +519,13 @@ class InheritanceHelper
      * @param $oo_id
      * @param $ids
      * @param $fieldname
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     protected function updateQueryTable($oo_id, $ids, $fieldname)
     {
         if (!empty($ids)) {
             $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
-            $this->db->update($this->querytable, [$fieldname => $value], $this->idField . " IN (" . implode(",", $ids) . ")");
+            $this->db->updateWhere($this->querytable, [$fieldname => $value], $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
 
@@ -537,7 +538,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = null;
-            $this->db->update($this->querytable, [$fieldname => $value], $this->idField . " IN (" . implode(",", $ids) . ")");
+            $this->db->updateWhere($this->querytable, [$fieldname => $value], $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
 }

@@ -119,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update("users", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("users", $data, ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -133,10 +133,6 @@ class Dao extends Model\Dao\AbstractDao
         $userId = $this->model->getId();
         Logger::debug("delete user with ID: " . $userId);
 
-        try {
-            $this->db->delete("users", $this->db->quoteInto("id = ?", $userId));
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete("users", ["id" => $userId]);
     }
 }

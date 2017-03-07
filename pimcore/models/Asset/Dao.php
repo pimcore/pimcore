@@ -120,7 +120,7 @@ class Dao extends Model\Element\Dao
             }
 
             // metadata
-            $this->db->delete("assets_metadata", "cid = " . $this->model->getId());
+            $this->db->delete("assets_metadata", ["cid" => $this->model->getId()]);
             $metadata = $this->model->getMetadata();
             $data["hasMetaData"] = 0;
             if (!empty($metadata)) {
@@ -142,7 +142,7 @@ class Dao extends Model\Element\Dao
             $this->db->insertOrUpdate("assets", $data);
 
             // tree_locks
-            $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");
+            $this->db->delete("tree_locks", ["id" => $this->model->getId(), "type" => "asset"]);
             if ($this->model->getLocked()) {
                 $this->db->insert("tree_locks", [
                     "id" => $this->model->getId(),
@@ -163,7 +163,7 @@ class Dao extends Model\Element\Dao
     public function delete()
     {
         try {
-            $this->db->delete("assets", $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete("assets", ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -173,7 +173,9 @@ class Dao extends Model\Element\Dao
     {
         $this->db->update("users_workspaces_asset", [
             "cpath" => $this->model->getRealFullPath()
-        ], "cid = " . $this->model->getId());
+        ], [
+            "cid" => $this->model->getId()
+        ]);
     }
 
     /**
@@ -215,7 +217,7 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", $this->model->getId());
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (" . implode(",", $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -264,7 +266,7 @@ class Dao extends Model\Element\Dao
      */
     public function deleteAllProperties()
     {
-        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'asset'", $this->model->getId()));
+        $this->db->delete("properties", ["cid" => $this->model->getId(), "ctype" => "asset"]);
     }
 
     /**
@@ -272,7 +274,7 @@ class Dao extends Model\Element\Dao
      */
     public function deleteAllMetadata()
     {
-        $this->db->delete("assets_metadata", $this->db->quoteInto("cid = ?", $this->model->getId()));
+        $this->db->delete("assets_metadata", ["cid" => $this->model->getId()]);
     }
 
     /**
@@ -282,7 +284,7 @@ class Dao extends Model\Element\Dao
      */
     public function getVersions()
     {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", $this->model->getId());
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", [$this->model->getId()]);
 
         $versions = [];
         foreach ($versionIds as $versionId) {
@@ -296,12 +298,12 @@ class Dao extends Model\Element\Dao
 
     public function deleteAllPermissions()
     {
-        $this->db->delete("users_workspaces_asset", $this->db->quoteInto("cid = ?", $this->model->getId()));
+        $this->db->delete("users_workspaces_asset", ["cid" => $this->model->getId()]);
     }
 
     public function deleteAllTasks()
     {
-        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='asset'", $this->model->getId()));
+        $this->db->delete("schedule_tasks", ["cid" => $this->model->getId(), "ctype" => "asset"]);
     }
 
     /**
@@ -399,7 +401,7 @@ class Dao extends Model\Element\Dao
     public function unlockPropagate()
     {
         $lockIds = $this->db->fetchCol("SELECT id from assets WHERE path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR id = " . $this->model->getId());
-        $this->db->delete("tree_locks", "type = 'asset' AND id IN (" . implode(",", $lockIds) . ")");
+        $this->db->deleteWhere("tree_locks", "type = 'asset' AND id IN (" . implode(",", $lockIds) . ")");
 
         return $lockIds;
     }

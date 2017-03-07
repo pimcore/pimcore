@@ -89,7 +89,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME_STORES, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete(self::TABLE_NAME_STORES, ["id" => $this->model->getId()]);
     }
 
     /**
@@ -98,8 +98,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         try {
-            $ts = time();
-
+            $data = [];
             $type = get_object_vars($this->model);
 
             foreach ($type as $key => $value) {
@@ -115,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_STORES, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update(self::TABLE_NAME_STORES, $data, ["id" => $this->model->getId()]);
 
             return $this->model;
         } catch (\Exception $e) {

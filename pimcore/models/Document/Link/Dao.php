@@ -79,7 +79,7 @@ class Dao extends Model\Document\Dao
     public function delete()
     {
         try {
-            $this->db->delete("documents_link", $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete("documents_link", ["id" => $this->model->getId()]);
             parent::delete();
         } catch (\Exception $e) {
             throw $e;

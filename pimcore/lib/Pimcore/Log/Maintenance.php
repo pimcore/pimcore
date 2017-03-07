@@ -31,7 +31,7 @@ class Maintenance
         $limit = time() - (6 * 86400);
 
         $db = \Pimcore\Db::get();
-        $db->delete("http_error_log", "date < " . $limit);
+        $db->deleteWhere("http_error_log", "date < " . $limit);
     }
 
     /**

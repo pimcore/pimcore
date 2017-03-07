@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         try {
-            $this->db->update(self::$dbTable, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update(self::$dbTable, $data, ["id" => $this->model->getId()]);
         } catch (\Exception $e) {
             Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
@@ -92,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::$dbTable, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete(self::$dbTable, ["id" => $this->model->getId()]);
     }
 
     /**

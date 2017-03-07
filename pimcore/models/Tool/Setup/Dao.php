@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $file
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function insertDump($file)
     {
@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
         \Pimcore\Db::reset();
 
         // set the id of the system user to 0
-        $this->db->update("users", ["id" => 0], $this->db->quoteInto("name = ?", "system"));
+        $this->db->update("users", ["id" => 0], ["name" => "system"]);
     }
 
     /**
@@ -145,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
             "admin" => 1,
             "active" => 1
         ]);
-        $this->db->update("users", ["id" => 0], $this->db->quoteInto("name = ?", "system"));
+        $this->db->update("users", ["id" => 0], ["name" => "system"]);
 
 
         $userPermissions = [

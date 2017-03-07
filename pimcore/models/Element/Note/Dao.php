@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
 
         // get key-value data
-        $keyValues = $this->db->fetchAll("SELECT * FROM notes_data WHERE id = ?", $id);
+        $keyValues = $this->db->fetchAll("SELECT * FROM notes_data WHERE id = ?", [$id]);
         $preparedData = [];
 
         foreach ($keyValues as $keyValue) {
@@ -147,12 +147,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("notes", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("notes", ["id" => $this->model->getId()]);
         $this->deleteData();
     }
 
     protected function deleteData()
     {
-        $this->db->delete("notes_data", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("notes_data", ["id" => $this->model->getId()]);
     }
 }

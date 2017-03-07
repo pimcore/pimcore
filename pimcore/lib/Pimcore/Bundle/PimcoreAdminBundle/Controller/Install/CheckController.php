@@ -359,7 +359,7 @@ class CheckController extends Controller implements EventedControllerInterface
             // delete
             $queryCheck = true;
             try {
-                $db->delete("__pimcore_req_check");
+                $db->deleteWhere("__pimcore_req_check");
             } catch (\Exception $e) {
                 $queryCheck = false;
             }

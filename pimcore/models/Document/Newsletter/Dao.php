@@ -80,9 +80,8 @@ class Dao extends Model\Document\PageSnippet\Dao
         try {
             $this->deleteAllProperties();
 
-            $this->db->delete("documents_newsletter", $this->db->quoteInto("id = ?", $this->model->getId()));
-            //deleting log files
-            $this->db->delete("email_log", $this->db->quoteInto("documentId = ?", $this->model->getId()));
+            $this->db->delete("documents_newsletter", ["id" => $this->model->getId()]);
+            $this->db->delete("email_log", ["documentId" => $this->model->getId()]);
 
             parent::delete();
         } catch (\Exception $e) {

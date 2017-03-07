@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $ownername
      * @param $position
      * @param $type
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public function save(Object\Concrete $object, $ownertype, $ownername, $position, $type = "object")
     {

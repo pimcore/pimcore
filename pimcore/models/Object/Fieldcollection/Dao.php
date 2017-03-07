@@ -129,7 +129,10 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
+                $this->db->delete($tableName, [
+                    "o_id" => $object->getId(),
+                    "fieldname" => $this->model->getFieldname()
+                ]);
             } catch (\Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
@@ -139,7 +142,10 @@ class Dao extends Model\Dao\AbstractDao
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
-                    $this->db->delete($tableName, $this->db->quoteInto("ooo_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
+                    $this->db->delete($tableName, [
+                        "ooo_id" => $object->getId(),
+                        "fieldname" => $this->model->getFieldname()
+                    ]);
                 } catch (\Exception $e) {
                     \Logger::error($e);
                 }
@@ -164,7 +170,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // empty relation table
-        $this->db->delete("object_relations_" . $object->getClassId(),
+        $this->db->deleteWhere("object_relations_" . $object->getClassId(),
             "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()) . ")"
             . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $this->model->getFieldname() . "/%") . ")"
         );
