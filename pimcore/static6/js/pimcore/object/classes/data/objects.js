@@ -54,7 +54,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
     },
 
     getIconClass: function () {
-        return "pimcore_icon_object";
+        return "pimcore_icon_objects";
     },
 
     getLayout: function ($super) {
