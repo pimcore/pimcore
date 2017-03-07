@@ -135,6 +135,20 @@ $this->url([
 Output will be: `/news-category/random+text_5_category_776`
 
 
+### Setting priorities
+
+There might be cases where you want to use a same pattern at the beginning, but in same time you require a completely different controller, action or additional parameters.
+In the example below you can see when exactly you **need** to set the priorities, if you leave those empty, depending on your environment, you may experience an uncommon behavior where one of your pattern will be completely ignored.
+
+In example below you can see how both routes are regulated by priorities.
+
+
+| ... | Pattern              | Reverse          | ... | Controller | Action | Variables | ... | Priority |
+|-----|----------------------|------------------|-----|------------|--------|-----------|-----|----------|
+| ... | /\/blog\/(.+)/       | /blog/%month     | ... | blog       | list   | month     | ... | 1        |
+| ... | /\/blog\/(.+)\/(.+)/ | /blog/%month/%id | ... | blog       | detail | month,id  | ... | 2        |
+
+
 ### Site Support
 
 It's possible to generate URL's pointing to a different Site inside Pimcore. To do so, set the option *Site*. 
