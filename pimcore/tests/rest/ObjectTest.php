@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Rest;
 
+use Codeception\Util\Debug;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Folder;
 use Pimcore\Model\Object\Unittest;

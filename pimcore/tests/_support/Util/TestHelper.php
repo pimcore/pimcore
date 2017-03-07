@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Util;
 
+use Codeception\Util\Debug;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
@@ -13,6 +14,7 @@ use Pimcore\Model\Object\Unittest;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
+use Pimcore\Tests\Helper\Datatype\TestData;
 
 class TestHelper
 {
@@ -167,7 +169,7 @@ class TestHelper
      *
      * @return string
      */
-    protected static function createDocumentComparisonString(Document $document, $ignoreCopyDifferences = false)
+    public static function createDocumentComparisonString(Document $document, $ignoreCopyDifferences = false)
     {
         if ($document instanceof Document) {
             $d = [];
@@ -352,7 +354,7 @@ class TestHelper
      *
      * @return string
      */
-    protected static function createObjectComparisonString(AbstractObject $object, $ignoreCopyDifferences = false)
+    public static function createObjectComparisonString(AbstractObject $object, $ignoreCopyDifferences = false)
     {
         if ($object instanceof AbstractObject) {
             $o = [];
@@ -495,7 +497,7 @@ class TestHelper
      *
      * @return Unittest
      */
-    public static function createFullyFledgedObject($keyPrefix = '', $save = true, $seed = 1)
+    public static function createFullyFledgedObject(TestData $testDataHelper, $keyPrefix = '', $save = true, $seed = 1)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -509,46 +511,44 @@ class TestHelper
         $object->setCreationDate(time());
         $object->setKey($keyPrefix . uniqid() . rand(10, 99));
 
-        try {
-            TestData::fillInput($object, "input", $seed);
-            TestData::fillNumber($object, "number", $seed);
-            TestData::fillTextarea($object, "textarea", $seed);
-            TestData::fillSlider($object, "slider", $seed);
-            TestData::fillHref($object, "href", $seed);
-            TestData::fillMultihref($object, "multihref", $seed);
-            TestData::fillImage($object, "image", $seed);
-            TestData::fillHotspotImage($object, "hotspotimage", $seed);
-            TestData::fillLanguage($object, "languagex", $seed);
-            TestData::fillCountry($object, "country", $seed);
-            TestData::fillDate($object, "date", $seed);
-            TestData::fillDate($object, "datetime", $seed);
-            TestData::fillTime($object, "time", $seed);
-            TestData::fillSelect($object, "select", $seed);
-            TestData::fillMultiSelect($object, "multiselect", $seed);
-            TestData::fillUser($object, "user", $seed);
-            TestData::fillCheckbox($object, "checkbox", $seed);
-            TestData::fillWysiwyg($object, "wysiwyg", $seed);
-            TestData::fillPassword($object, "password", $seed);
-            TestData::fillMultiSelect($object, "countries", $seed);
-            TestData::fillMultiSelect($object, "languages", $seed);
-            TestData::fillGeopoint($object, "point", $seed);
-            TestData::fillGeobounds($object, "bounds", $seed);
-            TestData::fillGeopolygon($object, "poly", $seed);
-            TestData::fillTable($object, "table", $seed);
-            TestData::fillLink($object, "link", $seed);
-            TestData::fillStructuredTable($object, "structuredtable", $seed);
-            TestData::fillObjects($object, "objects", $seed);
-            TestData::fillObjectsWithMetadata($object, "objectswithmetadata", $seed);
-            TestData::fillInput($object, "linput", $seed, "de");
-            TestData::fillInput($object, "linput", $seed, "en");
-            TestData::fillObjects($object, "lobjects", $seed, "de");
-            TestData::fillObjects($object, "lobjects", $seed, "en");
-            TestData::fillKeyValue($object, "keyvaluepairs", $seed);
-            TestData::fillBricks($object, "mybricks", $seed);
-            TestData::fillFieldCollection($object, "myfieldcollection", $seed);
-        } catch (\Exception $e) {
-            print($e . "\n");
-        }
+        $testDataHelper->fillInput($object, "input", $seed);
+        $testDataHelper->fillNumber($object, "number", $seed);
+        $testDataHelper->fillTextarea($object, "textarea", $seed);
+        $testDataHelper->fillSlider($object, "slider", $seed);
+        $testDataHelper->fillHref($object, "href", $seed);
+        $testDataHelper->fillMultihref($object, "multihref", $seed);
+        $testDataHelper->fillImage($object, "image", $seed);
+        $testDataHelper->fillHotspotImage($object, "hotspotimage", $seed);
+        $testDataHelper->fillLanguage($object, "languagex", $seed);
+        $testDataHelper->fillCountry($object, "country", $seed);
+        $testDataHelper->fillDate($object, "date", $seed);
+        $testDataHelper->fillDate($object, "datetime", $seed);
+        $testDataHelper->fillTime($object, "time", $seed);
+        $testDataHelper->fillSelect($object, "select", $seed);
+        $testDataHelper->fillMultiSelect($object, "multiselect", $seed);
+        $testDataHelper->fillUser($object, "user", $seed);
+        $testDataHelper->fillCheckbox($object, "checkbox", $seed);
+        $testDataHelper->fillWysiwyg($object, "wysiwyg", $seed);
+        $testDataHelper->fillPassword($object, "password", $seed);
+        $testDataHelper->fillMultiSelect($object, "countries", $seed);
+        $testDataHelper->fillMultiSelect($object, "languages", $seed);
+        $testDataHelper->fillGeopoint($object, "point", $seed);
+        $testDataHelper->fillGeobounds($object, "bounds", $seed);
+        $testDataHelper->fillGeopolygon($object, "poly", $seed);
+        $testDataHelper->fillTable($object, "table", $seed);
+        $testDataHelper->fillLink($object, "link", $seed);
+        $testDataHelper->fillStructuredTable($object, "structuredtable", $seed);
+        $testDataHelper->fillObjects($object, "objects", $seed);
+        $testDataHelper->fillObjectsWithMetadata($object, "objectswithmetadata", $seed);
+
+        $testDataHelper->fillInput($object, "linput", $seed, "de");
+        $testDataHelper->fillInput($object, "linput", $seed, "en");
+
+        $testDataHelper->fillObjects($object, "lobjects", $seed, "de");
+        $testDataHelper->fillObjects($object, "lobjects", $seed, "en");
+
+        $testDataHelper->fillBricks($object, "mybricks", $seed);
+        $testDataHelper->fillFieldCollection($object, "myfieldcollection", $seed);
 
         if ($save) {
             $object->save();
