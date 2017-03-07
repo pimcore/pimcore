@@ -9,6 +9,34 @@ use Pimcore\Db\ZendCompatibility\QueryBuilder;
 class Connection extends \Doctrine\DBAL\Connection {
 
     /**
+     * Specifies whether the connection automatically quotes identifiers.
+     * If true, the methods insert(), update() apply identifier quoting automatically.
+     * If false, developer must quote identifiers themselves by calling quoteIdentifier().
+     *
+     * @var bool
+     */
+    protected $autoQuoteIdentifiers = true;
+
+    /**
+     * @inheritdoc
+     */
+    public function update($tableExpression, array $data, array $identifier, array $types = array())
+    {
+        $data = $this->quoteDataIdentifiers($data);
+        $identifier = $this->quoteDataIdentifiers($identifier);
+        return parent::update($tableExpression, $data, $identifier, $types);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function insert($tableExpression, array $data, array $types = array())
+    {
+        $data = $this->quoteDataIdentifiers($data);
+        return parent::insert($tableExpression, $data, $types);
+    }
+
+    /**
      * Deletes table rows based on a custom WHERE clause.
      *
      * @param  mixed        $table The table to update.
@@ -34,13 +62,11 @@ class Connection extends \Doctrine\DBAL\Connection {
      */
     public function updateWhere($table, array $data, $where = '')
     {
-        $columnList = array();
         $set = array();
         $paramValues = array();
 
         foreach ($data as $columnName => $value) {
-            $columnList[] = $columnName;
-            $set[] = $columnName . ' = ?';
+            $set[] = $this->quoteIdentifier($columnName) . ' = ?';
             $paramValues[] = $value;
         }
 
@@ -356,5 +382,31 @@ class Connection extends \Doctrine\DBAL\Connection {
         }
 
         return $params;
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    protected function quoteDataIdentifiers($data) {
+
+        if(!$this->autoQuoteIdentifiers) {
+            return $data;
+        }
+
+        $newData = [];
+        foreach($data as $key => $value) {
+            $newData[$this->quoteIdentifier($key)] = $value;
+        }
+
+        return $newData;
+    }
+
+    /**
+     * @param bool $autoQuoteIdentifiers
+     */
+    public function setAutoQuoteIdentifiers($autoQuoteIdentifiers)
+    {
+        $this->autoQuoteIdentifiers = $autoQuoteIdentifiers;
     }
 }
