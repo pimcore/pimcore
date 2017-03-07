@@ -240,20 +240,6 @@ class TestHelper
             $d1Hash = self::createDocumentComparisonString($doc1, $ignoreCopyDifferences);
             $d2Hash = self::createDocumentComparisonString($doc2, $ignoreCopyDifferences);
 
-            $id = uniqid();
-
-            /*
-            $myFile = TESTS_PATH . "/output/document1-" . $id . ".txt";
-            $fh = fopen($myFile, 'w');
-            fwrite($fh, $d1Hash);
-            fclose($fh);
-
-            $myFile = TESTS_PATH . "/output/document2-" . $id . ".txt";
-            $fh = fopen($myFile, 'w');
-            fwrite($fh, $d2Hash);
-            fclose($fh);
-             */
-
             return $d1Hash === $d2Hash ? true : false;
         } else {
             return false;
