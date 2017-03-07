@@ -96,7 +96,7 @@ class ObjectTest extends RestTestCase
     {
         // create folder but don't save it
         /** @var Folder $folder */
-        $folder = TestHelper::createEmptyFolder("myfolder", false);
+        $folder = TestHelper::createEmptyObjectFolder("myfolder", false);
         $folder->setType('folder');
 
         $fitem = AbstractObject::getById($folder->getId());

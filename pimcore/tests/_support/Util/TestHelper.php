@@ -479,24 +479,24 @@ class TestHelper
      *
      * @return ObjectModel\Folder
      */
-    public static function createEmptyFolder($keyPrefix = '', $save = true)
+    public static function createEmptyObjectFolder($keyPrefix = '', $save = true)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
         }
 
-        $emptyObject = new ObjectModel\Folder();
-        $emptyObject->setParentId(1);
-        $emptyObject->setUserOwner(1);
-        $emptyObject->setUserModification(1);
-        $emptyObject->setCreationDate(time());
-        $emptyObject->setKey($keyPrefix . uniqid() . rand(10, 99));
+        $folder = new ObjectModel\Folder();
+        $folder->setParentId(1);
+        $folder->setUserOwner(1);
+        $folder->setUserModification(1);
+        $folder->setCreationDate(time());
+        $folder->setKey($keyPrefix . uniqid() . rand(10, 99));
 
         if ($save) {
-            $emptyObject->save();
+            $folder->save();
         }
 
-        return $emptyObject;
+        return $folder;
     }
 
     /**
@@ -591,7 +591,7 @@ class TestHelper
      *
      * @return Document\Page
      */
-    public static function createEmptyDocumentPage($keyPrefix = '', $save = true)
+    public static function createEmptyDocumentPage($keyPrefix = '', $save = true, $publish = true)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -605,11 +605,41 @@ class TestHelper
         $document->setCreationDate(time());
         $document->setKey($keyPrefix . uniqid() . rand(10, 99));
 
+        if ($publish) {
+            $document->setPublished(true);
+        }
+
         if ($save) {
             $document->save();
         }
 
         return $document;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param bool   $save
+     *
+     * @return Document\Folder
+     */
+    public static function createEmptyDocumentFolder($keyPrefix = '', $save = true)
+    {
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
+        }
+
+        $folder = new Document\Folder();
+        $folder->setParentId(1);
+        $folder->setUserOwner(1);
+        $folder->setUserModification(1);
+        $folder->setCreationDate(time());
+        $folder->setKey($keyPrefix . uniqid() . rand(10, 99));
+
+        if ($save) {
+            $folder->save();
+        }
+
+        return $folder;
     }
 
     /**
