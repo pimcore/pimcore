@@ -2,6 +2,7 @@
 
 namespace PimcoreLegacyBundle;
 
+use Pimcore\Cache;
 use PimcoreLegacyBundle\ClassLoader\LegacyClassLoader;
 use PimcoreLegacyBundle\DependencyInjection\Compiler\FallbackRouterPass;
 use PimcoreLegacyBundle\DependencyInjection\Compiler\LegacyAreaHandlerPass;
@@ -31,6 +32,9 @@ class PimcoreLegacyBundle extends Bundle
 
         \Zend_Registry::_unsetInstance();
         \Zend_Registry::setClassName("\\PimcoreLegacyBundle\\Zend\\Registry\\Proxy");
+
+        // setup ZF cache handler
+        Cache::setZendHandler($this->container->get('pimcore_legacy.cache.zend.handler'));
     }
 
     protected function defineConstants()
