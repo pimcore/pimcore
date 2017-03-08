@@ -48,7 +48,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/tree-get-childs-by-id/'
+                    url: '/admin/user/tree-get-childs-by-id'
                 }
             });
 
