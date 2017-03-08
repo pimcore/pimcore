@@ -74,7 +74,10 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.selectedClass,
             fields,
             "/admin/variants/get-variants",
-            {language: this.gridLanguage},
+            {
+                language: this.gridLanguage,
+                objectId: this.element.id
+            },
             false
         );
 
@@ -142,6 +145,18 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             }.bind(this)
         });
 
+        this.clearFilterButton =  new Ext.Button({
+            iconCls: "pimcore_icon_clear_filters",
+            hidden: true,
+            text: t("clear_filters"),
+            tooltip: t("clear_filters"),
+            handler: function (button) {
+                this.grid.filters.clearFilters();
+                this.toolbarFilterInfo.hide();
+                this.clearFilterButton.hide();
+            }.bind(this)
+        });
+
 
         this.createSqlEditor();
 
@@ -149,7 +164,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             clicksToEdit: 1
         });
 
-        var plugins = [this.cellEditing ];
+        var plugins = [this.cellEditing, 'gridfilters'];
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
@@ -174,7 +189,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
-                '-', this.languageInfo, '-', this.toolbarFilterInfo, '->'
+                '-', this.languageInfo, '-', this.toolbarFilterInfo, this.clearFilterButton, '->'
                 ,"-",this.sqlEditor
                 ,this.sqlButton,"-",{
                     text: t("export_csv"),
@@ -220,7 +235,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         // check for filter updates
         this.grid.on("filterchange", function () {
-            this.filterUpdateFunction(this.grid, this.toolbarFilterInfo);
+            this.filterUpdateFunction(this.grid, this.toolbarFilterInfo, this.clearFilterButton);
         }.bind(this));
 
         gridHelper.applyGridEvents(this.grid);

@@ -586,6 +586,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         proxy.setExtraParams(
                             {
                                 class: proxy.extraParams.class,
+                                objectId: proxy.extraParams.objectId,
                                 "fields[]": proxy.extraParams["fields[]"]
                             }
                         );
@@ -611,6 +612,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 proxy.setExtraParams(
                     {
                         class: proxy.extraParams.class,
+                        objectId: proxy.extraParams.objectId,
                         "fields[]": proxy.extraParams["fields[]"]
                     }
                 );
