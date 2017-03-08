@@ -20,6 +20,7 @@ use Pimcore\Model\Tool\Tag;
 use Pimcore\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -1068,21 +1069,20 @@ class SettingsController extends AdminController
     /**
      * @Route("/thumbnail-adapter-check")
      * @param Request $request
-     * @return JsonResponse
+     * @return Response
      */
     public function thumbnailAdapterCheckAction(Request $request)
     {
-        echo $this->trans("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") ;
-        exit;
-//
-//        $instance = \Pimcore\Image::getInstance();
-//        if ($instance instanceof \Pimcore\Image\Adapter\GD) {
-//            echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-//                $this->trans("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
-//                '</span>';
-//        }
-//
-//        exit;
+        $content = "";
+
+        $instance = \Pimcore\Image::getInstance();
+        if ($instance instanceof \Pimcore\Image\Adapter\GD) {
+            $content = '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
+                $this->trans("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
+                '</span>';
+        }
+
+        return new Response($content);
     }
 
     /**
@@ -1204,17 +1204,19 @@ class SettingsController extends AdminController
     /**
      * @Route("/video-thumbnail-adapter-check")
      * @param Request $request
-     * @return JsonResponse
+     * @return Response
      */
     public function videoThumbnailAdapterCheckAction(Request $request)
     {
+        $content = "";
+
         if (!\Pimcore\Video::isAvailable()) {
-            echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
+            $content = '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
                 $this->trans("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing") .
                 '</span>';
         }
 
-        exit;
+        return new Response($content);
     }
 
     /**

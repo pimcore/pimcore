@@ -76,7 +76,10 @@ pimcore.settings.thumbnail.item = Class.create({
                 xtype: "panel",
                 autoHeight: true,
                 border: false,
-                autoLoad: "/admin/settings/thumbnail-adapter-check"
+                loader: {
+                    url: "/admin/settings/thumbnail-adapter-check",
+                    autoLoad: true
+                }
             },{
                 xtype: "textfield",
                 name: "name",

@@ -82,7 +82,10 @@ pimcore.settings.videothumbnail.item = Class.create({
                 xtype: "panel",
                 autoHeight: true,
                 border: false,
-                autoLoad: "/admin/settings/video-thumbnail-adapter-check"
+                loader: {
+                    url: "/admin/settings/video-thumbnail-adapter-check",
+                    autoLoad: true
+                }
             },{
                 xtype: "textfield",
                 name: "name",

@@ -540,6 +540,7 @@ class MiscController extends AdminController
      * @Route("/phpinfo")
      * @param Request $request
      * @throws \Exception
+     * @return Response
      */
     public function phpinfoAction(Request $request)
     {
@@ -547,8 +548,11 @@ class MiscController extends AdminController
             throw new \Exception("Permission denied");
         }
 
+        ob_start();
         phpinfo();
-        exit;
+        $content = ob_get_clean();
+
+        return new Response($content);
     }
 
 

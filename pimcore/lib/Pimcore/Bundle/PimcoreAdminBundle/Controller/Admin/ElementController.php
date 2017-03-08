@@ -12,6 +12,7 @@ use Pimcore\Logger;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ElementController extends AdminController
@@ -20,21 +21,23 @@ class ElementController extends AdminController
     /**
      * @Route("/element/lock-element")
      * @param Request $request
+     * @return Response
      */
     public function lockElementAction(Request $request)
     {
         Element\Editlock::lock($request->get("id"), $request->get("type"));
-        exit;
+        return $this->json(["success" => true]);
     }
 
     /**
      * @Route("/element/unlock-element")
      * @param Request $request
+     * @return Response
      */
     public function unlockElementAction(Request $request)
     {
         Element\Editlock::unlock($request->get("id"), $request->get("type"));
-        exit;
+        return $this->json(["success" => true]);
     }
 
     /**

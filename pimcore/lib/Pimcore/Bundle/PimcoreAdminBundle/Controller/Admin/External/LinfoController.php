@@ -20,6 +20,7 @@ use \Linfo\Common;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,32 +36,35 @@ class LinfoController extends AdminController implements EventedControllerInterf
     /**
      * @Route("/external_linfo/")
      * @param Request $request
+     * @return Response
      */
     public function indexAction(Request $request)
     {
-        try {
-            $settings = Common::getVarFromFile($this->linfoHome . 'sample.config.inc.php', 'settings');
-            $settings["compress_content"] = false;
 
-            $linfo = new Linfo($settings);
-            $linfo->scan();
-            $output = new \Linfo\Output\Html($linfo);
-            $output->output();
-        } catch (FatalException $e) {
-            echo $e->getMessage()."\n";
-            exit(1);
-        }
-        exit();
+        $settings = Common::getVarFromFile($this->linfoHome . 'sample.config.inc.php', 'settings');
+        $settings["compress_content"] = false;
+
+        $linfo = new Linfo($settings);
+        $linfo->scan();
+        $output = new \Linfo\Output\Html($linfo);
+
+        ob_start();
+        $output->output();
+        $content = ob_get_clean();
+
+        return new Response($content);
     }
 
     /**
      * @Route("/external_linfo/layout/{anything}", defaults={"anything" = null}, requirements={"anything"=".+"})
      * @param Request $request
+     * @return Response
      */
     public function layoutAction(Request $request)
     {
         // proxy for resources
 
+        $response = new Response();
         $path = $request->getPathInfo();
         $path = str_replace("/admin/external_linfo/", "", $path);
 
@@ -73,18 +77,17 @@ class LinfoController extends AdminController implements EventedControllerInterf
             $path = $this->linfoHome . $path;
 
             if (preg_match("@.css$@", $path)) {
-                // it seems that css files need the right content-type (Chrome)
-                header("Content-Type: text/css");
+                $response->headers->set("Content-Type","text/css");
             } elseif (preg_match("@.js$@", $path)) {
-                header("Content-Type: text/javascript");
+                $response->headers->set("Content-Type","text/javascript");
             }
 
             if (file_exists($path)) {
-                echo file_get_contents($path);
+                $response->setContent(file_get_contents($path));
             }
         }
 
-        exit;
+        return $response;
     }
 
     /**

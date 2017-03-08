@@ -3,8 +3,10 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\File;
 use Pimcore\Model\Tool\Qrcode;
 use Pimcore\Model\Document;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -111,7 +113,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     /**
      * @Route("/code")
      * @param Request $request
-     * @return mixed
+     * @return BinaryFileResponse
      */
     public function codeAction(Request $request)
     {
@@ -147,15 +149,19 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
             $code->setBackgroundColor($hexToRGBA($request->get("backgroundColor")));
         }
 
-        header("Content-Type: image/png");
+        $tmpFile = PIMCORE_PRIVATE_VAR . "/qr-code-" . uniqid() . ".png";
+        $response = new BinaryFileResponse($tmpFile);
+        $response->deleteFileAfterSend(true);
+        $response->headers->set("Content-Type","image/png");
+
         if ($request->get("download")) {
             $code->setSize(4000);
-            header('Content-Disposition: attachment;filename="qrcode-' . $request->get("name", "preview") . '.png"', true);
+            $response->setContentDisposition("attachment", 'qrcode-' . $request->get("name", "preview") . '.png');
         }
 
-        $code->render();
+        $code->render($tmpFile);
 
-        exit;
+        return $response;
     }
 
     /**

@@ -22,6 +22,7 @@ use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -198,8 +199,8 @@ class PrintpageControllerBase extends DocumentControllerBase
     /**
      * @Route("/pdf-download")
      * @param Request $request
-     * @return JsonResponse
      * @throws \Exception
+     * @return BinaryFileResponse
      */
     public function pdfDownloadAction(Request $request)
     {
@@ -209,20 +210,12 @@ class PrintpageControllerBase extends DocumentControllerBase
         }
 
         if (file_exists($document->getPdfFileName())) {
+            $response = new BinaryFileResponse($document->getPdfFileName());
+            $response->headers->set("Content-Type", "application/pdf");
             if ($request->get("download")) {
-                header("Content-Type: application/pdf");
-                header("Content-Disposition: attachment; filename=" . $document->getKey() . '.pdf'); while (@ob_end_flush()) ;
-                flush();
-
-                readfile($document->getPdfFileName());
-                exit;
-            } else {
-                header("Content-Type: application/pdf"); while (@ob_end_flush()) ;
-                flush();
-
-                readfile($document->getPdfFileName());
-                exit;
+                $response->setContentDisposition("attachment", $document->getKey() . '.pdf');
             }
+            return $response;
         } else {
             throw new \Exception("File does not exist");
         }
