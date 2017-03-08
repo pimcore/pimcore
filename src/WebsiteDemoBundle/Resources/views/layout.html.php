@@ -124,7 +124,7 @@ use Pimcore\Model\Document\Page;
         ?>
 
         <div class="<?= $mainColClass ?>">
-            <?php $this['slots']->output('_content') ?>
+            <?php $this->slots()->output('_content') ?>
 
             <div>
                 <a href="/"><?= $this->translate('Home'); ?></a> &gt;
@@ -153,7 +153,7 @@ use Pimcore\Model\Document\Page;
         <?php endif; ?>
     </div>
 <?php else: ?>
-    <?php $this['slots']->output('_content') ?>
+    <?php $this->slots()->output('_content') ?>
 <?php endif; ?>
 
 <?php

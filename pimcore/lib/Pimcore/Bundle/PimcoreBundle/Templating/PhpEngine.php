@@ -7,7 +7,6 @@ use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\Helper\SlotsHelper;
@@ -20,11 +19,19 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadScript;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadStyle;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadTitle;
-use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Inc;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\InlineScript;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Model\Document\Tag;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\AssetsHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\CodeHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\FormHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\RequestHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\SessionHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\StopwatchHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\TranslatorHelper;
 
 /**
  * Symfony PHP engine with pimcore additions:
@@ -33,11 +40,25 @@ use Pimcore\Model\Document\Tag;
  *  - helper brokers integrate other view helpers (ZF) on __call
  *  - tag integration
  *
+ * Defined in \Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperShortcuts
  * @method string getLocale()
  * @method Request getRequest()
- * @method RouterHelper router()
  * @method SlotsHelper slots()
+ * @method string path($name, $parameters = array(), $relative = false)
+ * @method string url($name, $parameters = array(), $schemeRelative = false)
  *
+ * Symfony core helpers
+ * @method ActionsHelper actions()
+ * @method AssetsHelper assets()
+ * @method CodeHelper code()
+ * @method FormHelper form()
+ * @method RequestHelper request()
+ * @method RouterHelper router()
+ * @method SessionHelper session()
+ * @method StopwatchHelper stopwatch()
+ * @method TranslatorHelper translator()
+ *
+ * Pimcore helpers
  * @method string action($action, $controller, $module, array $params = [])
  * @method Cache cache($name, $lifetime = null, $force = false)
  * @method DeviceDetector device($default = null)
@@ -49,12 +70,13 @@ use Pimcore\Model\Document\Tag;
  * @method HeadScript headScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
  * @method HeadStyle headStyle($content = null, $placement = 'APPEND', $attributes = array())
  * @method HeadTitle headTitle($title = null, $setType = null)
- * @method Inc inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
+ * @method string inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
  * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
  * @method Navigation navigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
  * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
  * @method string translate($key, $parameters = [])
  *
+ * Pimcore editables
  * @method Tag\Area area($name, $options = [])
  * @method Tag\Areablock areablock($name, $options = [])
  * @method Tag\Block block($name, $options = [])

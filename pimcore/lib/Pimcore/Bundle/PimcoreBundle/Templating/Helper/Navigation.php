@@ -2,12 +2,19 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation\Renderer\Menu;
 use Pimcore\Bundle\PimcoreBundle\Templating\TimedPhpEngine;
 use Pimcore\Navigation\Builder;
 use Pimcore\Navigation\Container;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine;
 use Symfony\Component\Templating\Helper\Helper;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation\Renderer\Menu as MenuRenderer;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation\Renderer\Breadcrumbs;
 
+/**
+ * @method MenuRenderer menu()
+ * @method Breadcrumbs breadcrumbs()
+ */
 class Navigation extends Helper
 {
     /**

@@ -5,6 +5,10 @@
  * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
  */
 
+use Pimcore\Model\Asset\Video;
+use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Document;
+
 $this->extend('WebsiteDemoBundle::layout.html.php');
 
 ?>
@@ -21,6 +25,9 @@ $this->extend('WebsiteDemoBundle::layout.html.php');
 
 <div class="row">
     <?php foreach ($this->list as $asset) { ?>
+        <?php
+        /** @var Asset|Video|Document $asset */
+        ?>
         <?php if(in_array($asset->getType(), ["video", "image", "document"])) { ?>
             <div class="col-xs-3" style="padding-bottom: 10px">
                 <?php if($asset instanceof \Pimcore\Model\Asset\Image) { ?>

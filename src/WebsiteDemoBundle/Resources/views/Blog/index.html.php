@@ -5,6 +5,8 @@
  * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
  */
 
+use Pimcore\Model\Object\BlogArticle;
+
 $this->extend('WebsiteDemoBundle::layout.html.php');
 
 ?>
@@ -16,6 +18,9 @@ $this->extend('WebsiteDemoBundle::layout.html.php');
 <div class="row blog">
     <div class="col-md-8 list">
         <?php foreach ($this->articles as $article) { ?>
+            <?php
+            /** @var BlogArticle $article */
+            ?>
             <div class="media">
                 <?php
                     $detailLink = $this->path("blog", [
