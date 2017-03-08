@@ -11,13 +11,7 @@ $this->extend('WebsiteDemoBundle::layout.html.php');
 <?php
     // set page meta-data
     $this->headTitle()->set($this->article->getTitle());
-
-    $description = strip_tags($this->article->getText());
-    $description = \Website\Tool\Text::getStringAsOneLine($description);
-    $description = \Website\Tool\Text::cutStringRespectingWhitespace($description, 160);
-
-    // TODO HEAD META HELPER
-    // $this->headMeta($description, "description");
+    $this->headMeta()->setDescription($this->article->getText(), 160);
 ?>
 <section class="area-wysiwyg">
 

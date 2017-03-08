@@ -37,7 +37,7 @@ use Pimcore\Model\Document\Page;
 
     if ($document->getDescription()) {
         // use the manually set description if available
-        $this->headMeta()->appendName('description', $document->getDescription());
+        $this->headMeta()->setDescription($document->getDescription());
     }
 
     $this->headTitle()->append("pimcore Demo");

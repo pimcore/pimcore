@@ -42,18 +42,18 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService;
 
 /**
- * @method $this appendHttpEquiv($keyValue, $content, $conditionalHttpEquiv)
- * @method $this appendName($keyValue, $content, $conditionalName)
- * @method $this appendProperty($property, $content, $modifiers)
- * @method $this offsetSetHttpEquiv($index, $keyValue, $content, $conditionalHttpEquiv)
- * @method $this offsetSetName($index, $keyValue, $content, $conditionalName)
- * @method $this offsetSetProperty($index, $property, $content, $modifiers)
- * @method $this prependHttpEquiv($keyValue, $content, $conditionalHttpEquiv)
- * @method $this prependName($keyValue, $content, $conditionalName)
- * @method $this prependProperty($property, $content, $modifiers)
- * @method $this setHttpEquiv($keyValue, $content, $modifiers)
- * @method $this setName($keyValue, $content, $modifiers)
- * @method $this setProperty($property, $content, $modifiers)
+ * @method $this appendHttpEquiv($keyValue, $content, $conditionalHttpEquiv=[])
+ * @method $this appendName($keyValue, $content, $conditionalName=[])
+ * @method $this appendProperty($property, $content, $modifiers=[])
+ * @method $this offsetSetHttpEquiv($index, $keyValue, $content, $conditionalHttpEquiv=[])
+ * @method $this offsetSetName($index, $keyValue, $content, $conditionalName=[])
+ * @method $this offsetSetProperty($index, $property, $content, $modifiers=[])
+ * @method $this prependHttpEquiv($keyValue, $content, $conditionalHttpEquiv=[])
+ * @method $this prependName($keyValue, $content, $conditionalName=[])
+ * @method $this prependProperty($property, $content, $modifiers=[])
+ * @method $this setHttpEquiv($keyValue, $content, $modifiers=[])
+ * @method $this setName($keyValue, $content, $modifiers=[])
+ * @method $this setProperty($property, $content, $modifiers=[])
  */
 class HeadMeta extends AbstractHelper
 {
@@ -414,4 +414,30 @@ class HeadMeta extends AbstractHelper
         return $this->rawItems;
     }
 
+    /**
+     * @param string $string
+     * @param int $length
+     * @param string $suffix
+     * @return $this
+     */
+    public function setDescription($string, $length = null, $suffix = "") {
+
+        $string = strip_tags($string);
+
+        $string = str_replace("\r\n", " ", $string);
+        $string = str_replace("\n", " ", $string);
+        $string = str_replace("\r", " ", $string);
+        $string = str_replace("\t", "", $string);
+        $string = preg_replace('#[ ]+#', ' ', $string);
+
+        if ($length && $length < strlen($string)) {
+            $text = substr($string, 0, $length);
+            if (false !== ($length = strrpos($text, ' '))) {
+                $text = substr($text, 0, $length);
+            }
+            $string = $text . $suffix;
+        }
+
+        return $this->setName("description", $string);
+    }
 }

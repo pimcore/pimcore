@@ -12,9 +12,7 @@ $this->extend('WebsiteDemoBundle::layout.html.php');
 <?php
 // set page meta-data
 $this->headTitle()->set($this->news->getTitle());
-
-// TODO HEAD META HELPER
-// $this->headMeta($this->news->getShortText(), "description");
+$this->headMeta()->setDescription($this->news->getShortText(), 160);
 
 /** @var \Pimcore\Model\Object\News $news */
 $news = $this->news;
