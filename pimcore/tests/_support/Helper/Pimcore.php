@@ -18,12 +18,6 @@ use Symfony\Component\Filesystem\Filesystem;
 class Pimcore extends Module\Symfony
 {
     /**
-     * Shares DB initialization state between multiple module instances
-     * @var bool
-     */
-    protected static $dbInitialized = false;
-
-    /**
      * @inheritDoc
      */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
