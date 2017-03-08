@@ -17,7 +17,6 @@
 
 namespace OnlineShop\Framework\PricingManager;
 
-use OnlineShop\Framework\Model\IProduct;
 use OnlineShop\Framework\PricingManager\Action\IProductDiscount;
 use OnlineShop\Framework\PricingManager\Rule\Dao;
 
