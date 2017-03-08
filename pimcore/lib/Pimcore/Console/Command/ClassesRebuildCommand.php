@@ -34,6 +34,10 @@ class ClassesRebuildCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 "Create missing Classes (Classes that exists in website/var/classes but not in the database)"
             )
+            ->addOption(
+                'modified-only', 'm',
+                InputOption::VALUE_NONE, 'Only rebuild if generation date of definition and php class file differs'
+            )
         ;
     }
 
@@ -63,6 +67,13 @@ class ClassesRebuildCommand extends AbstractCommand
                     $existingClass = ClassDefinition::getByName($class->getName());
 
                     if ($existingClass instanceof ClassDefinition) {
+                        if ($input->getOption('modified-only') && $existingClass->checkDefinitionFileAndPhpClassFileGenerationDate()) {
+                            if ($output->isVeryVerbose()) {
+                                $output->writeln($existingClass->getName() . " is up-to-date, skipped");
+                            }
+                            continue;
+                        }
+
                         if ($output->isVerbose()) {
                             $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
                         }
@@ -79,6 +90,14 @@ class ClassesRebuildCommand extends AbstractCommand
             }
         } else {
             foreach ($list->getClasses() as $class) {
+                /** @var ClassDefinition $class */
+                if ($input->getOption('modified-only') && $class->checkDefinitionFileAndPhpClassFileGenerationDate()) {
+                    if ($output->isVeryVerbose()) {
+                        $output->writeln($class->getName() . " is up-to-date, skipped");
+                    }
+                    continue;
+                }
+
                 if ($output->isVerbose()) {
                     $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
                 }
@@ -94,6 +113,14 @@ class ClassesRebuildCommand extends AbstractCommand
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
         foreach ($list as $brickDefinition) {
+            /** @var Object\Objectbrick\Definition $brickDefinition */
+            if ($input->getOption('modified-only') && $brickDefinition->checkDefinitionFileAndPhpClassFileGenerationDate()) {
+                if ($output->isVeryVerbose()) {
+                    $output->writeln($brickDefinition->getKey() . " is up-to-date, skipped");
+                }
+                continue;
+            }
+
             if ($output->isVerbose()) {
                 $output->writeln($brickDefinition->getKey() . " saved");
             }
@@ -109,6 +136,14 @@ class ClassesRebuildCommand extends AbstractCommand
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
         foreach ($list as $fc) {
+            /** @var Object\Fieldcollection\Definition $fc */
+            if ($input->getOption('modified-only') && $fc->checkDefinitionFileAndPhpClassFileGenerationDate()) {
+                if ($output->isVeryVerbose()) {
+                    $output->writeln($fc->getKey() . " is up-to-date, skipped");
+                }
+                continue;
+            }
+
             if ($output->isVerbose()) {
                 $output->writeln($fc->getKey() . " saved");
             }
