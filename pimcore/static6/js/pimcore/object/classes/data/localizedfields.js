@@ -137,6 +137,13 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("at_a_glance"),
+                    name: "atAGlance",
+                    itemId: "atAGlance",
+                    checked: this.datax.atAGlance
                 }
             ]
         });
@@ -167,7 +174,8 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     width: source.datax.width,
                     height: source.datax.height,
                     maxTabs: source.datax.maxTabs,
-                    labelWidth: source.datax.labelWidth
+                    labelWidth: source.datax.labelWidth,
+                    atAGlance: source.datax.atAGlance
                 });
         }
     }

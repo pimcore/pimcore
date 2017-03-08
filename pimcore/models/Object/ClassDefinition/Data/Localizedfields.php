@@ -88,6 +88,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public $labelWidth;
 
     /**
+     * @var bool
+     */
+    public $atAGlance;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      * @var array
      */
@@ -915,6 +920,25 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function getWidth()
     {
         return $this->width;
+    }
+
+    /**
+     * @param $atAGlance
+     * @return $this
+     */
+    public function setAtAGlance($atAGlance)
+    {
+        $this->atAGlance = $atAGlance;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAtAGlance()
+    {
+        return $this->atAGlance;
     }
 
     /**
