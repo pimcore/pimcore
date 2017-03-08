@@ -2,9 +2,10 @@
 
 namespace Pimcore\Tests\Test;
 
-use Pimcore\Tests\Rest\RestClient;
+use Pimcore\Tests\Rest\BrowserKitRestClient;
 use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tool\RestClient;
 
 abstract class RestTestCase extends TestCase
 {
@@ -37,13 +38,13 @@ abstract class RestTestCase extends TestCase
             TestHelper::cleanUp();
         }
 
-        if ($this->authenticateUser) {
-            // authenticate as rest user
-            $this->tester->addApiKeyParam($this->authenticateUser);
-        }
-
         // setup test rest client
-        $this->restClient = new RestClient($this->tester);
+        $this->restClient = new BrowserKitRestClient($this->tester->getHttpClient());
+
+        // authenticate as rest user
+        if ($this->authenticateUser) {
+            $this->restClient->setApiKey($this->tester->getRestApiKey($this->authenticateUser));
+        }
     }
 
     /**

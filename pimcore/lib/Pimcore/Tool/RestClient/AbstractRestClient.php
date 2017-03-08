@@ -8,9 +8,10 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\BrowserKit\Response;
 
 abstract class AbstractRestClient implements LoggerAwareInterface
 {
@@ -37,11 +38,73 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     protected $condense = false;
 
     /**
-     * @param array $options
+     * @var string
      */
-    public function __construct(array $options = [])
+    protected $basePath = '/webservice/rest';
+
+    /**
+     * @var array
+     */
+    protected $defaultParameters = [];
+
+    /**
+     * @var array
+     */
+    protected $defaultHeaders = [];
+
+    /**
+     * @var RequestInterface
+     */
+    protected $lastRequest;
+
+    /**
+     * @var ResponseInterface
+     */
+    protected $lastResponse;
+
+    /**
+     * @param array $options
+     * @param array $parameters
+     * @param array $headers
+     */
+    public function __construct(array $parameters = [], array $headers = [], array $options = [])
     {
+        $this->defaultParameters = $parameters;
+        $this->defaultHeaders    = $headers;
+
         $this->setValues($options);
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultParameters()
+    {
+        return $this->defaultParameters;
+    }
+
+    /**
+     * @param array $defaultParameters
+     */
+    public function setDefaultParameters(array $defaultParameters)
+    {
+        $this->defaultParameters = $defaultParameters;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultHeaders()
+    {
+        return $this->defaultHeaders;
+    }
+
+    /**
+     * @param array $defaultHeaders
+     */
+    public function setDefaultHeaders(array $defaultHeaders)
+    {
+        $this->defaultHeaders = $defaultHeaders;
     }
 
     /**
@@ -69,6 +132,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         $method = "set" . $key;
         if (method_exists($this, $method)) {
             $this->$method($value);
+        } else {
+            throw new \InvalidArgumentException(sprintf('Invalid option: %s', $key));
         }
 
         return $this;
@@ -143,6 +208,42 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
+     * @param string $basePath
+     */
+    public function setBasePath($basePath)
+    {
+        $this->basePath = $basePath;
+    }
+
+    /**
+     * @param $apikey
+     *
+     * @return $this
+     */
+    public function setApiKey($apikey)
+    {
+        $this->defaultParameters['apikey'] = $apikey;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getApiKey()
+    {
+        return isset($this->defaultParameters['apikey']) ? $this->defaultParameters['apikey'] : null;
+    }
+
+    /**
      * Get response
      *
      * @param string $method     The request method
@@ -152,7 +253,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param array  $server     The server parameters (HTTP headers are referenced with a HTTP_ prefix as PHP does)
      * @param string $content    The raw body data
      *
-     * @return Response
+     * @return ResponseInterface
      */
     abstract public function getResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null);
 
@@ -169,7 +270,115 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      *
      * @return object
      */
-    abstract public function getJsonResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null, $expectedStatus = 200);
+    public function getJsonResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null, $expectedStatus = 200)
+    {
+        $response = $this->getResponse($method, $uri, $parameters, $files, $server, $content);
+
+        $json = $this->parseJsonResponse($this->lastRequest, $response);
+
+        return $json;
+    }
+
+    /**
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * @param int               $expectedStatus
+     *
+     * @return object
+     * @throws Exception
+     */
+    protected function parseJsonResponse(RequestInterface $request, ResponseInterface $response, $expectedStatus = 200)
+    {
+        if ($response->getStatusCode() !== $expectedStatus) {
+            throw Exception::create(
+                sprintf('Response status %d does not match the expected status %d', $response->getStatusCode(), $expectedStatus),
+                $request,
+                $response
+            );
+        }
+
+        $contentType = $response->getHeader('Content-Type');
+        if (count($contentType) !== 1) {
+            throw Exception::create(
+                sprintf(
+                    'Invalid content-type header (%s): %s',
+                    $request->getUri(),
+                    json_encode($contentType)
+                ),
+                $request,
+                $response
+            );
+        }
+
+        $contentType = $contentType[0];
+        if ($contentType !== 'application/json') {
+            throw Exception::create(
+                sprintf(
+                    'No JSON response header (%s): %d %s',
+                    $contentType,
+                    $response->getStatusCode(),
+                    $request->getUri()
+                ),
+                $request,
+                $response
+            );
+        }
+
+        $json = null;
+        $body = (string)$response->getBody();
+
+        if (!empty($body)) {
+            $json = json_decode($body);
+        }
+
+        if (null === $json) {
+            throw Exception::create(
+                sprintf('No valid JSON data: %s', $body),
+                $request,
+                $response
+            );
+        }
+
+        return $json;
+    }
+
+    /**
+     * @param string $uri
+     *
+     * @return string
+     */
+    protected function prepareUri($uri)
+    {
+        if ($this->basePath) {
+            $uri = $this->basePath . $uri;
+        }
+
+        return $uri;
+    }
+
+    /**
+     * @param array $parameters
+     *
+     * @return array
+     */
+    protected function prepareParameters(array $parameters = [])
+    {
+        $parameters = array_replace($this->defaultParameters, $parameters);
+
+        return $parameters;
+    }
+
+    /**
+     * @param array $headers
+     *
+     * @return array
+     */
+    protected function prepareHeaders(array $headers = [])
+    {
+        $parameters = array_replace($this->defaultHeaders, $headers);
+
+        return $parameters;
+    }
 
     /**
      * Add REST parameters

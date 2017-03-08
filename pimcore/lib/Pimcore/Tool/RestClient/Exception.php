@@ -14,29 +14,29 @@
 
 namespace Pimcore\Tool\RestClient;
 
-use Symfony\Component\BrowserKit\Request;
-use Symfony\Component\BrowserKit\Response;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Exception extends \Exception
 {
     /**
-     * @var Request
+     * @var RequestInterface
      */
     protected $request;
 
     /**
-     * @var Response
+     * @var ResponseInterface
      */
     protected $response;
 
     /**
-     * @param string   $message
-     * @param Request  $request
-     * @param Response $response
+     * @param string            $message
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      *
      * @return Exception
      */
-    public static function create($message, Request $request, Response $response)
+    public static function create($message, RequestInterface $request, ResponseInterface $response)
     {
         $e = new static($message);
         $e->setRequest($request);
@@ -46,7 +46,7 @@ class Exception extends \Exception
     }
 
     /**
-     * @return Request
+     * @return RequestInterface
      */
     public function getRequest()
     {
@@ -54,7 +54,7 @@ class Exception extends \Exception
     }
 
     /**
-     * @param Request $request
+     * @param RequestInterface $request
      */
     public function setRequest($request)
     {
@@ -62,7 +62,7 @@ class Exception extends \Exception
     }
 
     /**
-     * @return Response
+     * @return ResponseInterface
      */
     public function getResponse()
     {
@@ -70,7 +70,7 @@ class Exception extends \Exception
     }
 
     /**
-     * @param Response $response
+     * @param ResponseInterface $response
      */
     public function setResponse($response)
     {

@@ -91,6 +91,14 @@ class PimcoreRest extends REST
     }
 
     /**
+     * @return \Symfony\Component\BrowserKit\Client|\Symfony\Component\HttpKernel\Client
+     */
+    public function getHttpClient()
+    {
+        return $this->client;
+    }
+
+    /**
      * @return Response|null
      */
     public function grabResponseObject()
