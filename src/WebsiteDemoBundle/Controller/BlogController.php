@@ -4,6 +4,7 @@ namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
+use Zend\Paginator\Paginator;
 
 class BlogController extends AbstractController
 {
@@ -28,7 +29,7 @@ class BlogController extends AbstractController
             $blogList->setCondition(implode(" AND ", $conditions));
         }
 
-        $paginator = \Zend_Paginator::factory($blogList);
+        $paginator = new Paginator($blogList);
         $paginator->setCurrentPageNumber($request->get('page'));
         $paginator->setItemCountPerPage(5);
 
