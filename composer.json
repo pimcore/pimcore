@@ -96,7 +96,9 @@
   "require-dev": {
     "sensio/generator-bundle": "^3.0",
     "symfony/phpunit-bridge": "^3.0",
-    "codeception/codeception": "^2.2"
+    "codeception/codeception": "^2.2",
+    "cache/tag-interop": "1.0.x-dev",
+    "cache/integration-tests": "^0.15.0"
   },
   "suggest": {
     "ext-curl": "*",

@@ -302,7 +302,7 @@ class FullPageCacheListener extends AbstractFrontendListener
         } else {
             // output-cache was disabled, add "output" as cleared tag to ensure that no other "output" tagged elements
             // like the inc and snippet cache get into the cache
-            CacheManager::addClearedTag("output_inline");
+            CacheManager::addIgnoredTagOnSave('output_inline');
         }
     }
 }

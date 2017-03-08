@@ -348,22 +348,11 @@ class Pimcore
      */
     public static function shutdown()
     {
-
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
-        
 
-        // clear tags scheduled for the shutdown
-        Cache::clearTagsOnShutdown();
-
-        // write collected items to cache backend and remove the write lock
-        if (php_sapi_name() != "cli") {
-            // makes only sense for HTTP(S)
-            // CLI are normally longer running scripts that tend to produce race conditions
-            // so CLI scripts are not writing to the cache at all
-            Cache::write();
-        }
-        Cache::removeWriteLock();
+        // write and clean up cache
+        Cache::shutdown();
 
         // release all open locks from this process
         Model\Tool\Lock::releaseAll();
