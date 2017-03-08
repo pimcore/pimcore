@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,13 +28,17 @@ class OpcacheController extends AdminController implements EventedControllerInte
     /**
      * @Route("/external_opcache")
      * @param Request $request
+     * @return Response
      */
     public function indexAction(Request $request)
     {
         $path = PIMCORE_PROJECT_ROOT . '/vendor/amnuts/opcache-gui';
 
+        ob_start();
         include($path . "/index.php");
-        die();
+        $content = ob_get_clean();
+
+        return new Response($content);
     }
 
     /**

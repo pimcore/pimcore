@@ -252,8 +252,6 @@ class SearchController extends AdminController
 
         if (count($conditionParts) > 0) {
             $condition = implode(" AND ", $conditionParts);
-
-            //echo $condition; die();
             $searcherList->setCondition($condition);
         }
 

@@ -11,7 +11,9 @@ use Pimcore\Model;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -1865,6 +1867,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/preview")
      * @param Request $request
+     * @return Response|RedirectResponse
      */
     public function previewAction(Request $request)
     {
@@ -1875,7 +1878,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         if ($session->$key) {
             $object = $session->$key;
         } else {
-            die("Preview not available, it seems that there's a problem with this object.");
+            return new Response("Preview not available, it seems that there's a problem with this object.");
         }
 
         $url = $object->getClass()->getPreviewUrl();
@@ -1887,7 +1890,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $url = str_replace("%" . $key, urlencode($value), $url);
             } else {
                 if (strpos($url, "%" . $key) !== false) {
-                    die("No preview available, please ensure that all fields which are required for the preview are filled correctly.");
+                    return new Response("No preview available, please ensure that all fields which are required for the preview are filled correctly.");
                 }
             }
         }

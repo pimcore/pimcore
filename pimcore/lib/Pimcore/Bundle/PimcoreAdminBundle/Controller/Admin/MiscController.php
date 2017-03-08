@@ -572,10 +572,10 @@ class MiscController extends AdminController
     /**
      * @Route("/test")
      * @param Request $request
+     * @return Response
      */
-    public function testAction()
+    public function testAction(Request $request)
     {
-        die("done");
+        return new Response("done");
     }
-
 }

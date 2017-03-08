@@ -7,6 +7,7 @@ use Pimcore\Model\User;
 use Pimcore\Update;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -421,7 +422,7 @@ class CheckController extends Controller implements EventedControllerInterface
                 "state" => $queryCheck ? "ok" : "error"
             ];
         } else {
-            die("Not possible... no or wrong database settings given.<br />Please fill out the MySQL Settings in the install form an click again on `Check Requirements´");
+            return new Response("Not possible... no or wrong database settings given.<br />Please fill out the MySQL Settings in the install form an click again on `Check Requirements´");
         }
 
 
@@ -631,12 +632,12 @@ class CheckController extends Controller implements EventedControllerInterface
             // session authentication, only possible if user is logged in
             $user = \Pimcore\Tool\Authentication::authenticateSession();
             if (!$user instanceof User) {
-                die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
+                return new Response("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
             }
         } elseif ($request->get("mysql_adapter")) {
 
         } else {
-            die("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
+            return new Response("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
         }
 
     }
