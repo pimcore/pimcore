@@ -30,12 +30,6 @@
   "config": {
     "optimize-autoloader": true
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/maff/zf1-psr-7-bridge"
-    }
-  ],
   "require": {
     "php": ">=7.0",
     "ext-iconv": "*",
