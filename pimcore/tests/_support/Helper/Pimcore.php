@@ -66,6 +66,8 @@ class Pimcore extends Module\Symfony
 
     public function _initialize()
     {
+        Config::setEnvironment($this->config['environment']);
+
         // don't initialize the kernel multiple times if running multiple suites
         // TODO can this lead to side-effects?
         if (null !== $kernel = \Pimcore::getKernel()) {
@@ -93,6 +95,9 @@ class Pimcore extends Module\Symfony
                 $this->purgeClassDirectory();
             }
         }
+
+        // disable cache
+        Cache::disable();
     }
 
     /**
@@ -149,8 +154,6 @@ class Pimcore extends Module\Symfony
      */
     protected function initializeKernel()
     {
-        Config::setEnvironment($this->config['environment']);
-
         $maxNestingLevel   = 200; // Symfony may have very long nesting level
         $xdebugMaxLevelKey = 'xdebug.max_nesting_level';
         if (ini_get($xdebugMaxLevelKey) < $maxNestingLevel) {
@@ -163,9 +166,6 @@ class Pimcore extends Module\Symfony
         if ($this->config['cache_router'] === true) {
             $this->persistService('router', true);
         }
-
-        // disable cache
-        Cache::disable();
     }
 
     /**
