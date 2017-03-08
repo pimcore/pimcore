@@ -194,10 +194,8 @@ class Api
      */
     public static function getAnalyticsMetadata()
     {
-        $client = \Pimcore\Tool::getHttpClient();
-        $client->setUri(self::ANALYTICS_API_URL.'metadata/ga/columns');
-
-        $result = $client->request();
+        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $result = $client->get(self::ANALYTICS_API_URL.'metadata/ga/columns');
 
         return json_decode($result->getBody(), true);
     }

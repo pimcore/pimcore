@@ -224,3 +224,8 @@ services:
 
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
+
+
+    pimcore.http_client:
+        class: \GuzzleHttp\Client
+        factory: ['Pimcore\Bundle\PimcoreBundle\Http\ClientFactory', createHttpClient]

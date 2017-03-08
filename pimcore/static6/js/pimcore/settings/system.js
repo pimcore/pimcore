@@ -1011,22 +1011,22 @@ pimcore.settings.system = Class.create({
                                 width: 400,
                                 value: this.getValue("httpclient.adapter"),
                                 store: [
-                                    ["Zend_Http_Client_Adapter_Socket", t("direct_socket")],
-                                    ["Zend_Http_Client_Adapter_Proxy", t("proxy")]
+                                    ["Socket", t("direct_socket")],
+                                    ["Proxy", t("proxy")]
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
                                 editable: false,
                                 listeners: {
                                     afterrender: function (el) {
-                                        if (el.getValue() == "Zend_Http_Client_Adapter_Proxy") {
+                                        if (el.getValue() == "Proxy") {
                                             Ext.getCmp("system_settings_proxy_settings").show();
                                         } else {
                                             Ext.getCmp("system_settings_proxy_settings").hide();
                                         }
                                     },
                                     select: function (el) {
-                                        if (el.getValue() == "Zend_Http_Client_Adapter_Proxy") {
+                                        if (el.getValue() == "Proxy") {
                                             Ext.getCmp("system_settings_proxy_settings").show();
                                         } else {
                                             Ext.getCmp("system_settings_proxy_settings").hide();

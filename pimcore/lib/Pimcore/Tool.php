@@ -14,6 +14,7 @@
 
 namespace Pimcore;
 
+use GuzzleHttp\RequestOptions;
 use Symfony\Component\HttpFoundation\Request;
 
 class Tool
@@ -509,39 +510,7 @@ class Tool
         return $mail;
     }
 
-    /**
-     * @param string $type
-     * @param array $options
-     * @return \Zend_Http_Client
-     * @throws \Exception
-     * @throws \Zend_Http_Client_Exception
-     */
-    public static function getHttpClient($type = "Zend_Http_Client", $options = [])
-    {
-        $config = Config::getSystemConfig();
-        $clientConfig = $config->httpclient->toArray();
-        $clientConfig["adapter"] =  (isset($clientConfig["adapter"]) && !empty($clientConfig["adapter"])) ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
-        $clientConfig["maxredirects"] =  isset($options["maxredirects"]) ? $options["maxredirects"] : 2;
-        $clientConfig["timeout"] =  isset($options["timeout"]) ? $options["timeout"] : 3600;
-        $type = empty($type) ? "Zend_Http_Client" : $type;
 
-        $type = "\\" . ltrim($type, "\\");
-
-        if (self::classExists($type)) {
-            $client = new $type(null, $clientConfig);
-
-            // workaround/for ZF (Proxy-authorization isn't added by ZF)
-            if ($clientConfig['proxy_user']) {
-                $client->setHeaders('Proxy-authorization', \Zend_Http_Client::encodeAuthHeader(
-                    $clientConfig['proxy_user'], $clientConfig['proxy_pass'], \Zend_Http_Client::AUTH_BASIC
-                    ));
-            }
-        } else {
-            throw new \Exception("Pimcore_Tool::getHttpClient: Unable to create an instance of $type");
-        }
-
-        return $client;
-    }
 
     /**
      * @static
@@ -552,29 +521,35 @@ class Tool
      */
     public static function getHttpData($url, $paramsGet = [], $paramsPost = [])
     {
-        $client = self::getHttpClient();
-        $client->setUri($url);
-        $requestType = \Zend_Http_Client::GET;
+        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $requestType = 'GET';
+
+        $config = [];
 
         if (is_array($paramsGet) && count($paramsGet) > 0) {
-            foreach ($paramsGet as $key => $value) {
-                $client->setParameterGet($key, $value);
+
+            //need to insert get params from url to $paramsGet because otherwise the would be ignored
+            $urlParts = parse_url($url);
+            $urlParams = [];
+            parse_str($urlParts['query'], $urlParams);
+
+            if($urlParams) {
+                $paramsGet = array_merge($urlParams, $paramsGet);
             }
+
+            $config[RequestOptions::QUERY] = $paramsGet;
         }
 
         if (is_array($paramsPost) && count($paramsPost) > 0) {
-            foreach ($paramsPost as $key => $value) {
-                $client->setParameterPost($key, $value);
-            }
-
-            $requestType = \Zend_Http_Client::POST;
+            $config[RequestOptions::FORM_PARAMS] = $paramsPost;
+            $requestType = 'POST';
         }
 
         try {
-            $response = $client->request($requestType);
+            $response = $client->request($requestType, $url, $config);
 
-            if ($response->isSuccessful()) {
-                return $response->getBody();
+            if ($response->getStatusCode() < 300) {
+                return (string)$response->getBody();
             }
         } catch (\Exception $e) {
         }
@@ -708,5 +683,21 @@ class Tool
         }
 
         die($message);
+    }
+
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        if(class_exists("Pimcore\\Tool\\Legacy")) {
+            return forward_static_call_array("Pimcore\\Tool\\Legacy::" . $name, $arguments);
+        }
+
+        throw new \Exception("Call to undefined static method " . $name . " on class Pimcore\\Tool");
     }
 }
