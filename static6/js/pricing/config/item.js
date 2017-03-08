@@ -1253,7 +1253,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
             items: [
                 {
                     xtype: "numberfield",
-                    fieldLabel: t("amount"),
+                    fieldLabel: t("plugin_onlineshop_pricing_config_action_cart_discount_amount"),
                     name: "amount",
                     width: 200,
                     value: data.amount
@@ -1304,7 +1304,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
             items: [
                 {
                     xtype: "numberfield",
-                    fieldLabel: t("amount"),
+                    fieldLabel: t("plugin_onlineshop_pricing_config_action_product_discount_amount"),
                     name: "amount",
                     width: 200,
                     value: data.amount
