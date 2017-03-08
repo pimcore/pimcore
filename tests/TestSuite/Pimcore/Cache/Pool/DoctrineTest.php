@@ -7,7 +7,7 @@ use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use TestSuite\Pimcore\Cache\Factory;
 use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
-class PdoMysqlTest extends CachePoolTest
+class DoctrineTest extends CachePoolTest
 {
     use CacheItemPoolTestTrait;
 
@@ -21,6 +21,6 @@ class PdoMysqlTest extends CachePoolTest
             $this->markTestSkipped('TEST_MYSQL_DB env var is not configured');
         }
 
-        return (new Factory())->createPdoMysqlItemPool($this->defaultLifetime);
+        return (new Factory())->createDoctrineItemPool($this->defaultLifetime);
     }
 }

@@ -2,20 +2,21 @@
 
 namespace Pimcore\Cache\Pool;
 
+use Doctrine\DBAL\Driver\Connection;
 use Pimcore\Cache\Pool\Exception\CacheException;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
-class PdoMysql extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
+class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
 {
     /**
-     * @var \PDO
+     * @var Connection
      */
     protected $db;
 
     /**
-     * @param \PDO $db
+     * @param Connection $db
      */
-    public function __construct(\PDO $db, $defaultLifetime = 0)
+    public function __construct(Connection $db, $defaultLifetime = 0)
     {
         parent::__construct($defaultLifetime);
 

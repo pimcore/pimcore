@@ -5,7 +5,7 @@ use Pimcore\Cache\Backend\PimcoreCacheItemPool;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\ZendCacheHandler;
-use Pimcore\Cache\Pool\PdoMysql;
+use Pimcore\Cache\Pool\Doctrine;
 use Pimcore\Cache\Pool\Redis;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Pimcore\Logger;

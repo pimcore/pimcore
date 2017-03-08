@@ -2,15 +2,15 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use Pimcore\Cache\Pool\PdoMysql;
+use Pimcore\Cache\Pool\Doctrine;
 use TestSuite\Pimcore\Cache\Factory;
 
-class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
+class DoctrineCoreHandlerTest extends AbstractCoreHandlerTest
 {
     /**
      * Initializes item pool
      *
-     * @return PdoMysql
+     * @return Doctrine
      */
     protected function createCachePool()
     {
@@ -19,6 +19,6 @@ class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
             $this->markTestSkipped('TEST_MYSQL_DB env var is not configured');
         }
 
-        return (new Factory())->createPdoMysqlItemPool($this->defaultLifetime);
+        return (new Factory())->createDoctrineItemPool($this->defaultLifetime);
     }
 }

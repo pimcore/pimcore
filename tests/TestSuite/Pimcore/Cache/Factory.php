@@ -2,7 +2,7 @@
 
 namespace TestSuite\Pimcore\Cache;
 
-use Pimcore\Cache\Pool\PdoMysql;
+use Pimcore\Cache\Pool\Doctrine;
 use Pimcore\Cache\Pool\Redis;
 use Pimcore\Cache\Pool\Redis\ConnectionFactory;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
@@ -14,33 +14,14 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 class Factory
 {
     /**
-     * @var \PDO
-     */
-    protected static $pdo;
-
-    /**
-     * @param bool $forceRefresh
-     * @return \PDO
-     */
-    protected static function getPdo($forceRefresh = false)
-    {
-        if ($forceRefresh || null === static::$pdo) {
-            /** @var \PDO $pdo */
-            static::$pdo = \Pimcore::getDiContainer()->get('pimcore.db.pdo');
-        }
-
-        return static::$pdo;
-    }
-
-    /**
      * @param int $defaultLifetime
-     * @param bool $forceFreshPdo
-     * @return PdoMysql
+     *
+     * @return Doctrine
      */
-    public function createPdoMysqlItemPool($defaultLifetime = 0, $forceFreshPdo = false)
+    public function createDoctrineItemPool($defaultLifetime = 0)
     {
-        return new PdoMysql(
-            static::getPdo($forceFreshPdo),
+        return new Doctrine(
+            \Pimcore::getContainer()->get('doctrine.dbal.default_connection'),
             $defaultLifetime
         );
     }
