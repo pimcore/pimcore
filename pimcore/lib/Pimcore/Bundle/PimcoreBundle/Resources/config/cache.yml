@@ -1,0 +1,69 @@
+services:
+    # the actual core handler which is used from Pimcore\Cache
+    # the pimcore.cache.core.pool service is defined by config
+    # and set in PimcoreExtension
+    pimcore.cache.core.handler:
+        class: Pimcore\Cache\Core\CoreHandler
+        arguments:
+            - '@pimcore.cache.core.pool'
+            - '@pimcore.cache.core.write_lock'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
+
+    # CORE CACHE POOLS
+    # filesystem cache pool
+    pimcore.cache.core.pool.filesystem:
+        class: Pimcore\Cache\Pool\SymfonyAdapterProxy
+        arguments:
+            - '@pimcore.cache.core.symfony_adapter.filesystem'
+            - '%pimcore.cache.core.default_lifetime%'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
+
+    # array/in-memory cache pool
+    pimcore.cache.core.pool.array:
+        class: Pimcore\Cache\Pool\SymfonyAdapterProxy
+        arguments:
+            - '@pimcore.cache.core.symfony_adapter.array'
+            - '%pimcore.cache.core.default_lifetime%'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
+
+    # SYMFONY ADAPTERS - used in combination with SymfonyAdapterProxy
+    # filesystem cache adapter
+    pimcore.cache.core.symfony_adapter.filesystem:
+        class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+        arguments:
+            - 'pimcore'
+            - '%pimcore.cache.core.default_lifetime%'
+            - %kernel.cache_dir%/pimcore
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
+
+    # array/in-memory cache adapter
+    pimcore.cache.core.symfony_adapter.array:
+        class: Symfony\Component\Cache\Adapter\ArrayAdapter
+        arguments:
+            - '%pimcore.cache.core.default_lifetime%'
+            - false # do not store serialized
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
+
+    # write lock handles locking between processes
+    pimcore.cache.core.write_lock:
+        class: Pimcore\Cache\Core\WriteLock
+        arguments: ['@pimcore.cache.core.pool']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }

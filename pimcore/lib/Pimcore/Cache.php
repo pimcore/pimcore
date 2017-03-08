@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\ZendCacheHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
@@ -38,23 +39,24 @@ class Cache
      */
     public static function getInstance()
     {
-        return static::$zendHandler ? static::$zendHandler->getCache() : null;
+        throw new \RuntimeException('getInstance() is not supported anymore');
     }
 
-    public static function init($containerKey = 'pimcore.cache.core.handler')
+    /**
+     * @param CoreHandlerInterface $handler
+     */
+    public static function setHandler(CoreHandlerInterface $handler)
     {
-        $container = \Pimcore::getDiContainer();
+        self::$handler = $handler;
+    }
 
-        if (null === static::$handler) {
-            /** @var CoreHandlerInterface $handler */
-            static::$handler = $container->get($containerKey);
-        }
-
-        // setup ZF cache
-        if ($container->has('pimcore.cache.zend.handler')) {
-            static::$zendHandler = $container->get('pimcore.cache.zend.handler');
-            static::$zendHandler->setZendFrameworkCaches();
-        }
+    /**
+     * @param ZendCacheHandler $zendHandler
+     */
+    public static function setZendHandler(ZendCacheHandler $zendHandler)
+    {
+        static::$zendHandler = $zendHandler;
+        static::$zendHandler->setZendFrameworkCaches();
     }
 
     /**

@@ -1,0 +1,10 @@
+services:
+    # doctrine cache pool
+    # the connection will be resolved in the extension class as
+    # we need to look up the doctrine connection from the configured
+    # name
+    pimcore.cache.core.pool.doctrine:
+        class: Pimcore\Cache\Pool\PdoMysql
+        arguments:
+            - '@?'
+            - '%pimcore.cache.core.default_lifetime%'

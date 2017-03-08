@@ -1,0 +1,18 @@
+services:
+    # redis connection built from config data pimcore.cache.pools.redis.connection
+    pimcore.cache.core.redis.connection:
+        class: Credis_Client
+        factory: [Pimcore\Cache\Pool\Redis\ConnectionFactory, createConnection]
+        arguments: ['%pimcore.cache.core.redis.connection%']
+
+    # redis cache pool
+    pimcore.cache.core.pool.redis:
+        class: Pimcore\Cache\Pool\Redis
+        arguments:
+            - '@pimcore.cache.core.redis.connection'
+            - '%pimcore.cache.core.redis.options%'
+            - '%pimcore.cache.core.default_lifetime%'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
