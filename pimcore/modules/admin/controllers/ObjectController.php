@@ -162,7 +162,12 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             "lockOwner" => $child->getLocked() ? true : false
         ];
 
-        $hasChildren = $child->hasChilds([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+        $allowedTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER];
+        if ($child instanceof Object\Concrete && $child->getClass()->getShowVariants()) {
+            $allowedTypes[] = Object\AbstractObject::OBJECT_TYPE_VARIANT;
+        }
+
+        $hasChildren = $child->hasChildren($allowedTypes);
 
         $tmpObject["isTarget"] = false;
         $tmpObject["allowDrop"] = false;
