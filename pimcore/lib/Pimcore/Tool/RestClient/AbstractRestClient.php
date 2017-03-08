@@ -43,6 +43,21 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     protected $basePath = '/webservice/rest';
 
     /**
+     * @var string
+     */
+    protected $scheme = 'http';
+
+    /**
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * @var int
+     */
+    protected $port;
+
+    /**
      * @var array
      */
     protected $defaultParameters = [];
@@ -244,6 +259,54 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * @param string $scheme
+     */
+    public function setScheme($scheme)
+    {
+        $this->scheme = $scheme;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * @param string $host
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * @param int $port
+     */
+    public function setPort($port)
+    {
+        $this->port = (int)$port;
+    }
+
+    /**
      * Get response
      *
      * @param string $method     The request method
@@ -340,20 +403,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         }
 
         return $json;
-    }
-
-    /**
-     * @param string $uri
-     *
-     * @return string
-     */
-    protected function prepareUri($uri)
-    {
-        if ($this->basePath) {
-            $uri = $this->basePath . $uri;
-        }
-
-        return $uri;
     }
 
     /**

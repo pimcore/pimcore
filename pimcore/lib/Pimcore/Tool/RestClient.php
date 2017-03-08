@@ -4,6 +4,7 @@ namespace Pimcore\Tool;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Uri;
 use Pimcore\Tool\RestClient\AbstractRestClient;
 
 /**
@@ -49,5 +50,35 @@ class RestClient extends AbstractRestClient
         ]);
 
         return $response;
+    }
+
+    /**
+     * @param Uri|string $uri
+     *
+     * @return Uri
+     */
+    protected function prepareUri($uri)
+    {
+        if (!($uri instanceof Uri)) {
+            $uri = new Uri($uri);
+        }
+
+        if ($this->getScheme()) {
+            $uri = $uri->withScheme($this->getScheme());
+        }
+
+        if ($this->getHost()) {
+            $uri = $uri->withHost($this->getHost());
+        }
+
+        if ($this->getPort()) {
+            $uri = $uri->withPort($this->getPort());
+        }
+
+        if ($this->getBasePath()) {
+            $uri = $uri->withPath($this->getBasePath() . $uri->getPath());
+        }
+
+        return $uri;
     }
 }

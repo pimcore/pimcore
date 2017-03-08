@@ -61,4 +61,18 @@ class BrowserKitRestClient extends AbstractRestClient
 
         return $response;
     }
+
+    /**
+     * @param string $uri
+     *
+     * @return string
+     */
+    protected function prepareUri($uri)
+    {
+        if ($this->basePath) {
+            $uri = $this->basePath . $uri;
+        }
+
+        return $uri;
+    }
 }
