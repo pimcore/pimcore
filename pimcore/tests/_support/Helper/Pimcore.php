@@ -32,10 +32,9 @@ class Pimcore extends Module\Symfony
         // way faster if no DB has to be initialized first, so
         // we enable DB support on a suite level
         $this->config = array_merge($this->config, [
-            'connect_db'            => false,
-            'initialize_db'         => true,
-            'force_reinitialize_db' => false,
-            'purge_class_directory' => true,
+            'connect_db'            => false, // try to connect to DB
+            'initialize_db'         => true,  // initialize DB (drop & re-create)
+            'purge_class_directory' => true,  // purge class directory on boot
         ]);
 
         parent::__construct($moduleContainer, $config);
@@ -79,11 +78,8 @@ class Pimcore extends Module\Symfony
             // (re-)initialize DB if DB support was requested when
             // loading the module
             if ($this->config['initialize_db']) {
-                if (!static::$dbInitialized || $this->config['force_reinitialize_db']) {
-                    if ($this->initializeDb()) {
-                        define('PIMCORE_TEST_DB_INITIALIZED', true);
-                        static::$dbInitialized = true;
-                    }
+                if ($this->initializeDb()) {
+                    !defined('PIMCORE_TEST_DB_INITIALIZED') && define('PIMCORE_TEST_DB_INITIALIZED', true);
                 }
             } else {
                 // just try to connect without initializing the DB
