@@ -94,7 +94,7 @@ use Pimcore\Model\Document\Page;
                 </div>
                 <div class="navbar-collapse collapse">
                     <?php
-                    $mainNavigation = $this->pimcoreNavigation($document, $mainNavStartNode);
+                    $mainNavigation = $this->navigation($document, $mainNavStartNode);
                     echo $mainNavigation->menu()->renderMenu(null, [
                         'maxDepth' => 1,
                         'ulClass'  => 'nav navbar-nav'
@@ -107,6 +107,10 @@ use Pimcore\Model\Document\Page;
         </div>
     </div>
 </div>
+
+<!--
+<?= $this->navigation($document, $mainNavStartNode)->menu()->setPartial('WebsiteDemoBundle:Includes:navi-test.html.php')->render(); ?>
+-->
 
 <?php if (!$isPortal): ?>
     <?= $this->template('WebsiteDemoBundle:Includes:jumbotron.html.php') ?>
@@ -139,7 +143,7 @@ use Pimcore\Model\Document\Page;
                     ?>
 
                     <h3><?= $startNode->getProperty('navigation_name'); ?></h3>
-                    <?= $this->pimcoreNavigation($document, $startNode)->menu()->renderMenu(null, [
+                    <?= $this->navigation($document, $startNode)->menu()->renderMenu(null, [
                         'ulClass'                          => 'nav bs-sidenav',
                         'expandSiblingNodesOfActiveBranch' => true
                     ]); ?>

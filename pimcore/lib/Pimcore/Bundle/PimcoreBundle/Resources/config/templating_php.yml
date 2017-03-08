@@ -133,3 +133,10 @@ services:
             - { name: templating.helper, alias: translateAdmin }
       calls:
         - [setDomain, ['admin']]
+
+    pimcore.templating.view_helper.navigation:
+      class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation
+      arguments: ["@templating.engine.php"]
+      tags:
+          - { name: templating.helper, alias: navigation }
+
