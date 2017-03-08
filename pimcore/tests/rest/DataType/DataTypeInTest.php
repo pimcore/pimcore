@@ -7,7 +7,7 @@ use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Util\TestHelper;
 
-class DataTypeInTestCase extends AbstractDataTypeTestCase
+class DataTypeInTest extends AbstractDataTypeTestCase
 {
     /**
      * @inheritDoc
