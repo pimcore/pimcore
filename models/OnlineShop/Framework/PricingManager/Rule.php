@@ -17,6 +17,8 @@
 
 namespace OnlineShop\Framework\PricingManager;
 
+use OnlineShop\Framework\Model\IProduct;
+use OnlineShop\Framework\PricingManager\Action\IProductDiscount;
 use OnlineShop\Framework\PricingManager\Rule\Dao;
 
 class Rule extends \Pimcore\Model\AbstractModel implements IRule
@@ -361,6 +363,17 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
         }
 
         return true;
+    }
+
+    public function hasProductActions() {
+        foreach($this->getActions() as $action)
+        {
+            if($action instanceof IProductDiscount) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -17,7 +17,7 @@
 
 namespace OnlineShop\Framework\PricingManager\Action;
 
-class ProductDiscount implements IDiscount
+class ProductDiscount implements IProductDiscount
 {
     /**
      * @var float
@@ -51,7 +51,7 @@ class ProductDiscount implements IDiscount
      */
     public function executeOnCart(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
     {
-        // TODO: Implement executeOnCart() method.
+        //nothing to to here
         return $this;
     }
 

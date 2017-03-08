@@ -1,6 +1,10 @@
 # Update Notices
 Please consider following update notices when updating the e-commerce framework.
 
+## 0.11 - 0.12
+- Add Interface `IProductDiscount` to all custom pricing manager actions that modify product prices
+- [optional] Chance `name` attribute of `PricingRule` fieldcollection to localized field
+
 ## 0.10.1 - 0.11
 - Gift items were added to OnlineShopOrder - if you are updating, you need to add a property giftItems (object relation
 to OnlineShopOrderItem) to your OnlineShopOrder class. Otherwise a error log message will be issued on checkout.
