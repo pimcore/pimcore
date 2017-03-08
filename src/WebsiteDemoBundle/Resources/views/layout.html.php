@@ -108,10 +108,6 @@ use Pimcore\Model\Document\Page;
     </div>
 </div>
 
-<!--
-<?= $this->navigation($document, $mainNavStartNode)->menu()->setPartial('WebsiteDemoBundle:Includes:navi-test.html.php')->render(); ?>
--->
-
 <?php if (!$isPortal): ?>
     <?= $this->template('WebsiteDemoBundle:Includes:jumbotron.html.php') ?>
 
