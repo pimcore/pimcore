@@ -54,8 +54,6 @@ script:
   - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then hhvm vendor/bin/codecept run -c pimcore --json; fi
 
 after_script:
-  #- cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
-  #- cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
-  #- cat $TRAVIS_BUILD_DIR/apache-error.log
-  #- cat $TRAVIS_BUILD_DIR/apache-access.log
+  - for log in `$TRAVIS_BUILD_DIR/var/logs/*.log`; do echo $log; cat $log; done
+  - for log in `$TRAVIS_BUILD_DIR/apache-*.log`; do echo $log; cat $log; done
   #- cat /tmp/hhvm.log
