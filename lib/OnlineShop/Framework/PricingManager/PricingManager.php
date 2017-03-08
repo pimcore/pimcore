@@ -39,7 +39,7 @@ class PricingManager implements IPricingManager
      */
     public function __construct(\Zend_Config $config)
     {
-        $this->config = $config;
+        $this->config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "pricingmanager");
     }
 
 

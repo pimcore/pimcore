@@ -565,6 +565,12 @@ return [
                     "FreeShipping" => [
                         "class" => "\\OnlineShop\\Framework\\PricingManager\\Action\\FreeShipping"
                     ]
+                ],
+                //Checkout Tenants for Pricing Rules - e.g. to disable pricing rules for one tenant completely
+                "tenants" => [
+                    "noPricingRules" => [
+                        "disabled" => "false"
+                    ]
                 ]
             ]
         ],
