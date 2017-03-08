@@ -95,7 +95,7 @@ class Setup extends Model\AbstractModel
                     "excludeCookie" => ""
                 ],
                 "httpclient" => [
-                    "adapter" => "Zend_Http_Client_Adapter_Socket"
+                    "adapter" => "Socket"
                 ]
             ];
         }
