@@ -1,4 +1,13 @@
-<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('WebsiteDemoBundle::layout.html.php');
+
+?>
 
 <h1>This is just a simple example of a sub-module.</h1>
 <br />

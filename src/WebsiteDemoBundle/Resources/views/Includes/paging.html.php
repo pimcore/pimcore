@@ -1,4 +1,13 @@
 <?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+?>
+
+
+<?php
 // made by Twitter user @remisouverain
 if ($this->pageCount): ?>
 	<ul class="pagination">

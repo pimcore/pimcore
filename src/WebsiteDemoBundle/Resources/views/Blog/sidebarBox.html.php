@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+?>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title"><?= $this->translate("Recently in the Blog") ?></h3>

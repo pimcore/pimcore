@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+?><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

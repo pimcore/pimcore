@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+?>
+
 <header class="jumbotron subhead">
     <div class="container">
         <h2><?= $this->input('headTitle'); ?></h2>

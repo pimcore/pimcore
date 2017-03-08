@@ -1,9 +1,13 @@
 <?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 
-/** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view */
-/** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this */
 ?>
 
 <!DOCTYPE html>

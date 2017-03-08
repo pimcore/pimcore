@@ -1,4 +1,13 @@
-<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('WebsiteDemoBundle::layout.html.php');
+
+?>
 
 <div id="portalHeader" class="carousel header slide" data-ride="carousel" <?= ($this->editmode) ? 'data-interval="false"' : '' ?>>
 

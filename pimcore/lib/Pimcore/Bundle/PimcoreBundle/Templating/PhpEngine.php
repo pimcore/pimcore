@@ -6,11 +6,25 @@ use Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables;
 use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Model\Document;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\Helper\SlotsHelper;
 use Symfony\Component\Templating\Storage\Storage;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Cache;
+use Pimcore\Tool\DeviceDetector;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Glossary;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadLink;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadScript;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadStyle;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadTitle;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Inc;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\InlineScript;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation;
+use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
+use Pimcore\Model\Document\Tag;
 
 /**
  * Symfony PHP engine with pimcore additions:
@@ -19,12 +33,52 @@ use Symfony\Component\Templating\Storage\Storage;
  *  - helper brokers integrate other view helpers (ZF) on __call
  *  - tag integration
  *
- * @method mixed getParam($key, $default = null)
  * @method string getLocale()
  * @method Request getRequest()
  * @method RouterHelper router()
  * @method SlotsHelper slots()
  *
+ * @method string action($action, $controller, $module, array $params = [])
+ * @method Cache cache($name, $lifetime = null, $force = false)
+ * @method DeviceDetector device($default = null)
+ * @method array getAllParams()
+ * @method mixed getParam($key, $default = null)
+ * @method Glossary glossary()
+ * @method HeadLink headLink(array $attributes = null, $placement = Container::APPEND)
+ * @method HeadMeta headMeta($content = null, $keyValue = null, $keyType = 'name', $modifiers = array(), $placement = Container::APPEND)
+ * @method HeadScript headScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
+ * @method HeadStyle headStyle($content = null, $placement = 'APPEND', $attributes = array())
+ * @method HeadTitle headTitle($title = null, $setType = null)
+ * @method Inc inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
+ * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
+ * @method Navigation navigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
+ * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
+ * @method string translate($key, $parameters = [])
+ *
+ * @method Tag\Area area($name, $options = [])
+ * @method Tag\Areablock areablock($name, $options = [])
+ * @method Tag\Block block($name, $options = [])
+ * @method Tag\Checkbox checkbox($name, $options = [])
+ * @method Tag\Date date($name, $options = [])
+ * @method Tag\Embed embed($name, $options = [])
+ * @method Tag\Href href($name, $options = [])
+ * @method Tag\Image image($name, $options = [])
+ * @method Tag\Input input($name, $options = [])
+ * @method Tag\Link link($name, $options = [])
+ * @method Tag\Multihref multihref($name, $options = [])
+ * @method Tag\Multiselect mutliselect($name, $options = [])
+ * @method Tag\Numeric numeric($name, $options = [])
+ * @method Tag\Pdf pdf($name, $options = [])
+ * @method Tag\Renderlet renderlet($name, $options = [])
+ * @method Tag\Select select($name, $options = [])
+ * @method Tag\Snippet snippet($name, $options = [])
+ * @method Tag\Table table($name, $options = [])
+ * @method Tag\Textarea textarea($name, $options = [])
+ * @method Tag\Video video($name, $options = [])
+ * @method Tag\Wysiwyg wysiwyg($name, $options = [])
+ *
+ * @property Document $document
+ * @property bool $editmode
  * @property GlobalVariables $app
  */
 class PhpEngine extends BasePhpEngine
