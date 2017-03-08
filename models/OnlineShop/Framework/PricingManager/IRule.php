@@ -130,7 +130,7 @@ interface IRule
     public function check(IEnvironment $environment);
 
     /**
-     * check if rule has at least one action that changes product price (and not cart price)
+     * checks if rule has at least one action that changes product price (and not cart price)
      *
      * @return bool
      */

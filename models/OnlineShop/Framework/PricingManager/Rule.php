@@ -364,6 +364,11 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
         return true;
     }
 
+    /**
+     * checks if rule has at least one action that changes product price (and not cart price)
+     *
+     * @return bool
+     */
     public function hasProductActions() {
         foreach($this->getActions() as $action)
         {
