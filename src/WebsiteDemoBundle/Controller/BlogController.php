@@ -51,8 +51,7 @@ class BlogController extends AbstractController
         $article = Object\BlogArticle::getById($request->get("id"));
 
         if (!$article instanceof Object\BlogArticle || !$article->isPublished()) {
-            // this will trigger a 404 error response
-            throw new \Exception("Invalid request - no such blog article");
+            throw new $this->createNotFoundException("Invalid request - no such blog article");
         }
 
         $this->view->article = $article;
