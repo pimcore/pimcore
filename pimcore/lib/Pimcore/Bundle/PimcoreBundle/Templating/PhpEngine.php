@@ -143,21 +143,6 @@ class PhpEngine extends BasePhpEngine
     }
 
     /**
-     * Get all params passed to current view
-     *
-     * @return array
-     */
-    public function getAllParams()
-    {
-        $viewModel = $this->getViewModel();
-        if ($viewModel) {
-            return $viewModel->getParameters()->all();
-        }
-
-        return [];
-    }
-
-    /**
      * Magic getter reads variable from ViewModel
      *
      * @inheritDoc

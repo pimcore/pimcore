@@ -51,6 +51,13 @@ services:
         tags:
             - { name: templating.helper, alias: getParam }
 
+    pimcore.templating.view_helper.get_all_params:
+            class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\GetAllParams
+            arguments:
+                - '@pimcore.http.request_helper'
+            tags:
+                - { name: templating.helper, alias: GetAllParams }
+
     pimcore.templating.view_helper.glossary:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Glossary
         arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver', '@pimcore.http.request_helper']
