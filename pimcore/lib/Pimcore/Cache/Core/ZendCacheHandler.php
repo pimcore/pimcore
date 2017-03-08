@@ -55,6 +55,7 @@ class ZendCacheHandler
         \Zend_Locale::setCache($this->cache);
         \Zend_Locale_Data::setCache($this->cache);
         \Zend_Db_Table_Abstract::setDefaultMetadataCache($this->cache);
+        \Zend_Paginator::setCache($this->cache);
 
         return $this;
     }
