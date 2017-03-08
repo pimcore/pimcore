@@ -62,8 +62,9 @@
 # composer
 /composer.phar
 /composer.lock
+!/vendor
 /vendor/*
-!/vendor/.dummy
+!/vendor/.gitkeep
 
 # misc
 /php-cs-fixer.phar
