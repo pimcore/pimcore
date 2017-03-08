@@ -35,8 +35,9 @@ install:
   - mkdir -p var/config
   - cp .travis/system.template.php var/config/system.php
 
-  # install composer
-  - composer install
+  # install composer - HHVM isn't officially PHP 7 compatible - see https://github.com/composer/composer/issues/4976
+  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then composer install; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then composer install --ignore-platform-reqs; fi
 
 before_script:
   # install apache
@@ -54,7 +55,7 @@ before_script:
   - sudo service apache2 restart
 
 script:
-  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then php  vendor/bin/codecept run -c pimcore model --json ; fi
+  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then php  vendor/bin/codecept run -c pimcore model --json; fi
   - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then hhvm vendor/bin/codecept run -c pimcore model --json; fi
 
 after_script:
