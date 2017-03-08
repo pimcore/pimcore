@@ -317,7 +317,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return false;
             }
 
-            return $this->storeCacheItem($item, $force);
+            return $this->storeCacheItem($item, $data, $force);
         } else {
             $cacheQueueItem = new CacheQueueItem($key, $data, $tags, $lifetime, $priority, $force);
 
@@ -496,10 +496,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Actually store the item in the cache
      *
      * @param PimcoreCacheItemInterface $item
+     * @param mixed $data
      * @param bool $force
      * @return bool
      */
-    protected function storeCacheItem(PimcoreCacheItemInterface $item, $force = false)
+    protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
     {
         if (!$this->enabled) {
             // TODO return true here as the noop (not storing anything) is basically successful?
@@ -509,6 +510,19 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // don't put anything into the cache, when cache is cleared
         if ($this->cacheCleared && !$force) {
             return false;
+        }
+
+        if ($data instanceof ElementInterface) {
+            if (!$data->__isBasedOnLatestData()) {
+                $this->logger->warning(
+                    sprintf('Not saving %s to cache as element is not based on latest data', $item->getKey()),
+                    ['key' => $item->getKey()]
+                );
+
+                // TODO: this check needs to be done recursive, especially for Objects (like cache tags)
+                // all other entities shouldn't have references at all in the cache so it shouldn't matter
+                return false;
+            }
         }
 
         $result = $this->itemPool->save($item);
@@ -796,7 +810,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 $result = false;
                 $this->logger->error(sprintf('Not writing item %s to cache as prepareCacheTags failed', $key));
             } else {
-                $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->isForce());
+                $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getData(), $queueItem->isForce());
                 if (!$result) {
                     $this->logger->error(sprintf('Unable to write item %s to cache', $key));
                 }
