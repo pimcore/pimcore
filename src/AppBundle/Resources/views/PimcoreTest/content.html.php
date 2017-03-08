@@ -1,1 +1,0 @@
-<?= $this->input('foobar') ?>

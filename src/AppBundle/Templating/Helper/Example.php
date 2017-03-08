@@ -4,7 +4,7 @@ namespace AppBundle\Templating\Helper;
 
 use Symfony\Component\Templating\Helper\Helper;
 
-class FooBar extends Helper
+class Example extends Helper
 {
     /**
      * @var int
@@ -24,6 +24,6 @@ class FooBar extends Helper
      */
     public function __invoke()
     {
-        return 'fooBar: ' . $this->count++;
+        return 'Example: ' . $this->count++;
     }
 }

@@ -1,9 +1,5 @@
 services:
-    app.templating.language_switcher:
-        class: AppBundle\Templating\LanguageSwitcher
-        arguments: ['@pimcore.document_service']
-
     app.templating..helper.foobar:
-        class: AppBundle\Templating\Helper\FooBar
+        class: AppBundle\Templating\Helper\Example
         tags:
             - { name: templating.helper, alias: fooBar }
