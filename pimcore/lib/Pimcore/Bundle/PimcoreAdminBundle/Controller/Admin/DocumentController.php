@@ -1006,7 +1006,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         ];
 
         if ($site) {
-            $tmpDocument["qtipCfg"]["text"] .= "<br>" . $this->view->translate("site_id") . ": " . $site->getId();
+            $tmpDocument["qtipCfg"]["text"] .= "<br>" . $this->trans("site_id") . ": " . $site->getId();
         }
 
         // PREVIEWS temporary disabled, need's to be optimized some time
