@@ -66,14 +66,19 @@ class Discount implements IDiscount
     public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
         if($this->getAmount() != 0) {
-            $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+            $amount = $this->getAmount();
+            if($currentSubTotal->getAmount() < ($amount * -1)) {
+                $amount = $currentSubTotal->getAmount() * -1;
+            }
+
+            $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
 
             $taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
             if($taxClass) {
                 $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
                 $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
-                $modificatedPrice->setGrossAmount($this->getAmount(), true);
+                $modificatedPrice->setGrossAmount($amount, true);
             }
 
             return $modificatedPrice;
