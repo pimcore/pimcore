@@ -143,7 +143,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     addTab: function () {
 
         // icon class
-        var iconClass = "pimcore_icon_object";
+        var iconClass = this.data.general.o_type == "variant" ? "pimcore_icon_variant" : " pimcore_icon_object";
         if(this.data.general["iconCls"]) {
             iconClass = this.data.general["iconCls"];
         } else if (this.data.general["icon"]) {

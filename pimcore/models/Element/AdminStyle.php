@@ -55,7 +55,7 @@ class AdminStyle
             if ($element->getClass()->getIcon()) {
                 $this->elementIcon = $element->getClass()->getIcon();
             } else {
-                $this->elementIconClass = "pimcore_icon_object";
+                $this->elementIconClass = $element->getType() == "variant" ? "pimcore_icon_variant" : "pimcore_icon_object";
             }
 
             $this->elementQtipConfig = [
