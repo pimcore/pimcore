@@ -82,7 +82,7 @@ pimcore:
             - { route: pimcore_admin_login }
 
         translations:
-          path: "@PimcoreBundle/Resources/translations"
+            path: "@PimcoreBundle/Resources/translations"
 
 swiftmailer:
     default_mailer: pimcore_mailer

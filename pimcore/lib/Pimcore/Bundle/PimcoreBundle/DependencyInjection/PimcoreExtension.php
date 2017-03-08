@@ -3,11 +3,14 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\PimcoreBundle\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Config\Config;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 
 class PimcoreExtension extends Extension
 {
@@ -21,7 +24,7 @@ class PimcoreExtension extends Extension
         $config        = $this->processConfiguration($configuration, $configs);
 
         // unauthenticated routes do not double-check for authentication
-        $container->setParameter('pimcode.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
+        $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']["path"]);
 
@@ -43,6 +46,8 @@ class PimcoreExtension extends Extension
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
 
+        $this->configureCache($container, $loader, $config);
+
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
 
@@ -57,6 +62,50 @@ class PimcoreExtension extends Extension
         }
 
         $this->addContextRoutes($container, $config['context']);
+    }
+
+    /**
+     * Configure pimcore core cache
+     *
+     * @param ContainerBuilder $container
+     * @param LoaderInterface  $loader
+     * @param array            $config
+     */
+    protected function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
+    {
+        // core cache pool
+        $container->setAlias('pimcore.cache.core.pool', $config['cache']['pool_service_id']);
+
+        // default lifetime
+        $container->setParameter('pimcore.cache.core.default_lifetime', $config['cache']['default_lifetime']);
+
+        $loader->load('cache.yml');
+
+        // register doctrine cache if it is enabled
+        if ($config['cache']['pools']['doctrine']['enabled']) {
+            $loader->load('cache_doctrine.yml');
+
+            // load named connection
+            $connectionId = sprintf('doctrine.dbal.%s_connection', $config['cache']['pools']['doctrine']['connection']);
+
+            $doctrinePool = $container->findDefinition('pimcore.cache.core.pool.doctrine');
+            $doctrinePool->replaceArgument(0, new Reference($connectionId));
+        }
+
+        // register redis cache if it is enabled
+        if ($config['cache']['pools']['redis']['enabled']) {
+            $container->setParameter(
+                'pimcore.cache.core.redis.connection',
+                $config['cache']['pools']['redis']['connection']
+            );
+
+            $container->setParameter(
+                'pimcore.cache.core.redis.options',
+                $config['cache']['pools']['redis']['options']
+            );
+
+            $loader->load('cache_redis.yml');
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ class PimcoreLegacyExtension extends Extension
         );
 
         $loader->load('services.yml');
+        $loader->load('cache.yml');
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];

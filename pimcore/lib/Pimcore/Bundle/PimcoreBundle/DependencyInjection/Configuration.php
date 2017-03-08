@@ -19,6 +19,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode    = $treeBuilder->root('pimcore');
 
+        $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
 
@@ -102,5 +103,53 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * Add cache config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function addCacheNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode->children()
+            ->arrayNode('cache')
+            ->canBeEnabled()
+            ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('pool_service_id')
+                        ->defaultValue('pimcore.cache.core.pool.filesystem')
+                    ->end()
+                    ->integerNode('default_lifetime')
+                        ->defaultValue(2419200) // 28 days
+                    ->end()
+                    ->arrayNode('pools')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('doctrine')
+                                ->canBeDisabled()
+                                ->children()
+                                    ->scalarNode('connection')
+                                        ->defaultValue('default')
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('redis')
+                                ->canBeEnabled()
+                                ->children()
+                                    // TODO define available config values and defaults
+                                    ->variableNode('connection')
+                                        ->defaultValue([])
+                                    ->end()
+
+                                    // TODO define available config values and defaults
+                                    ->variableNode('options')
+                                        ->defaultValue([])
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end();
     }
 }

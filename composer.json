@@ -80,6 +80,7 @@
 
     "symfony/psr-http-message-bridge": "^1.0",
     "php-di/symfony-bridge": "^2.0",
+    "cache/tag-interop": "1.0.x-dev",
     "debril/rss-atom-bundle": "^3.0",
 
     "zendframework/zendframework1": "~1.12",
@@ -90,7 +91,8 @@
   "require-dev": {
     "sensio/generator-bundle": "^3.0",
     "symfony/phpunit-bridge": "^3.0",
-    "codeception/codeception": "^2.2"
+    "codeception/codeception": "^2.2",
+    "cache/integration-tests": "^0.15.0"
   },
   "suggest": {
     "ext-curl": "*",

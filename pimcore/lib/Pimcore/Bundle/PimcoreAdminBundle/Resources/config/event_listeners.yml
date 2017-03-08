@@ -27,7 +27,7 @@ services:
         arguments:
             - '@pimcore.service.request_matcher_factory'
             - '@pimcore_admin.security.token_storage_user_resolver'
-            - '%pimcode.admin.unauthenticated_routes%'
+            - '%pimcore.admin.unauthenticated_routes%'
         tags:
             - { name: kernel.event_subscriber }
 
