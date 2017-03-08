@@ -24,11 +24,6 @@ if (!defined('PIMCORE_PATH')) {
     define('PIMCORE_PATH', PIMCORE_PROJECT_ROOT . '/pimcore');
 }
 
-// pimcore version check
-if (!defined('PIMCORE_IGNORE_PHP_VERSION_CHECK')) {
-    define('PIMCORE_IGNORE_PHP_VERSION_CHECK', false);
-}
-
 // var directory
 if (is_array($_SERVER)
     && array_key_exists('HTTP_X_PIMCORE_UNIT_TEST_REQUEST', $_SERVER)

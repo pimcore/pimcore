@@ -16,7 +16,6 @@ if (!defined('TESTS_PATH')) {
 // some general pimcore definition overwrites
 define('PIMCORE_DEBUG', true);
 define('PIMCORE_DEVMODE', true);
-define('PIMCORE_IGNORE_PHP_VERSION_CHECK', true);
 
 // override and initialize directories
 define('PIMCORE_CLASS_DIRECTORY', codecept_output_dir() . 'var/classes');
