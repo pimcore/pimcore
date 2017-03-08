@@ -713,25 +713,6 @@ class ObjectHelperController extends AdminController
         return $this->json(["success" => $success]);
     }
 
-
-    /**
-     * @Route("/export")
-     * @param Request $request
-     */
-    public function exportAction(Request $request)
-    {
-        list($list, $fields, $requestedLanguage) = $this->prepareExportList();
-
-        $list->load();
-        $csv = $this->getCsvData($request, $list, $fields);
-
-        $response = new Response($csv);
-        $response->headers->set("Content-type", "text/csv");
-        $response->headers->set("Content-Disposition", "attachment; filename=\"export.csv\"");
-        echo $csv;
-        exit;
-    }
-
     /**
      * @param Request $request
      * @return mixed|string
