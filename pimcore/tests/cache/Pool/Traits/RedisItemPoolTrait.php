@@ -11,6 +11,11 @@ trait RedisItemPoolTrait
     /**
      * @var array
      */
+    protected $redisConnectionOptions = [];
+
+    /**
+     * @var array
+     */
     protected $redisOptions = [];
 
     /**
@@ -18,15 +23,6 @@ trait RedisItemPoolTrait
      */
     protected function buildCachePool()
     {
-        $redisDb = getenv('TEST_REDIS_DB');
-        if (!$redisDb) {
-            $this->markTestSkipped('TEST_REDIS_DB env var is not configured');
-        }
-
-        $connectionOptions = [
-            'database' => $redisDb
-        ];
-
-        return (new Factory())->createRedisItemPool($this->defaultLifetime, $connectionOptions, $this->redisOptions);
+        return (new Factory())->createRedisItemPool($this->defaultLifetime, $this->redisConnectionOptions, $this->redisOptions);
     }
 }

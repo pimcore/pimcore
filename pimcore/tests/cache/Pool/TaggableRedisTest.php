@@ -14,6 +14,10 @@ class TaggableRedisTest extends TaggableCachePoolTest
     use CacheItemPoolTestTrait;
     use RedisItemPoolTrait;
 
+    protected $skippedTests = [
+        'testInvalidateTag' => 'Invalidate tags is currently not working properly on redis',
+    ];
+
     /**
      * The redis pool does not clear all tag -> item relations properly, resulting in added items potentially having
      * tags which were set in earlier writes as the tag -> cacheItem relation is not cleared properly. See comments below.

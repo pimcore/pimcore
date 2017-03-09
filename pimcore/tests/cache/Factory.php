@@ -6,6 +6,7 @@ use Pimcore\Cache\Pool\Doctrine;
 use Pimcore\Cache\Pool\Redis;
 use Pimcore\Cache\Pool\Redis\ConnectionFactory;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
+use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -20,6 +21,8 @@ class Factory
      */
     public function createDoctrineItemPool($defaultLifetime = 0)
     {
+        TestHelper::checkDbSupport();
+
         return new Doctrine(
             \Pimcore::getContainer()->get('doctrine.dbal.default_connection'),
             $defaultLifetime
@@ -27,15 +30,21 @@ class Factory
     }
 
     /**
-     * @param $defaultLifetime
+     * @param int $defaultLifetime
      * @param array $connectionOptions
      * @param array $options
      * @return Redis
      */
     public function createRedisItemPool($defaultLifetime, array $connectionOptions = [], array $options = [])
     {
+        $redisDb = getenv('PIMCORE_TEST_CACHE_REDIS_DB');
+        if (!$redisDb) {
+            throw new \PHPUnit_Framework_SkippedTestError('PIMCORE_TEST_CACHE_REDIS_DB env var is not configured');
+        }
+
         $connectionOptions = array_merge([
-            'server' => 'localhost'
+            'server'   => 'localhost',
+            'database' => $redisDb
         ], $connectionOptions);
 
         $connection = ConnectionFactory::createConnection($connectionOptions);
@@ -64,7 +73,7 @@ class Factory
      */
     public function createFilesystemAdapterProxyItemPool($defaultLifetime = 0)
     {
-        $filesystemAdapter = new FilesystemAdapter('', $defaultLifetime);
+        $filesystemAdapter = new FilesystemAdapter('', $defaultLifetime, \Pimcore::getKernel()->getCacheDir());
 
         return $this->createSymfonyProxyItemPool($filesystemAdapter);
     }
