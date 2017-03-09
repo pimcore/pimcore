@@ -26,6 +26,8 @@ services:
     pimcore_legacy.cache.zend.handler:
         class: Pimcore\Cache\Core\ZendCacheHandler
         arguments: ['@pimcore_legacy.cache.zend.frontend']
-
-
-
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: cache }

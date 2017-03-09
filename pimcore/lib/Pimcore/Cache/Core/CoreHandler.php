@@ -5,11 +5,15 @@ namespace Pimcore\Cache\Core;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
+use Pimcore\Event\Cache\Core\ResultEvent;
+use Pimcore\Event\CoreCacheEvents;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
@@ -29,6 +33,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @var WriteLockInterface
      */
     protected $writeLock;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
 
     /**
      * Actually write/load to/from cache?
@@ -108,11 +117,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @param PimcoreCacheItemPoolInterface $adapter
      * @param WriteLockInterface $writeLock
      */
-    public function __construct(PimcoreCacheItemPoolInterface $adapter, WriteLockInterface $writeLock)
+    public function __construct(PimcoreCacheItemPoolInterface $adapter, WriteLockInterface $writeLock, EventDispatcherInterface $dispatcher)
     {
         $this->setItemPool($adapter);
 
-        $this->writeLock = $writeLock;
+        $this->writeLock  = $writeLock;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -142,6 +152,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function setEnabled($enabled)
     {
+        if ($enabled) {
+            $this->dispatcher->dispatch(CoreCacheEvents::ENABLE, new Event());
+        } else {
+            $this->dispatcher->dispatch(CoreCacheEvents::DISABLE, new Event());
+        }
+
         $this->enabled = (bool)$enabled;
 
         return $this;
@@ -215,6 +231,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $this->forceImmediateWrite = (bool)$forceImmediateWrite;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function init()
+    {
+        $this->dispatcher->dispatch(CoreCacheEvents::INIT, new Event());
     }
 
     /**
@@ -876,11 +900,18 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function purge()
     {
+        $result = true;
         if ($this->itemPool instanceof PurgeableCacheItemPoolInterface) {
-            return $this->itemPool->purge();
+            $result = $this->itemPool->purge();
         }
 
-        return true;
+        $purgeEvent = new ResultEvent();
+
+        $this->dispatcher->dispatch(CoreCacheEvents::PURGE, $purgeEvent);
+
+        $result = $result && $purgeEvent->getResult();
+
+        return $result;
     }
 
     /**

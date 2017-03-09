@@ -7,6 +7,7 @@ services:
         arguments:
             - '@pimcore.cache.core.pool'
             - '@pimcore.cache.core.write_lock'
+            - '@event_dispatcher'
         calls:
             - [setLogger, ['@logger']]
         tags:

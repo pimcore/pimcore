@@ -29,11 +29,6 @@ class Cache
     protected static $handler;
 
     /**
-     * @var ZendCacheHandler
-     */
-    protected static $zendHandler;
-
-    /**
      * @deprecated
      * @return \Zend_Cache_Core|null
      */
@@ -51,15 +46,6 @@ class Cache
     }
 
     /**
-     * @param ZendCacheHandler $zendHandler
-     */
-    public static function setZendHandler(ZendCacheHandler $zendHandler)
-    {
-        static::$zendHandler = $zendHandler;
-        static::$zendHandler->setZendFrameworkCaches();
-    }
-
-    /**
      * Get the cache handler implementation
      *
      * @return CoreHandlerInterface
@@ -67,6 +53,14 @@ class Cache
     public static function getHandler()
     {
         return static::$handler;
+    }
+
+    /**
+     * Initialize the handler
+     */
+    public static function init()
+    {
+        self::$handler->init();
     }
 
     /**
@@ -224,7 +218,6 @@ class Cache
      */
     public static function disable()
     {
-        static::$zendHandler->disable();
         static::$handler->disable();
     }
 
@@ -233,7 +226,6 @@ class Cache
      */
     public static function enable()
     {
-        static::$zendHandler->enable();
         static::$handler->enable();
     }
 
@@ -266,14 +258,6 @@ class Cache
      */
     public static function maintenance()
     {
-        $result = static::$handler->purge();
-
-        if (null !== static::$zendHandler) {
-            // TODO if the ZF backend and the handler itemPool are the same, purge will be called twice. However, not
-            // calling clean would result in ZF cache never being cleaned up if the backend differs from the core item pool.
-            $result = $result && static::$zendHandler->getCache()->clean(\Zend_Cache::CLEANING_MODE_OLD);
-        }
-
-        return $result;
+        return static::$handler->purge();
     }
 }

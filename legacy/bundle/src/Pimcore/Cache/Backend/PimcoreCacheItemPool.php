@@ -8,8 +8,8 @@ use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
 use Zend_Cache;
 
 /**
- * Zend_Cache backend operating on a PSR-6 item pool. Implements only the basic functionality needed by Zend_Locale and
- * Zend_Db!
+ * Zend_Cache backend operating on a pimcorePSR-6 item pool. Implements only the basic functionality needed by Zend_Locale
+ * and Zend_Db!
  */
 class PimcoreCacheItemPool extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
