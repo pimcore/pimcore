@@ -28,9 +28,6 @@ class Legacy {
      */
     public static function run($returnResponse = false, \Zend_Controller_Request_Abstract $request = null, \Zend_Controller_Response_Abstract $response = null)
     {
-        // initialize cache
-        Cache::init();
-
         $conf = Config::getSystemConfig();
         if (!$conf) {
             // redirect to installer if configuration isn't present

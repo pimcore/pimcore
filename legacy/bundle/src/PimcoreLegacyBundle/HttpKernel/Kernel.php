@@ -61,9 +61,6 @@ class Kernel implements KernelInterface
 
             $this->setupTempDirectories();
 
-            // initialize cache
-            Cache::init();
-
             $this->initializePlugins();
 
             // prepare the ZF MVC stack - needed for more advanced view helpers like action()
