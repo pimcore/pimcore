@@ -33,4 +33,14 @@ class DataTypeTest extends AbstractDataTypeTestCase
 
         return $this->testObject;
     }
+
+    public function testObjectsWithMetadata()
+    {
+        $this->markTestIncomplete('To be implemented (no local comparison)');
+    }
+
+    public function testPassword()
+    {
+        $this->markTestIncomplete('To be checked - what is the intended behaviour here in local context?');
+    }
 }

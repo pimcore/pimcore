@@ -800,15 +800,24 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @param $seed
+     *
+     * @return array
+     */
+    protected function getTableDataFixture($seed)
+    {
+        return [["eins", "zwei", "drei"], [$seed, 2, 3], ["a", "b", "c"]];
+    }
+
+    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
      */
     public function fillTable(Concrete $object, $field, $seed = 1)
     {
-        $setter    = "set" . ucfirst($field);
-        $tabledata = [["eins", "zwei", "drei"], [$seed, 2, 3], ["a", "b", "c"]];
-        $object->$setter($tabledata);
+        $setter = "set" . ucfirst($field);
+        $object->$setter($this->getTableDataFixture($seed));
     }
 
     /**
@@ -817,13 +826,25 @@ class TestDataHelper extends Module
      * @param Concrete $comparisonObject
      * @param int      $seed
      */
-    public function assertTable(Concrete $object, $field, Concrete $comparisonObject, $seed = 1)
+    public function assertTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
-        $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+
+        $expected = $this->getTableDataFixture($seed);
 
         $this->assertEquals($expected, $value);
+
+        // comparison object is only set on REST tests
+        if (null === $comparisonObject) {
+            return;
+        }
+
+        $fd           = $object->getClass()->getFieldDefinition($field);
+        $valueData    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
@@ -878,6 +899,7 @@ class TestDataHelper extends Module
 
     /**
      * @param int $seed
+     * @return Object\Data\StructuredTable
      */
     private function getStructuredTableData($seed = 1)
     {
@@ -888,6 +910,11 @@ class TestDataHelper extends Module
         $data['row1']['col2'] = "text_a_" . $seed;
         $data['row2']['col2'] = "text_b_" . $seed;
         $data['row3']['col2'] = "text_c_" . $seed;
+
+        $st = new Object\Data\StructuredTable();
+        $st->setData($data);
+
+        return $st;
     }
 
     /**
@@ -898,12 +925,7 @@ class TestDataHelper extends Module
     public function fillStructuredtable(Concrete $object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-
-        $data      = new Object\Data\StructuredTable();
-        $tabledata = $this->getStructuredTableData($seed);
-
-        $data->setData($tabledata);
-        $object->$setter($data);
+        $object->$setter($this->getStructuredTableData($seed));
     }
 
     /**
@@ -912,16 +934,31 @@ class TestDataHelper extends Module
      * @param Concrete $comparisonObject
      * @param int      $seed
      */
-    public function assertStructuredTable(Concrete $object, $field, Concrete $comparisonObject, $seed = 1)
+    public function assertStructuredTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
+
+        /** @var Object\Data\StructuredTable $value */
         $value  = $object->$getter();
 
-        $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+        $this->assertNotNull($value);
+        $this->assertInstanceOf(Object\Data\StructuredTable::class, $value);
+
+        $expected = $this->getStructuredTableData($seed);
 
         $this->assertEquals($expected, $value);
+        $this->assertEquals($expected->getData(), $value->getData());
+
+        // comparison object is only set on REST tests
+        if (null === $comparisonObject) {
+            return;
+        }
+
+        $fd           = $object->getClass()->getFieldDefinition($field);
+        $valueData    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
@@ -955,7 +992,7 @@ class TestDataHelper extends Module
      * @param int           $seed
      * @param string|null   $language
      */
-    public function assertObjects(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1, $language = null)
+    public function assertObjects(Concrete $object, $field, $seed = 1, $language = null)
     {
         $getter = "get" . ucfirst($field);
 

@@ -362,7 +362,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->createTestObject('objects');
 
-        $this->testDataHelper->assertObjects($this->testObject, "objects", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertObjects($this->testObject, "objects", $this->seed);
     }
 
     public function testObjectsWithMetadata()
@@ -379,13 +379,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjectsWithmetadata($this->testObject, "objectswithmetadata", $this->comparisonObject, $this->seed);
     }
 
-    /**
-     * @group only
-     */
     public function testLocalizedInput()
     {
-        $this->markTestIncomplete('Localized fields seem to have a bug');
-
         $this->createTestObject([
             [
                 'method'    => 'fillInput',
@@ -403,10 +398,11 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInput($this->testObject, "linput", $this->seed, "de");
     }
 
-    public function testLObjects()
+    /**
+     * @group only
+     */
+    public function testLocalizedObjects()
     {
-        $this->markTestIncomplete('Localized fields seem to have a bug');
-
         $this->createTestObject([
             [
                 'method'    => 'fillObjects',
@@ -420,8 +416,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "en");
-        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->comparisonObject, $this->seed, "de");
+        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->seed, "en");
+        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->seed, "de");
     }
 
     public function testBricks()
