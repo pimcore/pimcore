@@ -141,37 +141,4 @@ class Logger
     {
         self::log($m, "debug", $context);
     }
-
-    /**
-     * Get the PSR logger with the name core (if defined)
-     *
-     * @return \Monolog\Logger|null
-     */
-    public static function getPsrCoreLogger()
-    {
-        foreach (static::$logger as $logger) {
-            if ($logger instanceof \Monolog\Logger && $logger->getName() === 'core') {
-                return $logger;
-            }
-        }
-    }
-
-    /**
-     * Create a named logger from the core one (e.g. for cache, db, ...)
-     *
-     * @param $name
-     * @return \Monolog\Logger|null
-     */
-    public static function createNamedPsrLogger($name)
-    {
-        $coreLogger = static::getPsrCoreLogger();
-
-        if ($coreLogger) {
-            return new \Monolog\Logger(
-                $name,
-                $coreLogger->getHandlers(),
-                $coreLogger->getProcessors()
-            );
-        }
-    }
 }
