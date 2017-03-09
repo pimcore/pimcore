@@ -151,7 +151,10 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject('image');
 
         $this->assertNotNull($this->testObject->getImage());
-        $this->assertNotNull($this->comparisonObject->getImage());
+
+        if (null !== $this->comparisonObject) {
+            $this->assertNotNull($this->comparisonObject->getImage());
+        }
 
         $this->testDataHelper->assertImage($this->testObject, "image", $this->seed);
     }
@@ -166,7 +169,10 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->assertNotNull($this->testObject->getHotspotImage());
-        $this->assertNotNull($this->comparisonObject->getHotspotImage());
+
+        if (null !== $this->comparisonObject) {
+            $this->assertNotNull($this->comparisonObject->getHotspotImage());
+        }
 
         $this->testDataHelper->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
     }

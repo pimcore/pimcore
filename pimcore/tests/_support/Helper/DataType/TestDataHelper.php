@@ -638,6 +638,18 @@ class TestDataHelper extends Module
     }
 
     /**
+     * @return Object\Data\Geopoint
+     */
+    protected function getGeopointFixture()
+    {
+        $longitude = 2.2008440814678;
+        $latitude  = 102.25112915039;
+        $point     = new Object\Data\Geopoint($longitude, $latitude);
+
+        return $point;
+    }
+
+    /**
      * @param Concrete $object
      * @param string   $field
      * @param int      $seed
@@ -645,11 +657,7 @@ class TestDataHelper extends Module
     public function fillGeopoint(Concrete $object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-
-        $longitude = 2.2008440814678;
-        $latitude  = 102.25112915039;
-        $point     = new Object\Data\Geopoint($longitude, $latitude);
-        $object->$setter($point);
+        $object->$setter($this->getGeopointFixture());
     }
 
     /**
@@ -660,13 +668,28 @@ class TestDataHelper extends Module
     public function assertGeopoint(Concrete $object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
+
+        /** @var Object\Data\Geopoint $value */
         $value  = $object->$getter();
 
-        $longitude = 2.2008440814678;
-        $latitude  = 102.25112915039;
-        $expected  = new Object\Data\Geopoint($longitude, $latitude);
+        $this->assertNotNull($value);
+        $this->assertInstanceOf(Object\Data\Geopoint::class, $value);
 
-        $this->assertEquals($expected, $value);
+        $expected = $this->getGeopointFixture();
+
+        $this->assertEquals($expected->__toString(), $value->__toString(), 'String representations are equal');
+        $this->assertEquals($expected, $value, 'Objects are equal');
+    }
+
+    /**
+     * @return Object\Data\Geobounds
+     */
+    protected function getGeoboundsFixture()
+    {
+        return new Object\Data\Geobounds(
+            new Object\Data\Geopoint(150.96588134765625, -33.704920213014425),
+            new Object\Data\Geopoint(150.60333251953125, -33.893217379440884)
+        );
     }
 
     /**
@@ -677,11 +700,7 @@ class TestDataHelper extends Module
     public function fillGeobounds(Concrete $object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $bounds = new Object\Data\Geobounds(
-            new Object\Data\Geopoint(150.96588134765625, -33.704920213014425),
-            new Object\Data\Geopoint(150.60333251953125, -33.893217379440884)
-        );
-        $object->$setter($bounds);
+        $object->$setter($this->getGeoboundsFixture());
     }
 
     /**
@@ -690,13 +709,43 @@ class TestDataHelper extends Module
      * @param Concrete $comparisonObject
      * @param int      $seed
      */
-    public function assertGeobounds(Concrete $object, $field, Concrete $comparisonObject, $seed = 1)
+    public function assertGeobounds(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
-        $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+        $getter = 'get' . ucfirst($field);
 
-        $this->assertEquals($expected, $value);
+        /** @var Object\Data\Geobounds $value */
+        $value = $object->$getter();
+
+        $this->assertNotNull($value);
+        $this->assertInstanceOf(Object\Data\Geobounds::class, $value);
+
+        $expected = $this->getGeoboundsFixture();
+
+        $this->assertEquals($expected->__toString(), $value->__toString(), 'String representations are equal');
+        $this->assertEquals($expected, $value, 'Objects are equal');
+
+        // comparison object is only set on REST tests
+        if (null === $comparisonObject) {
+            return;
+        }
+
+        $fd           = $object->getClass()->getFieldDefinition($field);
+        $valueData    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        $this->assertEquals($expectedData, $valueData);
+    }
+
+    /**
+     * @return Object\Data\Geopoint[]
+     */
+    protected function getGeopolygonFixture()
+    {
+        return [
+            new Object\Data\Geopoint(150.54428100585938, -33.464671118242684),
+            new Object\Data\Geopoint(150.73654174804688, -33.913733814316245),
+            new Object\Data\Geopoint(151.2542724609375, -33.9946115848146)
+        ];
     }
 
     /**
@@ -707,13 +756,7 @@ class TestDataHelper extends Module
     public function fillGeopolygon(Concrete $object, $field, $seed = 1)
     {
         $setter  = "set" . ucfirst($field);
-        $polygon = [
-            new Object\Data\Geopoint(150.54428100585938, -33.464671118242684),
-            new Object\Data\Geopoint(150.73654174804688, -33.913733814316245),
-            new Object\Data\Geopoint(151.2542724609375, -33.9946115848146)
-        ];
-
-        $object->$setter($polygon);
+        $object->$setter($this->getGeopolygonFixture());
     }
 
     /**
@@ -722,13 +765,38 @@ class TestDataHelper extends Module
      * @param          $comparisonObject
      * @param int      $seed
      */
-    public function assertGeopolygon(Concrete $object, $field, Concrete $comparisonObject, $seed = 1)
+    public function assertGeopolygon(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
-        $fd       = $object->getClass()->getFieldDefinition($field);
-        $value    = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expected = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+        $getter = 'get' . ucfirst($field);
 
+        /** @var Object\Data\Geopoint[] $value */
+        $value = $object->$getter();
+
+        $expected = $this->getGeopolygonFixture();
+
+        $this->assertTrue(is_array($value));
+        $this->assertCount(count($expected), $value);
         $this->assertEquals($expected, $value);
+
+        foreach ($value as $i => $point) {
+            $expectedPoint = $expected[$i];
+
+            $this->assertNotNull($point);
+            $this->assertInstanceOf(Object\Data\Geopoint::class, $point);
+            $this->assertEquals($expectedPoint->__toString(), $point->__toString(), 'String representations are equal');
+            $this->assertEquals($expectedPoint, $point, 'Objects are equal');
+        }
+
+        // comparison object is only set on REST tests
+        if (null === $comparisonObject) {
+            return;
+        }
+
+        $fd           = $object->getClass()->getFieldDefinition($field);
+        $valueData    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expectedData = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        $this->assertEquals($expectedData, $valueData);
     }
 
     /**
