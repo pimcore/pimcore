@@ -34,7 +34,7 @@ class TestHelper
     public static function checkDbSupport()
     {
         if (!static::supportsDbTests()) {
-            throw new \PHPUnit_Framework_SkippedTestError('Not running test as DB connection couldn\'t be established');
+            throw new \PHPUnit_Framework_SkippedTestError('Not running test as DB is not connected');
         }
     }
 
@@ -685,6 +685,10 @@ class TestHelper
     public static function cleanUp($cleanObjects = true, $cleanDocuments = true, $cleanAssets = true)
     {
         \Pimcore::collectGarbage();
+
+        if (!static::supportsDbTests()) {
+            return;
+        }
 
         if ($cleanObjects) {
             static::cleanUpTree(AbstractObject::getById(1), 'object');

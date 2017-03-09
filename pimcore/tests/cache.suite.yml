@@ -1,4 +1,5 @@
 class_name: CacheTester
 modules:
     enabled:
-        - \Pimcore\Tests\Helper\Pimcore
+        - \Pimcore\Tests\Helper\Pimcore:
+            connect_db: true

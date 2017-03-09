@@ -32,7 +32,11 @@ class Model extends Module
         AbstractObject::setHideUnpublished(false);
 
         if ($this->config['initialize_definitions']) {
-            $this->initializeDefinitions();
+            if (TestHelper::supportsDbTests()) {
+                $this->initializeDefinitions();
+            } else {
+                $this->debug('[MODEL] Not initializing model definitions as DB is not connected');
+            }
         }
     }
 

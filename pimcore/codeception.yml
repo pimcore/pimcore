@@ -9,6 +9,8 @@ paths:
 settings:
     bootstrap: _bootstrap.php
     colors: true
+params:
+    - env
 extensions:
     enabled:
         - Codeception\Extension\RunFailed

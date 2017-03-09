@@ -6,6 +6,7 @@ use Codeception\Module\REST;
 use Codeception\TestInterface;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\RestTestCase;
+use Pimcore\Tests\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\BrowserKit\Response;
@@ -161,6 +162,13 @@ class PimcoreRest extends REST
      */
     protected function initializeUser($username = 'rest', $admin = true)
     {
+        if (!TestHelper::supportsDbTests()) {
+            $this->debug(sprintf('[REST] Not initializing user %s as DB is not connected', $username));
+            return null;
+        } else {
+            $this->debug(sprintf('[REST] Initializing user %s', $username));
+        }
+
         $password = $username;
 
         /** @var User $user */

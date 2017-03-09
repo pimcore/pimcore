@@ -29,6 +29,14 @@ abstract class RestTestCase extends TestCase
      */
     protected $authenticateUser = 'rest';
 
+    /**
+     * @inheritDoc
+     */
+    protected function needsDb()
+    {
+        return true;
+    }
+
     public function setUp()
     {
         parent::setUp();
