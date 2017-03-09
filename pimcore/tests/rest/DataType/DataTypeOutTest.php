@@ -6,6 +6,9 @@ use Codeception\Util\Debug;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Util\TestHelper;
 
+/**
+ * @group dataTypeOut
+ */
 class DataTypeOutTest extends AbstractDataTypeTestCase
 {
     /**

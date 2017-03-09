@@ -550,7 +550,8 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
-     * @param bool $save
+     * @param bool   $save
+     * @param bool   $publish
      *
      * @return Document\Page
      */

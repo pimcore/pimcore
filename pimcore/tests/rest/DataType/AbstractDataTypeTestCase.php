@@ -89,9 +89,6 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
         }
     }
 
-    /**
-     * @group only
-     */
     public function testInput()
     {
         $this->createTestObject('input');
@@ -122,8 +119,6 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
 
     public function testHref()
     {
-        $this->markTestIncomplete();
-
         TestHelper::createEmptyObjects();
         $this->createTestObject('href');
 
@@ -132,8 +127,6 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
 
     public function testMultiHref()
     {
-        $this->markTestIncomplete();
-
         TestHelper::createEmptyObjects();
         $this->createTestObject('multihref');
 
@@ -142,8 +135,6 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
 
     public function testImage()
     {
-        $this->markTestIncomplete();
-
         $this->createTestObject('image');
 
         $this->assertNotNull($this->testObject->getImage());
@@ -154,8 +145,6 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
 
     public function testHotspotImage()
     {
-        $this->markTestIncomplete();
-
         $this->createTestObject([
             [
                 'method'    => 'fillHotspotImage',

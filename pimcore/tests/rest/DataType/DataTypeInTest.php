@@ -7,6 +7,9 @@ use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Util\TestHelper;
 
+/**
+ * @group dataTypeIn
+ */
 class DataTypeInTest extends AbstractDataTypeTestCase
 {
     /**
