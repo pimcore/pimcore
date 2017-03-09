@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
 use Symfony\Bundle\FrameworkBundle\Templating\GlobalVariables;
+use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Templating\Loader\LoaderInterface;
@@ -39,6 +40,8 @@ class TimedPhpEngine extends PhpEngine
     public function render($name, array $parameters = array())
     {
         $e = $this->stopwatch->start(sprintf('template.php (%s)', $name), 'template');
+
+        /** @var TemplateReference $name */
 
         $ret = parent::render($name, $parameters);
 

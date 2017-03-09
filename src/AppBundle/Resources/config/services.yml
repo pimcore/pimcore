@@ -1,5 +1,0 @@
-services:
-    app.templating..helper.foobar:
-        class: AppBundle\Templating\Helper\Example
-        tags:
-            - { name: templating.helper, alias: fooBar }

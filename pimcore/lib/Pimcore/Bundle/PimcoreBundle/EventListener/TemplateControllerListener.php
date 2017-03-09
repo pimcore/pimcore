@@ -93,7 +93,9 @@ class TemplateControllerListener implements EventSubscriberInterface
             $template = new Template([]);
             $template->setOwner($controller);
             $template->setEngine($engine);
-            $template->setTemplate($guesser->guessTemplateName($controller, $request, $engine));
+            $templateReference = $guesser->guessTemplateName($controller, $request, $engine);
+            $templateReference->set("bundle", "");
+            $template->setTemplate($templateReference);
 
             // inject Template annotation into the request - will be used by SensioFrameworkExtraBundle
             $request->attributes->set('_template', $template);

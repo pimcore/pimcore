@@ -20,13 +20,4 @@ interface TemplateControllerInterface
      */
     public function setViewAutoRender(Request $request, $autoRender, $engine = null);
 
-    /**
-     * Get template reference for the current request
-     *
-     * @param Request $request
-     * @param string|null $engine
-     *
-     * @return TemplateReferenceInterface
-     */
-    public function getTemplateReference(Request $request, $engine = null);
 }

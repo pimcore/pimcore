@@ -43,7 +43,7 @@ return [
 
     // Customize the image processing library
     \Pimcore\Image\Adapter::class => DI\object('Pimcore\Image\Adapter\ImageMagick')
-    // can be used to customize the path to ImageMagick
-    //->method('setConvertScriptPath', '/usr/bin/convert')
-    //->method('setCompositeScriptPath', '/usr/bin/composite')
+        // can be used to customize the path to ImageMagick
+        //->method('setConvertScriptPath', '/usr/bin/convert')
+        //->method('setCompositeScriptPath', '/usr/bin/composite')
 ];

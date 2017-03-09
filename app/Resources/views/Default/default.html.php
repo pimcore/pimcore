@@ -111,8 +111,8 @@
 
     <?php if($this->editmode) { ?>
         <div class="buttons">
-            <a target="_blank" href="https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854186">Install Sample Data / Boilerplate</a>
-            <a target="_blank" href="http://www.pimcore.org/wiki/display/PIMCORE4/Develop+with+pimcore">Getting Started</a>
+            <a target="_blank" href="https://www.pimcore.org/docs/latest/Getting_Started/Installation.html">Install Sample Data / Boilerplate</a>
+            <a target="_blank" href="https://www.pimcore.org/docs/latest/Getting_Started/index.html">Getting Started</a>
         </div>
 
         <div class="info">

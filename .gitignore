@@ -7,6 +7,7 @@
 !/var/cache
 /var/cache/*
 !var/cache/.gitkeep
+
 !/var/logs
 /var/logs/*
 !var/logs/.gitkeep
@@ -31,25 +32,43 @@
 /tools/
 /website/
 
-# pimcore var directories
+# pimcore private var directories
+!/var/backup
+/var/backup/*
+!var/backup/.gitkeep
+
+!/var/config
+/var/config/*
+!var/config/GeoLite2-City.mmdb
+
+!/var/classes
+
+!/var/recyclebin
+/var/recyclebin/*
+!var/recyclebin/.gitkeep
+
 !/var/tmp
 /var/tmp/*
 !var/tmp/.gitkeep
-!/var/classes
-/var/classes/*
-!var/classes/.gitkeep
-!/var/config
-/var/config/*
-!var/config/.gitkeep
+
 !/var/versions
 /var/versions/*
 !var/versions/.gitkeep
 
-# pimcore web var directories
-/web/var
+!/var/webdav
+/var/webdav/*
+!var/webdav/.gitkeep
+
+
+# pimcore public var directories
+!/web/var/
+/web/var/*
+!/web/var/.gitkeep
+
 !/web/var/assets
 /web/var/assets/*
 !/web/var/assets/.gitkeep
+
 !/web/var/tmp
 /web/var/tmp/*
 !/web/var/tmp/.gitkeep
