@@ -1181,8 +1181,8 @@ class Asset extends Element\AbstractElement
      */
     public function getStream()
     {
-        $streamMeta = stream_get_meta_data($this->stream);
         if ($this->stream) {
+            $streamMeta = stream_get_meta_data($this->stream);
             if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
                 $this->stream = null;
             }
