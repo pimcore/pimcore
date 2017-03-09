@@ -20,6 +20,8 @@ if [[ -z "$PIMCORE_TEST_CACHE_FILE" ]] || [[ "$PIMCORE_TEST_CACHE_FILE" -ne 1 ]]
     CMD="$CMD --skip-group cache.core.file"
 fi
 
+CMD="$CMD --skip-group cache.core.redis"
+
 # generate json result file
 CMD="$CMD --json"
 
