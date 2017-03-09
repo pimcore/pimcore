@@ -80,7 +80,10 @@ class ZendCacheHandler implements EventSubscriberInterface, LoggerAwareInterface
     {
         $enabled = (bool)$enabled;
 
-        $this->logger->debug('Setting Zend legacy cache to {state}', $enabled ? 'enabled' : 'disabled');
+        $this->logger->debug('Setting Zend legacy cache to {state}', [
+            'state' => $enabled ? 'enabled' : 'disabled'
+        ]);
+
         $this->cache->setOption('caching', $enabled);
 
         if ($enabled) {
