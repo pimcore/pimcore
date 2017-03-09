@@ -55,6 +55,9 @@ class PimcoreNavigationController
 
         $cacheKeys = ["root_id__" . $navigationRootDocument->getId(), $htmlMenuIdPrefix];
 
+        // we add "legacy" to the cache key, so that it doesn't collide with the the new navigation implementation
+        $cacheKeys[] = "legacy";
+
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
             $cacheKeys[] = "site__" . $site->getId();
