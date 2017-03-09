@@ -81,6 +81,11 @@ abstract class PageSnippet extends Model\Document
     protected $inheritedElements = [];
 
     /**
+     * @var bool
+     */
+    public $legacy;
+
+    /**
      * @see Document::update
      */
     protected function update()
@@ -597,12 +602,30 @@ abstract class PageSnippet extends Model\Document
      * @return bool
      */
     public function doRenderWithLegacyStack() {
+        return $this->isLegacy();
+    }
 
-        //TODO re-think this and refactor it!!
-        if(substr($this->getModule(), 0, 4) == "zf1-") {
-            return true;
-        }
+    /**
+     * @return bool
+     */
+    public function isLegacy()
+    {
+        return $this->legacy;
+    }
 
-        return parent::doRenderWithLegacyStack();
+    /**
+     * @return bool
+     */
+    public function getLegacy()
+    {
+        return $this->isLegacy();
+    }
+
+    /**
+     * @param bool $legacy
+     */
+    public function setLegacy($legacy)
+    {
+        $this->legacy = (bool) $legacy;
     }
 }

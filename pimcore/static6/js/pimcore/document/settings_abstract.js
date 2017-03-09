@@ -189,8 +189,7 @@ pimcore.document.settings_abstract = Class.create({
             docTypeValue = "";
         }
 
-        var fieldSet = {
-            xtype:'fieldset',
+        var fieldSet = new Ext.form.FieldSet({
             title: t('controller_and_view_settings'),
             collapsible: true,
             autoHeight:true,
@@ -216,7 +215,8 @@ pimcore.document.settings_abstract = Class.create({
                 },
                 {
                     xtype:'combo',
-                    fieldLabel: t('module_optional'),
+                    fieldLabel: this.document.data.legacy ? t('module_optional') : t('bundle_optional'),
+                    itemId: "bundle",
                     displayField: 'name',
                     valueField: 'name',
                     name: "module",
@@ -348,7 +348,25 @@ pimcore.document.settings_abstract = Class.create({
                     }
                 }
             ]
-        };
+        });
+
+        fieldSet.add({
+            xtype: "checkbox",
+            fieldLabel: t("legacy_mode"),
+            name: "legacy",
+            checked: this.document.data.legacy,
+            listeners: {
+                change: function (el, newValue, oldValue) {
+
+                    var text = t("bundle_optional");
+                    if(newValue == true) {
+                        text = t("module_optional");
+                    }
+
+                    fieldSet.getComponent("bundle").setFieldLabel(text);
+                }
+            }
+        });
 
         return fieldSet;
     }

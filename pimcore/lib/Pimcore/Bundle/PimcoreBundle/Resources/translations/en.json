@@ -1,5 +1,9 @@
 [
     {
+        "term": "bundle_optional",
+        "definition": "Bundle (optional)"
+    },
+    {
         "term": "legacy_mode",
         "definition": "Legacy Mode"
     },
