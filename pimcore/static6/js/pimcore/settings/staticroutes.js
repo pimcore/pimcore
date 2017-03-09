@@ -70,8 +70,9 @@ pimcore.settings.staticroutes = Class.create({
                 {name:'defaults'},
                 {name:'siteId'},
                 {name:'priority', type:'int'},
-                {name: 'creationDate'},
-                {name: 'modificationDate'}
+                {name:'legacy', type:'bool'},
+                {name:'creationDate'},
+                {name:'modificationDate'}
             ], null, {
                 remoteSort: false,
                 remoteFilter: false
@@ -93,6 +94,12 @@ pimcore.settings.staticroutes = Class.create({
                     }
                 }.bind(this)
             }
+        });
+
+        var legacyCheck = new Ext.grid.column.Check({
+            header: t("legacy_mode"),
+            dataIndex: "legacy",
+            width: 90
         });
 
         var typesColumns = [
@@ -167,6 +174,7 @@ pimcore.settings.staticroutes = Class.create({
                 mode:"local",
                 triggerAction:"all"
             })},
+            legacyCheck,
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
