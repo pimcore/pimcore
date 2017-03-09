@@ -773,11 +773,13 @@ class TestDataHelper extends Module
             $doc = TestHelper::createEmptyDocumentPage(null, false);
             $doc->setProperties($this->createRandomProperties());
             $doc->setKey(static::DOCUMENT . $seed);
-            $doc->setParentId(1);
             $doc->save();
         }
 
-        $object->$setter("content" . $seed);
+        $link = new Object\Data\Link();
+        $link->setPath($doc);
+
+        $object->$setter($link);
     }
 
     /**
@@ -788,18 +790,22 @@ class TestDataHelper extends Module
     public function assertLink(Concrete $object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
-        $value  = $object->$getter();
 
+        /** @var Object\Data\Link $link */
+        $link = $object->$getter();
+
+        $this->assertNotNull($link);
+        $this->assertInstanceOf(Object\Data\Link::class, $link);
+
+        $document = Document::getByPath($link->getObject());
         $expected = Document::getByPath("/" . static::DOCUMENT . $seed);
 
-
-
-        foreach ([$value, $expected] as $item) {
-            $this->assertNotNull($item);
-            $this->assertInstanceOf(Document::class, $item);
+        foreach (['expected' => $expected, 'value' => $document] as $desc => $item) {
+            $this->assertNotNull($item, $desc . ' is not null');
+            $this->assertInstanceOf(Document::class, $item, $desc . ' is a Document');
         }
 
-        $this->assertDocumentsEqual($expected, $value);
+        $this->assertDocumentsEqual($expected, $document);
     }
 
     /**

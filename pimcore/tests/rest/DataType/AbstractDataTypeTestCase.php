@@ -330,8 +330,6 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
 
     public function testLink()
     {
-        $this->markTestSkipped();
-
         $this->createTestObject('link');
 
         $this->testDataHelper->assertLink($this->testObject, "link", $this->seed);
