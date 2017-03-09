@@ -2,7 +2,7 @@ notifications:
   email:
     - travis-ci@pimcore.org
 
-dist: trusty
+# dist: trusty
 sudo: false
 
 language: php
