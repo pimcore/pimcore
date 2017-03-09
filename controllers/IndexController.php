@@ -44,6 +44,7 @@ class EcommerceFramework_IndexController extends Pimcore\Controller\Action\Admin
 
         try {
             $data = array();
+            $factory = \OnlineShop\Framework\Factory::getInstance();
 
             if($this->getParam("field")) {
 
@@ -51,8 +52,8 @@ class EcommerceFramework_IndexController extends Pimcore\Controller\Action\Admin
                     \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->setCurrentAssortmentTenant($this->getParam("tenant"));
                 }
 
-                $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
-                $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
+                $indexService = $factory->getIndexService();
+                $filterService = $factory->getFilterService($this->view);
 
                 $columnGroup = "";
                 $filterGroups = $indexService->getAllFilterGroups();
@@ -66,7 +67,8 @@ class EcommerceFramework_IndexController extends Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $productList = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+                $factory->getEnvironment()->setCurrentAssortmentSubTenant(null);
+                $productList = $factory->getIndexService()->getProductListForCurrentTenant();
                 $helper = $filterService->getFilterGroupHelper();
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $this->getParam("field"));
 
