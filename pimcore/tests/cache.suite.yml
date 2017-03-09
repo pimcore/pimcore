@@ -1,0 +1,4 @@
+class_name: CacheTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Pimcore
