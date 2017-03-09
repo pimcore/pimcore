@@ -43,7 +43,7 @@ services:
         arguments:
             - 'pimcore'
             - '%pimcore.cache.core.default_lifetime%'
-            - %kernel.cache_dir%/pimcore
+            - '%kernel.cache_dir%/pimcore'
         calls:
             - [setLogger, ['@logger']]
         tags:
