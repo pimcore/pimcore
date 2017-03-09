@@ -3,24 +3,23 @@ notifications:
     - travis-ci@pimcore.org
 
 sudo: false
-
 language: php
 
 php:
   - 7
-  - 7.1
+  # - 7.1
 
 services:
   - mysql
   - redis
 
-matrix:
-  include:
-    - os: linux
-      sudo: false
-    - os: linux
-      sudo: true
-      env: PIMCORE_TEST_SUITE=rest
+#matrix:
+#  include:
+#    - os: linux
+#      sudo: false
+#    - os: linux
+#      sudo: true
+#      env: PIMCORE_TEST_SUITE=rest
 
 cache:
   directories:
