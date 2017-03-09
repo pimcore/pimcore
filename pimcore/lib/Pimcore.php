@@ -392,6 +392,13 @@ class Pimcore
     }
 
     /**
+     * @return bool
+     */
+    public static function isLegacyModeAvailable() {
+        return class_exists("Pimcore\\Legacy");
+    }
+
+    /**
      * @param $name
      * @param $arguments
      * @return mixed
@@ -399,7 +406,7 @@ class Pimcore
      */
     public static function __callStatic($name, $arguments)
     {
-        if(class_exists("Pimcore\\Legacy")) {
+        if(self::isLegacyModeAvailable()) {
             return forward_static_call_array("Pimcore\\Legacy::" . $name, $arguments);
         }
 

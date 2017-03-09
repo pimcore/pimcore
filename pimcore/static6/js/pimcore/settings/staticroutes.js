@@ -99,6 +99,7 @@ pimcore.settings.staticroutes = Class.create({
         var legacyCheck = new Ext.grid.column.Check({
             header: t("legacy_mode"),
             dataIndex: "legacy",
+            hidden: !pimcore.settings.isLegacyModeAvailable,
             width: 90
         });
 

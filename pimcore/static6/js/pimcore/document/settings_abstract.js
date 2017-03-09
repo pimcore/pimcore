@@ -355,6 +355,7 @@ pimcore.document.settings_abstract = Class.create({
             fieldLabel: t("legacy_mode"),
             name: "legacy",
             checked: this.document.data.legacy,
+            hidden: !pimcore.settings.isLegacyModeAvailable,
             listeners: {
                 change: function (el, newValue, oldValue) {
 
