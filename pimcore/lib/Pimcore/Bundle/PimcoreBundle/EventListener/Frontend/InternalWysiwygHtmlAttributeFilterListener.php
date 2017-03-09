@@ -3,12 +3,15 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractResponseInjectionListener;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListener
 {
+    use ResponseInjectionTrait;
+
     /**
      * @var bool
      */
@@ -60,6 +63,9 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
         }
 
         $response = $event->getResponse();
+        if(!$this->isHtmlResponse($response)) {
+            return;
+        }
 
         $content = $response->getContent();
         $content = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $content);

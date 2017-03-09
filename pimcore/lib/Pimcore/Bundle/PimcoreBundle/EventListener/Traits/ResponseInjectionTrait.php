@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Traits;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ResponseInjectionTrait
@@ -12,6 +13,10 @@ trait ResponseInjectionTrait
      */
     protected function isHtmlResponse(Response $response)
     {
+        if($response instanceof BinaryFileResponse) {
+            return false;
+        }
+
         if (strpos($response->getContent(), "<html")) {
             return true;
         }
