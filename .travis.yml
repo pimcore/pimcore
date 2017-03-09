@@ -10,6 +10,7 @@ php:
 
 services:
   - mysql
+  - redis
 
 cache:
   directories:
@@ -23,7 +24,7 @@ env:
 #  - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
 
 before_install:
-  - mysql -e "CREATE DATABASE $PIMCORE_TEST_DB_DBNAME;"
+  - mysql -e "CREATE DATABASE pimcore_test;"
 
 install:
   # add config template
