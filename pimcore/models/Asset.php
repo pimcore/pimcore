@@ -303,7 +303,7 @@ class Asset extends Element\AbstractElement
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = "Asset";
-        if (array_key_exists("filename", $data) && array_key_exists("sourcePath", $data) ) {
+        if (isset($data["filename"]) && isset($data["sourcePath"]) ) {
             $mimeType = Mime::detect($data["sourcePath"], $data["filename"]);
             if (is_file($data["sourcePath"])) {
                 $data["stream"] = fopen($data["sourcePath"], "r+", false, File::getContext());
@@ -313,7 +313,7 @@ class Asset extends Element\AbstractElement
 
             $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
             $class = "\\Pimcore\\Model\\Asset\\" . ucfirst($type);
-            if (array_key_exists("type", $data)) {
+            if (isset($data["type"])) {
                 unset($data["type"]);
             }
         }
