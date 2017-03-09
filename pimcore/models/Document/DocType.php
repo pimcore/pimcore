@@ -87,6 +87,11 @@ class DocType extends Model\AbstractModel
     public $modificationDate;
 
     /**
+     * @var bool
+     */
+    public $legacy = false;
+
+    /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
      *
      * @param integer $id
@@ -308,5 +313,29 @@ class DocType extends Model\AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLegacy()
+    {
+        return $this->legacy;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLegacy()
+    {
+        return $this->isLegacy();
+    }
+
+    /**
+     * @param bool $legacy
+     */
+    public function setLegacy($legacy)
+    {
+        $this->legacy = (bool) $legacy;
     }
 }

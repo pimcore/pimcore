@@ -255,7 +255,8 @@ Ext.onReady(function () {
             {name:'type', allowBlank:false},
             {name:'priority', allowBlank:true},
             {name: 'creationDate', allowBlank: true},
-            {name: 'modificationDate', allowBlank: true}
+            {name: 'modificationDate', allowBlank: true},
+            {name: 'legacy', allowBlank: true}
         ],
         proxy: {
             type: 'ajax',

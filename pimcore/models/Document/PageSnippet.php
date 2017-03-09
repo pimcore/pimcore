@@ -83,7 +83,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var bool
      */
-    public $legacy;
+    public $legacy = false;
 
     /**
      * @see Document::update

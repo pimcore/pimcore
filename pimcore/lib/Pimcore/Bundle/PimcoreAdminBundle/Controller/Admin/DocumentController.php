@@ -156,6 +156,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
                     $createValues["module"] = $docType->getModule();
+                    $createValues["legacy"] = $docType->getLegacy();
                 } elseif ($request->get("translationsBaseDocument")) {
                     $translationsBaseDocument = Document::getById($request->get("translationsBaseDocument"));
                     $createValues["template"] = $translationsBaseDocument->getTemplate();
@@ -1325,7 +1326,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $qtip = "";
 
             $translator = \Pimcore::getContainer()->get("translator");
-            
+
             if (mb_strlen($title) > 80) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
                 $qtip .= $translator->trans("The title is too long, it should have 5 to 80 characters.", [], "admin") . "<br>";

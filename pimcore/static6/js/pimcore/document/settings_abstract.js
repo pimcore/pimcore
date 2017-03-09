@@ -19,7 +19,7 @@ pimcore.document.settings_abstract = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["module","controller","action","template"];
+        var allowedFields = ["module","controller","action","template","legacy"];
         var form = this.getLayout().getForm();
         var element = null;
 

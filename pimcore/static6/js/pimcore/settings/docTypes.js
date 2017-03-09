@@ -56,10 +56,16 @@ pimcore.settings.document.doctypes = Class.create({
 
         this.store = pimcore.globalmanager.get("document_types_store");
 
+        var legacyCheck = new Ext.grid.column.Check({
+            header: t("legacy_mode"),
+            dataIndex: "legacy",
+            width: 90
+        });
+
         var typesColumns = [
             {header: t("name"), flex: 100, sortable: true, dataIndex: 'name',
                                                                         editor: new Ext.form.TextField({})},
-            {header: t("module_optional"), flex: 50, sortable: true, dataIndex: 'module',
+            {header: t("bundle_optional"), flex: 50, sortable: true, dataIndex: 'module',
                                                                         editor: new Ext.form.TextField({})},
             {header: t("controller"), flex: 50, sortable: true, dataIndex: 'controller',
                                                                         editor: new Ext.form.TextField({})},
@@ -79,6 +85,7 @@ pimcore.settings.document.doctypes = Class.create({
                 editable: false,
                 triggerAction: "all"
             })},
+            legacyCheck,
             {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
                 hidden: true,
                 renderer: function(d) {
