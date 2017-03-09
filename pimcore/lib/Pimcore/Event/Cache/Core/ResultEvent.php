@@ -9,7 +9,15 @@ class ResultEvent extends Event
     /**
      * @var bool
      */
-    protected $result = true;
+    protected $result;
+
+    /**
+     * @param bool $result
+     */
+    public function __construct($result = true)
+    {
+        $this->setResult($result);
+    }
 
     /**
      * @return bool
@@ -24,6 +32,6 @@ class ResultEvent extends Event
      */
     public function setResult($result)
     {
-        $this->result = $result;
+        $this->result = (bool)$result;
     }
 }

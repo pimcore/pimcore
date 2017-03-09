@@ -3,7 +3,7 @@ services:
     # the pimcore.cache.core.pool service is defined by config
     # and set in PimcoreExtension
     pimcore.cache.core.handler:
-        class: Pimcore\Cache\Core\CoreHandler
+        class: Pimcore\Cache\Core\EventDispatchingCoreHandler
         arguments:
             - '@pimcore.cache.core.pool'
             - '@pimcore.cache.core.write_lock'
