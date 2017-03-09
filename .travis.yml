@@ -16,7 +16,7 @@ cache:
     - vendor
 
 env:
-  - PIMCORE_ENVIRONMENT=test PIMCORE_TEST_DB_USERNAME=root PIMCORE_TEST_DB_PASSWORD= PIMCORE_TEST_DB_DBNAME=pimcore_test
+  - PIMCORE_ENVIRONMENT=test PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test" PIMCORE_TEST_CACHE_REDIS_DB=1
 
 #before_install:
 #  # analyze ZF usage before running anything else
