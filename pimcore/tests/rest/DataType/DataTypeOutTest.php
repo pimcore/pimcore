@@ -4,12 +4,13 @@ namespace Pimcore\Tests\Rest\DataType;
 
 use Codeception\Util\Debug;
 use Pimcore\Model\Object\Unittest;
+use Pimcore\Tests\Test\DataType\AbstractDataTypeRestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
 /**
  * @group dataTypeOut
  */
-class DataTypeOutTest extends AbstractDataTypeTestCase
+class DataTypeOutTest extends AbstractDataTypeRestTestCase
 {
     /**
      * @inheritDoc

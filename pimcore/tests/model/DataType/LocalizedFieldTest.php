@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Model\Datatype;
+namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;

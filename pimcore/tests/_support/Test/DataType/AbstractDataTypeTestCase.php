@@ -1,15 +1,20 @@
 <?php
 
-namespace Pimcore\Tests\Rest\DataType;
+namespace Pimcore\Tests\Test\DataType;
 
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
-use Pimcore\Tests\Test\RestTestCase;
+use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tests\Util\TestHelper;
 
-abstract class AbstractDataTypeTestCase extends RestTestCase
+abstract class AbstractDataTypeTestCase extends TestCase
 {
+    /**
+     * @var bool
+     */
+    protected $cleanupDbInSetup = true;
+
     /**
      * @var TestDataHelper
      */
@@ -36,6 +41,14 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function needsDb()
+    {
+        return true;
     }
 
     /**
@@ -360,7 +373,10 @@ abstract class AbstractDataTypeTestCase extends RestTestCase
         $this->testDataHelper->assertObjectsWithmetadata($this->testObject, "objectswithmetadata", $this->comparisonObject, $this->seed);
     }
 
-    public function testLInput()
+    /**
+     * @group only
+     */
+    public function testLocalizedInput()
     {
         $this->markTestIncomplete('Localized fields seem to have a bug');
 

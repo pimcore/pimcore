@@ -13,7 +13,7 @@ class AssetTest extends RestTestCase
     {
         parent::setUp();
 
-        if ($this->cleanupInSetup) {
+        if ($this->cleanupDbInSetup) {
             // drop and re-create asset dir before each test
             $filesystem = new Filesystem();
             if ($filesystem->exists(PIMCORE_ASSET_DIRECTORY)) {
