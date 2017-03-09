@@ -18,7 +18,7 @@ $includePaths = [
 ];
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
-// composer autoloader
+/** @var \Composer\Autoload\ClassLoader */
 $composerLoader = require PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 
 // the following code is out of `app/autoload.php`
@@ -42,6 +42,10 @@ foreach ($apiDocAnnotations as $apiDocAnnotation) {
 // includes not covered by composer autoloader
 require_once PIMCORE_PATH . "/lib/helper-functions.php";
 require_once PIMCORE_PATH . "/lib/Pimcore.php";
+
+if(defined("PIMCORE_APP_BUNDLE_CLASS_FILE")) {
+    require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
+}
 
 if(!class_exists("Zend_Date")) {
     // if ZF is not loaded, we need to provide some compatibility stubs

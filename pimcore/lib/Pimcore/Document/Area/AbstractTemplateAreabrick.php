@@ -120,7 +120,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function getTemplateReference($type)
     {
-        if ($this->getTemplateLocation() === static::TEMPLATE_LOCATION_BUNDLE) {
+        if ($this->getTemplateLocation() === static::TEMPLATE_LOCATION_BUNDLE && $this->getBundleName() != "AppBundle") {
             return sprintf(
                 '%s:Areas/%s:%s.%s',
                 $this->getBundleName(),

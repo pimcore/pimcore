@@ -162,15 +162,12 @@ class MvcConfigNormalizer
             $path = ucfirst($path);
         }
 
-        // TODO move to config
-        // TODO add support for non-bundled templates
-        $bundle = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
+        $bundle = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : '';
 
-        return sprintf(
-            '%s:%s:%s',
-            $bundle,
-            $path,
-            $template
-        );
+        if($bundle) {
+            return sprintf('%s:%s:%s', $bundle, $path, $template);
+        } else {
+            return sprintf('%s:%s', $path, $template);
+        }
     }
 }

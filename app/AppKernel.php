@@ -9,7 +9,6 @@ class AppKernel extends Kernel
     {
         $bundles = array_merge(parent::registerBundles(), [
             new \AppBundle\AppBundle(),
-            new \WebsiteDemoBundle\WebsiteDemoBundle(),
             new \PimcoreLegacyBundle\PimcoreLegacyBundle()
         ]);
 
@@ -21,7 +20,7 @@ class AppKernel extends Kernel
      */
     public function getRootDir()
     {
-        return __DIR__;
+        return PIMCORE_APP_ROOT;
     }
 
     /**
@@ -29,7 +28,7 @@ class AppKernel extends Kernel
      */
     public function getCacheDir()
     {
-        return dirname(__DIR__) . '/var/cache/' . $this->getEnvironment();
+        return PIMCORE_PRIVATE_VAR . '/cache/' . $this->getEnvironment();
     }
 
     /**
@@ -37,7 +36,7 @@ class AppKernel extends Kernel
      */
     public function getLogDir()
     {
-        return dirname(__DIR__) . '/var/logs';
+        return PIMCORE_LOG_DIRECTORY;
     }
 
     /**

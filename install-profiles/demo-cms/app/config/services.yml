@@ -1,0 +1,10 @@
+services:
+    website_demo.area.brick.blockquote:
+        class: AppBundle\Document\Areabrick\Blockquote
+        parent: pimcore.area.brick.templating_base
+        tags:
+            - { name: pimcore.area.brick }
+
+    website_demo.language_switcher:
+        class: AppBundle\Templating\LanguageSwitcher
+        arguments: ['@pimcore.document_service']

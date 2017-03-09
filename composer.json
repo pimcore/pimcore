@@ -103,6 +103,7 @@
   "autoload": {
     "psr-4": {
       "": ["src/", "legacy/bundle/src/"],
+      "AppBundle\\": "install-profiles/demo-cms/src/AppBundle",
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
@@ -113,8 +114,9 @@
       "pimcore/lib/Pimcore.php"
     ],
     "exclude-from-classmap": [
-      "pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/install-profiles",
-      "legacy/bundle/src/PimcoreLegacyBundle/Resources/deprecated-class-names.php"
+      "install-profiles/",
+      "legacy/bundle/src/PimcoreLegacyBundle/Resources/deprecated-class-names.php",
+      "pimcore/lib/compatibility-stubs.php"
     ]
   },
   "scripts": {
