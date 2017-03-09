@@ -8,7 +8,7 @@ use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
 /**
- * @group DB
+ * @group cache.core.db
  */
 class TaggableDoctrineTest extends TaggableCachePoolTest
 {

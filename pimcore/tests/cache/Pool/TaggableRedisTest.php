@@ -7,7 +7,7 @@ use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\RedisItemPoolTrait;
 
 /**
- * @group Redis
+ * @group cache.core.redis
  */
 class TaggableRedisTest extends TaggableCachePoolTest
 {

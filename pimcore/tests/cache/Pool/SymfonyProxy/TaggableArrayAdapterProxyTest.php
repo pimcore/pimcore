@@ -8,6 +8,9 @@ use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
+/**
+ * @group cache.core.array
+ */
 class TaggableArrayAdapterProxyTest extends TaggableCachePoolTest
 {
     use SymfonyProxyTestTrait;

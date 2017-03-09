@@ -3,8 +3,8 @@
 namespace Pimcore\Tests\Cache\Pool;
 
 /**
- * @group Redis
- * @group RedisLua
+ * @group cache.core.redis
+ * @group cache.core.redis_lua
  */
 class TaggableRedisLuaTest extends TaggableRedisTest
 {

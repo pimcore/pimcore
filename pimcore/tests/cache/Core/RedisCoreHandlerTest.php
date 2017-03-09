@@ -6,7 +6,7 @@ use Pimcore\Cache\Pool\Redis;
 use Pimcore\Tests\Cache\Pool\Traits\RedisItemPoolTrait;
 
 /**
- * @group Redis
+ * @group cache.core.redis
  */
 class RedisCoreHandlerTest extends AbstractCoreHandlerTest
 {

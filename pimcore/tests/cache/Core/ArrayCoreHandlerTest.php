@@ -5,6 +5,9 @@ namespace Pimcore\Tests\Cache\Core;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Pimcore\Tests\Cache\Factory;
 
+/**
+ * @group cache.core.array
+ */
 class ArrayCoreHandlerTest extends AbstractCoreHandlerTest
 {
     /**

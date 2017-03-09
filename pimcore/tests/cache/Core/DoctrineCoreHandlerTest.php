@@ -6,7 +6,7 @@ use Pimcore\Cache\Pool\Doctrine;
 use Pimcore\Tests\Cache\Factory;
 
 /**
- * @group DB
+ * @group cache.core.db
  */
 class DoctrineCoreHandlerTest extends AbstractCoreHandlerTest
 {
