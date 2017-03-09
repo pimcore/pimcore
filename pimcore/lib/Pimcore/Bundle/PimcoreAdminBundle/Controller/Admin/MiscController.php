@@ -7,10 +7,12 @@ use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,6 +20,193 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MiscController extends AdminController
 {
+
+    /**
+     * @Route("/get-available-templates")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableTemplatesAction(Request $request)
+    {
+        $templates = [];
+
+        $viewPath = PIMCORE_APP_ROOT . "/Resources/views/";
+        if(is_dir($viewPath)) {
+            $files = rscandir($viewPath);
+            foreach($files as $file) {
+                $templates[] = ["path" => $file];
+            }
+        }
+
+        return $this->json([
+            "data" => $templates
+        ]);
+    }
+
+    /**
+     * @Route("/get-available-actions")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableActionsAction(Request $request)
+    {
+        $bundle = $request->get("moduleName");
+        if(empty($bundle)) {
+            $bundle = "AppBundle";
+        }
+
+        $controller = $request->get("controllerName");
+
+        $actions = [];
+        if($controller) {
+            foreach ($this->getControllerActions($bundle, $controller) as $reflector) {
+                $name = $reflector->getName();
+                $name = preg_replace('/Action$/', '', $name);
+
+                $actions[] = ["name" => $name];
+            }
+        }
+
+        return $this->json([
+            "data" => $actions
+        ]);
+    }
+
+    /**
+     * @Route("/get-available-controllers")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableControllersAction(Request $request)
+    {
+        $bundle = $request->get("moduleName");
+        if(empty($bundle)) {
+            $bundle = "AppBundle";
+        }
+
+        $controllers = [];
+        foreach ($this->getControllers($bundle) as $className => $reflector) {
+            $name = preg_replace('/Controller$/', '', $className);
+
+            $controllers[] = ["name" => $name];
+        }
+
+
+        return $this->json([
+            "data" => $controllers
+        ]);
+    }
+
+    /**
+     * @Route("/get-available-modules")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableModulesAction(Request $request)
+    {
+        $modules = [];
+
+        foreach($this->getBundles() as $bundle => $class) {
+            $modules[] = ["name" => $bundle];
+        }
+
+        return $this->json([
+            "data" => $modules
+        ]);
+    }
+
+    /**
+     * @param string $bundle
+     * @return \ReflectionClass
+     */
+    protected function getBundleReflector($bundle)
+    {
+        $bundles = $this->getBundles();
+        if (!isset($bundles[$bundle])) {
+            throw new NotFoundHttpException();
+        }
+
+        $bundleClass = $bundles[$bundle];
+        $reflector = new \ReflectionClass($bundleClass);
+
+        return $reflector;
+    }
+
+    /**
+     * @param string $bundle
+     * @return \ReflectionClass[]
+     */
+    protected function getControllers($bundle)
+    {
+        $reflector = $this->getBundleReflector($bundle);
+        $controllers = [];
+
+        $controllerDirectory = dirname($reflector->getFileName()) . '/Controller';
+        if (file_exists($controllerDirectory)) {
+            $finder = new Finder();
+            $finder
+                ->files()
+                ->name('*Controller.php')
+                ->in($controllerDirectory);
+
+            foreach ($finder as $controllerFile) {
+                $className = str_replace([".php", "/"], ["","\\"], $controllerFile->getRelativePathname());
+                $fullClassName = $reflector->getNamespaceName() . '\\Controller\\' . $className;
+
+                if (class_exists($fullClassName)) {
+                    $controllerReflector = new \ReflectionClass($fullClassName);
+
+                    if ($controllerReflector->isInstantiable()) {
+                        $controllers[$className] = $controllerReflector;
+                    }
+                }
+            }
+        }
+
+        return $controllers;
+    }
+
+    /**
+     * @param string $bundle
+     * @param string $controller
+     * @return \ReflectionMethod[]
+     */
+    protected function getControllerActions($bundle, $controller)
+    {
+        $controller = ucfirst($controller) . "Controller";
+        $controllers = $this->getControllers($bundle);
+        if (!isset($controllers[$controller])) {
+            return [];
+        }
+
+        /** @var \ReflectionClass $controllerReflector */
+        $controllerReflector = $controllers[$controller];
+
+        $methods = [];
+        foreach ($controllerReflector->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_STATIC) as $method) {
+            if (preg_match('/^(.*)Action$/', $method->getName())) {
+                $methods[] = $method;
+            }
+        }
+
+        return $methods;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getBundles()
+    {
+        $allBundles = $this->getParameter('kernel.bundles');
+        $filteredBundles = [];
+
+        foreach($allBundles as $bundle => $class) {
+            if(preg_match("/^(Symfony|Doctrine|Pimcore|Sensio)/", $class)) continue;
+            $filteredBundles[$bundle] = $class;
+        }
+
+        return $filteredBundles;
+    }
 
     /**
      * @Route("/json-translations-admin")
