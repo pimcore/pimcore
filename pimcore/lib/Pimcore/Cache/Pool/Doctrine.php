@@ -2,7 +2,7 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Pimcore\Cache\Pool\Exception\CacheException;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
@@ -38,16 +38,17 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
             return;
         }
 
-        $idCondition = str_pad('', (count($ids) << 1) - 1, '?,');
-        $fetchQuery  = 'SELECT id, CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END FROM cache WHERE id IN (' . $idCondition . ')';
-
-        $stmt = $this->db->prepare($fetchQuery);
-
-        $i = 1;
-        $stmt->bindValue($i++, $now, \PDO::PARAM_INT);
-        foreach ($ids as $id) {
-            $stmt->bindValue($i++, $id);
-        }
+        $stmt = $this->db->executeQuery(
+            'SELECT id, CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END FROM cache WHERE id IN (?)',
+            [
+                $now,
+                $ids
+            ],
+            [
+                \PDO::PARAM_INT,
+                Connection::PARAM_INT_ARRAY
+            ]
+        );
 
         $stmt->execute();
 
@@ -74,15 +75,12 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
      */
     protected function doHave($id)
     {
-        $sql = "SELECT 1 FROM cache WHERE id = :id AND (expire IS NULL OR expire > :time)";
+        $result = $this->db->fetchColumn('SELECT 1 FROM cache WHERE id = :id AND (expire IS NULL OR expire > :time)', [
+            'id'   => $id,
+            'time' => time()
+        ]);
 
-        $stmt = $this->db->prepare($sql);
-
-        $stmt->bindValue(':id', $id);
-        $stmt->bindValue(':time', time(), \PDO::PARAM_INT);
-        $stmt->execute();
-
-        return (bool) $stmt->fetchColumn();
+        return (bool) $result;
     }
 
     /**
@@ -102,7 +100,9 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
 
         $this->db->exec('ALTER TABLE cache_tags ENGINE=InnoDB');
 
-        return $this->db->commit();
+        $this->db->commit();
+
+        return true;
     }
 
     /**
@@ -149,19 +149,17 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
             return [];
         }
 
-        $tagCondition = str_pad('', (count($tags) << 1) - 1, '?,');
-        $fetchQuery   = 'SELECT DISTINCT id FROM cache_tags WHERE tag IN (' . $tagCondition . ')';
-
-        $stmt = $this->db->prepare($fetchQuery);
-
-        $i = 1;
-        foreach ($tags as $tag) {
-            $stmt->bindValue($i++, $tag);
-        }
+        $stmt = $this->db->executeQuery(
+            'SELECT DISTINCT id FROM cache_tags WHERE tag IN (?)',
+            [$tags],
+            [Connection::PARAM_INT_ARRAY]
+        );
 
         $stmt->execute();
 
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+
+        return $result;
     }
 
     /**
@@ -208,14 +206,14 @@ INSERT INTO
     ON DUPLICATE KEY UPDATE data = VALUES(data), expire = VALUES(expire), mtime = VALUES(mtime)
 SQL;
 
-                $stmt = $this->db->prepare($insertQuery);
+                $stmt = $this->db->executeQuery($insertQuery, [
+                    'id'     => $item->getKey(),
+                    'data'   => $this->serializeData($item->get()),
+                    'expire' => $item->getExpiry(),
+                    'mtime'  => time()
+                ]);
 
-                $stmt->bindParam(':id', $item->getKey());
-                $stmt->bindParam(':data', $this->serializeData($item->get()));
-                $stmt->bindParam(':expire', $item->getExpiry());
-                $stmt->bindParam(':mtime', time());
                 $result = $stmt->execute();
-
                 if (!$result) {
                     throw new CacheException(sprintf('Failed to execute insert query for item %s', $item->getKey()));
                 }
@@ -233,7 +231,9 @@ SQL;
                 }
             }
 
-            return $this->db->commit();
+            $this->db->commit();
+
+            return true;
         } catch (\Exception $e) {
             $this->logger->error($e);
             $this->db->rollBack();
@@ -251,16 +251,17 @@ SQL;
      */
     protected function removeNotMatchingTags($id, array $tags)
     {
-        $condition = str_pad('', (count($tags) << 1) - 1, '?,');
-        $query     = 'DELETE FROM cache_tags WHERE id = ? AND tag NOT IN (' . $condition . ')';
-
-        $stmt = $this->db->prepare($query);
-
-        $i = 1;
-        $stmt->bindValue($i++, $id);
-        foreach ($tags as $tag) {
-            $stmt->bindValue($i++, $tag);
-        }
+        $stmt = $this->db->executeQuery(
+            'DELETE FROM cache_tags WHERE id = ? AND tag NOT IN (?)',
+            [
+                $id,
+                $tags
+            ],
+            [
+                \PDO::PARAM_INT,
+                Connection::PARAM_STR_ARRAY
+            ]
+        );
 
         return $stmt->execute();
     }
@@ -284,10 +285,8 @@ SQL;
      */
     protected function purgeExpiredItems()
     {
-        $stmt = $this->db->prepare('SELECT id FROM cache WHERE expire < UNIX_TIMESTAMP() OR mtime < (UNIX_TIMESTAMP() - 864000)');
-        $stmt->execute();
-
-        $ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $stmt = $this->db->executeQuery('SELECT id FROM cache WHERE expire < UNIX_TIMESTAMP() OR mtime < (UNIX_TIMESTAMP() - 864000)');
+        $ids  = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
         if (!empty($ids)) {
             return $this->deleteItems($ids);
@@ -316,7 +315,9 @@ SQL;
                 ]);
             }
 
-            return $this->db->commit();
+            $this->db->commit();
+
+            return true;
         }
 
         return true;
