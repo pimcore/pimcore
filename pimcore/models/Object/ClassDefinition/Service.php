@@ -199,13 +199,9 @@ class Service
     public static function generateLayoutTreeFromArray($array, $throwException = false)
     {
         if (is_array($array) && count($array) > 0) {
-            $class = "\\Pimcore\\Model\\Object\\ClassDefinition\\".ucfirst($array["datatype"])."\\" . ucfirst($array["fieldtype"]);
-            if (!\Pimcore\Tool::classExists($class)) {
-                $class = "\\Object_Class_" .ucfirst($array["datatype"])."_" . ucfirst($array["fieldtype"]);
-                if (!\Pimcore\Tool::classExists($class)) {
-                    $class = null;
-                }
-            }
+
+            $class = \Pimcore::getContainer()->get('pimcore.implementation_locator')
+                ->getObjectClassDefinitionImplementation($array["datatype"], $array["fieldtype"]);
 
             if ($class) {
                 $item = new $class();

@@ -40,6 +40,20 @@ class Configuration implements ConfigurationInterface
                 ->end() // document
             ->end();
 
+
+        $rootNode
+            ->children()
+                ->arrayNode('objects')
+                    ->children()
+                        ->arrayNode('class_definitions')
+                            ->children()
+                                ->arrayNode('data')
+                                    ->useAttributeAsKey('name')
+                                    ->prototype('scalar')
+                                    ->end()->end()
+                                ->arrayNode('layout')
+                                    ->useAttributeAsKey('name')
+                                    ->prototype('scalar')->end();
         return $treeBuilder;
     }
 

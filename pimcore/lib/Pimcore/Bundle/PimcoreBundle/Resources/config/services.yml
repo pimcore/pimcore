@@ -232,3 +232,8 @@ services:
     pimcore.rest_client:
         class: Pimcore\Tool\RestClient
         arguments: ['@pimcore.http_client']
+
+
+    pimcore.implementation_locator:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Tool\ImplementationLocator
+        arguments: ['%pimcore.config%']
