@@ -142,6 +142,11 @@
             $filesystem->rename($realCacheDir, $oldCacheDir);
             $filesystem->remove($oldCacheDir);
 
+            // move install.php out of the document root
+            rename(__FILE__, __DIR__ . "/../" . basename(__FILE__));
+            // rename install-profiles folder, to avoid collisions with auto-loader
+            rename(PIMCORE_PROJECT_ROOT . "/install-profiles", PIMCORE_PROJECT_ROOT . "/install-profiles-installed");
+
             echo json_encode([
                 "success" => true
             ]);
