@@ -21,6 +21,8 @@ class PimcoreLegacyBundle extends Bundle
 
     public function boot()
     {
+        $this->setupIncludePaths();
+
         $loader = new LegacyClassLoader();
         $loader->register();
 
@@ -84,6 +86,21 @@ class PimcoreLegacyBundle extends Bundle
              */
             define('PIMCORE_LOG_DEBUG', PIMCORE_LOG_DIRECTORY . '/debug.log');
         }
+    }
+
+    protected function setupIncludePaths() {
+        // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
+        // it also improves the performance when reducing the amount of include paths, you can of course add additional paths anywhere in your code (/website)
+        $includePaths = [
+            PIMCORE_PATH . "/lib",
+            PIMCORE_PATH . "/models",
+            PIMCORE_CLASS_DIRECTORY,
+            // we need to include the path to the ZF1, because we cannot remove all require_once() out of the source
+            // see also: Pimcore\Composer::zendFrameworkOptimization()
+            // actually the problem is 'require_once 'Zend/Loader.php';' in Zend/Loader/Autoloader.php
+            PIMCORE_PROJECT_ROOT . "/vendor/zendframework/zendframework1/library/",
+        ];
+        set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
     }
 
     protected function setupCliEnvironment() {
