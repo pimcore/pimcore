@@ -67,13 +67,13 @@ class ClassesRebuildCommand extends AbstractCommand
                             $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
                         }
 
-                        $existingClass->save();
+                        $existingClass->save(false);
                     } else {
                         if ($output->isVerbose()) {
                             $output->writeln($class->getName() . " [" . $class->getId() . "] created");
                         }
 
-                        $class->save();
+                        $class->save(false);
                     }
                 }
             }
@@ -83,7 +83,7 @@ class ClassesRebuildCommand extends AbstractCommand
                     $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
                 }
 
-                $class->save();
+                $class->save(false);
             }
         }
 
