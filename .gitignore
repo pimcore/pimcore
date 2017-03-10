@@ -25,12 +25,6 @@
 /legacy/*
 !legacy/.gitkeep
 !legacy/bundle
-!legacy/install-profiles
-
-# keep legacy paths ignored for easier migration
-/plugins/
-/tools/
-/website/
 
 # pimcore private var directories
 !/var/backup
@@ -73,11 +67,6 @@
 /web/var/tmp/*
 !/web/var/tmp/.gitkeep
 
-# tests
-/phpunit.xml
-/tests/output/*
-/tests/tmp/*
-
 # composer
 /composer.phar
 /composer.lock
@@ -93,9 +82,15 @@
 # NetBeans
 nbproject
 
-# temp.
-git-update.sh
-
 # codeception
 /pimcore/tests/_output/*
 /pimcore/tests/_support/_generated/*
+
+# keep legacy paths ignored for easier migration
+/plugins/
+/tools/
+/website/
+
+
+# temp.
+git-update.sh
