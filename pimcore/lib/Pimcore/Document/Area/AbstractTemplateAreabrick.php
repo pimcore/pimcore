@@ -40,6 +40,11 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     protected $templateReferences = [];
 
     /**
+     * @var string
+     */
+    protected $bundleName = null;
+
+    /**
      * @param BundleLocatorInterface $bundleLocator
      */
     public function __construct(BundleLocatorInterface $bundleLocator)
@@ -109,7 +114,16 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function getBundleName()
     {
-        return $this->bundleLocator->getBundle($this)->getName();
+
+        if(null === $this->bundleName) {
+            try {
+                $this->bundleName = $this->bundleLocator->getBundle($this)->getName();
+            } catch (\Exception $e) {
+                $this->bundleName = "AppBundle";
+            }
+        }
+
+        return $this->bundleName;
     }
 
     /**

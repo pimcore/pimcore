@@ -113,8 +113,8 @@ class Dao extends Model\Dao\AbstractDao
         ]);
         $this->db->insert("documents_page", [
             "id" => 1,
-            "controller" => "",
-            "action" => "",
+            "controller" => "default",
+            "action" => "default",
             "template" => "",
             "title" => "",
             "description" => ""

@@ -28,7 +28,6 @@ return [
         "show_cookie_notice" => FALSE
     ],
     "database" => [
-        "adapter" => "Mysqli",
         "params" => [
             "host" => "localhost",
             "username" => "pimcore_demo",
@@ -99,14 +98,14 @@ return [
     ],
     "email" => [
         "sender" => [
-            "name" => "pimcore Demo",
-            "email" => "pimcore-demo@byom.de"
+            "name" => "",
+            "email" => ""
         ],
         "return" => [
-            "name" => "pimcore Demo",
-            "email" => "pimcore-demo@byom.de"
+            "name" => "",
+            "email" => ""
         ],
-        "method" => "sendmail",
+        "method" => "mail",
         "smtp" => [
             "host" => "",
             "port" => "",
@@ -119,7 +118,7 @@ return [
             ]
         ],
         "debug" => [
-            "emailaddresses" => "pimcore@byom.de"
+            "emailaddresses" => ""
         ]
     ],
     "newsletter" => [
@@ -131,7 +130,7 @@ return [
             "name" => "",
             "email" => ""
         ],
-        "method" => "",
+        "method" => "mail",
         "smtp" => [
             "host" => "",
             "port" => "",

@@ -111,7 +111,13 @@
                 foreach($filesToCopy as $file) {
                     $relativeFilePath = str_replace($installProfileRoot, "", $file);
                     $newPath = PIMCORE_PROJECT_ROOT . "/" . $relativeFilePath;
-                    if(!file_exists($newPath)) {
+                    if(is_file($file)) {
+                        if(file_exists($newPath)) {
+                            unlink($newPath);
+                        }
+                        if(!is_dir(dirname($newPath))) {
+                            mkdir(dirname($newPath), \Pimcore\File::getDefaultMode(), true);
+                        }
                         copy($file, $newPath);
                     }
                 }
@@ -139,6 +145,9 @@
             echo json_encode([
                 "success" => true
             ]);
+            exit;
+        } else {
+            echo implode("<br />", $errors);
             exit;
         }
     }

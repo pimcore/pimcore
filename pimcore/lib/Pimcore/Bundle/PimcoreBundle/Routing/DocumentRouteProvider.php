@@ -170,18 +170,10 @@ class DocumentRouteProvider implements RouteProviderInterface
     // controller = foo, action = bar becomes AppBundle:Foo:bar
     protected function handleDocument(Document $document)
     {
-        if ($document->getProperty('symfony')) {
-            return true;
-        }
-
         if ($document->doRenderWithLegacyStack()) {
             return false;
         }
 
-        if (defined('PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS') && PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

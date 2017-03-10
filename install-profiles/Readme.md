@@ -1,5 +1,5 @@
 
-# How to use an install profile without installing them
+# How to use an install profile without installing it
 
 This example uses the profile `demo-cms`, so for other profiles you may change the commands below accordingly. 
 

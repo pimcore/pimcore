@@ -60,7 +60,7 @@ class Setup extends Model\AbstractModel
                     "timezone" => "Europe/Berlin",
                     "language" => "en",
                     "validLanguages" => "en",
-                    "debug" => "1",
+                    "debug" => true,
                 ],
                 "database" => [
                     "params" => [
@@ -108,7 +108,7 @@ class Setup extends Model\AbstractModel
                         "name" => "",
                         "email" => ""
                     ],
-                    "method" => "sendmail",
+                    "method" => "mail",
                     "smtp" => [
                         "host" => "",
                         "port" => "",
@@ -133,7 +133,7 @@ class Setup extends Model\AbstractModel
                         "name" => "",
                         "email" => ""
                     ],
-                    "method" => "",
+                    "method" => "mail",
                     "smtp" => [
                         "host" => "",
                         "port" => "",
@@ -151,6 +151,8 @@ class Setup extends Model\AbstractModel
         }
 
         $settings = array_replace_recursive($settings, $config);
+
+        $settings["general"]["debug"] = true;
 
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
