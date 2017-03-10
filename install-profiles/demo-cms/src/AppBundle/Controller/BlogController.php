@@ -51,7 +51,7 @@ class BlogController extends AbstractController
         $article = Object\BlogArticle::getById($request->get("id"));
 
         if (!$article instanceof Object\BlogArticle || !$article->isPublished()) {
-            throw new $this->createNotFoundException("Invalid request - no such blog article");
+            throw $this->createNotFoundException("Invalid request - no such blog article");
         }
 
         $this->view->article = $article;

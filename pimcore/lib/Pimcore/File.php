@@ -88,17 +88,6 @@ class File
                     $isIncludeAble = true;
                 }
             }
-        } else {
-            // this is the fallback for PHP < 5.3.2
-            $include_paths = explode(PATH_SEPARATOR, get_include_path());
-
-            foreach ($include_paths as $path) {
-                $include = $path.DIRECTORY_SEPARATOR.$filename;
-                if (@is_file($include) && @is_readable($include)) {
-                    $isIncludeAble = true;
-                    break;
-                }
-            }
         }
 
         // add to store
