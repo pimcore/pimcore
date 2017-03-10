@@ -72,6 +72,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         $logger = $this->getLogger();
 
         // hook logger into pimcore
+        /*
         Logger::addLogger($logger);
 
         if ($this->output->isVerbose()) {
@@ -90,6 +91,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         if ($this->output->isDebug()) {
             Logger::setVerbosePriorities();
         }
+        */
     }
 
     /**
