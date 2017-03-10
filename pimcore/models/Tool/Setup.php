@@ -37,7 +37,7 @@ class Setup extends Model\AbstractModel
 
         // check for an initial configuration template
         // used eg. by the demo installer
-        $configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.template.php";
+        $configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.php";
         if (file_exists($configTemplatePath)) {
             try {
                 $configTemplate = new \Pimcore\Config\Config(include($configTemplatePath));

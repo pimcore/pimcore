@@ -23,13 +23,12 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      *
      */
     public function database()
     {
-        $mysqlInstallScript = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
+        $mysqlInstallScript = file_get_contents(PIMCORE_PROJECT_ROOT . "/app/Resources/install/install.sql");
 
         // remove comments in SQL script
         $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", "", $mysqlInstallScript);
@@ -45,12 +44,6 @@ class Dao extends Model\Dao\AbstractDao
                 $this->db->query($sql);
             }
         }
-
-        // set table search_backend_data to InnoDB if MySQL Version is > 5.6
-        $this->db->query("ALTER TABLE search_backend_data /*!50600 ENGINE=InnoDB */;");
-
-        // reset the database connection
-        \Pimcore\Db::reset();
     }
 
     /**
@@ -67,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
         // and mysqli causes troubles because it doesn't support multiple queries
-        if ($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
+        /*if ($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
             $mysqli = $this->db->getConnection();
             $mysqli->multi_query($sql);
 
@@ -80,8 +73,10 @@ class Dao extends Model\Dao\AbstractDao
         } elseif ($this->db->getResource() instanceof \Zend_Db_Adapter_Pdo_Mysql) {
             $this->db->getConnection()->exec($sql);
         }
+        */
 
-        \Pimcore\Db::reset();
+        // install is now PDO only
+        $this->db->exec($sql);
 
         // set the id of the system user to 0
         $this->db->update("users", ["id" => 0], ["name" => "system"]);
