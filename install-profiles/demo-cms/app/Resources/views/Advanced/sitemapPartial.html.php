@@ -13,7 +13,7 @@
     <ul>
         <?php foreach ($this->doc->getChilds() as $child) { ?>
             <?php if(in_array($child->getType(), ["page","link"])) { ?>
-                <?= $this->action("sitemapPartial", "advanced", "websitedemo", ["doc" => $child]) ?>
+                <?= $this->action("sitemapPartial", "advanced", null, ["doc" => $child]) ?>
             <?php } ?>
         <?php } ?>
     </ul>

@@ -10,5 +10,5 @@ $this->extend('layout.html.php');
 ?>
 
 <ul>
-    <?= $this->action("sitemapPartial", "advanced", "websitedemo", ["doc" => $this->doc]) ?>
+    <?= $this->action("sitemapPartial", "advanced", null, ["doc" => $this->doc]) ?>
 </ul>
