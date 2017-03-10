@@ -21,6 +21,9 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Setup\Dao getDao()
+ * @method void database()
+ * @method void setDbConnection($db)
+ * @method void insertDump($dbDataFile)
  */
 class Setup extends Model\AbstractModel
 {
@@ -60,7 +63,6 @@ class Setup extends Model\AbstractModel
                     "debug" => "1",
                 ],
                 "database" => [
-                    "adapter" => "Mysqli",
                     "params" => [
                         "username" => "root",
                         "password" => "",
@@ -96,6 +98,54 @@ class Setup extends Model\AbstractModel
                 ],
                 "httpclient" => [
                     "adapter" => "Socket"
+                ],
+                "email" => [
+                    "sender" => [
+                        "name" => "",
+                        "email" => ""
+                    ],
+                    "return" => [
+                        "name" => "",
+                        "email" => ""
+                    ],
+                    "method" => "sendmail",
+                    "smtp" => [
+                        "host" => "",
+                        "port" => "",
+                        "ssl" => NULL,
+                        "name" => "",
+                        "auth" => [
+                            "method" => NULL,
+                            "username" => "",
+                            "password" => ""
+                        ]
+                    ],
+                    "debug" => [
+                        "emailaddresses" => ""
+                    ]
+                ],
+                "newsletter" => [
+                    "sender" => [
+                        "name" => "",
+                        "email" => ""
+                    ],
+                    "return" => [
+                        "name" => "",
+                        "email" => ""
+                    ],
+                    "method" => "",
+                    "smtp" => [
+                        "host" => "",
+                        "port" => "",
+                        "ssl" => NULL,
+                        "name" => "",
+                        "auth" => [
+                            "method" => NULL,
+                            "username" => "",
+                            "password" => ""
+                        ]
+                    ],
+                    "usespecific" => ""
                 ]
             ];
         }

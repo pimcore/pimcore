@@ -91,7 +91,7 @@ return [
         "enabled" => TRUE
     ],
     "httpclient" => [
-        "adapter" => "Zend_Http_Client_Adapter_Socket",
+        "adapter" => "Socket",
         "proxy_host" => "",
         "proxy_port" => "",
         "proxy_user" => "",
@@ -110,28 +110,16 @@ return [
         "smtp" => [
             "host" => "",
             "port" => "",
-            "ssl" => "",
+            "ssl" => NULL,
             "name" => "",
             "auth" => [
-                "method" => "",
+                "method" => NULL,
                 "username" => "",
                 "password" => ""
             ]
         ],
         "debug" => [
             "emailaddresses" => "pimcore@byom.de"
-        ],
-        "bounce" => [
-            "type" => "",
-            "maildir" => "",
-            "mbox" => "",
-            "imap" => [
-                "host" => "",
-                "port" => "",
-                "username" => "",
-                "password" => "",
-                "ssl" => ""
-            ]
         ]
     ],
     "newsletter" => [
@@ -147,10 +135,10 @@ return [
         "smtp" => [
             "host" => "",
             "port" => "",
-            "ssl" => "",
+            "ssl" => NULL,
             "name" => "",
             "auth" => [
-                "method" => "",
+                "method" => NULL,
                 "username" => "",
                 "password" => ""
             ]
