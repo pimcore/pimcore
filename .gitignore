@@ -34,6 +34,7 @@
 !/var/config
 /var/config/*
 !var/config/GeoLite2-City.mmdb
+!var/config/web2print.php
 
 !/var/classes
 
