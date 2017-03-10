@@ -82,7 +82,9 @@
     "debril/rss-atom-bundle": "^3.0",
 
     "zendframework/zendframework1": "~1.12",
-    "zendframework/zend-paginator": "^2.7"
+
+    "zendframework/zend-paginator": "^2.7",
+    "zendframework/zend-servicemanager": "^3.2"
   },
   "require-dev": {
     "sensio/generator-bundle": "^3.0",
