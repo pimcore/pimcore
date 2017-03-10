@@ -82,10 +82,14 @@ abstract class AbstractModel
         $cacheKey = $myClass . ($key ? ("-" . $key) : "");
         $dao = null;
 
+        $forbiddenClassNames = ["Pimcore\\Resource"];
+
         if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
             $dao = self::$daoClassCache[$cacheKey];
         } elseif (!$key || $forceDetection) {
-            $classes = $this->getParentClasses($key ? $key : $myClass);
+            $myClass = $key ? $key : $myClass;
+            $classes = class_parents($myClass);
+            array_unshift($classes, $myClass);
 
             foreach ($classes as $class) {
                 $delimiter = "_"; // old prefixed class style
@@ -99,17 +103,19 @@ abstract class AbstractModel
 
                 for ($i = 0; $i < $length; $i++) {
 
-                    // check for a general dao adapter
-                    $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Dao";
-                    if ($className = $this->determineResourceClass($tmpClassName)) {
-                        break;
+                    $classNames = [
+                        implode($delimiter, $classParts) . $delimiter . "Dao",
+                        implode($delimiter, $classParts) . $delimiter . "Resource"
+                    ];
+
+                    foreach($classNames as $tmpClassName) {
+                        if (class_exists($tmpClassName) && !in_array($tmpClassName, $forbiddenClassNames)) {
+                            $className = $tmpClassName;
+                            break;
+                        }
                     }
 
-                    // check for the old style resource adapter
-                    $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource";
-                    if ($className = $this->determineResourceClass($tmpClassName)) {
-                        break;
-                    }
+                    if ($className) break;
 
                     array_pop($classParts);
                 }
@@ -149,50 +155,6 @@ abstract class AbstractModel
         }
     }
 
-    /**
-     * @param $className
-     */
-    protected function determineResourceClass($className)
-    {
-        $filesToInclude = [];
-
-        $filePath = str_replace(["_", "\\"], "/", $className) . ".php";
-        $filesToInclude[] = preg_replace("@^Pimcore/Model/@", "", $filePath);
-        $filesToInclude[] = $filePath;
-
-        foreach ($filesToInclude as $fileToInclude) {
-            if ($fileToInclude == "Dao.php" || $fileToInclude == "Resource.php") {
-                return;
-            }
-
-            if (File::isIncludeable($fileToInclude)) {
-                include_once($fileToInclude);
-                if (Tool::classExists($className)) {
-                    return $className;
-                }
-            }
-        }
-
-        return;
-    }
-
-
-    /**
-     * @param  $class
-     * @return array
-     */
-    protected function getParentClasses($class)
-    {
-        $classes = [];
-        $classes[] = $class;
-
-        $parentClass = get_parent_class($class);
-        if ($parentClass && $parentClass != get_class()) {
-            $classes = array_merge($classes, $this->getParentClasses($parentClass));
-        }
-
-        return $classes;
-    }
 
     /**
      * @param array $data
