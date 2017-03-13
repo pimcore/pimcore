@@ -398,9 +398,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInput($this->testObject, "linput", $this->seed, "de");
     }
 
-    /**
-     * @group only
-     */
     public function testLocalizedObjects()
     {
         TestHelper::createEmptyObjects();

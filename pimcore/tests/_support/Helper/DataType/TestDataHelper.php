@@ -3,7 +3,6 @@
 namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
-use Codeception\Util\Debug;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
@@ -29,16 +28,10 @@ class TestDataHelper extends Module
      */
     public function fillInput(Concrete $object, $field, $seed = 1, $language = null)
     {
-        Debug::debug(sprintf('WRITE FIELD (%d): %s, SEED: %d, LANGUAGE: %s', $object->getId(), $field, $seed, $language));
-
         $setter = "set" . ucfirst($field);
         if ($language) {
-            Debug::debug(sprintf('WRITE CONTENT (%d): %s', $object->getId(), $language . "content" . $seed));
-
             $object->$setter($language . "content" . $seed, $language);
         } else {
-            Debug::debug(sprintf('WRITE CONTENT (%d): %s', $object->getId(), "content" . $seed));
-
             $object->$setter("content" . $seed);
         }
     }
@@ -51,16 +44,12 @@ class TestDataHelper extends Module
      */
     public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
     {
-        Debug::debug(sprintf('READ FIELD (%d): %s, SEED: %d, LANGUAGE: %s', $object->getId(), $field, $seed, $language));
-
         $getter = "get" . ucfirst($field);
         if ($language) {
             $value = $object->$getter($language);
         } else {
             $value = $object->$getter();
         }
-
-        Debug::debug(sprintf('READ VALUE (%d): %s', $object->getId(), $value));
 
         $expected = $language . "content" . $seed;
 

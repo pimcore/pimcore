@@ -13,12 +13,12 @@ use Pimcore\Tests\Util\TestHelper;
 class DataTypeTest extends AbstractDataTypeTestCase
 {
     /**
+     * Creates and saves object locally without testing against a comparison object
+     *
      * @inheritDoc
      */
     protected function createTestObject($fields = [])
     {
-        Debug::debug('CREATING TEST OBJECT: ' . json_encode($fields, true));
-
         $object = TestHelper::createEmptyObject('local', true, true);
         $this->fillObject($object, $fields);
 
@@ -28,8 +28,6 @@ class DataTypeTest extends AbstractDataTypeTestCase
         $this->assertInstanceOf(Unittest::class, $object);
 
         $this->testObject = $object;
-
-        Debug::debug('TEST OBJECT: ' . $this->testObject->getId());
 
         return $this->testObject;
     }

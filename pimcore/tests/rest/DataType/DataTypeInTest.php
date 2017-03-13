@@ -14,12 +14,12 @@ use Pimcore\Tests\Util\TestHelper;
 class DataTypeInTest extends AbstractDataTypeRestTestCase
 {
     /**
+     * Creates unsaved object locally, saves it via API and loads comparison object directly
+     *
      * @inheritDoc
      */
     protected function createTestObject($fields = [])
     {
-        Debug::debug('CREATING TEST OBJECT: ' . json_encode($fields, true));
-
         $object = TestHelper::createEmptyObject('local', false, true);
         $this->fillObject($object, $fields);
 
@@ -35,9 +35,6 @@ class DataTypeInTest extends AbstractDataTypeRestTestCase
 
         $this->testObject       = $localObject;
         $this->comparisonObject = $object;
-
-        Debug::debug('TEST OBJECT: ' . $this->testObject->getId());
-        Debug::debug('COMPARISON OBJECT: ' . json_encode($response, true));
 
         return $this->testObject;
     }
