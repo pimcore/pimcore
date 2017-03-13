@@ -78,7 +78,7 @@
     "sensio/distribution-bundle": "^5.0",
     "sensio/framework-extra-bundle": "^3.0.2",
 
-    "cache/tag-interop": "1.0.x-dev",
+    "cache/tag-interop": "*",
     "debril/rss-atom-bundle": "^3.0",
 
     "zendframework/zendframework1": "~1.12",
