@@ -728,7 +728,7 @@ class Config
                 ?: false;
 
 
-            if(!$environment) {
+            if (!$environment) {
                 $environment = getenv("SYMFONY_ENV")
                     ?: (getenv("REDIRECT_SYMFONY_ENV"))
                         ?: false;
