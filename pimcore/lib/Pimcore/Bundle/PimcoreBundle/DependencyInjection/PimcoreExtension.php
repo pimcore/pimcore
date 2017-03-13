@@ -85,8 +85,10 @@ class PimcoreExtension extends Extension
      */
     protected function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
     {
-        // core cache pool
-        $container->setAlias('pimcore.cache.core.pool', $config['cache']['pool_service_id']);
+        $coreCachePool = null;
+        if (null !== $config['cache']['pool_service_id']) {
+            $coreCachePool = $config['cache']['pool_service_id'];
+        }
 
         // default lifetime
         $container->setParameter('pimcore.cache.core.default_lifetime', $config['cache']['default_lifetime']);
@@ -102,6 +104,10 @@ class PimcoreExtension extends Extension
 
             $doctrinePool = $container->findDefinition('pimcore.cache.core.pool.doctrine');
             $doctrinePool->replaceArgument(0, new Reference($connectionId));
+
+            if (null === $coreCachePool) {
+                $coreCachePool = 'pimcore.cache.core.pool.doctrine';
+            }
         }
 
         // register redis cache if it is enabled
@@ -117,7 +123,19 @@ class PimcoreExtension extends Extension
             );
 
             $loader->load('cache_redis.yml');
+
+            if (null === $coreCachePool) {
+                $coreCachePool = 'pimcore.cache.core.pool.redis';
+            }
         }
+
+        // default to filesystem cache
+        if (null === $coreCachePool) {
+            $coreCachePool = 'pimcore.cache.core.pool.filesystem';
+        }
+
+        // set core cache pool alias
+        $container->setAlias('pimcore.cache.core.pool', $coreCachePool);
     }
 
     /**

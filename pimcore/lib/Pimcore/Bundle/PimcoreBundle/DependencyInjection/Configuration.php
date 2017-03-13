@@ -145,7 +145,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('pool_service_id')
-                        ->defaultValue('pimcore.cache.core.pool.filesystem')
+                        ->defaultValue(null)
                     ->end()
                     ->integerNode('default_lifetime')
                         ->defaultValue(2419200) // 28 days
