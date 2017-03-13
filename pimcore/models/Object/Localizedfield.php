@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\Model;
 use Pimcore\Tool;
 
@@ -193,7 +194,16 @@ class Localizedfield extends Model\AbstractModel
 
         // try to get the language from the service container
         try {
-            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            $locale = null;
+
+            if (Runtime::isRegistered('model.locale')) {
+                $locale = Runtime::get('model.locale');
+            }
+
+            if (null === $locale) {
+                $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            }
+
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
             }

@@ -18,7 +18,10 @@ use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
+use Pimcore\Model\Webservice\Data\Object\Concrete\Out as WebserviceObjectOut;
+use Pimcore\Model\Webservice\Data\Object\Element;
 use Pimcore\Model\Webservice\Data\Object\Folder\In as WebserviceFolderIn;
+use Pimcore\Model\Webservice\Data\Object\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
@@ -122,17 +125,18 @@ class ObjectController extends AbstractElementController
             $stopwatch->start('ws', $profileName);
         }
 
+        /** @var WebserviceObjectOut|WebserviceFolderOut $out */
         if ($object instanceof Object\Folder) {
-            $object = $this->service->getObjectFolderById($id);
+            $out = $this->service->getObjectFolderById($id);
         } else {
-            $object = $this->service->getObjectConcreteById($id);
+            $out = $this->service->getObjectConcreteById($id);
         }
 
         if ($profile) {
             $stopwatch->stop('ws');
         }
 
-        $data = $this->createSuccessData($object);
+        $data = $this->createSuccessData($out);
 
         if ($profile) {
             $data['profiling'] = $this->getProfilingData($profileName);

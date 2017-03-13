@@ -16,11 +16,12 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
-use Pimcore\Model\Element;
 
 class Localizedfields extends Model\Object\ClassDefinition\Data
 {
@@ -341,6 +342,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         }
 
         $validLanguages = Tool::getValidLanguages();
+        $runtimeCache   = Runtime::getInstance();
 
         if ($validLanguages) {
             foreach ($validLanguages as $language) {
@@ -348,6 +350,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     if ($languagesAllowed && !in_array($language, $languagesAllowed)) {
                         continue;
                     }
+
+                    // set locale to runtime cache - will be used in Localizedfield data object
+                    // when trying to find a default locale
+                    $runtimeCache->offsetSet('model.locale', $language);
 
                     $params["locale"] = $language;
 
@@ -360,6 +366,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     }
                     $el->language = $language;
                     $wsData[] = $el;
+
+                    $runtimeCache->offsetUnset('model.locale');
                 }
             }
         }
