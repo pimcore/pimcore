@@ -176,7 +176,7 @@ pimcore.document.versions = Class.create({
     },
 
     compareVersions: function (id1, id2) {
-        var path = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
+        var path = "/admin/document/diff-versions?from=" + id1 + "&to=" + id2;
         Ext.get("document_version_iframe_" + this.document.id).dom.src = path;
     },
 

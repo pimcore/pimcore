@@ -1308,7 +1308,7 @@ pimcore.document.tree = Class.create({
                     }
 
                     Ext.Ajax.request({
-                        url: "/admin/document/convert/",
+                        url: "/admin/document/convert",
                         method: "post",
                         params: {
                             id: record.data.id,

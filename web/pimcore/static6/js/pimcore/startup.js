@@ -711,7 +711,7 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
             } catch (e) {
                 data = false;
                 pimcore.settings.showCloseConfirmation = false;
-                window.location.href = "/admin/login/?session_expired=true";
+                window.location.href = "/admin/login?session_expired=true";
             }
 
             if (pimcore.maintenanceWindow) {
@@ -729,7 +729,7 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         failure: function (response) {
             if (response.status != 503) {
                 pimcore.settings.showCloseConfirmation = false;
-                window.location.href = "/admin/login/?session_expired=true&server_error=true";
+                window.location.href = "/admin/login?session_expired=true&server_error=true";
             }
         }
     });

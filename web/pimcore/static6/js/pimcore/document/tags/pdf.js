@@ -295,7 +295,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
     requestTextForCurrentPage : function(){
         Ext.Ajax.request({
-            url: "/admin/asset/get-text/",
+            url: "/admin/asset/get-text",
             params: {
                 id: this.data.id,
                 page : this.currentPage

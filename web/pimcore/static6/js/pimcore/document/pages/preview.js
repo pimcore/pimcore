@@ -54,7 +54,7 @@ pimcore.document.pages.preview = Class.create({
                     handler: function () {
                         var codeUrl = "/admin/reports/qrcode/code?documentId=" + this.page.id;
                         var download = function () {
-                            var codeUrl = "/admin/reports/qrcode/code?documentId=" + this.page.id + "/download/true";
+                            var codeUrl = "/admin/reports/qrcode/code?documentId=" + this.page.id + "&download=true";
                             pimcore.helpers.download(codeUrl);
                         };
 

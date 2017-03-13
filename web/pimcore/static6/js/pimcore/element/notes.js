@@ -351,7 +351,7 @@ pimcore.element.notes = Class.create({
                     var values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
-                        url: "/admin/element/note-add/",
+                        url: "/admin/element/note-add",
                         method: "post",
                         params: values
                     });
