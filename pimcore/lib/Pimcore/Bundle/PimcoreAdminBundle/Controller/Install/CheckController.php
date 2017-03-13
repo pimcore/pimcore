@@ -630,6 +630,7 @@ class CheckController extends Controller implements EventedControllerInterface
 
     /**
      * @param FilterControllerEvent $event
+     * @return Response|void
      */
     public function onKernelController(FilterControllerEvent $event)
     {

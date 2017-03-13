@@ -129,6 +129,7 @@ class PublicServicesController extends FrameworkController
 
     /**
      * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function qrcodeAction(Request $request)
     {
