@@ -1284,7 +1284,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $content    = Tool::getHttpData($contentUrl, ["pimcore_preview" => true, "pimcore_admin" => true, "_dc" => time()]);
 
                 if ($content) {
-                    include_once("simple_html_dom.php");
+                    include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
                     $html = str_get_html($content);
                     if ($html) {
                         $nodeConfig["links"]         = count($html->find("a"));

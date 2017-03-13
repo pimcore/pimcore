@@ -86,7 +86,7 @@ class Glossary extends Helper implements LoggerAwareInterface
             // why not using a simple str_ireplace(array(), array(), $subject) ?
             // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
 
-            include_once("simple_html_dom.php");
+            include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
             // kind of a hack but,
             // changed to this because of that: http://www.pimcore.org/issues/browse/PIMCORE-687

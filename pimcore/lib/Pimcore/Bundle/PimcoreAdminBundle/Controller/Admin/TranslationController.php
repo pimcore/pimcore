@@ -857,7 +857,7 @@ class TranslationController extends AdminController
      */
     public function xliffImportElementAction(Request $request)
     {
-        include_once("simple_html_dom.php");
+        include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
         $id = $request->get("id");
         $step = $request->get("step");
@@ -1136,7 +1136,7 @@ class TranslationController extends AdminController
                     $html = preg_replace("@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@", "", $html);
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    include_once("simple_html_dom.php");
+                    include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
                     $dom = str_get_html($html);
                     if ($dom) {
 

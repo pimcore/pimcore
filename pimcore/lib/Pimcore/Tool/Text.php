@@ -157,7 +157,7 @@ class Text
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
         if (!empty($text)) {
-            include_once("simple_html_dom.php");
+            include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
             $html = str_get_html($text);
             if (!$html) {
