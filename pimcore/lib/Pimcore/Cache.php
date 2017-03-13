@@ -15,8 +15,6 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
-use Pimcore\Cache\Core\ZendCacheHandler;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
