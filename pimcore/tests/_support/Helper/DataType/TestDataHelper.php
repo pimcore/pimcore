@@ -1018,13 +1018,13 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete $object
-     * @param string   $field
-     * @param int      $seed
+     * @param $field
+     * @param $seed
+     *
+     * @return Object\Data\ObjectMetadata[]
      */
-    public function fillObjectsWithMetadata(Concrete $object, $field, $seed = 1)
+    public function getObjectsWithMetadataFixture($field, $seed)
     {
-        $setter  = "set" . ucfirst($field);
         $objects = $this->getObjectList("o_type = 'object' AND o_className = 'unittest'");
         $objects = array_slice($objects, 0, 4);
 
@@ -1036,7 +1036,18 @@ class TestDataHelper extends Module
             $metaobjects[] = $mo;
         }
 
-        $object->$setter($metaobjects);
+        return $metaobjects;
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
+    public function fillObjectsWithMetadata(Concrete $object, $field, $seed = 1)
+    {
+        $setter = "set" . ucfirst($field);
+        $object->$setter($this->getObjectsWithMetadataFixture($field, $seed));
     }
 
     /**
@@ -1045,21 +1056,51 @@ class TestDataHelper extends Module
      * @param Concrete $comparisonObject
      * @param int      $seed
      */
-    public function assertObjectsWithMetadata(Concrete $object, $field, Concrete $comparisonObject, $seed = 1)
+    public function assertObjectsWithMetadata(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value  = $object->$getter();
 
-        $fd            = $object->getClass()->getFieldDefinition($field);
-        $valueForField = TestHelper::getComparisonDataForField($field, $fd, $object);
-        $expected      = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+        $expected = $this->getObjectsWithMetadataFixture($field, $seed);
 
-        $this->assertEquals($expected, $valueForField);
+        $this->assertObjectMetadataEqual($expected, $value);
 
-        $rel1 = $value[0];
-        $meta = $rel1->getMeta1();
+        // comparison object is only set on REST tests
+        if (null === $comparisonObject) {
+            return;
+        }
 
-        $this->assertEquals("value1" . $seed, $meta, "sample value does not match");
+        $fd           = $object->getClass()->getFieldDefinition($field);
+        $valueHash    = TestHelper::getComparisonDataForField($field, $fd, $object);
+        $expectedHash = TestHelper::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        $this->assertEquals($expectedHash, $valueHash);
+    }
+
+    /**
+     * @param Object\Data\ObjectMetadata[] $expected
+     * @param Object\Data\ObjectMetadata[] $value
+     */
+    protected function assertObjectMetadataEqual($expected, $value)
+    {
+        $this->assertInternalType('array', $expected);
+        $this->assertInternalType('array', $value);
+
+        $this->assertCount(count($expected), $value);
+
+        /** @var Object\Data\ObjectMetadata $expectedMetadata */
+        foreach ($expected as $i => $expectedMetadata) {
+            /** @var Object\Data\ObjectMetadata $valueMetadata */
+            $valueMetadata = $value[$i];
+
+            $this->assertEquals($expectedMetadata->getColumns(), $valueMetadata->getColumns());
+            $this->assertObjectsEqual($expectedMetadata->getElement(), $valueMetadata->getElement());
+
+            foreach ($expectedMetadata->getColumns() as $column) {
+                $getter = 'get' . ucfirst($column);
+                $this->assertEquals($expectedMetadata->$getter(), $valueMetadata->$getter());
+            }
+        }
     }
 
     /**

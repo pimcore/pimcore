@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Codeception\Util\Debug;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -30,11 +29,6 @@ class DataTypeTest extends AbstractDataTypeTestCase
         $this->testObject = $object;
 
         return $this->testObject;
-    }
-
-    public function testObjectsWithMetadata()
-    {
-        $this->markTestIncomplete('To be implemented (no local comparison)');
     }
 
     public function testPassword()
