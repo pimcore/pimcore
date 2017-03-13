@@ -90,7 +90,7 @@ pimcore:
                 block: 'Pimcore\Model\Object\ClassDefinition\Data\Block'
                 calculatedValue: 'Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue'
                 checkbox: 'Pimcore\Model\Object\ClassDefinition\Data\Checkbox'
-                classificationstore: 'Pimcore\Model\Object\ClassDefinition\Data\ClassificationStore'
+                classificationstore: 'Pimcore\Model\Object\ClassDefinition\Data\Classificationstore'
                 country: 'Pimcore\Model\Object\ClassDefinition\Data\Country'
                 countrymultiselect: 'Pimcore\Model\Object\ClassDefinition\Data\Countrymultiselect'
                 date: 'Pimcore\Model\Object\ClassDefinition\Data\Date'
