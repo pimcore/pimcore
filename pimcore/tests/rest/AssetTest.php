@@ -5,7 +5,6 @@ namespace Pimcore\Tests\Rest;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
-use Symfony\Component\Filesystem\Filesystem;
 
 class AssetTest extends RestTestCase
 {
@@ -14,12 +13,10 @@ class AssetTest extends RestTestCase
         parent::setUp();
 
         if ($this->cleanupDbInSetup) {
-            // drop and re-create asset dir before each test
-            $filesystem = new Filesystem();
-            if ($filesystem->exists(PIMCORE_ASSET_DIRECTORY)) {
-                $filesystem->remove(PIMCORE_ASSET_DIRECTORY);
-                $filesystem->mkdir(PIMCORE_ASSET_DIRECTORY, 0755);
-            }
+            // delete all assets before each test
+            // dropping the whole directory might fail when there are still
+            // locks on existing files, so we just delete every single file
+            TestHelper::cleanupDirectory(PIMCORE_ASSET_DIRECTORY);
         }
     }
 

@@ -15,6 +15,8 @@ use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class TestHelper
 {
@@ -677,6 +679,28 @@ class TestHelper
         }
 
         return $folder;
+    }
+
+    /**
+     * Clean up directory, deleting files one by one
+     *
+     * @param string|\Traversable|Finder $directory
+     */
+    public static function cleanupDirectory($directory)
+    {
+        $files = null;
+        if ($directory instanceof \Traversable) {
+            $files = $directory;
+        } else {
+            $files = new Finder();
+            $files
+                ->files()
+                ->in($directory)
+                ->ignoreDotFiles(true);
+        }
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($files);
     }
 
     /**
