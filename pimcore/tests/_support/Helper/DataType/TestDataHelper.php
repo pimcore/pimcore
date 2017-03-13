@@ -1009,7 +1009,17 @@ class TestDataHelper extends Module
             $value         = $object->$getter();
         }
 
+        $this->assertEquals(
+            $this->getElementPaths($expectedArray),
+            $this->getElementPaths($value)
+        );
+
         $this->assertCount(count($expectedArray), $value);
+
+        $this->assertEquals(
+            $this->getElementPaths($expectedArray),
+            $this->getElementPaths($value)
+        );
 
         for ($i = 0; $i < count($expectedArray); $i++) {
             $this->assertNotNull($value[$i]);
@@ -1196,6 +1206,24 @@ class TestDataHelper extends Module
         $this->assertNotNull($str2);
 
         $this->assertEquals($str1, $str2);
+    }
+
+    /**
+     * @param ElementInterface[] $elements
+     * @return array
+     */
+    private function getElementPaths(array $elements = [])
+    {
+        $paths = [];
+        foreach ($elements as $element) {
+            if (!($element instanceof ElementInterface)) {
+                throw new \InvalidArgumentException(sprintf('Invalid element. Must be an instance of %s', ElementInterface::class));
+            }
+
+            $paths[] = $element->getRealFullPath();
+        }
+
+        return $paths;
     }
 
     /**
