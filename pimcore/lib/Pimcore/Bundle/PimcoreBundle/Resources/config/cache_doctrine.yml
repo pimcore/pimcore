@@ -8,3 +8,7 @@ services:
         arguments:
             - '@?'
             - '%pimcore.cache.core.default_lifetime%'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: cache }
