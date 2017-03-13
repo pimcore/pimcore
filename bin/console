@@ -16,7 +16,6 @@
 use Pimcore\Config;
 use Symfony\Component\Console\Input\ArgvInput;
 
-chdir(__DIR__);
 ob_get_clean();
 
 define('PIMCORE_CONSOLE', true);
