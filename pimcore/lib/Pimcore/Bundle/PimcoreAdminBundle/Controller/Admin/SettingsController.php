@@ -611,9 +611,22 @@ class SettingsController extends AdminController
         $db->query("truncate table cache");
 
         // empty cache directory
-        recursiveDelete(PIMCORE_CACHE_DIRECTORY, false);
+        $realCacheDir = $this->getParameter('kernel.cache_dir');
+        // the old cache dir name must not be longer than the real one to avoid exceeding
+        // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
+        $oldCacheDir = substr($realCacheDir, 0, -1).('~' === substr($realCacheDir, -1) ? '+' : '~');
+        $filesystem = $this->get('filesystem');
+        if ($filesystem->exists($oldCacheDir)) {
+            $filesystem->remove($oldCacheDir);
+        }
+
+        $this->get('cache_clearer')->clear($realCacheDir);
+        $filesystem->rename($realCacheDir, $oldCacheDir);
+        $filesystem->remove($oldCacheDir);
+
+        $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
         // PIMCORE-1854 - recreate .dummy file => should remain
-        \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . "/.dummy", "");
+        \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . "/.gitkeep", "");
 
         \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
 
