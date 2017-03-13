@@ -727,6 +727,13 @@ class Config
                 ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT"))
                 ?: false;
 
+
+            if(!$environment) {
+                $environment = getenv("SYMFONY_ENV")
+                    ?: (getenv("REDIRECT_SYMFONY_ENV"))
+                        ?: false;
+            }
+
             if (!$environment && php_sapi_name() === 'cli') {
                 // check CLI option: --environment[=ENVIRONMENT]
                 foreach ($_SERVER["argv"] as $argument) {
