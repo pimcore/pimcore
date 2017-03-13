@@ -4,14 +4,14 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->exclude(['views', 'var/config', 'var/classes'])
-    ->in([__DIR__ . "/pimcore", __DIR__ . "/website_demo", __DIR__ . "/website_example", __DIR__ . "/tests"])
+    ->in([__DIR__ . "/pimcore", __DIR__ . "/app", __DIR__ . "/src"])
     //->in([__DIR__ . "/tests"])
 ;
 
 return PhpCsFixer\Config::create()
     ->setRules(array(
         '@PSR2' => true,
-        'short_array_syntax' => true,
+        'array_syntax' => array('syntax' => 'short'),
         "encoding" => true,
         "blank_line_before_return" => true,
         "hash_to_slash_comment" => true,
@@ -20,5 +20,5 @@ return PhpCsFixer\Config::create()
         "standardize_not_equals" => true,
         "whitespace_after_comma_in_array" => true,
     ))
-    ->finder($finder)
+    ->setFinder($finder)
     ;
