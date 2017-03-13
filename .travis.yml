@@ -10,8 +10,10 @@ php:
   # - 7.1
 
 services:
-  - mysql
   - redis
+
+addons:
+  mariadb: '10.1'
 
 #matrix:
 #  include:
@@ -33,6 +35,7 @@ env:
 #  - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
 
 before_install:
+  - mysql --version
   - mysql -e "CREATE DATABASE pimcore_test;"
 
 install:
