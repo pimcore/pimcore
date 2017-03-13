@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Webservice\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

@@ -14,8 +14,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\File;
-use Pimcore\Tool;
 use Pimcore\Logger;
 
 /**

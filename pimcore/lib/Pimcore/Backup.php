@@ -14,9 +14,6 @@
 
 namespace Pimcore;
 
-use Pimcore\Db;
-use Pimcore\Logger;
-
 class Backup
 {
 

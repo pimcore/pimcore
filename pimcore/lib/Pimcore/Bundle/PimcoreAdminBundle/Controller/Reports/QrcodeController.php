@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\File;
 use Pimcore\Model\Tool\Qrcode;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

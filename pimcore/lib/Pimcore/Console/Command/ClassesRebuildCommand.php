@@ -14,7 +14,6 @@
 
 namespace Pimcore\Console\Command;
 
-use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object;
