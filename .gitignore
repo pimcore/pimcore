@@ -81,7 +81,10 @@
 # NetBeans
 nbproject
 
-# codeception
+# codeception (only stage *.dist.yml config files)
+/codeception.yml
+/pimcore/codeception.yml
+/pimcore/tests/*.suite.yml
 /pimcore/tests/_output/*
 /pimcore/tests/_support/_generated/*
 
