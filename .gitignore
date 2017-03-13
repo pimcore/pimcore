@@ -7,6 +7,7 @@
 !/var/cache
 /var/cache/*
 !var/cache/.gitkeep
+/bin/symfony_requirements
 
 !/var/logs
 /var/logs/*
@@ -75,9 +76,6 @@
 /vendor/*
 !/vendor/.gitkeep
 
-# misc
-/php-cs-fixer.phar
-
 # PhpStorm / IDEA
 .idea
 # NetBeans
@@ -91,7 +89,3 @@ nbproject
 /plugins/
 /tools/
 /website/
-
-
-# temp.
-git-update.sh
