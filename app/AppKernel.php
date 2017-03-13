@@ -19,10 +19,15 @@ class AppKernel extends Kernel
 {
     public function registerBundles()
     {
-        $bundles = array_merge(parent::registerBundles(), [
+        $customBundles = [
             new \AppBundle\AppBundle(),
-            new \PimcoreLegacyBundle\PimcoreLegacyBundle()
-        ]);
+        ];
+
+        if(class_exists('\PimcoreLegacyBundle\PimcoreLegacyBundle')) {
+            $customBundles[] = new \PimcoreLegacyBundle\PimcoreLegacyBundle;
+        }
+
+        $bundles = array_merge(parent::registerBundles(), $customBundles);
 
         return $bundles;
     }
