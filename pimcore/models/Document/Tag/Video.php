@@ -814,7 +814,7 @@ class Video extends Model\Document\Tag
                     font-family:Arial,Verdana,sans-serif;
                     line-height:66px;
                     box-sizing:content-box;
-                    background:#fff url(/pimcore/static/img/video-loading.gif) center center no-repeat;
+                    background:#fff url(/pimcore/static6/img/video-loading.gif) center center no-repeat;
                     width:66px;
                     height:66px;
                     padding:20px;
