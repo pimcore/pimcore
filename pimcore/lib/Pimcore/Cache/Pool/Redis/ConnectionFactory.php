@@ -18,7 +18,7 @@ use Pimcore\Cache\Pool\Exception\CacheException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class ConnectionFactory
+class ConnectionFactory
 {
     const DEFAULT_CONNECT_TIMEOUT = 2.5;
     const DEFAULT_CONNECT_RETRIES = 1;
@@ -69,7 +69,7 @@ final class ConnectionFactory
     /**
      * @param OptionsResolver $resolver
      */
-    private static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('server');
         $resolver->setDefaults([

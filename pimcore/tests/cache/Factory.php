@@ -37,15 +37,14 @@ class Factory
      */
     public function createRedisItemPool($defaultLifetime, array $connectionOptions = [], array $options = [])
     {
-        $redisDb = getenv('PIMCORE_TEST_CACHE_REDIS_DB');
-        if (!$redisDb) {
-            throw new \PHPUnit_Framework_SkippedTestError('PIMCORE_TEST_CACHE_REDIS_DB env var is not configured');
-        }
-
         $connectionOptions = array_merge([
-            'server'   => 'localhost',
-            'database' => $redisDb
+            'server' => 'localhost'
         ], $connectionOptions);
+
+        $database = isset($connectionOptions['database']) ? $connectionOptions['database'] : null;
+        if (null === $database) {
+            throw new \PHPUnit_Framework_SkippedTestError('Test redis DB is not configured (env var PIMCORE_TEST_CACHE_REDIS_DATABASE)');
+        }
 
         $connection = ConnectionFactory::createConnection($connectionOptions);
 
