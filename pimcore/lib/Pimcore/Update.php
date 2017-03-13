@@ -24,7 +24,7 @@ class Update
     /**
      * @var string
      */
-    public static $updateHost = "update.pimcore.org";
+    public static $updateHost = "liveupdate.pimcore.org";
 
     /**
      * @var bool
@@ -71,9 +71,9 @@ class Update
         self::cleanup();
 
         if (PIMCORE_DEVMODE) {
-            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
         } else {
-            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getUpdateInfo.php?revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/getUpdateInfo.php?revision=" . $currentRev);
         }
 
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
@@ -123,7 +123,7 @@ class Update
             $currentRev = Version::$revision;
         }
 
-        $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
+        $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
         $jobs = [];
