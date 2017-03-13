@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\KeyValue\TranslatorConfig;
 use Pimcore\Model;
 
 /**
+ * @deprecated will be removed entirely in Pimcore 5
  * @property \Pimcore\Model\Object\KeyValue\TranslatorConfig $model
  */
 class Dao extends Model\Dao\AbstractDao

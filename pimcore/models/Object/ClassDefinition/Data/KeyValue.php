@@ -20,6 +20,11 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
 
+/**
+ * Class KeyValue
+ * @package Pimcore\Model\Object\ClassDefinition\Data
+ * @deprecated will be removed entirely in Pimcore 5
+ */
 class KeyValue extends Model\Object\ClassDefinition\Data
 {
 

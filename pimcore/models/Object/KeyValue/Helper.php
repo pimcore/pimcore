@@ -20,6 +20,11 @@ namespace Pimcore\Model\Object\KeyValue;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * Class Helper
+ * @package Pimcore\Model\Object\KeyValue
+ * @deprecated will be removed entirely in Pimcore 5
+ */
 class Helper
 {
 

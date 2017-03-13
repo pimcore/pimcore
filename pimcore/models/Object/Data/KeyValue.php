@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 
 /**
+ * @deprecated will be removed entirely in Pimcore 5
  * @method \Pimcore\Model\Object\Data\KeyValue\Dao getDao()
  */
 class KeyValue extends Model\AbstractModel

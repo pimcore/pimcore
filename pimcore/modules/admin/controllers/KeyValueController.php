@@ -17,6 +17,10 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Object\KeyValue;
 use Pimcore\Logger;
 
+/**
+ * Class Admin_KeyValueController
+ * @deprecated will be removed entirely in Pimcore 5
+ */
 class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 {
     public function deletegroupAction()

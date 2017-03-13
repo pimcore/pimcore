@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\KeyValue;
 use Pimcore\Model;
 
 /**
+ * @deprecated will be removed entirely in Pimcore 5
  * @method \Pimcore\Model\Object\KeyValue\GroupConfig\Dao getDao()
  */
 class GroupConfig extends Model\AbstractModel
