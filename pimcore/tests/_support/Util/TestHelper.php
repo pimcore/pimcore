@@ -317,7 +317,8 @@ class TestHelper
                 /** @var ObjectModel\ClassDefinition\Data $nestedFd */
                 foreach ($fd->getFieldDefinitions() as $nestedFd) {
                     Runtime::set('model.locale', $language);
-                    $lData[$language][$nestedFd->getName()] = self::getComparisonDataForField($nestedFd->getName(), $nestedFd, $object);;
+                    $lData[$language][$nestedFd->getName()] = self::getComparisonDataForField($nestedFd->getName(), $nestedFd, $object);
+                    ;
                 }
             }
 
@@ -732,7 +733,6 @@ class TestHelper
                 $child->delete();
             }
         }
-
     }
 
     /**
