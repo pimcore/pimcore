@@ -439,7 +439,7 @@ class CheckController extends Controller implements EventedControllerInterface
 
 
         // filesystem checks
-        foreach([PIMCORE_PUBLIC_VAR, PIMCORE_PRIVATE_VAR] as $varDir) {
+        foreach ([PIMCORE_PUBLIC_VAR, PIMCORE_PRIVATE_VAR] as $varDir) {
             $varWritable = true;
 
             try {
@@ -589,12 +589,12 @@ class CheckController extends Controller implements EventedControllerInterface
             "state" => $pdftotextBin ? "ok" : "warning"
         ];
 
-        $viewParams = array(
+        $viewParams = [
             "checksApps" => $checksApps,
             "checksPHP"  => $checksPHP,
             "checksMySQL" => $checksMySQL,
             "checksFS" => $checksFS
-        );
+        ];
 
         return $this->render("PimcoreAdminBundle:Install/Check:index.html.php", $viewParams);
     }
@@ -647,11 +647,9 @@ class CheckController extends Controller implements EventedControllerInterface
                 return new Response("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
             }
         } elseif ($request->get("mysql_adapter")) {
-
         } else {
             return new Response("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
         }
-
     }
 
     /**

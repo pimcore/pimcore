@@ -41,11 +41,11 @@ foreach ($apiDocAnnotations as $apiDocAnnotation) {
 require_once PIMCORE_PATH . "/lib/helper-functions.php";
 require_once PIMCORE_PATH . "/lib/Pimcore.php";
 
-if(defined("PIMCORE_APP_BUNDLE_CLASS_FILE")) {
+if (defined("PIMCORE_APP_BUNDLE_CLASS_FILE")) {
     require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
 }
 
-if(!class_exists("Zend_Date")) {
+if (!class_exists("Zend_Date")) {
     // if ZF is not loaded, we need to provide some compatibility stubs
     // for a detailed description see the included file
     require_once PIMCORE_PATH . "/lib/compatibility-stubs.php";

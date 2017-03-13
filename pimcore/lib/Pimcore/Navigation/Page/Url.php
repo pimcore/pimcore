@@ -62,6 +62,7 @@ class Url extends Page
         }
 
         $this->_uri = $uri;
+
         return $this;
     }
 
@@ -107,8 +108,8 @@ class Url extends Page
     {
         return array_merge(
             parent::toArray(),
-            array(
+            [
                 'uri' => $this->getUri()
-            ));
+            ]);
     }
 }

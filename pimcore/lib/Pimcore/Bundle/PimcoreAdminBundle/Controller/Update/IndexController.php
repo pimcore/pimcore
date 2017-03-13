@@ -61,6 +61,7 @@ class IndexController extends AdminController implements EventedControllerInterf
     public function getAvailableUpdatesAction(Request $request)
     {
         $availableUpdates = Update::getAvailableUpdates();
+
         return $this->json($availableUpdates);
     }
 

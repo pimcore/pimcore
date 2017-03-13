@@ -126,8 +126,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function getBundleName()
     {
-
-        if(null === $this->bundleName) {
+        if (null === $this->bundleName) {
             try {
                 $this->bundleName = $this->bundleLocator->getBundle($this)->getName();
             } catch (\Exception $e) {

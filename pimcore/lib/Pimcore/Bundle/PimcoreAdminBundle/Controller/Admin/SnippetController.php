@@ -112,11 +112,13 @@ class SnippetController extends DocumentControllerBase
                     try {
                         $snippet->save();
                         $this->saveToSession($snippet);
+
                         return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
+
                         return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -126,6 +128,7 @@ class SnippetController extends DocumentControllerBase
                         try {
                             $snippet->saveVersion();
                             $this->saveToSession($snippet);
+
                             return $this->json(["success" => true]);
                         } catch (\Exception $e) {
                             return $this->json(["success" => false, "message" => $e->getMessage()]);

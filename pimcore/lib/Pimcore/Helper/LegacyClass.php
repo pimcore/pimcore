@@ -14,8 +14,8 @@
 
 namespace Pimcore\Helper;
 
-class LegacyClass {
-
+class LegacyClass
+{
     public function __construct()
     {
         self::throwException();
@@ -26,7 +26,8 @@ class LegacyClass {
         self::throwException();
     }
 
-    protected static function throwException() {
+    protected static function throwException()
+    {
         throw new \Exception("Your're using Pimcore in without the PimcoreLegacyBundle and therefore without ZF Support!");
     }
 }

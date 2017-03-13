@@ -95,6 +95,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
     public function setAutoEscape($autoEscape = true)
     {
         $this->_autoEscape = ($autoEscape) ? true : false;
+
         return $this;
     }
 
@@ -128,6 +129,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
     public function setContainer(Container $container)
     {
         $this->_container = $container;
+
         return $this;
     }
 
@@ -179,6 +181,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
     public function __isset($key)
     {
         $container = $this->getContainer();
+
         return isset($container[$key]);
     }
 
@@ -209,11 +212,12 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
     {
         $container = $this->getContainer();
         if (method_exists($container, $method)) {
-            $return = call_user_func_array(array($container, $method), $args);
+            $return = call_user_func_array([$container, $method], $args);
             if ($return === $container) {
                 // If the container is returned, we really want the current object
                 return $this;
             }
+
             return $return;
         }
 
@@ -248,6 +252,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
     public function count()
     {
         $container = $this->getContainer();
+
         return count($container);
     }
 

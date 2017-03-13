@@ -39,6 +39,7 @@ class ElementController extends AdminController
     public function lockElementAction(Request $request)
     {
         Element\Editlock::lock($request->get("id"), $request->get("type"));
+
         return $this->json(["success" => true]);
     }
 
@@ -50,6 +51,7 @@ class ElementController extends AdminController
     public function unlockElementAction(Request $request)
     {
         Element\Editlock::unlock($request->get("id"), $request->get("type"));
+
         return $this->json(["success" => true]);
     }
 
@@ -543,9 +545,11 @@ class ElementController extends AdminController
             $element = Model\Element\Service::getElementById($type, $id);
             if ($element instanceof Model\Element\ElementInterface) {
                 $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies());
+
                 return $this->json($dependencies);
             }
         }
+
         return $this->json(false);
     }
 
@@ -566,9 +570,11 @@ class ElementController extends AdminController
             $element = Model\Element\Service::getElementById($type, $id);
             if ($element instanceof Model\Element\ElementInterface) {
                 $dependencies = Model\Element\Service::getRequiredByDependenciesForFrontend($element->getDependencies());
+
                 return $this->json($dependencies);
             }
         }
+
         return $this->json(false);
     }
 

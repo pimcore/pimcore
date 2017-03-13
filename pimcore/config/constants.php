@@ -111,6 +111,3 @@ if (!defined('PIMCORE_SYSTEM_TEMP_DIRECTORY')) {
 if (!defined('PIMCORE_LOG_MAIL_PERMANENT')) {
     define('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
 }
-
-
-

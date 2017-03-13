@@ -231,6 +231,7 @@ class Config implements Countable, Iterator, ArrayAccess
     public function current()
     {
         $this->skipNextIteration = false;
+
         return current($this->data);
     }
 
@@ -255,6 +256,7 @@ class Config implements Countable, Iterator, ArrayAccess
     {
         if ($this->skipNextIteration) {
             $this->skipNextIteration = false;
+
             return;
         }
 

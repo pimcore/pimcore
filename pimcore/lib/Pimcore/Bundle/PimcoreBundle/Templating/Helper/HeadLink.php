@@ -63,7 +63,7 @@ class HeadLink extends CacheBusterAware
      *
      * @var array
      */
-    protected $_itemKeys = array(
+    protected $_itemKeys = [
         'charset',
         'href',
         'hreflang',
@@ -75,7 +75,7 @@ class HeadLink extends CacheBusterAware
         'title',
         'extras',
         'sizes',
-    );
+    ];
 
     /**
      * @var string registry key
@@ -129,6 +129,7 @@ class HeadLink extends CacheBusterAware
                     break;
             }
         }
+
         return $this;
     }
 
@@ -286,8 +287,8 @@ class HeadLink extends CacheBusterAware
 
         foreach ($this->_itemKeys as $itemKey) {
             if (isset($attributes[$itemKey])) {
-                if(is_array($attributes[$itemKey])) {
-                    foreach($attributes[$itemKey] as $key => $value) {
+                if (is_array($attributes[$itemKey])) {
+                    foreach ($attributes[$itemKey] as $key => $value) {
                         $link .= sprintf('%s="%s" ', $key, ($this->_autoEscape) ? $this->_escape($value) : $value);
                     }
                 } else {
@@ -309,8 +310,7 @@ class HeadLink extends CacheBusterAware
 
         if (isset($attributes['conditionalStylesheet'])
             && !empty($attributes['conditionalStylesheet'])
-            && is_string($attributes['conditionalStylesheet']))
-        {
+            && is_string($attributes['conditionalStylesheet'])) {
             if (str_replace(' ', '', $attributes['conditionalStylesheet']) === '!IE') {
                 $link = '<!-->' . $link . '<!--';
             }
@@ -334,7 +334,7 @@ class HeadLink extends CacheBusterAware
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        $items = array();
+        $items = [];
         $this->getContainer()->ksort();
         foreach ($this as $item) {
             $items[] = $this->itemToString($item);
@@ -374,6 +374,7 @@ class HeadLink extends CacheBusterAware
     public function createData(array $attributes)
     {
         $data = (object) $attributes;
+
         return $data;
     }
 
@@ -397,7 +398,7 @@ class HeadLink extends CacheBusterAware
 
         if (0 < count($args)) {
             $media = array_shift($args);
-            if(is_array($media)) {
+            if (is_array($media)) {
                 $media = implode(',', $media);
             } else {
                 $media = (string) $media;
@@ -405,19 +406,20 @@ class HeadLink extends CacheBusterAware
         }
         if (0 < count($args)) {
             $conditionalStylesheet = array_shift($args);
-            if(!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
+            if (!empty($conditionalStylesheet) && is_string($conditionalStylesheet)) {
                 $conditionalStylesheet = (string) $conditionalStylesheet;
             } else {
                 $conditionalStylesheet = null;
             }
         }
 
-        if(0 < count($args) && is_array($args[0])) {
+        if (0 < count($args) && is_array($args[0])) {
             $extras = array_shift($args);
             $extras = (array) $extras;
         }
 
         $attributes = compact('rel', 'type', 'href', 'media', 'conditionalStylesheet', 'extras');
+
         return $this->createData($this->_applyExtras($attributes));
     }
 
@@ -434,6 +436,7 @@ class HeadLink extends CacheBusterAware
                 return true;
             }
         }
+
         return false;
     }
 
@@ -454,11 +457,11 @@ class HeadLink extends CacheBusterAware
         $type  = array_shift($args);
         $title = array_shift($args);
 
-        if(0 < count($args) && is_array($args[0])) {
+        if (0 < count($args) && is_array($args[0])) {
             $extras = array_shift($args);
             $extras = (array) $extras;
 
-            if(isset($extras['media']) && is_array($extras['media'])) {
+            if (isset($extras['media']) && is_array($extras['media'])) {
                 $extras['media'] = implode(',', $extras['media']);
             }
         }
@@ -468,6 +471,7 @@ class HeadLink extends CacheBusterAware
         $title = (string) $title;
 
         $attributes = compact('rel', 'href', 'type', 'title', 'extras');
+
         return $this->createData($this->_applyExtras($attributes));
     }
 
@@ -486,6 +490,7 @@ class HeadLink extends CacheBusterAware
                 }
             }
         }
+
         return $attributes;
     }
 }

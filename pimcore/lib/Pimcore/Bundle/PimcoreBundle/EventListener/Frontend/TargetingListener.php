@@ -78,6 +78,7 @@ class TargetingListener extends AbstractFrontendListener
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 
@@ -87,6 +88,7 @@ class TargetingListener extends AbstractFrontendListener
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 
@@ -118,7 +120,7 @@ class TargetingListener extends AbstractFrontendListener
         if ($this->isEnabled() && Tool::useFrontendOutputFilters() && $this->isHtmlResponse($response)) {
             $db = \Pimcore\Db::get();
             $personasAvailable = $db->fetchOne("SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1");
-            if($personasAvailable) {
+            if ($personasAvailable) {
                 $targets = [];
                 $personas = [];
                 $dataPush = [

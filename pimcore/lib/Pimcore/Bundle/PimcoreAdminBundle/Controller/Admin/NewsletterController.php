@@ -110,9 +110,11 @@ class NewsletterController extends DocumentControllerBase
                     try {
                         $page->save();
                         $this->saveToSession($page);
+
                         return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
+
                         return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -123,6 +125,7 @@ class NewsletterController extends DocumentControllerBase
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
+
                             return $this->json(["success" => true]);
                         } catch (\Exception $e) {
                             if ($e instanceof Element\ValidationException) {
@@ -130,6 +133,7 @@ class NewsletterController extends DocumentControllerBase
                             }
 
                             Logger::err($e);
+
                             return $this->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
@@ -303,6 +307,7 @@ class NewsletterController extends DocumentControllerBase
         ], 'newsletter');
 
         \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-document-send " . escapeshellarg($document->getTmpStoreId()) . " " . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "newsletter-sending-output.log");
+
         return $this->json(["success" => true]);
     }
 

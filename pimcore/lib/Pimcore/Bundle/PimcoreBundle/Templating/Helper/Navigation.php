@@ -74,8 +74,9 @@ class Navigation extends Helper
     /**
      * @return Builder
      */
-    protected function getBuilder() {
-        if(!$this->builder) {
+    protected function getBuilder()
+    {
+        if (!$this->builder) {
             $this->builder = new Builder();
         }
 
@@ -103,8 +104,9 @@ class Navigation extends Helper
      * @param $name
      * @return mixed
      */
-    public function getRenderer($name) {
-        if(!isset($this->renderer[$name])) {
+    public function getRenderer($name)
+    {
+        if (!isset($this->renderer[$name])) {
             $renderClass = 'Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation\Renderer\\' . ucfirst($name);
             $this->renderer[$name] = new $renderClass;
             $this->renderer[$name]->setHelper($this);
@@ -116,8 +118,8 @@ class Navigation extends Helper
     /**
      * @param Container|null $container
      */
-    public function render(Container $container = null) {
-
+    public function render(Container $container = null)
+    {
     }
 
     /**
@@ -157,11 +159,11 @@ class Navigation extends Helper
      * @param array $arguments
      * @return mixed
      */
-    public function __call($method, array $arguments = array())
+    public function __call($method, array $arguments = [])
     {
         // check if call should proxy to another helper
         if ($helper = $this->getRenderer($method)) {
-            return call_user_func_array(array($helper, $method), $arguments);
+            return call_user_func_array([$helper, $method], $arguments);
         }
 
         // default behaviour: proxy call to container

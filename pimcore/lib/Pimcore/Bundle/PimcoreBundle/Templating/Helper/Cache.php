@@ -129,5 +129,4 @@ class Cache extends Helper
     {
         $this->end();
     }
-
 }

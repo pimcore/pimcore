@@ -58,7 +58,7 @@ class ApplicationLogger implements LoggerInterface
     {
         $containerId = "pimcore.app_logger." . $component;
 
-        if(\Pimcore::getContainer()->has($containerId)) {
+        if (\Pimcore::getContainer()->has($containerId)) {
             $logger = \Pimcore::getContainer()->get($containerId);
         } else {
             $logger = new self;

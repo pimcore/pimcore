@@ -248,9 +248,9 @@ class Mail extends \Swift_Message
      *
      * @return bool
      */
-    public function doRedirectMailsToDebugMailAddresses() {
-
-        if(static::$forceDebugMode) {
+    public function doRedirectMailsToDebugMailAddresses()
+    {
+        if (static::$forceDebugMode) {
             return true;
         }
 
@@ -481,14 +481,14 @@ class Mail extends \Swift_Message
 
                 $cc = $document->getCcAsArray();
                 if (!empty($cc)) {
-                    foreach($cc as $ccEntry) {
+                    foreach ($cc as $ccEntry) {
                         $this->addCc($ccEntry);
                     }
                 }
 
                 $bcc = $document->getBccAsArray();
                 if (!empty($bcc)) {
-                    foreach($bcc as $bccEntry) {
+                    foreach ($bcc as $bccEntry) {
                         $this->addBcc($bccEntry);
                     }
                 }
@@ -501,7 +501,6 @@ class Mail extends \Swift_Message
             if (!empty($fromArray)) {
                 list($from) = $fromArray;
                 if ($from) {
-
                     $fromAddress = $from;
                     $fromName = null;
 
@@ -547,7 +546,7 @@ class Mail extends \Swift_Message
     public function setTo($email, $name = '')
     {
         $this->getHeaders()->removeAll("to");
-        if($email) {
+        if ($email) {
             parent::setTo($email, $name);
         }
     }
@@ -561,7 +560,7 @@ class Mail extends \Swift_Message
     public function setCc($email, $name = '')
     {
         $this->getHeaders()->removeAll("cc");
-        if($email) {
+        if ($email) {
             parent::setCc($email, $name);
         }
     }
@@ -575,7 +574,7 @@ class Mail extends \Swift_Message
     public function setBcc($email, $name = '')
     {
         $this->getHeaders()->removeAll("bcc");
-        if($email) {
+        if ($email) {
             parent::setBcc($email, $name);
         }
     }
@@ -601,7 +600,7 @@ class Mail extends \Swift_Message
             $this->setBody($bodyHtmlRendered, 'text/html');
         }
 
-        if($this->bodyTextMimePart) {
+        if ($this->bodyTextMimePart) {
             $this->detach($this->bodyTextMimePart);
         }
         $bodyTextRendered = $this->getBodyTextRendered();
@@ -625,12 +624,11 @@ class Mail extends \Swift_Message
     {
         // filter email addresses
         foreach (['To', 'Cc', 'Bcc'] as $key) {
-
             $getterName = "get" . $key;
             $setterName = "set" . $key;
             $addresses = $this->$getterName();
-            if($addresses) {
-                foreach(array_keys($addresses) as $address) {
+            if ($addresses) {
+                foreach (array_keys($addresses) as $address) {
 
                     //remove address if blacklisted
                     if (Model\Tool\Email\Blacklist::getByAddress($address)) {
@@ -640,10 +638,9 @@ class Mail extends \Swift_Message
             }
 
             $this->$setterName($addresses);
-
         }
 
-        if($mailer == null) {
+        if ($mailer == null) {
             //if no mailer given, get default mailer from container
             $mailer = \Pimcore::getContainer()->get("mailer");
         }
@@ -811,7 +808,8 @@ class Mail extends \Swift_Message
      *
      * @return bool
      */
-    public function isPreventingDebugInformationAppending() {
+    public function isPreventingDebugInformationAppending()
+    {
         return $this->preventDebugInformationAppending;
     }
 
@@ -894,6 +892,7 @@ class Mail extends \Swift_Message
     public function setBodyText($bodyText)
     {
         $this->bodyText = $bodyText;
+
         return $this;
     }
 
@@ -901,14 +900,16 @@ class Mail extends \Swift_Message
      * @param $body
      * @return \Pimcore\Mail
      */
-    public function setBodyHtml($body) {
+    public function setBodyHtml($body)
+    {
         return $this->setBody($body, 'text/html');
     }
 
     /**
      * @return \Swift_MimePart
      */
-    public function getBodyTextMimePart() {
+    public function getBodyTextMimePart()
+    {
         return $this->bodyTextMimePart;
     }
 
@@ -932,7 +933,8 @@ class Mail extends \Swift_Message
      * @param \Swift_Mime_Attachment $attachment
      * @return $this
      */
-    public function addAttachment(\Swift_Mime_Attachment $attachment) {
+    public function addAttachment(\Swift_Mime_Attachment $attachment)
+    {
         return $this->attach($attachment);
     }
 
@@ -945,13 +947,14 @@ class Mail extends \Swift_Message
      * @param null $filename
      * @return \Swift_Mime_Attachment
      */
-    public function createAttachment($data, $mimeType = null, $filename = null, $disposition = null) {
+    public function createAttachment($data, $mimeType = null, $filename = null, $disposition = null)
+    {
         $attachment = \Swift_Attachment::newInstance($data, $filename, $mimeType);
-        if($disposition) {
+        if ($disposition) {
             $attachment->setDisposition($disposition);
         }
         $this->addAttachment($attachment);
+
         return $attachment;
     }
-
 }

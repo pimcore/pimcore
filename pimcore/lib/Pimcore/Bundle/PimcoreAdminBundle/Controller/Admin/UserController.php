@@ -54,6 +54,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
         }
+
         return $this->json($users);
     }
 
@@ -171,6 +172,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                     }
                 }
             }
+
             return $this->json([
                 "success" => true,
                 "id" => $user->getId()
@@ -402,6 +404,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         $conf = \Pimcore\Config::getSystemConfig();
+
         return $this->json([
             "success" => true,
             "wsenabled" => $conf->webservice->enabled,
@@ -451,6 +454,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $this->uploadImageAction();
             } else {
                 Logger::warn("prevented save current user, because ids do not match. ");
+
                 return $this->json(false);
             }
         } else {
@@ -510,9 +514,11 @@ class UserController extends AdminController implements EventedControllerInterfa
 
                 $user->setValues($values);
                 $user->save();
+
                 return $this->json(["success" => true]);
             } else {
                 Logger::warn("prevented save current user, because ids do not match. ");
+
                 return $this->json(false);
             }
         } else {
@@ -544,6 +550,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $response = new Response("pimcore.currentuser = " . $this->encodeJson($userData));
         $response->headers->set("Content-Type", "text/javascript");
+
         return $response;
     }
 
@@ -567,6 +574,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $roles[] = $this->getRoleTreeNodeConfig($role);
             }
         }
+
         return $this->json($roles);
     }
 
@@ -676,6 +684,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $response = $this->json(["success" => true]);
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -701,6 +710,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $response = new BinaryFileResponse($thumb);
         $response->headers->set('Content-Type', 'image/png');
+
         return $response;
     }
 
@@ -758,6 +768,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
         }
+
         return $this->json([
             "success" => true,
             "users" => $users

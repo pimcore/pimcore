@@ -57,19 +57,15 @@ class Service extends Model\Element\Service
      */
     public static function render(Document $document, $params = [], $useLayout = false)
     {
-
-        if($document->doRenderWithLegacyStack()) {
-
+        if ($document->doRenderWithLegacyStack()) {
             $renderer = \Pimcore::getContainer()->get('pimcore.templating.legacy_document_renderer');
-            return $renderer->render($document, $params, $useLayout);
 
+            return $renderer->render($document, $params, $useLayout);
         } else {
-
             $renderer = \Pimcore::getContainer()->get('pimcore.templating.document_renderer');
+
             return $renderer->render($document, $params, $useLayout);
-
         }
-
     }
 
     /**

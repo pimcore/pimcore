@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model;
 use Pimcore\Model\Version;
 use Symfony\Component\EventDispatcher\Event;
 
-class VersionEvent extends Event {
+class VersionEvent extends Event
+{
 
     /**
      * @var Version
@@ -28,7 +29,7 @@ class VersionEvent extends Event {
      * DocumentEvent constructor.
      * @param Version $version
      */
-    function __construct(Version $version)
+    public function __construct(Version $version)
     {
         $this->version = $version;
     }

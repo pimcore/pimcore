@@ -533,7 +533,7 @@ class Tool
             $urlParams = [];
             parse_str($urlParts['query'], $urlParams);
 
-            if($urlParams) {
+            if ($urlParams) {
                 $paramsGet = array_merge($urlParams, $paramsGet);
             }
 
@@ -694,7 +694,7 @@ class Tool
      */
     public static function __callStatic($name, $arguments)
     {
-        if(class_exists("Pimcore\\Tool\\Legacy")) {
+        if (class_exists("Pimcore\\Tool\\Legacy")) {
             return forward_static_call_array("Pimcore\\Tool\\Legacy::" . $name, $arguments);
         }
 

@@ -36,6 +36,7 @@
  */
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
+
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService;
@@ -58,16 +59,16 @@ class HeadStyle extends AbstractHelper
      * Allowed optional attributes
      * @var array
      */
-    protected $_optionalAttributes = array('lang', 'title', 'media', 'dir');
+    protected $_optionalAttributes = ['lang', 'title', 'media', 'dir'];
 
     /**
      * Allowed media types
      * @var array
      */
-    protected $_mediaTypes = array(
+    protected $_mediaTypes = [
         'all', 'aural', 'braille', 'handheld', 'print',
         'projection', 'screen', 'tty', 'tv'
-    );
+    ];
 
     /**
      * Capture type and/or attributes (used for hinting during capture)
@@ -119,7 +120,7 @@ class HeadStyle extends AbstractHelper
      * @param  string|array $attributes Optional attributes to utilize
      * @return HeadStyle
      */
-    public function __invoke($content = null, $placement = 'APPEND', $attributes = array())
+    public function __invoke($content = null, $placement = 'APPEND', $attributes = [])
     {
         if ((null !== $content) && is_string($content)) {
             switch (strtoupper($placement)) {
@@ -173,7 +174,7 @@ class HeadStyle extends AbstractHelper
             }
 
             $content = $args[0];
-            $attrs   = array();
+            $attrs   = [];
             if (isset($args[1])) {
                 $attrs = (array) $args[1];
             }
@@ -203,8 +204,7 @@ class HeadStyle extends AbstractHelper
     {
         if ((!$value instanceof \stdClass)
             || !isset($value->content)
-            || !isset($value->attributes))
-        {
+            || !isset($value->attributes)) {
             return false;
         }
 
@@ -333,14 +333,14 @@ class HeadStyle extends AbstractHelper
                     continue;
                 }
                 if ('media' == $key) {
-                    if(false === strpos($value, ',')) {
+                    if (false === strpos($value, ',')) {
                         if (!in_array($value, $this->_mediaTypes)) {
                             continue;
                         }
                     } else {
                         $media_types = explode(',', $value);
                         $value = '';
-                        foreach($media_types as $type) {
+                        foreach ($media_types as $type) {
                             $type = trim($type);
                             if (!in_array($type, $this->_mediaTypes)) {
                                 continue;
@@ -390,7 +390,7 @@ class HeadStyle extends AbstractHelper
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        $items = array();
+        $items = [];
         $this->getContainer()->ksort();
         foreach ($this as $item) {
             if (!$this->_isValid($item)) {
@@ -401,6 +401,7 @@ class HeadStyle extends AbstractHelper
 
         $return = $indent . implode($this->getSeparator() . $indent, $items);
         $return = preg_replace("/(\r\n?|\n)/", '$1' . $indent, $return);
+
         return $return;
     }
 
@@ -415,7 +416,7 @@ class HeadStyle extends AbstractHelper
     {
         if (!isset($attributes['media'])) {
             $attributes['media'] = 'screen';
-        } else if(is_array($attributes['media'])) {
+        } elseif (is_array($attributes['media'])) {
             $attributes['media'] = implode(',', $attributes['media']);
         }
 

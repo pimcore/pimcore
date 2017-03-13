@@ -49,7 +49,7 @@ class TimedPhpEngine extends PhpEngine
     /**
      * {@inheritdoc}
      */
-    public function render($name, array $parameters = array())
+    public function render($name, array $parameters = [])
     {
         $e = $this->stopwatch->start(sprintf('template.php (%s)', $name), 'template');
 

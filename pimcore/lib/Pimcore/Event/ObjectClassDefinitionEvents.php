@@ -51,5 +51,4 @@ final class ObjectClassDefinitionEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.class.postDelete';
-
 }

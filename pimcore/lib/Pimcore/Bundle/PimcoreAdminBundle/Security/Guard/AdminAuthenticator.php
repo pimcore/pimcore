@@ -81,8 +81,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         EventDispatcherInterface $dispatcher,
         HttpUtils $httpUtils,
         BruteforceProtectionHandler $bruteforceProtectionHandler
-    )
-    {
+    ) {
         $this->tokenStorage = $tokenStorage;
         $this->router       = $router;
         $this->dispatcher   = $dispatcher;
@@ -128,7 +127,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                     'username' => $username,
                     'password' => $password
                 ];
-            } else if ($token = $request->get('token')) {
+            } elseif ($token = $request->get('token')) {
                 $credentials = [
                     'username' => $username,
                     'token'    => $token,
@@ -184,7 +183,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                         throw new AuthenticationException('Failed to authenticate with username and password');
                     }
                 }
-            } else if (isset($credentials['token'])) {
+            } elseif (isset($credentials['token'])) {
                 $pimcoreUser = Authentication::authenticateToken($credentials['username'], $credentials['token']);
 
                 if ($pimcoreUser) {

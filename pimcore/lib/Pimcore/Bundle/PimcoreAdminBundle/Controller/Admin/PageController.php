@@ -202,12 +202,14 @@ class PageController extends DocumentControllerBase
                     try {
                         $page->save();
                         $this->saveToSession($page);
+
                         return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         Logger::err($e);
+
                         return $this->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 } else {
@@ -217,9 +219,11 @@ class PageController extends DocumentControllerBase
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
+
                             return $this->json(["success" => true]);
                         } catch (\Exception $e) {
                             Logger::err($e);
+
                             return $this->json(["success" => false, "message"=>$e->getMessage()]);
                         }
                     }

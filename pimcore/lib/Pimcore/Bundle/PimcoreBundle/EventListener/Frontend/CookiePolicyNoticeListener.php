@@ -59,6 +59,7 @@ class CookiePolicyNoticeListener extends AbstractFrontendListener
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 
@@ -68,6 +69,7 @@ class CookiePolicyNoticeListener extends AbstractFrontendListener
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 
@@ -143,7 +145,6 @@ class CookiePolicyNoticeListener extends AbstractFrontendListener
 
         if ($this->enabled && $config->general->show_cookie_notice && \Pimcore\Tool::useFrontendOutputFilters()) {
             if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
-
                 $template = $this->getTemplateCode();
 
                 // cleanup code

@@ -34,7 +34,7 @@ class SystemConfigParamResource
 
         // register system.php as resource to rebuild container in dev on change
         $systemConfigFile = Config::locateConfigFile('system.php');
-        if(file_exists($systemConfigFile)) {
+        if (file_exists($systemConfigFile)) {
             $container->addResource(new FileResource($systemConfigFile));
         }
     }
@@ -45,7 +45,7 @@ class SystemConfigParamResource
     public function setParameters()
     {
         $config = Config::getSystemConfig(true);
-        if($config) {
+        if ($config) {
             $this->processConfig('pimcore_system_config', $config->toArray());
         } else {
             // default config which is necessary to initialize the container even if pimcore isn't installed
@@ -65,10 +65,10 @@ class SystemConfigParamResource
                     "smtp" => [
                         "host" => "",
                         "port" => "",
-                        "ssl" => NULL,
+                        "ssl" => null,
                         "name" => "",
                         "auth" => [
-                            "method" => NULL,
+                            "method" => null,
                             "username" => "",
                             "password" => ""
                         ]
@@ -82,10 +82,10 @@ class SystemConfigParamResource
                     "smtp" => [
                         "host" => "",
                         "port" => "",
-                        "ssl" => NULL,
+                        "ssl" => null,
                         "name" => "",
                         "auth" => [
-                            "method" => NULL,
+                            "method" => null,
                             "username" => "",
                             "password" => ""
                         ]
@@ -118,4 +118,3 @@ class SystemConfigParamResource
         }
     }
 }
-

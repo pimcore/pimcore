@@ -251,6 +251,7 @@ class Menu extends AbstractHelper
     public function setRenderParentClass($flag = true)
     {
         $this->_renderParentClass = (bool) $flag;
+
         return $this;
     }
 
@@ -275,6 +276,7 @@ class Menu extends AbstractHelper
     public function setOnlyActiveBranch($flag = true)
     {
         $this->_onlyActiveBranch = (bool) $flag;
+
         return $this;
     }
 
@@ -301,6 +303,7 @@ class Menu extends AbstractHelper
     public function setExpandSiblingNodesOfActiveBranch($flag = true)
     {
         $this->_expandSiblingNodesOfActiveBranch = (bool) $flag;
+
         return $this;
     }
 
@@ -330,6 +333,7 @@ class Menu extends AbstractHelper
     public function setRenderParents($flag = true)
     {
         $this->_renderParents = (bool) $flag;
+
         return $this;
     }
 
@@ -370,6 +374,7 @@ class Menu extends AbstractHelper
     public function setPartial($partial)
     {
         $this->_template = $partial;
+
         return $this;
     }
 
@@ -462,10 +467,10 @@ class Menu extends AbstractHelper
         $title = $page->getTitle();
 
         // get attribs for element
-        $attribs = array(
+        $attribs = [
             'id'     => $page->getId(),
             'title'  => $title,
-        );
+        ];
 
         if (false === $this->getAddPageClassToLi()) {
             $attribs['class'] = $page->getClass();
@@ -495,7 +500,7 @@ class Menu extends AbstractHelper
      * @param  array $options  [optional] options to normalize
      * @return array           normalized options
      */
-    protected function _normalizeOptions(array $options = array())
+    protected function _normalizeOptions(array $options = [])
     {
         // Ident
         if (isset($options['indent'])) {
@@ -635,18 +640,18 @@ class Menu extends AbstractHelper
             if (!$active['page']->hasPages()) {
                 return '';
             }
-        } else if (!$active['page']->hasPages()) {
+        } elseif (!$active['page']->hasPages()) {
             // found pages has no children; render siblings
             $active['page'] = $active['page']->getParent();
-        } else if (is_int($maxDepth) && $active['depth'] + 1 > $maxDepth) {
+        } elseif (is_int($maxDepth) && $active['depth'] + 1 > $maxDepth) {
             // children are below max depth; render siblings
             $active['page'] = $active['page']->getParent();
         }
 
-        $attribs = array(
+        $attribs = [
             'class' => $ulClass,
             'id'    => $ulId,
-        );
+        ];
 
         // We don't need a prefix for the menu ID (backup)
         $skipValue = $this->_skipPrefixForId;
@@ -668,13 +673,13 @@ class Menu extends AbstractHelper
             $liClass = '';
             if ($subPage->isActive(true) && $addPageClassToLi) {
                 $liClass = $this->_htmlAttribs(
-                    array('class' => $activeClass . ' ' . $subPage->getClass())
+                    ['class' => $activeClass . ' ' . $subPage->getClass()]
                 );
-            } else if ($subPage->isActive(true)) {
-                $liClass = $this->_htmlAttribs(array('class' => $activeClass));
-            } else if ($addPageClassToLi) {
+            } elseif ($subPage->isActive(true)) {
+                $liClass = $this->_htmlAttribs(['class' => $activeClass]);
+            } elseif ($addPageClassToLi) {
                 $liClass = $this->_htmlAttribs(
-                    array('class' => $subPage->getClass())
+                    ['class' => $subPage->getClass()]
                 );
             }
             $html .= $indent . $innerIndent . '<li' . $liClass . '>' . $this->getEOL();
@@ -750,14 +755,14 @@ class Menu extends AbstractHelper
             if ($depth < $minDepth || !$this->accept($page)) {
                 // page is below minDepth or not accepted by visibilty
                 continue;
-            } else if ($expandSibs && $depth > $minDepth) {
+            } elseif ($expandSibs && $depth > $minDepth) {
                 // page is not active itself, but might be in the active branch
                 $accept = false;
                 if ($foundPage) {
                     if ($foundPage->hasPage($page)) {
                         // accept if page is a direct child of the active page
                         $accept = true;
-                    } else if ($page->getParent()->isActive(true)) {
+                    } elseif ($page->getParent()->isActive(true)) {
                         // page is a sibling of the active branch...
                         $accept = true;
                     }
@@ -765,14 +770,14 @@ class Menu extends AbstractHelper
                 if (!$isActive && !$accept) {
                     continue;
                 }
-            } else if ($onlyActive && !$isActive) {
+            } elseif ($onlyActive && !$isActive) {
                 // page is not active itself, but might be in the active branch
                 $accept = false;
                 if ($foundPage) {
                     if ($foundPage->hasPage($page)) {
                         // accept if page is a direct child of the active page
                         $accept = true;
-                    } else if ($foundPage->getParent()->hasPage($page)) {
+                    } elseif ($foundPage->getParent()->hasPage($page)) {
                         // page is a sibling of the active page...
                         if (!$foundPage->hasPages() ||
                             is_int($maxDepth) && $foundDepth + 1 > $maxDepth) {
@@ -793,14 +798,14 @@ class Menu extends AbstractHelper
             $myIndent = $indent . str_repeat($innerIndent, $depth * 2);
 
             if ($depth > $prevDepth) {
-                $attribs = array();
+                $attribs = [];
 
                 // start new ul tag
                 if (0 == $depth) {
-                    $attribs = array(
+                    $attribs = [
                         'class' => $ulClass,
                         'id'    => $ulId,
-                    );
+                    ];
                 }
 
                 // We don't need a prefix for the menu ID (backup)
@@ -814,7 +819,7 @@ class Menu extends AbstractHelper
 
                 // Reset prefix for IDs
                 $this->_skipPrefixForId = $skipValue;
-            } else if ($prevDepth > $depth) {
+            } elseif ($prevDepth > $depth) {
                 // close li/ul tags until we're at current depth
                 for ($i = $prevDepth; $i > $depth; $i--) {
                     $ind   = $indent . str_repeat($innerIndent, $i * 2);
@@ -829,7 +834,7 @@ class Menu extends AbstractHelper
             }
 
             // render li tag and page
-            $liClasses = array();
+            $liClasses = [];
             // Is page active?
             if ($isActive) {
                 $liClasses[] = $activeClass;
@@ -849,7 +854,7 @@ class Menu extends AbstractHelper
             }
 
             $html .= $myIndent . $innerIndent . '<li'
-                   . $this->_htmlAttribs(array('class' => implode(' ', $liClasses)))
+                   . $this->_htmlAttribs(['class' => implode(' ', $liClasses)])
                    . '>' . $this->getEOL()
                    . $myIndent . str_repeat($innerIndent, 2)
                    . $this->htmlify($page)
@@ -891,7 +896,7 @@ class Menu extends AbstractHelper
      * @return string                                rendered menu
      */
     public function renderMenu(Container $container = null,
-                               array $options = array())
+                               array $options = [])
     {
         if (null === $container) {
             $container = $this->getContainer();
@@ -980,7 +985,7 @@ class Menu extends AbstractHelper
                                   $addPageClassToLi = false,
                                   $innerIndent = null)
     {
-        return $this->renderMenu($container, array(
+        return $this->renderMenu($container, [
             'indent'           => $indent,
             'innerIndent'      => $innerIndent,
             'ulClass'          => $ulClass,
@@ -990,7 +995,7 @@ class Menu extends AbstractHelper
             'renderParents'    => false,
             'ulId'             => $ulId,
             'addPageClassToLi' => $addPageClassToLi,
-        ));
+        ]);
     }
 
     /**
@@ -1032,9 +1037,9 @@ class Menu extends AbstractHelper
             throw $e;
         }
 
-        $model = array(
+        $model = [
             'container' => $container
-        );
+        ];
 
         return $this->getTemplatingEngine()->render($partial, $model);
     }

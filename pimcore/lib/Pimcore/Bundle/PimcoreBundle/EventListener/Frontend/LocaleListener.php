@@ -45,7 +45,7 @@ class LocaleListener extends AbstractFrontendListener implements EventSubscriber
 
         $locale = $request->getLocale();
 
-        if($locale && $locale != $this->lastLocale) {
+        if ($locale && $locale != $this->lastLocale) {
             $this->lastLocale = $locale;
 
             // now we prepare everything for setlocale()
@@ -75,7 +75,7 @@ class LocaleListener extends AbstractFrontendListener implements EventSubscriber
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if($this->lastLocale && $event->isMasterRequest()) {
+        if ($this->lastLocale && $event->isMasterRequest()) {
             $response = $event->getResponse();
             $response->headers->set("Content-Language", strtolower(str_replace("_", "-", $this->lastLocale)), true);
         }

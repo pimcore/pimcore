@@ -787,6 +787,7 @@ class SettingsController extends AdminController
         }
 
         $t = new Model\Translation\Website();
+
         return $this->json($t->getAvailableLanguages());
     }
 
@@ -852,6 +853,7 @@ class SettingsController extends AdminController
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
+
                 return $this->json(["data" => $redirect, "success" => true]);
             } elseif ($request->get("xaction") == "create") {
                 $data = $this->decodeJson($request->get("data"));
@@ -876,6 +878,7 @@ class SettingsController extends AdminController
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
+
                 return $this->json(["data" => $redirect, "success" => true]);
             }
         } else {
@@ -1317,6 +1320,7 @@ class SettingsController extends AdminController
         $this->checkPermission("thumbnails");
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get("name"));
+
         return $this->json($pipe);
     }
 
@@ -1471,6 +1475,7 @@ class SettingsController extends AdminController
         $this->checkPermission("tag_snippet_management");
 
         $tag = Model\Tool\Tag\Config::getByName($request->get("name"));
+
         return $this->json($tag);
     }
 

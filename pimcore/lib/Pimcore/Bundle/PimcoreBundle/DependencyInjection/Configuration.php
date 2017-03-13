@@ -66,6 +66,7 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('layout')
                                     ->useAttributeAsKey('name')
                                     ->prototype('scalar')->end();
+
         return $treeBuilder;
     }
 

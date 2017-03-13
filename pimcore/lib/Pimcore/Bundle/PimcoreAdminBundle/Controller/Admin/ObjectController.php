@@ -426,6 +426,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             return $this->json($data);
         } else {
             Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
+
             return $this->json(["success" => false, "message" => "missing_permission"]);
         }
     }
@@ -723,6 +724,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             return $this->json($objectData);
         } else {
             Logger::debug("prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
+
             return $this->json(["success" => false, "message" => "missing_permission"]);
         }
     }
@@ -983,6 +985,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         }
 
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
+
         return $this->json([
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
@@ -1040,6 +1043,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
                     if ($objectWithSamePath != null) {
                         $allowUpdate = false;
+
                         return $this->json(["success" => false, "message" => "prevented creating object because object with same path+key already exists"]);
                     }
 
@@ -1064,6 +1068,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     $success = true;
                 } catch (\Exception $e) {
                     Logger::error($e);
+
                     return $this->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
@@ -1077,6 +1082,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $success = true;
             } catch (\Exception $e) {
                 Logger::error($e);
+
                 return $this->json(["success" => false, "message" => $e->getMessage()]);
             }
         } else {
@@ -1281,6 +1287,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $object = $this->assignPropertiesFromEditmode($request, $object);
 
                 $object->save();
+
                 return $this->json(["success" => true]);
             } catch (\Exception $e) {
                 return $this->json(["success" => false, "message" => $e->getMessage()]);
@@ -1351,6 +1358,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $object->save();
                 $treeData = [];
                 $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
+
                 return $this->json([
                         "success" => true,
                         "general" => ["o_modificationDate" => $object->getModificationDate() ],
@@ -1383,7 +1391,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         if ($object) {
             if ($object->isAllowed("versions")) {
-                return array("object" => $object);
+                return ["object" => $object];
             } else {
                 throw new \Exception("Permission denied, version id [" . $id . "]");
             }
@@ -1419,11 +1427,10 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         if ($object1 && $object2) {
             if ($object1->isAllowed("versions") && $object2->isAllowed("versions")) {
-
-                return array(
+                return [
                     "object1" => $object1,
                     "object2" => $object2
-                );
+                ];
             } else {
                 throw new \Exception("Permission denied, version ids [" . $id1 . ", " . $id2 . "]");
             }
@@ -1442,7 +1449,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
-//                $this->get('translator')->setLocale($requestedLanguage);
+                //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {
@@ -1537,6 +1544,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
 
                     $object->save();
+
                     return $this->json(["data" => Object\Service::gridObjectData($object, $request->get("fields"), $requestedLanguage), "success" => true]);
                 } catch (\Exception $e) {
                     return $this->json(["success" => false, "message" => $e->getMessage()]);
@@ -1687,6 +1695,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
                 $objects[] = $o;
             }
+
             return $this->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
@@ -1872,10 +1881,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
             } else {
                 Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");
+
                 return $this->json(["success" => false, "message" => "source object not found"]);
             }
         } else {
             Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+
             return $this->json(["error" => false, "message" => "missing_permission"]);
         }
 

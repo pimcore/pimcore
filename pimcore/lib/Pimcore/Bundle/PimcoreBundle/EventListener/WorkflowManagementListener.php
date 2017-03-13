@@ -165,8 +165,8 @@ class WorkflowManagementListener implements EventSubscriberInterface
     {
         $element = null;
 
-        foreach(["object","asset","document"] as $type) {
-            if($e->hasArgument($type)) {
+        foreach (["object", "asset", "document"] as $type) {
+            if ($e->hasArgument($type)) {
                 $element = $e->getArgument($type);
             }
         }
@@ -181,21 +181,24 @@ class WorkflowManagementListener implements EventSubscriberInterface
     /**
      *
      */
-    public function enable() {
+    public function enable()
+    {
         $this->enabled = true;
     }
 
     /**
      *
      */
-    public function disable() {
+    public function disable()
+    {
         $this->enabled = false;
     }
 
     /**
      * @return bool
      */
-    public function isEnabled() {
+    public function isEnabled()
+    {
         return $this->enabled;
     }
 }

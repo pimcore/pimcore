@@ -18,7 +18,8 @@ use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
-class DocumentRenderer {
+class DocumentRenderer
+{
 
     /**
      * @var ActionRenderer
@@ -49,7 +50,8 @@ class DocumentRenderer {
      * @param bool $useLayout
      * @return string
      */
-    public function render(Document $document, $params = [], $useLayout = false) {
+    public function render(Document $document, $params = [], $useLayout = false)
+    {
 
         //TODO consider useLayout == false
 
@@ -63,5 +65,4 @@ class DocumentRenderer {
 
         return $content->getContent();
     }
-
 }

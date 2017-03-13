@@ -16,11 +16,12 @@
  * @param string $file
  * @return array
  */
-function xmlToArray($file) {
-
+function xmlToArray($file)
+{
     $xml = simplexml_load_file($file, null, LIBXML_NOCDATA);
     $json = json_encode((array) $xml);
     $array = json_decode($json, true);
+
     return $array;
 }
 
@@ -419,7 +420,7 @@ function recursiveCopy($source, $destination)
  */
 function p_r($var)
 {
-    if(function_exists("dump")) {
+    if (function_exists("dump")) {
         dump($var);
     } else {
         echo "<pre>";

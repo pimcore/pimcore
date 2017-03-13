@@ -21,7 +21,8 @@ use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\ObjectEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class SearchBackendListener implements EventSubscriberInterface {
+class SearchBackendListener implements EventSubscriberInterface
+{
 
     /**
      * @inheritDoc

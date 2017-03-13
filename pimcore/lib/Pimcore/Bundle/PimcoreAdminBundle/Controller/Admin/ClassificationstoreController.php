@@ -67,6 +67,7 @@ class ClassificationstoreController extends AdminController
         $config->setGroupId($groupId);
 
         $config->delete();
+
         return $this->json(["success" => true]);
     }
 
@@ -85,6 +86,7 @@ class ClassificationstoreController extends AdminController
         $config->setGroupId($groupId);
 
         $config->delete();
+
         return $this->json(["success" => true]);
     }
 

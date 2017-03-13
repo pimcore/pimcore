@@ -14,24 +14,23 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Http;
 
-
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Config;
 
-class ClientFactory {
-
-    public static function createHttpClient() {
+class ClientFactory
+{
+    public static function createHttpClient()
+    {
         $systemConfig = Config::getSystemConfig();
 
         $guzzleConfig = [
             RequestOptions::TIMEOUT => 3600
         ];
 
-        if($systemConfig['httpclient']['adapter'] == 'Proxy') {
-
+        if ($systemConfig['httpclient']['adapter'] == 'Proxy') {
             $authorization = "";
-            if($systemConfig['httpclient']['proxy_user']) {
+            if ($systemConfig['httpclient']['proxy_user']) {
                 $authorization = $systemConfig['httpclient']['proxy_user'] . ":" . $systemConfig['httpclient']['proxy_pass'] . "@";
             }
             $proxyUri = "tcp://" . $authorization . $systemConfig['httpclient']['proxy_host'] . ":" . $systemConfig['httpclient']['proxy_port'];
@@ -41,5 +40,4 @@ class ClientFactory {
 
         return new Client($guzzleConfig);
     }
-
 }

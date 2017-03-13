@@ -46,6 +46,7 @@ class GetAllParams extends Helper
     public function __invoke()
     {
         $request = $this->requestHelper->getCurrentRequest();
+
         return array_merge($request->request->all(), $request->query->all());
     }
 }

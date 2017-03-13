@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model;
 use Pimcore\Model\User\AbstractUser;
 use Symfony\Component\EventDispatcher\Event;
 
-class UserRoleEvent extends Event {
+class UserRoleEvent extends Event
+{
 
     /**
      * @var AbstractUser
@@ -28,7 +29,7 @@ class UserRoleEvent extends Event {
      * DocumentEvent constructor.
      * @param AbstractUser $userRole
      */
-    function __construct(AbstractUser $userRole)
+    public function __construct(AbstractUser $userRole)
     {
         $this->userRole = $userRole;
     }

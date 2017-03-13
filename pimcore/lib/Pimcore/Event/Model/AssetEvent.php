@@ -18,8 +18,8 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\Event;
 
-class AssetEvent extends Event implements ElementEventInterface {
-
+class AssetEvent extends Event implements ElementEventInterface
+{
     use ArgumentsAwareTrait;
 
     /**
@@ -32,7 +32,7 @@ class AssetEvent extends Event implements ElementEventInterface {
      * @param Asset $asset
      * @param array $arguments
      */
-    function __construct(Asset $asset, array $arguments = [])
+    public function __construct(Asset $asset, array $arguments = [])
     {
         $this->asset = $asset;
         $this->arguments = $arguments;

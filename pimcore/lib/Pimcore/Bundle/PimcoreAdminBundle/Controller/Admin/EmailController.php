@@ -113,9 +113,11 @@ class EmailController extends DocumentControllerBase
                     try {
                         $page->save();
                         $this->saveToSession($page);
+
                         return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
+
                         return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -126,6 +128,7 @@ class EmailController extends DocumentControllerBase
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
+
                             return $this->json(["success" => true]);
                         } catch (\Exception $e) {
                             if ($e instanceof Element\ValidationException) {
@@ -133,6 +136,7 @@ class EmailController extends DocumentControllerBase
                             }
 
                             Logger::err($e);
+
                             return $this->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
@@ -238,7 +242,6 @@ class EmailController extends DocumentControllerBase
         $emailLog = Tool\Email\Log::getById($request->get('id'));
 
         if ($request->get('type') == 'text') {
-
             return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $emailLog->getTextLog() . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog());
@@ -252,6 +255,7 @@ class EmailController extends DocumentControllerBase
             foreach ($params as &$entry) {
                 $this->enhanceLoggingData($entry);
             }
+
             return $this->json($params);
         } else {
             return new Response('No Type specified');
@@ -355,6 +359,7 @@ class EmailController extends DocumentControllerBase
             $emailLog->delete();
             $success = true;
         }
+
         return $this->json([
             "success" => $success,
         ]);
@@ -461,7 +466,7 @@ class EmailController extends DocumentControllerBase
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
-                    if(is_string($value)) {
+                    if (is_string($value)) {
                         $value = trim($value);
                     }
                 }

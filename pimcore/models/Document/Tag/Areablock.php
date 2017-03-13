@@ -82,7 +82,8 @@ class Areablock extends Model\Document\Tag
         if (!is_array($this->indices)) {
             $this->indices = [];
         }
-        reset($this->indices); while ($this->loop());
+        reset($this->indices);
+        while ($this->loop());
     }
 
     /**

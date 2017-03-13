@@ -135,6 +135,7 @@ abstract class AbstractHelper implements HelperInterface
         } else {
             $this->_minDepth = (int) $minDepth;
         }
+
         return $this;
     }
 
@@ -146,6 +147,7 @@ abstract class AbstractHelper implements HelperInterface
         if (!is_int($this->_minDepth) || $this->_minDepth < 0) {
             return 0;
         }
+
         return $this->_minDepth;
     }
 
@@ -160,6 +162,7 @@ abstract class AbstractHelper implements HelperInterface
         } else {
             $this->_maxDepth = (int) $maxDepth;
         }
+
         return $this;
     }
 
@@ -178,6 +181,7 @@ abstract class AbstractHelper implements HelperInterface
     public function setIndent($indent)
     {
         $this->_indent = $this->_getWhitespace($indent);
+
         return $this;
     }
 
@@ -232,6 +236,7 @@ abstract class AbstractHelper implements HelperInterface
     public function skipPrefixForId($flag = true)
     {
         $this->_skipPrefixForId = (bool) $flag;
+
         return $this;
     }
 
@@ -250,6 +255,7 @@ abstract class AbstractHelper implements HelperInterface
     public function setRenderInvisible($renderInvisible = true)
     {
         $this->_renderInvisible = (bool) $renderInvisible;
+
         return $this;
     }
 
@@ -263,10 +269,10 @@ abstract class AbstractHelper implements HelperInterface
      * @return mixed                      returns what the container returns
      * @throws \Exception  if method does not exist in container
      */
-    public function __call($method, array $arguments = array())
+    public function __call($method, array $arguments = [])
     {
         return call_user_func_array(
-                array($this->getContainer(), $method),
+                [$this->getContainer(), $method],
                 $arguments);
     }
 
@@ -285,6 +291,7 @@ abstract class AbstractHelper implements HelperInterface
         } catch (\Exception $e) {
             $msg = get_class($e) . ': ' . $e->getMessage();
             trigger_error($msg, E_USER_ERROR);
+
             return '';
         }
     }
@@ -341,9 +348,9 @@ abstract class AbstractHelper implements HelperInterface
         }
 
         if ($found) {
-            return array('page' => $found, 'depth' => $foundDepth);
+            return ['page' => $found, 'depth' => $foundDepth];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -368,13 +375,13 @@ abstract class AbstractHelper implements HelperInterface
 
         // get attribs for anchor element
         $attribs = array_merge(
-            array(
+            [
                 'id'     => $page->getId(),
                 'title'  => $title,
                 'class'  => $page->getClass(),
                 'href'   => $page->getHref(),
                 'target' => $page->getTarget()
-            ),
+            ],
             $page->getCustomHtmlAttribs()
         );
 
@@ -510,13 +517,15 @@ abstract class AbstractHelper implements HelperInterface
             $value = str_replace('][', '-', $value);
             $value = str_replace('[', '-', $value);
         }
+
         return $value;
     }
 
     /**
      * @return \Symfony\Bundle\FrameworkBundle\Templating\PhpEngine
      */
-    protected function getTemplatingEngine() {
+    protected function getTemplatingEngine()
+    {
         return $this->getHelper()->getTemplatingEngine();
     }
 }

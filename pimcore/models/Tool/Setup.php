@@ -112,10 +112,10 @@ class Setup extends Model\AbstractModel
                     "smtp" => [
                         "host" => "",
                         "port" => "",
-                        "ssl" => NULL,
+                        "ssl" => null,
                         "name" => "",
                         "auth" => [
-                            "method" => NULL,
+                            "method" => null,
                             "username" => "",
                             "password" => ""
                         ]
@@ -137,10 +137,10 @@ class Setup extends Model\AbstractModel
                     "smtp" => [
                         "host" => "",
                         "port" => "",
-                        "ssl" => NULL,
+                        "ssl" => null,
                         "name" => "",
                         "auth" => [
-                            "method" => NULL,
+                            "method" => null,
                             "username" => "",
                             "password" => ""
                         ]

@@ -34,6 +34,7 @@ class GoogleAnalyticsCodeListener extends AbstractFrontendListener
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 
@@ -43,6 +44,7 @@ class GoogleAnalyticsCodeListener extends AbstractFrontendListener
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 

@@ -21,5 +21,4 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
  */
 interface BruteforceProtectedControllerInterface
 {
-
 }

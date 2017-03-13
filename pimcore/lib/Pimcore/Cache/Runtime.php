@@ -24,11 +24,11 @@ class Runtime extends \ArrayObject
      */
     public static function getInstance()
     {
-        if(\Pimcore::hasContainer()) {
+        if (\Pimcore::hasContainer()) {
             $instance = \Pimcore::getContainer()->get("pimcore.cache.runtime");
-            if(self::$tempInstance) {
+            if (self::$tempInstance) {
                 // copy values from static temp. instance to the service instance
-                foreach(self::$tempInstance as $key => $value) {
+                foreach (self::$tempInstance as $key => $value) {
                     $instance->offsetSet($key, $value);
                 }
                 self::$tempInstance = null;
@@ -39,7 +39,7 @@ class Runtime extends \ArrayObject
             // create a temp. instance
             // this is necessary because the runtime cache is sometimes in use before the actual service container
             // is initialized
-            if(!self::$tempInstance) {
+            if (!self::$tempInstance) {
                 self::$tempInstance = new self;
             }
 
@@ -98,6 +98,7 @@ class Runtime extends \ArrayObject
     public static function isRegistered($index)
     {
         $instance = self::getInstance();
+
         return $instance->offsetExists($index);
     }
 
@@ -108,7 +109,7 @@ class Runtime extends \ArrayObject
      * @param array $array data array
      * @param integer $flags ArrayObject flags
      */
-    public function __construct($array = array(), $flags = parent::ARRAY_AS_PROPS)
+    public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
     {
         parent::__construct($array, $flags);
     }
@@ -153,8 +154,8 @@ class Runtime extends \ArrayObject
         $newInstance = new self();
         $oldInstance = self::getInstance();
 
-        foreach($keepItems as $key) {
-            if($oldInstance->offsetExists($key)) {
+        foreach ($keepItems as $key) {
+            if ($oldInstance->offsetExists($key)) {
                 $newInstance->offsetSet($key, $oldInstance->offsetGet($key));
             }
         }

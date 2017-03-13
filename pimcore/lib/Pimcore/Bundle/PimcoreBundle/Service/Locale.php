@@ -16,7 +16,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class Locale {
+class Locale
+{
 
     /**
      * @var null|RequestStack
@@ -36,17 +37,19 @@ class Locale {
      * @param $locale
      * @return bool
      */
-    public function isLocale($locale) {
-
+    public function isLocale($locale)
+    {
         $locales = array_flip($this->getLocaleList());
         $exists = isset($locales[$locale]);
+
         return $exists;
     }
 
     /**
      * @return string
      */
-    public function findLocale() {
+    public function findLocale()
+    {
         if ($this->requestStack) {
             $masterRequest = $this->requestStack->getMasterRequest();
 
@@ -56,7 +59,7 @@ class Locale {
         }
 
         $defaultLocale = \Pimcore\Tool::getDefaultLanguage();
-        if($defaultLocale) {
+        if ($defaultLocale) {
             return $defaultLocale;
         }
 
@@ -66,8 +69,10 @@ class Locale {
     /**
      * @return array
      */
-    public function getLocaleList() {
+    public function getLocaleList()
+    {
         $locales = \ResourceBundle::getLocales(null);
+
         return $locales;
     }
 
@@ -75,17 +80,17 @@ class Locale {
      * @param null $locale
      * @return array
      */
-    public function getDisplayRegions($locale = null) {
-
-        if(!$locale) {
+    public function getDisplayRegions($locale = null)
+    {
+        if (!$locale) {
             $locale = $this->findLocale();
         }
 
         $regions = [];
         $locales = $this->getLocaleList();
-        foreach($locales as $code) {
+        foreach ($locales as $code) {
             $regionCode = \Locale::getRegion($code);
-            if($regionCode) {
+            if ($regionCode) {
                 $regionTranslation = \Locale::getDisplayRegion($code, $locale);
                 $regions[$regionCode] = $regionTranslation;
             }

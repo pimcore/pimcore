@@ -38,7 +38,6 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder;
 
-
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Exception;
 
 class Container extends \ArrayObject
@@ -111,7 +110,7 @@ class Container extends \ArrayObject
      */
     public function set($value)
     {
-        $this->exchangeArray(array($value));
+        $this->exchangeArray([$value]);
     }
 
     /**
@@ -140,6 +139,7 @@ class Container extends \ArrayObject
         if (1 == count($this)) {
             $keys = $this->getKeys();
             $key  = array_shift($keys);
+
             return $this[$key];
         }
 
@@ -155,6 +155,7 @@ class Container extends \ArrayObject
     public function setPrefix($prefix)
     {
         $this->_prefix = (string) $prefix;
+
         return $this;
     }
 
@@ -177,6 +178,7 @@ class Container extends \ArrayObject
     public function setPostfix($postfix)
     {
         $this->_postfix = (string) $postfix;
+
         return $this;
     }
 
@@ -201,6 +203,7 @@ class Container extends \ArrayObject
     public function setSeparator($separator)
     {
         $this->_separator = (string) $separator;
+
         return $this;
     }
 
@@ -224,6 +227,7 @@ class Container extends \ArrayObject
     public function setIndent($indent)
     {
         $this->_indent = $this->getWhitespace($indent);
+
         return $this;
     }
 
@@ -292,12 +296,12 @@ class Container extends \ArrayObject
                 if (null !== $key) {
                     $this[$key] = $data;
                 } else {
-                    $this->exchangeArray(array($data));
+                    $this->exchangeArray([$data]);
                 }
                 break;
             case self::PREPEND:
                 if (null !== $key) {
-                    $array  = array($key => $data);
+                    $array  = [$key => $data];
                     $values = $this->getArrayCopy();
                     $final  = $array + $values;
                     $this->exchangeArray($final);
@@ -328,6 +332,7 @@ class Container extends \ArrayObject
     public function getKeys()
     {
         $array = $this->getArrayCopy();
+
         return array_keys($array);
     }
 
@@ -370,6 +375,7 @@ class Container extends \ArrayObject
             . implode($this->getSeparator(), $items)
             . $this->getPostfix();
         $return = preg_replace("/(\r\n?|\n)/", '$1' . $indent, $return);
+
         return $return;
     }
 

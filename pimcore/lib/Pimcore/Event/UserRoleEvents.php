@@ -51,5 +51,4 @@ final class UserRoleEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.user.postDelete';
-
 }

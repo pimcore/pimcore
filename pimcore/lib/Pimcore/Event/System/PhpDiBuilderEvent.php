@@ -17,7 +17,8 @@ namespace Pimcore\Event\System;
 use DI\ContainerBuilder;
 use Symfony\Component\EventDispatcher\Event;
 
-class PhpDiBuilderEvent extends Event {
+class PhpDiBuilderEvent extends Event
+{
 
     /**
      * @var ContainerBuilder

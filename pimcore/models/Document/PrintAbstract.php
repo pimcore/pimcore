@@ -56,6 +56,7 @@ abstract class PrintAbstract extends Document\PageSnippet
         if ($this->lastGenerated) {
             $date = new \DateTime();
             $date->setTimestamp($this->lastGenerated);
+
             return $date;
         }
 

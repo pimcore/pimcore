@@ -25,7 +25,7 @@ trait ResponseInjectionTrait
      */
     protected function isHtmlResponse(Response $response)
     {
-        if($response instanceof BinaryFileResponse) {
+        if ($response instanceof BinaryFileResponse) {
             return false;
         }
 

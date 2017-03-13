@@ -53,8 +53,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         PimcoreContextResolver $resolver,
         RequestStack $requestStack,
         ContextInitializerInterface $contextInitializer
-    )
-    {
+    ) {
         $this->resolver           = $resolver;
         $this->requestStack       = $requestStack;
         $this->contextInitializer = $contextInitializer;

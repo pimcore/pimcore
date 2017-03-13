@@ -13,6 +13,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 namespace Pimcore\Bundle\PimcoreBundle\Service\Tool;
 
 /**
@@ -21,7 +22,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Service\Tool;
  * finds concrete implementations based on configuration on symfony container and returns class names
  *
  */
-class ImplementationLocator {
+class ImplementationLocator
+{
 
     /**
      * @var array
@@ -45,8 +47,8 @@ class ImplementationLocator {
      * @param $fieldType - name of component
      * @return null|string
      */
-    public function getObjectClassDefinitionImplementation($dataType, $fieldType) {
-
+    public function getObjectClassDefinitionImplementation($dataType, $fieldType)
+    {
         $class = $this->pimcoreConfig['objects']['class_definitions'][$dataType][$fieldType];
         if (!\Pimcore\Tool::classExists($class)) {
             $class = "\\Pimcore\\Model\\Object\\ClassDefinition\\".ucfirst($dataType)."\\" . ucfirst($fieldType);
@@ -57,8 +59,7 @@ class ImplementationLocator {
                 }
             }
         }
+
         return $class;
     }
-
-
 }

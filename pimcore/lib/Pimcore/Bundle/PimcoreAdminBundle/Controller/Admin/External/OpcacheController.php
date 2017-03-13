@@ -62,5 +62,4 @@ class OpcacheController extends AdminController implements EventedControllerInte
     {
         // nothing to do
     }
-
 }

@@ -50,6 +50,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 "text" => $documentType
             ];
         }
+
         return $this->json($typeItems);
     }
 
@@ -67,6 +68,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 "text" => $assetType
             ];
         }
+
         return $this->json($typeItems);
     }
 
@@ -242,6 +244,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $class = Object\ClassDefinition::getById(intval($request->get("id")));
         $class->delete();
+
         return new Response();
     }
 
@@ -295,6 +298,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             return $this->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
+
             return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -364,6 +368,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             return $this->json(["success" => true, "class" => $class]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
+
             return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -398,6 +403,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -434,6 +440,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -527,6 +534,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $response = new Response($json);
             $response->headers->set("Content-type", "application/json");
             $response->headers->set("Content-Disposition", "attachment; filename=\"class_" . $class->getName() . "_export.json\"");
+
             return $response;
         }
     }
@@ -558,6 +566,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $response = new Response($json);
                 $response->headers->set("Content-type", "application/json");
                 $response->headers->set("Content-Disposition", "attachment; filename=\"custom_definition_" . $name . "_export.json\"");
+
                 return $response;
             }
         }
@@ -581,6 +590,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function fieldcollectionGetAction(Request $request)
     {
         $fc = Object\Fieldcollection\Definition::getByKey($request->get("id"));
+
         return $this->json($fc);
     }
 
@@ -629,6 +639,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             return $this->json(["success" => true, "id" => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
+
             return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -653,6 +664,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -674,6 +686,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $response = new Response($json);
             $response->headers->set("Content-type", "application/json");
             $response->headers->set("Content-Disposition", "attachment; filename=\"fieldcollection_" . $key . "_export.json\"");
+
             return $response;
         }
     }
@@ -832,6 +845,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function objectbrickGetAction(Request $request)
     {
         $fc = Object\Objectbrick\Definition::getByKey($request->get("id"));
+
         return $this->json($fc);
     }
 
@@ -883,6 +897,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             return $this->json(["success" => true, "id" => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
+
             return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -906,6 +921,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -927,6 +943,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $response = new Response($xml);
             $response->headers->set("Content-type", "application/json");
             $response->headers->set("Content-Disposition", "attachment; filename=\"objectbrick_" . $key . "_export.json\"");
+
             return $response;
         }
     }
@@ -1072,6 +1089,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $response = $this->json(["success" => true, "filename" => $tmpName, "data" => $result]);
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -1114,6 +1132,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     $class->setName($name);
                 }
                 $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
+
                 return $this->json(["success" => $success !== false]);
             } elseif ($type == "objectbrick" && $item["key"] == $name) {
                 try {
@@ -1124,6 +1143,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
 
                 $success = Object\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
+
                 return $this->json(["success" => $success !== false]);
             } elseif ($type == "fieldcollection" && $item["key"] == $name) {
                 try {
@@ -1133,6 +1153,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     $fieldCollection->setKey($name);
                 }
                 $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
+
                 return $this->json(["success" => $success !== false]);
             } elseif ($type == "customlayout") {
                 $layoutData = unserialize($data["name"]);
@@ -1171,6 +1192,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                         $layoutDefinition->save();
                     } catch (\Exception $e) {
                         Logger::error($e->getMessage());
+
                         return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 }
@@ -1241,6 +1263,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $response = new Response($result);
         $response->headers->set("Content-type", "application/json");
         $response->headers->set("Content-Disposition", "attachment; filename=\"bulk_export.json\"");
+
         return $response;
     }
 

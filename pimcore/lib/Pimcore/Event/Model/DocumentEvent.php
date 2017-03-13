@@ -18,8 +18,8 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\Event;
 
-class DocumentEvent extends Event implements ElementEventInterface {
-
+class DocumentEvent extends Event implements ElementEventInterface
+{
     use ArgumentsAwareTrait;
 
     /**
@@ -32,7 +32,7 @@ class DocumentEvent extends Event implements ElementEventInterface {
      * @param Document $document
      * @param array $arguments
      */
-    function __construct(Document $document, array $arguments = [])
+    public function __construct(Document $document, array $arguments = [])
     {
         $this->document = $document;
         $this->arguments = $arguments;

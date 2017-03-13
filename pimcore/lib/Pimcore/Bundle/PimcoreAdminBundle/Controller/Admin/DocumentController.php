@@ -312,9 +312,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($document->isAllowed("delete")) {
                 try {
                     $document->delete();
+
                     return $this->json(["success" => true]);
                 } catch (\Exception $e) {
                     Logger::err($e);
+
                     return $this->json(["success" => false, "message" => $e->getMessage()]);
                 }
             }
@@ -495,6 +497,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             } else {
                 $msg = "Prevented moving document, because document with same path+key already exists or the document is locked. ID: " . $document->getId();
                 Logger::debug($msg);
+
                 return $this->json(["success" => false, "message" => $msg]);
             }
         } elseif ($document->isAllowed("rename") && $request->get("key")) {
@@ -616,6 +619,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $key = "document_" . $document->getId();
             $session->set($key, $document);
         }, "pimcore_documents");
+
         return new Response();
     }
 
@@ -882,6 +886,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 }
             } else {
                 Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+
                 return $this->json(["success" => false, "message" => "missing_permission"]);
             }
         }
@@ -909,7 +914,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $toFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
         $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
 
-        $viewParams = array();
+        $viewParams = [];
 
 
         if (\Pimcore\Image\HtmlToImage::isSupported() && class_exists("Imagick")) {
@@ -928,7 +933,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $result[0]->destroy();
 
 
-                $viewParams["image"] = base64_encode(file_get_contents($diffFile));;
+                $viewParams["image"] = base64_encode(file_get_contents($diffFile));
+                ;
                 unlink($diffFile);
             } else {
                 $viewParams["image1"] = base64_encode(file_get_contents($fromFile));

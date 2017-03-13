@@ -601,7 +601,8 @@ abstract class PageSnippet extends Model\Document
      *
      * @return bool
      */
-    public function doRenderWithLegacyStack() {
+    public function doRenderWithLegacyStack()
+    {
         return $this->isLegacy();
     }
 

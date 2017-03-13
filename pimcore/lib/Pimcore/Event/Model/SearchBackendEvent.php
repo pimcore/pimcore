@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\Event;
 
-class SearchBackendEvent extends Event {
+class SearchBackendEvent extends Event
+{
 
     /**
      * @var Data
@@ -28,7 +29,7 @@ class SearchBackendEvent extends Event {
      * Data constructor.
      * @param Data $data
      */
-    function __construct(Data $data)
+    public function __construct(Data $data)
     {
         $this->data = $data;
     }

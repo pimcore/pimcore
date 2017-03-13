@@ -78,6 +78,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         if ($page->isAllowed("view")) {
             $data = $event->getArgument("data");
+
             return $this->json($data);
         }
 
@@ -100,7 +101,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             // save to session
             $key = "document_" . $request->get("id");
 
-            Session::useSession(function(AttributeBagInterface $session) use ($key, $page) {
+            Session::useSession(function (AttributeBagInterface $session) use ($key, $page) {
                 $session->set($key, $page);
             }, 'pimcore_documents');
 
@@ -125,9 +126,11 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                 try {
                     $page->save();
+
                     return $this->json(["success" => true]);
                 } catch (\Exception $e) {
                     Logger::err($e);
+
                     return $this->json(["success" => false, "message"=>$e->getMessage()]);
                 }
             } else {
@@ -137,14 +140,17 @@ class PrintpageControllerBase extends DocumentControllerBase
 
                     try {
                         $page->saveVersion();
+
                         return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
+
                         return $this->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 }
             }
         }
+
         return $this->json(false);
     }
 
@@ -215,6 +221,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             if ($request->get("download")) {
                 $response->setContentDisposition("attachment", $document->getKey() . '.pdf');
             }
+
             return $response;
         } else {
             throw new \Exception("File does not exist");
@@ -255,6 +262,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         if ($printDocument) {
             $dirty = $printDocument->pdfIsDirty();
         }
+
         return $this->json(["pdfDirty" => $dirty]);
     }
 
@@ -323,6 +331,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     public function cancelGenerationAction(Request $request)
     {
         Processor::getInstance()->cancelGeneration(intval($request->get("id")));
+
         return $this->json(["success" => true]);
     }
 }

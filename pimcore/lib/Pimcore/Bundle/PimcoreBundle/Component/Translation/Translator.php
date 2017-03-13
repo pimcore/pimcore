@@ -23,7 +23,8 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Pimcore\Cache;
 use Pimcore\Tool;
 
-class Translator implements TranslatorInterface, TranslatorBagInterface {
+class Translator implements TranslatorInterface, TranslatorBagInterface
+{
 
     /**
      * @var TranslatorInterface|TranslatorBagInterface
@@ -66,7 +67,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = array(), $domain = null, $locale = null)
+    public function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
         if (null === $domain) {
             $domain = 'messages';
@@ -81,7 +82,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
         $term = strtr($term, $parameters);
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
-        if(isset($parameters[0])) {
+        if (isset($parameters[0])) {
             $term = vsprintf($id, $parameters);
         }
 
@@ -91,11 +92,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
     /**
      * {@inheritdoc}
      */
-    public function transChoice($id, $number, array $parameters = array(), $domain = null, $locale = null)
+    public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
     {
-        $parameters = array_merge(array(
+        $parameters = array_merge([
             '%count%' => $number,
-        ), $parameters);
+        ], $parameters);
 
         if (null === $domain) {
             $domain = 'messages';
@@ -118,6 +119,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
         $term = $catalogue->get($id, $domain);
         $term = $this->checkForEmptyTranslation($id, $term, $domain, $locale);
         $term = $this->selector->choose($term, (int) $number, $locale);
+
         return strtr($term, $parameters);
     }
 
@@ -149,24 +151,24 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
      * @param string $domain
      * @param string $locale
      */
-    protected function lazyInitialize($domain, $locale) {
-
+    protected function lazyInitialize($domain, $locale)
+    {
         $cacheKey = "translation_data_" . $domain . "_" . $locale;
 
-        if(isset($this->initializedCatalogues[$cacheKey])) {
+        if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
         }
 
         $this->initializedCatalogues[$cacheKey] = true;
         $backend = $this->getBackendForDomain($domain);
 
-        if($backend) {
+        if ($backend) {
             $catalogue = null;
 
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ["__pimcore_dummy" => "only_a_dummy"];
 
-                if($domain == "admin") {
+                if ($domain == "admin") {
                     // add json catalogue
                     try {
                         $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . "/" . $locale . ".json");
@@ -175,8 +177,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
                     }
 
                     $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
-                    if(is_array($jsonTranslations)) {
-                        foreach($jsonTranslations as $jsonTranslation) {
+                    if (is_array($jsonTranslations)) {
+                        foreach ($jsonTranslations as $jsonTranslation) {
                             $data[$jsonTranslation["term"]] = $jsonTranslation["definition"];
                         }
                     }
@@ -214,12 +216,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
      */
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
     {
-        if($id != $translated && $translated) {
+        if ($id != $translated && $translated) {
             return $translated;
-        } else if($id == $translated && !$this->getCatalogue($locale)->has($id, $domain)) {
-
+        } elseif ($id == $translated && !$this->getCatalogue($locale)->has($id, $domain)) {
             $backend = $this->getBackendForDomain($domain);
-            if($backend) {
+            if ($backend) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Pimcore_Translate: Message ID's longer than 190 characters are invalid!");
                 }
@@ -254,13 +255,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
         }
 
         // now check for custom fallback locales, only for shared translations
-        if(empty($translated) && ($domain == "messages" || $domain == "admin")) {
+        if (empty($translated) && ($domain == "messages" || $domain == "admin")) {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
-                if($catalogue->has($id, $domain)) {
+                if ($catalogue->has($id, $domain)) {
                     $fallbackValue = $catalogue->get($id, $domain);
-                    if($fallbackValue) {
+                    if ($fallbackValue) {
                         return $fallbackValue;
                     }
                 }
@@ -276,13 +277,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
      * @param $domain
      * @return string
      */
-    protected function getBackendForDomain($domain) {
+    protected function getBackendForDomain($domain)
+    {
         $backends = [
             "messages" => "website",
             "admin" => "admin"
         ];
 
-        if(isset($backends[$domain])) {
+        if (isset($backends[$domain])) {
             return $backends[$domain];
         }
 
@@ -326,6 +328,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
      */
     public function __call($method, $args)
     {
-        return call_user_func_array(array($this->translator, $method), $args);
+        return call_user_func_array([$this->translator, $method], $args);
     }
 }

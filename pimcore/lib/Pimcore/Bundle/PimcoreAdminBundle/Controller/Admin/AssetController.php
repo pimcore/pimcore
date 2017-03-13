@@ -142,7 +142,6 @@ class AssetController extends ElementControllerBase implements EventedController
         $offset = intval($request->get("start"));
 
         if ($asset->hasChildren()) {
-
             if ($request->get("view")) {
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get("view"));
             }
@@ -196,6 +195,7 @@ class AssetController extends ElementControllerBase implements EventedController
     public function addAssetAction(Request $request)
     {
         $res = $this->addAsset($request);
+
         return $this->json(["success" => $res["success"], "msg" => "Success"]);
     }
 
@@ -217,6 +217,7 @@ class AssetController extends ElementControllerBase implements EventedController
             "type" => $res["asset"] ? $res["asset"]->getType() : null
         ]);
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -528,6 +529,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
+
         return $this->json([
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
@@ -738,6 +740,7 @@ class AssetController extends ElementControllerBase implements EventedController
             } else {
                 $msg = "prevented moving asset, asset with same path+key already exists at target location or the asset is locked. ID: " . $asset->getId();
                 Logger::debug($msg);
+
                 return $this->json(["success" => $success, "message" => $msg]);
             }
         } elseif ($asset->isAllowed("rename") && $request->get("filename")) {
@@ -870,6 +873,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
+
                         return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -904,6 +908,7 @@ class AssetController extends ElementControllerBase implements EventedController
             try {
                 $asset->setUserModification($this->getUser()->getId());
                 $asset->save();
+
                 return $this->json(["success" => true]);
             } catch (\Exception $e) {
                 return $this->json(["success" => false, "message" => $e->getMessage()]);
@@ -928,7 +933,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($asset->isAllowed("versions")) {
             return $this->render("PimcoreAdminBundle:Admin/Asset:showVersion" . ucfirst($asset->getType()) . ".html.php",
-                array("asset" => $asset));
+                ["asset" => $asset]);
         } else {
             throw new \Exception("Permission denied, version id [" . $id . "]");
         }
@@ -947,6 +952,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $response = new BinaryFileResponse($asset->getFileSystemPath());
             $response->headers->set("Content-Type", $asset->getMimetype());
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $asset->getFilename());
+
             return $response;
         }
     }
@@ -1034,7 +1040,7 @@ class AssetController extends ElementControllerBase implements EventedController
             clearstatcache();
 
             $response = new BinaryFileResponse($thumbnailFile);
-            $response->headers->set("Content-Type",  $thumbnail->getMimeType());
+            $response->headers->set("Content-Type", $thumbnail->getMimeType());
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $downloadFilename);
             $this->addThumbnailCacheHeaders($response);
             $response->deleteFileAfterSend(true);
@@ -1106,6 +1112,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
         $this->addThumbnailCacheHeaders($response);
+
         return $response;
     }
 
@@ -1154,9 +1161,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnailFile = $thumb->getFileSystemPath();
 
         $response = new BinaryFileResponse($thumbnailFile);
-        $response->headers->set("Content-type", "image/" . File::getFileExtension($thumbnailFile)  );
+        $response->headers->set("Content-type", "image/" . File::getFileExtension($thumbnailFile));
 
         $this->addThumbnailCacheHeaders($response);
+
         return $response;
     }
 
@@ -1191,8 +1199,9 @@ class AssetController extends ElementControllerBase implements EventedController
         $format = "png";
 
         $response = new BinaryFileResponse($thumbnailFile);
-        $response->headers->set("Content-type",  'image/' . $format);
+        $response->headers->set("Content-type", 'image/' . $format);
         $this->addThumbnailCacheHeaders($response);
+
         return $response;
     }
 
@@ -1208,7 +1217,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $response->setMaxAge($lifetime);
         $response->setPublic();
         $response->setExpires($date);
-        $response->headers->set("Pragma","");
+        $response->headers->set("Pragma", "");
     }
 
     /**
@@ -1220,6 +1229,7 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getPreviewDocumentAction(Request $request)
     {
         $asset = Asset::getById($request->get("id"));
+
         return ["asset" => $asset];
     }
 
@@ -1233,7 +1243,7 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getPreviewVideoAction(Request $request)
     {
         $asset = Asset::getById($request->get("id"));
-        $previewData = array("asset" => $asset);
+        $previewData = ["asset" => $asset];
 
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
 
@@ -1265,7 +1275,8 @@ class AssetController extends ElementControllerBase implements EventedController
     public function imageEditorAction(Request $request)
     {
         $asset = Asset::getById($request->get("id"));
-        return array("asset" => $asset);
+
+        return ["asset" => $asset];
     }
 
     /**
@@ -1469,6 +1480,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         } else {
             Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+
             return $this->json(["error" => false, "message" => "missing_permission"]);
         }
 
@@ -1592,6 +1604,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $response->headers->set("Content-Type", "application/zip");
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $suggestedFilename . '.zip');
         $response->deleteFileAfterSend(true);
+
         return $response;
     }
 
@@ -1989,6 +2002,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($asset instanceof Asset\Document) {
             $text = $asset->getText($page);
         }
+
         return $this->json(['success' => 'true', 'text' => $text]);
     }
 

@@ -66,8 +66,7 @@ class TagHandler implements TagHandlerInterface
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
         ActionRenderer $actionRenderer
-    )
-    {
+    ) {
         $this->brickManager    = $brickManager;
         $this->templating      = $templating;
         $this->bundleLocator   = $bundleLocator;

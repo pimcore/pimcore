@@ -48,6 +48,7 @@ class ObjectHelperController extends AdminController
         } else {
             $result['success'] = false;
         }
+
         return $this->json($result);
     }
 
@@ -298,6 +299,7 @@ class ObjectHelperController extends AdminController
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
         }
+
         return $this->json([
             "sortinfo" => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             "language" => $language,
@@ -472,6 +474,7 @@ class ObjectHelperController extends AdminController
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -715,6 +718,7 @@ class ObjectHelperController extends AdminController
 
             try {
                 $object->save();
+
                 return $this->json(["success" => true]);
             } catch (\Exception $e) {
                 return $this->json(["success" => false, "message" => $object->getKey() . " - " . $e->getMessage()]);
@@ -908,11 +912,11 @@ class ObjectHelperController extends AdminController
         $fileHandle = \Pimcore\File::getValidFilename($request->get("fileHandle"));
         $csvFile = $this->getCsvFile($fileHandle);
         if (file_exists($csvFile)) {
-
             $response = new BinaryFileResponse($csvFile);
             $response->headers->set("Content-Type", "application/csv");
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, "export.csv");
             $response->deleteFileAfterSend(true);
+
             return $response;
         }
     }
@@ -1255,10 +1259,12 @@ class ObjectHelperController extends AdminController
                 }
             } else {
                 Logger::debug("ObjectController::batchAction => There is no object left to update.");
+
                 return $this->json(["success" => false, "message" => "ObjectController::batchAction => There is no object left to update."]);
             }
         } catch (\Exception $e) {
             Logger::err($e);
+
             return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
 

@@ -164,6 +164,7 @@ class PimcoreRest extends REST
     {
         if (!TestHelper::supportsDbTests()) {
             $this->debug(sprintf('[REST] Not initializing user %s as DB is not connected', $username));
+
             return null;
         } else {
             $this->debug(sprintf('[REST] Initializing user %s', $username));

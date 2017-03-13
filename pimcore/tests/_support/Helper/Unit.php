@@ -6,5 +6,4 @@ namespace Pimcore\Tests\Helper;
 
 class Unit extends \Codeception\Module
 {
-
 }

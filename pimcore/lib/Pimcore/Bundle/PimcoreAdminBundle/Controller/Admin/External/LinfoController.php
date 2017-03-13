@@ -40,7 +40,6 @@ class LinfoController extends AdminController implements EventedControllerInterf
      */
     public function indexAction(Request $request)
     {
-
         $settings = Common::getVarFromFile($this->linfoHome . 'sample.config.inc.php', 'settings');
         $settings["compress_content"] = false;
 
@@ -77,9 +76,9 @@ class LinfoController extends AdminController implements EventedControllerInterf
             $path = $this->linfoHome . $path;
 
             if (preg_match("@.css$@", $path)) {
-                $response->headers->set("Content-Type","text/css");
+                $response->headers->set("Content-Type", "text/css");
             } elseif (preg_match("@.js$@", $path)) {
-                $response->headers->set("Content-Type","text/javascript");
+                $response->headers->set("Content-Type", "text/javascript");
             }
 
             if (file_exists($path)) {

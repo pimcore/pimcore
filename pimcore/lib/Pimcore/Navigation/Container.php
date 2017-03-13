@@ -45,14 +45,14 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @var Page[]
      */
-    protected $_pages = array();
+    protected $_pages = [];
 
     /**
      * An index that contains the order in which to iterate pages
      *
      * @var array
      */
-    protected $_index = array();
+    protected $_index = [];
 
     /**
      * Whether index is dirty and needs to be re-arranged
@@ -71,7 +71,7 @@ class Container implements \RecursiveIterator, \Countable
     protected function _sort()
     {
         if ($this->_dirtyIndex) {
-            $newIndex = array();
+            $newIndex = [];
             $index = 0;
 
             foreach ($this->_pages as $hash => $page) {
@@ -175,6 +175,7 @@ class Container implements \RecursiveIterator, \Countable
     public function setPages(array $pages)
     {
         $this->removePages();
+
         return $this->addPages($pages);
     }
 
@@ -212,6 +213,7 @@ class Container implements \RecursiveIterator, \Countable
             unset($this->_pages[$hash]);
             unset($this->_index[$hash]);
             $this->_dirtyIndex = true;
+
             return true;
         }
 
@@ -220,6 +222,7 @@ class Container implements \RecursiveIterator, \Countable
             foreach ($this->_pages as $childPage) {
                 if ($childPage->hasPage($page, true)) {
                     $childPage->removePage($page, true);
+
                     return true;
                 }
             }
@@ -235,8 +238,9 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function removePages()
     {
-        $this->_pages = array();
-        $this->_index = array();
+        $this->_pages = [];
+        $this->_index = [];
+
         return $this;
     }
 
@@ -349,7 +353,7 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function findAllBy($property, $value, $useRegex = false)
     {
-        $found = array();
+        $found = [];
 
         $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
 
@@ -463,7 +467,7 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function toArray()
     {
-        $pages = array();
+        $pages = [];
 
         $this->_dirtyIndex = true;
         $this->_sort();
@@ -471,6 +475,7 @@ class Container implements \RecursiveIterator, \Countable
         foreach ($indexes as $hash) {
             $pages[] = $this->_pages[$hash]->toArray();
         }
+
         return $pages;
     }
 
@@ -505,6 +510,7 @@ class Container implements \RecursiveIterator, \Countable
     public function key()
     {
         $this->_sort();
+
         return key($this->_index);
     }
 
@@ -544,6 +550,7 @@ class Container implements \RecursiveIterator, \Countable
     public function valid()
     {
         $this->_sort();
+
         return current($this->_index) !== false;
     }
 

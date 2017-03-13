@@ -128,6 +128,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
 
             if ($this->isLockValid($lock)) {
                 $this->timestamp = $lock;
+
                 return true;
             }
         }

@@ -286,5 +286,5 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      * @param Request $request
      * @param Model\Document $page
      */
-    protected abstract function setValuesToDocument(Request $request, Model\Document $page);
+    abstract protected function setValuesToDocument(Request $request, Model\Document $page);
 }

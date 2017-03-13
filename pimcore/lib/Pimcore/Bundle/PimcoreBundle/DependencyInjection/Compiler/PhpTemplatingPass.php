@@ -36,7 +36,7 @@ class PhpTemplatingPass implements CompilerPassInterface
 
             if ($engine->getClass() === BasePhpEngine::class) {
                 $engine->setClass(PhpEngine::class);
-            } else if ($engine->getClass() === BaseTimedPhpEngine::class) {
+            } elseif ($engine->getClass() === BaseTimedPhpEngine::class) {
                 $engine->setClass(TimedPhpEngine::class);
             }
 

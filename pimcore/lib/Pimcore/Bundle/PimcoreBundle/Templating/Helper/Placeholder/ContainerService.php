@@ -38,7 +38,6 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder;
 
-
 /**
  * Registry for placeholder containers
  */
@@ -48,7 +47,7 @@ class ContainerService
      * Placeholder containers
      * @var array
      */
-    protected $_items = array();
+    protected $_items = [];
 
     /**
      * createContainer
@@ -57,11 +56,12 @@ class ContainerService
      * @param  array $value
      * @return Container
      */
-    public function createContainer($key, array $value = array())
+    public function createContainer($key, array $value = [])
     {
         $key = (string) $key;
 
         $this->_items[$key] = new Container($value);
+
         return $this->_items[$key];
     }
 
@@ -93,6 +93,7 @@ class ContainerService
     {
         $key = (string) $key;
         $return =  array_key_exists($key, $this->_items);
+
         return $return;
     }
 
@@ -107,6 +108,7 @@ class ContainerService
     {
         $key = (string) $key;
         $this->_items[$key] = $container;
+
         return $this;
     }
 
@@ -121,10 +123,10 @@ class ContainerService
         $key = (string) $key;
         if (isset($this->_items[$key])) {
             unset($this->_items[$key]);
+
             return true;
         }
 
         return false;
     }
-
 }

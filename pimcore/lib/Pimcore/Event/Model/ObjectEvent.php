@@ -18,8 +18,8 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Object\AbstractObject;
 use Symfony\Component\EventDispatcher\Event;
 
-class ObjectEvent extends Event implements ElementEventInterface {
-
+class ObjectEvent extends Event implements ElementEventInterface
+{
     use ArgumentsAwareTrait;
 
     /**
@@ -32,7 +32,7 @@ class ObjectEvent extends Event implements ElementEventInterface {
      * @param AbstractObject $object
      * @param array $arguments
      */
-    function __construct(AbstractObject $object, array $arguments = [])
+    public function __construct(AbstractObject $object, array $arguments = [])
     {
         $this->object = $object;
         $this->arguments = $arguments;

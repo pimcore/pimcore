@@ -33,7 +33,7 @@ class Composer
         @unlink($rootPath . '/.travis.yml');
 
         $filesystem = new Filesystem();
-        if(is_dir($rootPath . '/update')) {
+        if (is_dir($rootPath . '/update')) {
             $filesystem->removeDirectory($rootPath . '/update');
         }
     }
@@ -70,7 +70,7 @@ class Composer
         // see also: http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed
         $zfPath = $rootPath . "/vendor/zendframework/zendframework1/library/Zend/";
 
-        if(is_dir($zfPath)) {
+        if (is_dir($zfPath)) {
             $directory = new \RecursiveDirectoryIterator($zfPath);
             $iterator = new \RecursiveIteratorIterator($directory);
             $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);

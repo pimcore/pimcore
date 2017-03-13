@@ -13,6 +13,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
@@ -38,6 +39,7 @@ class QuantityValueController extends AdminController
                 $unit = \Pimcore\Model\Object\QuantityValue\Unit::getById($id);
                 if (!empty($unit)) {
                     $unit->delete();
+
                     return $this->json(["data" => [], "success" => true]);
                 } else {
                     throw new \Exception("Unit with id " . $id . " not found.");
@@ -48,6 +50,7 @@ class QuantityValueController extends AdminController
                 if (!empty($unit)) {
                     $unit->setValues($data);
                     $unit->save();
+
                     return $this->json(["data" => get_object_vars($unit), "success" => true]);
                 } else {
                     throw new \Exception("Unit with id " . $data['id'] . " not found.");
@@ -58,6 +61,7 @@ class QuantityValueController extends AdminController
                 $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();
+
                 return $this->json(["data" => get_object_vars($unit), "success" => true]);
             }
         } else {
@@ -145,6 +149,7 @@ class QuantityValueController extends AdminController
         }
 
         $units = $list->getUnits();
+
         return $this->json(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
     }
 }

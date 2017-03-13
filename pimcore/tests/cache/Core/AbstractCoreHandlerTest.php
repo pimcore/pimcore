@@ -617,7 +617,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         // call shutdown which in turn should call the clear tags method or call the method directly
         if ($shutdown) {
-             $this->handler->shutdown();
+            $this->handler->shutdown();
         } else {
             $this->handler->clearTagsOnShutdown();
         }

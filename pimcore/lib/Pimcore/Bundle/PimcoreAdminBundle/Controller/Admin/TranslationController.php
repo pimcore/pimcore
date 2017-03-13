@@ -80,6 +80,7 @@ class TranslationController extends AdminController
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
+
         return $response;
     }
 
@@ -253,6 +254,7 @@ class TranslationController extends AdminController
                 }
             }
         }
+
         return $this->json(null);
     }
 
@@ -806,6 +808,7 @@ class TranslationController extends AdminController
         $response->headers->set("Content-Type", "application/x-xliff+xml");
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFile));
         $response->deleteFileAfterSend(true);
+
         return $response;
     }
 
@@ -842,8 +845,8 @@ class TranslationController extends AdminController
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
-        return $response;
 
+        return $response;
     }
 
     /**
@@ -1303,11 +1306,11 @@ class TranslationController extends AdminController
             $response = new BinaryFileResponse($exportFile);
             // no conversion, output html file
             $response->headers->set("Content-Type", "text/html");
-
         }
 
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFile));
         $response->deleteFileAfterSend(true);
+
         return $response;
     }
 

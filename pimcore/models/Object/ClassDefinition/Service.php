@@ -199,7 +199,6 @@ class Service
     public static function generateLayoutTreeFromArray($array, $throwException = false)
     {
         if (is_array($array) && count($array) > 0) {
-
             $class = \Pimcore::getContainer()->get('pimcore.implementation_locator')
                 ->getObjectClassDefinitionImplementation($array["datatype"], $array["fieldtype"]);
 

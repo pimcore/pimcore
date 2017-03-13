@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder;
 
 /**
@@ -30,7 +29,7 @@ abstract class CacheBusterAware extends AbstractHelper
     /**
      * prepares entries with cache buster prefix
      */
-    protected abstract function prepareEntries();
+    abstract protected function prepareEntries();
 
     /**
      * @return boolean
@@ -47,5 +46,4 @@ abstract class CacheBusterAware extends AbstractHelper
     {
         $this->cacheBuster = $cacheBuster;
     }
-
 }

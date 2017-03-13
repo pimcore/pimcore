@@ -48,7 +48,6 @@ class Mail
             $debugInformation .= '</td></tr>';
 
             foreach (['To', 'Cc', 'Bcc'] as $key) {
-
                 $getterName = "get" . $key;
                 $addresses = $mail->$getterName();
 
@@ -63,12 +62,12 @@ class Mail
             //generating text debug info
             $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
             if ($mail->getFrom()) {
-                $debugInformation .= 'From: ' . self::formatDebugReceivers($mail->getFrom()) . "\r\n";;
+                $debugInformation .= 'From: ' . self::formatDebugReceivers($mail->getFrom()) . "\r\n";
+                ;
             }
 
             //generating text debug info
             foreach (['To', 'Cc', 'Bcc'] as $key) {
-
                 $getterName = "get" . $key;
                 $addresses = $mail->$getterName();
 

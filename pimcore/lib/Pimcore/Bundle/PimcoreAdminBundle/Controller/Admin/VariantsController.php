@@ -40,6 +40,7 @@ class VariantsController extends AdminController
             if (!empty($object)) {
                 $object->setKey($key);
                 $object->save();
+
                 return $this->json(["success" => true]);
             } else {
                 throw new \Exception("No Object found for given id.");
@@ -100,6 +101,7 @@ class VariantsController extends AdminController
 
                 try {
                     $object->save();
+
                     return $this->json(["data" => Object\Service::gridObjectData($object, $request->get("fields")), "success" => true]);
                 } catch (\Exception $e) {
                     return $this->json(["success" => false, "message" => $e->getMessage()]);

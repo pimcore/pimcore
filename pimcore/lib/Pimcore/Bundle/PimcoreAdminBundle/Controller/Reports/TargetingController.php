@@ -204,6 +204,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     public function personaGetAction(Request $request)
     {
         $persona = Targeting\Persona::getById($request->get("id"));
+
         return $this->json($persona);
     }
 

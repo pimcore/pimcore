@@ -61,6 +61,7 @@ class QueryParams
     public static function getRecordIdForGridRequest($param)
     {
         $param = json_decode($param, true);
+
         return $param['id'];
     }
 

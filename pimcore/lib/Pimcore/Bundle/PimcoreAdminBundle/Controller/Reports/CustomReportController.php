@@ -252,6 +252,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
+
         return $this->json([
             "success" => true,
             "data" => $result['data'],
@@ -339,6 +340,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $response->headers->set("Content-Type", "text/csv; charset=UTF-8");
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, "export.csv");
         $response->deleteFileAfterSend(true);
+
         return $response;
     }
 

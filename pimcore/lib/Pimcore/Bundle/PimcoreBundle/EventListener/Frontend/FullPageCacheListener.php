@@ -70,13 +70,15 @@ class FullPageCacheListener extends AbstractFrontendListener
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 
     /**
      * @return bool
      */
-    public function isEnabled() {
+    public function isEnabled()
+    {
         return $this->enabled;
     }
 
@@ -131,7 +133,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             return;
         }
 
-        if(!\Pimcore\Tool::useFrontendOutputFilters()) {
+        if (!\Pimcore\Tool::useFrontendOutputFilters()) {
             return false;
         }
 
@@ -255,17 +257,17 @@ class FullPageCacheListener extends AbstractFrontendListener
      */
     public function onKernelResponse(KernelEvent $event)
     {
-        if(!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
+        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
             return false;
         }
 
-        if(!$event->isMasterRequest()) {
+        if (!$event->isMasterRequest()) {
             return false;
         }
 
         $response = $event->getResponse();
 
-        if(!$response) {
+        if (!$response) {
             return false;
         }
 

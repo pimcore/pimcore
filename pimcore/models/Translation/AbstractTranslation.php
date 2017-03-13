@@ -247,7 +247,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     {
         if (!$language) {
             $language = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
-            if(!$language) {
+            if (!$language) {
                 throw new \Exception("Couldn't determine current language.");
             }
         }

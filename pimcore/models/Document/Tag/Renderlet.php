@@ -155,7 +155,7 @@ class Renderlet extends Model\Document\Tag
 
                 if (isset($this->options['bundle'])) {
                     $moduleOrBundle = $this->options['bundle'];
-                } else if (isset($this->options['module'])) {
+                } elseif (isset($this->options['module'])) {
                     $moduleOrBundle = $this->options['module'];
                 }
 

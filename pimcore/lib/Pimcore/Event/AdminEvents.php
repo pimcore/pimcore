@@ -162,6 +162,4 @@ final class AdminEvents
      * @var string
      */
     const CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA = "pimcore.admin.class.objectbrickList.preSendData";
-
-
 }

@@ -14,7 +14,8 @@
 
 namespace Pimcore\Event\Traits;
 
-trait ArgumentsAwareTrait {
+trait ArgumentsAwareTrait
+{
 
     /**
      * Array of arguments.
@@ -73,7 +74,7 @@ trait ArgumentsAwareTrait {
      *
      * @return $this
      */
-    public function setArguments(array $args = array())
+    public function setArguments(array $args = [])
     {
         $this->arguments = $args;
 

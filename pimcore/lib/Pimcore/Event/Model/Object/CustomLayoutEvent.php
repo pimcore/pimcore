@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model\Object;
 use Pimcore\Model\Object\ClassDefinition;
 use Symfony\Component\EventDispatcher\Event;
 
-class CustomLayoutEvent extends Event {
+class CustomLayoutEvent extends Event
+{
 
     /**
      * @var ClassDefinition\CustomLayout
@@ -28,7 +29,7 @@ class CustomLayoutEvent extends Event {
      * DocumentEvent constructor.
      * @param ClassDefinition\CustomLayout $customLayout
      */
-    function __construct(ClassDefinition\CustomLayout $customLayout)
+    public function __construct(ClassDefinition\CustomLayout $customLayout)
     {
         $this->customLayout = $customLayout;
     }

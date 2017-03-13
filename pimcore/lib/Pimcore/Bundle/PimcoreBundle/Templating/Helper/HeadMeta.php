@@ -61,9 +61,9 @@ class HeadMeta extends AbstractHelper
      * Types of attributes
      * @var array
      */
-    protected $_typeKeys     = array('name', 'http-equiv', 'charset', 'property');
-    protected $_requiredKeys = array('content');
-    protected $_modifierKeys = array('lang', 'scheme');
+    protected $_typeKeys     = ['name', 'http-equiv', 'charset', 'property'];
+    protected $_requiredKeys = ['content'];
+    protected $_modifierKeys = ['lang', 'scheme'];
     protected $rawItems = [];
 
     /**
@@ -102,7 +102,7 @@ class HeadMeta extends AbstractHelper
      * @param  string $placement
      * @return HeadMeta
      */
-    public function __invoke($content = null, $keyValue = null, $keyType = 'name', $modifiers = array(), $placement = Container::APPEND)
+    public function __invoke($content = null, $keyValue = null, $keyType = 'name', $modifiers = [], $placement = Container::APPEND)
     {
         if ((null !== $content) && (null !== $keyValue)) {
             $item   = $this->createData($keyType, $keyValue, $content, $modifiers);
@@ -177,7 +177,7 @@ class HeadMeta extends AbstractHelper
             }
 
             if (3 > $argc) {
-                $args[] = array();
+                $args[] = [];
             }
 
             $item  = $this->createData($type, $args[0], $args[1], $args[2]);
@@ -187,6 +187,7 @@ class HeadMeta extends AbstractHelper
             }
 
             $this->$action($item);
+
             return $this;
         }
 
@@ -333,8 +334,7 @@ class HeadMeta extends AbstractHelper
 
         if (isset($item->modifiers['conditional'])
             && !empty($item->modifiers['conditional'])
-            && is_string($item->modifiers['conditional']))
-        {
+            && is_string($item->modifiers['conditional'])) {
             if (str_replace(' ', '', $item->modifiers['conditional']) === '!IE') {
                 $meta = '<!-->' . $meta . '<!--';
             }
@@ -356,7 +356,7 @@ class HeadMeta extends AbstractHelper
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        $items = array();
+        $items = [];
         $this->getContainer()->ksort();
         try {
             foreach ($this as $item) {
@@ -364,6 +364,7 @@ class HeadMeta extends AbstractHelper
             }
         } catch (Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
+
             return '';
         }
         $metaString = $indent . implode($this->_escape($this->getSeparator()) . $indent, $items);
@@ -391,6 +392,7 @@ class HeadMeta extends AbstractHelper
         $data->$type     = $typeValue;
         $data->content   = $content;
         $data->modifiers = $modifiers;
+
         return $data;
     }
 
@@ -420,8 +422,8 @@ class HeadMeta extends AbstractHelper
      * @param string $suffix
      * @return $this
      */
-    public function setDescription($string, $length = null, $suffix = "") {
-
+    public function setDescription($string, $length = null, $suffix = "")
+    {
         $string = strip_tags($string);
 
         $string = str_replace("\r\n", " ", $string);

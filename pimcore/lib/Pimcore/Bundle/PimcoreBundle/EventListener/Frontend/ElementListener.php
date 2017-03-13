@@ -72,8 +72,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
         EditmodeResolver $editmodeResolver,
         RequestHelper $requestHelper,
         UserLoader $userLoader
-    )
-    {
+    ) {
         $this->documentResolver = $documentResolver;
         $this->editmodeResolver = $editmodeResolver;
         $this->requestHelper    = $requestHelper;

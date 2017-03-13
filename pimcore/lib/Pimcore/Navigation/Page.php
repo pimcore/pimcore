@@ -110,7 +110,7 @@ abstract class Page extends Container
      *
      * @var array
      */
-    protected $_rel = array();
+    protected $_rel = [];
 
     /**
      * Reverse links to other pages
@@ -119,7 +119,7 @@ abstract class Page extends Container
      *
      * @var array
      */
-    protected $_rev = array();
+    protected $_rev = [];
 
     /**
      * Page order used by parent container
@@ -154,14 +154,14 @@ abstract class Page extends Container
      *
      * @var array
      */
-    protected $_properties = array();
+    protected $_properties = [];
 
     /**
      * Custom HTML attributes
      *
      * @var array
      */
-    protected $_customHtmlAttribs = array();
+    protected $_customHtmlAttribs = [];
 
     /**
      * The type of page to use when it wasn't set
@@ -197,11 +197,11 @@ abstract class Page extends Container
 
         if (isset($options['type'])) {
             $type = $options['type'];
-        } elseif(self::getDefaultPageType()!= null) {
+        } elseif (self::getDefaultPageType()!= null) {
             $type = self::getDefaultPageType();
         }
 
-        if(isset($type)) {
+        if (isset($type)) {
             if (is_string($type) && !empty($type)) {
                 switch (strtolower($type)) {
                     case 'uri':
@@ -214,6 +214,7 @@ abstract class Page extends Container
                     throw new \Exception(sprintf(
                             'Invalid argument: Detected type "%s", which is not an instance of Page', $type));
                 }
+
                 return $page;
             }
         }
@@ -294,6 +295,7 @@ abstract class Page extends Container
         }
 
         $this->_label = $label;
+
         return $this;
     }
 
@@ -321,6 +323,7 @@ abstract class Page extends Container
         }
 
         $this->_fragment = $fragment;
+
         return $this;
     }
 
@@ -378,6 +381,7 @@ abstract class Page extends Container
         }
 
         $this->_class = $class;
+
         return $this;
     }
 
@@ -406,6 +410,7 @@ abstract class Page extends Container
         }
 
         $this->_title = $title;
+
         return $this;
     }
 
@@ -434,6 +439,7 @@ abstract class Page extends Container
         }
 
         $this->_target = $target;
+
         return $this;
     }
 
@@ -459,12 +465,12 @@ abstract class Page extends Container
     public function setAccesskey($character = null)
     {
         if (null !== $character
-            && (!is_string($character) || 1 != strlen($character)))
-        {
+            && (!is_string($character) || 1 != strlen($character))) {
             throw new \Exception('Invalid argument: $character must be a single character or null');
         }
 
         $this->_accesskey = $character;
+
         return $this;
     }
 
@@ -493,7 +499,7 @@ abstract class Page extends Container
      */
     public function setRel($relations = null)
     {
-        $this->_rel = array();
+        $this->_rel = [];
 
         if (null !== $relations) {
             if (!is_array($relations)) {
@@ -550,7 +556,7 @@ abstract class Page extends Container
      */
     public function setRev($relations = null)
     {
-        $this->_rev = array();
+        $this->_rev = [];
 
         if (null !== $relations) {
             if (!is_array($relations)) {
@@ -651,6 +657,7 @@ abstract class Page extends Container
         foreach ($attribs as $key => $value) {
             $this->setCustomHtmlAttrib($key, $value);
         }
+
         return $this;
     }
 
@@ -689,7 +696,7 @@ abstract class Page extends Container
      */
     public function clearCustomHtmlAttribs()
     {
-        $this->_customHtmlAttribs = array();
+        $this->_customHtmlAttribs = [];
 
         return $this;
     }
@@ -747,6 +754,7 @@ abstract class Page extends Container
     public function setActive($active = true)
     {
         $this->_active = (bool) $active;
+
         return $this;
     }
 
@@ -766,6 +774,7 @@ abstract class Page extends Container
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -798,6 +807,7 @@ abstract class Page extends Container
             $visible = false;
         }
         $this->_visible = (bool) $visible;
+
         return $this;
     }
 
@@ -848,7 +858,7 @@ abstract class Page extends Container
     public function setParent(Container $parent = null)
     {
         if ($parent === $this) {
-            throw new \Exception( 'A page cannot have itself as a parent');
+            throw new \Exception('A page cannot have itself as a parent');
         }
 
         // return if the given parent already is parent
@@ -1040,6 +1050,7 @@ abstract class Page extends Container
         if (is_string($relation)) {
             $this->_rel[$relation] = $value;
         }
+
         return $this;
     }
 
@@ -1056,6 +1067,7 @@ abstract class Page extends Container
         if (is_string($relation)) {
             $this->_rev[$relation] = $value;
         }
+
         return $this;
     }
 
@@ -1124,7 +1136,7 @@ abstract class Page extends Container
      *
      * @return string  a hash code value for this page
      */
-    public final function hashCode()
+    final public function hashCode()
     {
         return spl_object_hash($this);
     }
@@ -1138,7 +1150,7 @@ abstract class Page extends Container
     {
         return array_merge(
             $this->getCustomProperties(),
-            array(
+            [
                 'label'             => $this->getlabel(),
                 'fragment'          => $this->getFragment(),
                 'id'                => $this->getId(),
@@ -1155,7 +1167,7 @@ abstract class Page extends Container
                 'visible'           => $this->isVisible(),
                 'type'              => get_class($this),
                 'pages'             => parent::toArray()
-            )
+            ]
         );
     }
 
@@ -1172,8 +1184,9 @@ abstract class Page extends Container
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
     }
 
-    public static function setDefaultPageType($type = null) {
-        if($type !== null && !is_string($type)) {
+    public static function setDefaultPageType($type = null)
+    {
+        if ($type !== null && !is_string($type)) {
             throw new \Exception(
                 'Cannot set default page type: type is no string but should be'
             );
@@ -1182,7 +1195,8 @@ abstract class Page extends Container
         self::$_defaultPageType = $type;
     }
 
-    public static function getDefaultPageType() {
+    public static function getDefaultPageType()
+    {
         return self::$_defaultPageType;
     }
 

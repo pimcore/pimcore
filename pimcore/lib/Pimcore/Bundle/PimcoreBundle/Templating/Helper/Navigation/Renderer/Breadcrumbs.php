@@ -115,6 +115,7 @@ class Breadcrumbs extends AbstractHelper
     public function setLinkLast($linkLast)
     {
         $this->_linkLast = (bool) $linkLast;
+
         return $this;
     }
 
@@ -152,6 +153,7 @@ class Breadcrumbs extends AbstractHelper
     public function setPartial($partial)
     {
         $this->_template = $partial;
+
         return $this;
     }
 
@@ -235,7 +237,7 @@ class Breadcrumbs extends AbstractHelper
         }
 
         // put breadcrumb pages in model
-        $model = array('pages' => array());
+        $model = ['pages' => []];
         if ($active = $this->findActive($container)) {
             $active = $active['page'];
             $model['pages'][] = $active;
@@ -266,7 +268,8 @@ class Breadcrumbs extends AbstractHelper
      * @param null $partial
      * @return mixed
      */
-    public function renderPartial(Container $container = null, $partial = null) {
+    public function renderPartial(Container $container = null, $partial = null)
+    {
         return $this->renderTemplate($container, $partial);
     }
 

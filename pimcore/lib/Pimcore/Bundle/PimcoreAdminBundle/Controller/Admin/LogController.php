@@ -170,7 +170,7 @@ class LogController extends AdminController
         $response = new Response();
         $response->headers->set("Content-Type", "text/plain");
 
-        if(file_exists($filePath)) {
+        if (file_exists($filePath)) {
             $response->setContent(file_get_contents($filePath));
         } else {
             $response->setContent("Path `" . $filePath . "` not found.");

@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model\Object\ClassificationStore;
 use Pimcore\Model\Object\Classificationstore\GroupConfig;
 use Symfony\Component\EventDispatcher\Event;
 
-class GroupConfigEvent extends Event {
+class GroupConfigEvent extends Event
+{
 
     /**
      * @var GroupConfig
@@ -28,7 +29,7 @@ class GroupConfigEvent extends Event {
      * DocumentEvent constructor.
      * @param GroupConfig $groupConfig
      */
-    function __construct(GroupConfig $groupConfig)
+    public function __construct(GroupConfig $groupConfig)
     {
         $this->groupConfig = $groupConfig;
     }

@@ -227,12 +227,12 @@ class CacheItem implements PimcoreCacheItemInterface
      *
      * @internal
      */
-    public static function log(LoggerInterface $logger = null, $message, $context = array())
+    public static function log(LoggerInterface $logger = null, $message, $context = [])
     {
         if ($logger) {
             $logger->warning($message, $context);
         } else {
-            $replace = array();
+            $replace = [];
             foreach ($context as $k => $v) {
                 if (is_scalar($v)) {
                     $replace['{' . $k . '}'] = $v;
@@ -242,4 +242,3 @@ class CacheItem implements PimcoreCacheItemInterface
         }
     }
 }
-

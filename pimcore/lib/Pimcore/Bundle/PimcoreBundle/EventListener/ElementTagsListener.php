@@ -22,7 +22,8 @@ use Pimcore\Event\ObjectEvents;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ElementTagsListener implements EventSubscriberInterface {
+class ElementTagsListener implements EventSubscriberInterface
+{
 
     /**
      * @inheritDoc
@@ -41,7 +42,8 @@ class ElementTagsListener implements EventSubscriberInterface {
     /**
      * @param ElementEventInterface $e
      */
-    public function onPostCopy(ElementEventInterface $e) {
+    public function onPostCopy(ElementEventInterface $e)
+    {
         $elementType = Service::getElementType($e->getElement());
         /** @var \Pimcore\Model\Element\AbstractElement $copiedElement */
         $copiedElement = $e->getElement();
@@ -54,7 +56,8 @@ class ElementTagsListener implements EventSubscriberInterface {
     /**
      * @param AssetEvent $e
      */
-    public function onPostAssetDelete(AssetEvent $e) {
+    public function onPostAssetDelete(AssetEvent $e)
+    {
         $asset = $e->getAsset();
         \Pimcore\Model\Element\Tag::setTagsForElement("asset", $asset->getId(), []);
     }

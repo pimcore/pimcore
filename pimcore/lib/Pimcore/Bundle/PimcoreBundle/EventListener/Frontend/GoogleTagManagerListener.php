@@ -34,6 +34,7 @@ class GoogleTagManagerListener extends AbstractFrontendListener
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 
@@ -43,6 +44,7 @@ class GoogleTagManagerListener extends AbstractFrontendListener
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 
@@ -75,7 +77,6 @@ class GoogleTagManagerListener extends AbstractFrontendListener
 
         if ($this->isEnabled() && $event->isMasterRequest() && $this->isHtmlResponse($response) &&
              Tool::useFrontendOutputFilters() && isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
-
             $containerId = $reportConfig->tagmanager->sites->$siteKey->containerId;
 
             if ($containerId) {

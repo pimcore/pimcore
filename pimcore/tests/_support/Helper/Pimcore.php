@@ -133,6 +133,7 @@ class Pimcore extends Module\Symfony
 
         if ($this->config['skip_db_tests']) {
             $this->debug('[DB] Not connecting to DB as skip_db_tests is set');
+
             return;
         }
 

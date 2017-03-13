@@ -35,6 +35,7 @@ class TagManagerListener extends AbstractFrontendListener
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 
@@ -44,6 +45,7 @@ class TagManagerListener extends AbstractFrontendListener
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 

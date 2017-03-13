@@ -52,5 +52,4 @@ class InlineScript extends HeadScript
      * @var string
      */
     protected $_regKey = 'InlineScript';
-
 }

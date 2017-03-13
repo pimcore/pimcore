@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model\Object;
 use Pimcore\Model\Object\ClassDefinition;
 use Symfony\Component\EventDispatcher\Event;
 
-class ClassDefinitionEvent extends Event {
+class ClassDefinitionEvent extends Event
+{
 
     /**
      * @var ClassDefinition
@@ -28,7 +29,7 @@ class ClassDefinitionEvent extends Event {
      * DocumentEvent constructor.
      * @param ClassDefinition $classDefinition
      */
-    function __construct(ClassDefinition $classDefinition)
+    public function __construct(ClassDefinition $classDefinition)
     {
         $this->classDefinition = $classDefinition;
     }

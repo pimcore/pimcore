@@ -102,20 +102,21 @@ abstract class AbstractModel
                 $className = null;
 
                 for ($i = 0; $i < $length; $i++) {
-
                     $classNames = [
                         implode($delimiter, $classParts) . $delimiter . "Dao",
                         implode($delimiter, $classParts) . $delimiter . "Resource"
                     ];
 
-                    foreach($classNames as $tmpClassName) {
+                    foreach ($classNames as $tmpClassName) {
                         if (class_exists($tmpClassName) && !in_array($tmpClassName, $forbiddenClassNames)) {
                             $className = $tmpClassName;
                             break;
                         }
                     }
 
-                    if ($className) break;
+                    if ($className) {
+                        break;
+                    }
 
                     array_pop($classParts);
                 }

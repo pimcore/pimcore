@@ -41,7 +41,6 @@ use Exception;
 
 class QueryBuilder
 {
-
     const DISTINCT       = 'distinct';
     const COLUMNS        = 'columns';
     const FROM           = 'from';
@@ -105,7 +104,7 @@ class QueryBuilder
      *
      * @var array
      */
-    protected $_bind = array();
+    protected $_bind = [];
 
     /**
      * \Doctrine\DBAL\Connection object.
@@ -121,43 +120,43 @@ class QueryBuilder
      *
      * @var array
      */
-    protected static $_partsInit = array(
+    protected static $_partsInit = [
         self::DISTINCT     => false,
-        self::COLUMNS      => array(),
-        self::UNION        => array(),
-        self::FROM         => array(),
-        self::WHERE        => array(),
-        self::GROUP        => array(),
-        self::HAVING       => array(),
-        self::ORDER        => array(),
+        self::COLUMNS      => [],
+        self::UNION        => [],
+        self::FROM         => [],
+        self::WHERE        => [],
+        self::GROUP        => [],
+        self::HAVING       => [],
+        self::ORDER        => [],
         self::LIMIT_COUNT  => null,
         self::LIMIT_OFFSET => null,
         self::FOR_UPDATE   => false
-    );
+    ];
 
     /**
      * Specify legal join types.
      *
      * @var array
      */
-    protected static $_joinTypes = array(
+    protected static $_joinTypes = [
         self::INNER_JOIN,
         self::LEFT_JOIN,
         self::RIGHT_JOIN,
         self::FULL_JOIN,
         self::CROSS_JOIN,
         self::NATURAL_JOIN,
-    );
+    ];
 
     /**
      * Specify legal union types.
      *
      * @var array
      */
-    protected static $_unionTypes = array(
+    protected static $_unionTypes = [
         self::SQL_UNION,
         self::SQL_UNION_ALL
-    );
+    ];
 
     /**
      * The component parts of a SELECT statement.
@@ -165,14 +164,14 @@ class QueryBuilder
      *
      * @var array
      */
-    protected $_parts = array();
+    protected $_parts = [];
 
     /**
      * Tracks which columns are being select from each table and join.
      *
      * @var array
      */
-    protected $_tableCols = array();
+    protected $_tableCols = [];
 
     /**
      * Class constructor
@@ -217,6 +216,7 @@ class QueryBuilder
     public function distinct($flag = true)
     {
         $this->_parts[self::DISTINCT] = (bool) $flag;
+
         return $this;
     }
 
@@ -292,7 +292,7 @@ class QueryBuilder
      * @param  array $select Array of select clauses for the union.
      * @return self
      */
-    public function union($select = array(), $type = self::SQL_UNION)
+    public function union($select = [], $type = self::SQL_UNION)
     {
         if (!is_array($select)) {
             throw new \Exception(
@@ -305,7 +305,7 @@ class QueryBuilder
         }
 
         foreach ($select as $target) {
-            $this->_parts[self::UNION][] = array($target, $type);
+            $this->_parts[self::UNION][] = [$target, $type];
         }
 
         return $this;
@@ -518,7 +518,7 @@ class QueryBuilder
     public function group($spec)
     {
         if (!is_array($spec)) {
-            $spec = array($spec);
+            $spec = [$spec];
         }
 
         foreach ($spec as $val) {
@@ -596,7 +596,7 @@ class QueryBuilder
     public function order($spec)
     {
         if (!is_array($spec)) {
-            $spec = array($spec);
+            $spec = [$spec];
         }
 
         // force 'ASC' or 'DESC' on each order spec, default is ASC.
@@ -621,7 +621,7 @@ class QueryBuilder
                 if (preg_match(self::REGEX_COLUMN_EXPR_ORDER, $noComments)) {
                     $val = new Expression($val);
                 }
-                $this->_parts[self::ORDER][] = array($val, $direction);
+                $this->_parts[self::ORDER][] = [$val, $direction];
             }
         }
 
@@ -639,6 +639,7 @@ class QueryBuilder
     {
         $this->_parts[self::LIMIT_COUNT]  = (int) $count;
         $this->_parts[self::LIMIT_OFFSET] = (int) $offset;
+
         return $this;
     }
 
@@ -655,6 +656,7 @@ class QueryBuilder
         $rowCount = ($rowCount > 0) ? $rowCount : 1;
         $this->_parts[self::LIMIT_COUNT]  = (int) $rowCount;
         $this->_parts[self::LIMIT_OFFSET] = (int) $rowCount * ($page - 1);
+
         return $this;
     }
 
@@ -667,6 +669,7 @@ class QueryBuilder
     public function forUpdate($flag = true)
     {
         $this->_parts[self::FOR_UPDATE] = (bool) $flag;
+
         return $this;
     }
 
@@ -683,6 +686,7 @@ class QueryBuilder
         if (!array_key_exists($part, $this->_parts)) {
             throw new \Exception("Invalid Select part '$part'");
         }
+
         return $this->_parts[$part];
     }
 
@@ -693,7 +697,7 @@ class QueryBuilder
      * @param  mixed  $bind An array of data to bind to the placeholders.
      * @return \Doctrine\DBAL\Driver\Statement
      */
-    public function query($fetchMode = null, $bind = array())
+    public function query($fetchMode = null, $bind = [])
     {
         if (!empty($bind)) {
             $this->bind($bind);
@@ -704,6 +708,7 @@ class QueryBuilder
             $fetchMode = \PDO::FETCH_ASSOC;
         }
         $stmt->setFetchMode($fetchMode);
+
         return $stmt;
     }
 
@@ -721,6 +726,7 @@ class QueryBuilder
                 $sql = $this->$method($sql);
             }
         }
+
         return $sql;
     }
 
@@ -737,6 +743,7 @@ class QueryBuilder
         } elseif (array_key_exists($part, self::$_partsInit)) {
             $this->_parts[$part] = self::$_partsInit[$part];
         }
+
         return $this;
     }
 
@@ -818,7 +825,7 @@ class QueryBuilder
             if ($type == self::FROM) {
                 // append this from after the last from joinType
                 $tmpFromParts = $this->_parts[self::FROM];
-                $this->_parts[self::FROM] = array();
+                $this->_parts[self::FROM] = [];
                 // move all the froms onto the stack
                 while ($tmpFromParts) {
                     $currentCorrelationName = key($tmpFromParts);
@@ -829,14 +836,14 @@ class QueryBuilder
                     $this->_parts[self::FROM][$currentCorrelationName] = array_shift($tmpFromParts);
                 }
             } else {
-                $tmpFromParts = array();
+                $tmpFromParts = [];
             }
-            $this->_parts[self::FROM][$correlationName] = array(
+            $this->_parts[self::FROM][$correlationName] = [
                 'joinType'      => $type,
                 'schema'        => $schema,
                 'tableName'     => $tableName,
                 'joinCondition' => $cond
-            );
+            ];
             while ($tmpFromParts) {
                 $currentCorrelationName = key($tmpFromParts);
                 $this->_parts[self::FROM][$currentCorrelationName] = array_shift($tmpFromParts);
@@ -886,7 +893,7 @@ class QueryBuilder
         $join  = $this->_adapter->quoteIdentifier(key($this->_parts[self::FROM]), true);
         $from  = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($name), true);
 
-        $joinCond = array();
+        $joinCond = [];
         foreach ((array)$cond as $fieldName) {
             $cond1 = $from . '.' . $fieldName;
             $cond2 = $join . '.' . $fieldName;
@@ -910,12 +917,13 @@ class QueryBuilder
             $c = is_string($k) ? $k : end($name);
         } else {
             // Extract just the last name of a qualified table name
-            $dot = strrpos($name,'.');
+            $dot = strrpos($name, '.');
             $c = ($dot === false) ? $name : substr($name, $dot+1);
         }
         for ($i = 2; array_key_exists($c, $this->_parts[self::FROM]); ++$i) {
             $c = $name . '_' . (string) $i;
         }
+
         return $c;
     }
 
@@ -931,14 +939,14 @@ class QueryBuilder
     protected function _tableCols($correlationName, $cols, $afterCorrelationName = null)
     {
         if (!is_array($cols)) {
-            $cols = array($cols);
+            $cols = [$cols];
         }
 
         if ($correlationName == null) {
             $correlationName = '';
         }
 
-        $columnValues = array();
+        $columnValues = [];
 
         foreach (array_filter($cols) as $alias => $col) {
             $currentCorrelationName = $correlationName;
@@ -957,7 +965,7 @@ class QueryBuilder
                     $col = $m[2];
                 }
             }
-            $columnValues[] = array($currentCorrelationName, $col, is_string($alias) ? $alias : null);
+            $columnValues[] = [$currentCorrelationName, $col, is_string($alias) ? $alias : null];
         }
 
         if ($columnValues) {
@@ -965,9 +973,9 @@ class QueryBuilder
             // should we attempt to prepend or insert these values?
             if ($afterCorrelationName === true || is_string($afterCorrelationName)) {
                 $tmpColumns = $this->_parts[self::COLUMNS];
-                $this->_parts[self::COLUMNS] = array();
+                $this->_parts[self::COLUMNS] = [];
             } else {
-                $tmpColumns = array();
+                $tmpColumns = [];
             }
 
             // find the correlation name to insert after
@@ -1028,7 +1036,7 @@ class QueryBuilder
      */
     protected function _getDummyTable()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -1042,6 +1050,7 @@ class QueryBuilder
         if ($schema === null) {
             return null;
         }
+
         return $this->_adapter->quoteIdentifier($schema, true) . '.';
     }
 
@@ -1084,7 +1093,7 @@ class QueryBuilder
             return null;
         }
 
-        $columns = array();
+        $columns = [];
         foreach ($this->_parts[self::COLUMNS] as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
             if ($column instanceof Expression) {
@@ -1097,7 +1106,7 @@ class QueryBuilder
                 if (empty($correlationName)) {
                     $columns[] = $this->_adapter->quoteColumnAs($column, $alias, true);
                 } else {
-                    $columns[] = $this->_adapter->quoteColumnAs(array($correlationName, $column), $alias, true);
+                    $columns[] = $this->_adapter->quoteColumnAs([$correlationName, $column], $alias, true);
                 }
             }
         }
@@ -1121,7 +1130,7 @@ class QueryBuilder
             $this->_parts[self::FROM] = $this->_getDummyTable();
         }
 
-        $from = array();
+        $from = [];
 
         foreach ($this->_parts[self::FROM] as $correlationName => $table) {
             $tmp = '';
@@ -1202,7 +1211,7 @@ class QueryBuilder
     protected function _renderGroup($sql)
     {
         if ($this->_parts[self::FROM] && $this->_parts[self::GROUP]) {
-            $group = array();
+            $group = [];
             foreach ($this->_parts[self::GROUP] as $term) {
                 $group[] = $this->_adapter->quoteIdentifier($term, true);
             }
@@ -1236,10 +1245,10 @@ class QueryBuilder
     protected function _renderOrder($sql)
     {
         if ($this->_parts[self::ORDER]) {
-            $order = array();
+            $order = [];
             foreach ($this->_parts[self::ORDER] as $term) {
                 if (is_array($term)) {
-                    if(is_numeric($term[0]) && strval(intval($term[0])) == $term[0]) {
+                    if (is_numeric($term[0]) && strval(intval($term[0])) == $term[0]) {
                         $order[] = (int)trim($term[0]) . ' ' . $term[1];
                     } else {
                         $order[] = $this->_adapter->quoteIdentifier($term[0], true) . ' ' . $term[1];
@@ -1312,7 +1321,7 @@ class QueryBuilder
      */
     public function __call($method, array $args)
     {
-        $matches = array();
+        $matches = [];
 
         /**
          * Recognize methods for Has-Many cases:
@@ -1327,14 +1336,15 @@ class QueryBuilder
                 if (!in_array($type, self::$_joinTypes)) {
                     throw new \Exception("Unrecognized method '$method()'");
                 }
-                if (in_array($type, array(self::CROSS_JOIN, self::NATURAL_JOIN))) {
+                if (in_array($type, [self::CROSS_JOIN, self::NATURAL_JOIN])) {
                     throw new \Exception("Cannot perform a joinUsing with method '$method()'");
                 }
             } else {
                 $type = self::INNER_JOIN;
             }
             array_unshift($args, $type);
-            return call_user_func_array(array($this, '_joinUsing'), $args);
+
+            return call_user_func_array([$this, '_joinUsing'], $args);
         }
 
         throw new \Exception("Unrecognized method '$method()'");
@@ -1353,7 +1363,7 @@ class QueryBuilder
             trigger_error($e->getMessage(), E_USER_WARNING);
             $sql = '';
         }
+
         return (string)$sql;
     }
-
 }

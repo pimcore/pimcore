@@ -17,7 +17,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Mail\Plugins;
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
 
-class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
+class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
+{
 
 
     /**
@@ -26,10 +27,10 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
      * @param mixed $recipient
      * @param array $whitelist
      */
-    public function __construct($recipient, array $whitelist = array())
+    public function __construct($recipient, array $whitelist = [])
     {
         $explodedRecipientArray = [];
-        foreach($recipient as $r) {
+        foreach ($recipient as $r) {
             $explodedRecipientArray = array_merge($explodedRecipientArray, array_filter(explode(",", $r)));
         }
 
@@ -44,32 +45,26 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
      */
     public function beforeSendPerformed(\Swift_Events_SendEvent $evt)
     {
-
         $message = $evt->getMessage();
 
-        if($message instanceof Mail) {
+        if ($message instanceof Mail) {
 
             // additional checks if message is Pimcore\Mail
-            if($message->doRedirectMailsToDebugMailAddresses()) {
-
-                if(empty($this->getRecipient())) {
+            if ($message->doRedirectMailsToDebugMailAddresses()) {
+                if (empty($this->getRecipient())) {
                     throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
                 }
 
                 $this->appendDebugInformation($message);
                 parent::beforeSendPerformed($evt);
-
             }
-
         } else {
 
             // default symfony behavior - only redirect when recipients are set and pimcore debug mode is active
-            if(\Pimcore::inDebugMode() && $this->getRecipient()) {
+            if (\Pimcore::inDebugMode() && $this->getRecipient()) {
                 parent::beforeSendPerformed($evt);
             }
-
         }
-
     }
 
     /**
@@ -77,11 +72,12 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
      *
      * @param \Swift_Events_SendEvent $evt
      */
-    public function sendPerformed(\Swift_Events_SendEvent $evt) {
+    public function sendPerformed(\Swift_Events_SendEvent $evt)
+    {
         parent::sendPerformed($evt);
 
         $message = $evt->getMessage();
-        if($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
+        if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
             $this->removeDebugInformation($message);
         }
     }
@@ -100,7 +96,6 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
             //adding the debug information to the html email
             $html = $message->getBody();
             if (!empty($html)) {
-
                 $originalData['html'] = $html;
 
                 $debugInformation = MailHelper::getDebugInformation('html', $message);
@@ -116,7 +111,6 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
             $text = $message->getBodyTextMimePart();
 
             if (!empty($text)) {
-
                 $originalData['text'] = $text->getBody();
 
                 $rawText = $text->getBody();
@@ -140,21 +134,20 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin {
      *
      * @param Mail $message
      */
-    protected function removeDebugInformation(Mail $message) {
-
+    protected function removeDebugInformation(Mail $message)
+    {
         $originalData = $message->getOriginalData();
 
-        if($originalData['html']) {
+        if ($originalData['html']) {
             $message->setBody($originalData['html'], 'text/html');
         }
-        if($originalData['text']) {
+        if ($originalData['text']) {
             $message->getBodyTextMimePart()->setBody($originalData['html']);
         }
-        if($originalData['subject']) {
+        if ($originalData['subject']) {
             $message->setSubject($originalData['subject']);
         }
 
         $message->setOriginalData(null);
     }
-
 }

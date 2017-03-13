@@ -43,9 +43,9 @@ class MiscController extends AdminController
         $templates = [];
 
         $viewPath = PIMCORE_APP_ROOT . "/Resources/views/";
-        if(is_dir($viewPath)) {
+        if (is_dir($viewPath)) {
             $files = rscandir($viewPath);
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $templates[] = ["path" => $file];
             }
         }
@@ -63,14 +63,14 @@ class MiscController extends AdminController
     public function getAvailableActionsAction(Request $request)
     {
         $bundle = $request->get("moduleName");
-        if(empty($bundle)) {
+        if (empty($bundle)) {
             $bundle = "AppBundle";
         }
 
         $controller = $request->get("controllerName");
 
         $actions = [];
-        if($controller) {
+        if ($controller) {
             foreach ($this->getControllerActions($bundle, $controller) as $reflector) {
                 $name = $reflector->getName();
                 $name = preg_replace('/Action$/', '', $name);
@@ -92,7 +92,7 @@ class MiscController extends AdminController
     public function getAvailableControllersAction(Request $request)
     {
         $bundle = $request->get("moduleName");
-        if(empty($bundle)) {
+        if (empty($bundle)) {
             $bundle = "AppBundle";
         }
 
@@ -118,7 +118,7 @@ class MiscController extends AdminController
     {
         $modules = [];
 
-        foreach($this->getBundles() as $bundle => $class) {
+        foreach ($this->getBundles() as $bundle => $class) {
             $modules[] = ["name" => $bundle];
         }
 
@@ -162,7 +162,7 @@ class MiscController extends AdminController
                 ->in($controllerDirectory);
 
             foreach ($finder as $controllerFile) {
-                $className = str_replace([".php", "/"], ["","\\"], $controllerFile->getRelativePathname());
+                $className = str_replace([".php", "/"], ["", "\\"], $controllerFile->getRelativePathname());
                 $fullClassName = $reflector->getNamespaceName() . '\\Controller\\' . $className;
 
                 if (class_exists($fullClassName)) {
@@ -212,8 +212,10 @@ class MiscController extends AdminController
         $allBundles = $this->getParameter('kernel.bundles');
         $filteredBundles = [];
 
-        foreach($allBundles as $bundle => $class) {
-            if(preg_match("/^(Symfony|Doctrine|Pimcore|Sensio)/", $class)) continue;
+        foreach ($allBundles as $bundle => $class) {
+            if (preg_match("/^(Symfony|Doctrine|Pimcore|Sensio)/", $class)) {
+                continue;
+            }
             $filteredBundles[$bundle] = $class;
         }
 
@@ -241,8 +243,8 @@ class MiscController extends AdminController
 
         $response = new Response("pimcore.admin_i18n = " . $this->encodeJson($translations) . ";");
         $response->headers->set("Content-Type", "text/javascript");
-        return $response;
 
+        return $response;
     }
 
     /**
@@ -277,6 +279,7 @@ class MiscController extends AdminController
 
         $response = new Response("pimcore.system_i18n = " . $this->encodeJson($translations) . ";");
         $response->headers->set("Content-Type", "text/javascript");
+
         return $response;
     }
 
@@ -331,8 +334,9 @@ class MiscController extends AdminController
         // customviews config
         $cvData = Tool::getCustomViewConfig();
 
-        $response = $this->render("PimcoreAdminBundle:Admin/Misc:admin-css.html.php", array("customviews" => $cvData));
+        $response = $this->render("PimcoreAdminBundle:Admin/Misc:admin-css.html.php", ["customviews" => $cvData]);
         $response->headers->set("Content-Type", "text/css; charset=UTF-8");
+
         return $response;
     }
 
@@ -360,6 +364,7 @@ class MiscController extends AdminController
         $locales = Tool::getSupportedLocales();
         $response = new Response("pimcore.available_languages = " . $this->encodeJson($locales) . ";");
         $response->headers->set("Content-Type", "text/javascript");
+
         return $response;
     }
 
@@ -690,9 +695,9 @@ class MiscController extends AdminController
             }
         }
 
-        $response = $this->render("PimcoreAdminBundle:Admin/Misc:http-error-log-detail.html.php", array("data" => $data));
-        return $response;
+        $response = $this->render("PimcoreAdminBundle:Admin/Misc:http-error-log-detail.html.php", ["data" => $data]);
 
+        return $response;
     }
 
     /**
@@ -767,6 +772,7 @@ class MiscController extends AdminController
         $iconPath = Tool::getLanguageFlagFile($request->get("language"));
         $response = new BinaryFileResponse($iconPath);
         $response->headers->set("Content-Type: image/svg+xml");
+
         return $response;
     }
 

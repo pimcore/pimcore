@@ -97,6 +97,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     public function getAction(Request $request)
     {
         $code = Qrcode\Config::getByName($request->get("name"));
+
         return $this->json($code);
     }
 
@@ -164,7 +165,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         $tmpFile = PIMCORE_PRIVATE_VAR . "/qr-code-" . uniqid() . ".png";
         $response = new BinaryFileResponse($tmpFile);
         $response->deleteFileAfterSend(true);
-        $response->headers->set("Content-Type","image/png");
+        $response->headers->set("Content-Type", "image/png");
 
         if ($request->get("download")) {
             $code->setSize(4000);
@@ -201,5 +202,4 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     {
         // nothing to do
     }
-
 }

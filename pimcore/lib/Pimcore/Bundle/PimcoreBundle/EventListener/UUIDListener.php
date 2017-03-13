@@ -23,7 +23,8 @@ use Pimcore\Event\ObjectEvents;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class UUIDListener implements EventSubscriberInterface {
+class UUIDListener implements EventSubscriberInterface
+{
 
     /**
      * @inheritDoc
@@ -46,9 +47,9 @@ class UUIDListener implements EventSubscriberInterface {
     /**
      * @param Event $e
      */
-    public function onPostAdd(Event $e) {
-
-        if($this->isEnabled()) {
+    public function onPostAdd(Event $e)
+    {
+        if ($this->isEnabled()) {
             $element = $this->extractElement($e);
 
             if ($element) {
@@ -60,9 +61,9 @@ class UUIDListener implements EventSubscriberInterface {
     /**
      * @param Event $e
      */
-    public function onPostDelete(Event $e) {
-
-        if($this->isEnabled()) {
+    public function onPostDelete(Event $e)
+    {
+        if ($this->isEnabled()) {
             $element = $this->extractElement($e);
 
             if ($element) {
@@ -77,8 +78,8 @@ class UUIDListener implements EventSubscriberInterface {
     /**
      * @return bool
      */
-    protected function isEnabled() {
-
+    protected function isEnabled()
+    {
         $conf = \Pimcore\Config::getSystemConfig();
         if ($conf->general->instanceIdentifier) {
             return true;
@@ -91,14 +92,15 @@ class UUIDListener implements EventSubscriberInterface {
      * @param Event $event
      * @return null|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Object\ClassDefinition
      */
-    protected function extractElement(Event $event) {
+    protected function extractElement(Event $event)
+    {
         $element = null;
 
-        if($event instanceof ElementEventInterface) {
+        if ($event instanceof ElementEventInterface) {
             $element = $event->getElement();
         }
 
-        if($event instanceof ClassDefinitionEvent) {
+        if ($event instanceof ClassDefinitionEvent) {
             $element = $event->getClassDefinition();
         }
 

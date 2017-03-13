@@ -14,7 +14,8 @@
 
 namespace Pimcore\Db\ZendCompatibility;
 
-class Expression {
+class Expression
+{
     /**
      * Storage for the SQL expression.
      *

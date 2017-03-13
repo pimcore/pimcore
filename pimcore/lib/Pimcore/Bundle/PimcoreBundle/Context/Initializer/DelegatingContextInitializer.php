@@ -37,7 +37,6 @@ class DelegatingContextInitializer implements ContextInitializerInterface
                 $this->addInitializer($initializer);
             }
         }
-
     }
 
     /**

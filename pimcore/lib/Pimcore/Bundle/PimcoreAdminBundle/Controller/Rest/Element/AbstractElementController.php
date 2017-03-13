@@ -56,7 +56,7 @@ abstract class AbstractElementController extends AbstractRestController
             return $this->createErrorResponse('Missing list of IDs');
         }
 
-        $idList = array_filter($idList, function($id) {
+        $idList = array_filter($idList, function ($id) {
             return (int)$id;
         });
 
@@ -165,7 +165,6 @@ abstract class AbstractElementController extends AbstractRestController
                     }
                 }
                 $value = $tmp;
-
             }
             $wsData->$key = $value;
         }

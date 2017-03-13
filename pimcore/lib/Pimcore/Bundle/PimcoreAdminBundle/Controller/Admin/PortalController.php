@@ -92,6 +92,7 @@ class PortalController extends AdminController implements EventedControllerInter
             return $this->json(["success" => false, "message" => "dashboard_already_exists"]);
         } elseif (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
+
             return $this->json(["success" => true]);
         } else {
             return $this->json(["success" => false, "message" => "empty"]);
@@ -107,6 +108,7 @@ class PortalController extends AdminController implements EventedControllerInter
     {
         $key = $request->get("key");
         $this->dashboardHelper->deleteDashboard($key);
+
         return $this->json(["success" => true]);
     }
 
@@ -474,5 +476,4 @@ class PortalController extends AdminController implements EventedControllerInter
     {
         // nothing to do
     }
-
 }

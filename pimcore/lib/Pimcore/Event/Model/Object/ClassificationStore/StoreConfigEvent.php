@@ -17,7 +17,8 @@ namespace Pimcore\Event\Model\Object\ClassificationStore;
 use Pimcore\Model\Object\Classificationstore\StoreConfig;
 use Symfony\Component\EventDispatcher\Event;
 
-class StoreConfigEvent extends Event {
+class StoreConfigEvent extends Event
+{
 
     /**
      * @var StoreConfig
@@ -28,7 +29,7 @@ class StoreConfigEvent extends Event {
      * DocumentEvent constructor.
      * @param StoreConfig $storeConfig
      */
-    function __construct(StoreConfig $storeConfig)
+    public function __construct(StoreConfig $storeConfig)
     {
         $this->storeConfig = $storeConfig;
     }
@@ -49,4 +50,3 @@ class StoreConfigEvent extends Event {
         $this->storeConfig = $storeConfig;
     }
 }
-

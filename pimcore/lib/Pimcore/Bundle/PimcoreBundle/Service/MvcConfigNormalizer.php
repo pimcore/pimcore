@@ -88,7 +88,7 @@ class MvcConfigNormalizer
         if ($controller) {
             //split submodules with _ and uppercase first character
             $controllerParts = explode("_", $controller);
-            foreach($controllerParts as &$part) {
+            foreach ($controllerParts as &$part) {
                 $part = ucfirst($part);
             }
 
@@ -176,7 +176,7 @@ class MvcConfigNormalizer
 
         $bundle = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : '';
 
-        if($bundle) {
+        if ($bundle) {
             return sprintf('%s:%s:%s', $bundle, $path, $template);
         } else {
             return sprintf('%s:%s', $path, $template);

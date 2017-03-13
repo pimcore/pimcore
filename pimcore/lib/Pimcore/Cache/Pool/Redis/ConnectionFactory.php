@@ -93,14 +93,13 @@ final class ConnectionFactory
         $resolver->setNormalizer('database', function (Options $options, $value) {
             return (int)$value;
         });
-
     }
 
-    private final function __construct()
+    final private function __construct()
     {
     }
 
-    private final function __clone()
+    final private function __clone()
     {
     }
 }

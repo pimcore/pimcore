@@ -300,6 +300,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Not saving object %s to cache (deactivated)', $key), ['key' => $key]);
+
             return false;
         }
 
@@ -355,7 +356,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $this->saveQueue[$item->getKey()] = $item;
 
         // order by priority
-        uasort($this->saveQueue, function(CacheQueueItem $a, CacheQueueItem $b) {
+        uasort($this->saveQueue, function (CacheQueueItem $a, CacheQueueItem $b) {
             if ($a->getPriority() === $b->getPriority()) {
                 // records with serialized data have priority, to save cpu cycles. if the item has a CacheItem set, data
                 // was already serialized
@@ -753,7 +754,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function removeTagIgnoredOnSave($tag)
     {
-        $this->tagsIgnoredOnSave = array_filter($this->tagsIgnoredOnSave, function($t) use ($tag) {
+        $this->tagsIgnoredOnSave = array_filter($this->tagsIgnoredOnSave, function ($t) use ($tag) {
             return $t !== $tag;
         });
 
@@ -778,7 +779,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function removeTagIgnoredOnClear($tag)
     {
-        $this->tagsIgnoredOnClear = array_filter($this->tagsIgnoredOnClear, function($t) use ($tag) {
+        $this->tagsIgnoredOnClear = array_filter($this->tagsIgnoredOnClear, function ($t) use ($tag) {
             return $t !== $tag;
         });
 

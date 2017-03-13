@@ -38,15 +38,14 @@ interface Zend_Paginator_AdapterAggregate
     public function getPaginatorAdapter();
 }
 
-class Zend_Date extends \Pimcore\Helper\LegacyClass {
-
+class Zend_Date extends \Pimcore\Helper\LegacyClass
+{
 }
 
-class Zend_Log extends \Pimcore\Helper\LegacyClass {
-
+class Zend_Log extends \Pimcore\Helper\LegacyClass
+{
 }
 
-abstract class Zend_Log_Writer_Abstract extends \Pimcore\Helper\LegacyClass {
-
+abstract class Zend_Log_Writer_Abstract extends \Pimcore\Helper\LegacyClass
+{
 }
-

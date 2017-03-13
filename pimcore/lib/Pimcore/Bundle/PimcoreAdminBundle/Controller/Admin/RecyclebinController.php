@@ -34,7 +34,6 @@ class RecyclebinController extends AdminController implements EventedControllerI
      */
     public function listAction(Request $request)
     {
-
         if ($request->get("xaction") == "destroy") {
             $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($request->get("data")));
             $item->delete();
@@ -213,5 +212,4 @@ class RecyclebinController extends AdminController implements EventedControllerI
     {
         // nothing to do
     }
-
 }

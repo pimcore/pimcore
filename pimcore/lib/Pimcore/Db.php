@@ -34,6 +34,7 @@ class Db
     public static function reset()
     {
         self::close();
+
         return self::get();
     }
 
@@ -47,6 +48,7 @@ class Db
          * @var \Pimcore\Db\Connection $db
          */
         $db = \Pimcore::getContainer()->get("database_connection");
+
         return $db;
     }
 

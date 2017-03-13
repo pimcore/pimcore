@@ -23,15 +23,15 @@ use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\Response;
 use Pimcore\Model\Tool;
 
-class PublicServicesController extends FrameworkController {
+class PublicServicesController extends FrameworkController
+{
 
     /**
      * @param Request $request
      * @return BinaryFileResponse
      */
-    public function thumbnailAction(Request $request) {
-
-
+    public function thumbnailAction(Request $request)
+    {
         $assetId = $request->get("assetId");
         $thumbnailName = $request->get("thumbnailName");
         $filename = $request->get("filename");
@@ -113,7 +113,8 @@ class PublicServicesController extends FrameworkController {
      * @param Request $request
      * @return Response
      */
-    public function commonFilesAction(Request $request) {
+    public function commonFilesAction(Request $request)
+    {
         return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
     }
 
@@ -121,14 +122,16 @@ class PublicServicesController extends FrameworkController {
     /**
      * @param Request $request
      */
-    public function hybridauthAction(Request $request) {
+    public function hybridauthAction(Request $request)
+    {
         \Pimcore\Tool\HybridAuth::process();
     }
 
     /**
      * @param Request $request
      */
-    public function qrcodeAction(Request $request) {
+    public function qrcodeAction(Request $request)
+    {
         $code = Tool\Qrcode\Config::getByName($request->get("key"));
         if ($code) {
             $url = $code->getUrl();

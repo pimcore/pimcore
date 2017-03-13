@@ -113,7 +113,7 @@ class Pimcore
         $debug = false;
 
         $conf = Config::getSystemConfig();
-        if($conf) {
+        if ($conf) {
             $debug = (bool)$conf->general->debug;
             // enable debug mode only for one IP
             if ($conf->general->debug_ip && $conf->general->debug) {
@@ -199,8 +199,9 @@ class Pimcore
     /**
      * @return bool
      */
-    public static function hasKernel() {
-        if(static::$kernel) {
+    public static function hasKernel()
+    {
+        if (static::$kernel) {
             return true;
         }
 
@@ -229,8 +230,9 @@ class Pimcore
     /**
      * @return bool
      */
-    public static function hasContainer() {
-        if(static::hasKernel()) {
+    public static function hasContainer()
+    {
+        if (static::hasKernel()) {
             $container = static::getContainer();
             if ($container) {
                 return true;
@@ -332,7 +334,7 @@ class Pimcore
 
         Cache\Runtime::clear($protectedItems);
 
-        if(class_exists("Pimcore\\Legacy")) {
+        if (class_exists("Pimcore\\Legacy")) {
             // @TODO: should be removed
             Pimcore\Legacy::collectGarbage($protectedItems);
         }
@@ -384,9 +386,9 @@ class Pimcore
             $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);
 
             foreach (self::getContainer()->getServiceIds() as $id) {
-                if(strpos($id, "monolog.logger.") === 0) {
+                if (strpos($id, "monolog.logger.") === 0) {
                     $logger = self::getContainer()->get($id);
-                    if($logger->getName() != "event") {
+                    if ($logger->getName() != "event") {
                         // replace all handlers
                         $logger->setHandlers([$requestDebugHandler]);
                     }
@@ -398,7 +400,8 @@ class Pimcore
     /**
      * @return bool
      */
-    public static function isLegacyModeAvailable() {
+    public static function isLegacyModeAvailable()
+    {
         return class_exists("Pimcore\\Legacy");
     }
 
@@ -410,7 +413,7 @@ class Pimcore
      */
     public static function __callStatic($name, $arguments)
     {
-        if(self::isLegacyModeAvailable()) {
+        if (self::isLegacyModeAvailable()) {
             return forward_static_call_array("Pimcore\\Legacy::" . $name, $arguments);
         }
 

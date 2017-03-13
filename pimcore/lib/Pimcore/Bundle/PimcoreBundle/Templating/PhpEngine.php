@@ -156,7 +156,7 @@ class PhpEngine extends BasePhpEngine
      *
      * {@inheritdoc}
      */
-    protected function evaluate(Storage $template, array $parameters = array())
+    protected function evaluate(Storage $template, array $parameters = [])
     {
         // disable parent with "magic" _no_parent parameter
         $disableParent = false;
@@ -245,7 +245,8 @@ class PhpEngine extends BasePhpEngine
      *
      * @inheritDoc
      */
-    public function __isset($name) {
+    public function __isset($name)
+    {
         return $this->getViewParameter($name) !== null;
     }
 

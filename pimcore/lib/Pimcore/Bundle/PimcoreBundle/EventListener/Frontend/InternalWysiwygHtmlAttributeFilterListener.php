@@ -35,6 +35,7 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 
@@ -44,6 +45,7 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 
@@ -75,7 +77,7 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
         }
 
         $response = $event->getResponse();
-        if(!$this->isHtmlResponse($response)) {
+        if (!$this->isHtmlResponse($response)) {
             return;
         }
 

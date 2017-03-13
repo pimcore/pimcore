@@ -164,7 +164,7 @@ class Glossary extends Helper implements LoggerAwareInterface
     protected function getData()
     {
         $locale = $this->requestHelper->getMasterRequest()->getLocale();
-        if(!$locale) {
+        if (!$locale) {
             return [];
         }
 

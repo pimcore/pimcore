@@ -70,7 +70,7 @@ class TemplateControllerListener implements EventSubscriberInterface
         $templateController = false;
         if (is_object($callable) && $callable instanceof TemplateControllerInterface) {
             $templateController = true;
-        } else if (is_array($callable) && is_object($callable[0]) && $callable[0] instanceof TemplateControllerInterface) {
+        } elseif (is_array($callable) && is_object($callable[0]) && $callable[0] instanceof TemplateControllerInterface) {
             $templateController = true;
         }
 
@@ -107,7 +107,7 @@ class TemplateControllerListener implements EventSubscriberInterface
             $template->setEngine($engine);
             $templateReference = $guesser->guessTemplateName($controller, $request, $engine);
 
-            if($templateReference->get("bundle") == "AppBundle") {
+            if ($templateReference->get("bundle") == "AppBundle") {
                 $templateReference->set("bundle", "");
             }
 

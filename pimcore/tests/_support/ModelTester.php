@@ -1,6 +1,7 @@
 <?php
 
 namespace Pimcore\Tests;
+
 use Pimcore\Model\Object\ClassDefinition;
 
 /**

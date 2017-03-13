@@ -69,6 +69,7 @@ class ControllerViewModelListener implements EventSubscriberInterface
         // controller returned a ViewModel instance -> transform the model to array and return
         if ($result instanceof ViewModelInterface) {
             $event->setControllerResult($result->getParameters()->all());
+
             return;
         }
 

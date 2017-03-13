@@ -51,6 +51,7 @@ class TagsController extends AdminController
         $tag = Tag::getById($request->get("id"));
         if ($tag) {
             $tag->delete();
+
             return $this->json(['success' => true]);
         } else {
             throw new \Exception("Tag with ID " . $request->get("id") . " not found.");
@@ -189,6 +190,7 @@ class TagsController extends AdminController
         $tag = Tag::getById($tagId);
         if ($tag) {
             Tag::addTagToElement($assginmentCType, $assginmentCId, $tag);
+
             return $this->json(['success' => true, 'id' => $tag->getId()]);
         } else {
             return $this->json(['success' => false]);
@@ -209,6 +211,7 @@ class TagsController extends AdminController
         $tag = Tag::getById($tagId);
         if ($tag) {
             Tag::removeTagFromElement($assginmentCType, $assginmentCId, $tag);
+
             return $this->json(['success' => true, 'id' => $tag->getId()]);
         } else {
             return $this->json(['success' => false]);

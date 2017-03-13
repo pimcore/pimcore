@@ -61,9 +61,10 @@ class MaintenancePageListener
     /**
      * @param string $path
      */
-    public function loadTemplateFromResource($path) {
+    public function loadTemplateFromResource($path)
+    {
         $templateFile = $this->kernel->locateResource($path);
-        if(file_exists($templateFile)) {
+        if (file_exists($templateFile)) {
             $this->setTemplateCode(file_get_contents($templateFile));
         }
     }

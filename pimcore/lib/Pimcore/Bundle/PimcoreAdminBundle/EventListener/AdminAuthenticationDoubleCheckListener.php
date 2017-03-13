@@ -67,8 +67,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
         RequestMatcherFactory $factory,
         TokenStorageUserResolver $tokenResolver,
         array $unauthenticatedRoutes
-    )
-    {
+    ) {
         $this->requestMatcherFactory = $factory;
         $this->tokenResolver         = $tokenResolver;
         $this->unauthenticatedRoutes = $unauthenticatedRoutes;

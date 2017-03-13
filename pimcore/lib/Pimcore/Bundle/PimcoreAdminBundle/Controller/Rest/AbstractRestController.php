@@ -105,7 +105,7 @@ abstract class AbstractRestController extends AdminController
     {
         if (null === $data) {
             $data = [];
-        } else if (is_string($data)) {
+        } elseif (is_string($data)) {
             $data = ['msg' => $data];
         }
 

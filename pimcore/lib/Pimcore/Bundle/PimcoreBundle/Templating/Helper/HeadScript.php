@@ -89,15 +89,15 @@ class HeadScript extends CacheBusterAware
      * Optional allowed attributes for script tag
      * @var array
      */
-    protected $_optionalAttributes = array(
+    protected $_optionalAttributes = [
         'charset', 'defer', 'language', 'src'
-    );
+    ];
 
     /**
      * Required attributes for script tag
      * @var string
      */
-    protected $_requiredAttributes = array('type');
+    protected $_requiredAttributes = ['type'];
 
     /**
      * Whether or not to format scripts using CDATA; used only if doctype
@@ -142,7 +142,7 @@ class HeadScript extends CacheBusterAware
      * @param  string $type Script type and/or array of script attributes
      * @return HeadScript
      */
-    public function __invoke($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
+    public function __invoke($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
     {
         if ((null !== $spec) && is_string($spec)) {
             $action    = ucfirst(strtolower($mode));
@@ -170,7 +170,7 @@ class HeadScript extends CacheBusterAware
      * @param  string $typeOrAttrs
      * @return void
      */
-    public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', $attrs = array())
+    public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', $attrs = [])
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
@@ -238,7 +238,7 @@ class HeadScript extends CacheBusterAware
             $action  = $matches['action'];
             $mode    = strtolower($matches['mode']);
             $type    = 'text/javascript';
-            $attrs   = array();
+            $attrs   = [];
 
             if ('offsetSet' == $action) {
                 $index = array_shift($args);
@@ -296,11 +296,11 @@ class HeadScript extends CacheBusterAware
         foreach ($this->getContainer() as $item) {
             if (($item->source === null)
                 && array_key_exists('src', $item->attributes)
-                && ($file == $item->attributes['src']))
-            {
+                && ($file == $item->attributes['src'])) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -315,8 +315,7 @@ class HeadScript extends CacheBusterAware
     {
         if ((!$value instanceof \stdClass)
             || !isset($value->type)
-            || (!isset($value->source) && !isset($value->attributes)))
-        {
+            || (!isset($value->source) && !isset($value->attributes))) {
             return false;
         }
 
@@ -393,6 +392,7 @@ class HeadScript extends CacheBusterAware
     public function setAllowArbitraryAttributes($flag)
     {
         $this->_arbitraryAttributes = (bool) $flag;
+
         return $this;
     }
 
@@ -421,8 +421,7 @@ class HeadScript extends CacheBusterAware
         if (!empty($item->attributes)) {
             foreach ($item->attributes as $key => $value) {
                 if ((!$this->arbitraryAttributesAllowed() && !in_array($key, $this->_optionalAttributes))
-                    || in_array($key, array('conditional', 'noescape')))
-                {
+                    || in_array($key, ['conditional', 'noescape'])) {
                     continue;
                 }
                 if ('defer' == $key) {
@@ -455,8 +454,7 @@ class HeadScript extends CacheBusterAware
 
         if (isset($item->attributes['conditional'])
             && !empty($item->attributes['conditional'])
-            && is_string($item->attributes['conditional']))
-        {
+            && is_string($item->attributes['conditional'])) {
             // inner wrap with comment end and start if !IE
             if (str_replace(' ', '', $item->attributes['conditional']) === '!IE') {
                 $html = '<!-->' . $html . '<!--';
@@ -489,7 +487,7 @@ class HeadScript extends CacheBusterAware
         $escapeStart = ($useCdata) ? '//<![CDATA[' : '//<!--';
         $escapeEnd   = ($useCdata) ? '//]]>'       : '//-->';
 
-        $items = array();
+        $items = [];
         $this->getContainer()->ksort();
         foreach ($this as $item) {
             if (!$this->_isValid($item)) {
@@ -500,6 +498,7 @@ class HeadScript extends CacheBusterAware
         }
 
         $return = implode($this->getSeparator(), $items);
+
         return $return;
     }
 
@@ -545,6 +544,7 @@ class HeadScript extends CacheBusterAware
         $data->type       = $type;
         $data->attributes = $attributes;
         $data->source     = $content;
+
         return $data;
     }
 }

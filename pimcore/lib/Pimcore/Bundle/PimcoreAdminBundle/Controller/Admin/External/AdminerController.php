@@ -60,8 +60,8 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External {
          * @param Request $request
          * @return Response
          */
-        public function proxyAction(Request $request) {
-
+        public function proxyAction(Request $request)
+        {
             $response = new Response();
 
             // proxy for resources
@@ -128,7 +128,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External {
 
 namespace {
 
-    if(!function_exists("adminer_object")) {
+    if (!function_exists("adminer_object")) {
         // adminer plugin
         /**
          * @return AdminerPimcore
@@ -203,6 +203,7 @@ namespace {
                         $conf->username,
                         $conf->password
                     ];
+
                     return $result;
                 }
 

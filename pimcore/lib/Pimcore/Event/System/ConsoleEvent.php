@@ -17,7 +17,8 @@ namespace Pimcore\Event\System;
 use Pimcore\Console\Application;
 use Symfony\Component\EventDispatcher\Event;
 
-class ConsoleEvent extends Event {
+class ConsoleEvent extends Event
+{
 
     /**
      * @var Application

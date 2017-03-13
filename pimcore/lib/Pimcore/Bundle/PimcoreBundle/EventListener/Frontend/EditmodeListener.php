@@ -68,8 +68,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
         PimcoreBundleManager $bundleManager
-    )
-    {
+    ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
         $this->bundleManager    = $bundleManager;

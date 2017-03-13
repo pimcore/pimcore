@@ -317,7 +317,8 @@ class TestHelper
                 foreach ($fd->getFieldDefinitions() as $fd) {
                     \Pimcore\Cache\Runtime::set("Zend_Locale", new \Zend_Locale($language));
 
-                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);;
+                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);
+                    ;
                 }
             }
 
@@ -732,7 +733,6 @@ class TestHelper
                 $child->delete();
             }
         }
-
     }
 
     /**

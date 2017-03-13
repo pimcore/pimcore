@@ -21,7 +21,8 @@ use Pimcore\Navigation\Page\Url;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class Builder {
+class Builder
+{
 
     /**
      * @var string

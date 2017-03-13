@@ -165,8 +165,10 @@ class BackupController extends AdminController implements EventedControllerInter
         // nothing to do
     }
 
-    protected function getSession() {
+    protected function getSession()
+    {
         $session = Session::get("pimcore_backup");
+
         return $session;
     }
 }

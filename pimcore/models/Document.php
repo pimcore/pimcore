@@ -1392,7 +1392,8 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    public function doRenderWithLegacyStack() {
+    public function doRenderWithLegacyStack()
+    {
         return false;
     }
 }

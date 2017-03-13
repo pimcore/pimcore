@@ -30,7 +30,7 @@ class Transliteration
         // äüö is in EN auo in DE  aeueoe
         if (!$language) {
             $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
-            if($locale) {
+            if ($locale) {
                 $language = \Locale::getPrimaryLanguage($locale);
             }
 

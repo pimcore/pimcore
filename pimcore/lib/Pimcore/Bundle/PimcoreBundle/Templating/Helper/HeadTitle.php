@@ -40,7 +40,6 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 
-
 class HeadTitle extends AbstractHelper
 {
 
@@ -102,15 +101,16 @@ class HeadTitle extends AbstractHelper
      */
     public function setDefaultAttachOrder($setType)
     {
-        if (!in_array($setType, array(
+        if (!in_array($setType, [
             Container::APPEND,
             Container::SET,
             Container::PREPEND
-        ))) {
+        ])) {
             throw new Exception("You must use a valid attach order: 'PREPEND', 'APPEND' or 'SET'");
         }
 
         $this->_defaultAttachOrder = $setType;
+
         return $this;
     }
 
@@ -137,7 +137,7 @@ class HeadTitle extends AbstractHelper
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        $items = array();
+        $items = [];
 
         foreach ($this as $item) {
             $items[] = $item;
@@ -145,11 +145,11 @@ class HeadTitle extends AbstractHelper
 
         $separator = $this->getSeparator();
         $output = '';
-        if(($prefix = $this->getPrefix())) {
+        if (($prefix = $this->getPrefix())) {
             $output  .= $prefix;
         }
         $output .= implode($separator, $items);
-        if(($postfix = $this->getPostfix())) {
+        if (($postfix = $this->getPostfix())) {
             $output .= $postfix;
         }
 

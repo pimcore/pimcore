@@ -31,5 +31,4 @@ interface TemplateControllerInterface
      * @param string|null $engine
      */
     public function setViewAutoRender(Request $request, $autoRender, $engine = null);
-
 }

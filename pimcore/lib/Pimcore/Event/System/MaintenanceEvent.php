@@ -17,7 +17,8 @@ namespace Pimcore\Event\System;
 use Pimcore\Model\Schedule\Manager\Procedural;
 use Symfony\Component\EventDispatcher\Event;
 
-class MaintenanceEvent extends Event {
+class MaintenanceEvent extends Event
+{
 
     /**
      * @var Procedural

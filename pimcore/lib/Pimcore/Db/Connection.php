@@ -18,7 +18,8 @@ use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 
-class Connection extends \Doctrine\DBAL\Connection {
+class Connection extends \Doctrine\DBAL\Connection
+{
 
     /**
      * Specifies whether the connection automatically quotes identifiers.
@@ -32,19 +33,21 @@ class Connection extends \Doctrine\DBAL\Connection {
     /**
      * @inheritdoc
      */
-    public function update($tableExpression, array $data, array $identifier, array $types = array())
+    public function update($tableExpression, array $data, array $identifier, array $types = [])
     {
         $data = $this->quoteDataIdentifiers($data);
         $identifier = $this->quoteDataIdentifiers($identifier);
+
         return parent::update($tableExpression, $data, $identifier, $types);
     }
 
     /**
      * @inheritdoc
      */
-    public function insert($tableExpression, array $data, array $types = array())
+    public function insert($tableExpression, array $data, array $types = [])
     {
         $data = $this->quoteDataIdentifiers($data);
+
         return parent::insert($tableExpression, $data, $types);
     }
 
@@ -58,9 +61,10 @@ class Connection extends \Doctrine\DBAL\Connection {
     public function deleteWhere($table, $where = '')
     {
         $sql = 'DELETE FROM ' . $table;
-        if($where) {
+        if ($where) {
             $sql .= ' WHERE ' . $where;
         }
+
         return $this->executeUpdate($sql);
     }
 
@@ -74,8 +78,8 @@ class Connection extends \Doctrine\DBAL\Connection {
      */
     public function updateWhere($table, array $data, $where = '')
     {
-        $set = array();
-        $paramValues = array();
+        $set = [];
+        $paramValues = [];
 
         foreach ($data as $columnName => $value) {
             $set[] = $this->quoteIdentifier($columnName) . ' = ?';
@@ -84,7 +88,7 @@ class Connection extends \Doctrine\DBAL\Connection {
 
         $sql  = 'UPDATE ' . $table . ' SET ' . implode(', ', $set);
 
-        if($where) {
+        if ($where) {
             $sql .= ' WHERE ' . $where;
         }
 
@@ -99,8 +103,10 @@ class Connection extends \Doctrine\DBAL\Connection {
      * @param array $types
      * @return mixed
      */
-    public function fetchRow($sql, $params = array(), $types = array()) {
+    public function fetchRow($sql, $params = [], $types = [])
+    {
         $params = $this->prepareParams($params);
+
         return $this->executeQuery($sql, $params, $types)->fetch();
     }
 
@@ -112,7 +118,8 @@ class Connection extends \Doctrine\DBAL\Connection {
      * @param array $types
      * @return mixed
      */
-    public function fetchCol($sql, $params = array(), $types = array()) {
+    public function fetchCol($sql, $params = [], $types = [])
+    {
         $params = $this->prepareParams($params);
 
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to do it manually
@@ -135,7 +142,8 @@ class Connection extends \Doctrine\DBAL\Connection {
      * @param array $types
      * @return mixed
      */
-    public function fetchOne($sql, $params = array(), $types = array()) {
+    public function fetchOne($sql, $params = [], $types = [])
+    {
         $params = $this->prepareParams($params);
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to use $this->fetchColumn() instead
         return $this->fetchColumn($sql, $params, 0, $types);
@@ -152,13 +160,15 @@ class Connection extends \Doctrine\DBAL\Connection {
      * @param array $types
      * @return array
      */
-    public function fetchPairs($sql, array $params = array(), $types = array()) {
+    public function fetchPairs($sql, array $params = [], $types = [])
+    {
         $params = $this->prepareParams($params);
         $statement = $this->executeQuery($sql, $params, $types);
         $data = [];
         while ($row = $statement->fetch(\PDO::FETCH_NUM)) {
             $data[$row[0]] = $row[1];
         }
+
         return $data;
     }
 
@@ -209,9 +219,9 @@ class Connection extends \Doctrine\DBAL\Connection {
      */
     public function quoteIdentifier($str)
     {
-        if($str instanceof Expression) {
+        if ($str instanceof Expression) {
             return (string) $str;
-        } else if ($str instanceof QueryBuilder) {
+        } elseif ($str instanceof QueryBuilder) {
             return '(' . $str->assemble() . ')';
         }
 
@@ -290,7 +300,7 @@ class Connection extends \Doctrine\DBAL\Connection {
                 $ident = explode('.', $ident);
             }
             if (is_array($ident)) {
-                $segments = array();
+                $segments = [];
                 foreach ($ident as $segment) {
                     if ($segment instanceof Expression) {
                         $segments[] = $segment->__toString();
@@ -309,6 +319,7 @@ class Connection extends \Doctrine\DBAL\Connection {
         if ($alias !== null) {
             $quoted .= $as . $this->_quoteIdentifier($alias, $auto);
         }
+
         return $quoted;
     }
 
@@ -323,8 +334,10 @@ class Connection extends \Doctrine\DBAL\Connection {
     {
         if ($auto === false) {
             $q = "`";
+
             return ($q . str_replace("$q", "$q$q", $value) . $q);
         }
+
         return $value;
     }
 
@@ -333,7 +346,8 @@ class Connection extends \Doctrine\DBAL\Connection {
      * To use the standard Doctrine QueryBuilder, please use $dbal->createQueryBuilder() instead
      * @return ZendDbCompatibleQueryBuilder
      */
-    public function select() {
+    public function select()
+    {
         return new ZendDbCompatibleQueryBuilder($this);
     }
 
@@ -388,8 +402,9 @@ class Connection extends \Doctrine\DBAL\Connection {
      * @param $params
      * @return array
      */
-    protected function prepareParams($params) {
-        if(is_scalar($params)) {
+    protected function prepareParams($params)
+    {
+        if (is_scalar($params)) {
             $params = [$params];
         }
 
@@ -400,14 +415,14 @@ class Connection extends \Doctrine\DBAL\Connection {
      * @param $data
      * @return array
      */
-    protected function quoteDataIdentifiers($data) {
-
-        if(!$this->autoQuoteIdentifiers) {
+    protected function quoteDataIdentifiers($data)
+    {
+        if (!$this->autoQuoteIdentifiers) {
             return $data;
         }
 
         $newData = [];
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $newData[$this->quoteIdentifier($key)] = $value;
         }
 
