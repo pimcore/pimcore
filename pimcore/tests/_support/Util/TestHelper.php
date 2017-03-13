@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Util;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
@@ -307,23 +308,21 @@ class TestHelper
                 return [];
             }
 
-            try {
-                $localeBak = \Pimcore\Cache\Runtime::get("Zend_Locale");
-            } catch (\Exception $e) {
-                $localeBak = null;
+            $localeBak = null;
+            if (Runtime::isRegistered('model.locale')) {
+                $localeBak = Runtime::get('model.locale');
             }
 
             foreach ($data->getItems() as $language => $values) {
                 /** @var ObjectModel\ClassDefinition\Data $nestedFd */
                 foreach ($fd->getFieldDefinitions() as $nestedFd) {
-                    \Pimcore\Cache\Runtime::set("Zend_Locale", new \Zend_Locale($language));
-
+                    Runtime::set('model.locale', $language);
                     $lData[$language][$nestedFd->getName()] = self::getComparisonDataForField($nestedFd->getName(), $nestedFd, $object);;
                 }
             }
 
             if ($localeBak) {
-                \Pimcore\Cache\Runtime::set("Zend_Locale", $localeBak);
+                Runtime::set('model.locale', $localeBak);
             }
 
             return serialize($lData);
