@@ -17,62 +17,78 @@ You have to put the file into the `/website/controllers` directory.
 ```php
 <?php
 
-use Website\Controller\Action;
-use Pimcore\Model\Asset;
+namespace AppBundle\Controller;
 
-class ContentController extends Action
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class ContentController extends AbstractController
 {
-
-    public function defaultAction()
+    public function defaultAction(Request $request)
     {
-        $this->enableLayout();
+
     }
 }
 ```
 
 There is the only one action `defaultAction()`.
-The method `enableLayout()` registers a global instance of `\Zend_Layout` to decorate the page. 
 In the defaultAction, we can put some custom code or assign values to the template.
 
 ### Create a Template
 Now we create a template for our page:
-* Create a new folder in `/website/view/scripts` and name it like the controller but in lowercase (in this case `content`). 
-* Put a new PHP file into this folder and name it like our action, again in lowercase (`default.php`).
-* If your're using camel-case for the name of your action/controller, it's still lowercase but separated by a hyphen: `myCustomAction` => `my-custom.php` ...
+* Create a new folder in `/app/Resources/views` and name it like the controller (in this case `Content`). 
+* Put a new PHP tempalte into this folder and name it like our action in lowercase (`default.html.php`).
 
 Then we can put some template code into it, for example:
 
 ```php
-<?php /** @var $this \Pimcore\View */ ?>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
 
-<?php $this->layout()->setLayout('default'); ?>
+$this->extend('layout.html.php');
+
+?>
 
     <h1><?= $this->input("headline", ["width" => 540]); ?></h1>
 
-<?php while ($this->block("contentblock")->loop()) { ?>
-    <h2><?= $this->input("subline"); ?></h2>
-    <?= $this->wysiwyg("content"); ?>
-<?php } ?>
+    <?php while ($this->block("contentblock")->loop()) { ?>
+        <h2><?= $this->input("subline"); ?></h2>
+        <?= $this->wysiwyg("content"); ?>
+    <?php } ?>
 ```
 
-Pimcore uses `\Zend_View` as templates and therefore plain php as template language. So you have the full power of
-  `\Zend_View` with all ZF (*Zend Framework*) functionality available. In addition to that, there are some Pimcore additions like so called *editables*,
-  which add editable parts (placeholders) to the layout. 
+Pimcore uses by default an improved version of the Symfony PHP templating engine (`PhpEngine`) and therefore plain php as template language. So you have the full power of
+  Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore additions like so called *editables*,
+  which add editable parts (placeholders) to the layout and some custom templating helpers. 
+
+  We've improved the default [Symfony PHP engine](http://symfony.com/doc/current/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
+  the `$view` variable or local variables when using the default Symfony syntax. However the default syntax is still available and ready to use.  
+
   For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-Pimcore uses the advantages of `\Zend_Layout` out of the ZF, for details please read more [here](https://framework.zend.com/manual/1.12/en/zend.layout.html) about it.
-Because we have enabled the layout engine in our controller, we can use layouts to wrap our content page with another template which contains the main navigation, a sidebar, …
-using the following code:
+We can use Symfony`s [template inheritance and layout](http://symfony.com/doc/current/templating.html#template-inheritance-and-layouts) functionality 
+to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
 ```php
-<?php $this->layout()->setLayout('default'); ?>
+$this->extend('layout.html.php');
 ```
-We tell the engine that we want to use the layout `default`. Now create a new php file in the folder `/website/views/layouts` and name it to default.php (just like the name of the layout appending .php).
+We tell the engine that we want to use the layout `layout.html.php`. 
+Now create a new php file in the folder `/app/Resources/views` and name it `layout.html.php`.
 Then we can also put some HTML and template code into it:
 
 ```php
-<?php /** @var $this \Pimcore\View */ ?>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */ 
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -90,14 +106,14 @@ Then we can also put some HTML and template code into it:
             </div>
         </div>
         <div class="info">
-            <?= $this->layout()->content; ?>
+            <?php $this->slots()->output('_content') ?>
         </div>
     </div>
 </body>
 </html>
 ```
 
-The code `<?= $this->layout()->content ?>` is the placeholder where your contentpage will be inserted.
+The code `<?php $this->slots()->output('_content') ?>` is the placeholder where the content of the page will be inserted.
 
 ### Putting It Together with Pimcore Documents
 Now we need to connect the action to a page. This is done in the Pimcore backend.
@@ -203,28 +219,38 @@ Therefore create another action in the controller (ContentController) called `pr
 ```php
 <?php
 
-use Website\Controller\Action;
-use Pimcore\Model\Asset;
+namespace AppBundle\Controller;
 
-class ContentController extends Action
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class ContentController extends AbstractController
 {
-    public function defaultAction ()
+    public function defaultAction (Request $request)
     {
-        $this->enableLayout();
+    
     }
     
-    public function productAction()
+    public function productAction(Request $request)
     {
-        $this->enableLayout();
+    
     }
 }
 ```
 
-Then we also need a new template: `website/views/scripts/content/product.php` 
+Then we also need a new template: `app/Resources/views/Content/product.html.php` 
 
 ```php
-<?php /** @var $this \Pimcore\View */ ?>
-<?php $this->layout()->setLayout('default'); ?>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('layout.html.php');
+
+?>
 
 <h1><?= $this->input("headline", ["width" => 540]); ?></h1>
 
@@ -265,11 +291,19 @@ Go to the product page. In my case, let's say `http://pimcore.local/tshirt` wher
 
 We haven't implemented frontend features yet, therefore the page doesn't contain any product information.
 
-In the template file (`website/views/scripts/content/product.php`) add few lines:
+In the template file (`app/Resources/views/Content/product.html.php`) add few lines:
 
 ```php
-<?php /** @var $this \Pimcore\View */ ?>
-<?php $this->layout()->setLayout('default'); ?>
+<?php
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('layout.html.php');
+
+?>
 
 <h1><?= $this->input("headline", ["width" => 540]); ?></h1>
 <div class="product-info">

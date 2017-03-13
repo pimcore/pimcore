@@ -47,11 +47,10 @@ Most important, all elements (assets, documents or objects) can be linked with a
 As Pimcore is a platform that stores data independently from the channel ,it can provide the managed data to any channel – simple 
 websites (B2B, B2C), commerce-systems (integrated, third party), mobile apps, print, digital signage, … There are basically no limits. 
 
-In terms of output to the frontend or custom APIs, Pimcore follows the MVC pattern and is based on Zend Framework. 
+In terms of output to the frontend or custom APIs, Pimcore follows the MVC pattern and is based on the Symfony Framework. 
  If you don't know the MVC pattern please read [this article](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) 
  first.
-If you are new to the Zend Framework or the ZF MVC you can read about 
-[controllers](http://framework.zend.com/manual/1.12/en/zend.controller.html) in Zend Framework manual. With this 
+If you are new to Symfony you should read the [getting started guide](http://symfony.com/doc/current/) of Symfony first. With this 
 knowledge learning Pimcore will be much easier.
 
 In addition to that, Pimcore can also be executed in a headless way and therefore integrated into any environment. 
