@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -48,7 +48,7 @@ class WorkflowState extends Model\AbstractModel
      */
     public $status;
 
-    
+
     /**
      * @param $cid
      * @param $ctype

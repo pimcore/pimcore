@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -118,7 +118,7 @@ class Menu extends AbstractHelper
      * @var string
      */
     protected $_innerIndent = '    ';
-    
+
     /**
      * View helper entry point:
      * Retrieves helper and optionally sets container to operate on
@@ -290,10 +290,10 @@ class Menu extends AbstractHelper
     {
         return $this->_onlyActiveBranch;
     }
-    
+
     /**
      * Sets a flag indicating whether to expand all sibling nodes of the active branch
-     * 
+     *
      * @param  bool $flag                        [optional] expand all siblings of
      *                                           nodes in the active branch. Default is true.
      * @return self  fluent interface, returns self
@@ -316,7 +316,7 @@ class Menu extends AbstractHelper
     {
         return $this->_expandSiblingNodesOfActiveBranch;
     }
-    
+
     /**
      * Enables/disables rendering of parents when only rendering active branch
      *

@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -307,7 +307,7 @@ class Text
     public static function getCacheTagsOfWysiwygText($text, $tags = [])
     {
         $tags = is_array($tags) ? $tags : [];
-        
+
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {

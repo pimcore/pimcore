@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Redirect
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->delete("redirects", ["id" => $this->model->getId()]);
-        
+
         $this->model->clearDependentCache();
     }
 
@@ -90,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
         } catch (\Exception $e) {
             throw $e;
         }
-        
+
         $this->model->clearDependentCache();
     }
 

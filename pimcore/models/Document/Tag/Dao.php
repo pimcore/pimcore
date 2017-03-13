@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $data = $this->model->getDataForResource();
-        
+
         if (is_array($data) or is_object($data)) {
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }

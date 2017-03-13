@@ -1,4 +1,16 @@
 <?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
@@ -35,7 +47,7 @@ class LogController extends AdminController
             $levels = [];
             foreach (["emergency", "alert", "critical", "error", "warning", "notice", "info", "debug"] as $level) {
                 $levels[] = "priority = '" . $level . "'";
-                
+
                 if ($request->get("priority") == $level) {
                     break;
                 }
@@ -59,11 +71,11 @@ class LogController extends AdminController
             }
             $queryString .= " AND timestamp <= '" . $datetime . "'";
         }
-        
+
         if ($request->get("component")) {
             $queryString .= " AND component =  '" . addslashes($request->get("component")) . "'";
         }
-         
+
         if ($request->get("relatedobject")) {
             $queryString .= " AND relatedobject = " . $request->get("relatedobject");
         }

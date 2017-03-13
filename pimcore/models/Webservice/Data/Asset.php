@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -102,7 +102,7 @@ class Asset extends Model\Webservice\Data
         if (!empty($settings)) {
             $this->customSettings = $settings;
         }
-        
+
         $keys = get_object_vars($this);
         if (array_key_exists("childs", $keys)) {
             if ($object->hasChilds()) {

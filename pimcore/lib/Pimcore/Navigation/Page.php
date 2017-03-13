@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -51,14 +51,14 @@ abstract class Page extends Container
 
     /**
      * Fragment identifier (anchor identifier)
-     * 
-     * The fragment identifier (anchor identifier) pointing to an anchor within 
+     *
+     * The fragment identifier (anchor identifier) pointing to an anchor within
      * a resource that is subordinate to another, primary resource.
      * The fragment identifier introduced by a hash mark "#".
      * Example: http://www.example.org/foo.html#bar ("bar" is the fragment identifier)
-     * 
+     *
      * @link http://www.w3.org/TR/html401/intro/intro.html#fragment-uri
-     * 
+     *
      * @var string|null
      */
     protected $_fragment;
@@ -319,11 +319,11 @@ abstract class Page extends Container
         if (null !== $fragment && !is_string($fragment)) {
             throw new \Exception('Invalid argument: $fragment must be a string or null');
         }
- 
+
         $this->_fragment = $fragment;
         return $this;
     }
-    
+
      /**
      * Returns fragment identifier
      *
@@ -463,7 +463,7 @@ abstract class Page extends Container
         {
             throw new \Exception('Invalid argument: $character must be a single character or null');
         }
- 
+
         $this->_accesskey = $character;
         return $this;
     }

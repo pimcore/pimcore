@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -300,7 +300,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             try {
                 $list = new Staticroute\Listing();
                 $list->setOrder(function ($a, $b) {
-                    
+
                     // give site ids a higher priority
                     if ($a["siteId"] && !$b["siteId"]) {
                         return -1;

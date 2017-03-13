@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -83,7 +83,7 @@ class CacheController
         $this->key = "pimcore_viewcache_" . $name;
         $this->editmode = $editmode;
         $this->force = $force;
-        
+
         if (!$lifetime) {
             $lifetime = null;
         }
@@ -99,16 +99,16 @@ class CacheController
         if (\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
             return false;
         }
-        
+
         if ($content = CacheManager::load($this->key)) {
             echo $content;
 
             return true;
         }
-        
+
         $this->captureEnabled = true;
         ob_start();
-        
+
         return false;
     }
 
@@ -119,12 +119,12 @@ class CacheController
     {
         if ($this->captureEnabled) {
             $this->captureEnabled = false;
-            
+
             $tags = ["in_template"];
             if (!$this->lifetime) {
                 $tags[] = "output";
             }
-    
+
             $content = ob_get_clean();
             CacheManager::save($content, $this->key, $tags, $this->lifetime, 996, true);
             echo $content;

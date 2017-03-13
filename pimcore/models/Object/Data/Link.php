@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -392,10 +392,10 @@ class Link
         } else {
             $path = $this->getDirect();
         }
-        
+
         return $path;
     }
-    
+
     /**
      * Returns the plain text path of the link
      *
@@ -423,7 +423,7 @@ class Link
 
         return $path;
     }
-    
+
     /**
      * @return Document|Asset|boolean
      *
@@ -489,7 +489,7 @@ class Link
         if (empty($this->text)) {
             return "";
         }
-        
+
         return '<a href="' . $this->getHref() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getText()) . '</a>';
     }
 
@@ -504,7 +504,7 @@ class Link
                 return false;
             }
         }
-        
+
         return true;
     }
 

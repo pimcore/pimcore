@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -126,7 +126,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
-        
+
         if (!empty($data)) {
             $user = Model\User::getById($data);
             if (!$user instanceof Model\User) {

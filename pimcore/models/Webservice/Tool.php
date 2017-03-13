@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -36,7 +36,7 @@ class Tool
                 $file = str_replace($modelsDir, "", $file);
                 $file = str_replace(".php", "", $file);
                 $class = str_replace(DIRECTORY_SEPARATOR, "_", $file);
-                
+
                 if (\Pimcore\Tool::classExists($class)) {
                     $match = false;
                     foreach ($includePatterns as $pattern) {

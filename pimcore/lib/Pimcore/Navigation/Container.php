@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -273,7 +273,7 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
-     * Returns a child page matching $property == $value or 
+     * Returns a child page matching $property == $value or
      * preg_match($value, $property), or null if not found
      *
      * @param  string  $property          name of property to match against
@@ -283,12 +283,12 @@ class Container implements \RecursiveIterator, \Countable
      * @return Page|null  matching page or null
      */
     public function findOneBy($property, $value, $useRegex = false)
-    {        
+    {
         $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $page) {
             $pageProperty = $page->get($property);
-            
+
             // Rel and rev
             if (is_array($pageProperty)) {
                 foreach ($pageProperty as $item) {
@@ -318,10 +318,10 @@ class Container implements \RecursiveIterator, \Countable
                         }
                     }
                 }
-                
+
                 continue;
             }
-            
+
             // Use regex?
             if (true === $useRegex) {
                 if (preg_match($value, $pageProperty)) {
@@ -333,7 +333,7 @@ class Container implements \RecursiveIterator, \Countable
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -348,14 +348,14 @@ class Container implements \RecursiveIterator, \Countable
      * @return Page[] array containing only Page instances
      */
     public function findAllBy($property, $value, $useRegex = false)
-    {        
+    {
         $found = array();
 
         $iterator = new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
-        
+
         foreach ($iterator as $page) {
             $pageProperty = $page->get($property);
-            
+
             // Rel and rev
             if (is_array($pageProperty)) {
                 foreach ($pageProperty as $item) {
@@ -385,10 +385,10 @@ class Container implements \RecursiveIterator, \Countable
                         }
                     }
                 }
-                
+
                 continue;
             }
-            
+
             // Use regex?
             if (true === $useRegex) {
                 if (0 !== preg_match($value, $pageProperty)) {

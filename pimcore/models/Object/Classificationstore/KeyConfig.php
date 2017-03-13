@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -86,7 +86,7 @@ class KeyConfig extends Model\AbstractModel
 
     /** @var  boolean */
     public $enabled;
-    
+
 
     /**
      * @param integer $id

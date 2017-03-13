@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -73,7 +73,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
-        
+
         $object->childs = null;
         $object->elements = [];
 

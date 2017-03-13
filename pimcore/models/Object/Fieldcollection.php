@@ -10,7 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Fieldcollection
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -95,7 +95,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
         foreach ($this->getItems() as $item) {
             $definitions[$item->getType()] = $item->getDefinition();
         }
-        
+
         return $definitions;
     }
 
@@ -127,7 +127,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
             }
         }
     }
-    
+
     /**
      * @return bool
      */
@@ -178,8 +178,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     {
         return count($this->getItems());
     }
-    
-    
+
+
     /**
      * Methods for Iterator
      */

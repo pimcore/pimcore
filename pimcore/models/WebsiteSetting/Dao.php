@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE id = ?", $this->model->getId());
         $this->assignVariablesToModel($data);
-        
+
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setName($name);
         }
         $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", [$this->model->getName(), $siteId]);
-        
+
         if (!empty($data["id"])) {
             $this->assignVariablesToModel($data);
         } else {
@@ -83,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->delete("website_settings", ["id" => $this->model->getId()]);
-        
+
         $this->model->clearDependentCache();
     }
 
@@ -109,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
         } catch (\Exception $e) {
             throw $e;
         }
-        
+
         $this->model->clearDependentCache();
     }
 
