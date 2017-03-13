@@ -8,11 +8,11 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 * [Documentation](doc/)
-* Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
+* Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
-* Help [translating](https://poeditor.com/join/project/VWmZyvFVMH) pimcore
+* Help [translating](https://poeditor.com/join/project/VWmZyvFVMH) Pimcore
 * [Google Group](https://groups.google.com/forum/#!forum/pimcore) - Discussions 
 * [StackOverflow](http://stackoverflow.com/questions/tagged/pimcore) - Questions / Support 
 
@@ -28,5 +28,5 @@ Please have a look at our [contributing guide](CONTRIBUTING.md).
 **Security vulnerabilities:** please contact us (security@pimcore.org)  
 
 ## Copyright and license 
-Copyright: [pimcore](http://www.pimcore.org) GmbH  
+Copyright: [Pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
