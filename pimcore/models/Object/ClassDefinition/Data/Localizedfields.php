@@ -1152,6 +1152,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setHideLabelsWhenTabsReached($hideLabelsWhenTabsReached)
     {
         $this->hideLabelsWhenTabsReached = $hideLabelsWhenTabsReached;
+
         return $this;
     }
 
