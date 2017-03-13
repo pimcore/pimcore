@@ -21,7 +21,10 @@ class SystemConfigParamResource
         $this->container = $container;
 
         // register system.php as resource to rebuild container in dev on change
-        $container->addResource(new FileResource(Config::locateConfigFile('system.php')));
+        $systemConfigFile = Config::locateConfigFile('system.php');
+        if(file_exists($systemConfigFile)) {
+            $container->addResource(new FileResource($systemConfigFile));
+        }
     }
 
     /**
@@ -30,7 +33,54 @@ class SystemConfigParamResource
     public function setParameters()
     {
         $config = Config::getSystemConfig(true);
-        $this->processConfig('pimcore_system_config', $config->toArray());
+        if($config) {
+            $this->processConfig('pimcore_system_config', $config->toArray());
+        } else {
+            // default config which is necessary to initialize the container even if pimcore isn't installed
+            // we only need parameters here which are referenced in the container to avoid compilation errors
+            $this->processConfig('pimcore_system_config', [
+                "database" => [
+                    "params" => [
+                        "host" => "localhost",
+                        "port" => 3306,
+                        "dbname" => "",
+                        "username" => "root",
+                        "password" => "",
+                    ]
+                ],
+                "email" => [
+                    "method" => "mail",
+                    "smtp" => [
+                        "host" => "",
+                        "port" => "",
+                        "ssl" => NULL,
+                        "name" => "",
+                        "auth" => [
+                            "method" => NULL,
+                            "username" => "",
+                            "password" => ""
+                        ]
+                    ],
+                    "debug" => [
+                        "emailaddresses" => ""
+                    ]
+                ],
+                "newsletter" => [
+                    "method" => "mail",
+                    "smtp" => [
+                        "host" => "",
+                        "port" => "",
+                        "ssl" => NULL,
+                        "name" => "",
+                        "auth" => [
+                            "method" => NULL,
+                            "username" => "",
+                            "password" => ""
+                        ]
+                    ]
+                ]
+            ]);
+        }
     }
 
     /**

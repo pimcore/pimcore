@@ -110,15 +110,19 @@ class Pimcore
             return PIMCORE_DEBUG;
         }
 
-        $conf = Config::getSystemConfig();
-        $debug = (bool) $conf->general->debug;
-        // enable debug mode only for one IP
-        if ($conf->general->debug_ip && $conf->general->debug) {
-            $debug = false;
+        $debug = false;
 
-            $debugIpAddresses = explode_and_trim(',', $conf->general->debug_ip);
-            if (in_array(Tool::getClientIp(), $debugIpAddresses)) {
-                $debug = true;
+        $conf = Config::getSystemConfig();
+        if($conf) {
+            $debug = (bool)$conf->general->debug;
+            // enable debug mode only for one IP
+            if ($conf->general->debug_ip && $conf->general->debug) {
+                $debug = false;
+
+                $debugIpAddresses = explode_and_trim(',', $conf->general->debug_ip);
+                if (in_array(Tool::getClientIp(), $debugIpAddresses)) {
+                    $debug = true;
+                }
             }
         }
 
