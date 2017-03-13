@@ -403,6 +403,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
      */
     public function testLocalizedObjects()
     {
+        TestHelper::createEmptyObjects();
+
         $this->createTestObject([
             [
                 'method'    => 'fillObjects',
