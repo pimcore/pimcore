@@ -117,7 +117,10 @@ pimcore.document.versions = Class.create({
                 width:620,
                 title: t('available_versions'),
                 region: "west",
-                split: true
+                split: true,
+                viewConfig: {
+                    xtype: 'patchedgridview'
+                }
             });
 
             //this.grid.on("rowclick", this.onRowClick.bind(this));
