@@ -1066,7 +1066,7 @@ class TranslationController extends AdminController
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
         if (!is_file($exportFile)) {
-            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") . '</style>');
+            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_WEB_ROOT . "/pimcore/static6/css/word-export.css") . '</style>');
         }
 
         foreach ($data as $el) {
