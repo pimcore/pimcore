@@ -330,6 +330,25 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * display the quantity value field data in the grid
+     * @param $data
+     * @param null $object
+     * @param array $params
+     * @return array
+     */
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
+        if ($data instanceof  \Pimcore\Model\Object\Data\QuantityValue) {
+            return [
+                "value" => $data->getValue(),
+                "unit" => $data->getUnit()->getAbbreviation()
+            ];
+        }
+
+        return;
+    }
+
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params
