@@ -119,7 +119,14 @@ class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $cacheService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.full_page_cache");
+        $container = \Pimcore::getContainer();
+
+        $serviceId = 'pimcore.event_listener.frontend.full_page_cache';
+        if (!$container->has($serviceId)) {
+            return false;
+        }
+
+        $cacheService = $container->get($serviceId);
         if ($cacheService && $cacheService->isEnabled()) {
             return [
                 "enabled" => true,
