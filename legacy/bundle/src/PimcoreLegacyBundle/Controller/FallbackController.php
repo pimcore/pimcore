@@ -14,6 +14,7 @@
 
 namespace PimcoreLegacyBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,6 +22,18 @@ class FallbackController extends Controller
 {
     public function fallbackAction(Request $request)
     {
+        $resolver = $this->get('pimcore.service.request.pimcore_context_resolver');
+
+        $invalidContexts = [
+            PimcoreContextResolver::CONTEXT_ADMIN,
+            PimcoreContextResolver::CONTEXT_WEBSERVICE
+        ];
+
+        if (in_array($resolver->getPimcoreContext($request), $invalidContexts)) {
+            // TODO enable this when all admin modules were migrated
+            // throw $this->createNotFoundException('Legacy mode is not supported for admin controllers');
+        }
+
         $legacyKernel = $this->get('pimcore.legacy_kernel');
 
         return $legacyKernel->handle($request);
