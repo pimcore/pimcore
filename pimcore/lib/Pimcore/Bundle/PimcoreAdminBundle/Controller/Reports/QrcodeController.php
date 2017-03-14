@@ -162,16 +162,18 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         }
 
         $tmpFile = PIMCORE_PRIVATE_VAR . "/qr-code-" . uniqid() . ".png";
+        $code->render($tmpFile);
         $response = new BinaryFileResponse($tmpFile);
-        $response->deleteFileAfterSend(true);
-        $response->headers->set("Content-Type", "image/png");
 
         if ($request->get("download")) {
             $code->setSize(4000);
             $response->setContentDisposition("attachment", 'qrcode-' . $request->get("name", "preview") . '.png');
         }
 
-        $code->render($tmpFile);
+
+        $response->deleteFileAfterSend(true);
+        $response->headers->set("Content-Type", "image/png");
+
 
         return $response;
     }
