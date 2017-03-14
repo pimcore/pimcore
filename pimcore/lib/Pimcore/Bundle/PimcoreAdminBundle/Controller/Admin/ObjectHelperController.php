@@ -469,7 +469,7 @@ class ObjectHelperController extends AdminController
 
         $response = $this->json([
             "success" => true
-        ], false);
+        ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -558,8 +558,8 @@ class ObjectHelperController extends AdminController
         }
 
         //How many rows
-        $csv = new SplFileObject($file);
-        $csv->setFlags(SplFileObject::READ_CSV);
+        $csv = new \SplFileObject($file);
+        $csv->setFlags(\SplFileObject::READ_CSV);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         $rows = 0;
         $nbFields = 0;
