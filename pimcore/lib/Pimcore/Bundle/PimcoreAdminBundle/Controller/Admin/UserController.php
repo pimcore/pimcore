@@ -558,7 +558,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     /* ROLES */
 
     /**
-     * @Route("/user/roles-tree-get-childs-by-id")
+     * @Route("/user/role-tree-get-childs-by-id")
      * @param Request $request
      * @return JsonResponse
      */
