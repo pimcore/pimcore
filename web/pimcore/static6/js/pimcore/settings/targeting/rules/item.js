@@ -66,7 +66,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                     fieldLabel: "URL",
                     name: "redirect.url",
                     value: this.data.actions.redirectUrl,
-                    cls: "input_drop_target",
+                    fieldCls: "input_drop_target",
                     listeners: {
                         "render": function (el) {
                             new Ext.dd.DropZone(el.getEl(), {

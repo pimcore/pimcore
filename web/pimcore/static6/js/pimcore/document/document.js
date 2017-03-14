@@ -261,7 +261,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 name: "translation",
                 itemId: "translation",
                 width: "100%",
-                cls: "input_drop_target",
+                fieldCls: "input_drop_target",
                 fieldLabel: t("translation"),
                 enableKeyListeners: true,
                 listeners: {
@@ -383,7 +383,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 name: "parent",
                 itemId: "parent",
                 width: "100%",
-                cls: "input_drop_target",
+                fieldCls: "input_drop_target",
                 fieldLabel: t("parent_document"),
                 listeners: {
                     "render": function (el) {

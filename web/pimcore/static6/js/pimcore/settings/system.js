@@ -564,7 +564,7 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t("default_error_page"),
                                 name: "documents.error_pages.default",
-                                cls: "input_drop_target",
+                                fieldCls: "input_drop_target",
                                 value: this.getValue("documents.error_pages.default"),
                                 width: 600,
                                 xtype: "textfield",

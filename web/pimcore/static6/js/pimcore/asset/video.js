@@ -149,7 +149,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         {
                         xtype: "textfield",
                         itemId: "assetPath",
-                        cls: "input_drop_target",
+                        fieldCls: "input_drop_target",
                         width: 265,
                         listeners: {
                             "render": function (el) {

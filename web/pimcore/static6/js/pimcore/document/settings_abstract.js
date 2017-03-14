@@ -47,7 +47,7 @@ pimcore.document.settings_abstract = Class.create({
                     fieldLabel: t("document"),
                     name: "contentMasterDocumentPath",
                     value: this.document.data.contentMasterDocumentPath,
-                    cls: "input_drop_target",
+                    fieldCls: "input_drop_target",
                     id: "contentMasterDocumentPath_" + this.document.id,
                     listeners: {
                         "render": function (el) {

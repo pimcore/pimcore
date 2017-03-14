@@ -178,7 +178,7 @@ pimcore.report.qrcode.item = Class.create({
                     value: this.data.url,
                     fieldLabel: "URL",
                     width: 450,
-                    cls: "input_drop_target",
+                    fieldCls: "input_drop_target",
                     enableKeyEvents: true,
                     listeners: {
                         "render": function (el) {

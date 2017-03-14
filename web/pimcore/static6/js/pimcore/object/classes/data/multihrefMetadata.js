@@ -281,7 +281,7 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
                         name: "assetUploadPath",
                         hidden: !this.datax.assetsAllowed,
                         id: 'class_asset_upload_path_' + this.uniqeFieldId,
-                        cls: "input_drop_target",
+                        fieldCls: "input_drop_target",
                         value: this.datax.assetUploadPath,
                         width: 500,
                         xtype: "textfield",

@@ -1026,7 +1026,7 @@ pimcore.document.tree = Class.create({
                 }, {
                     xtype: "textfield",
                     name: "errorDocument",
-                    cls: "input_drop_target",
+                    fieldCls: "input_drop_target",
                     fieldLabel: t("error_page"),
                     value: data["errorDocument"],
                     listeners: {
