@@ -363,6 +363,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 "path" => $asset->getRealFullPath(),
                 "success" => true
             ]);
+
             return $response;
 
 
