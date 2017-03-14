@@ -50,7 +50,7 @@ class Action extends Helper
      */
     public function __invoke($action, $controller, $module, array $params = [])
     {
-        $document = $params['document'];
+        $document = isset($params['document']) ? $params['document'] : null;
         if ($document && $document instanceof PageSnippet) {
             $params = $this->actionRenderer->addDocumentParams($document, $params);
         }
