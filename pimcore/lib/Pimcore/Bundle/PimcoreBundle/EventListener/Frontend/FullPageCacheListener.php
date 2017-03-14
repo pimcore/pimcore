@@ -192,7 +192,7 @@ class FullPageCacheListener extends AbstractFrontendListener
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
-                if (isset($_COOKIE["pimcore_admin_sid"])) {
+                if (Tool\Session::requestHasSessionId($request)) {
                     return $this->disable("backend user is logged in");
                 }
             } else {

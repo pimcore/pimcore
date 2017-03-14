@@ -140,7 +140,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
             return $event->getCredentials();
         } else {
-            if ($pimcoreUser = Authentication::authenticateSession()) {
+            if ($pimcoreUser = Authentication::authenticateSession($request)) {
                 return [
                     'user' => $pimcoreUser
                 ];

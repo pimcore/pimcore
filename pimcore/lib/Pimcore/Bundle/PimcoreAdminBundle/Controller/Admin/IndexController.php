@@ -114,7 +114,7 @@ class IndexController extends AdminController
             'build'     => Version::getRevision(),
             'debug'     => \Pimcore::inDebugMode(),
             'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
-            'sessionId' => htmlentities($request->cookies->get('pimcore_admin_sid'), ENT_QUOTES, 'UTF-8'),
+            'sessionId' => htmlentities(Session::getSessionIdFromRequest($request), ENT_QUOTES, 'UTF-8'),
             "isLegacyModeAvailable" => \Pimcore::isLegacyModeAvailable()
         ]);
 

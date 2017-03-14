@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
@@ -72,7 +73,7 @@ class MaintenancePageListener
     /**
      * @param GetResponseEvent $event
      */
-    public function onKernelRequest(GetResponseEvent  $event)
+    public function onKernelRequest(GetResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -84,7 +85,7 @@ class MaintenancePageListener
         if (is_file($file)) {
             $conf = include($file);
             if (isset($conf["sessionId"])) {
-                if ($conf["sessionId"] != $_COOKIE["pimcore_admin_sid"]) {
+                if ($conf["sessionId"] != Session::getSessionIdFromRequest($event->getRequest())) {
                     $maintenance = true;
                 }
             } else {

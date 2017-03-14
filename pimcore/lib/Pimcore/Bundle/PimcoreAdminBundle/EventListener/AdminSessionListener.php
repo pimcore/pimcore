@@ -60,7 +60,7 @@ class AdminSessionListener implements EventSubscriberInterface
             return;
         }
 
-        // set request session to admin session (pimcore_admin_sid) instead of using the
+        // set request session to admin session (pimcore-admin-sid) instead of using the
         // framework wide one (if configured)
         $event->getRequest()->setSession($this->container->get('pimcore_admin.session'));
     }

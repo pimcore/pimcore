@@ -78,7 +78,7 @@ class UserLoader
 
         // try to directly authenticate
         if ($this->requestHelper->isFrontendRequestByAdmin()) {
-            return Authentication::authenticateSession();
+            return Authentication::authenticateSession($this->requestHelper->getCurrentRequest());
         }
     }
 }

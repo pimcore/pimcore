@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Security\Guard;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as UserProxy;
 use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;
+use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +52,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
             ];
         } else {
             // check for existing session user
-            if ($request->cookies->has('pimcore_admin_sid')) {
+            if (Session::requestHasSessionId($request)) {
                 if ($pimcoreUser = Authentication::authenticateSession()) {
                     return [
                         'user' => $pimcoreUser

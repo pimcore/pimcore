@@ -99,8 +99,10 @@ abstract class Admin extends Action
 
             // TODO is the following needed for symfony? see afe133db43bf081f86732b2fdf9ff24361ec6995
             // this is to make it possible to use the session id as a part of the route (ZF default route) used for external editors, etc.
-            if ($this->getParam("pimcore_admin_sid")) {
-                $_REQUEST["pimcore_admin_sid"] = $this->getParam("pimcore_admin_sid");
+
+            $sessionName = Tool\Session::getSessionName();
+            if ($this->getParam($sessionName)) {
+                $_REQUEST[$sessionName] = $this->getParam($sessionName);
             }
 
 //            // authenticate user, first try to authenticate with session information
