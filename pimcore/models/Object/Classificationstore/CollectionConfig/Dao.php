@@ -117,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_COLLECTIONS, [$data], ["id" => $this->model->getId()]);
+            $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, ["id" => $this->model->getId()]);
 
             return $this->model;
         } catch (\Exception $e) {
