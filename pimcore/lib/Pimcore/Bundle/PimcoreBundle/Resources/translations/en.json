@@ -4173,6 +4173,10 @@
         "definition": "CSV Export"
     },
     {
+        "term": "export_csv_include_headers",
+        "definition": "CSV Export with headers"
+    },
+    {
         "term": "import_csv",
         "definition": "CSV Import"
     },
