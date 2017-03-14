@@ -33,6 +33,19 @@ class Connection extends \Doctrine\DBAL\Connection
     /**
      * @inheritdoc
      */
+    public function connect()
+    {
+        $returnValue = parent::connect();
+
+        $this->query("SET default_storage_engine=InnoDB;");
+        $this->query("SET sql_mode = '';");
+
+        return $returnValue;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function update($tableExpression, array $data, array $identifier, array $types = [])
     {
         $data = $this->quoteDataIdentifiers($data);
