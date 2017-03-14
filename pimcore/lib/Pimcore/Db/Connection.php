@@ -37,8 +37,8 @@ class Connection extends \Doctrine\DBAL\Connection
     {
         $returnValue = parent::connect();
 
-        $this->query("SET default_storage_engine=InnoDB;");
-        $this->query("SET sql_mode = '';");
+        $this->_conn->query("SET default_storage_engine=InnoDB;");
+        $this->_conn->query("SET sql_mode = '';");
 
         return $returnValue;
     }
