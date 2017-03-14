@@ -35,11 +35,14 @@ class Connection extends \Doctrine\DBAL\Connection
      */
     public function connect()
     {
+
         $returnValue = parent::connect();
 
-        $this->_conn->query("SET default_storage_engine=InnoDB;");
-        $this->_conn->query("SET sql_mode = '';");
-
+        if ($returnValue) {
+            $this->_conn->query("SET default_storage_engine=InnoDB;");
+            $this->_conn->query("SET sql_mode = '';");
+        }
+        
         return $returnValue;
     }
 
