@@ -718,11 +718,11 @@ class Service extends Model\Element\Service
                     if (is_array($filter["value"])) {
                         $fieldConditions = [];
                         foreach ($filter["value"] as $filterValue) {
-                            $fieldConditions[] = $db->getQuoteIdentifierSymbol() . $brickType . $db->getQuoteIdentifierSymbol() . "." . $brickField->getFilterCondition($filterValue, $operator);
+                            $fieldConditions[] = $db->quoteIdentifier($brickType) . "." . $brickField->getFilterCondition($filterValue, $operator);
                         }
                         $conditionPartsFilters[] = "(" . implode(" OR ", $fieldConditions) . ")";
                     } else {
-                        $conditionPartsFilters[] = $db->getQuoteIdentifierSymbol() . $brickType . $db->getQuoteIdentifierSymbol() . "." . $brickField->getFilterCondition($filter["value"], $operator);
+                        $conditionPartsFilters[] = $db->quoteIdentifier($brickType) . "." . $brickField->getFilterCondition($filter["value"], $operator);
                     }
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field

@@ -92,10 +92,10 @@ class QuantityValueController extends AdminController
                 $db = \Pimcore\Db::get();
                 foreach ($filters as $f) {
                     if ($f->type == "string") {
-                        $condition .= " AND " . $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $condition .= " AND " . $db->quoteIdentifier($f->field) . " LIKE " . $db->quote("%" . $f->value . "%");
                     } elseif ($f->type == "numeric") {
                         $operator = $this->getOperator($f->comparison);
-                        $condition .= " AND " . $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " " . $operator . " " . $db->quote($f->value);
+                        $condition .= " AND " . $db->quoteIdentifier($f->field) . " " . $operator . " " . $db->quote($f->value);
                     }
                 }
                 $list->setCondition($condition);

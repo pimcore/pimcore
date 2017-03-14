@@ -87,9 +87,9 @@ class QueryParams
         foreach ($filters as $f) {
             if ($f->type == 'string') {
                 if (in_array($f->property, $matchExact)) {
-                    $conditions[$f->property][] = ' ' . $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " = " . $db->quote($f->value) . ' ';
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . " = " . $db->quote($f->value) . ' ';
                 } else {
-                    $conditions[$f->property][] = ' ' . $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%") . ' ';
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%") . ' ';
                 }
             } elseif ($f->type == 'numeric') {
                 if ($f->operator == 'eq') {
@@ -99,7 +99,7 @@ class QueryParams
                 } elseif ($f->operator == 'gt') {
                     $symbol = ' > ';
                 }
-                $conditions[$f->property][] = ' ' . $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . $symbol . $db->quote($f->value) . ' ';
+                $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property)  . ' ' . $symbol . $db->quote($f->value) . ' ';
             } elseif ($f->type == 'date') {
                 /**
                  * make sure you pass the date as timestamp

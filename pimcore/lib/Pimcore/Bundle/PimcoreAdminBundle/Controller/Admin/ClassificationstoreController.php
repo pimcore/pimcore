@@ -328,7 +328,7 @@ class ClassificationstoreController extends AdminController
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $conditionParts[]= $db->quoteIdentifier($f->property) . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
@@ -460,7 +460,7 @@ class ClassificationstoreController extends AdminController
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $conditionParts[]= $db->quoteIdentifier($f->property) . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
@@ -599,7 +599,7 @@ class ClassificationstoreController extends AdminController
                     }
                     $count++;
                     $fieldname = $mapping[$f->field];
-                    $condition .= $db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $condition .= $db->quoteIdentifier($fieldname) . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
@@ -837,7 +837,7 @@ class ClassificationstoreController extends AdminController
                 foreach ($filters as $f) {
                     $count++;
                     $fieldname = $mapping[$f->field];
-                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $conditionParts[]= $db->quoteIdentifier($fieldname) . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
@@ -1161,7 +1161,7 @@ class ClassificationstoreController extends AdminController
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $conditionParts[]= $db->quoteIdentifier($f->property) . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
             $condition = implode(" AND ", $conditionParts);
@@ -1178,7 +1178,7 @@ class ClassificationstoreController extends AdminController
                     $col = "id";
                 }
 
-                $condition = $db->getQuoteIdentifierSymbol() . $col . $db->getQuoteIdentifierSymbol() . " IN (";
+                $condition = $db->quoteIdentifier($col) . " IN (";
                 $count = 0;
                 foreach ($ids as $theId) {
                     if ($count > 0) {
@@ -1369,7 +1369,7 @@ class ClassificationstoreController extends AdminController
      * @param Request $request
      * @return JsonResponse
      */
-    public function getPageAction()
+    public function getPageAction(Request $request)
     {
         $table = "classificationstore_" . $request->get("table");
         $db = \Pimcore\Db::get();

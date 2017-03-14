@@ -365,6 +365,7 @@ class AssetController extends ElementControllerBase implements EventedController
             ]);
             return $response;
 
+
             // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
             // Ext.form.Action.Submit and mark the submission as failed
             $response->headers->set("Content-Type", "text/html");
