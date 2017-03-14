@@ -1366,4 +1366,22 @@ class QueryBuilder
 
         return (string)$sql;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function __sleep()
+    {
+        $vars      = get_object_vars($this);
+        $blacklist = ['_adapter'];
+
+        $result = [];
+        foreach (array_keys($vars) as $var) {
+            if (!in_array($var, $blacklist)) {
+                $result[] = $var;
+            }
+        }
+
+        return $result;
+    }
 }
