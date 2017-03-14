@@ -15,11 +15,12 @@
 use Pimcore\Config;
 use Symfony\Component\Debug\Debug;
 
-if (Pimcore::inDebugMode()) {
+$debug = Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
+if ($debug) {
     Debug::enable();
 }
 
-$kernel = new AppKernel(Config::getEnvironment(), Pimcore::inDebugMode());
+$kernel = new AppKernel(Config::getEnvironment(), $debug);
 $kernel->boot();
 Pimcore::setKernel($kernel);
 
