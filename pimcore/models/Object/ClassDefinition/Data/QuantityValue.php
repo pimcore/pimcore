@@ -339,9 +339,16 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public function getDataForGrid($data, $object = null, $params = [])
     {
         if ($data instanceof  \Pimcore\Model\Object\Data\QuantityValue) {
+            $unit = $data->getUnit();
+            $unitAbbreviation = "";
+
+            if ($unit instanceof Model\Object\QuantityValue\Unit) {
+                $unitAbbreviation = $unit->getAbbreviation();
+            }
+
             return [
                 "value" => $data->getValue(),
-                "unit" => $data->getUnit()->getAbbreviation()
+                "unit" => $unitAbbreviation
             ];
         }
 
