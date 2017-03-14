@@ -15,14 +15,15 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Event\AdminEvents;
-use Pimcore\Tool\Session;
-use Pimcore\Tool;
 use Pimcore\Config;
-use Pimcore\Model\Document;
-use Pimcore\Model\Version;
-use Pimcore\Model\Site;
+use Pimcore\Event\AdminEvents;
+use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
+use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+use Pimcore\Model\Version;
+use Pimcore\Tool;
+use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -894,66 +895,70 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->json(["success" => $success]);
     }
 
-
     /**
-     * @Route("/diff-versions/from/{from}/to/{to}")
+     * @Route("/diff-versions/from/{from}/to/{to}", requirements={"from": "\d+", "to": "\d+"})
      * @param Request $request
+     * @param int $from
+     * @param int $to
+     *
      * @return Response
      */
-    public function diffVersionsAction(Request $request)
+    public function diffVersionsAction(Request $request, $from, $to)
     {
-        $versionFrom = Version::getById($request->get("from"));
+        // return with error if prerequisites do not match
+        if (!HtmlToImage::isSupported() || !class_exists("Imagick")) {
+            return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions-unsupported.html.php");
+        }
+
+        $versionFrom = Version::getById($from);
         $docFrom = $versionFrom->loadData();
 
         $sessionName = Tool\Session::getOption("name");
-        $prefix = $request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getRealFullPath() . "?pimcore_version=";
-        $fromUrl = $prefix . $request->get("from") . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
-        $toUrl = $prefix . $request->get("to") . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
+
+        $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . "?pimcore_version=";
+
+        $fromUrl = $prefix . $from . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
+        $toUrl   = $prefix . $to . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
 
         $fromFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
-        $toFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
+        $toFile   = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
         $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . uniqid() . ".png";
 
         $viewParams = [];
 
+        HtmlToImage::convert($fromUrl, $fromFile);
+        HtmlToImage::convert($toUrl, $toFile);
 
-        if (\Pimcore\Image\HtmlToImage::isSupported() && class_exists("Imagick")) {
-            \Pimcore\Image\HtmlToImage::convert($fromUrl, $fromFile);
-            \Pimcore\Image\HtmlToImage::convert($toUrl, $toFile);
+        $image1 = new \Imagick($fromFile);
+        $image2 = new \Imagick($toFile);
 
-            $image1 = new \Imagick($fromFile);
-            $image2 = new \Imagick($toFile);
+        if ($image1->getImageWidth() == $image2->getImageWidth() && $image1->getImageHeight() == $image2->getImageHeight()) {
+            $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
+            $result[0]->setImageFormat("png");
 
-            if ($image1->getImageWidth() == $image2->getImageWidth() && $image1->getImageHeight() == $image2->getImageHeight()) {
-                $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
-                $result[0]->setImageFormat("png");
-
-                $result[0]->writeImage($diffFile);
-                $result[0]->clear();
-                $result[0]->destroy();
+            $result[0]->writeImage($diffFile);
+            $result[0]->clear();
+            $result[0]->destroy();
 
 
-                $viewParams["image"] = base64_encode(file_get_contents($diffFile));
-                ;
-                unlink($diffFile);
-            } else {
-                $viewParams["image1"] = base64_encode(file_get_contents($fromFile));
-                $viewParams["image2"] = base64_encode(file_get_contents($toFile));
-            }
-
-            // cleanup
-            $image1->clear();
-            $image1->destroy();
-            $image2->clear();
-            $image2->destroy();
-
-            unlink($fromFile);
-            unlink($toFile);
-
-            return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions.html.php", $viewParams);
+            $viewParams["image"] = base64_encode(file_get_contents($diffFile));
+            ;
+            unlink($diffFile);
         } else {
-            return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions-unsupported.html.php", $viewParams);
+            $viewParams["image1"] = base64_encode(file_get_contents($fromFile));
+            $viewParams["image2"] = base64_encode(file_get_contents($toFile));
         }
+
+        // cleanup
+        $image1->clear();
+        $image1->destroy();
+        $image2->clear();
+        $image2->destroy();
+
+        unlink($fromFile);
+        unlink($toFile);
+
+        return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions.html.php", $viewParams);
     }
 
     /**
