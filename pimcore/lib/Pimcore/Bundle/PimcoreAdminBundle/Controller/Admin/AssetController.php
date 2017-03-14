@@ -362,7 +362,8 @@ class AssetController extends ElementControllerBase implements EventedController
                 "id" => $asset->getId(),
                 "path" => $asset->getRealFullPath(),
                 "success" => true
-            ], false);
+            ]);
+            return $response;
 
             // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
             // Ext.form.Action.Submit and mark the submission as failed
