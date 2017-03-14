@@ -583,7 +583,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/fieldcollections-get")
+     * @Route("/fieldcollection-get")
      * @param Request $request
      * @return JsonResponse
      */
@@ -595,7 +595,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/fieldcollections-update")
+     * @Route("/fieldcollection-update")
      * @param Request $request
      * @return JsonResponse
      */
