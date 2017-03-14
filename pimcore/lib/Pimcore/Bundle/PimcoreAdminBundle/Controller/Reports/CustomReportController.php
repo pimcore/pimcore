@@ -331,7 +331,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         }
 
         foreach ($result['data'] as $row) {
-            fputcsv($fp, array_values($row));
+            fputcsv($fp, array_values($row), ';');
         }
 
         fclose($fp);
