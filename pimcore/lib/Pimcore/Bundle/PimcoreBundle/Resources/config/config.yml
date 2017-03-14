@@ -46,6 +46,8 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_unicode_ci
+                options:
+                    !php/const:PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode=''"
 
 # Monolog Configuration
 monolog:
