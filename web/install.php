@@ -31,7 +31,7 @@
 
     // no installer if Pimcore is already installed
     if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-        header("Location: /admin/");
+        //header("Location: /admin/");
     }
 
     if(!isset($_REQUEST["profile"])) {
@@ -331,6 +331,12 @@ $scripts = array(
             } else {
                 Ext.getCmp("install_button").disable();
             }
+
+            if(validCheckReq) {
+                Ext.getCmp("check_button").enable();
+            } else {
+                Ext.getCmp("check_button").disable();
+            }
         };
 
         var win = new Ext.Window({
@@ -484,7 +490,15 @@ $scripts = array(
                     ]
                 }
             ],
-            bbar: ["->",
+            bbar: [{
+                    id: "check_button",
+                    text: "Check Requirements",
+                    iconCls: "icon_check",
+                    disabled: true,
+                    handler: function () {
+                        window.open("/install/check?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
+                    }
+                },"->",
                 {
                     id: "install_button",
                     text: "<b>Install Now!</b>",
@@ -494,6 +508,8 @@ $scripts = array(
 
                         btn.disable();
                         Ext.getCmp("install_form").hide();
+                        Ext.getCmp("check_button").hide();
+
                         Ext.getCmp("install_errors").show();
                         Ext.getCmp("install_errors").update("Installing ...");
 
@@ -511,12 +527,14 @@ $scripts = array(
                                 catch (e) {
                                     Ext.getCmp("install_errors").update(transport.responseText);
                                     Ext.getCmp("install_form").show();
+                                    Ext.getCmp("check_button").show();
                                     btn.enable();
                                 }
                             },
                             failure: function (transport) {
                                 Ext.getCmp("install_errors").update("Failed: " + transport.responseText);
                                 Ext.getCmp("install_form").show();
+                                Ext.getCmp("check_button").show();
                                 btn.enable();
                             }
                         });

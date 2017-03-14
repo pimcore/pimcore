@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CheckController extends Controller implements EventedControllerInterface
@@ -178,13 +179,15 @@ class CheckController extends Controller implements EventedControllerInterface
 
         $db = null;
 
-        if ($request->get("mysql_adapter")) {
+        if ($request->get("mysql_username")) {
             // this is before installing
             try {
                 $dbConfig = [
-                    'username' => $request->get("mysql_username"),
+                    'user' => $request->get("mysql_username"),
                     'password' => $request->get("mysql_password"),
-                    'dbname' => $request->get("mysql_database")
+                    'dbname' => $request->get("mysql_database"),
+                    'driver' => "pdo_mysql",
+                    'wrapperClass' => 'Pimcore\Db\Connection',
                 ];
 
                 $hostSocketValue = $request->get("mysql_host_socket");
@@ -195,15 +198,15 @@ class CheckController extends Controller implements EventedControllerInterface
                     $dbConfig["port"] = $request->get("mysql_port");
                 }
 
-                $db = \Zend_Db::factory($request->get("mysql_adapter"), $dbConfig);
+                $config = new \Doctrine\DBAL\Configuration();
+                $db = \Doctrine\DBAL\DriverManager::getConnection($dbConfig, $config);
 
-                $db->getConnection();
             } catch (\Exception $e) {
                 $db = null;
             }
         } else {
             // this is after installing, eg. after a migration, ...
-            $db = \Pimcore\Db::get();
+            $db = $this->get("database_connection");
         }
 
         if ($db) {
@@ -315,7 +318,7 @@ class CheckController extends Controller implements EventedControllerInterface
             // update
             $queryCheck = true;
             try {
-                $db->update("__pimcore_req_check", [
+                $db->updateWhere("__pimcore_req_check", [
                     "field" => uniqid(),
                     "alter_field" => uniqid()
                 ]);
@@ -645,11 +648,11 @@ class CheckController extends Controller implements EventedControllerInterface
             // session authentication, only possible if user is logged in
             $user = \Pimcore\Tool\Authentication::authenticateSession();
             if (!$user instanceof User) {
-                return new Response("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
+                throw new AccessDeniedHttpException("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
             }
-        } elseif ($request->get("mysql_adapter")) {
+        } elseif ($request->get("mysql_username")) {
         } else {
-            return new Response("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
+            throw new AccessDeniedHttpException("Not possible... no database settings given.<br />Parameters: mysql_host,mysql_username,mysql_password,mysql_database");
         }
     }
 
