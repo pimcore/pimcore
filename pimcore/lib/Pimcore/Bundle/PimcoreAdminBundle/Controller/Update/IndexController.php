@@ -72,7 +72,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function getJobsAction(Request $request)
     {
-        $jobs = Update::getJobs($this->getParam("toRevision"));
+        $jobs = Update::getJobs($request->get("toRevision"));
 
         return $this->json($jobs);
     }
@@ -84,15 +84,15 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function jobParallelAction(Request $request)
     {
-        if ($this->getParam("type") == "download") {
-            Update::downloadData($this->getParam("revision"), $this->getParam("url"));
+        if ($request->get("type") == "download") {
+            Update::downloadData($request->get("revision"), $request->get("url"));
         }
 
         return $this->json(["success" => true]);
     }
 
     /**
-     * @Route("/jobs-procedural")
+     * @Route("/job-procedural")
      * @param Request $request
      * @return mixed
      */
@@ -100,17 +100,18 @@ class IndexController extends AdminController implements EventedControllerInterf
     {
         $status = ["success" => true];
 
-        if ($this->getParam("type") == "files") {
-            Update::installData($this->getParam("revision"));
-        } elseif ($this->getParam("type") == "clearcache") {
+        if ($request->get("type") == "files") {
+            Update::installData($request->get("revision"));
+        } elseif ($request->get("type") == "clearcache") {
             \Pimcore\Cache::clearAll();
-        } elseif ($this->getParam("type") == "preupdate") {
-            $status = Update::executeScript($this->getParam("revision"), "preupdate");
-        } elseif ($this->getParam("type") == "postupdate") {
-            $status = Update::executeScript($this->getParam("revision"), "postupdate");
-        } elseif ($this->getParam("type") == "cleanup") {
+            \Pimcore\Tool::clearSymfonyCache($this->container);
+        } elseif ($request->get("type") == "preupdate") {
+            $status = Update::executeScript($request->get("revision"), "preupdate");
+        } elseif ($request->get("type") == "postupdate") {
+            $status = Update::executeScript($request->get("revision"), "postupdate");
+        } elseif ($request->get("type") == "cleanup") {
             Update::cleanup();
-        } elseif ($this->getParam("type") == "composer-dump-autoload") {
+        } elseif ($request->get("type") == "composer-dump-autoload") {
             $status = Update::composerDumpAutoload();
         }
 
