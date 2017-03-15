@@ -314,15 +314,6 @@ condense parameter is set to true then only non-existing object ids are returned
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/user?apikey=[API-KEY]`
 * **Returns**: The JSON-encoded user data for the current user
 
-
-### Get KeyValue Definition
-* **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/key-value-definition?apikey=[API-KEY]`
-* **Returns**: The JSON-encoded Key/Value definition
-* **Parameters**:
-    * **condition**: where clause
-
-
 ### Get Server Info
 * **Method**: GET
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/server-info?apikey=[API-KEY]`

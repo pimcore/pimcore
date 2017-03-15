@@ -173,31 +173,6 @@ attach multiple events
 | `object.class.preDelete` | `Pimcore\Model\Object\ClassDefinition` | - |  |
 | `object.class.postDelete` | `Pimcore\Model\Object\ClassDefinition` | - |  |
 
-
-### Object KeyValue Group Configuration
-
-| Name | Target | Parameters | Description | 
-| ---- | ------ | ---------- | ----------- |
-| `object.keyValue.groupConfig.preAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.postAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.preDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.postDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-
-
-### Object KeyValue Key Configuration
-
-| Name | Target | Parameters | Description | 
-| ---- | ------ | ---------- | ----------- |
-| `object.keyValue.keyConfig.preAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
-| `object.keyValue.keyConfig.postAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
-| `object.keyValue.keyConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
-| `object.keyValue.keyConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
-| `object.keyValue.keyConfig.preDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
-| `object.keyValue.keyConfig.postDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
-
-
 ### Object Classification Store Collection Configuration
 
 | Name | Target | Parameters | Description | 

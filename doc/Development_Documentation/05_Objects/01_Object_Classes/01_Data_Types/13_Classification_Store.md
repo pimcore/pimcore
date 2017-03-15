@@ -2,8 +2,10 @@
 
 ## Overview
 
-The classification store has quite some similarities with the KeyValue datatype, the way how the keys can be added to 
-the object differs as well as the variety of supported data types.
+The classification store has quite some similarities to a key/value-like datatype. 
+
+A key/value data type allows to add an arbitrary number of key/value pairs to objects with the restriction that each 
+key can only be added once to that object.
 
 #### The most important facts:
 * There can be multiple store with completely isolated feature sets.

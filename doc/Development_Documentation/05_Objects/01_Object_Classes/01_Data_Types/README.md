@@ -67,8 +67,6 @@ The entire list of data types is indicated below:
 | [fieldcollections](./19_Fieldcollections.md)         | A collection of fields that can be added to the object                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | [objectbricks](./21_Object_Bricks.md)             | Bricks of attributes, that can be added to objects | 
 | [localizedfields](./23_Localized_Fields.md)          | Set of attributes that can be translated |
-| [keyvalue](./25_Key_Value_Pairs.md)                 | simple key/value pairs                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-
 
 ### [Geographic Datatypes](./27_Geographic_Types.md)
 
