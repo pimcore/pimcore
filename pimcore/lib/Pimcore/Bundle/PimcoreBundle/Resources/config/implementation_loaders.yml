@@ -1,0 +1,46 @@
+services:
+    # document tag loader
+    pimcore.implementation_loader.document.tag.map:
+        class: Pimcore\Loader\ImplementationLoader\ClassMapLoader
+        arguments: ['%pimcore.implementation_loader.document.tag.map%']
+
+    pimcore.implementation_loader.document.tag.prefix:
+        class: Pimcore\Loader\ImplementationLoader\PrefixLoader
+        arguments: ['%pimcore.implementation_loader.document.tag.prefixes%']
+
+    pimcore.implementation_loader.document.tag:
+        class: Pimcore\Model\Document\Tag\Loader\TagLoader
+        calls:
+            - [register, ['@pimcore.implementation_loader.document.tag.map', '10']]
+            - [register, ['@pimcore.implementation_loader.document.tag.prefix']]
+
+
+    # datatype definition loader
+    pimcore.implementation_loader.object.data.map:
+        class: Pimcore\Loader\ImplementationLoader\ClassMapLoader
+        arguments: ['%pimcore.objects.class_definitions.data.map%']
+
+    pimcore.implementation_loader.object.data.prefix:
+        class: Pimcore\Loader\ImplementationLoader\PrefixLoader
+        arguments: ['%pimcore.objects.class_definitions.data.prefixes%']
+
+    pimcore.implementation_loader.object.data:
+        class: Pimcore\Model\Object\ClassDefinition\Loader\DataLoader
+        calls:
+            - [register, ['@pimcore.implementation_loader.object.data.map', '10']]
+            - [register, ['@pimcore.implementation_loader.object.data.prefix']]
+
+    # object layout loader
+    pimcore.implementation_loader.object.layout.map:
+        class: Pimcore\Loader\ImplementationLoader\ClassMapLoader
+        arguments: ['%pimcore.objects.class_definitions.layout.map%']
+
+    pimcore.implementation_loader.object.layout.prefix:
+        class: Pimcore\Loader\ImplementationLoader\PrefixLoader
+        arguments: ['%pimcore.objects.class_definitions.layout.prefixes%']
+
+    pimcore.implementation_loader.object.layout:
+        class: Pimcore\Model\Object\ClassDefinition\Loader\LayoutLoader
+        calls:
+            - [register, ['@pimcore.implementation_loader.object.layout.map', '10']]
+            - [register, ['@pimcore.implementation_loader.object.layout.prefix']]

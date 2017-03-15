@@ -242,17 +242,9 @@ class View extends \Zend_View
      */
     public function __call($method, $arguments)
     {
-        $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst(strtolower($method));
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
 
-        $classFound = true;
-        if (!\Pimcore\Tool::classExists($class)) {
-            $oldStyleClass = "Document_Tag_" . ucfirst(strtolower($method));
-            if (!\Pimcore\Tool::classExists($oldStyleClass)) {
-                $classFound = false;
-            }
-        }
-
-        if ($classFound) {
+        if ($loader->supports($method)) {
             if (!isset($arguments[0])) {
                 throw new \Exception("You have to set a name for the called tag (editable): " . $method);
             }

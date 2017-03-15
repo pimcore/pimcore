@@ -9,7 +9,9 @@ services:
 
     pimcore.templating.tag_renderer:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer
-        arguments: ['@pimcore.service.request.editmode_resolver']
+        arguments:
+            - '@pimcore.implementation_loader.document.tag'
+            - '@pimcore.service.request.editmode_resolver'
         calls:
             - [setLogger, ['@logger']]
 

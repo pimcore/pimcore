@@ -16,12 +16,12 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Model;
-use Pimcore\Config;
-use Pimcore\Model\Document;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Document;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -323,18 +323,10 @@ abstract class PageSnippet extends Model\Document
     {
         try {
             if ($type) {
-                $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
+                $loader  = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
+                $element = $loader->build($type);
 
-                // this is the fallback for custom document tags using prefixes
-                // so we need to check if the class exists first
-                if (!\Pimcore\Tool::classExists($class)) {
-                    $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
-                    if (\Pimcore\Tool::classExists($oldStyleClass)) {
-                        $class = $oldStyleClass;
-                    }
-                }
-
-                $this->elements[$name] = new $class();
+                $this->elements[$name] = $element;
                 $this->elements[$name]->setDataFromEditmode($data);
                 $this->elements[$name]->setName($name);
                 $this->elements[$name]->setDocumentId($this->getId());
