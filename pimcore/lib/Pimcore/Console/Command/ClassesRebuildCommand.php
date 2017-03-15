@@ -41,8 +41,6 @@ class ClassesRebuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->disableLogging();
-
         $list = new ClassDefinition\Listing();
         $list->load();
 
