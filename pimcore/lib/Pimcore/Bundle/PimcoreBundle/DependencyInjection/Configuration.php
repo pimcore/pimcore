@@ -53,21 +53,32 @@ class Configuration implements ConfigurationInterface
             ->end();
 
 
-        $rootNode
+        $objectsNode = $rootNode
             ->children()
                 ->arrayNode('objects')
                     ->children()
-                        ->arrayNode('class_definitions')
-                            ->children()
-                                ->arrayNode('data')
-                                    ->useAttributeAsKey('name')
-                                    ->prototype('scalar')
-                                    ->end()->end()
-                                ->arrayNode('layout')
-                                    ->useAttributeAsKey('name')
-                                    ->prototype('scalar')->end();
+                        ->arrayNode('class_definitions');
+
+        $this->addObjectClassDefinitionNode('data', $objectsNode);
+        $this->addObjectClassDefinitionNode('layout', $objectsNode);
 
         return $treeBuilder;
+    }
+
+    protected function addObjectClassDefinitionNode($name, ArrayNodeDefinition $node)
+    {
+        $children = $node
+            ->children()
+            ->arrayNode($name)
+                ->children();
+
+        $children->arrayNode('map')
+            ->useAttributeAsKey('name')
+            ->prototype('scalar');
+
+        $children
+            ->arrayNode('prefixes')
+            ->prototype('scalar');
     }
 
     /**

@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object\ClassDefinition;
 
+use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 
@@ -199,11 +200,11 @@ class Service
     public static function generateLayoutTreeFromArray($array, $throwException = false)
     {
         if (is_array($array) && count($array) > 0) {
-            $class = \Pimcore::getContainer()->get('pimcore.implementation_locator')
-                ->getObjectClassDefinitionImplementation($array["datatype"], $array["fieldtype"]);
+            /** @var LoaderInterface $loader */
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
-            if ($class) {
-                $item = new $class();
+            if ($loader->supports($array['fieldtype'])) {
+                $item = $loader->build($array['fieldtype']);
 
                 if (method_exists($item, "addChild")) { // allows childs
 
