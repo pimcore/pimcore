@@ -541,7 +541,11 @@ class Factory {
      *
      * @return \OnlineShop\Framework\FilterService\FilterService
      */
-    public function getFilterService(\Zend_View $view) {
+    public function getFilterService(\Zend_View $view = null) {
+
+        if(empty($view)) {
+            $view = new \Zend_View();
+        }
 
         $filterTypes = $this->getIndexService()->getCurrentTenantConfig()->getFilterTypeConfig();
         if(!$filterTypes)

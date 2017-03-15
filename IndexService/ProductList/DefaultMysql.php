@@ -576,7 +576,8 @@ class DefaultMysql implements IProductList
             $condition .= " AND " . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributeConfig(), $searchstring);
         }
 
-        \OnlineShop\Plugin::getSQLLogger()->log("Total Condition: " . $condition, \Zend_Log::INFO);
+        //TODO
+//        \OnlineShop\Plugin::getSQLLogger()->log("Total Condition: " . $condition, \Zend_Log::INFO);
         return $condition;
     }
 
@@ -610,7 +611,8 @@ class DefaultMysql implements IProductList
             }
         }
 
-        \OnlineShop\Plugin::getSQLLogger()->log("User specific Condition Part: " . $condition, \Zend_Log::INFO);
+        //TODO
+//        \OnlineShop\Plugin::getSQLLogger()->log("User specific Condition Part: " . $condition, \Zend_Log::INFO);
         return $condition;
     }
 

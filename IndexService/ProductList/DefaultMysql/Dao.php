@@ -77,10 +77,12 @@ class Dao {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+        //TODO
+//        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
-        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+        //TODO
+//        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
         return $result;
     }
 
@@ -103,18 +105,22 @@ class Dao {
                     . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             }
 
-            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
             $result = $this->db->fetchAll($query);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
             return $result;
         } else {
             $query = "SELECT " . $this->db->quoteIdentifier($fieldname) . " FROM "
                 . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . " GROUP BY " . $this->db->quoteIdentifier($fieldname);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
             return $result;
         }
     }
@@ -143,9 +149,11 @@ class Dao {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
             $result = $this->db->fetchAssoc($query);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
             return $result;
         } else {
             $query = "SELECT dest FROM " . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
@@ -158,9 +166,12 @@ class Dao {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
             return $result;
         }
     }
@@ -193,9 +204,11 @@ class Dao {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+        //TODO
+//        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
         $result = $this->db->fetchOne($query);
-        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+        //TODO
+//        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
         return $result;
     }
 
@@ -224,14 +237,19 @@ class Dao {
             }
 
             $query = "SELECT " . $fieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a WHERE a.o_id = ?;";
-            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
             $objectValues = $this->db->fetchRow($query, $objectId);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
 
             $query = "SELECT " . $maxFieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a";
-            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
             $maxObjectValues = $this->db->fetchRow($query);
-            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
 
             if(!empty($objectValues)) {
                 $subStatement = array();
@@ -246,7 +264,8 @@ class Dao {
 
                 $statement = "ABS(" . implode(" + ", $subStatement) . ")";
 
-                \OnlineShop\Plugin::getSQLLogger()->log("Similarity Statement: " . $statement, \Zend_Log::INFO);
+                //TODO
+//                \OnlineShop\Plugin::getSQLLogger()->log("Similarity Statement: " . $statement, \Zend_Log::INFO);
                 return $statement;
             } else {
                 throw new \Exception("Field array for given object id is empty");
@@ -255,7 +274,8 @@ class Dao {
 
 
         } catch(\Exception $e) {
-            \OnlineShop\Plugin::getSQLLogger()->err($e);
+            //TODO
+//            \OnlineShop\Plugin::getSQLLogger()->err($e);
             return "";
         }
     }
