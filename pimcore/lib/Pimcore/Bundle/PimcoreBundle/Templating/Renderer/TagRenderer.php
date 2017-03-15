@@ -18,6 +18,7 @@ use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
+use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -26,15 +27,22 @@ class TagRenderer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
+     * @var TagLoaderInterface
+     */
+    protected $tagLoader;
+
+    /**
      * @var EditmodeResolver
      */
     protected $editmodeResolver;
 
     /**
+     * @param TagLoaderInterface $tagLoader
      * @param EditmodeResolver $editmodeResolver
      */
-    public function __construct(EditmodeResolver $editmodeResolver)
+    public function __construct(TagLoaderInterface $tagLoader, EditmodeResolver $editmodeResolver)
     {
+        $this->tagLoader        = $tagLoader;
         $this->editmodeResolver = $editmodeResolver;
     }
 
@@ -44,20 +52,7 @@ class TagRenderer implements LoggerAwareInterface
      */
     public function tagExists($type)
     {
-        // TODO register tags on container
-        $class = '\\Pimcore\\Model\\Document\\Tag\\' . ucfirst(strtolower($type));
-
-        $classFound = false;
-        if (\Pimcore\Tool::classExists($class)) { // TODO use ClassUtils
-            $classFound = true;
-        } else {
-            $oldStyleClass = 'Document_Tag_' . ucfirst(strtolower($type));
-            if (\Pimcore\Tool::classExists($oldStyleClass)) {
-                $classFound = true;
-            }
-        }
-
-        return $classFound;
+        return $this->tagLoader->supports($type);
     }
 
     /**

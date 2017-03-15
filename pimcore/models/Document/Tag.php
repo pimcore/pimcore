@@ -17,10 +17,10 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
-use Pimcore\Logger;
 use Pimcore\View;
 
 /**
@@ -90,19 +90,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
     {
-        $tagClass = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
-
-        // this is the fallback for custom document tags using prefixes
-        // so we need to check if the class exists first
-        if (!\Pimcore\Tool::classExists($tagClass)) {
-            $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
-            if (\Pimcore\Tool::classExists($oldStyleClass)) {
-                $tagClass = $oldStyleClass;
-            }
-        }
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
 
         /** @var Tag $tag */
-        $tag = new $tagClass();
+        $tag = $loader->build($type);
         $tag->setName($name);
         $tag->setDocumentId($documentId);
         $tag->setController($controller);

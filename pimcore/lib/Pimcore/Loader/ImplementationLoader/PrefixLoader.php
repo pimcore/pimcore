@@ -108,6 +108,6 @@ class PrefixLoader extends AbstractClassNameLoader
      */
     protected function normalizeName($name)
     {
-        return Inflector::camelize($name);
+        return Inflector::classify($name);
     }
 }

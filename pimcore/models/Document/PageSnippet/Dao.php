@@ -17,8 +17,8 @@
 namespace Pimcore\Model\Document\PageSnippet;
 
 use Pimcore\Model;
-use Pimcore\Model\Version;
 use Pimcore\Model\Document;
+use Pimcore\Model\Version;
 
 /**
  * @property \Pimcore\Model\Document\PageSnippet $model
@@ -44,21 +44,11 @@ abstract class Dao extends Model\Document\Dao
         $elementsRaw = $this->db->fetchAll("SELECT * FROM documents_elements WHERE documentId = ?", [$this->model->getId()]);
 
         $elements = [];
+        $loader   = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
 
         foreach ($elementsRaw as $elementRaw) {
-            $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($elementRaw["type"]);
-
-            // this is the fallback for custom document tags using prefixes
-            // so we need to check if the class exists first
-            if (!\Pimcore\Tool::classExists($class)) {
-                $oldStyleClass = "\\Document_Tag_" . ucfirst($elementRaw["type"]);
-                if (\Pimcore\Tool::classExists($oldStyleClass)) {
-                    $class = $oldStyleClass;
-                }
-            }
-
             /** @var Document\Tag $element */
-            $element = new $class();
+            $element = $loader->build($elementRaw["type"]);
             $element->setName($elementRaw["name"]);
             $element->setDocumentId($this->model->getId());
             $element->setDataFromResource($elementRaw["data"]);
