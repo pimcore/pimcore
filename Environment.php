@@ -345,7 +345,9 @@ class Environment implements IEnvironment {
      */
     protected function buildSession()
     {
-        return new \Zend_Session_Namespace($this->sessionNamespace);
+        //TODO
+        //return new \Zend_Session_Namespace($this->sessionNamespace);
+        return new \stdClass();
     }
 
     /**

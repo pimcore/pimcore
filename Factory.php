@@ -132,8 +132,12 @@ class Factory {
 
     public function getConfig() {
         if(empty($this->config)) {
-            $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
-            $this->config = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
+//            $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
+
+//            TODO
+//            $this->config = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
+
+            $this->config = new \Zend_Config(require PIMCORE_PROJECT_ROOT . '/legacy/website/var/plugins/EcommerceFramework/OnlineShopConfig.php', true);
         }
 
         return $this->config;

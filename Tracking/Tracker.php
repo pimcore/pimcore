@@ -48,8 +48,9 @@ abstract class Tracker implements ITracker
      */
     protected function buildView()
     {
+        //TODO
         $view = new \Zend_View();
-        $view->setBasePath(PIMCORE_DOCUMENT_ROOT . '/plugins/EcommerceFramework/views');
+        $view->setBasePath(PIMCORE_PROJECT_ROOT . '/pimcore/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/views/');
 
         return $view;
     }

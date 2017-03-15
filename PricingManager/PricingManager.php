@@ -164,7 +164,8 @@ class PricingManager implements IPricingManager
     public function getEnvironment()
     {
         $environment = new Environment();
-        $environment->setSession( new \Zend_Session_Namespace('PricingManager') );
+        //TODO
+//        $environment->setSession( new \Zend_Session_Namespace('PricingManager') );
 
         return $environment;
     }
