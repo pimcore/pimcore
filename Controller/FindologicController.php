@@ -14,19 +14,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
-class EcommerceFramework_FindologicController extends Pimcore\Controller\Action\Frontend
+use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * Class FindologicController
+ */
+class FindologicController extends FrontendController
 {
     /**
      * create xml output for findologic
      */
-    public function exportAction()
+    public function exportAction(Request $request)
     {
         // init
-        $start = (int)$this->getParam('start');
-        $count = (int)$this->getParam('count', 200);
-        $shopKey = $this->getParam('shopkey');
-        $db = Pimcore\Resource::getConnection();
+        $start = (int)$request->get('start');
+        $count = (int)$request->get('count', 200);
+        $shopKey = $request->get('shopkey');
+
+        $db = \Pimcore\Db::getConnection();
 
 
         // load export items
@@ -72,15 +81,17 @@ XML;
         // output
         if( $this->getParam('validate') )
         {
-            $doc = new DOMDocument();
+            $doc = new \DOMDocument();
             $doc->loadXML( $xml );
 
+            $response = new Response();
             var_dump( $doc->schemaValidate('plugins/EcommerceFramework/static/vendor/findologic/export.xsd') );
         }
         else
         {
-            $this->getResponse()->setHeader('Content-Type', 'text/xml');
-            echo $xml;
+
+            $response = new Response($xml);
+            $response->headers->set('Content-Type', 'text/xml');
 
 
             // mark items as transmitted
@@ -93,9 +104,8 @@ XML;
             }
         }
 
+        return $response;
 
-        // disable output
-        $this->disableViewAutoRender();
     }
 
 
