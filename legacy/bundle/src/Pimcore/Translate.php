@@ -43,6 +43,9 @@ class Translate extends \Zend_Translate_Adapter
         $locale = (string) $locale;
 
         $this->translator = \Pimcore::getContainer()->get("translator");
+
+        //this line is needed to 'tell' zend translate that language is loaded
+        $this->_translate[$locale] = true;
     }
 
     /**
