@@ -18,14 +18,14 @@ In addition to the ZF standard view helpers, Pimcore adds some addition powerful
 
 ## Pimcore View Helpers
 
-The Pimcore implementation of `\Zend_View` namely `Pimcore\View` offers addtional view helpers to increase the usability even more:
+The Pimcore implementation of `\Zend_View` namely `Pimcore\View` offers additional view helpers to increase the usability even more:
 
 | Method                                   | Reference                                             | Description                                                          |
 |------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|
 | `inc()`                    | `\Pimcore\View::inc`                            | Use this function to directly include a document.                    |
 | `template()`              | `\Pimcore\View::template`                       | Use this method to include a template                                |
-| `getParam()`            | `\Pimcore\View::getParam`                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
-| `cache()`                    | `\Pimcore\View\Helper\Cache::cache`           | Cache implementation in temaplates.                                  |
+| `getParam()`            | `\Pimcore\View::getParam`                       | Gets a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
+| `cache()`                    | `\Pimcore\View\Helper\Cache::cache`           | Cache implementation in templates.                                  |
 | `device()`                  | `\Pimcore\View\Helper\Device::device`         | Helps implementing adaptive designs.                                  |
 | `glossary()`              | `\Pimcore\View\Helper\Glossary::glossary`     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
 | `translate()`           | `\Pimcore\View::t`                              | i18n / shared translations                                                  |
