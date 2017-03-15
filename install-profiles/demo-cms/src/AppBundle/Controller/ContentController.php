@@ -10,7 +10,7 @@ class ContentController extends AbstractController
 {
     public function defaultAction()
     {
-
+        throw new \Exception("foo");
     }
 
     public function portalAction()
