@@ -133,6 +133,9 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
         ]);
 
         $this->addEditmodeAssets($document, $response);
+
+        // set sameorigin header for editmode responses
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN', true);
     }
 
     /**

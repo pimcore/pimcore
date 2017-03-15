@@ -194,10 +194,6 @@ abstract class Frontend extends Action
                             }
                         }
                     }
-
-                    // register editmode plugin
-                    $front = \Zend_Controller_Front::getInstance();
-                    $front->registerPlugin(new \Pimcore\Controller\Plugin\Frontend\Editmode($this), 1000);
                 }
 
                 // document preview
