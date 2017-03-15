@@ -14,8 +14,6 @@
 
 namespace Pimcore;
 
-use Pimcore\Logger;
-
 class ExtensionManager
 {
 
@@ -23,6 +21,11 @@ class ExtensionManager
      * @var \Pimcore\Config\Config
      */
     private static $config;
+
+    /**
+     * @var array
+     */
+    private static $assetPaths;
 
     /**
      * @static
@@ -164,6 +167,8 @@ class ExtensionManager
 
     /**
      * @param $id
+     *
+     * @return array
      * @throws \Exception
      */
     public static function getPluginConfig($id)
@@ -177,6 +182,128 @@ class ExtensionManager
         }
 
         throw new \Exception("Plugin with id: " . $id . " does not exists");
+    }
+
+    /**
+     * @param string $type
+     * @param bool $editmode
+     *
+     * @return array
+     */
+    public static function getAssetPaths($type, $editmode = false, $pluginName = null)
+    {
+        if (!in_array($type, ['js', 'css'])) {
+            throw new \InvalidArgumentException('Invalid type');
+        }
+
+        $paths = static::loadAssetPaths();
+
+        $key = $type;
+        if ($editmode) {
+            $key = 'editmode_' . $type;
+        }
+
+        if (null !== $pluginName) {
+            if (isset($paths['plugin'][$pluginName]) && isset($paths['plugin'][$pluginName][$key])) {
+                return $paths['plugin'][$pluginName][$key];
+            }
+        } else {
+            if (isset($paths['merged'][$key])) {
+                return $paths['merged'][$key];
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    protected static function loadAssetPaths()
+    {
+        if (null !== static::$assetPaths) {
+            return static::$assetPaths;
+        }
+
+        $paths = [
+            'plugin' => [],
+            'merged' => []
+        ];
+
+        // don't try to load paths if no legacy mode is available
+        if (!\Pimcore::isLegacyModeAvailable()) {
+            return $paths;
+        }
+
+        foreach (static::getPluginConfigs() as $pluginConfig) {
+            $pluginName = $pluginConfig['plugin']['pluginName'];
+            if (!static::isEnabled('plugin', $pluginName)) {
+                // continue;
+            }
+
+            $paths['plugin'][$pluginName] = [
+                'js'           => static::resolveAssetPaths($pluginConfig['plugin'], 'js'),
+                'css'          => static::resolveAssetPaths($pluginConfig['plugin'], 'css'),
+                'editmode_js'  => static::resolveAssetPaths($pluginConfig['plugin'], 'js', 'editmode'),
+                'editmode_css' => static::resolveAssetPaths($pluginConfig['plugin'], 'css', 'editmode'),
+            ];
+        }
+
+        $merged = [];
+        foreach ($paths['plugin'] as $pluginName => $pluginPaths) {
+            $merged = array_merge($merged, $pluginPaths);
+        }
+
+        $paths['merged'] = $merged;
+
+        static::$assetPaths = $paths;
+
+        return $paths;
+    }
+
+    /**
+     * @param array       $pluginConfig
+     * @param string      $type
+     * @param null|string $mode
+     *
+     * @return array
+     */
+    protected static function resolveAssetPaths(array $pluginConfig, $type, $mode = null)
+    {
+        $paths = [];
+
+        $modePrefix = '';
+        if ('editmode' === $mode) {
+            $modePrefix = 'DocumentEditmode';
+        }
+
+        $versions = ['-extjs6', ''];
+        foreach ($versions as $versionSuffix) {
+            // pluginCssPaths-extjs6
+            // pluginDocumentEditmodeJsPaths
+            $key = sprintf('plugin%s%sPaths%s', $modePrefix, ucfirst($type), $versionSuffix);
+
+            if (array_key_exists($key, $pluginConfig) && is_array($pluginConfig[$key]) && isset($pluginConfig[$key]['path'])) {
+                if (is_array($pluginConfig[$key]['path'])) {
+                    $paths = $pluginConfig[$key]['path'];
+                    break;
+                } elseif (null !== $pluginConfig[$key]['path']) {
+                    $paths[]  = $pluginConfig[$key]['path'];
+                    break;
+                }
+            }
+        }
+
+        $result = [];
+        if (count($paths) > 0) {
+            for ($i = 0; $i < count($paths); $i++) {
+                if (is_file(PIMCORE_PLUGINS_PATH . $paths[$i])) {
+                    $result[] = '/plugins' . $paths[$i];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

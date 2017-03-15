@@ -421,58 +421,8 @@ class Legacy {
                         continue;
                     }
 
-                    $jsPaths = [];
-                    $isExtJs6 = true;
-
-                    if ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
-                        && isset($p['plugin']['pluginJsPaths-extjs6']['path'])
-                        && is_array($p['plugin']['pluginJsPaths-extjs6']['path'])) {
-                        $jsPaths = $p['plugin']['pluginJsPaths-extjs6']['path'];
-                    } elseif ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
-                        && $p['plugin']['pluginJsPaths-extjs6']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginJsPaths-extjs6']['path'];
-                    } elseif (is_array($p['plugin']['pluginJsPaths'])
-                        && isset($p['plugin']['pluginJsPaths']['path'])
-                        && is_array($p['plugin']['pluginJsPaths']['path'])) {
-                        $jsPaths = $p['plugin']['pluginJsPaths']['path'];
-                    } elseif (is_array($p['plugin']['pluginJsPaths'])
-                        && $p['plugin']['pluginJsPaths']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginJsPaths']['path'];
-                    }
-                    //manipulate path for frontend
-                    if (is_array($jsPaths) and count($jsPaths) > 0) {
-                        for ($i = 0; $i < count($jsPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $jsPaths[$i])) {
-                                $jsPaths[$i] = "/plugins" . $jsPaths[$i];
-                            }
-                        }
-                    }
-
-                    $cssPaths = [];
-                    if ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
-                        && isset($p['plugin']['pluginCssPaths-extjs6']['path'])
-                        && is_array($p['plugin']['pluginCssPaths-extjs6']['path'])) {
-                        $cssPaths = $p['plugin']['pluginCssPaths-extjs6']['path'];
-                    } elseif ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
-                        && $p['plugin']['pluginCssPaths-extjs6']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginCssPaths-extjs6']['path'];
-                    } elseif (is_array($p['plugin']['pluginCssPaths'])
-                        && isset($p['plugin']['pluginCssPaths']['path'])
-                        && is_array($p['plugin']['pluginCssPaths']['path'])) {
-                        $cssPaths = $p['plugin']['pluginCssPaths']['path'];
-                    } elseif (is_array($p['plugin']['pluginCssPaths'])
-                        && $p['plugin']['pluginCssPaths']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginCssPaths']['path'];
-                    }
-
-                    //manipulate path for frontend
-                    if (is_array($cssPaths) and count($cssPaths) > 0) {
-                        for ($i = 0; $i < count($cssPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $cssPaths[$i])) {
-                                $cssPaths[$i] = "/plugins" . $cssPaths[$i];
-                            }
-                        }
-                    }
+                    $jsPaths  = ExtensionManager::getAssetPaths('js', false, $p["plugin"]["pluginName"]);
+                    $cssPaths = ExtensionManager::getAssetPaths('css', false, $p["plugin"]["pluginName"]);
 
                     try {
                         $className = $p['plugin']['pluginClassName'];
