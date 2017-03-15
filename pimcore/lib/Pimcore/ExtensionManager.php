@@ -134,7 +134,7 @@ class ExtensionManager
 
 
     /**
-     * @return Array $pluginConfigs
+     * @return array $pluginConfigs
      */
     public static function getPluginConfigs()
     {
