@@ -35,13 +35,7 @@ class PimcoreExtension extends Extension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
-
-
-        $container->setParameter('pimcore.objects.class_definitions.data.map', $config['objects']['class_definitions']['data']['map']);
-        $container->setParameter('pimcore.objects.class_definitions.data.prefixes', $config['objects']['class_definitions']['data']['prefixes']);
-
-        $container->setParameter('pimcore.objects.class_definitions.layout.map', $config['objects']['class_definitions']['layout']['map']);
-        $container->setParameter('pimcore.objects.class_definitions.layout.prefixes', $config['objects']['class_definitions']['layout']['prefixes']);
+        $this->registerImplementationLoaderParameters($container, $config);
 
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
@@ -83,6 +77,24 @@ class PimcoreExtension extends Extension
         }
 
         $this->addContextRoutes($container, $config['context']);
+    }
+
+    /**
+     * Registers parameters for implementation loaders from config
+     *
+     * @param ContainerBuilder $container
+     * @param $config
+     */
+    protected function registerImplementationLoaderParameters(ContainerBuilder $container, $config)
+    {
+        $container->setParameter('pimcore.implementation_loader.document.tag.map', $config['documents']['tags']['map']);
+        $container->setParameter('pimcore.implementation_loader.document.tag.prefixes', $config['documents']['tags']['prefixes']);
+
+        $container->setParameter('pimcore.objects.class_definitions.data.map', $config['objects']['class_definitions']['data']['map']);
+        $container->setParameter('pimcore.objects.class_definitions.data.prefixes', $config['objects']['class_definitions']['data']['prefixes']);
+
+        $container->setParameter('pimcore.objects.class_definitions.layout.map', $config['objects']['class_definitions']['layout']['map']);
+        $container->setParameter('pimcore.objects.class_definitions.layout.prefixes', $config['objects']['class_definitions']['layout']['prefixes']);
     }
 
     /**

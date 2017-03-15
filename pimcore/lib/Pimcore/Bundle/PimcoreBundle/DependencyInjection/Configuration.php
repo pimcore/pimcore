@@ -34,38 +34,61 @@ class Configuration implements ConfigurationInterface
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
-
-        $rootNode
-            ->children()
-                ->arrayNode('documents')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('areas')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->booleanNode('autoload')
-                                    ->defaultTrue()
-                                ->end()
-                            ->end()
-                        ->end() // areas
-                    ->end()
-                ->end() // document
-            ->end();
-
-
-        $objectsNode = $rootNode
-            ->children()
-                ->arrayNode('objects')
-                    ->children()
-                        ->arrayNode('class_definitions');
-
-        $this->addObjectClassDefinitionNode('data', $objectsNode);
-        $this->addObjectClassDefinitionNode('layout', $objectsNode);
+        $this->addDocumentsNode($rootNode);
+        $this->addObjectsNode($rootNode);
 
         return $treeBuilder;
     }
 
-    protected function addObjectClassDefinitionNode($name, ArrayNodeDefinition $node)
+    /**
+     * Add document specific config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function addDocumentsNode(ArrayNodeDefinition $rootNode)
+    {
+        $documentsNode = $rootNode
+            ->children()
+                ->arrayNode('documents')
+                    ->addDefaultsIfNotSet();
+
+        $this->addImplementationLoaderNode($documentsNode, 'tags');
+
+        $documentsNode
+            ->children()
+                ->arrayNode('areas')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('autoload')
+                            ->defaultTrue();
+    }
+
+    /**
+     * Add object specific config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function addObjectsNode(ArrayNodeDefinition $rootNode)
+    {
+        $objectsNode = $rootNode
+            ->children()
+                ->arrayNode('objects');
+
+        $classDefinitionsNode = $objectsNode
+            ->children()
+                ->arrayNode('class_definitions');
+
+        $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
+        $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add implementation node config (map, prefixes)
+     *
+     * @param ArrayNodeDefinition $node
+     * @param string $name
+     */
+    protected function addImplementationLoaderNode(ArrayNodeDefinition $node, $name)
     {
         $children = $node
             ->children()

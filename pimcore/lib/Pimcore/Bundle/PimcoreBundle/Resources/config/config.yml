@@ -86,6 +86,12 @@ pimcore:
         translations:
             path: "@PimcoreBundle/Resources/translations"
 
+    documents:
+        tags:
+            prefixes:
+                - \Pimcore\Model\Document\Tag\
+                - \Document_Tag_
+
     objects:
         class_definitions:
             data:
