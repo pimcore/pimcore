@@ -81,7 +81,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
         try {
             $this->db->insert(self::TABLE_NAME, $data);
         } catch(\Exception $e) {
-            $this->db->update(self::TABLE_NAME, $data,  "`key`=" . $this->db->quote($this->model->getKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()));
+            $this->db->updateWhere(self::TABLE_NAME, $data,  "`key`=" . $this->db->quote($this->model->getKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()));
         }
     }
 
@@ -91,11 +91,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      * @return void
      */
     public function delete() {
-        $this->db->delete(self::TABLE_NAME, "productId=" . $this->db->quote($this->model->productId). " AND cartId = " . $this->db->quote($this->model->cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, "productId=" . $this->db->quote($this->model->productId). " AND cartId = " . $this->db->quote($this->model->cartId));
     }
 
     public function removeAllFromCart($cartId) {
-        $this->db->delete(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
     }
 
 }

@@ -84,7 +84,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
         try {
             $this->db->insert(self::TABLE_NAME, $data);
         } catch(\Exception $e) {
-            $this->db->update(self::TABLE_NAME, $data,  "itemKey=" . $this->db->quote($this->model->getItemKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
+            $this->db->updateWhere(self::TABLE_NAME, $data,  "itemKey=" . $this->db->quote($this->model->getItemKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
         }
     }
 
@@ -94,11 +94,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      * @return void
      */
     public function delete() {
-        $this->db->delete(self::TABLE_NAME, "itemKey=" . $this->db->quote($this->model->getItemKey()) . " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
+        $this->db->deleteWhere(self::TABLE_NAME, "itemKey=" . $this->db->quote($this->model->getItemKey()) . " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
     }
 
     public function removeAllFromCart($cartId) {
-        $this->db->delete(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
     }
 
 }

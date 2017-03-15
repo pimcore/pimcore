@@ -19,6 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use OnlineShop\Framework\PricingManager\Action\IProductDiscount;
 use OnlineShop\Framework\PricingManager\Rule\Dao;
+use Pimcore\Cache\Runtime;
+use Pimcore\Tool;
 
 class Rule extends \Pimcore\Model\AbstractModel implements IRule
 {
@@ -167,12 +169,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function setLabel($label, $locale = null)
     {
-        if($locale === NULL)
-        {
-            $locale = \Zend_Registry::get('Zend_Locale')->toString();
-        }
-
-        $this->label[ $locale ] = $label;
+        $this->label[ $this->getLanguage($locale) ] = $label;
         return $this;
     }
 
@@ -183,11 +180,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function getLabel($locale = null)
     {
-        if($locale === NULL)
-        {
-            $locale = \Zend_Registry::get('Zend_Locale')->toString();
-        }
-        return $this->label[ $locale ];
+        return $this->label[ $this->getLanguage($locale) ];
     }
 
     /**
@@ -218,12 +211,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function setDescription($description, $locale = null)
     {
-        if($locale === NULL)
-        {
-            $locale = \Zend_Registry::get('Zend_Locale')->toString();
-        }
-
-        $this->description[ $locale ] = $description;
+        $this->description[ $this->getLanguage($locale) ] = $description;
         return $this;
     }
 
@@ -234,11 +222,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function getDescription($locale = null)
     {
-        if($locale === NULL)
-        {
-            $locale = \Zend_Registry::get('Zend_Locale')->toString();
-        }
-        return $this->description[ $locale ];
+        return $this->description[ $this->getLanguage($locale) ];
     }
 
     /**
@@ -413,4 +397,35 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     }
 
 
+    /**
+     * gets current language
+     *
+     * @param $language
+     * @return string
+     */
+    protected function getLanguage($language = null) {
+        if ($language) {
+            return (string) $language;
+        }
+
+        // try to get the language from the service container
+        try {
+            $locale = null;
+
+            if (Runtime::isRegistered('model.locale')) {
+                $locale = Runtime::get('model.locale');
+            }
+
+            if (null === $locale) {
+                $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            }
+
+            if (Tool::isValidLanguage($locale)) {
+                return (string) $locale;
+            }
+            throw new \Exception("Not supported language");
+        } catch (\Exception $e) {
+            return Tool::getDefaultLanguage();
+        }
+    }
 }

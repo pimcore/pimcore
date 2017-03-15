@@ -527,7 +527,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
                 }
 
-                $this->db->update($this->getStoreTableName(), $data, ['o_id = ?' => $response['index']['_id']]);
+                $this->db->updateWhere($this->getStoreTableName(), $data, ['o_id = ?' => $response['index']['_id']]);
             }    
         }
 

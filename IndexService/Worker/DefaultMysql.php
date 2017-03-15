@@ -62,10 +62,10 @@ class DefaultMysql extends AbstractWorker implements IWorker {
     }
 
     protected function doDeleteFromIndex($subObjectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
-        $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
-        $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+        $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
+        $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
         if($this->tenantConfig->getTenantRelationTablename()) {
-            $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+            $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
         }
     }
 
@@ -210,7 +210,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                 }
 
                 try {
-                    $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
                     foreach($relationData as $rd) {
                         $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
                     }
@@ -222,20 +222,20 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                 Logger::info("Don't adding product " . $subObjectId . " to index.");
 
                 try {
-                    $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
+                    $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
                 } catch (\Exception $e) {
                     Logger::warn("Error during updating index table: " . $e->getMessage(), $e);
                 }
 
                 try {
-                    $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
                 } catch (\Exception $e) {
                     Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
                 }
 
                 try {
                     if($this->tenantConfig->getTenantRelationTablename()) {
-                        $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+                        $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
                     }
                 } catch (\Exception $e) {
                     Logger::warn("Error during updating index tenant relation table: " . $e->getMessage(), $e);

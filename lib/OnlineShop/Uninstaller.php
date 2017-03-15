@@ -35,10 +35,10 @@ class Uninstaller {
 
         //remove permissions
         $key = 'plugin_onlineshop_pricing_rules';
-        $db->delete('users_permission_definitions', '`key` = ' . $db->quote($key) );
+        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key) );
 
         $key = 'plugin_onlineshop_back-office_order';
-        $db->delete('users_permission_definitions', '`key` = ' . $db->quote($key) );
+        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key) );
 
     }
 

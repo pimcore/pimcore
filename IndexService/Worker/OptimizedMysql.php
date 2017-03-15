@@ -65,10 +65,10 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
     protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
         try {
             $this->db->beginTransaction();
-            $this->db->delete($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($objectId));
-            $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
+            $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($objectId));
+            $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
             if($this->tenantConfig->getTenantRelationTablename()) {
-                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($objectId));
+                $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($objectId));
             }
 
             $this->deleteFromMockupCache($objectId);
@@ -117,7 +117,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
                 $this->mySqlHelper->doInsertData($data['data']);
 
                 //insert relation data
-                $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
+                $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
                 foreach($data['relations'] as $rd) {
                     $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
                 }

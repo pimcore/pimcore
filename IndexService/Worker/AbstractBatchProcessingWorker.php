@@ -79,7 +79,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      * @param $objectId
      */
     protected function deleteFromStoreTable($objectId) {
-        $this->db->delete($this->getStoreTableName(), "o_id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
+        $this->db->deleteWhere($this->getStoreTableName(), "o_id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
     }
 
     /**
@@ -294,7 +294,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
         if(!$currentEntry) {
             $this->db->insert($this->getStoreTableName(), $data);
         } else if($currentEntry['crc_current'] != $data['crc_current']) {
-            $this->db->update($this->getStoreTableName(), $data, "o_id = " . $this->db->quote((string)$subObjectId) . " AND tenant = " . $this->db->quote($this->name));
+            $this->db->updateWhere($this->getStoreTableName(), $data, "o_id = " . $this->db->quote((string)$subObjectId) . " AND tenant = " . $this->db->quote($this->name));
         } else if($currentEntry['in_preparation_queue']) {
             $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?", array($subObjectId, $this->name));
         }

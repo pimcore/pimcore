@@ -124,7 +124,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update(self::TABLE_NAME, $data, 'id=' . $this->db->quote($this->model->getId()));
+        $this->db->updateWhere(self::TABLE_NAME, $data, 'id=' . $this->db->quote($this->model->getId()));
     }
 
     /**
@@ -134,7 +134,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME, 'id=' . $this->db->quote($this->model->getId()));
+        $this->db->deleteWhere(self::TABLE_NAME, 'id=' . $this->db->quote($this->model->getId()));
     }
 
     /**
