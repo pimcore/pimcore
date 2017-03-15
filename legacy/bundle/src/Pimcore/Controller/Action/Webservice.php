@@ -18,6 +18,7 @@ use Pimcore\Controller\Action;
 use Pimcore\Tool\Authentication;
 use Pimcore\Config;
 use Pimcore\Model\User;
+use Pimcore\Tool\Session;
 
 class Webservice extends Action
 {
@@ -32,7 +33,7 @@ class Webservice extends Action
             throw new \Exception("Webservice API isn't enabled");
         }
 
-        if (!$this->getParam("apikey") && $_COOKIE["pimcore_admin_sid"]) {
+        if (!$this->getParam("apikey") && $_COOKIE[Session::getSessionName()]) {
             $user = Authentication::authenticateSession();
             if (!$user instanceof User) {
                 throw new \Exception("User is not valid");

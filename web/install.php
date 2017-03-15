@@ -31,7 +31,8 @@
 
     // no installer if Pimcore is already installed
     if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-        //header("Location: /admin/");
+        header("Location: /admin?_dc=" . microtime(true));
+        exit;
     }
 
     if(!isset($_REQUEST["profile"])) {
@@ -142,18 +143,7 @@
                 $setup->contents($contentConfig);
             }
 
-            $realCacheDir = $kernel->getContainer()->getParameter('kernel.cache_dir');
-            // the old cache dir name must not be longer than the real one to avoid exceeding
-            // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
-            $oldCacheDir = substr($realCacheDir, 0, -1).('~' === substr($realCacheDir, -1) ? '+' : '~');
-            $filesystem = $kernel->getContainer()->get('filesystem');
-            if ($filesystem->exists($oldCacheDir)) {
-                $filesystem->remove($oldCacheDir);
-            }
-
-            $kernel->getContainer()->get('cache_clearer')->clear($realCacheDir);
-            $filesystem->rename($realCacheDir, $oldCacheDir);
-            $filesystem->remove($oldCacheDir);
+            \Pimcore\Tool::clearSymfonyCache($kernel->getContainer());
 
             // move install.php out of the document root
             rename(__FILE__, __DIR__ . "/../" . basename(__FILE__));
@@ -521,7 +511,8 @@ $scripts = array(
                                 try {
                                     var response = Ext.decode(transport.responseText);
                                     if (response.success) {
-                                        location.href = "/admin/";
+                                        var date = new Date();
+                                        location.href = "/admin?_dc=" + date.getTime();
                                     }
                                 }
                                 catch (e) {

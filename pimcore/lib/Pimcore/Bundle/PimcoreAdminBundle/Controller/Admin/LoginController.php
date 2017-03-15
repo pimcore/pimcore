@@ -38,6 +38,11 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function loginAction(Request $request)
     {
+        if (!is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
+            return $this->redirect("/install.php");
+        }
+
+
         $user = $this->getUser();
         if ($user instanceof UserInterface) {
             return $this->redirectToRoute('pimcore_admin_index');

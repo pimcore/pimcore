@@ -35,6 +35,8 @@
 
 <?php
     $languages = \Pimcore\Tool::getValidLanguages();
+    $adminLanguages = \Pimcore\Tool\Admin::getLanguages();
+    $languages = array_unique(array_merge($languages, $adminLanguages));
 ?>
 
 <?php foreach ($languages as $language) {

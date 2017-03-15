@@ -18,6 +18,7 @@ use Defuse\Crypto\Crypto;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 
 class Authentication
 {
@@ -43,12 +44,18 @@ class Authentication
 
     /**
      * @static
-     * @throws \Exception
+     *
+     * @param Request $request
+     *
      * @return User
      */
-    public static function authenticateSession()
+    public static function authenticateSession(Request $request = null)
     {
-        if (!isset($_COOKIE["pimcore_admin_sid"]) && !isset($_REQUEST["pimcore_admin_sid"])) {
+        if (null === $request) {
+            $request = \Pimcore::getContainer()->get('pimcore.http.request_helper')->getCurrentRequest();
+        }
+
+        if (!Session::requestHasSessionId($request, true)) {
             // if no session cookie / ID no authentication possible, we don't need to start a session
             return null;
         }

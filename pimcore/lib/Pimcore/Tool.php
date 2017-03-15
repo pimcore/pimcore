@@ -15,7 +15,7 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\Container;
 
 class Tool
 {
@@ -608,6 +608,29 @@ class Tool
         $aip .= "255";
 
         return $aip;
+    }
+
+    /**
+     * @param Container|null $container
+     */
+    public static function clearSymfonyCache(Container $container = null) {
+
+        if(!$container) {
+            $container = \Pimcore::getContainer();
+        }
+
+        $realCacheDir = $container->getParameter('kernel.cache_dir');
+        // the old cache dir name must not be longer than the real one to avoid exceeding
+        // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
+        $oldCacheDir = substr($realCacheDir, 0, -1).('~' === substr($realCacheDir, -1) ? '+' : '~');
+        $filesystem = $container->get('filesystem');
+        if ($filesystem->exists($oldCacheDir)) {
+            $filesystem->remove($oldCacheDir);
+        }
+
+        $container->get('cache_clearer')->clear($realCacheDir);
+        $filesystem->rename($realCacheDir, $oldCacheDir);
+        $filesystem->remove($oldCacheDir);
     }
 
     /**

@@ -16,6 +16,7 @@ namespace Pimcore\Tool;
 
 use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBagInterface;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Session
@@ -39,30 +40,7 @@ class Session
     /**
      * @var array
      */
-    protected static $options = [
-        "strict" => false,
-        "throw_startup_exceptions" => false,
-
-
-        "name" => "pimcore_admin_sid",
-        "use_trans_sid" => false,
-        "use_only_cookies" => false,
-        "cookie_httponly" => true
-    ];
-
-    /**
-     * @var array
-     */
     protected static $restoreSession = [];
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public static function setOption($name, $value)
-    {
-        self::$options[$name] = $value;
-    }
 
     /**
      * @param $name
@@ -70,11 +48,7 @@ class Session
      */
     public static function getOption($name)
     {
-        if (isset(self::$options[$name])) {
-            return self::$options[$name];
-        }
-
-        return null;
+        return static::getSessionStorageFactory()->getOption($name);
     }
 
     /**
@@ -115,6 +89,69 @@ class Session
     }
 
     /**
+     * @return string
+     */
+    public static function getSessionName()
+    {
+        return static::getSessionStorageFactory()->getOption('name');
+    }
+
+    /**
+     * @param Request $request
+     * @param bool    $checkRequest
+     *
+     * @return bool
+     */
+    public static function requestHasSessionId(Request $request, $checkRequest = false)
+    {
+        $sessionName = static::getSessionName();
+
+        $cookieResult = $request->cookies->has($sessionName);
+        if ($cookieResult) {
+            return true;
+        }
+
+        if ($checkRequest) {
+            $requestResult = $request->request->has($sessionName) || $request->query->has($sessionName);
+            if ($requestResult) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Request $request
+     * @param bool    $checkRequest
+     *
+     * @return string
+     */
+    public static function getSessionIdFromRequest(Request $request, $checkRequest = false)
+    {
+        if (static::requestHasSessionId($request, $checkRequest)) {
+            $sessionName = static::getSessionName();
+
+            if ($sessionId = $request->cookies->get($sessionName)) {
+                return $sessionId;
+            }
+
+            if ($checkRequest) {
+                if ($sessionId = $request->request->get($sessionName)) {
+                    return $sessionId;
+                }
+
+                if ($sessionId = $request->query->get($sessionName)) {
+                    return $sessionId;
+                }
+
+            }
+        }
+
+        throw new \RuntimeException('Failed to get session ID from request');
+    }
+
+    /**
      * Start session and get an attribute bag
      *
      * @param string $namespace
@@ -146,7 +183,7 @@ class Session
                     // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
                     if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
                         // get session work with session-id via get (since SwfUpload doesn't support cookies)
-                        $session->setId($sName);
+                        $session->setId($_REQUEST[$sName]);
                     }
                 }
             } catch (\Exception $e) {
