@@ -15,6 +15,8 @@
 namespace Pimcore\API\Bundle;
 
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
+use Pimcore\Event\BundleManager\PathsEvent;
+use Pimcore\Event\BundleManagerEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PimcoreBundleManager
@@ -25,6 +27,8 @@ class PimcoreBundleManager
     protected $container;
 
     /**
+     * We need to inject the container as the installer getter has access to the whole container.
+     *
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
@@ -57,6 +61,7 @@ class PimcoreBundleManager
 
     /**
      * @param PimcoreBundleInterface $bundle
+     *
      * @return bool
      */
     public function isInstalled(PimcoreBundleInterface $bundle)
@@ -76,7 +81,9 @@ class PimcoreBundleManager
      */
     public function getJsPaths()
     {
-        return $this->resolvePaths('js');
+        $paths = $this->resolvePaths('js');
+
+        return $this->resolveEventPaths($paths, BundleManagerEvents::JS_PATHS);
     }
 
     /**
@@ -86,7 +93,9 @@ class PimcoreBundleManager
      */
     public function getCssPaths()
     {
-        return $this->resolvePaths('css');
+        $paths = $this->resolvePaths('css');
+
+        return $this->resolveEventPaths($paths, BundleManagerEvents::CSS_PATHS);
     }
 
     /**
@@ -96,7 +105,9 @@ class PimcoreBundleManager
      */
     public function getEditmodeJsPaths()
     {
-        return $this->resolvePaths('js', 'editmode');
+        $paths = $this->resolvePaths('js', 'editmode');
+
+        return $this->resolveEventPaths($paths, BundleManagerEvents::EDITMODE_JS_PATHS);
     }
 
     /**
@@ -106,13 +117,15 @@ class PimcoreBundleManager
      */
     public function getEditmodeCssPaths()
     {
-        return $this->resolvePaths('css', 'editmode');
+        $paths = $this->resolvePaths('css', 'editmode');
+
+        return $this->resolveEventPaths($paths, BundleManagerEvents::EDITMODE_CSS_PATHS);
     }
 
     /**
      * Iterates installed bundles and fetches asset paths
      *
-     * @param $type
+     * @param      $type
      * @param null $mode
      *
      * @return array
@@ -146,5 +159,22 @@ class PimcoreBundleManager
         }
 
         return $result;
+    }
+
+    /**
+     * Emits given path event
+     *
+     * @param array  $paths
+     * @param string $eventName
+     *
+     * @return array
+     */
+    protected function resolveEventPaths(array $paths, $eventName)
+    {
+        $event = new PathsEvent($paths);
+
+        $this->container->get('event_dispatcher')->dispatch($eventName, $event);
+
+        return $event->getPaths();
     }
 }
