@@ -14,14 +14,13 @@
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Composer\Autoload\ClassLoader;
 
 /** @var \Composer\Autoload\ClassLoader */
-$composerLoader = require PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+$loader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
 
 // the following code is out of `app/autoload.php`
 // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
-AnnotationRegistry::registerLoader([$composerLoader, 'loadClass']);
+AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
 // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
 $apiDocAnnotations = [
@@ -34,7 +33,6 @@ $apiDocAnnotations = [
 foreach ($apiDocAnnotations as $apiDocAnnotation) {
     AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
 }
-
 
 // some pimcore specific generic includes
 // includes not covered by composer autoloader
@@ -51,4 +49,4 @@ if (!class_exists("Zend_Date")) {
     require_once PIMCORE_PATH . "/lib/compatibility-stubs.php";
 }
 
-return $composerLoader;
+return $loader;

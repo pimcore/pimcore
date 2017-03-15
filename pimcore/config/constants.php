@@ -24,6 +24,10 @@ if (!defined('PIMCORE_PROJECT_ROOT')) {
     define('PIMCORE_PROJECT_ROOT', $projectRoot);
 }
 
+if (!defined('PIMCORE_COMPOSER_PATH')) {
+    define('PIMCORE_COMPOSER_PATH', PIMCORE_PROJECT_ROOT . '/vendor');
+}
+
 if (!defined('PIMCORE_APP_ROOT')) {
     define('PIMCORE_APP_ROOT', PIMCORE_PROJECT_ROOT . '/app');
 }

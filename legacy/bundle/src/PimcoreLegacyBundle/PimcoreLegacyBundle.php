@@ -39,6 +39,7 @@ class PimcoreLegacyBundle extends Bundle
         $loader->register();
 
         $this->defineConstants();
+        $this->registerAutoloadPaths();
 
         if(php_sapi_name() == "cli") {
             $this->setupCliEnvironment();
@@ -98,6 +99,16 @@ class PimcoreLegacyBundle extends Bundle
              */
             define('PIMCORE_LOG_DEBUG', PIMCORE_LOG_DIRECTORY . '/debug.log');
         }
+    }
+
+    protected function registerAutoloadPaths()
+    {
+        // register website/lib and website/models as autoload paths
+        $autoloader = include PIMCORE_COMPOSER_PATH . '/autoload.php';
+        $autoloader->add('', [
+            PIMCORE_WEBSITE_PATH . '/lib',
+            PIMCORE_WEBSITE_PATH . '/models'
+        ]);
     }
 
     protected function setupIncludePaths() {
