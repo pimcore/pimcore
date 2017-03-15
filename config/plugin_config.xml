@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
-  <onlineshop_config_file>/website/var/plugins/EcommerceFramework/OnlineShopConfig.xml</onlineshop_config_file>
-</zend-config>
