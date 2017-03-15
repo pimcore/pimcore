@@ -2,6 +2,10 @@
 <html>
 <head>
 
+    <?php
+        $this->get("translate")->setDomain("admin");
+    ?>
+
 <style type="text/css">
     body {
         margin: 0;

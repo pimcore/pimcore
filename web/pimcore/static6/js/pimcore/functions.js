@@ -11,53 +11,54 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 function t(key) {
-    if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
-        return pimcore.system_i18n[key];
-    }
-    return "~" + key + "~";
-}
-
-function ts(key) {
-
     if(!key) {
         return "";
     }
 
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
+    if(!alreadyTranslated) {
+        alreadyTranslated = [];
+    }
 
     // remove plus at the start and the end to avoid double translations
     key = key.replace(/^[\+]+(.*)[\+]+$/, function(match, $1, offset, original) {
         return $1;
     });
 
-    var originalKey = key;
-    key = key.toLocaleLowerCase();
-
-    if (pimcore && pimcore.admin_i18n && pimcore.admin_i18n[key]) {
+    if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
         // add here a "zero width joiner" to detect if a key is already translated
 
-        alreadyTranslated.push(pimcore.admin_i18n[key]);
-        pimcore.globalmanager.add("translations_admin_translated_values", alreadyTranslated);
+        alreadyTranslated.push(pimcore.system_i18n[key]);
 
-        return pimcore.admin_i18n[key];
+        if(pimcore.globalmanager.exists("translations_admin_translated_values")) {
+            pimcore.globalmanager.add("translations_admin_translated_values", alreadyTranslated);
+        }
+
+        return pimcore.system_i18n[key];
     } else {
 
         // if the key contains a "zero width joiner" it is already translated
         if(in_array(key, alreadyTranslated)) {
-            return originalKey;
+            return key;
         }
 
-        if(!in_array(key, pimcore.globalmanager.get("translations_admin_added"))){
-             var missingTranslations =  pimcore.globalmanager.get("translations_admin_missing");
-             missingTranslations.push(key);
-             pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
+        if(pimcore.globalmanager.exists("translations_admin_missing")) {
+            if (!in_array(key, pimcore.globalmanager.get("translations_admin_added"))) {
+                var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
+                missingTranslations.push(key);
+                pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
+            }
         }
     }
     if(parent.pimcore.settings.debug_admin_translations){ // use parent here, because it's also used in the editmode iframe
         return "+" + key + "+";
     } else {
-        return originalKey;
+        return key;
     }
+}
+
+function ts(key) {
+    return t(key);
 }
 
 Math.sec = function(x) {

@@ -49,16 +49,22 @@ class Translate extends Helper
     /**
      * @param $key
      * @param array $parameters
+     * @param null $domain
+     * @param null $locale
      * @return string
      */
-    public function __invoke($key, $parameters = [])
+    public function __invoke($key, $parameters = [], $domain = null, $locale = null)
     {
         //compatibility for legacy views
         if (is_string($parameters) || is_numeric($parameters)) {
             $parameters = [$parameters];
         }
 
-        $term = $this->translator->trans($key, $parameters, $this->domain);
+        if(!$domain) {
+            $domain = $this->domain;
+        }
+
+        $term = $this->translator->trans($key, $parameters, $domain, $locale);
 
         return $term;
     }

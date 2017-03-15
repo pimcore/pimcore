@@ -223,31 +223,6 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/json-translations-admin")
-     * @param Request $request
-     * @return Response
-     */
-    public function jsonTranslationsAdminAction(Request $request)
-    {
-        $language = $request->get("language");
-
-        $list = new Translation\Admin\Listing();
-        $list->setOrder("asc");
-        $list->setOrderKey("key");
-        $list->load();
-
-        $translations = [];
-        foreach ($list->getTranslations() as $t) {
-            $translations[$t->getKey()] = $t->getTranslation($language);
-        }
-
-        $response = new Response("pimcore.admin_i18n = " . $this->encodeJson($translations) . ";");
-        $response->headers->set("Content-Type", "text/javascript");
-
-        return $response;
-    }
-
-    /**
      * @Route("/json-translations-system")
      * @param Request $request
      * @return Response
@@ -256,26 +231,19 @@ class MiscController extends AdminController
     {
         $language = $request->get("language");
 
-        $languageFiles = [
-            $language => Tool\Admin::getLanguageFile($language),
-            "en" => Tool\Admin::getLanguageFile("en")
-        ];
+        $translator = $this->get("translator");
+        $translator->lazyInitialize("admin", $language);
 
-        $translations = [];
-        foreach ($languageFiles as $langKey => $languageFile) {
-            if (file_exists($languageFile)) {
-                $rawTranslations = json_decode(file_get_contents($languageFile), true);
-                foreach ($rawTranslations as $entry) {
-                    if (!isset($translations[$entry["term"]])) {
-                        $translations[$entry["term"]] = $entry["definition"];
-                    }
+        $translations = $translator->getCatalogue($language)->all("admin");
+        if($language != "en") {
+            // add en as a fallback
+            $translator->lazyInitialize("admin", "en");
+            foreach($translator->getCatalogue("en")->all("admin") as $key => $value) {
+                if(!isset($translations[$key]) || empty($translations[$key])) {
+                    $translations[$key] = $value;
                 }
             }
         }
-
-        $broker = \Pimcore\API\Plugin\Broker::getInstance();
-        $pluginTranslations = $broker->getTranslations($language);
-        $translations = array_merge($pluginTranslations, $translations);
 
         $response = new Response("pimcore.system_i18n = " . $this->encodeJson($translations) . ";");
         $response->headers->set("Content-Type", "text/javascript");

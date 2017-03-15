@@ -1,6 +1,9 @@
 <?php
 /** @var $view \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine */
 $view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
+
+$this->get("translate")->setDomain("admin");
+
 ?>
 
 <div id="vcenter">

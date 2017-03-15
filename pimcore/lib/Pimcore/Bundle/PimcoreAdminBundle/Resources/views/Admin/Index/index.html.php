@@ -1,9 +1,11 @@
 <?php
 /** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view */
+/** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this */
 /** @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app */
 $app = $view->app;
 
 $language = $app->getRequest()->getLocale();
+$this->get("translate")->setDomain("admin");
 
 /** @var \Pimcore\Bundle\PimcoreAdminBundle\Security\User\User $userProxy */
 $userProxy = $app->getUser();
@@ -580,7 +582,6 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 </script>
 
 <script type="text/javascript" src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/misc/json-translations-admin?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 

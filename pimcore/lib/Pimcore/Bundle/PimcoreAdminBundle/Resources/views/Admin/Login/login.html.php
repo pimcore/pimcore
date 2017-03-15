@@ -2,6 +2,8 @@
 /** @var $view \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine */
 $view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
 
+$this->get("translate")->setDomain("admin");
+
 //detect browser
 $supported      = false;
 $browser        = new \Pimcore\Browser();

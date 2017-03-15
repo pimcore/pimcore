@@ -151,9 +151,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      * @param string $domain
      * @param string $locale
      */
-    protected function lazyInitialize($domain, $locale)
+    public function lazyInitialize($domain, $locale)
     {
-        $cacheKey = "translation_data_" . $domain . "_" . $locale;
+        $cacheKey = "translation_data_" . $domain . "_" . $locale . uniqid();
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
@@ -191,7 +191,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 $translations = $list->loadRaw();
 
                 foreach ($translations as $translation) {
-                    $data[$translation["key"]] = Tool\Text::removeLineBreaks($translation["text"]);
+                    $translationTerm = Tool\Text::removeLineBreaks($translation["text"]);
+                    if(!isset($data[$translation["key"]]) || !empty($translationTerm)) {
+                        $data[$translation["key"]] = $translationTerm;
+                    }
                 }
 
                 $data = [$domain => $data];

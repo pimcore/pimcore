@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\BruteforceProtectedControllerInterface;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
@@ -27,11 +28,34 @@ use Pimcore\Tool\Authentication;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends AdminController implements BruteforceProtectedControllerInterface
+class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
 {
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        // use browser language for login page if possible
+        $locale = "en";
+
+        $availableLocales = Tool\Admin::getLanguages();
+        foreach($event->getRequest()->getLanguages() as $userLocale) {
+            if(in_array($userLocale, $availableLocales)) {
+                $locale = $userLocale;
+                break;
+            }
+        }
+
+        $this->get("translator")->setLocale($locale);
+    }
+
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+
+    }
+
     /**
      * @Route("/login", name="pimcore_admin_login")
      * @TemplatePhp()

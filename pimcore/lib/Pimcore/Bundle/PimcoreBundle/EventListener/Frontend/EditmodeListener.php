@@ -250,7 +250,6 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
         }
 
         $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::$revision . '"></script>' . "\n";
-        $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin?language=' . $language . '&_dc=' . Version::$revision . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()
