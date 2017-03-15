@@ -14,6 +14,7 @@
 
 namespace Pimcore;
 
+use Composer\Autoload\ClassLoader;
 use Pimcore\Legacy\EventManager;
 
 class Legacy {
@@ -377,21 +378,21 @@ class Legacy {
     {
         // add plugin include paths
 
-        $autoloader = \Zend_Loader_Autoloader::getInstance();
+        /** @var ClassLoader $autoloader */
+        $autoloader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
 
         try {
             $pluginConfigs = ExtensionManager::getPluginConfigs();
             if (!empty($pluginConfigs)) {
-                $includePaths = [
-                    get_include_path()
-                ];
-
                 //adding plugin include paths and namespaces
                 if (count($pluginConfigs) > 0) {
                     foreach ($pluginConfigs as $p) {
                         if (!ExtensionManager::isEnabled("plugin", $p["plugin"]["pluginName"])) {
                             continue;
                         }
+
+                        $namespaces   = [];
+                        $includePaths = [];
 
                         if (is_array($p['plugin']['pluginIncludePaths']['path'])) {
                             foreach ($p['plugin']['pluginIncludePaths']['path'] as $path) {
@@ -402,15 +403,19 @@ class Legacy {
                         }
                         if (is_array($p['plugin']['pluginNamespaces']['namespace'])) {
                             foreach ($p['plugin']['pluginNamespaces']['namespace'] as $namespace) {
-                                $autoloader->registerNamespace($namespace);
+                                $namespaces[] = $namespace;
                             }
                         } elseif ($p['plugin']['pluginNamespaces']['namespace'] != null) {
-                            $autoloader->registerNamespace($p['plugin']['pluginNamespaces']['namespace']);
+                            $namespaces[] = $p['plugin']['pluginNamespaces']['namespace'];
                         }
-                    }
-                }
 
-                set_include_path(implode(PATH_SEPARATOR, $includePaths));
+                        // add path without prefix
+                        // TODO namespaces are ignored for now as the PSR-0 loader with empty prefix should take care of
+                        // all namespaces in the include path - can we gain performance by additionally adding namespaces?
+                        $autoloader->add('', $includePaths);
+                    }
+
+                }
 
                 /** @var \Pimcore\API\Plugin\Broker $broker */
                 $broker = static::getKernel()->getContainer()->get('pimcore.plugin_broker');
