@@ -200,7 +200,9 @@ class Tool
      */
     public static function getLanguageFlagFile($language)
     {
-        $iconBasePath = PIMCORE_PATH . '/static6/img/flags';
+        $relativePath = '/pimcore/static6/img/flags';
+        $iconWebBasePath = PIMCORE_PROJECT_ROOT . $relativePath;
+        $iconFsBasePath = PIMCORE_WEB_ROOT . $relativePath;
 
         $code = strtolower($language);
         $code = str_replace("_", "-", $code);
@@ -213,11 +215,11 @@ class Tool
             $fallbackLanguageCode = $parts[0];
         }
 
-        $languagePath = $iconBasePath . "/languages/" . $code . ".svg";
-        $countryPath = $iconBasePath . "/countries/" . $countryCode . ".svg";
-        $fallbackLanguagePath = $iconBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
+        $languagePath = $iconWebBasePath . "/languages/" . $code . ".svg";
+        $countryFsPath = $iconFsBasePath . "/countries/" . $countryCode . ".svg";
+        $fallbackFsLanguagePath = $iconFsBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
 
-        $iconPath = $iconBasePath . "/countries/_unknown.svg";
+        $iconPath = $iconWebBasePath . "/countries/_unknown.svg";
 
         $languageCountryMapping = [
             "aa" => "er", "af" => "za", "am" => "et", "as" => "in", "ast" => "es", "asa" => "tz",
@@ -239,13 +241,13 @@ class Tool
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
-            $iconPath = $iconBasePath . "/countries/" . $languageCountryMapping[$code] . ".svg";
+            $iconPath = $iconWebBasePath . "/countries/" . $languageCountryMapping[$code] . ".svg";
         } elseif (file_exists($languagePath)) {
             $iconPath = $languagePath;
-        } elseif ($countryCode && file_exists($countryPath)) {
-            $iconPath = $countryPath;
-        } elseif ($fallbackLanguageCode && file_exists($fallbackLanguagePath)) {
-            $iconPath = $fallbackLanguagePath;
+        } elseif ($countryCode && file_exists($countryFsPath)) {
+            $iconPath = $iconWebBasePath . "/countries/" . $countryCode . ".svg";
+        } elseif ($fallbackLanguageCode && file_exists($fallbackFsLanguagePath)) {
+            $iconPath = $iconWebBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
         }
 
         return $iconPath;
