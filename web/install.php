@@ -31,7 +31,8 @@
 
     // no installer if Pimcore is already installed
     if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-        header("Location: /admin/");
+        header("Location: /admin?_dc=" . microtime(true));
+        exit;
     }
 
     if(!isset($_REQUEST["profile"])) {
