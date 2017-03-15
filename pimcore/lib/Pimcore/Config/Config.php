@@ -403,4 +403,17 @@ class Config implements Countable, Iterator, ArrayAccess
     {
         return ! $this->allowModifications;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function __toString()
+    {
+        // Zend_Xml parses <tag></tag> as empty array
+        if (empty($this->data)) {
+            return '';
+        }
+
+        return is_string($this->data) ? (string)$this->data : json_encode($this->data, JSON_PRETTY_PRINT);
+    }
 }
