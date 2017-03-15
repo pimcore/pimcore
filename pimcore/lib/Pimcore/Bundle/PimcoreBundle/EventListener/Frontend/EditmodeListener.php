@@ -318,7 +318,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
                 '/pimcore/static6/js/pimcore/document/tags/embed.js',
                 '/pimcore/static6/js/pimcore/document/edit/helper.js'
             ],
-            $this->bundleManager->getJsPaths()
+            $this->bundleManager->getEditmodeJsPaths()
         );
     }
 
@@ -332,7 +332,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
                 '/pimcore/static6/css/icons.css',
                 '/pimcore/static6/css/editmode.css?_dc=' . time()
             ],
-            $this->bundleManager->getCssPaths()
+            $this->bundleManager->getEditmodeCssPaths()
         );
     }
 }
