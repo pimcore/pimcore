@@ -28,7 +28,7 @@ pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/plugin/EcommerceFramework/index/get-fields',
+                url: '/admin/ecommerceframework/index/get-fields',
                 reader: {
                     rootProperty: 'data',
                     idProperty: 'key'
@@ -52,7 +52,7 @@ pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/plugin/EcommerceFramework/index/get-all-tenants',
+                    url: '/admin/ecommerceframework/index/get-all-tenants',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'key'

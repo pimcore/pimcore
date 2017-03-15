@@ -32,7 +32,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/plugin/EcommerceFramework/index/get-fields',
+                url: '/admin/ecommerceframework/index/get-fields',
                 reader: {
                     rootProperty: 'data',
                     idProperty: 'key'
@@ -48,7 +48,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/plugin/EcommerceFramework/index/get-values-for-filter-field',
+                    url: '/admin/ecommerceframework/index/get-values-for-filter-field',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'key'
@@ -91,7 +91,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/plugin/EcommerceFramework/index/get-all-tenants',
+                    url: '/admin/ecommerceframework/index/get-all-tenants',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'key'
