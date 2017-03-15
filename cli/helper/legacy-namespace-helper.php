@@ -4,7 +4,7 @@
 $newRootNamespace = 'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\\';
 $oldRootNamespace = 'OnlineShop\Framework\\';
 
-$baseDirs = ["/home/fash/pimcore5/pimcore/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/models/"];
+$baseDirs = ["/home/fash/pimcore5/pimcore/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/lib/"];
 
 
 foreach($baseDirs as $baseDir) {
