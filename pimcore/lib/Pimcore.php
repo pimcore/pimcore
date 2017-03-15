@@ -72,11 +72,6 @@ class Pimcore
                 }
             }
 
-            $debug = self::inDebugMode();
-
-            if (!defined("PIMCORE_DEBUG")) {
-                define("PIMCORE_DEBUG", $debug);
-            }
             if (!defined("PIMCORE_DEVMODE")) {
                 define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
             }
@@ -84,12 +79,15 @@ class Pimcore
             $m = "Couldn't load system configuration";
             Logger::err($m);
 
-            if (!defined("PIMCORE_DEBUG")) {
-                define("PIMCORE_DEBUG", true);
-            }
             if (!defined("PIMCORE_DEVMODE")) {
                 define("PIMCORE_DEVMODE", false);
             }
+        }
+
+        $debug = self::inDebugMode();
+
+        if (!defined("PIMCORE_DEBUG")) {
+            define("PIMCORE_DEBUG", $debug);
         }
 
         // custom error logging in DEBUG mode & DEVMODE
@@ -112,14 +110,16 @@ class Pimcore
 
         $debug = false;
 
-        $conf = Config::getSystemConfig();
-        if ($conf) {
-            $debug = (bool)$conf->general->debug;
+        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . "/debug-mode.php";
+        if (file_exists($debugModeFile)) {
+            $conf = include $debugModeFile;
+            $debug = $conf["active"];
+
             // enable debug mode only for one IP
-            if ($conf->general->debug_ip && $conf->general->debug) {
+            if ($conf["ip"] && $debug) {
                 $debug = false;
 
-                $debugIpAddresses = explode_and_trim(',', $conf->general->debug_ip);
+                $debugIpAddresses = explode_and_trim(',', $conf["ip"]);
                 if (in_array(Tool::getClientIp(), $debugIpAddresses)) {
                     $debug = true;
                 }

@@ -395,8 +395,6 @@ class SettingsController extends AdminController
                 "defaultLanguage" => $values["general.defaultLanguage"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
-                "debug" => $values["general.debug"],
-                "debug_ip" => $values["general.debug_ip"],
                 "http_auth" => [
                     "username" => $values["general.http_auth.username"],
                     "password" => $values["general.http_auth.password"]
@@ -513,6 +511,12 @@ class SettingsController extends AdminController
 
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
+
+        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . "/debug-mode.php";
+        File::putPhpFile($debugModeFile, to_php_data_file_format([
+            "active" => $values["general.debug"],
+            "ip" => $values["general.debug_ip"],
+        ]));
 
         return $this->json(["success" => true]);
     }

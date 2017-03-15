@@ -722,11 +722,19 @@ class Config
     public static function getEnvironment()
     {
         if (null === static::$environment) {
-            // check env vars - fall back to default (prod)
-            $environment = getenv("PIMCORE_ENVIRONMENT")
-                ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT"))
-                ?: false;
 
+            $environment = false;
+
+            if(\Pimcore::inDebugMode()) {
+                $environment = "dev";
+            }
+
+            // check env vars - fall back to default (prod)
+            if (!$environment) {
+                $environment = getenv("PIMCORE_ENVIRONMENT")
+                    ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT"))
+                        ?: false;
+            }
 
             if (!$environment) {
                 $environment = getenv("SYMFONY_ENV")
