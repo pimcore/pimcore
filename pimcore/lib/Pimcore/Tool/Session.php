@@ -144,7 +144,6 @@ class Session
                 if ($sessionId = $request->query->get($sessionName)) {
                     return $sessionId;
                 }
-
             }
         }
 

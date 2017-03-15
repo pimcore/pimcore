@@ -35,7 +35,6 @@ class Connection extends \Doctrine\DBAL\Connection
      */
     public function connect()
     {
-
         $returnValue = parent::connect();
 
         if ($returnValue) {

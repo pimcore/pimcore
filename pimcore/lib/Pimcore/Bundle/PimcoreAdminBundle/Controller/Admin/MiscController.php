@@ -235,11 +235,11 @@ class MiscController extends AdminController
         $translator->lazyInitialize("admin", $language);
 
         $translations = $translator->getCatalogue($language)->all("admin");
-        if($language != "en") {
+        if ($language != "en") {
             // add en as a fallback
             $translator->lazyInitialize("admin", "en");
-            foreach($translator->getCatalogue("en")->all("admin") as $key => $value) {
-                if(!isset($translations[$key]) || empty($translations[$key])) {
+            foreach ($translator->getCatalogue("en")->all("admin") as $key => $value) {
+                if (!isset($translations[$key]) || empty($translations[$key])) {
                     $translations[$key] = $value;
                 }
             }

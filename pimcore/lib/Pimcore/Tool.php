@@ -615,9 +615,9 @@ class Tool
     /**
      * @param Container|null $container
      */
-    public static function clearSymfonyCache(Container $container = null) {
-
-        if(!$container) {
+    public static function clearSymfonyCache(Container $container = null)
+    {
+        if (!$container) {
             $container = \Pimcore::getContainer();
         }
 

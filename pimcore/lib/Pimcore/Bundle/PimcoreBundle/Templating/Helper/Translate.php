@@ -60,7 +60,7 @@ class Translate extends Helper
             $parameters = [$parameters];
         }
 
-        if(!$domain) {
+        if (!$domain) {
             $domain = $this->domain;
         }
 

@@ -192,7 +192,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                 foreach ($translations as $translation) {
                     $translationTerm = Tool\Text::removeLineBreaks($translation["text"]);
-                    if(!isset($data[$translation["key"]]) || !empty($translationTerm)) {
+                    if (!isset($data[$translation["key"]]) || !empty($translationTerm)) {
                         $data[$translation["key"]] = $translationTerm;
                     }
                 }

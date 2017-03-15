@@ -156,7 +156,7 @@ class CheckController extends Controller implements EventedControllerInterface
         ];
 
         // Locales
-        $fmt = new \IntlDateFormatter( "de" , \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, "Europe/Vienna", \IntlDateFormatter::GREGORIAN, "EEEE");
+        $fmt = new \IntlDateFormatter("de", \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, "Europe/Vienna", \IntlDateFormatter::GREGORIAN, "EEEE");
         $checksPHP[] = [
             "name" => "locales-all",
             "link" => "https://packages.debian.org/en/stable/locales-all",
@@ -215,7 +215,6 @@ class CheckController extends Controller implements EventedControllerInterface
 
                 $config = new \Doctrine\DBAL\Configuration();
                 $db = \Doctrine\DBAL\DriverManager::getConnection($dbConfig, $config);
-
             } catch (\Exception $e) {
                 $db = null;
             }
