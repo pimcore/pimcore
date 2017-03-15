@@ -511,7 +511,7 @@ class LegacyClassMappingTool {
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command\Voucher\CleanupReservationsCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupReservationsCommand',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command\Voucher\CleanupStatisticsCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupStatisticsCommand',
 
-        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory' => 'OnlineShop\Framework\OnlineShop\Framework\Factory',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory' => 'OnlineShop\Framework\Factory',
 
     ];
 

@@ -30,7 +30,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             '/bundles/pimcoreecommerceframework/js/pricing/config/item.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/objects.js',
             '/bundles/pimcoreecommerceframework/js/voucherservice/VoucherSeriesTab.js',
-            '/plugin/EcommerceFramework/config/js-config'
+            '/admin/ecommerceframework/config/js-config'
         ];
     }
 

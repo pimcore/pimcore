@@ -14,13 +14,24 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
-class EcommerceFramework_ConfigController extends Pimcore\Controller\Action\Admin
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+/**
+ * Class ConfigController
+ * @Route("/config")
+ */
+class ConfigController extends AdminController
 {
 
+    /**
+     * @Route("/js-config")
+     * @return string
+     */
     public function jsConfigAction() {
-
-        $this->disableViewAutoRender();
 
         $config = \OnlineShop\Framework\Factory::getInstance()->getConfig();
 
@@ -41,7 +52,9 @@ class EcommerceFramework_ConfigController extends Pimcore\Controller\Action\Admi
         $javascript.= "pimcore.plugin.OnlineShop.plugin.config = ";
         $javascript.= json_encode($params).";";
 
-        header('Content-Type: application/javascript');
-        echo $javascript;
+        $response = new Response($javascript);
+        $response->headers->set('Content-Type', 'application/javascript');
+
+        return $response;
     }
 }
