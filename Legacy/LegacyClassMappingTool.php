@@ -290,6 +290,54 @@ class LegacyClassMappingTool {
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherSeries' => 'OnlineShop\Framework\Model\AbstractVoucherSeries',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherTokenType' => 'OnlineShop\Framework\Model\AbstractVoucherTokenType',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup' => 'OnlineShop\Framework\Model\DefaultMockup',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Environment' => 'OnlineShop\Framework\Environment',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\AbstractData' => 'OnlineShop\Framework\Tracking\AbstractData',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\AbstractProductData' => 'OnlineShop\Framework\Tracking\AbstractProductData',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ProductAction' => 'OnlineShop\Framework\Tracking\ProductAction',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ProductImpression' => 'OnlineShop\Framework\Tracking\ProductImpression',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Transaction' => 'OnlineShop\Framework\Tracking\Transaction',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer' => 'OnlineShop\Framework\OfferTool\AbstractOffer',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOfferItem' => 'OnlineShop\Framework\OfferTool\AbstractOfferItem',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOfferToolProduct' => 'OnlineShop\Framework\OfferTool\AbstractOfferToolProduct',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\AbstractStep' => 'OnlineShop\Framework\CheckoutManager\AbstractStep',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\DeliveryAddress' => 'OnlineShop\Framework\CheckoutManager\DeliveryAddress',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\DeliveryDate' => 'OnlineShop\Framework\CheckoutManager\DeliveryDate',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule' => 'OnlineShop\Framework\PricingManager\Rule',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Dao' => 'OnlineShop\Framework\PricingManager\Rule\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Listing' => 'OnlineShop\Framework\PricingManager\Rule\Listing',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Listing\Dao' => 'OnlineShop\Framework\PricingManager\Rule\Listing\Dao',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation' => 'OnlineShop\Framework\VoucherService\Reservation',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation\Dao' => 'OnlineShop\Framework\VoucherService\Reservation\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic' => 'OnlineShop\Framework\VoucherService\Statistic',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic\Dao' => 'OnlineShop\Framework\VoucherService\Statistic\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token' => 'OnlineShop\Framework\VoucherService\Token',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao' => 'OnlineShop\Framework\VoucherService\Token\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Listing' => 'OnlineShop\Framework\VoucherService\Token\Listing',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Listing\Dao' => 'OnlineShop\Framework\VoucherService\Token\Listing\Dao',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\AbstractCart' => 'OnlineShop\Framework\CartManager\AbstractCart',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\AbstractCartCheckoutData' => 'OnlineShop\Framework\CartManager\AbstractCartCheckoutData',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\AbstractCartItem' => 'OnlineShop\Framework\CartManager\AbstractCartItem',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart' => 'OnlineShop\Framework\CartManager\Cart',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData' => 'OnlineShop\Framework\CartManager\CartCheckoutData',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem' => 'OnlineShop\Framework\CartManager\CartItem',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCart' => 'OnlineShop\Framework\CartManager\SessionCart',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCartCheckoutData' => 'OnlineShop\Framework\CartManager\SessionCartCheckoutData',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCartItem' => 'OnlineShop\Framework\CartManager\SessionCartItem',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart\Dao' => 'OnlineShop\Framework\CartManager\Cart\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart\Listing' => 'OnlineShop\Framework\CartManager\Cart\Listing',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart\Listing\Dao' => 'OnlineShop\Framework\CartManager\Cart\Listing\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao' => 'OnlineShop\Framework\CartManager\CartCheckoutData\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing' => 'OnlineShop\Framework\CartManager\CartCheckoutData\Listing',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing\Dao' => 'OnlineShop\Framework\CartManager\CartCheckoutData\Listing\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem\Dao' => 'OnlineShop\Framework\CartManager\CartItem\Dao',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem\Listing' => 'OnlineShop\Framework\CartManager\CartItem\Listing',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem\Listing\Dao' => 'OnlineShop\Framework\CartManager\CartItem\Listing\Dao',
 
     ];
 
@@ -297,6 +345,17 @@ class LegacyClassMappingTool {
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable' => 'OnlineShop\Framework\Model\ICheckoutable',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable' => 'OnlineShop\Framework\Model\IIndexable',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct' => 'OnlineShop\Framework\Model\IProduct',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IEnvironment' => 'OnlineShop\Framework\IEnvironment',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IComponent' => 'OnlineShop\Framework\IComponent',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep' => 'OnlineShop\Framework\CheckoutManager\ICheckoutStep',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule' => 'OnlineShop\Framework\PricingManager\IRule',
+
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart' => 'OnlineShop\Framework\CartManager\ICart',
+        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem' => 'OnlineShop\Framework\CartManager\ICartItem',
+
     ];
 
 
@@ -312,7 +371,7 @@ class LegacyClassMappingTool {
 
 
         foreach(self::$symfonyMappingInterfaces as $newClass => $oldClass) {
-            @class_alias($newClass, $oldClass);
+            class_alias($newClass, $oldClass);
         }
 
         foreach(self::$symfonyMappingClasses as $newClass => $oldClass) {
