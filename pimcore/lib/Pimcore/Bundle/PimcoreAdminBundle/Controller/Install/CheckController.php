@@ -64,7 +64,7 @@ class CheckController extends Controller implements EventedControllerInterface
             "state" => @constant("PDO::MYSQL_ATTR_FOUND_ROWS") ? "ok" : "error"
         ];
 
-        // pdo_mysql
+        // Mysqli
         $checksPHP[] = [
             "name" => "Mysqli",
             "link" => "http://www.php.net/mysqli",
@@ -146,6 +146,21 @@ class CheckController extends Controller implements EventedControllerInterface
             "name" => "OpenSSL",
             "link" => "http://www.php.net/openssl",
             "state" => function_exists("openssl_open") ? "ok" : "error"
+        ];
+
+        // Intl
+        $checksPHP[] = [
+            "name" => "Intl",
+            "link" => "http://www.php.net/intl",
+            "state" => class_exists("Locale") ? "ok" : "error"
+        ];
+
+        // Locales
+        $fmt = new \IntlDateFormatter( "de" , \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, "Europe/Vienna", \IntlDateFormatter::GREGORIAN, "EEEE");
+        $checksPHP[] = [
+            "name" => "locales-all",
+            "link" => "https://packages.debian.org/en/stable/locales-all",
+            "state" => ($fmt->format(new \DateTime("next tuesday")) == "Dienstag") ? "ok" : "warning"
         ];
 
         // Imagick
