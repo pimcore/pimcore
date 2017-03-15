@@ -26,7 +26,7 @@ class Service
      */
     public static function getDeleteLogFile()
     {
-        return PIMCORE_WEBDAV_TEMP . "/delete.dat";
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/webdav-delete.dat";
     }
 
     /**

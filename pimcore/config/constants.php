@@ -79,9 +79,6 @@ if (!defined('PIMCORE_ASSET_DIRECTORY')) {
 if (!defined('PIMCORE_VERSION_DIRECTORY')) {
     define('PIMCORE_VERSION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/versions');
 }
-if (!defined('PIMCORE_WEBDAV_TEMP')) {
-    define('PIMCORE_WEBDAV_TEMP', PIMCORE_PRIVATE_VAR . '/webdav');
-}
 if (!defined('PIMCORE_LOG_DIRECTORY')) {
     define('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/logs');
 }
