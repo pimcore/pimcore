@@ -134,20 +134,18 @@ class IndexController extends AdminController {
 
         $fields = array();
 
-        $translator = \Pimcore::getContainer()->get("translator");
-
         if($request->get("add_empty") == "true") {
-            $fields[" "] = array("key" => "", "name" => "(" . $translator->trans("empty", [], "messages") . ")");
+            $fields[" "] = array("key" => "", "name" => "(" . $this->trans("empty", [], "messages") . ")");
         }
 
         foreach($indexColumns as $c) {
-            $fields[$c] = array("key" => $c, "name" => $translator->trans($c, [], "admin"));
+            $fields[$c] = array("key" => $c, "name" => $this->trans($c));
         }
 
         if($request->get("specific_price_field") == "true") {
             $fields[IProductList::ORDERKEY_PRICE] = [
                 "key" => IProductList::ORDERKEY_PRICE,
-                "name" => $translator->trans(IProductList::ORDERKEY_PRICE, [], "admin")
+                "name" => $this->trans(IProductList::ORDERKEY_PRICE)
             ];
         }
 
@@ -161,13 +159,11 @@ class IndexController extends AdminController {
      * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
      */
     public function getAllTenantsAction() {
-        $translator = \Pimcore::getContainer()->get("translator");
-
         $tenants = Factory::getInstance()->getAllTenants();
-        $data = array(array("key" => "", "name" => $translator->trans("default", [], "admin")));
+        $data = array(array("key" => "", "name" => $this->trans("default")));
         if($tenants) {
             foreach($tenants as $tenant) {
-                $data[] = array("key" => $tenant, "name" => $translator->trans($tenant, [], "admin"));
+                $data[] = array("key" => $tenant, "name" => $this->trans($tenant));
             }
         }
         return $this->json(array("data" => $data));
