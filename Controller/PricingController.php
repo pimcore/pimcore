@@ -14,39 +14,55 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
-class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Admin
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
+
+/**
+ * Class ConfigController
+ * @Route("/pricing")
+ */
+class PricingController extends AdminController implements EventedControllerInterface
 {
-    /**
-     * init pricing config system
-     */
-    public function init()
-    {
-        parent::init();
 
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
         // permission check
         $key = 'plugin_onlineshop_pricing_rules';
         $access = $this->getUser()->getPermission( $key );
         if(!$access)
         {
-            throw new Exception('this function requires "plugin_onlineshop_pricing_rules" permission!');
+            throw new \Exception('this function requires "plugin_onlineshop_pricing_rules" permission!');
         }
+
     }
 
 
     /**
+     * @Route("/list")
      * definierte preisregeln ausgeben
      */
     public function listAction()
     {
-        $rules = new \OnlineShop\Framework\PricingManager\Rule\Listing();
+        $rules = new Rule\Listing();
         $rules->setOrderKey('prio');
         $rules->setOrder('ASC');
 
         $json = array();
         foreach($rules->load() as $rule)
         {
-            /* @var  \OnlineShop\Framework\PricingManager\IRule $rule */
+            /* @var  IRule $rule */
 
             if($rule->getActive())
             {
@@ -71,20 +87,25 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
             );
         }
 
-        $this->_helper->json($json);
+        return $this->json($json);
     }
 
 
     /**
+     * @Route("/get")
+     * @param Request $request
      * preisregel details als json ausgeben
      */
-    public function getAction()
+    public function getAction(Request $request)
     {
-        $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$this->getParam('id') );
+        $rule = Rule::getById((int) $request->get('id'));
         if($rule)
         {
             // get data
             $condition = $rule->getCondition();
+            $localizedLabel = [];
+            $localizedDescription = [];
+
             foreach(\Pimcore\Tool::getValidLanguages() as $lang)
             {
                 $localizedLabel[ $lang ] = $rule->getLabel( $lang );
@@ -108,15 +129,17 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
                 $json['actions'][] = json_decode($action->toJSON());
             }
 
-            $this->_helper->json( $json );
+            return $this->json( $json );
         }
     }
 
 
     /**
+     * @Route("/add")
+     * @param Request $request
      * add new rule
      */
-    public function addAction()
+    public function addAction(Request $request)
     {
         // send json respone
         $return = array(
@@ -127,27 +150,29 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
         // save rule
         try
         {
-            $rule = new \OnlineShop\Framework\PricingManager\Rule();
-            $rule->setName( $this->getParam('name') );
+            $rule = new Rule();
+            $rule->setName( $request->get('name') );
             $rule->save();
 
             $return['success'] = true;
             $return['id'] = $rule->getId();
         }
-        catch(Exception $e)
+        catch(\Exception $e)
         {
             $return['message'] = $e->getMessage();
         }
 
         // send respone
-        $this->_helper->json($return);
+        return $this->json($return);
     }
 
 
     /**
+     * @Route("/delete")
+     * @param Request $request
      * delete exiting rule
      */
-    public function deleteAction()
+    public function deleteAction(Request $request)
     {
         // send json respone
         $return = array(
@@ -158,24 +183,26 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
         // delete rule
         try
         {
-            $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$this->getParam('id') );
+            $rule = Rule::getById( (int) $request->get('id') );
             $rule->delete();
             $return['success'] = true;
         }
-        catch(Exception $e)
+        catch(\Exception $e)
         {
             $return['message'] = $e->getMessage();
         }
 
         // send respone
-        $this->_helper->json($return);
+        return $this->json($return);
     }
 
 
     /**
+     * @Route("/save")
+     * @param Request $request
      * save rule config
      */
-    public function saveAction()
+    public function saveAction(Request $request)
     {
         // send json respone
         $return = array(
@@ -186,8 +213,8 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
         // save rule config
         try
         {
-            $data = json_decode($this->getParam('data'));
-            $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$this->getParam('id') );
+            $data = json_decode($request->get('data'));
+            $rule = Rule::getById( (int) $request->get('id') );
 
             // apply basic settings
             $rule->setBehavior( $data->settings->behavior )
@@ -202,7 +229,7 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
 
 
             // create root condition
-            $rootContainer = new stdClass();
+            $rootContainer = new \stdClass();
             $rootContainer->parent = null;
             $rootContainer->operator = null;
             $rootContainer->type = 'Bracket';
@@ -215,7 +242,7 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
                 // handle brackets
                 if($settings->bracketLeft == true)
                 {
-                    $newContainer = new stdClass();
+                    $newContainer = new \stdClass();
                     $newContainer->parent = $currentContainer;
                     $newContainer->type = 'Bracket';
                     $newContainer->conditions = array();
@@ -239,7 +266,7 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
             }
 
             // create rule condition
-            $condition = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getCondition( $rootContainer->type );
+            $condition = Factory::getInstance()->getPricingManager()->getCondition( $rootContainer->type );
             $condition->fromJSON( json_encode($rootContainer) );
             $rule->setCondition( $condition );
 
@@ -248,7 +275,7 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
             $arrActions = array();
             foreach($data->actions as $setting)
             {
-                $action = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getAction( $setting->type );
+                $action = Factory::getInstance()->getPricingManager()->getAction( $setting->type );
                 $action->fromJSON( json_encode($setting) );
                 $arrActions[] = $action;
             }
@@ -261,17 +288,21 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
             $return['success'] = true;
             $return['id'] = $rule->getId();
         }
-        catch(Exception $e)
+        catch(\Exception $e)
         {
             $return['message'] = $e->getMessage();
         }
 
         // send respone
-        $this->_helper->json($return);
+        return $this->json($return);
     }
 
 
-    public function saveOrderAction()
+    /**
+     * @Route("/save-order")
+     * @param Request $request
+     */
+    public function saveOrderAction(Request $request)
     {
         // send json respone
         $return = array(
@@ -280,24 +311,25 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
         );
 
         // save order
-        $rules = json_decode($this->getParam('rules'));
+        $rules = json_decode($request->get('rules'));
         foreach($rules as $id => $prio)
         {
-            $rule = \OnlineShop\Framework\PricingManager\Rule::getById( (int)$id );
+            $rule = Rule::getById( (int)$id );
             if($rule)
                 $rule->setPrio( (int)$prio )->save();
         }
         $return['success'] = true;
 
         // send respone
-        $this->_helper->json($return);
+        return $this->json($return);
     }
 
 
     /**
-     *
+     * @Route("/get-config")
+     * @param Request $request
      */
-    public function getConfigAction()
+    public function getConfigAction(Request $request)
     {
         // init
         $json = array(
@@ -306,7 +338,7 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
         );
 
         // get config
-        $pricingConfig = \OnlineShop\Framework\Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
+        $pricingConfig = Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
         if($pricingConfig)
         {
             $list = $pricingConfig->get('config')->get( 'condition' );
@@ -323,91 +355,15 @@ class EcommerceFramework_PricingController extends Pimcore\Controller\Action\Adm
         }
 
         // print
-        $this->_helper->json($json);
-    }
-
-
-
-    public function testAction()
-    {
-//        $dateRange = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getCondition('DateRange');
-//        $action = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->getAction('Gift');
-//        var_dump($dateRange,$action);exit;
-
-
-        // test normal
-//        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->createCart(array('name' => 'pricingTest'));
-//        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCart(2);
-//
-//
-//        $pricingManager = \OnlineShop\Framework\Factory::getInstance()->getPricingManager();
-//        $pricingManager->applyCartRules( $cart );
-
-
-        $env = new \OnlineShop\Framework\PricingManager\Environment;
-//
-//        // test daterange
-//        $dateRange = new \OnlineShop\Framework\PricingManager\Condition\DateRange();
-//        $dateRange->setStarting(new Zend_Date('2013-02-03'));
-//        $dateRange->setEnding(new Zend_Date('2013-07-04'));
-//        var_dump($dateRange->check($env)); exit;
-//
-//
-//        // test action
-//        $giftAction = new \OnlineShop\Framework\PricingManager\Action\Gift();
-//        $giftAction->setProduct( \OnlineShop\Framework\Model\AbstractProduct::getById(18149) );
-//
-//        // test rule
-//        $priceRule = new \OnlineShop\Framework\PricingManager\Rule();
-//        $priceRule->addCondition($dateRange);
-//        $priceRule->setAction($giftAction);
-
-//        var_dump($priceRule->check($env)); exit;
-
-        // test conditionlist OR
-        $dateRange = new \OnlineShop\Framework\PricingManager\Condition\DateRange();   // true
-        $dateRange->setStarting(new \Zend_Date('2013-02-03'));
-        $dateRange->setEnding(new \Zend_Date('2013-20-04'));
-        $dateRange2 = new \OnlineShop\Framework\PricingManager\Condition\DateRange();  // false
-        $dateRange2->setStarting(new \Zend_Date('2012-02-03'));
-        $dateRange2->setEnding(new \Zend_Date('2012-30-04'));
-
-        $bracket = new \OnlineShop\Framework\PricingManager\Condition\Bracket();
-        $bracket->addCondition($dateRange, null);
-        $bracket->addCondition($dateRange2, \OnlineShop\Framework\PricingManager\Condition\IBracket::OPERATOR_AND_NOT); // true
-
-
-
-        // bracket test
-        $dateRange3 = new \OnlineShop\Framework\PricingManager\Condition\DateRange();  // false
-        $dateRange3->setStarting(new \Zend_Date('2012-02-03'));
-        $dateRange3->setEnding(new \Zend_Date('2012-30-04'));
-
-        $bracket2 = new \OnlineShop\Framework\PricingManager\Condition\Bracket();
-        $bracket2->addCondition($bracket, null);
-        $bracket2->addCondition($dateRange3, \OnlineShop\Framework\PricingManager\Condition\IBracket::OPERATOR_AND_NOT);
-
-        # var_dump($bracket2->check($env) );die();
-
-
-        echo $bracket2->toJSON();
-        exit;
+        return $this->json($json);
     }
 
 
     /**
-     * cart rule test
+     * @param FilterResponseEvent $event
      */
-    public function testCartAction()
+    public function onKernelResponse(FilterResponseEvent $event)
     {
-        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->createCart(array('name' => 'pricingTest'));
-
-
-        $cart = \OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCart(2);
-
-        $pricingManager = \OnlineShop\Framework\Factory::getInstance()->getPricingManager();
-        $pricingManager->applyCartRules( $cart );
-
-        exit;
+        // nothing to do
     }
 }

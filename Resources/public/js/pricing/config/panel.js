@@ -49,7 +49,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
         // load defined conditions & actions
         var _this = this;
         Ext.Ajax.request({
-            url: "/plugin/EcommerceFramework/Pricing/get-config",
+            url: "/admin/ecommerceframework/pricing/get-config",
             method: "GET",
             success: function(result){
                 var config = Ext.decode(result.responseText);
@@ -141,7 +141,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
 
                     // save order
                     Ext.Ajax.request({
-                        url: "/plugin/EcommerceFramework/Pricing/save-order",
+                        url: "/admin/ecommerceframework/pricing/save-order",
                         params: {
                             rules: Ext.encode(rules)
                         },
@@ -159,7 +159,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/plugin/EcommerceFramework/Pricing/list",
+                    url: "/admin/ecommerceframework/pricing/list",
                     reader: {
                         type: 'json'
                     }
@@ -248,7 +248,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 2 && regresult == value) {
             Ext.Ajax.request({
-                url: "/plugin/EcommerceFramework/Pricing/add",
+                url: "/admin/ecommerceframework/pricing/add",
                 params: {
                     name: value,
                     documentId: (this.page ? this.page.id : null)
@@ -285,7 +285,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
      */
     deleteRule: function (tree, record) {
         Ext.Ajax.request({
-            url: "/plugin/EcommerceFramework/Pricing/delete",
+            url: "/admin/ecommerceframework/pricing/delete",
             params: {
                 id: record.id
             },
@@ -313,7 +313,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
             } else {
                 // load defined rules
                 Ext.Ajax.request({
-                    url: "/plugin/EcommerceFramework/Pricing/get",
+                    url: "/admin/ecommerceframework/pricing/get",
                     params: {
                         id: record
                     },
