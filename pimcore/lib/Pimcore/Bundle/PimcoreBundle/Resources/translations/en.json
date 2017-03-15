@@ -273,7 +273,7 @@
     },
     {
         "term": "too_many_children_for_recyclebin",
-        "definition": "This element contains too many children to be moved to the recyclebin."
+        "definition": "This element contains too many children to be moved to the recycle bin."
     },
     {
         "term": "please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail",
