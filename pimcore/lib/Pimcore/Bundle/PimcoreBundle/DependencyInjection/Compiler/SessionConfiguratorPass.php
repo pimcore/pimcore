@@ -30,6 +30,10 @@ class SessionConfiguratorPass implements CompilerPassInterface
             return;
         }
 
+        if (!$container->hasDefinition('pimcore.session.configurator')) {
+            return;
+        }
+
         // configure the core session through our configurator service (mainly to register custom attribute bags)
         $session = $container->getDefinition('session');
 
@@ -39,5 +43,22 @@ class SessionConfiguratorPass implements CompilerPassInterface
         }
 
         $session->setConfigurator([new Reference('pimcore.session.configurator'), 'configure']);
+
+        $this->addTaggedConfigurators($container);
+    }
+
+    /**
+     * Finds all configurators tagged as pimcore.session.configurator and adds them to the configurator collection
+     *
+     * @param ContainerBuilder $container
+     */
+    protected function addTaggedConfigurators(ContainerBuilder $container)
+    {
+        $configurator   = $container->getDefinition('pimcore.session.configurator');
+        $taggedServices = $container->findTaggedServiceIds('pimcore.session.configurator');
+
+        foreach ($taggedServices as $id => $tags) {
+            $configurator->addMethodCall('addConfigurator', [new Reference($id)]);
+        }
     }
 }
