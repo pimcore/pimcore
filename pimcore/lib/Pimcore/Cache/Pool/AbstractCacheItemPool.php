@@ -111,6 +111,8 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      */
     public function createCacheItem($key, $value = null, array $tags = [], $isHit = false)
     {
+        CacheItem::validateKey($key);
+
         $cacheItem = new CacheItem($key, $value, $isHit, $tags, $this->defaultLifeTime);
 
         return $cacheItem;

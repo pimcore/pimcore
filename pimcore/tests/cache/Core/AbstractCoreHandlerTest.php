@@ -2,12 +2,14 @@
 
 namespace Pimcore\Tests\Cache\Core;
 
+use Cache\IntegrationTests\CachePoolTest;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\WriteLockInterface;
 use Pimcore\Cache\Pool\AbstractCacheItemPool;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Tests\Cache\Traits\LogHandlerTrait;
@@ -190,6 +192,32 @@ abstract class AbstractCoreHandlerTest extends TestCase
     public function testCacheIsEnabledByDefault()
     {
         $this->assertTrue($this->handler->isEnabled());
+    }
+
+    /**
+     * Invalid keys is defined on abstract CachePool test
+     *
+     * @dataProvider invalidKeys
+     * @expectedException InvalidArgumentException
+     *
+     * @param $key
+     */
+    public function testExceptionOnInvalidItemKeySave($key)
+    {
+        $this->handler->save($key, 'foo');
+    }
+
+    /**
+     * Invalid keys is defined on abstract CachePool test
+     *
+     * @dataProvider invalidKeys
+     * @expectedException InvalidArgumentException
+     *
+     * @param $key
+     */
+    public function testExceptionOnInvalidItemKeyRemove($key)
+    {
+        $this->handler->remove($key);
     }
 
     public function testLoadReturnsFalseOnMiss()
@@ -691,5 +719,33 @@ abstract class AbstractCoreHandlerTest extends TestCase
         $this->handler->shutdown();
 
         $this->assertFalse($this->writeLock->hasLock());
+    }
+
+    /**
+     * Data provider for invalid keys.
+     *
+     * @return array
+     */
+    public static function invalidKeys()
+    {
+        return [
+            [true],
+            [false],
+            [null],
+            [2],
+            [2.5],
+            ['{str'],
+            ['rand{'],
+            ['rand{str'],
+            ['rand}str'],
+            ['rand(str'],
+            ['rand)str'],
+            ['rand/str'],
+            ['rand\\str'],
+            ['rand@str'],
+            ['rand:str'],
+            [new \stdClass()],
+            [['array']],
+        ];
     }
 }

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Cache\Core;
 
+use Pimcore\Cache\Core\Exception\InvalidArgumentException;
+use Pimcore\Cache\Pool\CacheItem;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
@@ -298,6 +300,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
+        CacheItem::validateKey($key);
+
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Not saving object %s to cache (deactivated)', $key), ['key' => $key]);
 
@@ -570,6 +574,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function remove($key)
     {
+        CacheItem::validateKey($key);
+
         $this->writeLock->lock();
 
         return $this->itemPool->deleteItem($key);
