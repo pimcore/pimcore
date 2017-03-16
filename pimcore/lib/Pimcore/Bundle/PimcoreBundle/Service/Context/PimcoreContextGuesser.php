@@ -32,6 +32,4 @@ class PimcoreContextGuesser
     {
         $this->requestMatcherFactory = $factory;
     }
-
-
 }

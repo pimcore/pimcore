@@ -41,8 +41,7 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
     public function __construct(
         ClassMapLoaderInterface $classMapLoader = null,
         PrefixLoaderInterface $prefixLoader = null
-    )
-    {
+    ) {
         if (null === $classMapLoader) {
             $classMapLoader = new ClassMapLoader();
         }

@@ -65,9 +65,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $event->setResponse($exception->getResponse());
         }
 
-        if($this->contextResolver->getPimcoreContext() == PimcoreContextResolver::CONTEXT_DEFAULT) {
-            if(!\Pimcore::inDebugMode()) {
-
+        if ($this->contextResolver->getPimcoreContext() == PimcoreContextResolver::CONTEXT_DEFAULT) {
+            if (!\Pimcore::inDebugMode()) {
                 $errorPath = Config::getSystemConfig()->documents->error_pages->default;
 
                 if (Site::isSiteRequest()) {

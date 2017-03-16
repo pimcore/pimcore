@@ -73,7 +73,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      */
     public function getPimcoreContext(Request $request = null)
     {
-        if(!$this->pimcoreContext) {
+        if (!$this->pimcoreContext) {
             if (null === $request) {
                 // per default the pimcore context always depends on the master request
                 $request = $this->getMasterRequest();

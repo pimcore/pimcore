@@ -722,10 +722,9 @@ class Config
     public static function getEnvironment()
     {
         if (null === static::$environment) {
-
             $environment = false;
 
-            if(\Pimcore::inDebugMode()) {
+            if (\Pimcore::inDebugMode()) {
                 $environment = "dev";
             }
 
