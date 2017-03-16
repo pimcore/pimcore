@@ -95,10 +95,6 @@ services:
     pimcore.service.request_matcher_factory:
         class: Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory
 
-    pimcore.service.context.pimcore_context_guesser:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Context\PimcoreContextGuesser
-        arguments: ['@pimcore.service.request_matcher_factory']
-
     #
     # REQUEST RESOLVERS
     #
@@ -107,7 +103,7 @@ services:
 
     pimcore.service.request.pimcore_context_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver
-        arguments: ['@request_stack', '@pimcore.service.context.pimcore_context_guesser']
+        arguments: ['@request_stack', '@pimcore.service.request_matcher_factory']
 
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver

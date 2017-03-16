@@ -38,9 +38,21 @@ abstract class AbstractRequestResolver
     protected function getCurrentRequest()
     {
         if (!$this->requestStack->getCurrentRequest()) {
-            throw new \LogicException('A Request must be available.');
+            throw new \LogicException('A request must be available.');
         }
 
         return $this->requestStack->getCurrentRequest();
+    }
+
+    /**
+     * @return Request
+     */
+    protected function getMasterRequest()
+    {
+        if (!$this->requestStack->getMasterRequest()) {
+            throw new \LogicException('A master request must be available.');
+        }
+
+        return $this->requestStack->getMasterRequest();
     }
 }

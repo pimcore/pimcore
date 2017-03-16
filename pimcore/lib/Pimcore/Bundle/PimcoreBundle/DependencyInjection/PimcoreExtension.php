@@ -53,7 +53,6 @@ class PimcoreExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('event_listeners.yml');
-        $loader->load('context_initializers.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
 
@@ -145,7 +144,7 @@ class PimcoreExtension extends Extension
      */
     protected function addContextRoutes(ContainerBuilder $container, array $config)
     {
-        $guesser = $container->getDefinition('pimcore.service.context.pimcore_context_guesser');
+        $guesser = $container->getDefinition('pimcore.service.request.pimcore_context_resolver');
 
         foreach ($config as $context => $contextConfig) {
             $guesser->addMethodCall('addContextRoutes', [$context, $contextConfig['routes']]);

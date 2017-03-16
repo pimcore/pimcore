@@ -11,7 +11,7 @@ services:
 
     pimcore.event_listener.pimcore_context:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\PimcoreContextListener
-        arguments: ['@pimcore.service.request.pimcore_context_resolver', '@request_stack', '@pimcore.context_initializer']
+        arguments: ['@pimcore.service.request.pimcore_context_resolver', '@request_stack']
         calls:
             - [setLogger, ['@logger']]
         tags:

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Context\Initializer\ContextInitializerInterface;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -24,6 +23,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
 
 class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
@@ -40,23 +41,15 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     protected $requestStack;
 
     /**
-     * @var ContextInitializerInterface
-     */
-    protected $contextInitializer;
-
-    /**
      * @param PimcoreContextResolver $resolver
      * @param RequestStack $requestStack
-     * @param ContextInitializerInterface $contextInitializer
      */
     public function __construct(
         PimcoreContextResolver $resolver,
-        RequestStack $requestStack,
-        ContextInitializerInterface $contextInitializer
+        RequestStack $requestStack
     ) {
         $this->resolver           = $resolver;
         $this->requestStack       = $requestStack;
-        $this->contextInitializer = $contextInitializer;
     }
 
     /**
@@ -89,29 +82,29 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
                 ]);
             }
 
-        } else {
-            // copy master pimcore context to sub-request if available
-            if (!$this->resolver->getPimcoreContext($request)) {
-                if ($masterContext = $this->resolver->getPimcoreContext($this->requestStack->getMasterRequest())) {
-                    $this->resolver->setPimcoreContext($request, $masterContext);
-                }
-            }
+            $this->initializeContext($context);
         }
-
-        $this->initializeContext($request, $event->getRequestType());
     }
 
     /**
-     * Run context specific initializers
+     * Do context specific initialization
      *
-     * @param Request $request
-     * @param int $requestType
+     * @param $context
      */
-    protected function initializeContext(Request $request, $requestType = KernelInterface::MASTER_REQUEST)
+    protected function initializeContext($context)
     {
-        $context = $this->resolver->getPimcoreContext($request);
-        if ($context) {
-            $this->contextInitializer->initialize($request, $context, $requestType);
+        if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
+            \Pimcore::setAdminMode();
+            Document::setHideUnpublished(false);
+            Object\AbstractObject::setHideUnpublished(false);
+            Object\AbstractObject::setGetInheritedValues(false);
+            Object\Localizedfield::setGetFallbackValues(false);
+        } else {
+            \Pimcore::unsetAdminMode();
+            Document::setHideUnpublished(true);
+            Object\AbstractObject::setHideUnpublished(true);
+            Object\AbstractObject::setGetInheritedValues(true);
+            Object\Localizedfield::setGetFallbackValues(true);
         }
     }
 }

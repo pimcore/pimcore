@@ -279,7 +279,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             $response->headers->set("X-Pimcore-Output-Cache-Disable-Reason", $this->disableReason, true);
         }
 
-        if ($this->enabled && $response->getStatusCode() == 200) {
+        if ($this->enabled && $response->getStatusCode() == 200 && $this->defaultCacheKey) {
             try {
                 if ($this->lifetime && $this->addExpireHeader) {
                     // add cache control for proxies and http-caches like varnish, ...

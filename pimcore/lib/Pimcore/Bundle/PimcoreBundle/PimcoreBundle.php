@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\PimcoreBundle;
 
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\AreabrickPass;
-use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\ContextInitializerPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PimcoreContextResolverAwarePass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
@@ -32,7 +31,6 @@ class PimcoreBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new ContextInitializerPass());
         $container->addCompilerPass(new PimcoreContextResolverAwarePass());
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());

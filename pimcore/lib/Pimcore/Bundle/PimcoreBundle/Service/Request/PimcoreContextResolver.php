@@ -15,7 +15,9 @@
 namespace Pimcore\Bundle\PimcoreBundle\Service\Request;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Context\PimcoreContextGuesser;
+use Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -24,11 +26,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class PimcoreContextResolver extends AbstractRequestResolver
 {
-    const ATTRIBUTE_PIMCORE_CONTEXT = '_pimcore_context';
-
     const CONTEXT_ADMIN = 'admin';
     const CONTEXT_WEBSERVICE = 'webservice';
     const CONTEXT_DEFAULT = 'default';
+
+    /**
+     * @var string
+     */
+    protected $pimcoreContext;
 
     /**
      * @var PimcoreContextGuesser
@@ -36,11 +41,26 @@ class PimcoreContextResolver extends AbstractRequestResolver
     protected $guesser;
 
     /**
+     * @var array
+     */
+    protected $routes = [];
+
+    /**
+     * @var RequestMatcherInterface[]
+     */
+    protected $matchers;
+
+    /**
+     * @var RequestMatcherFactory
+     */
+    protected $requestMatcherFactory;
+
+    /**
      * @inheritDoc
      */
-    public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
+    public function __construct(RequestStack $requestStack, RequestMatcherFactory $requestMatcherFactory)
     {
-        $this->guesser = $guesser;
+        $this->requestMatcherFactory = $requestMatcherFactory;
 
         parent::__construct($requestStack);
     }
@@ -53,28 +73,71 @@ class PimcoreContextResolver extends AbstractRequestResolver
      */
     public function getPimcoreContext(Request $request = null)
     {
-        if (null === $request) {
-            $request = $this->getCurrentRequest();
+        if(!$this->pimcoreContext) {
+            if (null === $request) {
+                // per default the pimcore context always depends on the master request
+                $request = $this->getMasterRequest();
+            }
+
+            $context = $this->guess($request);
+            $this->pimcoreContext = $context;
         }
 
-        $context = $request->attributes->get(static::ATTRIBUTE_PIMCORE_CONTEXT);
-
-        if(!$context) {
-            $context = $this->guesser->guess($request);
-            $this->setPimcoreContext($request, $context);
-        }
-
-        return $context;
+        return $this->pimcoreContext;
     }
 
     /**
-     * Set the pimcore context on the request
-     *
-     * @param Request $request
      * @param string $context
      */
-    public function setPimcoreContext(Request $request, $context)
+    public function setPimcoreContext($context)
     {
-        $request->attributes->set(static::ATTRIBUTE_PIMCORE_CONTEXT, $context);
+        $this->pimcoreContext = $context;
+    }
+
+    /**
+     * Add context specific routes
+     *
+     * @param string $context
+     * @param array $routes
+     */
+    public function addContextRoutes($context, array $routes)
+    {
+        $this->routes[$context] = $routes;
+    }
+
+    /**
+     * Guess the pimcore context
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function guess(Request $request)
+    {
+        /** @var RequestMatcherInterface[] $matchers */
+        foreach ($this->getMatchers() as $context => $matchers) {
+            foreach ($matchers as $matcher) {
+                if ($matcher->matches($request)) {
+                    return $context;
+                }
+            }
+        }
+
+        return PimcoreContextResolver::CONTEXT_DEFAULT;
+    }
+
+    /**
+     * Get request matchers to query admin pimcore context from
+     *
+     * @return RequestMatcherInterface[]
+     */
+    protected function getMatchers()
+    {
+        if (null === $this->matchers) {
+            foreach ($this->routes as $context => $routes) {
+                $this->matchers[$context] = $this->requestMatcherFactory->buildRequestMatchers($routes);
+            }
+        }
+
+        return $this->matchers;
     }
 }
