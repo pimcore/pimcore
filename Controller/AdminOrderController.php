@@ -14,10 +14,29 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
+
 
 use OnlineShop\Framework\OrderManager\Order\Listing\Filter;
+use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\Object\Localizedfield;
+use Pimcore\Model\Object\OnlineShopOrder;
+use Pimcore\Model\Object\OnlineShopOrderItem;
+use Pimcore\Model\User;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
+use Zend\Paginator\Paginator;
 
-class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\Admin
+/**
+ * Class AdminOrderController
+ * @Route("/admin-order")
+ */
+class AdminOrderController extends FrontendController
 {
     /**
      * @var OnlineShop\Framework\OrderManager\IOrderManager
@@ -25,95 +44,47 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
     protected $orderManager;
 
 
-    public function init()
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
     {
-        parent::init();
-
-
-        // enable layout only if its a normal request
-        if($this->getRequest()->isXmlHttpRequest() === false)
-        {
-            $this->enableLayout();
-            $this->setLayout('back-office');
+        // set language
+        $user = $this->get('pimcore_admin.security.token_storage_user_resolver')->getUser();
+        if($user) {
+            $this->get("translator")->setLocale($user->getLanguage());
+            $event->getRequest()->setLocale($user->getLanguage());
         }
-
-
-        // sprache setzen
-        $language = $this->getUser() ? $this->getUser()->getLanguage() : 'en';
-        \Zend_Registry::set("Zend_Locale", new \Zend_Locale( $language ));
-        $this->language = $language;
-        $this->view->language = $language;
-        $this->initTranslation();
-
 
         // enable inherited values
-        Object_Abstract::setGetInheritedValues(true);
-        Object_Localizedfield::setGetFallbackValues(true);
+        AbstractObject::setGetInheritedValues(true);
+        Localizedfield::setGetFallbackValues(true);
 
+        $this->orderManager = Factory::getInstance()->getOrderManager();
 
-        // init
-        $this->orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        // enable view auto-rendering
+        $this->setViewAutoRender($event->getRequest(), true, 'php');
     }
 
-
-    protected function initTranslation() {
-
-        $translate = null;
-        if(\Zend_Registry::isRegistered("Zend_Translate")) {
-            $t = \Zend_Registry::get("Zend_Translate");
-            // this check is necessary for the case that a document is rendered within an admin request
-            // example: send test newsletter
-            if($t instanceof Pimcore_Translate) {
-                $translate = $t;
-            }
-        }
-
-        if(!$translate) {
-            // setup Zend_Translate
-            try {
-                $locale = \Zend_Registry::get("Zend_Locale");
-
-                $translate = new Pimcore_Translate_Website($locale);
-
-                if(Pimcore_Tool::isValidLanguage($locale)) {
-                    $translate->setLocale($locale);
-                } else {
-                    Logger::error("You want to use an invalid language which is not defined in the system settings: " . $locale);
-                    // fall back to the first (default) language defined
-                    $languages = Pimcore_Tool::getValidLanguages();
-                    if($languages[0]) {
-                        Logger::error("Using '" . $languages[0] . "' as a fallback, because the language '".$locale."' is not defined in system settings");
-                        $translate = new Pimcore_Translate_Website($languages[0]); // reinit with new locale
-                        $translate->setLocale($languages[0]);
-                    } else {
-                        throw new Exception("You have not defined a language in the system settings (Website -> Frontend-Languages), please add at least one language.");
-                    }
-                }
-
-
-                // register the translator in Zend_Registry with the key "Zend_Translate" to use the translate helper for Zend_View
-                \Zend_Registry::set("Zend_Translate", $translate);
-            }
-            catch (Exception $e) {
-                Logger::error("initialization of Pimcore_Translate failed");
-                Logger::error($e);
-            }
-        }
-
-        return $translate;
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
-
 
     /**
      * Bestellungen auflisten
+     * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list")
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
         // create new order list
         $list = $this->orderManager->createOrderList();
 
         // set list type
-        $list->setListType( $this->getParam('type', $list::LIST_TYPE_ORDER) );
+        $list->setListType( $request->get('type', $list::LIST_TYPE_ORDER) );
 
         // set order state
         $list->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED );
@@ -134,10 +105,10 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
         // Search
-        if($this->getParam('q'))
+        if($request->get('q'))
         {
-            $q = htmlentities($this->getParam('q'));
-            $search = $this->getParam('search');
+            $q = htmlentities($request->get('q'));
+            $search = $request->get('search');
             switch($search)
             {
                 case 'productType':
@@ -157,20 +128,19 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
         // add Date Filter
-        if($this->hasParam('from') === false && $this->hasParam('till') === false )
+        if($request->query->has('from') === false && $request->query->has('till') === false )
         {
             // als default, nehmen wir den ersten des aktuellen monats
             $from = new \Zend_Date();
             $from->setDay(1);
-            $this->setParam('from', $from->toString('dd.MM.yyyy'));
-
+            $request->query->set('from', $from->toString('dd.MM.yyyy'));
         }
 
         $filterDate = new Filter\OrderDateTime();
-        if($this->getParam('from') || $this->getParam('till') )
+        if($request->get('from') || $request->get('till') )
         {
-            $from = $this->getParam('from') ? new \Zend_Date($this->getParam('from'), 'dd.MM.yyyy') : null;
-            $till = $this->getParam('till') ? new \Zend_Date($this->getParam('till'), 'dd.MM.yyyy') : null;
+            $from = $request->get('from') ? new \Zend_Date($request->get('from'), 'dd.MM.yyyy') : null;
+            $till = $request->get('till') ? new \Zend_Date($request->get('till'), 'dd.MM.yyyy') : null;
             if ($till){
                 $till->add(1,\Zend_Date::DAY);
             }
@@ -192,9 +162,9 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
         // create paging
-        $paginator = \Zend_Paginator::factory( $list );
+        $paginator = new Paginator($list);
         $paginator->setItemCountPerPage( 10 );
-        $paginator->setCurrentPageNumber( $this->getParam('page', 1) );
+        $paginator->setCurrentPageNumber( $request->get('page', 1) );
 
         // view
         $this->view->paginator = $paginator;
@@ -203,11 +173,12 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
     /**
      * details der bestellung anzeigen
+     * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail")
      */
-    public function detailAction()
+    public function detailAction(Request $request)
     {
         // init
-        $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
+        $order = OnlineShopOrder::getById( $request->get('id') );
         /* @var \OnlineShop\Framework\Model\AbstractOrder $order */
         $orderAgent = $this->view->orderAgent = $this->orderManager->createOrderAgent( $order );
 
@@ -262,7 +233,7 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
             // order count
             $addOrderCount = function () use($customer, &$arrCustomerAccount) {
-                $order = new Object_OnlineShopOrder();
+                $order = new OnlineShopOrder();
                 $field = $order->getClass()->getFieldDefinition('customer');
                 if($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href)
                 {
@@ -307,7 +278,7 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
             /* @var \Pimcore\Model\Element\Note $note */
 
             // get avatar
-            $user = Pimcore_Model_User::getById( $note->getUser() );
+            $user = User::getById( $note->getUser() );
             /* @var \Pimcore\Model\User $user */
             $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
@@ -320,7 +291,7 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
             // load reference
-            $reference = Pimcore\Model\Object\Concrete::getById( $note->getCid() );
+            $reference = Concrete::getById( $note->getCid() );
             $title = $reference instanceof \OnlineShop\Framework\Model\AbstractOrderItem
                 ? $reference->getProduct()->getOSName()
                 : null
@@ -345,16 +316,17 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
     /**
      * cancel order item
+     * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel")
      */
-    public function itemCancelAction()
+    public function itemCancelAction(Request $request)
     {
         // init
-        $this->view->orderItem = $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
+        $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById( $request->get('id') );
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
 
-        if($this->getParam('confirmed') && $orderItem->isCancelAble())
+        if($request->get('confirmed') && $orderItem->isCancelAble())
         {
             // init
             $agent = $this->orderManager->createOrderAgent( $order );
@@ -363,71 +335,73 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
             $note = $agent->itemCancel( $orderItem );
 
             // extend log
-            $note->addData('message', 'text', $this->getParam('message'));
+            $note->addData('message', 'text', $request->get('message'));
             $note->save();
 
 
             // redir
-            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $order->getId()], 'plugin', true);
-            $this->redirect( $url );
+            $url = $this->generateUrl("pimcore_ecommerce_backend_admin-order_detail", ['id' => $order->getId()]);
+            return $this->redirect( $url );
         }
     }
 
 
     /**
      * edit item
+     * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit")
      */
-    public function itemEditAction()
+    public function itemEditAction(Request $request)
     {
         // init
-        $this->view->orderItem = $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
+        $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById( $request->get('id') );
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
 
-        if($this->getParam('confirmed'))
+        if($request->get('confirmed'))
         {
             // change item
             $agent = $this->orderManager->createOrderAgent( $order );
-            $note = $agent->itemChangeAmount($orderItem, $this->getParam('quantity'));
+            $note = $agent->itemChangeAmount($orderItem, $request->get('quantity'));
 
             // extend log
-            $note->addData('message', 'text', $this->getParam('message')); # 'text','date','document','asset','object','bool'
+            $note->addData('message', 'text', $request->get('message')); # 'text','date','document','asset','object','bool'
             $note->save();
 
 
             // redir
-            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $order->getId()], 'plugin', true);
-            $this->redirect( $url );
+            $url = $this->generateUrl("pimcore_ecommerce_backend_admin-order_detail", ['id' => $order->getId()]);
+            return $this->redirect( $url );
         }
     }
 
 
     /**
      * complaint item
+     * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint")
      */
-    public function itemComplaintAction()
+    public function itemComplaintAction(Request $request)
     {
         // init
-        $this->view->orderItem = $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
+        $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById( $request->get('id') );
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
 
-        if($this->getParam('confirmed'))
+        if($request->get('confirmed'))
         {
             // change item
             $agent = $this->orderManager->createOrderAgent( $order );
-            $note = $agent->itemComplaint($orderItem, $this->getParam('quantity'));
+            $note = $agent->itemComplaint($orderItem, $request->get('quantity'));
 
             // extend log
-            $note->addData('message', 'text', $this->getParam('message'));
+            $note->addData('message', 'text', $request->get('message'));
             $note->save();
 
 
             // redir
-            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $order->getId()], 'plugin', true);
-            $this->redirect( $url );
+            $url = $this->generateUrl("pimcore_ecommerce_backend_admin-order_detail", ['id' => $order->getId()]);
+            return $this->redirect( $url );
         }
     }
 }

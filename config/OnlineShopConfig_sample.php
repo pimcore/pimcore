@@ -658,7 +658,7 @@ return [
                 ],
                 "orderlist" => [
                     "disabled" => "0",
-                    "route" => "/plugin/EcommerceFramework/admin-order/list"
+                    "route" => "/admin/ecommerceframework/admin-order/list"
                 ]
             ]
         ]

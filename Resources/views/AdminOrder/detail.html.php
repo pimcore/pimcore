@@ -14,6 +14,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
 
 $orderAgent = $this->orderAgent;
 $order = $orderAgent->getOrder();
@@ -26,10 +33,10 @@ $currency = $orderAgent->getCurrency();
             <div class="panel-heading">
                 <div class="panel-title row" style="font-weight: bold;">
                     <?php
-                    $urlList = $this->url(['action' => 'list', 'controller' => 'admin-order', 'module' => 'EcommerceFramework'], null);
+                    $urlList = $this->path("pimcore_ecommerce_backend_admin-order_list");
                     ?>
                     <div class="col-sm-6">
-                        <a href="<?= $urlList ?>"><?= $this->translate('online-shop.back-office.order-list') ?></a>
+                        <a href="<?= $urlList ?>"><?= $this->translateAdmin('online-shop.back-office.order-list') ?></a>
                         <span class="glyphicon glyphicon-chevron-right"></span>
                         <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
                     </div>
@@ -42,7 +49,7 @@ $currency = $orderAgent->getCurrency();
                     <div class="col-sm-6">
                         <a href="#" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>
 
-                        <?= $this->translate('online-shop.back-office.order') ?> <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
+                        <?= $this->translateAdmin('online-shop.back-office.order') ?> <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
                     </div>
                     <div class="col-sm-6 text-right">
                         <?= $order->getOrderDate() ?>
@@ -71,10 +78,10 @@ $currency = $orderAgent->getCurrency();
         <!-- order items -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <span class="glyphicon glyphicon-list-alt"></span> <?= $this->translate('online-shop.back-office.order.order-items') ?>
+                <span class="glyphicon glyphicon-list-alt"></span> <?= $this->translateAdmin('online-shop.back-office.order.order-items') ?>
 
                 <?php if($order->getComment()): ?>
-                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translate('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($order->getComment()) ?>">
+                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translateAdmin('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($order->getComment()) ?>">
                         <span class="glyphicon glyphicon-comment"></span>
                     </button>
                 <?php endif; ?>
@@ -83,10 +90,10 @@ $currency = $orderAgent->getCurrency();
                 <thead>
                 <tr>
                     <th width="70">ID</th>
-                    <th><?= $this->translate('online-shop.back-office.order.product') ?></th>
-                    <th class="text-right"><?= $this->translate('online-shop.back-office.order.price.unit') ?></th>
-                    <th width="60" class="text-center"><?= $this->translate('online-shop.back-office.order.quantity') ?></th>
-                    <th class="text-right" width="110"><?= $this->translate('online-shop.back-office.order.price.total') ?></th>
+                    <th><?= $this->translateAdmin('online-shop.back-office.order.product') ?></th>
+                    <th class="text-right"><?= $this->translateAdmin('online-shop.back-office.order.price.unit') ?></th>
+                    <th width="60" class="text-center"><?= $this->translateAdmin('online-shop.back-office.order.quantity') ?></th>
+                    <th class="text-right" width="110"><?= $this->translateAdmin('online-shop.back-office.order.price.total') ?></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -110,7 +117,7 @@ $currency = $orderAgent->getCurrency();
                 <?php if($order->getTaxInfo()) { ?>
 
                     <tr>
-                        <th colspan="4" class="text-right"><?= $this->translate("cart.taxes") ?></th>
+                        <th colspan="4" class="text-right"><?= $this->translateAdmin("cart.taxes") ?></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -149,19 +156,14 @@ $currency = $orderAgent->getCurrency();
                         <td class="text-right"><?= $currency->toCurrency($item->getTotalPrice()) ?></td>
                         <td>
                             <?php if($item->getComment()): ?>
-                                <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="<?= $this->translate('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($item->getComment()) ?>">
+                                <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="<?= $this->translateAdmin('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($item->getComment()) ?>">
                                     <span class="glyphicon glyphicon-comment"></span>
                                 </button>
                             <?php endif; ?>
 
                             <!-- item actions -->
                             <?php if($item->isEditAble()):
-                                $urlEdit = $this->url([
-                                    'action' => 'item-edit'
-                                    , 'controller' => 'admin-order'
-                                    , 'module' => 'EcommerceFramework'
-                                    , 'id' => $item->getId()
-                                ]);
+                                $urlEdit = $this->path("pimcore_ecommerce_backend_admin-order_item-edit", ['id' => $item->getId()]);
                                 ?>
                                 <div class="btn-group">
                                     <a href="<?= $urlEdit ?>" data-toggle="modal" data-target="#popup" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -172,29 +174,19 @@ $currency = $orderAgent->getCurrency();
                                     <ul class="dropdown-menu" role="menu">
                                         <li>
                                             <?php if($item->isCancelAble()):
-                                                $urlCancel = $this->url([
-                                                    'action' => 'item-cancel'
-                                                    , 'controller' => 'admin-order'
-                                                    , 'module' => 'EcommerceFramework'
-                                                    , 'id' => $item->getId()
-                                                ]);
+                                                $urlCancel = $this->path("pimcore_ecommerce_backend_admin-order_item-cancel", ['id' => $item->getId()]);
                                                 ?>
                                                 <a href="<?= $urlCancel ?>" data-toggle="modal" data-target="#popup" class="text-danger">
                                                     <span class="glyphicon glyphicon-remove text-danger"></span>
-                                                    <?= $this->translate('online-shop.back-office.order.cancel.item') ?>
+                                                    <?= $this->translateAdmin('online-shop.back-office.order.cancel.item') ?>
                                                 </a>
                                             <?php endif; ?>
                                             <?php if($item->isComplaintAble()):
-                                                $urlComplaint = $this->url([
-                                                    'action' => 'item-complaint'
-                                                    , 'controller' => 'admin-order'
-                                                    , 'module' => 'EcommerceFramework'
-                                                    , 'id' => $item->getId()
-                                                ]);
+                                                $urlComplaint = $this->path("pimcore_ecommerce_backend_admin-order_item-complaint", ['id' => $item->getId()]);
                                                 ?>
                                                 <a href="<?= $urlComplaint ?>" data-toggle="modal" data-target="#popup" class="text-danger">
                                                     <span class="glyphicon glyphicon-share-alt"></span>
-                                                    <?= $this->translate('online-shop.back-office.order.complaint.item') ?>
+                                                    <?= $this->translateAdmin('online-shop.back-office.order.complaint.item') ?>
                                                 </a>
                                             <?php endif; ?>
                                         </li>
@@ -211,7 +203,7 @@ $currency = $orderAgent->getCurrency();
         <?php if($orderAgent->hasPayment()): ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <span class="glyphicon glyphicon-credit-card"></span> <?= $this->translate('online-shop.back-office.order.payment.history') ?>
+                    <span class="glyphicon glyphicon-credit-card"></span> <?= $this->translateAdmin('online-shop.back-office.order.payment.history') ?>
                 </div>
                 <table class="table table-condensed">
                     <tbody>
@@ -280,11 +272,11 @@ $currency = $orderAgent->getCurrency();
         <div role="tabpanel" class="tabpanel-customer-info">
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active">
-                    <a href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> <?= $this->translate('online-shop.back-office.order.address.invoice') ?></a>
+                    <a href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> <?= $this->translateAdmin('online-shop.back-office.order.address.invoice') ?></a>
                 </li>
                 <?php if($order->hasDeliveryAddress()) :?>
                     <li role="presentation">
-                        <a href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> <?= $this->translate('online-shop.back-office.order.address.delivery') ?></a>
+                        <a href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> <?= $this->translateAdmin('online-shop.back-office.order.address.delivery') ?></a>
                     </li>
                 <?php endif; ?>
 
@@ -377,7 +369,7 @@ $currency = $orderAgent->getCurrency();
                 <?php if($order->getCustomer()): ?>
                 <div role="tabpanel" class="tab-pane" id="customerDetail">
 
-                    <h4><?= $this->translate('online-shop.back-office.order.customer.account') ?></h4>
+                    <h4><?= $this->translateAdmin('online-shop.back-office.order.customer.account') ?></h4>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="well text-center" style="margin-bottom: 0;">
@@ -398,7 +390,7 @@ $currency = $orderAgent->getCurrency();
                                 foreach($this->arrCustomerAccount as $field => $value)
                                 {
                                     echo sprintf('<tr><th>%1$s</th><td><span class="%3$s"></span> %2$s</td></tr>'
-                                        , $this->translate('online-shop.back-office.order.customer-account.' . $field)
+                                        , $this->translateAdmin('online-shop.back-office.order.customer-account.' . $field)
                                         , $value
                                         , '' #$arrIcon[ $field ]
                                     );
@@ -430,7 +422,7 @@ $currency = $orderAgent->getCurrency();
 
                         <!-- Icon -->
                         <div class="panel-heading icon">
-                            <span class="<?= $item['icon'] ?>" title="<?= $this->translate('online-shop.back-office.order.history.' . $item['type']) ?>"></span>
+                            <span class="<?= $item['icon'] ?>" title="<?= $this->translateAdmin('online-shop.back-office.order.history.' . $item['type']) ?>"></span>
                         </div>
                         <!-- /Icon -->
 
@@ -441,7 +433,7 @@ $currency = $orderAgent->getCurrency();
                                 <div class="media-body">
                                     <h4 class="media-heading">
                                         <?= $item['title'] ?>
-                                        <small><?= $this->translate('online-shop.back-office.order.history.' . $item['type']) ?></small>
+                                        <small><?= $this->translateAdmin('online-shop.back-office.order.history.' . $item['type']) ?></small>
                                     </h4>
                                     <p><?= nl2br($item['message']) ?></p>
                                 </div>
@@ -466,7 +458,7 @@ $currency = $orderAgent->getCurrency();
                     <i class="glyphicon glyphicon-shopping-cart"></i>
                 </div>
                 <div class="panel-body">
-                    <?= $this->translate('online-shop.back-office.order.commit') ?>
+                    <?= $this->translateAdmin('online-shop.back-office.order.commit') ?>
                 </div>
             </article>
         </div>

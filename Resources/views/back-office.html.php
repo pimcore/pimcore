@@ -14,11 +14,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
 
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $this->getLocale() ?>">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -29,10 +34,10 @@
     <title>Online-Shop Back Office</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/plugins/EcommerceFramework/static/css/back-office.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/css/back-office.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -55,22 +60,24 @@
             <ul class="nav navbar-nav navbar-right">
                 <?php
                 $user = \Pimcore\Tool\Admin::getCurrentUser();
-                $currentAction = Zend_Controller_Front::getInstance()->getRequest()->getActionName();
-                $currentController = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+                $currentRouteName = $this->getRequest()->get('_route');
                 $arrActions = [];
 
                 if($user->isAllowed('plugin_onlineshop_back-office_order'))
                 {
                     $arrActions['order'][] = 'list';
                 }
+                ?>
 
-                foreach($arrActions as $controller => $actions):
-                    foreach($actions as $action): ?>
-                    <li class="<?= $currentController == 'admin-' . $controller && $currentAction == $action ? 'active' : '' ?>">
-                        <a href="<?= $this->url(['action' => $action, 'controller' => 'admin-' . $controller, 'module' => 'EcommerceFramework'], null, true); ?>"><?= $this->translate('online-shop.back-office.' . $controller.'-'.$action) ?></a>
+                <?php foreach($arrActions as $controller => $actions) { ?>
+                    <?php foreach($actions as $action) { ?>
+
+                        <?php $route = "pimcore_ecommerce_backend_admin-" . $controller . "_" . $action ?>
+                    <li class="<?= $currentRouteName == $route ? 'active' : '' ?>">
+                        <a href="<?= $this->path($route); ?>"><?= $this->translateAdmin('online-shop.back-office.' . $controller.'-'.$action) ?></a>
                     </li>
-                    <?php endforeach; ?>
-                <?php endforeach; ?>
+                    <?php } ?>
+                <?php } ?>
 
                 <!-- notifications -->
                 <!--
@@ -98,7 +105,7 @@
 
 <div class="container">
 
-    <?= $this->layout()->content ?>
+    <?php $this->slots()->output('_content') ?>
 
 </div>
 
@@ -108,8 +115,8 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/plugins/EcommerceFramework/static/vendor/jquery-1.11.1.min.js"></script>
-<script src="/plugins/EcommerceFramework/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/jquery-1.11.1.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/bootstrap/js/bootstrap.min.js"></script>
 
 <script>
     var pimcore = parent.pimcore;
@@ -117,7 +124,7 @@
 
 <?= $this->headScript() ?>
 
-<!--<script src="/plugins/EcommerceFramework/static/js/back-office.js"></script>-->
+<!--<script src="/bundles/pimcoreecommerceframework/js/back-office.js"></script>-->
 
 </body>
 </html>

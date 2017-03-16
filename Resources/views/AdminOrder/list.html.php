@@ -14,18 +14,25 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
 
 $paginator = $this->paginator;
 $listing = $this->listing;
 
 
-$this->headLink()->appendStylesheet('/plugins/EcommerceFramework/static/vendor/pickadate.classic.css');
-$this->headLink()->appendStylesheet('/plugins/EcommerceFramework/static/vendor/pickadate.classic.date.css');
-$this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picker.v3.5.3.js');
-$this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picker.date.v3.5.3.js');
+$this->headLink()->appendStylesheet('/bundles/pimcoreecommerceframework/vendor/pickadate.classic.css');
+$this->headLink()->appendStylesheet('/bundles/pimcoreecommerceframework/vendor/pickadate.classic.date.css');
+$this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picker.v3.5.3.js');
+$this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picker.date.v3.5.3.js');
 ?>
 <div class="page-header">
-    <h1><?= $this->translate('online-shop.back-office.order-list') ?></h1>
+    <h1><?= $this->translateAdmin('online-shop.back-office.order-list') ?></h1>
 </div>
 
 <div class="panel panel-default">
@@ -38,8 +45,8 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
                         <div class="input-group-btn" id="search-filter">
                             <?php
                             $arrFields = [
-                                'order' => $this->translate('online-shop.back-office.order-list.filter-order')
-                                , 'productType' => $this->translate('online-shop.back-office.order-list.filter-product-type')
+                                'order' => $this->translateAdmin('online-shop.back-office.order-list.filter-order')
+                                , 'productType' => $this->translateAdmin('online-shop.back-office.order-list.filter-product-type')
                             ];
                             $selected = $this->getParam('search', 'order');
                             ?>
@@ -53,19 +60,19 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
                             </ul>
                         </div>
                         <input type="hidden" id="search-query" name="search" value="<?= $selected ?>" />
-                        <input type="text" class="form-control" name="q" placeholder="<?= $this->translate('online-shop.back-office.order-list.search.placeholder') ?>" value="<?= $this->escape($this->getParam('q')) ?>">
+                        <input type="text" class="form-control" name="q" placeholder="<?= $this->translateAdmin('online-shop.back-office.order-list.search.placeholder') ?>" value="<?= $this->escape($this->getParam('q')) ?>">
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group">
                         <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        <input type="text" class="form-control date" name="from" placeholder="<?= $this->translate('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('from')) ?>">
+                        <input type="text" class="form-control date" name="from" placeholder="<?= $this->translateAdmin('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('from')) ?>">
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group">
                         <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        <input type="text" class="form-control date" name="till" placeholder="<?= $this->translate('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('till')) ?>">
+                        <input type="text" class="form-control date" name="till" placeholder="<?= $this->translateAdmin('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('till')) ?>">
                     </div>
                 </div>
                 <?php
@@ -76,7 +83,7 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></div>
                             <select class="form-control" name="pricingRule">
-                                <option value=""><?= $this->translate('online-shop.back-office.order-list.filter-pricing-rules') ?></option>
+                                <option value=""><?= $this->translateAdmin('online-shop.back-office.order-list.filter-pricing-rules') ?></option>
                                 <?php foreach($list as $item): ?>
                                     <option value="<?= $item->getId() ?>" <?= $item->getId() == $this->getParam('pricingRule') ? 'selected':'' ?>><?= $item->getLabel() ?></option>
                                 <?php endforeach; ?>
@@ -87,21 +94,21 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
             </fieldset>
         </div>
         <div class="panel-footer text-center">
-            <button type="submit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-filter"></span> <?= $this->translate('online-shop.back-office.order-list.search.button') ?></button>
+            <button type="submit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-filter"></span> <?= $this->translateAdmin('online-shop.back-office.order-list.search.button') ?></button>
         </div>
     </form>
 </div>
 
 
 <table class="table table-striped table-hover">
-    <caption><?= $this->translate('online-shop.back-office.order-list.result-count') ?>: <?= $paginator->getTotalItemCount(); ?></caption>
+    <caption><?= $this->translateAdmin('online-shop.back-office.order-list.result-count') ?>: <?= $paginator->getTotalItemCount(); ?></caption>
     <thead>
     <tr>
-        <th width="180"><?= $this->translate('online-shop.back-office.order') ?></th>
-        <th width="180"><?= $this->translate('online-shop.back-office.order.date') ?></th>
-        <th width="80"><?= $this->translate('online-shop.back-office.order.order-items') ?></th>
+        <th width="180"><?= $this->translateAdmin('online-shop.back-office.order') ?></th>
+        <th width="180"><?= $this->translateAdmin('online-shop.back-office.order.date') ?></th>
+        <th width="80"><?= $this->translateAdmin('online-shop.back-office.order.order-items') ?></th>
         <th></th>
-        <th width="100"><?= $this->translate('online-shop.back-office.order.price.total') ?></th>
+        <th width="100"><?= $this->translateAdmin('online-shop.back-office.order.price.total') ?></th>
     </tr>
     </thead>
     <tbody>
@@ -114,7 +121,7 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
         <tr>
             <td>
                 <?php
-                $urlDetail = $this->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $item->getOrderId()], null, true);
+                $urlDetail = $this->path('pimcore_ecommerce_backend_admin-order_detail', ['id' => $item->getOrderId()], null, true);
                 ?>
                 <a href="<?= $urlDetail ?>"><?= $item->getOrderNumber() ?></a>
             </td>
@@ -144,7 +151,10 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
 
 <?php if($paginator->getPages()->pageCount > 1): ?>
     <div class="text-center">
-        <?= $this->paginationControl($paginator, 'Sliding', 'includes/pagination/default.php', $this->getAllParams()); ?>
+        <?= $this->render(
+            "PimcoreEcommerceFrameworkBundle:Includes:paging.html.php",
+            get_object_vars($paginator->getPages("Sliding"))
+        ); ?>
     </div>
 <?php endif; ?>
 
