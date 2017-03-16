@@ -161,7 +161,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
             $session = Session::get("pimcore_documents");
 
-            if (!$document = $session->$key) {
+            if (!$document = $session->get($key)) {
                 $document = Model\Document::getById($request->get("id"));
                 $document = $this->getLatestVersion($document);
             }
@@ -170,7 +170,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             $document->_fulldump = true;
             $this->setValuesToDocument($request, $document);
 
-            $session->$key = $document;
+            $session->set($key, $document);
 
             Session::writeClose();
         }
