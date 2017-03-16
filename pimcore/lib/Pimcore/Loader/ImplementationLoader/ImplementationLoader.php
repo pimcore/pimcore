@@ -88,6 +88,14 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
     }
 
     /**
+     * @inheritDoc
+     */
+    public function addPrefixes(array $prefixes, callable $normalizer = null)
+    {
+        $this->prefixLoader->addPrefixes($prefixes, $normalizer);
+    }
+
+    /**
      * @return LoaderInterface[]
      */
     protected function getLoaders() : array

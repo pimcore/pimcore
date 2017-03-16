@@ -202,6 +202,23 @@ services:
             - '@pimcore.web_path_resolver'
             - '@pimcore.templating.action_renderer'
 
+    #
+    # IMPLEMENTATION LOADERS
+    #
+    # Class maps and prefixes will be set from the extension as they are loaded from config
+    #
+
+    # document tag loader
+    pimcore.implementation_loader.document.tag:
+        class: Pimcore\Model\Document\Tag\Loader\TagLoader
+
+    # object data loader
+    pimcore.implementation_loader.object.data:
+        class: Pimcore\Model\Object\ClassDefinition\Loader\DataLoader
+
+    # object layout loader
+    pimcore.implementation_loader.object.layout:
+        class: Pimcore\Model\Object\ClassDefinition\Loader\LayoutLoader
 
     #
     # PIMCORE SERVICES

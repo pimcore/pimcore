@@ -23,6 +23,16 @@ namespace Pimcore\Loader\ImplementationLoader;
 interface PrefixLoaderInterface extends LoaderInterface
 {
     /**
+     * Add a set of prefixes
+     *
+     * @param array $prefixes
+     * @param callable $normalizer
+     *
+     * @return mixed
+     */
+    public function addPrefixes(array $prefixes, callable $normalizer = null);
+
+    /**
      * Adds a prefix to the list of searched prefixes. The normalizer will be used to build the class name.
      *
      * @param string $prefix

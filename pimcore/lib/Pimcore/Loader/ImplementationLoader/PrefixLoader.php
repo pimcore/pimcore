@@ -56,6 +56,16 @@ class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterf
     /**
      * @inheritDoc
      */
+    public function addPrefixes(array $prefixes, callable $normalizer = null)
+    {
+        foreach ($prefixes as $prefix) {
+            $this->addPrefix($prefix, $normalizer);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function supports(string $name) : bool
     {
         return null !== $this->findClassName($name);

@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\PimcoreBundle\Routing\Loader\AnnotatedRouteControllerLoader;
-use Pimcore\Config\Config;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -34,8 +33,6 @@ class PimcoreExtension extends Extension
         // TODO use ConfigurableExtension or getExtension()??
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
-
-        $this->registerImplementationLoaderParameters($container, $config);
 
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
@@ -57,10 +54,10 @@ class PimcoreExtension extends Extension
         $loader->load('services.yml');
         $loader->load('event_listeners.yml');
         $loader->load('context_initializers.yml');
-        $loader->load('implementation_loaders.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
 
+        $this->configureImplementationLoaders($container, $config);
         $this->configureCache($container, $loader, $config);
 
         // load engine specific configuration only if engine is active
@@ -80,21 +77,24 @@ class PimcoreExtension extends Extension
     }
 
     /**
-     * Registers parameters for implementation loaders from config
+     * Configure implementation loaders from config
      *
      * @param ContainerBuilder $container
-     * @param $config
+     * @param array $config
      */
-    protected function registerImplementationLoaderParameters(ContainerBuilder $container, $config)
+    protected function configureImplementationLoaders(ContainerBuilder $container, $config)
     {
-        $container->setParameter('pimcore.implementation_loader.document.tag.map', $config['documents']['tags']['map']);
-        $container->setParameter('pimcore.implementation_loader.document.tag.prefixes', $config['documents']['tags']['prefixes']);
+        $loaders = [
+            'pimcore.implementation_loader.document.tag'  => $config['documents']['tags'],
+            'pimcore.implementation_loader.object.data'   => $config['objects']['class_definitions']['data'],
+            'pimcore.implementation_loader.object.layout' => $config['objects']['class_definitions']['layout'],
+        ];
 
-        $container->setParameter('pimcore.objects.class_definitions.data.map', $config['objects']['class_definitions']['data']['map']);
-        $container->setParameter('pimcore.objects.class_definitions.data.prefixes', $config['objects']['class_definitions']['data']['prefixes']);
-
-        $container->setParameter('pimcore.objects.class_definitions.layout.map', $config['objects']['class_definitions']['layout']['map']);
-        $container->setParameter('pimcore.objects.class_definitions.layout.prefixes', $config['objects']['class_definitions']['layout']['prefixes']);
+        foreach ($loaders as $serviceId => $cfg) {
+            $service = $container->getDefinition($serviceId);
+            $service->addMethodCall('setClassMap', [$cfg['map']]);
+            $service->addMethodCall('addPrefixes', [$cfg['prefixes']]);
+        }
     }
 
     /**
