@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -53,7 +56,7 @@ class ContainerLoader implements LoaderInterface
     /**
      * @inheritDoc
      */
-    public function supports($name)
+    public function supports(string $name) : bool
     {
         return isset($this->map[$name]);
     }
@@ -61,7 +64,7 @@ class ContainerLoader implements LoaderInterface
     /**
      * @inheritDoc
      */
-    public function build($name, array $params = [])
+    public function build(string $name, array $params = [])
     {
         if (!$this->supports($name)) {
             throw new UnsupportedException(sprintf('"%s" is not supported', $name));

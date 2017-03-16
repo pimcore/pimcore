@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -23,7 +26,7 @@ interface LoaderInterface
      *
      * @return bool
      */
-    public function supports($name);
+    public function supports(string $name) : bool;
 
     /**
      * Builds an implementation instance
@@ -33,5 +36,5 @@ interface LoaderInterface
      *
      * @return mixed
      */
-    public function build($name, array $params = []);
+    public function build(string $name, array $params = []);
 }

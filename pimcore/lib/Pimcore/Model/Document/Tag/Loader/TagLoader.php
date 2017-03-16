@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,7 +18,15 @@
 namespace Pimcore\Model\Document\Tag\Loader;
 
 use Pimcore\Loader\ImplementationLoader\DelegatingLoader;
+use Pimcore\Model\Document\Tag;
 
 class TagLoader extends DelegatingLoader implements TagLoaderInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function build(string $name, array $params = []) : Tag
+    {
+        return parent::build($name, $params);
+    }
 }

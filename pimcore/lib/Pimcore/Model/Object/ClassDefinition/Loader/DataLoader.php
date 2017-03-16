@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,7 +18,15 @@
 namespace Pimcore\Model\Object\ClassDefinition\Loader;
 
 use Pimcore\Loader\ImplementationLoader\DelegatingLoader;
+use Pimcore\Model\Object\ClassDefinition\Data;
 
 class DataLoader extends DelegatingLoader implements DataLoaderInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function build(string $name, array $params = []) : Data
+    {
+        return parent::build($name, $params);
+    }
 }

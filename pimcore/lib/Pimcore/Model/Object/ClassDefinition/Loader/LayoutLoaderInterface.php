@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,9 +20,15 @@ namespace Pimcore\Model\Object\ClassDefinition\Loader;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Model\Object\ClassDefinition\Layout;
 
-/**
- * @method Layout build($name, array $params = [])
- */
 interface LayoutLoaderInterface extends LoaderInterface
 {
+    /**
+     * Builds a classdefinition layout instance
+     *
+     * @param string $name
+     * @param array  $params
+     *
+     * @return Layout
+     */
+    public function build(string $name, array $params = []) : Layout;
 }

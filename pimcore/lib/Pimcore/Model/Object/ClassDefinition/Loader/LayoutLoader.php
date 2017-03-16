@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,7 +18,15 @@
 namespace Pimcore\Model\Object\ClassDefinition\Loader;
 
 use Pimcore\Loader\ImplementationLoader\DelegatingLoader;
+use Pimcore\Model\Object\ClassDefinition\Layout;
 
 class LayoutLoader extends DelegatingLoader implements LayoutLoaderInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function build(string $name, array $params = []) : Layout
+    {
+        return parent::build($name, $params);
+    }
 }

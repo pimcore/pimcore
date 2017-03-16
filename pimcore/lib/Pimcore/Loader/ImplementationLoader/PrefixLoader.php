@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -52,7 +55,7 @@ class PrefixLoader extends AbstractClassNameLoader
     /**
      * @inheritDoc
      */
-    public function supports($name)
+    public function supports(string $name) : bool
     {
         return null !== $this->findClassName($name);
     }

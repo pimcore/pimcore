@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -24,7 +27,7 @@ trait MapLoaderTrait
     /**
      * @return array
      */
-    public function getMap()
+    public function getMap() : array
     {
         return $this->map;
     }

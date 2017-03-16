@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -82,7 +85,7 @@ class DelegatingLoader implements LoaderInterface
     /**
      * @inheritDoc
      */
-    public function supports($name)
+    public function supports(string $name) : bool
     {
         return null !== $this->getLoader($name);
     }
@@ -90,7 +93,7 @@ class DelegatingLoader implements LoaderInterface
     /**
      * @inheritDoc
      */
-    public function build($name, array $params = [])
+    public function build(string $name, array $params = [])
     {
         $loader = $this->getLoader($name);
         if (null === $loader) {

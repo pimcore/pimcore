@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,9 +20,15 @@ namespace Pimcore\Model\Object\ClassDefinition\Loader;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Model\Object\ClassDefinition\Data;
 
-/**
- * @method Data build($name, array $params = [])
- */
 interface DataLoaderInterface extends LoaderInterface
 {
+    /**
+     * Builds a classdefinition data instance
+     *
+     * @param string $name
+     * @param array  $params
+     *
+     * @return Data
+     */
+    public function build(string $name, array $params = []) : Data;
 }

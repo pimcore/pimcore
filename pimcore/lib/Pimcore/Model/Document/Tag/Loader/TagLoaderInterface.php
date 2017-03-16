@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,9 +20,15 @@ namespace Pimcore\Model\Document\Tag\Loader;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Model\Document\Tag;
 
-/**
- * @method Tag build($name, array $params = [])
- */
 interface TagLoaderInterface extends LoaderInterface
 {
+    /**
+     * Builds a tag instance
+     *
+     * @param string $name
+     * @param array  $params
+     *
+     * @return Tag
+     */
+    public function build(string $name, array $params = []) : Tag;
 }
