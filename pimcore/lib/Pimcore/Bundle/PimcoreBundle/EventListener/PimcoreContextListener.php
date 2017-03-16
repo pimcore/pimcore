@@ -76,23 +76,19 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         $request = $event->getRequest();
 
         if ($event->isMasterRequest()) {
-            // if there's no pimcore context set on the request, try to guess and set it
-            if (!$this->resolver->getPimcoreContext($request)) {
-                $context = $this->resolver->guessPimcoreContext($request);
+            $context = $this->resolver->getPimcoreContext($request);
 
-                if ($context) {
-                    $this->resolver->setPimcoreContext($request, $context);
-
-                    $this->logger->debug('Resolved pimcore context for path {path} to {context}', [
-                        'path'    => $request->getPathInfo(),
-                        'context' => $context
-                    ]);
-                } else {
-                    $this->logger->debug('Could not resolve a pimcore context for path {path}', [
-                        'path' => $request->getPathInfo()
-                    ]);
-                }
+            if ($context) {
+                $this->logger->debug('Resolved pimcore context for path {path} to {context}', [
+                    'path'    => $request->getPathInfo(),
+                    'context' => $context
+                ]);
+            } else {
+                $this->logger->debug('Could not resolve a pimcore context for path {path}', [
+                    'path' => $request->getPathInfo()
+                ]);
             }
+
         } else {
             // copy master pimcore context to sub-request if available
             if (!$this->resolver->getPimcoreContext($request)) {

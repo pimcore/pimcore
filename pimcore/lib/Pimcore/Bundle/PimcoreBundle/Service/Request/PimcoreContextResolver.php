@@ -57,7 +57,14 @@ class PimcoreContextResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        return $request->attributes->get(static::ATTRIBUTE_PIMCORE_CONTEXT);
+        $context = $request->attributes->get(static::ATTRIBUTE_PIMCORE_CONTEXT);
+
+        if(!$context) {
+            $context = $this->guesser->guess($request);
+            $this->setPimcoreContext($request, $context);
+        }
+
+        return $context;
     }
 
     /**
@@ -69,16 +76,5 @@ class PimcoreContextResolver extends AbstractRequestResolver
     public function setPimcoreContext(Request $request, $context)
     {
         $request->attributes->set(static::ATTRIBUTE_PIMCORE_CONTEXT, $context);
-    }
-
-    /**
-     * Guess the pimcore context
-     *
-     * @param Request $request
-     * @return string
-     */
-    public function guessPimcoreContext(Request $request)
-    {
-        return $this->guesser->guess($request);
     }
 }
