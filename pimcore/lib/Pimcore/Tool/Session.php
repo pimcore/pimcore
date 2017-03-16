@@ -17,6 +17,7 @@ namespace Pimcore\Tool;
 use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Session
@@ -162,20 +163,17 @@ class Session
      * Start session and get an attribute bag
      *
      * @param string $namespace
-     * @param bool $readOnly
      * @return AttributeBagInterface
      */
-    public static function get($namespace = "pimcore_admin", $readOnly = false)
+    public static function get($namespace = "pimcore_admin")
     {
         $factory = static::getSessionStorageFactory();
 
         $initSession = session_status() !== PHP_SESSION_ACTIVE;
-        $forceStart = !$readOnly; // we don't force the session to start in read-only mode (default behavior)
         $sName = $factory->getOption('name');
 
         if (self::backupForeignSession()) {
             $initSession = true;
-            $forceStart = true;
         }
 
         // load session after foreign session was backed up
@@ -204,32 +202,18 @@ class Session
             die();
         }
 
-        // TODO is the cookie cleanup still handled?
-        /*
-        if ($forceStart) {
-            @session_start();
-            self::$sessionCookieCleanupNeeded = true;
-        }
-        */
 
-        // TODO handle exceptions and migrate session here as before?
-        $attributeBag = $session->getBag($namespace);
+        try {
+            $attributeBag = $session->getBag($namespace);
+        } catch (\Exception $e) {
+            // requested bag doesn't exist, we create a default attribute bag
+            $attributeBag = new AttributeBag($namespace);
+            $session->registerBag($attributeBag);
+        }
+
         if ($attributeBag instanceof LockableAttributeBagInterface) {
             $attributeBag->unlock();
         }
-
-        /*
-        if (!array_key_exists($namespace, self::$sessions) || !self::$sessions[$namespace] instanceof \Zend_Session_Namespace) {
-            try {
-                self::$sessions[$namespace] = new Session\Container($namespace);
-            } catch (\Exception $e) {
-                // invalid session, regenerate the session, and return a dummy object
-                $session->migrate(true);
-
-                return new \stdClass();
-            }
-        }
-        */
 
         self::$openedSessions++;
 
