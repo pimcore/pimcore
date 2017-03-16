@@ -50,14 +50,16 @@ class OrderSearch implements IOrderListFilter
 OR `order`.ordernumber like ?
 OR `order`.comment like ?
 
-OR `order`.customerName like ?
+OR `order`.customerFirstName like ?
+OR `order`.customerLastName like ?
 OR `order`.customerCompany like ?
 OR `order`.customerStreet like ?
 OR `order`.customerZip like ?
 OR `order`.customerCity like ?
 OR `order`.customerCountry like ?
 
-OR `order`.deliveryName like ?
+OR `order`.deliveryFirstName like ?
+OR `order`.deliveryLastName like ?
 OR `order`.deliveryCompany like ?
 OR `order`.deliveryStreet like ?
 OR `order`.deliveryZip like ?
