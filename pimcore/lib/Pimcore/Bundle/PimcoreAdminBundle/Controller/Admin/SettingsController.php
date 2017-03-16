@@ -319,6 +319,12 @@ class SettingsController extends AdminController
         //remove password from values sent to frontend
         $valueArray['database']["params"]['password'] = "##SECRET_PASS##";
 
+        // inject debug mode
+        $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . "/debug-mode.php";
+        $debugMode = include $debugModeFile;
+        $valueArray["general"]["debug"] = $debugMode["active"];
+        $valueArray["general"]["debug_ip"] = $debugMode["ip"];
+
         $response = [
             "values" => $valueArray,
             "config" => [
