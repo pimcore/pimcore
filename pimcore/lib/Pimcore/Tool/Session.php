@@ -204,10 +204,6 @@ class Session
             die();
         }
 
-        if ($initSession && !$session->isStarted()) {
-            $session->start();
-        }
-
         // TODO is the cookie cleanup still handled?
         /*
         if ($forceStart) {
