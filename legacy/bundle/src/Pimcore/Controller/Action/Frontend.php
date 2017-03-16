@@ -181,9 +181,9 @@ abstract class Frontend extends Action
                     $docKey = "document_" . $this->getDocument()->getId();
                     $docSession = Session::getReadOnly("pimcore_documents");
 
-                    if ($docSession->$docKey) {
+                    if ($docSession->has($docKey)) {
                         // if there is a document in the session use it
-                        $this->setDocument($docSession->$docKey);
+                        $this->setDocument($docSession->get($docKey));
                     } else {
                         // set the latest available version for editmode if there is no doc in the session
                         $latestVersion = $this->getDocument()->getLatestVersion();
@@ -202,8 +202,8 @@ abstract class Frontend extends Action
                     $docKey = "document_" . $this->getParam("document")->getId();
                     $docSession = Session::getReadOnly("pimcore_documents");
 
-                    if ($docSession->$docKey) {
-                        $this->setDocument($docSession->$docKey);
+                    if ($docSession->has($docKey)) {
+                        $this->setDocument($docSession->get($docKey));
                     }
                 }
 
@@ -212,8 +212,8 @@ abstract class Frontend extends Action
                     $key = "object_" . $this->getParam("pimcore_object_preview");
 
                     $session = Session::getReadOnly("pimcore_objects");
-                    if ($session->$key) {
-                        $object = $session->$key;
+                    if ($session->has($key)) {
+                        $object = $session->get($key);
                         // add the object to the registry so every call to Object::getById() will return this object instead of the real one
                         \Zend_Registry::set("object_" . $object->getId(), $object);
                     }

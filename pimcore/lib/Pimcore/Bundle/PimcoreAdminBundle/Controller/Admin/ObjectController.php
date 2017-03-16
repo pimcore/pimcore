@@ -1904,8 +1904,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $key = "object_" . $id;
 
         $session = Tool\Session::getReadOnly("pimcore_objects");
-        if ($session->$key) {
-            $object = $session->$key;
+        if ($session->has($key)) {
+            $object = $session->get($key);
         } else {
             return new Response("Preview not available, it seems that there's a problem with this object.");
         }
