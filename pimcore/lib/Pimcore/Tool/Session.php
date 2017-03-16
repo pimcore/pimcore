@@ -250,17 +250,12 @@ class Session
         }
     }
 
+    /**
+     *
+     */
     public static function regenerateId()
     {
         static::getSession()->migrate(true);
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isSessionCookieCleanupNeeded()
-    {
-        return self::$sessionCookieCleanupNeeded;
     }
 
     /**
