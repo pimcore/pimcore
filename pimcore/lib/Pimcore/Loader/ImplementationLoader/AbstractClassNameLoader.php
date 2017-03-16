@@ -26,7 +26,7 @@ abstract class AbstractClassNameLoader implements LoaderInterface
      *
      * @return string
      */
-    abstract protected function getClassName($name);
+    abstract protected function getClassName(string $name);
 
     /**
      * @inheritDoc

@@ -17,30 +17,46 @@ declare(strict_types=1);
 
 namespace Pimcore\Loader\ImplementationLoader;
 
-use Pimcore\Loader\ImplementationLoader\Traits\MapLoaderTrait;
-
 /**
  * Loads implementations from a fixed name => className map
  */
-class ClassMapLoader extends AbstractClassNameLoader
+class ClassMapLoader extends AbstractClassNameLoader implements ClassMapLoaderInterface
 {
-    use MapLoaderTrait;
+    /**
+     * @var array
+     */
+    protected $classMap = [];
 
     /**
-     * @param array $map
+     * @param array $classMap
      */
-    public function __construct(array $map = [])
+    public function __construct(array $classMap = [])
     {
-        $this->map = $map;
+        $this->setClassMap($classMap);
     }
 
     /**
-     * @param string $name
-     * @param string $className
+     * @inheritdoc
      */
-    public function register($name, $className)
+    public function addClassMap(string $name, string $className)
     {
-        $this->map[$name] = $className;
+        $this->classMap[$name] = $className;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getClassMap() : array
+    {
+        return $this->classMap;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setClassMap(array $classMap)
+    {
+        $this->classMap = $classMap;
     }
 
     /**
@@ -48,14 +64,14 @@ class ClassMapLoader extends AbstractClassNameLoader
      */
     public function supports(string $name) : bool
     {
-        return isset($this->map[$name]);
+        return isset($this->classMap[$name]);
     }
 
     /**
      * @inheritDoc
      */
-    protected function getClassName($name)
+    protected function getClassName(string $name)
     {
-        return $this->map[$name];
+        return $this->classMap[$name];
     }
 }

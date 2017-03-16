@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Tag\Loader;
 
-use Pimcore\Loader\ImplementationLoader\DelegatingLoader;
+use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\Document\Tag;
 
-class TagLoader extends DelegatingLoader implements TagLoaderInterface
+class TagLoader extends ImplementationLoader implements TagLoaderInterface
 {
     /**
      * @inheritDoc

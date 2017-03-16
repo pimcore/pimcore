@@ -15,28 +15,18 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Loader\ImplementationLoader\Traits;
+namespace Pimcore\Loader\ImplementationLoader;
 
-trait MapLoaderTrait
+/**
+ * Iterates an array of namespace prefixes and tries to load classes by namespace/prefix.
+ */
+interface PrefixLoaderInterface extends LoaderInterface
 {
     /**
-     * @var array
+     * Adds a prefix to the list of searched prefixes. The normalizer will be used to build the class name.
+     *
+     * @param string $prefix
+     * @param callable $normalizer
      */
-    protected $map = [];
-
-    /**
-     * @return array
-     */
-    public function getMap() : array
-    {
-        return $this->map;
-    }
-
-    /**
-     * @param array $map
-     */
-    public function setMap(array $map)
-    {
-        $this->map = $map;
-    }
+    public function addPrefix(string $prefix, callable $normalizer = null);
 }

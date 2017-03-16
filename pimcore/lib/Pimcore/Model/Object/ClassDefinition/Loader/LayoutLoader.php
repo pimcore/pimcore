@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Object\ClassDefinition\Loader;
 
-use Pimcore\Loader\ImplementationLoader\DelegatingLoader;
+use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\Object\ClassDefinition\Layout;
 
-class LayoutLoader extends DelegatingLoader implements LayoutLoaderInterface
+class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
 {
     /**
      * @inheritDoc

@@ -23,7 +23,7 @@ use Pimcore\Tool;
 /**
  * Iterates an array of namespace prefixes and tries to load classes by namespace.
  */
-class PrefixLoader extends AbstractClassNameLoader
+class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterface
 {
     /**
      * @var array
@@ -40,16 +40,17 @@ class PrefixLoader extends AbstractClassNameLoader
      */
     public function __construct(array $prefixes = [])
     {
-        $this->prefixes = $prefixes;
+        foreach ($prefixes as $prefix) {
+            $this->addPrefix($prefix);
+        }
     }
 
     /**
-     * @param string $prefix
+     * @inheritdoc
      */
-    public function addPrefix($prefix)
+    public function addPrefix(string $prefix, callable $normalizer = null)
     {
-        $this->prefixes[] = $prefix;
-        $this->prefixes = array_unique($this->prefixes);
+        $this->prefixes[$prefix] = [$prefix, $normalizer];
     }
 
     /**
@@ -63,7 +64,7 @@ class PrefixLoader extends AbstractClassNameLoader
     /**
      * @inheritDoc
      */
-    protected function getClassName($name)
+    protected function getClassName(string $name)
     {
         return $this->findClassName($name);
     }
@@ -75,7 +76,7 @@ class PrefixLoader extends AbstractClassNameLoader
      *
      * @return mixed|string
      */
-    protected function findClassName($name)
+    protected function findClassName(string $name)
     {
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
@@ -94,23 +95,28 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
     /**
-     * @param string $prefix
+     * @param array $prefix
      * @param string $name
      *
      * @return string
      */
-    protected function buildClassName($prefix, $name)
+    protected function buildClassName(array $prefix, $name) : string
     {
-        return $prefix . $this->normalizeName($name);
+        return $prefix[0] . $this->normalizeName($name, $prefix[1]);
     }
 
     /**
      * @param string $name
+     * @param callable $normalizer
      *
      * @return string
      */
-    protected function normalizeName($name)
+    protected function normalizeName(string $name, callable $normalizer = null) : string
     {
-        return Inflector::classify($name);
+        if (null === $normalizer) {
+            $normalizer = [Inflector::class, 'classify'];
+        }
+
+        return call_user_func($normalizer, $name);
     }
 }

@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Object\ClassDefinition\Loader;
 
-use Pimcore\Loader\ImplementationLoader\DelegatingLoader;
+use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 use Pimcore\Model\Object\ClassDefinition\Data;
 
-class DataLoader extends DelegatingLoader implements DataLoaderInterface
+class DataLoader extends ImplementationLoader implements DataLoaderInterface
 {
     /**
      * @inheritDoc
