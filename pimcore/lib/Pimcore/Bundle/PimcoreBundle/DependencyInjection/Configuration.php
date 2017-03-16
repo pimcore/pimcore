@@ -35,7 +35,6 @@ class Configuration implements ConfigurationInterface
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
         $this->addDocumentsNode($rootNode);
-        $this->addObjectsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -52,8 +51,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('documents')
                     ->addDefaultsIfNotSet();
 
-        $this->addImplementationLoaderNode($documentsNode, 'tags');
-
         $documentsNode
             ->children()
                 ->arrayNode('areas')
@@ -61,47 +58,6 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->booleanNode('autoload')
                             ->defaultTrue();
-    }
-
-    /**
-     * Add object specific config
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    protected function addObjectsNode(ArrayNodeDefinition $rootNode)
-    {
-        $objectsNode = $rootNode
-            ->children()
-                ->arrayNode('objects');
-
-        $classDefinitionsNode = $objectsNode
-            ->children()
-                ->arrayNode('class_definitions');
-
-        $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
-        $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
-    }
-
-    /**
-     * Add implementation node config (map, prefixes)
-     *
-     * @param ArrayNodeDefinition $node
-     * @param string $name
-     */
-    protected function addImplementationLoaderNode(ArrayNodeDefinition $node, $name)
-    {
-        $children = $node
-            ->children()
-            ->arrayNode($name)
-                ->children();
-
-        $children->arrayNode('map')
-            ->useAttributeAsKey('name')
-            ->prototype('scalar');
-
-        $children
-            ->arrayNode('prefixes')
-            ->prototype('scalar');
     }
 
     /**

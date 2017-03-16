@@ -53,6 +53,15 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
 
         $this->classMapLoader = $classMapLoader;
         $this->prefixLoader   = $prefixLoader;
+
+        $this->init();
+    }
+
+    /**
+     * Initializes loader after construction
+     */
+    protected function init()
+    {
     }
 
     /**

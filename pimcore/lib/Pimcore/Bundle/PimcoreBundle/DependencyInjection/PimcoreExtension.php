@@ -57,7 +57,6 @@ class PimcoreExtension extends Extension
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
 
-        $this->configureImplementationLoaders($container, $config);
         $this->configureCache($container, $loader, $config);
 
         // load engine specific configuration only if engine is active
@@ -74,27 +73,6 @@ class PimcoreExtension extends Extension
         }
 
         $this->addContextRoutes($container, $config['context']);
-    }
-
-    /**
-     * Configure implementation loaders from config
-     *
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    protected function configureImplementationLoaders(ContainerBuilder $container, $config)
-    {
-        $loaders = [
-            'pimcore.implementation_loader.document.tag'  => $config['documents']['tags'],
-            'pimcore.implementation_loader.object.data'   => $config['objects']['class_definitions']['data'],
-            'pimcore.implementation_loader.object.layout' => $config['objects']['class_definitions']['layout'],
-        ];
-
-        foreach ($loaders as $serviceId => $cfg) {
-            $service = $container->getDefinition($serviceId);
-            $service->addMethodCall('setClassMap', [$cfg['map']]);
-            $service->addMethodCall('addPrefixes', [$cfg['prefixes']]);
-        }
     }
 
     /**

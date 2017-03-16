@@ -25,6 +25,19 @@ class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
     /**
      * @inheritDoc
      */
+    protected function init()
+    {
+        $normalizer = function ($name) {
+            return ucfirst($name);
+        };
+
+        $this->prefixLoader->addPrefix('\\Pimcore\\Model\\Object\\ClassDefinition\\Layout\\', $normalizer);
+        $this->prefixLoader->addPrefix('\\Object_Class_Layout', $normalizer);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function build(string $name, array $params = []) : Layout
     {
         return parent::build($name, $params);
