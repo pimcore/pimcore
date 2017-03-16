@@ -16,11 +16,13 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
+use Zend\Paginator\Adapter\AdapterInterface;
+use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * Interface for product list which works based on the product index of the online shop framework
  */
-interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     const ORDERKEY_PRICE = "orderkey_price";
 

@@ -19,8 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use SeekableIterator;
 use Countable;
-use Zend_Paginator_Adapter_Interface;
-use Zend_Paginator_AdapterAggregate;
+use Zend\Paginator\Adapter\AdapterInterface;
+use Zend\Paginator\AdapterAggregateInterface;
 use Zend_Db_Select;
 use ArrayAccess;
 
@@ -31,7 +31,7 @@ use ArrayAccess;
  * @package OnlineShop\Framework\OrderManager
  * @method IOrderListItem current()
  */
-interface IOrderList extends SeekableIterator, Countable, Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, ArrayAccess
+interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, ArrayAccess, AdapterInterface, AdapterAggregateInterface
 {
     const LIST_TYPE_ORDER = 'order';
     const LIST_TYPE_ORDER_ITEM = 'item';
