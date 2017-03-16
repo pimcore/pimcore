@@ -77,7 +77,7 @@ class Listing extends AbstractOrderList implements IOrderList
             $select->from(
                 [ 'order' => 'object_query_' . OnlineShopOrder::classId() ]
                 , [
-                    new Zend_Db_Expr('SQL_CALC_FOUND_ROWS 1')
+                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1')
                     , 'OrderId' => 'order.oo_id'
                 ]
             );
@@ -277,7 +277,7 @@ class Listing extends AbstractOrderList implements IOrderList
      *
      * @return $this
      */
-    protected function joinItemsAndSubItems(Zend_Db_Select $select)
+    protected function joinItemsAndSubItems($select)
     {
         if(!$this->useSubItems())
         {
