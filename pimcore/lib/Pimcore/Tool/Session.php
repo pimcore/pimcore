@@ -15,7 +15,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBagInterface;
-use Pimcore\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
@@ -62,6 +62,14 @@ class Session
         self::writeClose();
 
         return $ret;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public static function getLogger()
+    {
+        return \Pimcore::getContainer()->get('monolog.logger.session');
     }
 
     /**
@@ -159,11 +167,9 @@ class Session
      */
     public static function get($namespace = "pimcore_admin", $readOnly = false)
     {
-        $session = static::getSession();
-        $storage = static::getSessionStorage();
         $factory = static::getSessionStorageFactory();
 
-        $initSession = !$session->isStarted();
+        $initSession = session_status() !== PHP_SESSION_ACTIVE;
         $forceStart = !$readOnly; // we don't force the session to start in read-only mode (default behavior)
         $sName = $factory->getOption('name');
 
@@ -171,6 +177,10 @@ class Session
             $initSession = true;
             $forceStart = true;
         }
+
+        // load session after foreign session was backed up
+        $session = static::getSession();
+        $storage = static::getSessionStorage();
 
         if ($initSession) {
             $factory->initializeStorage($storage);
@@ -186,22 +196,25 @@ class Session
                     }
                 }
             } catch (\Exception $e) {
-                Logger::error("Problem while starting session");
-                Logger::error($e);
+                self::getLogger()->error("Problem while starting session");
+                self::getLogger()->error($e);
             }
         } catch (\Exception $e) {
-            Logger::emergency("there is a problem with admin session");
+            self::getLogger()->emergency("there is a problem with admin session");
             die();
         }
 
-        if ($initSession) {
+        if ($initSession && !$session->isStarted()) {
             $session->start();
         }
 
+        // TODO is the cookie cleanup still handled?
+        /*
         if ($forceStart) {
             @session_start();
             self::$sessionCookieCleanupNeeded = true;
         }
+        */
 
         // TODO handle exceptions and migrate session here as before?
         $attributeBag = $session->getBag($namespace);
@@ -276,7 +289,13 @@ class Session
     protected static function backupForeignSession()
     {
         $sName = static::getSessionStorageFactory()->getOption('name');
+
+        self::getLogger()->debug('Current session name is {name}', ['name' => session_name(), 'sName' => $sName]);
+
+
         if ($sName != session_name()) {
+            self::getLogger()->debug('Backing up foreign session {name}', ['name' => session_name()]);
+
             // there's a different session in use, stop it and restart the admin session
             self::$restoreSession = [
                 "name" => session_name(),
@@ -303,6 +322,8 @@ class Session
     protected static function restoreForeignSession()
     {
         if (!empty(self::$restoreSession)) {
+            self::getLogger()->debug('Restoring foreign session {name}', ['name' => self::$restoreSession["name"]]);
+
             session_write_close();
 
             session_name(self::$restoreSession["name"]);

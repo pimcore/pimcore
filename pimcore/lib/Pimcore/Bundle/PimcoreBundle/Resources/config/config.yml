@@ -51,7 +51,7 @@ doctrine:
 
 # Monolog Configuration
 monolog:
-    channels: ['pimcore', 'pimcore_api']
+    channels: ['pimcore', 'pimcore_api', 'session']
 
 # CMF routing
 cmf_routing:
