@@ -14,9 +14,6 @@
 
 namespace Pimcore;
 
-use Pimcore\Tool;
-use Pimcore\Logger;
-
 class Document
 {
 

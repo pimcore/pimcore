@@ -16,7 +16,6 @@ namespace Pimcore\Document\Adapter;
 
 use Pimcore\Document\Adapter;
 use Pimcore\Tool\Console;
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Logger;
 

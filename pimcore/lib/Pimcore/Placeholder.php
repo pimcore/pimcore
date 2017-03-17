@@ -15,7 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Model;
-use Pimcore\Logger;
+
 
 class Placeholder
 {

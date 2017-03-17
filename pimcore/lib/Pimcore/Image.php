@@ -14,9 +14,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Tool;
 use Pimcore\Image\Adapter;
-use Pimcore\Logger;
 
 class Image
 {

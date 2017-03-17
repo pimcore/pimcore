@@ -15,7 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Db\Wrapper;
-use Pimcore\Logger;
+
 
 class Db
 {
