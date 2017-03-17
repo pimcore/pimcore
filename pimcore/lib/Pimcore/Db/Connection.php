@@ -41,8 +41,25 @@ class Connection extends \Doctrine\DBAL\Connection
             $this->_conn->query("SET default_storage_engine=InnoDB;");
             $this->_conn->query("SET sql_mode = '';");
         }
-        
+
         return $returnValue;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function query()
+    {
+        // compatibility layer for additional parameters in the 2nd argument
+        // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
+        if(func_num_args() === 2) {
+            $args = func_get_args();
+            if(is_array($args[1])) {
+                return $this->executeQuery($args[0], $args[1]);
+            }
+        }
+
+        return parent::query();
     }
 
     /**
