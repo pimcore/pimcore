@@ -111,7 +111,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      *
      */
-    protected function disableSlowQueryLog() {
+    protected function disableSlowQueryLog()
+    {
         try {
             $this->db->query("SET @@session.long_query_time = 300000;");
         } catch (\Exception $e) {
@@ -122,7 +123,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      *
      */
-    protected function enableSlowQueryLog() {
+    protected function enableSlowQueryLog()
+    {
         try {
             $this->db->query("SET @@session.long_query_time=@@global.long_query_time;");
         } catch (\Exception $e) {
