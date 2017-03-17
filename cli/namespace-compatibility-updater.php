@@ -17,11 +17,11 @@
 
 $workingDirectory = getcwd();
 chdir(__DIR__);
-include_once("../../../pimcore/cli/startup.php");
+include_once("../../../../../config/startup_cli.php");
 chdir($workingDirectory);
 
-//\OnlineShop\LegacyClassMappingTool::createNamespaceCompatibilityFile();
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Legacy\LegacyClassMappingTool::createNamespaceCompatibilityFile();
 
-\OnlineShop\LegacyClassMappingTool::generateMarkdownTable();
+//\OnlineShop\LegacyClassMappingTool::generateMarkdownTable();
 
 die("done.\n\n");
