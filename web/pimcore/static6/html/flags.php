@@ -1,6 +1,6 @@
 <?php
 
-include("../../cli/startup.php");
+include("../../../../pimcore/config/startup.php");
 
 $iconPath = '/pimcore/static6/img/flags/';
 
