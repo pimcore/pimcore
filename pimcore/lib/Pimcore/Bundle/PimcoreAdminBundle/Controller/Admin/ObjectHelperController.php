@@ -1056,7 +1056,6 @@ class ObjectHelperController extends AdminController
                         $keyId = $groupKeyId[1];
                         $getter = "get" . ucfirst($fieldname);
                         if (method_exists($object, $getter)) {
-                            /** @var  $classificationStoreData Classificationstore */
                             $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
                             $type = $keyConfig->getType();
                             $definition = json_decode($keyConfig->getDefinition());
