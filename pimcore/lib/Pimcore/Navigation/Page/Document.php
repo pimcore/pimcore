@@ -74,9 +74,10 @@ class Document extends Url
         return $this->_tabindex;
     }
 
+
     /**
      * @param null $character
-     * @return $this|\P
+     * @return $this
      */
     public function setAccesskey($character = null)
     {
