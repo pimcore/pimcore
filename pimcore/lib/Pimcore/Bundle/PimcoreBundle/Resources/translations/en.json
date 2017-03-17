@@ -4950,7 +4950,11 @@
     },
     {
         "term": "translation_merger_website",
-        "definition": "Merge website translations."
+        "definition": "Merge website translations"
+    },
+    {
+        "term": "translation_merger_admin",
+        "definition": "Merge admin translations"
     },
     {
         "term": "nothing_to_merge",
