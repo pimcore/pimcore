@@ -50,16 +50,17 @@ class Connection extends \Doctrine\DBAL\Connection
      */
     public function query()
     {
+        $args = func_get_args();
+
         // compatibility layer for additional parameters in the 2nd argument
         // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
         if(func_num_args() === 2) {
-            $args = func_get_args();
             if(is_array($args[1])) {
                 return $this->executeQuery($args[0], $args[1]);
             }
         }
 
-        return parent::query();
+        return call_user_func_array([$this, "parent::query"], $args);
     }
 
     /**
