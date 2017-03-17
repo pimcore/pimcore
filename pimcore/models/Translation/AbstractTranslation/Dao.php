@@ -71,7 +71,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function delete()
     {
-        $this->db->delete(static::getTableName(), [$this->db->quote("key") => $this->model->getKey()]);
+        $this->db->delete(static::getTableName(), [$this->db->quoteIdentifier("key") => $this->model->getKey()]);
 
         $this->model->clearDependentCache();
     }
