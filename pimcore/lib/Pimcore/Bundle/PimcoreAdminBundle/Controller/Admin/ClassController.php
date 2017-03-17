@@ -457,6 +457,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list->setCondition("classId = " . $list->quote($classId));
         $list = $list->load();
         $result = [];
+        /** @var $item Object\ClassDefinition\CustomLayout */
         foreach ($list as $item) {
             $result[] = [
                 "id" => $item->getId(),

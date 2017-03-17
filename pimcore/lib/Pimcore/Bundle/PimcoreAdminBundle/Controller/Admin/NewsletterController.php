@@ -293,7 +293,7 @@ class NewsletterController extends DocumentControllerBase
         $document = Document\Newsletter::getById($request->get("id"));
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
-            throw new Exception("newsletter sending already in progress, need to finish first.");
+            throw new \Exception("newsletter sending already in progress, need to finish first.");
         }
 
         $document = Document\Newsletter::getById($request->get("id"));
