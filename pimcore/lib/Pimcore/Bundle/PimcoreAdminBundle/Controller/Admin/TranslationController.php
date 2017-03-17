@@ -76,7 +76,7 @@ class TranslationController extends AdminController
             $result["delta"] = base64_encode(json_encode($enrichedDelta));
         }
 
-        $response = $this->json($result, false);
+        $response = $this->json($result);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set("Content-Type", "text/html");
