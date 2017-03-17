@@ -215,11 +215,11 @@ class Tool
             $fallbackLanguageCode = $parts[0];
         }
 
-        $languagePath = $iconWebBasePath . "/languages/" . $code . ".svg";
+        $languageFsPath = $iconFsBasePath . "/languages/" . $code . ".svg";
         $countryFsPath = $iconFsBasePath . "/countries/" . $countryCode . ".svg";
         $fallbackFsLanguagePath = $iconFsBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
 
-        $iconPath = $iconWebBasePath . "/countries/_unknown.svg";
+        $iconPath = $iconFsBasePath . "/countries/_unknown.svg";
 
         $languageCountryMapping = [
             "aa" => "er", "af" => "za", "am" => "et", "as" => "in", "ast" => "es", "asa" => "tz",
@@ -241,13 +241,13 @@ class Tool
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
-            $iconPath = $iconWebBasePath . "/countries/" . $languageCountryMapping[$code] . ".svg";
-        } elseif (file_exists($languagePath)) {
-            $iconPath = $languagePath;
+            $iconPath = $iconFsBasePath . "/countries/" . $languageCountryMapping[$code] . ".svg";
+        } elseif (file_exists($languageFsPath)) {
+            $iconPath = $languageFsPath;
         } elseif ($countryCode && file_exists($countryFsPath)) {
-            $iconPath = $iconWebBasePath . "/countries/" . $countryCode . ".svg";
+            $iconPath = $iconFsBasePath . "/countries/" . $countryCode . ".svg";
         } elseif ($fallbackLanguageCode && file_exists($fallbackFsLanguagePath)) {
-            $iconPath = $iconWebBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
+            $iconPath = $iconFsBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
         }
 
         return $iconPath;

@@ -739,7 +739,7 @@ class MiscController extends AdminController
     {
         $iconPath = Tool::getLanguageFlagFile($request->get("language"));
         $response = new BinaryFileResponse($iconPath);
-        $response->headers->set("Content-Type: image/svg+xml");
+        $response->headers->set("Content-Type", "image/svg+xml");
 
         return $response;
     }
