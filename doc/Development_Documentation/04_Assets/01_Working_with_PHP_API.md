@@ -58,7 +58,7 @@ $asset->save();
 
 
 ## Using (localized) Asset Metadata
-Asset Metadata allow to to attach localized metadata to assets within Pimcore. These Medata can be accessed via API and 
+Asset Metadata allow you to attach localized metadata to assets within Pimcore. These Medata can be accessed via API and 
 therefore used on all output channels. 
 
 ### Examples
@@ -84,7 +84,7 @@ $asset->getMetadata("title", "en");
 
 
 ### Predefined System Metadata
-There may be predefined and default fields on an Asset. That means that this fields have a special meaning and 
+There may be predefined and default fields on an Asset. That means that these fields have a special meaning and 
 will be used somewhere else.
 
 ##### Image asset
