@@ -119,7 +119,7 @@ class Reservation extends \Pimcore\Model\AbstractModel
 
         $db = \Pimcore\Db::get();
         try {
-            $db->query($query, $params);
+            $db->executeQuery($query, $params);
             return true;
         } catch (\Exception $e) {
             return false;

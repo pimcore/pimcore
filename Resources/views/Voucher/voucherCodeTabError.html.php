@@ -14,11 +14,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ */
 
 ?>
 
 <head>
-    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -26,7 +29,7 @@
 <div class="alert alert-danger">
     <?php if (is_array($this->errors)) { ?>
         <?php foreach ($this->errors as $error) { ?>
-            <?= $error ?>
+            <?= $this->translateAdmin($error) ?>
         <?php } ?>
     <?php } ?>
 </div>

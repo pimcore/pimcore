@@ -18,6 +18,8 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use OnlineShop\Framework\Exception\InvalidConfigException;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Paginator\Paginator;
 
 class Single extends AbstractTokenManager implements IExportableTokenManager
 {
@@ -28,7 +30,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     {
         parent::__construct($configuration);
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle) {
-            $this->template =  "voucher/voucher-code-tab-single.php";
+            $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabSingle.html.php";
         } else {
             throw new InvalidConfigException("Invalid Configuration Class for type VoucherTokenTypeSingle.");
         }
@@ -57,33 +59,37 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * @param $view
+     * @param $viewParamsBag
      * @param array $params
      * @return string
      * @throws \Zend_Paginator_Exception
      */
-    public function prepareConfigurationView($view, $params)
+    public function prepareConfigurationView(&$viewParamsBag, $params)
     {
+        $translator = \Pimcore::getContainer()->get("translator");
         if ($this->getConfiguration()->getToken() != $this->getCodes()[0]['token']) {
-            $view->generateWarning = $view->ts('plugin_onlineshop_voucherservice_msg-error-overwrite-single');
-            $view->settings['Original Token'] = $this->getCodes()[0];
+            $viewParamsBag['generateWarning'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-overwrite-single', [], 'admin');
+            $viewParamsBag['settings']['Original Token'] = $this->getCodes()[0];
         }
 
         if ($codes = $this->getCodes()) {
-            $view->paginator = \Zend_Paginator::factory($codes);
-            $view->count = sizeof($codes);
+            $viewParamsBag['paginator'] = new Paginator(new ArrayAdapter($codes));
+            $viewParamsBag['count'] = sizeof($codes);
         }
 
-        $view->settings = [
-            $view->ts('plugin_onlineshop_voucherservice_settings-token') => $this->getConfiguration()->getToken(),
-            $view->ts('plugin_onlineshop_voucherservice_settings-max-usages') => $this->getConfiguration()->getUsages(),
+        $viewParamsBag['msg']['error'] = $params['error'];
+        $viewParamsBag['msg']['success'] = $params['success'];
+
+        $viewParamsBag['settings'] = [
+            $translator->trans('plugin_onlineshop_voucherservice_settings-token', [], 'admin') => $this->getConfiguration()->getToken(),
+            $translator->trans('plugin_onlineshop_voucherservice_settings-max-usages', [], 'admin') => $this->getConfiguration()->getUsages(),
         ];
 
         $statisticUsagePeriod = 30;
         if(isset($params['statisticUsagePeriod'])){
             $statisticUsagePeriod = $params['statisticUsagePeriod'];
         }
-        $view->statistics = $this->getStatistics($statisticUsagePeriod);
+        $viewParamsBag['statistics'] = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
     }

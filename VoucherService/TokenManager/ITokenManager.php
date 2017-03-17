@@ -138,11 +138,11 @@ interface ITokenManager
      * Gets the codes according to paging and filter params and sets
      * error/success messages, settings and statistics for view.
      *
-     * @param $view
+     * @param $viewParamsBag
      * @param array $params All params, especially for filtering and ordering token codes.
      * @return string The path of the template to display.
      */
-    public function prepareConfigurationView($view, $params);
+    public function prepareConfigurationView(&$viewParamsBag, $params);
 
 
     /**

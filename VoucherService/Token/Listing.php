@@ -17,7 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+use Zend\Paginator\Adapter\AdapterInterface;
+use Zend\Paginator\AdapterAggregateInterface;
+
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
 
     public $tokens;
@@ -290,14 +293,14 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             $reservationsQuery = $reservationsQuery . " AND " . $queryParts[0];
             $tokensQuery = $tokensQuery . " AND " . $queryParts[0];
         } elseif (sizeof($queryParts) > 1) {
-            $reservationsQuery = $reservationsQuery . " AND (" . implode(' OR ', $queryParts) . ")";
-            $tokensQuery = $tokensQuery . " AND (" . implode(' OR ', $queryParts) . ")";
+            $reservationsQuery = $reservationsQuery . " AND (" . implode(' AND ', $queryParts) . ")";
+            $tokensQuery = $tokensQuery . " AND (" . implode(' AND ', $queryParts) . ")";
         }
 
         $db->beginTransaction();
         try {
-            $db->query($reservationsQuery, $params);
-            $db->query($tokensQuery, $params);
+            $db->executeQuery($reservationsQuery, $params);
+            $db->executeQuery($tokensQuery, $params);
             $db->commit();
             return true;
         } catch (\Exception $e) {

@@ -45,18 +45,24 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
     }
 
     /**
-     * @return bool|string
+     * @return array|bool
      */
     public function getExistingLengths(){
         $db = \Pimcore\Db::get();
 
         $query = "
-            SELECT length FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . "
+            SELECT length, COUNT(*) AS count FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . "
             WHERE voucherSeriesId = ?
             GROUP BY length";
 
         try {
-            return $db->fetchAssoc($query, $this->getId());
+            $lengths = $db->fetchAll($query, [$this->getId()]);
+
+            $result = [];
+            foreach($lengths as $lengthEntry) {
+                $result[$lengthEntry['length']] = $lengthEntry['count'];
+            }
+            return $result;
         }catch (\Exception $e){
             return false;
         }

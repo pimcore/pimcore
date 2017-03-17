@@ -14,7 +14,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ */
 ?>
 
 <?php if (is_array($this->usage)) { ?>

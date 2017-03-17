@@ -14,15 +14,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ */
 ?>
 
 <head>
-    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="/plugins/EcommerceFramework/static/vendor/pickadate.classic.css" rel="stylesheet">
-    <link href="/plugins/EcommerceFramework/static/vendor/pickadate.classic.date.css" rel="stylesheet">
-    <link href="/plugins/EcommerceFramework/static/css/voucherservice/style.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/pickadate.classic.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/pickadate.classic.date.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/css/voucherservice/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -35,17 +37,16 @@ $colors=[
 ];
 
 $seriesId = $this->getParam('id');
-$urlParams = $this->getAllParams();
+$urlParams = $this->getRequest()->query->all();
 
 if ($this->paginator) {
     $this->paginator->setPageRange(10);
 
     $pagesCount = $this->paginator->getItemCountPerPage();
 
-    $paginationTemplate = $this->paginationControl($this->paginator,
-        'Sliding',
-        'voucher/parts/paginator.php',
-        ['urlParams' => $urlParams]
+    $paginationTemplate = $this->render(
+        "PimcoreEcommerceFrameworkBundle:Voucher/parts:paginator.html.php",
+        get_object_vars($this->paginator->getPages("Sliding"))
     );
 }
 
@@ -54,23 +55,23 @@ if ($this->paginator) {
 <div class="container-fluid">
     <div id="content">
         <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-            <li class="active"><a href="#manager" data-toggle="tab"><span class="glyphicon glyphicon-home"></span>&nbsp; <?=$this->ts('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
-            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><span class="glyphicon glyphicon-stats"></span>&nbsp; <?=$this->ts('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
+            <li class="active"><a href="#manager" data-toggle="tab"><span class="glyphicon glyphicon-home"></span>&nbsp; <?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
+            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><span class="glyphicon glyphicon-stats"></span>&nbsp; <?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
         </ul>
 
         <div id="my-tab-content" class="tab-content">
             <div class="tab-pane active" id="manager">
                 <div class="row">
                     <div class="col col-sm-12">
-                        <h2><?=$this->ts('plugin_onlineshop_voucherservice_tab-manager-headline')?></h2>
+                        <h2><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-manager-headline')?></h2>
                     </div>
                 </div>
 
                 <div class="row header">
                     <div class="col col-sm-4">
-                        <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->ts('plugin_onlineshop_voucherservice_generate-button')?></button>
+                        <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_generate-button')?></button>
                         <?php if ($this->voucherType != "single") { ?>
-                        <button type="button" class="btn btn-default js-modal" data-modal="cleanUp"><?=$this->ts('plugin_onlineshop_voucherservice_cleanup-button')?></button>
+                        <button type="button" class="btn btn-default js-modal" data-modal="cleanUp"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_cleanup-button')?></button>
                         <?php } ?>
                     </div>
 
@@ -90,15 +91,12 @@ if ($this->paginator) {
                         <div class="btn-group">
                             <?php if ($this->supportsExport): ?>
                                 <?php
-                                $exportUrl = $this->url(array_merge($this->getAllParams(), [
-                                    'action' => 'export-tokens',
-                                    'format' => 'csv'
-                                ]), 'plugin', false);
+                                    $exportUrl = $this->path('pimcore_ecommerce_backend_voucher_export-tokens', array_merge($urlParams, ['format' => 'csv']));
                                 ?>
 
                                 <a class="btn btn-default" href="<?= $exportUrl ?>" target="_blank">
                                     <span class="glyphicon glyphicon-export"></span>
-                                    <?= $this->ts('plugin_onlineshop_voucherservice_export-button') ?>
+                                    <?= $this->translateAdmin('plugin_onlineshop_voucherservice_export-button') ?>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -110,7 +108,7 @@ if ($this->paginator) {
                     <div class="col col-sm-8 token-overview">
                         <div class=" row">
                             <div class="col col-sm-5">
-                                <h3 style="float: left;"><i class="glyphicon glyphicon-list"></i>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_token-overview-headline')?></h3>
+                                <h3 style="float: left;"><i class="glyphicon glyphicon-list"></i>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_token-overview-headline')?></h3>
                             </div>
                             <div class="col col-sm-7 text-right">
                                 <?= $paginationTemplate ?>
@@ -119,15 +117,15 @@ if ($this->paginator) {
                         <div class="row">
                             <div class="col col-sm-6">
                                 <?php if ($this->voucherType != "single") { ?>
-                                    <h5 class="subtitle"><?= number_format($this->count, 0, ',', ' ') ?> <?=$this->ts('plugin_onlineshop_voucherservice_result-text')?></h5>
+                                    <h5 class="subtitle"><?= number_format($this->count, 0, ',', ' ') ?> <?=$this->translateAdmin('plugin_onlineshop_voucherservice_result-text')?></h5>
                                 <?php } ?>
                             </div>
                             <?php if($this->paginator){?>
                             <div class="col col-sm-6 text-right">
-                                <h5 class="subtitle pages"><?=$this->ts('plugin_onlineshop_voucherservice_tokens-per-page')?>
-                                    <a class="pages-count <?php if($pagesCount == 25){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 25]))?>">25&nbsp;</a>
-                                    <a class="pages-count <?php if($pagesCount == 75){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 75]))?>">75&nbsp;</a>
-                                    <a class="pages-count <?php if($pagesCount == 150){echo "active";}?>" href="<?=$this->url(array_merge($urlParams, ['action' => 'voucher-code-tab', 'tokensPerPage' => 150]))?>">150&nbsp;</a>
+                                <h5 class="subtitle pages"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tokens-per-page')?>
+                                    <a class="pages-count <?php if($pagesCount == 25){echo "active";}?>" href="<?=$this->pimcoreUrl(['tokensPerPage' => 25])?>">25&nbsp;</a>
+                                    <a class="pages-count <?php if($pagesCount == 75){echo "active";}?>" href="<?=$this->pimcoreUrl(['tokensPerPage' => 75])?>">75&nbsp;</a>
+                                    <a class="pages-count <?php if($pagesCount == 150){echo "active";}?>" href="<?=$this->pimcoreUrl(['tokensPerPage' => 150])?>">150&nbsp;</a>
                                 </h5>
                             </div>
                             <?php } ?>
@@ -137,10 +135,10 @@ if ($this->paginator) {
                             <table class="table">
                                 <thead>
                                 <tr class="active">
-                                    <th><span class="sort glyphicon glyphicon-chevron-down" data-criteria="token"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-token')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="usages"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-usages')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="length"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-length')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down active" data-criteria="timestamp"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-date')?></th>
+                                    <th><span class="sort glyphicon glyphicon-chevron-down" data-criteria="token"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-token')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="usages"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-usages')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="length"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-length')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down active" data-criteria="timestamp"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-date')?></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -160,36 +158,36 @@ if ($this->paginator) {
                     </div>
                     <?php if ($this->voucherType != "single") { ?>
                     <div class="col col-sm-4 filter">
-                        <h3><i class="glyphicon glyphicon-search"></i> &nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_filter-headline')?></h3>
+                        <h3><i class="glyphicon glyphicon-search"></i> &nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_filter-headline')?></h3>
 
-                        <form class="form-horizontal js-filter-form" action="<?= $this->url(['action' => 'voucher-code-tab', 'id' => $seriesId, 'module' => 'EcommerceFramework', 'controller' => 'voucher'], 'plugin', true) ?>">
+                        <form class="form-horizontal js-filter-form" action="<?= $this->pimcoreUrl([], null, true) ?>">
                             <div class="form-group">
                                 <div class=" col col-sm-12">
-                                    <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-token')?></label>
+                                    <label><?=$this->translateAdmin('plugin_onlineshop_voucherservice_filter-token')?></label>
                                     <input type="text" name="token" value="<?= $this->getParam('token') ?>" placeholder="token"
                                            class="form-control"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class=" col col-sm-6">
-                                    <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-from-date')?></label>
+                                    <label><?=$this->translateAdmin('plugin_onlineshop_voucherservice_filter-from-date')?></label>
                                     <input type="text" name="creation_from" value="<?= $this->getParam('creation_from') ?>"
                                            placeholder="YYYY/MM/DD" class="js-datepicker form-control"/>
                                 </div>
                                 <div class=" col col-sm-6">
-                                    <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-to-date')?></label>
+                                    <label><?=$this->translateAdmin('plugin_onlineshop_voucherservice_filter-to-date')?></label>
                                     <input type="text" name="creation_to" value="<?= $this->getParam('creation_to') ?>"
                                            placeholder="YYYY/MM/DD" class="js-datepicker form-control"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class=" col col-sm-6">
-                                    <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-usages')?></label>
+                                    <label><?=$this->translateAdmin('plugin_onlineshop_voucherservice_filter-usages')?></label>
                                     <input type="number" name="usages" value="<?= $this->getParam('usages') ?>" min="0"
                                            placeholder="usages" class="form-control"/>
                                 </div>
                                 <div class=" col col-sm-6">
-                                    <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-length')?></label>
+                                    <label><?=$this->translateAdmin('plugin_onlineshop_voucherservice_filter-length')?></label>
                                     <select class="form-control" name="length" >
                                         <?php foreach($this->tokenLengths as $length => $amount){ ?>
                                             <option value="<?=$length ?>" <?php if ($this->getParam('length') == $length) { echo "selected"; } ?>"> <?= $length?> </option>
@@ -202,7 +200,7 @@ if ($this->paginator) {
 
                             <div class="form-group">
                                 <div class=" col col-sm-12">
-                                    <button class="btn btn-primary" type="submit"><?=$this->ts('plugin_onlineshop_voucherservice_apply-filter-button')?></button>
+                                    <button class="btn btn-primary" type="submit"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_apply-filter-button')?></button>
                                 </div>
                             </div>
                         </form>
@@ -213,7 +211,7 @@ if ($this->paginator) {
             <div class="tab-pane" id="statistics">
                 <div class="row">
                     <div class="col col-sm-12">
-                        <h2><?=$this->ts('plugin_onlineshop_voucherservice_tab-statistics-headline')?></h2>
+                        <h2><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-statistics-headline')?></h2>
                     </div>
                 </div>
 
@@ -227,12 +225,12 @@ if ($this->paginator) {
                     <div class="col col-sm-8 text-right">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="glyphicon glyphicon-refresh"></span>
-                                <?=$this->ts('plugin_onlineshop_voucherservice_cleanup-reservations-button')?></button>
+                                <?=$this->translateAdmin('plugin_onlineshop_voucherservice_cleanup-reservations-button')?></button>
                         </div>
                     </div>
                 </div>
 
-                <?= $this->template('voucher/parts/statistics.php', ['statistics' => $this->statistics, 'colors' => $colors]) ?>
+                <?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts:statistics.html.php', ['statistics' => $this->statistics, 'colors' => $colors]) ?>
             </div>
         </div>
     </div>
@@ -240,24 +238,24 @@ if ($this->paginator) {
 
 
 <!-- Modal Templates -->
-<?= $this->template('voucher/parts/modals/pattern/cleanup-modal.php', ['urlParams' => $urlParams]) ?>
-<?= $this->template('voucher/parts/modals/pattern/generate-modal.php', ['settings' => $this->settings, 'urlParams' => $urlParams]) ?>
-<?= $this->template('voucher/parts/modals/cleanup-reservations-modal.php', ['urlParams' => $urlParams]) ?>
+<?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts/modals/pattern:cleanupModal.html.php', ['id' => $seriesId]) ?>
+<?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts/modals/pattern:generateModal.html.php', ['settings' => $this->settings, 'urlParams' => $urlParams]) ?>
+<?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts/modals:cleanupReservationsModal.html.php', ['urlParams' => $urlParams]) ?>
 
 <!--Plugin and Lib Scripts -->
-<script src="/plugins/EcommerceFramework/static/vendor/jquery-2.1.3.min.js"></script>
-<script src="/plugins/EcommerceFramework/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/jquery-2.1.3.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-<script src="/plugins/EcommerceFramework/static/vendor/picker.v3.5.3.js"></script>
-<script src="/plugins/EcommerceFramework/static/vendor/picker.date.v3.5.3.js"></script>
-<script src="/plugins/EcommerceFramework/static/vendor/chart.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/picker.v3.5.3.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/picker.date.v3.5.3.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/chart.min.js"></script>
 
-<script src="/plugins/EcommerceFramework/static/js/voucherservice/voucherSeriesTabScript.js"></script>
+<script src="/bundles/pimcoreecommerceframework/js/voucherservice/voucherSeriesTabScript.js"></script>
 
 
 <!--Script for statistics-->
 <?php if (is_array($this->statistics['usage'])) { ?>
-    <?= $this->template('voucher/parts/usageStatisticScript.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
+    <?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts:usageStatisticScript.html.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
 <?php } ?>
 
 <!--Script for tab view-->
@@ -322,45 +320,6 @@ if ($this->paginator) {
         };
 
         initSort();
-
-
-//        /**
-//         * Filtering
-//         */
-//
-//        var urlData = {
-//            <?php // foreach($urlParams as $key => $param){ ?>
-//            "<?php //= $key ?>//": "<?php //= $param ?>//",
-//            <?php // } ?>
-//        };
-//
-//        function getFormData($form){
-//            var unindexed_array = $form.serializeArray();
-//            var indexed_array = {};
-//
-//            $.map(unindexed_array, function(n, i){
-//                indexed_array[n['name']] = n['value'];
-//            });
-//
-//            return indexed_array;
-//        }
-//
-//        function mergeObjects(obj1,obj2){
-//            var obj3 = {};
-//            for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-//            for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-//            return obj3;
-//        }
-//
-//        documentBody.on('submit','.js-cleanup-modal-form', function(event){
-//            console.log($(this).attr("action"));
-//        });
-//        documentBody.on('submit',form, function(event){
-//            event.preventDefault();
-//            var formData = getFormData(form);
-//            var params = mergeObjects(urlData, formData);
-//            window.location.href = "/?" + $.param(params);
-//        });
 
     });
 </script>

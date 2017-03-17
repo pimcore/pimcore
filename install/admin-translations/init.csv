@@ -14,7 +14,7 @@
 "plugin_onlineshop_voucherservice_modal_assign-headline";1432395845;1432395923;"Konfiguration auf Tokens übernehmen";"";"Apply configuration to Tokens";"";""
 "plugin_onlineshop_voucherservice_modal_assign-infotext";1432282107;1432282131;"Konfiguration wird übernommen, bitte warten.";"";"Updating token settings, please wait. This can take some seconds.";"";""
 "plugin_onlineshop_voucherservice_modal_assign-submit";1432395879;1432395929;"Übernehmen";"";"Apply";"";""
-"plugin_onlineshop_voucherservice_modal_cancle";1432281018;1432281026;"Abbrechen";"";"Cancle";"";""
+"plugin_onlineshop_voucherservice_modal_cancel";1432281018;1432281026;"Abbrechen";"";"Cancel";"";""
 "plugin_onlineshop_voucherservice_modal_cleanup-both-checkbox";1432305348;1432305355;"Alle";"";"Both";"";""
 "plugin_onlineshop_voucherservice_modal_cleanup-headline";1432280978;1432303670;"Tokens nach Kriterien entfernen";"";"Remove tokens by condition";"";""
 "plugin_onlineshop_voucherservice_modal_cleanup-infotext";1432281005;1432303519;"VORSICHT: Der Aufräum Vorgang wird Token in dieser Serie entfernen, um die Leistung für die Generierung neuer Token zu verbessern.";"";"USE WITH CARE: The Cleanup will remove tokens in your series, to improve performance for creating new tokens.";"";""

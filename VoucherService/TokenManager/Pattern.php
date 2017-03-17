@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenMan
 
 use OnlineShop\Framework\Exception\VoucherServiceException;
 use OnlineShop\Framework\VoucherService\Token;
+use Zend\Paginator\Paginator;
 
 /**
  * Class Pattern
@@ -41,7 +42,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     {
         parent::__construct($configuration);
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern) {
-            $this->template = "voucher/voucher-code-tab-pattern.php";
+            $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabPattern.html.php";
         } else {
             throw new VoucherServiceException("Invalid Configuration Class for Type VoucherTokenTypePattern.");
         }
@@ -486,27 +487,29 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     /**
      * Prepares the view and returns the according template for rendering.
      *
-     * @param $view
+     * @param $viewParamsBag
      * @param array $params
      * @return string
      * @throws \Zend_Paginator_Exception
      */
-    public function prepareConfigurationView($view, $params)
+    public function prepareConfigurationView(&$viewParamsBag, $params)
     {
-        $view->msg = [];
+        $translator = \Pimcore::getContainer()->get("translator");
+
+        $viewParamsBag['msg'] = [];
 
         $tokens = new \OnlineShop\Framework\VoucherService\Token\Listing();
 
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (\Exception $e) {
-            $this->template = "voucher/voucher-code-tab-error.php";
-            $view->errors[] = $e->getMessage() . " | Error-Code: " . $e->getCode();
+            $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php";
+            $viewParamsBag['errors'][] = $e->getMessage() . " | Error-Code: " . $e->getCode();
         }
 
         if ($tokens) {
 
-            $paginator = \Zend_Paginator::factory($tokens);
+            $paginator = new Paginator($tokens);
 
             if ($params['tokensPerPage']) {
                 $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
@@ -516,22 +519,22 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
             $paginator->setCurrentPageNumber($params['page']);
 
-            $view->paginator = $paginator;
-            $view->count = sizeof($tokens);
+            $viewParamsBag['paginator'] = $paginator;
+            $viewParamsBag['count'] = sizeof($tokens);
 
         } else {
-            $view->msg['result'] = $view->ts('plugin_onlineshop_voucherservice_msg-error-token-noresult');
+            $viewParamsBag['msg']['result'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-token-noresult', [], 'admin');
         }
 
-        $view->msg['error'] = $params['error'];
-        $view->msg['success'] = $params['success'];
+        $viewParamsBag['msg']['error'] = $params['error'];
+        $viewParamsBag['msg']['success'] = $params['success'];
 
         // Settings parsed via foreach in view -> key is translation
-        $view->settings = [
-            $view->ts('plugin_onlineshop_voucherservice_settings-count') => $this->getConfiguration()->getCount(),
-            $view->ts('plugin_onlineshop_voucherservice_settings-prefix') => $this->getConfiguration()->getPrefix(),
-            $view->ts('plugin_onlineshop_voucherservice_settings-length') => $this->getConfiguration()->getLength(),
-            $view->ts('plugin_onlineshop_voucherservice_settings-exampletoken') => $this->getExampleToken(),
+        $viewParamsBag['settings'] = [
+            $translator->trans('plugin_onlineshop_voucherservice_settings-count', [], 'admin') => $this->getConfiguration()->getCount(),
+            $translator->trans('plugin_onlineshop_voucherservice_settings-prefix', [], 'admin') => $this->getConfiguration()->getPrefix(),
+            $translator->trans('plugin_onlineshop_voucherservice_settings-length', [], 'admin') => $this->getConfiguration()->getLength(),
+            $translator->trans('plugin_onlineshop_voucherservice_settings-exampletoken', [], 'admin') => $this->getExampleToken(),
         ];
 
         $statisticUsagePeriod = 30;
@@ -540,9 +543,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             $statisticUsagePeriod = $params['statisticUsagePeriod'];
         }
 
-        $view->tokenLengths = $this->series->getExistingLengths();
+        $viewParamsBag['tokenLengths'] = $this->series->getExistingLengths();
 
-        $view->statistics = $this->getStatistics($statisticUsagePeriod);
+        $viewParamsBag['statistics'] = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
     }

@@ -14,15 +14,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
+/**
+ * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ */
 ?>
 
 <head>
 
-    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/plugins/EcommerceFramework/static/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
 
-    <link href="/plugins/EcommerceFramework/static/css/voucherservice/style.css" rel="stylesheet">
+    <link href="/bundles/pimcoreecommerceframework/css/voucherservice/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -36,27 +38,27 @@ $colors = [
 ];
 
 $seriesId = $this->getParam('id');
-$urlParams = $this->getAllParams();
+$urlParams = $this->getRequest()->query->all();
 ?>
 
 <div class="container-fluid">
     <div id="content">
         <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-            <li class="active"><a href="#manager" data-toggle="tab"><?=$this->ts('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
-            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><?=$this->ts('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
+            <li class="active"><a href="#manager" data-toggle="tab"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
+            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
         </ul>
 
         <div id="my-tab-content" class="tab-content">
             <div class="tab-pane active" id="manager">
                 <div class="row">
                     <div class="col col-sm-12">
-                        <h2><?=$this->ts('plugin_onlineshop_voucherservice_usage-headline')?></h2>
+                        <h2><?=$this->translateAdmin('plugin_onlineshop_voucherservice_usage-headline')?></h2>
                     </div>
                 </div>
 
                 <div class="row header">
                     <div class="col col-sm-4">
-                        <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->ts('plugin_onlineshop_voucherservice_assign-config')?></button>
+                        <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_assign-config')?></button>
                     </div>
 
                     <!--Info and Error Messages Container-->
@@ -75,15 +77,12 @@ $urlParams = $this->getAllParams();
                         <div class="btn-group">
                             <?php if ($this->supportsExport): ?>
                                 <?php
-                                $exportUrl = $this->url(array_merge($this->getAllParams(), [
-                                    'action' => 'export-tokens',
-                                    'format' => 'csv'
-                                ]), 'plugin', false);
+                                $exportUrl = $this->path('pimcore_ecommerce_backend_voucher_export-tokens', array_merge($urlParams, ['format' => 'csv']));
                                 ?>
 
                                 <a class="btn btn-default" href="<?= $exportUrl ?>" target="_blank">
                                     <span class="glyphicon glyphicon-export"></span>
-                                    <?= $this->ts('plugin_onlineshop_voucherservice_export-button') ?>
+                                    <?= $this->translateAdmin('plugin_onlineshop_voucherservice_export-button') ?>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -95,7 +94,7 @@ $urlParams = $this->getAllParams();
                     <div class="col col-sm-8 token-overview">
                         <div class=" row">
                             <div class="col col-sm-5">
-                                <h3 style="float: left;"><i class="glyphicon glyphicon-list"></i> &nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_token-overview-headline')?></h3>
+                                <h3 style="float: left;"><i class="glyphicon glyphicon-list"></i> &nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_token-overview-headline')?></h3>
                             </div>
                             <div class="col col-sm-7 text-right">
                             </div>
@@ -109,10 +108,10 @@ $urlParams = $this->getAllParams();
                             <table class="table">
                                 <thead>
                                 <tr class="active">
-                                    <th><span class="sort glyphicon glyphicon-chevron-down" data-criteria="token"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-token')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="usages"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-usages')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="length"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-length')?></th>
-                                    <th class="text-center"><span class="sort active glyphicon glyphicon-chevron-down" data-criteria="timestamp"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_table-date')?></th>
+                                    <th><span class="sort glyphicon glyphicon-chevron-down" data-criteria="token"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-token')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="usages"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-usages')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="length"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-length')?></th>
+                                    <th class="text-center"><span class="sort active glyphicon glyphicon-chevron-down" data-criteria="timestamp"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-date')?></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -135,7 +134,7 @@ $urlParams = $this->getAllParams();
             <div class="tab-pane" id="statistics">
                 <div class="row">
                     <div class="col col-sm-12">
-                        <h2><?=$this->ts('plugin_onlineshop_voucherservice_tab-statistics-headline')?></h2>
+                        <h2><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-statistics-headline')?></h2>
                     </div>
                 </div>
 
@@ -147,11 +146,11 @@ $urlParams = $this->getAllParams();
                         <?php } ?>
                     </div>
                     <div class="col col-sm-8 text-right">
-                            <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_cleanup-reservations-button')?></button>
+                            <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_cleanup-reservations-button')?></button>
                     </div>
                 </div>
 
-                <?= $this->template('voucher/parts/statistics.php', ['statistics' => $this->statistics, 'colors' => $colors]) ?>
+                <?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts:statistics.html.php', ['statistics' => $this->statistics, 'colors' => $colors]) ?>
             </div>
         </div>
     </div>
@@ -160,21 +159,21 @@ $urlParams = $this->getAllParams();
 
 <!-- Modal Templates -->
 
-<?= $this->template('voucher/parts/modals/single/assign-settings-modal.php', ['settings' => $this->settings, 'generateWarning' => $this->generateWarning, 'urlParams' => $urlParams]) ?>
-<?= $this->template('voucher/parts/modals/cleanup-reservations-modal.php', ['urlParams' => $urlParams]) ?>
+<?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts/modals/single:assignSettingsModal.html.php', ['settings' => $this->settings, 'generateWarning' => $this->generateWarning, 'urlParams' => $urlParams]) ?>
+<?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts/modals:cleanupReservationsModal.html.php', ['urlParams' => $urlParams]) ?>
 
 <!--Plugin and Lib Scripts -->
 
-<script src="/plugins/EcommerceFramework/static/vendor/jquery-2.1.3.min.js"></script>
-<script src="/plugins/EcommerceFramework/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/jquery-2.1.3.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-<script src="/plugins/EcommerceFramework/static/vendor/chart.min.js"></script>
+<script src="/bundles/pimcoreecommerceframework/vendor/chart.min.js"></script>
 
-<script src="/plugins/EcommerceFramework/static/js/voucherservice/voucherSeriesTabScript.js"></script>
+<script src="/bundles/pimcoreecommerceframework/js/voucherservice/voucherSeriesTabScript.js"></script>
 
 <!--Script for statistics-->
 <?php if (is_array($this->statistics['usage'])) { ?>
-    <?= $this->template('voucher/parts/usageStatisticScript.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
+    <?= $this->template('PimcoreEcommerceFrameworkBundle:Voucher/parts:usageStatisticScript.html.php', ['usage' => $this->statistics['usage'], 'colors'=>$colors]) ?>
 <?php } ?>
 
 

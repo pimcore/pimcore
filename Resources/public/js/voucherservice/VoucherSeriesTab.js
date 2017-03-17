@@ -20,7 +20,7 @@ pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
 
     title: t('plugin_onlineshop_vouchertoolkit_tab'),
     iconCls: 'plugin_voucherservice_icon',
-    src: '/plugin/EcommerceFramework/voucher/voucher-code-tab',
+    src: '/admin/ecommerceframework/voucher/voucher-code-tab',
     id: null,
 
     initialize: function(object, type) {

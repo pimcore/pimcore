@@ -260,10 +260,10 @@ abstract class AbstractTokenManager implements ITokenManager
     public abstract function cleanUpReservations($duration = 0);
 
     /**
-     * @param $view
+     * @param $viewParamsBag
      * @param array $params
      * @return string The path of the template to display
      */
-    public abstract function prepareConfigurationView($view, $params);
+    public abstract function prepareConfigurationView(&$viewParamsBag, $params);
 
 }
