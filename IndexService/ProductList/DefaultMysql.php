@@ -802,4 +802,25 @@ class DefaultMysql implements IProductList
         return $var;
     }
 
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+
+        //this is needed for ZF1 Pagiantor - because it serializes the adapter and PDO instance cannot be serialized
+        unset($vars['resource']);
+        return array_keys($vars);
+    }
+
+    /**
+     *
+     */
+    public function __wakeup()
+    {
+        if(empty($this->resource)) {
+            $this->resource = new DefaultMysql\Dao($this);
+        }
+    }
 }
