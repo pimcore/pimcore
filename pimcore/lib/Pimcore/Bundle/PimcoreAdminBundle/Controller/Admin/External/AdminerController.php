@@ -128,6 +128,8 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External {
 
 namespace {
 
+    use Pimcore\Tool\Session;
+
     if (!function_exists("adminer_object")) {
         // adminer plugin
         /**
