@@ -51,6 +51,7 @@ class ResetPasswordCommand extends AbstractCommand
         }
 
         $method = is_numeric($user) ? 'getById' : 'getByName';
+        /** @var $user User */
         $user = User::$method($user);
 
         if (!$user) {
