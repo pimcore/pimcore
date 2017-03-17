@@ -42,8 +42,9 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
     /**
      * Constructor.
      *
-     * @param string $name The name of the application
-     * @param string $version The version of the application
+     * @param KernelInterface $kernel
+     * @internal param string $name The name of the application
+     * @internal param string $version The version of the application
      *
      * @api
      */

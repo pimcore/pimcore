@@ -32,6 +32,7 @@ class PimcoreUrl extends Helper
 
     /**
      * @param UrlGeneratorInterface $generator
+     * @param RequestHelper $requestHelper
      */
     public function __construct(UrlGeneratorInterface $generator, RequestHelper $requestHelper)
     {

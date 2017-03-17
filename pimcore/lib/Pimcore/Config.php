@@ -456,6 +456,7 @@ class Config
     }
 
     /** Gets the active perspective for the current user
+     * @param Model\User $currentUser
      * @return array
      */
     public static function getRuntimePerspective(Model\User $currentUser = null)

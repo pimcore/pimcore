@@ -79,7 +79,8 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
 
     /**
      * AbstractHelper constructor.
-     * @param Container $container
+     * @param ContainerService $containerService
+     * @internal param Container $container
      */
     public function __construct(ContainerService $containerService)
     {

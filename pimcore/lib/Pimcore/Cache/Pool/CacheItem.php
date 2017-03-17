@@ -226,6 +226,9 @@ class CacheItem implements PimcoreCacheItemInterface
      * Internal logging helper.
      *
      * @internal
+     * @param LoggerInterface $logger
+     * @param $message
+     * @param array $context
      */
     public static function log(LoggerInterface $logger = null, $message, $context = [])
     {

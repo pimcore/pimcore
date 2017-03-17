@@ -21,7 +21,8 @@ use Symfony\Component\HttpFoundation\Request;
 class DocumentResolver extends AbstractRequestResolver
 {
     /**
-     * @return Document\PageSnippet|Document|null
+     * @param Request $request
+     * @return null|Document|Document\PageSnippet
      */
     public function getDocument(Request $request = null)
     {

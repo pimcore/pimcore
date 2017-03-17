@@ -78,6 +78,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
+     * @param Request $request
      * @param Model\Document $document
      */
     protected function addSchedulerToDocument(Request $request, Model\Document $document)

@@ -300,6 +300,7 @@ class ApplicationLogger implements LoggerInterface
 
     /**
      * @param string $message
+     * @param array $context
      */
     public function warning($message, array $context = [])
     {

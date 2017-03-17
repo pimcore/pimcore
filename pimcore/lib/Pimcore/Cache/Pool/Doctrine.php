@@ -27,6 +27,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
 
     /**
      * @param Connection $db
+     * @param int $defaultLifetime
      */
     public function __construct(Connection $db, $defaultLifetime = 0)
     {

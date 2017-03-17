@@ -136,9 +136,10 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param QueryBuilder
-     *
+     * @param QueryBuilder $select
      * @return $this
+     * @internal param $QueryBuilder
+     *
      */
     protected function addGroupBy(QueryBuilder $select)
     {
