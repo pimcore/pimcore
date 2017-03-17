@@ -186,7 +186,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     protected function getWorkflowManager()
     {
         if (!$this->manager) {
-            $this->manager = Workflow\Manager\Factory::getManager($this->element, $this->user);
+            $this->manager = Workflow\Manager\Factory::getManager($this->element, $this->getUser());
         }
 
         return $this->manager;
