@@ -16,7 +16,6 @@ namespace Pimcore;
 
 use Pimcore\Db\Wrapper;
 
-
 class Db
 {
     /**

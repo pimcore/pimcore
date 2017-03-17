@@ -16,7 +16,6 @@ namespace Pimcore;
 
 use Pimcore\Model;
 
-
 class Placeholder
 {
 
