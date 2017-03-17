@@ -179,7 +179,7 @@ class Ffmpeg extends Adapter
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-info-" . uniqid() . ".out";
 
         $cmd = self::getFfmpegCli() . " -i " . escapeshellarg(realpath($this->file));
-        Console::exec($cmd, $tmpFile, null, 60);
+        Console::exec($cmd, $tmpFile, 60);
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);
