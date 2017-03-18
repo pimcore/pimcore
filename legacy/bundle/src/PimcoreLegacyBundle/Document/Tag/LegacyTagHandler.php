@@ -142,7 +142,12 @@ class LegacyTagHandler implements TagHandlerInterface
                 if ($actionObject instanceof AbstractArea) {
                     $actionObject->setView($view);
 
-                    $areaConfig = new \Pimcore\Config\Config($areas[$type] . "/area.xml");
+                    $configArray = [];
+                    if(is_file($areas[$type] . "/area.xml")) {
+                        $configArray = (array) simplexml_load_file($areas[$type] . "/area.xml");
+                    }
+
+                    $areaConfig = new \Pimcore\Config\Config($configArray);
                     $actionObject->setConfig($areaConfig);
 
                     // params
