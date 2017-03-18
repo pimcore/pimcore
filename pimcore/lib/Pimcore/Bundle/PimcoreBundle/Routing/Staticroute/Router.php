@@ -232,7 +232,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
             if (isset($routeParams[$key])) {
                 $value = $routeParams[$key];
-                unset($routeParams[$key]);
             }
 
             $controllerParams[$key] = $value;

@@ -323,6 +323,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                         if ($routeParams) {
                             $params = $routeParams;
 
+                            // set params to symfony request attributes
+                            // needed if static route assembly is used in legacy mode
+                            $request = \Pimcore::getContainer()->get("request_stack")->getCurrentRequest();
+                            $request->attributes->set('_route_params', array_merge($request->attributes->get('_route_params'), $routeParams));
+
                             // try to get nearest document to the route
                             $document = $this->getNearestDocumentByPath($path, false, ["page", "snippet", "hardlink"]);
                             if ($document instanceof Document\Hardlink) {

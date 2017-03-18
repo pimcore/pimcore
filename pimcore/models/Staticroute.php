@@ -548,6 +548,13 @@ class Staticroute extends AbstractModel
             $requestParameters = [];
         } else {
             $requestParameters = \Pimcore::getContainer()->get('router.request_context')->getParameters();
+
+            // merge route params from static routes here
+            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+            if($request->attributes->get("_route_params")) {
+                $requestParameters = array_merge($requestParameters, $request->attributes->get("_route_params"));
+            }
+
             // remove blocked parameters from request
             foreach ($blockedRequestParams as $key) {
                 if (array_key_exists($key, $requestParameters)) {
