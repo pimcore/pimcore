@@ -198,6 +198,7 @@ class PayPal implements IPayment
         // execute
         //TODO do not call this in handle response, but call it in the controller!
         //TODO return a 'intermediate' status
+        // see https://github.com/pimcore-partner/ecommerce-framework/issues/118
         return $this->executeDebit($price, $response['InvoiceID']);
     }
 

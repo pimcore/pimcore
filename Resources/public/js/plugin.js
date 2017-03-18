@@ -29,7 +29,6 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
     },
 
     uninstall: function(){
-        //TODO remove from menu
     },
 
     pimcoreReady: function (params,broker) {

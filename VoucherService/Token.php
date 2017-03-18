@@ -151,7 +151,6 @@ class Token extends \Pimcore\Model\AbstractModel
     public function unuse()
     {
         if ($this->getDao()->unuse()) {
-            //TODO eventually remove from statistics
             return true;
         }
         return false;

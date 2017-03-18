@@ -592,11 +592,9 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return array
      * @throws \Exception
-     * @todo Not implemented yet
      */
     protected function loadWithoutPriceFilterWithPriceSorting()
     {
-        //TODO implement this
         throw new \Exception("Not implemented yet");
     }
 
@@ -606,11 +604,9 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return array
      * @throws \Exception
-     * @todo Not implemented yet
      */
     protected function loadWithPriceFilterWithoutPriceSorting()
     {
-        //TODO implement this
         throw new \Exception("Not implemented yet");
     }
 
@@ -620,11 +616,9 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return array
      * @throws \Exception
-     * @todo Not implemented yet
      */
     protected function loadWithPriceFilterWithPriceSorting()
     {
-        //TODO implement this
         throw new \Exception("Not implemented yet");
     }
 

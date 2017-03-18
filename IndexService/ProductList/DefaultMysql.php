@@ -380,9 +380,8 @@ class DefaultMysql implements IProductList
      */
     protected function loadWithPriceFilterWithoutPriceSorting()
     {
-        //TODO check number of price systems
-
-        //TODO set $this->totalCount
+        //check number of price systems
+        //set $this->totalCount
         throw new \Exception("Not implemented yet");
     }
 
@@ -396,9 +395,8 @@ class DefaultMysql implements IProductList
      */
     protected function loadWithPriceFilterWithPriceSorting()
     {
-        //TODO check number of price systems
-
-        //TODO set $this->totalCount
+        //check number of price systems
+        //set $this->totalCount
         throw new \Exception("Not implemented yet");
     }
 

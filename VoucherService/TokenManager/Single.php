@@ -132,7 +132,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
             $db->query($query, [trim($this->configuration->getToken()), $this->getFinalTokenLength(), $this->getSeriesId(), trim($this->configuration->getToken()), $this->getFinalTokenLength()]);
         } catch (\Exception $e) {
-            return ['error' => 'Something went wrong.']; //TODO Error
+            return ['error' => 'Something went wrong.'];
         }
     }
 
