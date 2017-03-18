@@ -55,7 +55,7 @@ class MultiSelectRelation extends \OnlineShop\Framework\FilterService\FilterType
 
 
         $objects = array();
-        \Logger::log("Load Objects...", \Zend_Log::INFO);
+        \Logger::info("Load Objects...");
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
@@ -70,7 +70,7 @@ class MultiSelectRelation extends \OnlineShop\Framework\FilterService\FilterType
         // sort result
         $values = $this->sortResult($filterDefinition, $values);
 
-        \Logger::log("done.", \Zend_Log::INFO);
+        \Logger::info("done.");
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

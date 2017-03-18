@@ -26,7 +26,7 @@ class SelectRelation extends AbstractFilterType {
         $values = $productList->getGroupByRelationValues($field, true);
 
         $objects = array();
-        \Logger::log("Load Objects...", \Zend_Log::INFO);
+        \Logger::info("Load Objects...");
 
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
@@ -38,7 +38,7 @@ class SelectRelation extends AbstractFilterType {
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
-        \Logger::log("done.", \Zend_Log::INFO);
+        \Logger::info("done.");
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

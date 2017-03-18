@@ -30,7 +30,7 @@ class SelectRelation extends \OnlineShop\Framework\FilterService\FilterType\Sele
         $values = $productList->getGroupByValues($field, true);
 
         $objects = array();
-        \Logger::log("Load Objects...", \Zend_Log::INFO);
+        \Logger::info("Load Objects...");
 
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
@@ -42,7 +42,7 @@ class SelectRelation extends \OnlineShop\Framework\FilterService\FilterType\Sele
                 $objects[$v['label']] = \Pimcore\Model\Object\AbstractObject::getById($v['label']);
             }
         }
-        \Logger::log("done.", \Zend_Log::INFO);
+        \Logger::info("done.");
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

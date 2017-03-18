@@ -26,7 +26,7 @@ class MultiSelectRelation extends AbstractFilterType {
         $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $objects = array();
-        \Logger::log("Load Objects...", \Zend_Log::INFO);
+        \Logger::info("Load Objects...");
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
@@ -37,7 +37,7 @@ class MultiSelectRelation extends AbstractFilterType {
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
-        \Logger::log("done.", \Zend_Log::INFO);
+        \Logger::info("done.");
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
