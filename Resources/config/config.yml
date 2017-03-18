@@ -1,7 +1,0 @@
-pimcore:
-    objects:
-        class_definitions:
-            data:
-                indexFieldSelection: 'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection'
-                indexFieldSelectionCombo: 'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo'
-                indexFieldSelectionField: 'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField'

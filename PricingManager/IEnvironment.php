@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+
 interface IEnvironment
 {
     /**
@@ -92,14 +94,14 @@ interface IEnvironment
     public function getCategories();
 
     /**
-     * @param \Zend_Session_Namespace $namespace
+     * @param AttributeBagInterface $namespace
      *
      * @return IEnvironment
      */
-    public function setSession(\Zend_Session_Namespace $namespace);
+    public function setSession(AttributeBagInterface $namespace);
 
     /**
-     * @return \Zend_Session_Namespace
+     * @return AttributeBagInterface
      */
     public function getSession();
 

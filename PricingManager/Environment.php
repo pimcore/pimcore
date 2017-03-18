@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+
 class Environment implements IEnvironment
 {
     /**
@@ -50,7 +52,7 @@ class Environment implements IEnvironment
     protected $categories = array();
 
     /**
-     * @var \Zend_Session_Namespace
+     * @var AttributeBagInterface
      */
     protected $session;
 
@@ -170,7 +172,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return \Zend_Session_Namespace
+     * @return AttributeBagInterface
      */
     public function getSession()
     {
@@ -178,11 +180,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param \Zend_Session_Namespace $session
+     * @param AttributeBagInterface $session
      *
      * @return IEnvironment
      */
-    public function setSession(\Zend_Session_Namespace $session)
+    public function setSession(AttributeBagInterface $session)
     {
         $this->session = $session;
 

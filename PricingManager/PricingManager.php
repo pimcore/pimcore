@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use OnlineShop\Framework\CartManager\CartPriceModificator\Discount;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
 
 /**
  * Class PricingManager
@@ -164,9 +165,7 @@ class PricingManager implements IPricingManager
     public function getEnvironment()
     {
         $environment = new Environment();
-        //TODO
-//        $environment->setSession( new \Zend_Session_Namespace('PricingManager') );
-
+        $environment->setSession( \Pimcore::getContainer()->get("session")->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT) );
         return $environment;
     }
 

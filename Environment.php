@@ -17,6 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+
 class Environment implements IEnvironment {
     const SESSION_KEY_CUSTOM_ITEMS = "customitems";
     const SESSION_KEY_USERID = "userid";
@@ -29,7 +33,7 @@ class Environment implements IEnvironment {
     protected $sessionNamespace = "onlineshop";
 
     /**
-     * @var \Zend_Session_Namespace
+     * @var AttributeBagInterface
      */
     protected $session;
 
@@ -71,55 +75,41 @@ class Environment implements IEnvironment {
     }
 
     protected function loadFromSession() {
-        // when $_SESSION[self::SESSION_NAMESPACE] is set, always load environment from session (also within cli scripts)
-        if(php_sapi_name() != "cli" || (isset($_SESSION) && $_SESSION[$this->sessionNamespace])) {
+        if(php_sapi_name() != "cli") {
             $this->session = $this->buildSession();
 
-            $key = self::SESSION_KEY_CUSTOM_ITEMS;
-            $this->customItems = $this->session->$key;
+            $this->customItems = $this->session->get(self::SESSION_KEY_CUSTOM_ITEMS);
             if ($this->customItems==null){
                 $this->customItems=array();
             }
 
-            $key = self::SESSION_KEY_USERID;
-            $this->userId = $this->session->$key;
+            $this->userId = $this->session->get(self::SESSION_KEY_USERID);
 
-            $key = self::SESSION_KEY_ASSORTMENT_TENANT;
-            $this->currentAssortmentTenant = $this->session->$key;
+            $this->currentAssortmentTenant = $this->session->get(self::SESSION_KEY_ASSORTMENT_TENANT);
 
-            $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
-            $this->currentAssortmentSubTenant = $this->session->$key;
+            $this->currentAssortmentSubTenant = $this->session->get(self::SESSION_KEY_ASSORTMENT_SUB_TENANT);
 
-            $key = self::SESSION_KEY_CHECKOUT_TENANT;
-            $this->currentCheckoutTenant = $this->session->$key;
-            $this->currentTransientCheckoutTenant = $this->session->$key;
+            $this->currentCheckoutTenant = $this->session->get(self::SESSION_KEY_CHECKOUT_TENANT);
+            $this->currentTransientCheckoutTenant = $this->session->get(self::SESSION_KEY_CHECKOUT_TENANT);
 
-            $key = self::SESSION_KEY_USE_GUEST_CART;
-            $this->useGuestCart = $this->session->$key;
+            $this->useGuestCart = $this->session->get(self::SESSION_KEY_USE_GUEST_CART);
         }
     }
 
     public function save() {
-        // when $_SESSION[self::SESSION_NAMESPACE] is set, always save environment to session (also within cli scripts)
-        if(php_sapi_name() != "cli" || $_SESSION[$this->sessionNamespace])
+        if(php_sapi_name() != "cli")
         {
-            $key = self::SESSION_KEY_CUSTOM_ITEMS;
-            $this->session->$key = $this->customItems;
+            $this->session->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
 
-            $key = self::SESSION_KEY_USERID;
-            $this->session->$key = $this->userId;
+            $this->session->set(self::SESSION_KEY_USERID, $this->userId);
 
-            $key = self::SESSION_KEY_ASSORTMENT_TENANT;
-            $this->session->$key = $this->currentAssortmentTenant;
+            $this->session->set(self::SESSION_KEY_ASSORTMENT_TENANT, $this->currentAssortmentTenant);
 
-            $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
-            $this->session->$key = $this->currentAssortmentSubTenant;
+            $this->session->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
 
-            $key = self::SESSION_KEY_CHECKOUT_TENANT;
-            $this->session->$key = $this->currentCheckoutTenant;
+            $this->session->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
 
-            $key = self::SESSION_KEY_USE_GUEST_CART;
-            $this->session->$key = $this->useGuestCart;
+            $this->session->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
         }
     }
 
@@ -341,13 +331,13 @@ class Environment implements IEnvironment {
     }
 
     /**
-     * @return \Zend_Session_Namespace
+     * @return AttributeBagInterface
      */
     protected function buildSession()
     {
-        //TODO
-        //return new \Zend_Session_Namespace($this->sessionNamespace);
-        return new \stdClass();
+        $session = \Pimcore::getContainer()->get("session");
+        /** @var NamespacedAttributeBag $bag */
+        return $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
     }
 
     /**

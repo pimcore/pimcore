@@ -17,9 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
-class SessionCart extends AbstractCart implements ICart {
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
-    protected static $sessionNamespace = "onlineshop_sessioncarts";
+class SessionCart extends AbstractCart implements ICart {
 
     /**
      * @return string
@@ -35,11 +37,17 @@ class SessionCart extends AbstractCart implements ICart {
         return '\OnlineShop\Framework\CartManager\SessionCartCheckoutData';
     }
 
+    /**
+     * @return AttributeBagInterface
+     */
     protected function getSession() {
-        $session = new \Zend_Session_Namespace(static::$sessionNamespace);
+        /**
+         * @var AttributeBagInterface $session
+         */
+        $session = \Pimcore::getContainer()->get("session")->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
 
-        if(empty($session->carts)) {
-            $session->carts = array();
+        if(empty($session->get("carts"))) {
+            $session->set("carts", []);
         }
 
         return $session;
@@ -53,7 +61,9 @@ class SessionCart extends AbstractCart implements ICart {
             $this->setId(uniqid("sesscart_"));
         }
 
-        $session->carts[$this->getId()] = serialize($this);
+        $carts = $session->get("carts");
+        $carts[$this->getId()] = serialize($this);
+        $session->set("carts", $carts);
     }
 
     /**
@@ -70,7 +80,10 @@ class SessionCart extends AbstractCart implements ICart {
         }
 
         $this->clear();
-        unset($session->carts[$this->getId()]);
+
+        $carts = $session->get("carts");
+        unset($carts[$this->getId()]);
+        $session->set("carts", $carts);
 
     }
 
@@ -111,30 +124,13 @@ class SessionCart extends AbstractCart implements ICart {
 
             $tmpCart = new static();
 
-            foreach($tmpCart->getSession()->carts as $serializedCart) {
+            foreach($tmpCart->getSession()->get("carts") as $serializedCart) {
                 $cart = unserialize($serializedCart);
                 static::$unserializedCarts[$cart->getId()] = $cart;
             }
         }
         return static::$unserializedCarts;
     }
-
-    /**
-     * @return string
-     */
-    public static function getSessionNamespace()
-    {
-        return static::$sessionNamespace;
-    }
-
-    /**
-     * @param string $sessionNamespace
-     */
-    public static function setSessionNamespace($sessionNamespace)
-    {
-        static::$sessionNamespace = $sessionNamespace;
-    }
-
 
     /**
      * @return array
