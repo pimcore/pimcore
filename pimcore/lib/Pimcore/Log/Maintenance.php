@@ -122,7 +122,6 @@ class Maintenance
             PIMCORE_LOG_DIRECTORY . "/legacy-class-names.log",
             PIMCORE_LOG_DIRECTORY . "/legacy-class-names-admin.log",
             PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log",
-            PIMCORE_LOG_DIRECTORY . "/usagelog.log",
         ];
 
         foreach ($logs as $log) {
