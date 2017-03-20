@@ -241,10 +241,11 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
      * @throws \Exception
      */
     public function cleanUpPendingOrders() {
-        $config = Factory::getInstance()->getConfig();
         $orderManager = Factory::getInstance()->getOrderManager();
 
-        $timestamp = \Zend_Date::now()->sub(1, \Zend_Date::HOUR)->get();
+        $dateTime = new \DateTime();
+        $dateTime->add(new \DateInterval('PT1H'));
+        $timestamp = $dateTime->getTimestamp();
 
         //Abort orders with payment pending
         $list = $orderManager->buildOrderList();

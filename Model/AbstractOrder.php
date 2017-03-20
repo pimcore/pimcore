@@ -132,7 +132,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getOrderdate() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getOrderdate is not implemented for " . get_class($this));
@@ -140,7 +140,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param \Zend_Date $orderdate
+     * @param \DateTime $orderdate
      */
     public function setOrderdate($orderdate) {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setOrderdate is not implemented for " . get_class($this));

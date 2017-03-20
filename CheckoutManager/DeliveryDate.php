@@ -39,8 +39,8 @@ class DeliveryDate extends AbstractStep implements ICheckoutStep {
 
         $this->cart->setCheckoutData(self::INSTANTLY, $data->instantly);
         $date = null;
-        if($data->date instanceof \Zend_Date) {
-            $date = $data->date->get(\Zend_Date::TIMESTAMP);
+        if($data->date instanceof \DateTime) {
+            $date = $data->date->getTimestamp();
         }
         $this->cart->setCheckoutData(self::DATE, $date);
         return true;
@@ -53,7 +53,7 @@ class DeliveryDate extends AbstractStep implements ICheckoutStep {
         $data = new \stdClass();
         $data->instantly = $this->cart->getCheckoutData(self::INSTANTLY);
         if($this->cart->getCheckoutData(self::DATE)) {
-            $data->date = new \Zend_Date($this->cart->getCheckoutData(self::DATE), \Zend_Date::TIMESTAMP);
+            $data->date = new \DateTime('@' . $this->cart->getCheckoutData(self::DATE));
         } else {
             $data->instantly = true;
         }

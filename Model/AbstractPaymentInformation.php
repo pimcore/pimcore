@@ -23,23 +23,23 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public abstract function getPaymentStart ();
 
     /**
-     * @param \Zend_Date $paymentStart
+     * @param \DateTime $paymentStart
      * @return void
      */
     public abstract function setPaymentStart ($paymentStart);
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public abstract function getPaymentFinish ();
 
     /**
-     * @param \Zend_Date $paymentStart
+     * @param \DateTime $paymentStart
      * @return void
      */
     public abstract function setPaymentFinish ($paymentFinish);

@@ -46,7 +46,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function __construct()
     {
-        $this->setAddedDate(\Zend_Date::now());
+        $this->setAddedDate(new \DateTime());
     }
 
     public function setCount($count) {
@@ -73,21 +73,36 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->product;
     }
 
-    public function setCart(\OnlineShop\Framework\CartManager\ICart $cart) {
+    /**
+     * @param ICart $cart
+     */
+    public function setCart(ICart $cart) {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }
 
+    /**
+     * @return ICart
+     */
     public abstract function getCart();
 
+    /**
+     * @return mixed
+     */
     public function getCartId() {
         return $this->cartId;
     }
 
+    /**
+     * @param $cartId
+     */
     public function setCartId($cartId) {
         $this->cartId = $cartId;
     }
 
+    /**
+     * @return int
+     */
     public function getProductId() {
         if ($this->productId) {
             return $this->productId;
@@ -95,22 +110,37 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->getProduct()->getId();
     }
 
+    /**
+     * @param $productId
+     */
     public function setProductId($productId) {
         $this->productId = $productId;
     }
 
+    /**
+     * @param $parentItemKey
+     */
     public function setParentItemKey($parentItemKey) {
         $this->parentItemKey = $parentItemKey;
     }
 
+    /**
+     * @return string
+     */
     public function getParentItemKey() {
         return $this->parentItemKey;
     }
 
+    /**
+     * @param $itemKey
+     */
     public function setItemKey($itemKey) {
         $this->itemKey = $itemKey;
     }
 
+    /**
+     * @return mixed
+     */
     public function getItemKey() {
         return $this->itemKey;
     }
@@ -205,8 +235,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->getPriceInfo()->getTotalPrice();
     }
 
-
-    public function setAddedDate(\Zend_Date $date = null) {
+    /**
+     * @param \DateTime|null $date
+     */
+    public function setAddedDate(\DateTime $date = null) {
         if($date) {
             $this->addedDateTimestamp = $date->getTimestamp();
         } else {
@@ -214,15 +246,24 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         }
     }
 
+    /**
+     * @return \DateTime|null
+     */
     public function getAddedDate() {
-        return $this->addedDateTimestamp !== NULL ? new \Zend_Date($this->addedDateTimestamp) : null;
+        return $this->addedDateTimestamp !== NULL ? new \DateTime('@' . $this->addedDateTimestamp) : null;
     }
 
+    /**
+     * @return int
+     */
     public function getAddedDateTimestamp()
     {
         return $this->addedDateTimestamp;
     }
 
+    /**
+     * @param int $time
+     */
     public function setAddedDateTimestamp($time)
     {
         $this->addedDateTimestamp = $time;

@@ -19,11 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order;
 
 use OnlineShop\Framework\OrderManager\IOrderAgent;
 use \OnlineShop\Framework\PaymentManager\IStatus;
-use \OnlineShop\Framework\PaymentManager\Payment\IPayment;
-use \OnlineShop\Framework\Factory;
 use Exception;
 
-use Zend_Date;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 
@@ -402,7 +399,7 @@ class Agent implements IOrderAgent
             }
 
             $currentPaymentInformation = new PaymentInfo();
-            $currentPaymentInformation->setPaymentStart( \Zend_Date::now() );
+            $currentPaymentInformation->setPaymentStart( new \DateTime() );
             $currentPaymentInformation->setPaymentState( $order::ORDER_STATE_PAYMENT_PENDING );
             $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
 
@@ -513,7 +510,7 @@ class Agent implements IOrderAgent
         }
 
         // save basic payment data
-        $currentPaymentInformation->setPaymentFinish( \Zend_Date::now() );
+        $currentPaymentInformation->setPaymentFinish( new \DateTime() );
         $currentPaymentInformation->setPaymentReference( $status->getPaymentReference() );
         $currentPaymentInformation->setPaymentState( $status->getStatus() );
         $currentPaymentInformation->setMessage( $currentPaymentInformation->getMessage() . " " . $status->getMessage() );

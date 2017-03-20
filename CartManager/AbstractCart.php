@@ -42,7 +42,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     protected $name;
 
     /**
-     * @var \Zend_Date
+     * @var \DateTime
      */
     protected $creationDate;
 
@@ -52,7 +52,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     protected $creationDateTimestamp;
 
     /**
-     * @var \Zend_Date
+     * @var \DateTime
      */
     protected $modificationDate;
 
@@ -99,7 +99,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
     public function __construct() {
         $this->setIgnoreReadonly();
-        $this->setCreationDate(\Zend_Date::now());
+        $this->setCreationDate( new \DateTime() );
         $this->unsetIgnoreReadonly();
     }
 
@@ -550,24 +550,24 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     }
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getCreationDate() {
         if(empty($this->creationDate) && $this->creationDateTimestamp) {
-            $this->creationDate = new \Zend_Date($this->creationDateTimestamp, \Zend_Date::TIMESTAMP);
+            $this->creationDate = new \DateTime('@'.$this->creationDateTimestamp);
         }
         return $this->creationDate;
     }
 
     /**
-     * @param \Zend_Date $creationDate
+     * @param \DateTime $creationDate
      */
-    public function setCreationDate(\Zend_Date $creationDate = null) {
+    public function setCreationDate(\DateTime $creationDate = null) {
         $this->checkCartIsReadOnly();
 
         $this->creationDate = $creationDate;
         if($creationDate) {
-            $this->creationDateTimestamp = $creationDate->get(\Zend_Date::TIMESTAMP);
+            $this->creationDateTimestamp = $creationDate->getTimezone();
         } else {
             $this->creationDateTimestamp = null;
         }
@@ -593,25 +593,25 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getModificationDate() {
         if(empty($this->modificationDate) && $this->modificationDateTimestamp) {
-            $this->modificationDate = new \Zend_Date($this->modificationDateTimestamp);
+            $this->modificationDate = new \DateTime('@' . $this->modificationDateTimestamp);
         }
 
         return $this->modificationDate;
     }
 
     /**
-     * @param \Zend_Date $modificationDate
+     * @param \DateTime $modificationDate
      */
-    public function setModificationDate(\Zend_Date $modificationDate = null) {
+    public function setModificationDate(\DateTime $modificationDate = null) {
         $this->checkCartIsReadOnly();
 
         $this->modificationDate = $modificationDate;
         if($modificationDate) {
-            $this->modificationDateTimestamp = $modificationDate->get(\Zend_Date::TIMESTAMP);
+            $this->modificationDateTimestamp = $modificationDate->getTimestamp();
         } else {
             $this->modificationDateTimestamp = null;
         }

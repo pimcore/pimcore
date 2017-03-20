@@ -337,7 +337,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     public function processPreparationQueue($limit = 200) {
 
         $workerId = uniqid();
-        $workerTimestamp = \Zend_Date::now()->getTimestamp();
+        $workerTimestamp = time();
         $this->db->query("UPDATE " . $this->getStoreTableName() . " SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT " . intval($limit),
             array($workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()));
 
@@ -373,7 +373,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     public function processUpdateIndexQueue($limit = 200) {
 
         $workerId = uniqid();
-        $workerTimestamp = \Zend_Date::now()->getTimestamp();
+        $workerTimestamp = time();
         $this->db->query("UPDATE " . $this->getStoreTableName() . " SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
             array($workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()));
 

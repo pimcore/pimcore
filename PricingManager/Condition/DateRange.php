@@ -20,12 +20,12 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Conditio
 class DateRange implements IDateRange
 {
     /**
-     * @var \Zend_Date
+     * @var \DateTime
      */
     protected $starting;
 
     /**
-     * @var \Zend_Date
+     * @var \DateTime
      */
     protected $ending;
 
@@ -45,29 +45,29 @@ class DateRange implements IDateRange
     }
 
     /**
-     * @param \Zend_Date $date
+     * @param \DateTime $date
      *
      * @return IDateRange
      */
-    public function setStarting(\Zend_Date $date)
+    public function setStarting(\DateTime $date)
     {
         $this->starting = $date;
         return $this;
     }
 
     /**
-     * @param \Zend_Date $date
+     * @param \DateTime $date
      *
      * @return IDateRange
      */
-    public function setEnding(\Zend_Date $date)
+    public function setEnding(\DateTime $date)
     {
         $this->ending = $date;
         return $this;
     }
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getStarting()
     {
@@ -75,7 +75,7 @@ class DateRange implements IDateRange
     }
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getEnding()
     {
@@ -103,11 +103,11 @@ class DateRange implements IDateRange
     {
         $json = json_decode($string);
 
-        $starting = new \Zend_Date(strtotime($json->starting));
-        $starting->setTime('00:00:00');
+        $starting = new \DateTime(strtotime($json->starting));
+        $starting->setTime(0,0,0);
 
-        $ending = new \Zend_Date(strtotime($json->ending));
-        $ending->setTime('23:59:59');
+        $ending = new \DateTime(strtotime($json->ending));
+        $ending->setTime(23, 59, 59);
 
         $this->setStarting($starting);
         $this->setEnding($ending);

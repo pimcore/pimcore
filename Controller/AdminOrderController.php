@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use OnlineShop\Framework\OrderManager\Order\Listing\Filter;
 use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
+use Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
@@ -131,18 +132,17 @@ class AdminOrderController extends FrontendController
         if($request->query->has('from') === false && $request->query->has('till') === false )
         {
             // als default, nehmen wir den ersten des aktuellen monats
-            $from = new \Zend_Date();
-            $from->setDay(1);
-            $request->query->set('from', $from->toString('dd.MM.yyyy'));
+            $from = new \DateTime('first day of this month');
+            $request->query->set('from', $from->format('d.m.Y'));
         }
 
         $filterDate = new Filter\OrderDateTime();
         if($request->get('from') || $request->get('till') )
         {
-            $from = $request->get('from') ? new \Zend_Date($request->get('from'), 'dd.MM.yyyy') : null;
-            $till = $request->get('till') ? new \Zend_Date($request->get('till'), 'dd.MM.yyyy') : null;
+            $from = $request->get('from') ? new \DateTime($request->get('from')) : null;
+            $till = $request->get('till') ? new \DateTime($request->get('till')) : null;
             if ($till){
-                $till->add(1,\Zend_Date::DAY);
+                $till->add(new \DateInterval('P1D'));
             }
 
             if($from)
@@ -177,6 +177,8 @@ class AdminOrderController extends FrontendController
      */
     public function detailAction(Request $request)
     {
+        $dateFormatter = $this->get('pimcore.locale.intl_formatter');
+
         // init
         $order = OnlineShopOrder::getById( $request->get('id') );
         /* @var \OnlineShop\Framework\Model\AbstractOrder $order */
@@ -220,8 +222,8 @@ class AdminOrderController extends FrontendController
             
 
             // register
-            $register = new \Zend_Date($order->getCreationDate());
-            $arrCustomerAccount['created'] = $register->get(\Zend_Date::DATE_MEDIUM);
+            $register = new \DateTime($order->getCreationDate());
+            $arrCustomerAccount['created'] = $dateFormatter->formatDateTime($register, IntlFormatterService::DATE_MEDIUM);
 
 
             // mail
@@ -272,7 +274,7 @@ class AdminOrderController extends FrontendController
         ];
 
         $arrTimeline = [];
-        $date = new \Zend_Date();
+        $date = new \DateTime();
         foreach($orderAgent->getFullChangeLog() as $note)
         {
             /* @var \Pimcore\Model\Element\Note $note */
@@ -284,10 +286,8 @@ class AdminOrderController extends FrontendController
 
 
             // group events
-            $group = $date
-                ->setTimestamp( $note->getDate() )
-                ->get(\Zend_Date::DATE_MEDIUM)
-            ;
+            $date->setTimestamp( $note->getDate() );
+            $group = $dateFormatter->formatDateTime($date, IntlFormatterService::DATE_MEDIUM);
 
 
             // load reference
@@ -303,7 +303,7 @@ class AdminOrderController extends FrontendController
                 'icon' => $arrIcons[ $note->getTitle() ]
                 , 'context' => $arrContext[ $note->getTitle() ] ?: 'default'
                 , 'type' => $note->getTitle()
-                , 'date' => $date->setTimestamp( $note->getDate() )->get(\Zend_Date::DATETIME_MEDIUM)
+                , 'date' => $dateFormatter->formatDateTime($date->setTimestamp( $note->getDate() ), IntlFormatterService::DATETIME_MEDIUM)
                 , 'avatar' => $avatar
                 , 'user' => $user ? $user->getName() : null
                 , 'message' => $note->getData()['message']['data']

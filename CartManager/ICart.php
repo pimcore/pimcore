@@ -231,29 +231,29 @@ interface ICart {
 
     /**
      * @abstract
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getCreationDate();
 
     /**
      * @abstract
-     * @param null|\Zend_Date $creationDate
+     * @param null|\DateTime $creationDate
      * @return void
      */
-    public function setCreationDate(\Zend_Date $creationDate = null);
+    public function setCreationDate(\DateTime $creationDate = null);
 
     /**
      * @abstract
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getModificationDate();
 
     /**
      * @abstract
-     * @param null|\Zend_Date $modificationDate
+     * @param null|\DateTime $modificationDate
      * @return void
      */
-    public function setModificationDate(\Zend_Date $modificationDate = null);
+    public function setModificationDate(\DateTime $modificationDate = null);
 
     /**
      * sorts all items in cart according to a given callback function

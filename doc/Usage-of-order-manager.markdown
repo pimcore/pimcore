@@ -78,8 +78,8 @@ $orderList = $orderManager->createOrderList();
 
 // create date time filter
 $filterDate = new \OnlineShop\Framework\OrderManager\Order\Listing\Filter\OrderDateTime();
-$filterDate->setFrom( new Zend_Date('20.01.2015') );
-$filterDate->setTill( new Zend_Date('31.01.2015') );
+$filterDate->setFrom( new DateTime('20.01.2015') );
+$filterDate->setTill( new DateTime('31.01.2015') );
 
 
 // add filter

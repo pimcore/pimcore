@@ -106,7 +106,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getDateCreated() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getDateCreated is not implemented for " . get_class($this));
@@ -114,7 +114,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param \Zend_Date $dateCreated
+     * @param \DateTime $dateCreated
      */
     public function setDateCreated($dateCreated) {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setDateCreated is not implemented for " . get_class($this));
@@ -123,7 +123,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getDateValidUntil() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getDateValidUntil is not implemented for " . get_class($this));
@@ -131,7 +131,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @param \Zend_Date $dateValidUntil
+     * @param \DateTime $dateValidUntil
      */
     public function setDateValidUntil($dateValidUntil) {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setDateValidUntil is not implemented for " . get_class($this));

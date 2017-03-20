@@ -30,6 +30,9 @@ $this->headLink()->appendStylesheet('/bundles/pimcoreecommerceframework/vendor/p
 $this->headLink()->appendStylesheet('/bundles/pimcoreecommerceframework/vendor/pickadate.classic.date.css');
 $this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picker.v3.5.3.js');
 $this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picker.date.v3.5.3.js');
+
+$formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
+
 ?>
 <div class="page-header">
     <h1><?= $this->translateAdmin('online-shop.back-office.order-list') ?></h1>
@@ -107,7 +110,6 @@ $this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picke
         <th width="180"><?= $this->translateAdmin('online-shop.back-office.order') ?></th>
         <th width="180"><?= $this->translateAdmin('online-shop.back-office.order.date') ?></th>
         <th width="80"><?= $this->translateAdmin('online-shop.back-office.order.order-items') ?></th>
-        <th></th>
         <th width="100"><?= $this->translateAdmin('online-shop.back-office.order.price.total') ?></th>
     </tr>
     </thead>
@@ -127,13 +129,14 @@ $this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picke
             </td>
             <td>
                 <?php
-                echo $item->getOrderDate() instanceof Zend_Date
-                    ? $item->getOrderDate()
-                    : new Zend_Date( $item->getOrderDate() );
+                    $date = $item->getOrderDate() instanceof DateTime
+                        ? $item->getOrderDate()
+                        : new DateTime( '@' . $item->getOrderDate() );
+
+                    echo $formatter->formatDateTime($date, \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM);
                 ?>
             </td>
             <td><?= $item->getItems() ?></td>
-            <td>
             </td>
             <td class="text-right"><?= $totalSum->toCurrency($item->getTotalPrice()) ?></td>
         </tr>
@@ -141,7 +144,7 @@ $this->headScript()->appendFile('/bundles/pimcoreecommerceframework/vendor/picke
     </tbody>
     <tfoot>
     <tr>
-        <td colspan="4"></td>
+        <td colspan="3"></td>
         <td class="text-right">
             <strong><?= $totalSum ?></strong>
         </td>

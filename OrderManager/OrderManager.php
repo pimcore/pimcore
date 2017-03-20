@@ -189,12 +189,12 @@ class OrderManager implements IOrderManager
             $order = $this->getNewOrderObject();
 
             $order->setParent( $this->getOrderParentFolder() );
-            $order->setCreationDate(\Zend_Date::now()->get());
+            $order->setCreationDate(time());
             $order->setKey( \Pimcore\File::getValidFilename($tempOrdernumber) );
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
-            $order->setOrderdate(\Zend_Date::now());
+            $order->setOrderdate(new \DateTime());
             $order->setCartId($this->createCartId($cart));
         }
 

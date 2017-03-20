@@ -383,7 +383,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                 $this->deleteFromMockupCache($objectId);
 
             } catch(\Exception $e) {
-                $check = \Zend_Json::decode($e->getMessage());
+                $check = json_decode($e->getMessage());
                 if(!$check['found']){ //not in es index -> we can delete it from store table
                     $this->deleteFromStoreTable($objectId);
                     $this->deleteFromMockupCache($objectId);
@@ -522,7 +522,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     'update_error' => null,
                 ];
                 if($response['index']['error']) {
-                    $data['update_error'] = \Zend_Json::encode($response['index']['error']);
+                    $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
                     Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
                 }

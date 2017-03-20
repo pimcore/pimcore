@@ -89,10 +89,10 @@ class DefaultService implements IService {
          * @var $offer \OnlineShop\Framework\OfferTool\AbstractOffer
          */
         $offer->setParent(\Pimcore\Model\Object\Folder::getByPath($this->parentFolderPath));
-        $offer->setCreationDate(\Zend_Date::now()->get());
+        $offer->setCreationDate(time());
         $offer->setKey($tempOfferNumber);
         $offer->setPublished(true);
-        $offer->setDateCreated(\Zend_Date::now());
+        $offer->setDateCreated(new \DateTime());
 
         return $offer;
     }

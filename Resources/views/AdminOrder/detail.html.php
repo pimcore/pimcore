@@ -26,6 +26,8 @@ $orderAgent = $this->orderAgent;
 $order = $orderAgent->getOrder();
 $currency = $orderAgent->getCurrency();
 
+$formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
+
 ?>
 <div class="row order-detail">
     <div class="col-xs-7">
@@ -230,7 +232,11 @@ $currency = $orderAgent->getCurrency();
                         }
                         ?>
                         <tr>
-                            <td width="130"><small><?= $item->getPaymentFinish() ? $item->getPaymentFinish()->toString(Zend_Date::DATETIME_MEDIUM) : '' ?></small></td>
+                            <td width="130">
+                                <small>
+                                    <?= $item->getPaymentFinish() ? $formatter->formatDateTime($item->getPaymentFinish(), \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM) : '' ?>
+                                </small>
+                            </td>
                             <td width="100">
                                 <small>
                                     <?php
@@ -449,7 +455,7 @@ $currency = $orderAgent->getCurrency();
 
             <!-- Separator -->
             <div class="separator text-muted">
-                <time><?= $order->getOrderdate()->get(Zend_Date::DATETIME_MEDIUM) ?></time>
+                <time><?= $formatter->formatDateTime($order->getOrderdate(), \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM) ?></time>
             </div>
             <!-- /Separator -->
 

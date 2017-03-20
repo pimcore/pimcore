@@ -19,17 +19,16 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\List
 
 use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListFilter;
-use Zend_Date;
 
 class OrderDateTime implements IOrderListFilter
 {
     /**
-     * @var Zend_Date
+     * @var \DateTime
      */
     protected $from;
 
     /**
-     * @var Zend_Date
+     * @var \DateTime
      */
     protected $till;
 
@@ -60,7 +59,7 @@ class OrderDateTime implements IOrderListFilter
     }
 
     /**
-     * @return Zend_Date
+     * @return \DateTime
      */
     public function getFrom()
     {
@@ -68,18 +67,18 @@ class OrderDateTime implements IOrderListFilter
     }
 
     /**
-     * @param Zend_Date $from
+     * @param \DateTime $from
      *
      * @return $this
      */
-    public function setFrom(Zend_Date $from)
+    public function setFrom(\DateTime $from)
     {
         $this->from = $from;
         return $this;
     }
 
     /**
-     * @return Zend_Date
+     * @return \DateTime
      */
     public function getTill()
     {
@@ -87,11 +86,11 @@ class OrderDateTime implements IOrderListFilter
     }
 
     /**
-     * @param Zend_Date $till
+     * @param \DateTime $till
      *
      * @return $this
      */
-    public function setTill(Zend_Date $till)
+    public function setTill(\DateTime $till)
     {
         $this->till = $till;
         return $this;

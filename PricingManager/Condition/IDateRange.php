@@ -20,26 +20,26 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Conditio
 interface IDateRange extends \OnlineShop\Framework\PricingManager\ICondition
 {
     /**
-     * @param \Zend_Date $date
+     * @param \DateTime $date
      *
      * @return IDateRange
      */
-    public function setStarting(\Zend_Date $date);
+    public function setStarting(\DateTime $date);
 
     /**
-     * @param \Zend_Date $date
+     * @param \DateTime $date
      *
      * @return IDateRange
      */
-    public function setEnding(\Zend_Date $date);
+    public function setEnding(\DateTime $date);
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getStarting();
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getEnding();
 }

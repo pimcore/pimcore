@@ -147,13 +147,13 @@ interface ICartItem {
     public function save();
 
     /**
-     * @param \Zend_Date $date
+     * @param \DateTime $date
      * @return void
      */
-    public function setAddedDate(\Zend_Date $date = null);
+    public function setAddedDate(\DateTime $date = null);
 
     /**
-     * @return \Zend_Date
+     * @return \DateTime
      */
     public function getAddedDate();
 
