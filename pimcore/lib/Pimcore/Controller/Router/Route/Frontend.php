@@ -273,7 +273,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 }
                             }
 
-                            if ($redirectTargetUrl !== $originalPath) {
+                            if ($redirectTargetUrl !== $originalPath && !Tool::isFrontentRequestByAdmin()) {
                                 if ($_SERVER["QUERY_STRING"]) {
                                     $redirectTargetUrl .= "?" . $_SERVER["QUERY_STRING"];
                                 }
@@ -300,7 +300,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             try {
                 $list = new Staticroute\Listing();
                 $list->setOrder(function ($a, $b) {
-                    
+
                     // give site ids a higher priority
                     if ($a["siteId"] && !$b["siteId"]) {
                         return -1;
