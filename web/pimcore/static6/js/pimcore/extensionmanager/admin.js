@@ -233,6 +233,7 @@ pimcore.extensionmanager.admin = Class.create({
                     getClass: function (v, meta, rec) {
                         var klass = "";
 
+                        // only legacy plugins/bricks can be deleted as pimcore 5 components could be installed via composer
                         if(rec.get("active") != true && rec.get("type") == "brick") {
                             klass += "pimcore_action_column pimcore_icon_delete ";
                         }

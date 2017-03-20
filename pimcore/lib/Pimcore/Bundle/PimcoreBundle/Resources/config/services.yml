@@ -240,6 +240,9 @@ services:
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
 
+    pimcore.extension_manager.config:
+        class: Pimcore\ExtensionManager\Config
+
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
 

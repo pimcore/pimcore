@@ -14,14 +14,12 @@
 
 namespace Pimcore;
 
+use Pimcore\Config;
+/**
+ * @deprecated Superseded by PimcoreBundleManager and AreabrickManager in Pimcore 5
+ */
 class ExtensionManager
 {
-
-    /**
-     * @var \Pimcore\Config\Config
-     */
-    private static $config;
-
     /**
      * @var array
      */
@@ -29,36 +27,20 @@ class ExtensionManager
 
     /**
      * @static
-     * @return \Pimcore\Config\Config
+     * @return Config\Config
      */
     public static function getConfig()
     {
-        if (!self::$config) {
-            try {
-                $file = \Pimcore\Config::locateConfigFile("extensions.php");
-                if (file_exists($file)) {
-                    self::$config = new \Pimcore\Config\Config(include($file), true);
-                } else {
-                    throw new \Exception($file . " doesn't exist");
-                }
-            } catch (\Exception $e) {
-                self::$config = new \Pimcore\Config\Config([], true);
-            }
-        }
-
-        return self::$config;
+        return \Pimcore::getContainer()->get('pimcore.extension_manager.config')->loadConfig();
     }
 
     /**
      * @static
-     * @param \Pimcore\Config\Config $config
+     * @param Config\Config $config
      */
-    public static function setConfig(\Pimcore\Config\Config $config)
+    public static function setConfig(Config\Config $config)
     {
-        self::$config = $config;
-
-        $file = \Pimcore\Config::locateConfigFile("extensions.php");
-        File::putPhpFile($file, to_php_data_file_format(self::$config->toArray()));
+        return \Pimcore::getContainer()->get('pimcore.extension_manager.config')->saveConfig($config);
     }
 
     /**
@@ -97,7 +79,7 @@ class ExtensionManager
     {
         $config = self::getConfig();
         if (!isset($config->$type)) {
-            $config->$type = new \Pimcore\Config\Config([], true);
+            $config->$type = new Config\Config([], true);
         }
         $config->$type->$id = true;
         self::setConfig($config);
@@ -119,7 +101,7 @@ class ExtensionManager
     {
         $config = self::getConfig();
         if (!isset($config->$type)) {
-            $config->$type = new \Pimcore\Config\Config([], true);
+            $config->$type = new Config\Config([], true);
         }
         $config->$type->$id = false;
         self::setConfig($config);
@@ -148,7 +130,7 @@ class ExtensionManager
                         if (file_exists(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml")) {
                             try {
                                 $pluginConfArray = xmlToArray(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
-                                $pluginConf = new \Pimcore\Config\Config($pluginConfArray);
+                                $pluginConf = new Config\Config($pluginConfArray);
                                 if ($pluginConf != null) {
                                     $pluginConfigs[] = $pluginConf->toArray();
                                 }
@@ -384,7 +366,7 @@ class ExtensionManager
             foreach (self::getBrickDirectories($customPath) as $areaName => $path) {
                 try {
                     $configArray = xmlToArray($path . "/area.xml");
-                    $configs[$areaName] = new \Pimcore\Config\Config($configArray);
+                    $configs[$areaName] = new Config\Config($configArray);
                 } catch (\Exception $e) {
                     Logger::error("Unable to initalize brick with id: " . $areaName);
                     Logger::error($e);

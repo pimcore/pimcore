@@ -14,14 +14,44 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\ExtensionManager;
 
+use Pimcore\API\Bundle\Exception\BundleNotFoundException;
 use Pimcore\API\Bundle\PimcoreBundleInterface;
+use Pimcore\API\Bundle\PimcoreBundleManager;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
 use Pimcore\Document\Area\AreabrickInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class ExtensionManagerController extends AdminController
+class ExtensionManagerController extends AdminController implements EventedControllerInterface
 {
+    /**
+     * @var PimcoreBundleManager
+     */
+    protected $bundleManager;
+
+    /**
+     * @inheritDoc
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $this->checkPermission('plugins');
+
+        $this->bundleManager = $this->get('pimcore.extension.bundle_manager');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // noop
+    }
+
     /**
      * @Route("/admin/get-extensions")
      */
@@ -40,15 +70,106 @@ class ExtensionManagerController extends AdminController
     }
 
     /**
+     * @Route("/admin/toggle-extension-state")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function toggleExtensionStateAction(Request $request)
+    {
+        $type   = $request->get('type');
+        $id     = $request->get('id');
+        $enable = $request->get('method', 'enable') === 'enable' ? true : false;
+        $reload = true;
+
+        if ($type === 'bundle') {
+            if ($enable) {
+                $this->bundleManager->enable($id);
+            } else {
+                $this->bundleManager->disable($id);
+            }
+        } else if ($type === 'areabrick') {
+
+        }
+
+        if ($type === 'areabrick') {
+            $reload = false;
+        }
+
+        return $this->json([
+            'success' => true,
+            'reload'  => $reload
+        ]);
+    }
+
+    /**
+     * @Route("/admin/install")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function installAction(Request $request)
+    {
+        return $this->handleInstallation($request, true);
+    }
+
+    /**
+     * @Route("/admin/uninstall")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function uninstallAction(Request $request)
+    {
+        return $this->handleInstallation($request, false);
+    }
+
+    /**
+     * @param Request $request
+     * @param bool $install
+     *
+     * @return JsonResponse
+     */
+    private function handleInstallation(Request $request, $install = true)
+    {
+        try {
+            $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
+
+            if ($install) {
+                $this->bundleManager->install($bundle);
+            } else {
+                $this->bundleManager->uninstall($bundle);
+            }
+
+            return $this->json(['success' => true]);
+        } catch (BundleNotFoundException $e) {
+            return $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
      * @return array
      */
     private function getBundleList()
     {
-        $bm = $this->get('pimcore.extension.bundle_manager');
+        $bm = $this->bundleManager;
 
         $results = [];
-        foreach ($bm->getEnabledBundles() as $bundle) {
-            $results[get_class($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
+        foreach ($bm->getEnabledBundles() as $className) {
+            $bundle = $bm->getActiveBundle($className, false);
+
+            $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
         }
 
         foreach ($bm->getAvailableBundles() as $className) {
@@ -57,17 +178,25 @@ class ExtensionManagerController extends AdminController
                 continue;
             }
 
-            try {
-                $results[$className] = $this->buildBundleInfo(new $className());
-            } catch (\Exception $e) {
-                $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
-                    'bundle' => $className,
-                    'error'  => $e->getMessage()
-                ]);
+            $bundle = $this->buildBundleInstance($className);
+            if ($bundle) {
+                $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle);
             }
         }
 
         return array_values($results);
+    }
+
+    private function buildBundleInstance($bundleName)
+    {
+        try {
+            return new $bundleName();
+        } catch (\Exception $e) {
+            $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
+                'bundle' => $bundleName,
+                'error'  => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -91,7 +220,7 @@ class ExtensionManagerController extends AdminController
         }
 
         $info = [
-            'id'            => $bundle->getName(),
+            'id'            => $this->bundleManager->getBundleIdentifier($bundle),
             'type'          => 'bundle',
             'name'          => $bundle->getName(), // TODO what to do with nice name and description?
             'description'   => '',
