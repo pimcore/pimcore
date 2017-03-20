@@ -240,8 +240,11 @@ services:
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
 
+    # extension manager config will be built on kernel boot and injected
+    # into the container at runtime
     pimcore.extension_manager.config:
         class: Pimcore\ExtensionManager\Config
+        synthetic: true
 
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker

@@ -13,54 +13,26 @@
  */
 
 use Pimcore\Kernel;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class AppKernel extends Kernel
 {
+    /**
+     * Returns an array of bundles to register.
+     *
+     * @return BundleInterface[] An array of bundle instances
+     */
     public function registerBundles()
     {
-        $customBundles = [
-            new \AppBundle\AppBundle(),
-        ];
+        // pimcore bundles
+        $bundles = parent::registerBundles();
+
+        $bundles[] = new \AppBundle\AppBundle;
 
         if (class_exists('\PimcoreLegacyBundle\PimcoreLegacyBundle')) {
-            $customBundles[] = new \PimcoreLegacyBundle\PimcoreLegacyBundle;
+            $bundles[] = new \PimcoreLegacyBundle\PimcoreLegacyBundle;
         }
 
-        $bundles = array_merge(parent::registerBundles(), $customBundles);
-
         return $bundles;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRootDir()
-    {
-        return PIMCORE_APP_ROOT;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheDir()
-    {
-        return PIMCORE_PRIVATE_VAR . '/cache/' . $this->getEnvironment();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLogDir()
-    {
-        return PIMCORE_LOG_DIRECTORY;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function registerContainerConfiguration(LoaderInterface $loader)
-    {
-        $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 }

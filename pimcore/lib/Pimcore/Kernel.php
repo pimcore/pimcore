@@ -14,11 +14,11 @@
 
 namespace Pimcore;
 
-use Debril\RssAtomBundle\DebrilRssAtomBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Event\SystemEvents;
+use Pimcore\ExtensionManager;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -30,10 +30,16 @@ use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
+    /**
+     * @var array
+     */
+    protected $extensionManagerBundles = [];
+
     /**
      * Returns an array of bundles to register.
      *
@@ -59,6 +65,10 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             new PimcoreAdminBundle(),
         ];
 
+        // bundles registered in extensions.php
+        $bundles = $this->registerExtensionManagerBundles($bundles);
+
+        // load environment specific bundles
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new DebugBundle();
             $bundles[] = new WebProfilerBundle();
@@ -70,6 +80,52 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         }
 
         return $bundles;
+    }
+
+    /**
+     * @param array $bundles
+     *
+     * @return array
+     */
+    protected function registerExtensionManagerBundles(array $bundles)
+    {
+        foreach ($this->extensionManagerBundles as $extensionManagerBundle) {
+            $bundles[] = new $extensionManagerBundle();
+        }
+
+        return $bundles;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRootDir()
+    {
+        return PIMCORE_APP_ROOT;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCacheDir()
+    {
+        return PIMCORE_PRIVATE_VAR . '/cache/' . $this->getEnvironment();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLogDir()
+    {
+        return PIMCORE_LOG_DIRECTORY;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader)
+    {
+        $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 
     /**
@@ -87,11 +143,18 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         // force load config
         $config = \Pimcore::initConfiguration();
 
+        // initialize extension managet config
+        $extensionConfig = new ExtensionManager\Config();
+        $this->processExtensionManagerConfig($extensionConfig);
+
         // init bundles
         $this->initializeBundles();
 
         // init container
         $this->initializeContainer();
+
+        // set the extension config on the container
+        $this->container->set('pimcore.extension_manager.config', $extensionConfig);
 
         \Pimcore::initLogger();
 
@@ -110,6 +173,23 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         }
 
         $this->booted = true;
+    }
+
+    /**
+     * Reads enabled bundles from extension manager config
+     *
+     * @param ExtensionManager\Config $config
+     */
+    protected function processExtensionManagerConfig(ExtensionManager\Config $config)
+    {
+        $config = $config->loadConfig();
+        if (isset($config->bundles)) {
+            foreach ($config->bundles->toArray() as $bundleName => $state) {
+                if ((bool) $state) {
+                    $this->extensionManagerBundles[] = $bundleName;
+                }
+            }
+        }
     }
 
     /**
