@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Config\Config;
+
 class QPay implements IPayment
 {
     // supported hashing algorithms
@@ -72,11 +74,11 @@ class QPay implements IPayment
     ];
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $settings = $config->config->{$config->mode};
         if($settings->secret == '' || $settings->customer == '')
@@ -101,9 +103,9 @@ class QPay implements IPayment
     /**
      * Initialize hash algorithm
      *
-     * @param \Zend_Config $settings
+     * @param Config $settings
      */
-    protected function initHashAlgorithm(\Zend_Config $settings)
+    protected function initHashAlgorithm(Config $settings)
     {
         if ($settings->hashAlgorithm) {
             $hashAlgorithm = (string) $settings->hashAlgorithm;
@@ -118,11 +120,11 @@ class QPay implements IPayment
     /**
      * Initialize optional payment properties from config
      *
-     * @param \Zend_Config $settings
+     * @param Config $settings
      */
-    protected function initOptionalPaymentProperties(\Zend_Config $settings)
+    protected function initOptionalPaymentProperties(Config $settings)
     {
-        if ($settings->optionalPaymentProperties instanceof \Zend_Config) {
+        if ($settings->optionalPaymentProperties instanceof Config) {
             $configArray = $settings->optionalPaymentProperties->toArray();
             if (isset($configArray['property'])) {
                 // Zend_Config behaves differently if there's just a single object in the set

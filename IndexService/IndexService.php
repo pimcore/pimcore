@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService;
 
+use Pimcore\Config\Config;
+
 class IndexService {
 
     /**
@@ -35,12 +37,12 @@ class IndexService {
         }
 
         $this->tenantWorkers = array();
-        if($config->tenants && $config->tenants instanceof \Zend_Config) {
+        if($config->tenants && $config->tenants instanceof Config) {
             foreach($config->tenants as $name => $tenant) {
                 $tenantConfigClass = (string) $tenant->class;
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    $tenantConfig = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), true);
+                    $tenantConfig = new Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), true);
                     $tenantConfig = $tenantConfig->tenant;
                 }
 

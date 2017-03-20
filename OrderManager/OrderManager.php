@@ -19,12 +19,12 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
-use Zend_Config;
+use Pimcore\Config\Config;
 
 class OrderManager implements IOrderManager
 {
     /**
-     * @var Zend_Config
+     * @var Config
      */
     protected $config;
 
@@ -45,9 +45,9 @@ class OrderManager implements IOrderManager
 
 
     /**
-     * @param Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "ordermanager");
     }

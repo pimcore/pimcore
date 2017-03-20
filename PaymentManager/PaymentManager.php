@@ -17,13 +17,15 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager;
 
+use Pimcore\Config\Config;
+
 /**
  * Class PaymentManager
  */
 class PaymentManager implements IPaymentManager
 {
     /**
-     * @var \Zend_Config
+     * @var Config
      */
     protected $config;
 
@@ -33,9 +35,9 @@ class PaymentManager implements IPaymentManager
     protected $instance = [];
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }

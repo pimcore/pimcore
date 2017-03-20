@@ -17,7 +17,7 @@
 
 namespace OnlineShop;
 
-use Pimcore\Config;
+use Pimcore\Config\Config;
 use Pimcore\File;
 
 class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
@@ -42,9 +42,9 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
     public static function getConfig($readonly = true) {
         if (!$readonly) {
-            $config = new \Zend_Config(require PIMCORE_PLUGINS_PATH . self::$configFile, true);
+            $config = new Config(require PIMCORE_PLUGINS_PATH . self::$configFile, true);
         } else {
-            $config = new \Zend_Config(require PIMCORE_PLUGINS_PATH . self::$configFile);
+            $config = new Config(require PIMCORE_PLUGINS_PATH . self::$configFile);
         }
         return $config;
     }

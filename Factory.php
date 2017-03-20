@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
+use Pimcore\Config\Config;
+
 class Factory {
 
     /**
@@ -30,7 +32,7 @@ class Factory {
     private static $instance;
 
     /**
-     * @var \Zend_Config
+     * @var Config
      */
     private $config;
 
@@ -135,9 +137,9 @@ class Factory {
 //            $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
 
 //            TODO
-//            $this->config = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
+//            $this->config = new Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
 
-            $this->config = new \Zend_Config(require PIMCORE_PROJECT_ROOT . '/legacy/website/var/plugins/EcommerceFramework/OnlineShopConfig.php', true);
+            $this->config = new Config(require PIMCORE_PROJECT_ROOT . '/legacy/website/var/plugins/EcommerceFramework/OnlineShopConfig.php', true);
         }
 
         return $this->config;
@@ -199,10 +201,10 @@ class Factory {
     /**
      * Configure tracking manager
      *
-     * @param \Zend_Config $config
+     * @param Config $config
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    private function configureTrackingManager(\Zend_Config $config)
+    private function configureTrackingManager(Config $config)
     {
         if (!empty($config->onlineshop->trackingmanager->class)) {
             $trackingManagerClass = $config->onlineshop->trackingmanager->class;
@@ -323,11 +325,11 @@ class Factory {
     }
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    private function configurePricingManager(\Zend_Config $config) {
+    private function configurePricingManager(Config $config) {
         if (empty($config->onlineshop->pricingmanager->class)) {
             throw new \OnlineShop\Framework\Exception\InvalidConfigException("No PricingManager class defined.");
         } else {
@@ -359,11 +361,11 @@ class Factory {
 
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    private function configurePaymentManager(\Zend_Config $config)
+    private function configurePaymentManager(Config $config)
     {
         if (!empty($config->onlineshop->paymentmanager->class))
         {
@@ -384,11 +386,11 @@ class Factory {
 
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    private function configureOrderManager(\Zend_Config $config)
+    private function configureOrderManager(Config $config)
     {
         if (!empty($config->onlineshop->ordermanager->class))
         {
@@ -527,7 +529,7 @@ class Factory {
      * @return string[]
      */
     public function getAllTenants() {
-        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && $this->config->onlineshop->productindex->tenants instanceof \Zend_Config) {
+        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && $this->config->onlineshop->productindex->tenants instanceof Config) {
             foreach($this->config->onlineshop->productindex->tenants as $name => $tenant) {
                 $this->allTenants[$name] = $name;
             }

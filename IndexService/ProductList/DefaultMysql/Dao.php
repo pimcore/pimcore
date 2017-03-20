@@ -151,7 +151,7 @@ class Dao {
 
             //TODO
 //            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
-            $result = $this->db->fetchAssoc($query);
+            $result = $this->db->fetchAll($query);
             //TODO
 //            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
             return $result;

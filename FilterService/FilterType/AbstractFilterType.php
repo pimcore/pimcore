@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Config\Config;
+
 abstract class AbstractFilterType {
 
     const EMPTY_STRING = '$$EMPTY$$';
@@ -27,7 +29,7 @@ abstract class AbstractFilterType {
     /**
      * @param $view view to render the filter frontend into
      * @param $script script for rendering the filter frontend
-     * @param $config \Zend_Config for more settings (optional)
+     * @param $config Config for more settings (optional)
      */
     public function __construct($view, $script, $config = null) {
         $this->view = $view;

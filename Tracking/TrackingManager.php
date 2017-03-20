@@ -17,6 +17,7 @@ use OnlineShop\Framework\CheckoutManager\ICheckoutStep;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Framework\Model\IProduct;
 use OnlineShop\Framework\Exception\InvalidConfigException;
+use Pimcore\Config\Config;
 
 class TrackingManager implements ITrackingManager
 {
@@ -30,10 +31,10 @@ class TrackingManager implements ITrackingManager
     protected $trackingItemBuilders = [];
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      * @throws InvalidConfigException
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->processConfig($config);
     }
@@ -41,10 +42,10 @@ class TrackingManager implements ITrackingManager
     /**
      * Process config and register configured trackers
      *
-     * @param \Zend_Config $config
+     * @param Config $config
      * @throws InvalidConfigException
      */
-    protected function processConfig(\Zend_Config $config)
+    protected function processConfig(Config $config)
     {
         $container = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, 'trackingmanager');
 
@@ -62,10 +63,10 @@ class TrackingManager implements ITrackingManager
     /**
      * Used by processConfig to handle single config entry
      * 
-     * @param \Zend_Config $cfg
+     * @param Config $cfg
      * @throws InvalidConfigException
      */
-    protected function processConfigEntry(\Zend_Config $cfg)
+    protected function processConfigEntry(Config $cfg)
     {
         $className = $cfg->class;
         if (!class_exists($className)) {

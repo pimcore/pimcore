@@ -7,6 +7,7 @@ use OnlineShop\Framework\PaymentManager\IStatus;
 use OnlineShop\Framework\PaymentManager\Status;
 use OnlineShop\Framework\PriceSystem\IPrice;
 use OnlineShop\Framework\PriceSystem\Price;
+use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopOrder;
 
 class WirecardSeamless implements IPayment
@@ -32,11 +33,11 @@ class WirecardSeamless implements IPayment
     const ENCODED_ORDERIDENT_DELIMITER = '---';
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->settings = $config->config->{$config->mode};
         $this->partial = $config->partial;

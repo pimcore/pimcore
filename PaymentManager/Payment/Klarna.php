@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Config\Config;
+
 class Klarna implements IPayment
 {
     /**
@@ -41,11 +43,11 @@ class Klarna implements IPayment
 
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $settings = $config->config->{$config->mode};
         if($settings->eid == '' || $settings->{'shared-secret-key'} == '')

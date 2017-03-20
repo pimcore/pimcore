@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Config\Config;
+
 abstract class AbstractConfig implements IConfig {
 
     protected $tenantName;
@@ -24,7 +26,7 @@ abstract class AbstractConfig implements IConfig {
     protected $searchAttributeConfig;
 
     /**
-     * @var \Zend_Config
+     * @var Config
      */
     protected $filterTypeConfig;
 
@@ -61,7 +63,7 @@ abstract class AbstractConfig implements IConfig {
             $attributeConfigArray = array_merge($attributeConfigArray, $includeColumnConfig);
         }
 
-        $this->attributeConfig = new \Zend_Config($attributeConfigArray);
+        $this->attributeConfig = new Config($attributeConfigArray);
 
         $this->filterTypeConfig = $tenantConfig->filtertypes;
 

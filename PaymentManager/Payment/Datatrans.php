@@ -20,6 +20,7 @@ use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Framework\PaymentManager\IStatus;
 use OnlineShop\Framework\PaymentManager\Status;
 use OnlineShop\Framework\PriceSystem\IPrice;
+use Pimcore\Config\Config;
 
 class Datatrans implements IPayment
 {
@@ -65,11 +66,11 @@ class Datatrans implements IPayment
     protected $currencyLocale;
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $settings = $config->config->{$config->mode};
         if($settings->sign == '' || $settings->merchantId == '')

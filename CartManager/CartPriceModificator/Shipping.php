@@ -20,6 +20,7 @@ use OnlineShop\Framework\CartManager\ICart;
 use OnlineShop\Framework\Factory;
 use OnlineShop\Framework\PriceSystem\IModificatedPrice;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 /**
@@ -38,9 +39,9 @@ class Shipping implements IShipping
     protected $taxClass = 0;
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(\Zend_Config $config = null)
+    public function __construct(Config $config = null)
     {
         if($config && $config->charge)
         {

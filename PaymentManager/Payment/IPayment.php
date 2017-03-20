@@ -17,15 +17,17 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Config\Config;
+
 /**
  * Interface for checkout payment provider
  */
 interface IPayment
 {
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(\Zend_Config $config);
+    public function __construct(Config $config);
 
 
     /**

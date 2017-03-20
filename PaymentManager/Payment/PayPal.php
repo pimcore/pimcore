@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Config\Config;
+
 class PayPal implements IPayment
 {
     /**
@@ -46,9 +48,9 @@ class PayPal implements IPayment
 
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         // init
         $credentials = $config->config->{$config->mode};

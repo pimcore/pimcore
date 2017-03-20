@@ -17,6 +17,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Config\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -37,7 +38,7 @@ class ConfigController extends AdminController
 
         $params = [];
 
-        if ($config->onlineshop->pimcore instanceof \Zend_Config) {
+        if ($config->onlineshop->pimcore instanceof Config) {
             foreach ($config->onlineshop->pimcore as $confName => $conf) {
                 $entries = [];
                 foreach($conf as $entryName => $entry) {

@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use OnlineShop\Framework\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Config\Config;
 
 /**
  * Class PricingManager
@@ -27,7 +28,7 @@ class PricingManager implements IPricingManager
 {
 
     /**
-     * @var \Zend_Config
+     * @var Config
      */
     protected $config;
 
@@ -37,9 +38,9 @@ class PricingManager implements IPricingManager
     protected $rules;
 
     /**
-     * @param \Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(\Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "pricingmanager");
     }
