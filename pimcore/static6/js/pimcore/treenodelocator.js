@@ -16,6 +16,11 @@ pimcore.treenodelocator.showInTree = function(id, elementType, button) {
             try {
                 var res = Ext.decode(response.responseText);
                 if (res.success) {
+                    var accordion = Ext.getCmp("pimcore_panel_tree_left");
+                    if (accordion) {
+                        accordion.expand();
+                    }
+
                     Ext.getCmp("pimcore_panel_tree_" + elementType + "s").expand();
                     var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
 
