@@ -3,6 +3,11 @@ _pimcore_admin:
     type:     annotation
     prefix:   /admin
 
+_pimcore_extensionmanager:
+    resource: "@PimcoreAdminBundle/Controller/ExtensionManager/"
+    type:     annotation
+    prefix:   /admin/extensionmanager
+
 _pimcore_reports:
     resource: "@PimcoreAdminBundle/Controller/Reports/"
     type:     annotation
