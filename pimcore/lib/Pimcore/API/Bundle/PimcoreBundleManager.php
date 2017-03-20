@@ -27,6 +27,11 @@ class PimcoreBundleManager
     protected $container;
 
     /**
+     * @var array
+     */
+    protected $availableBundles;
+
+    /**
      * We need to inject the container as the installer getter has access to the whole container.
      *
      * @param ContainerInterface $container
@@ -37,14 +42,37 @@ class PimcoreBundleManager
     }
 
     /**
+     * List of available bundles from a defined set of paths
+     *
+     * @return array
+     */
+    public function getAvailableBundles()
+    {
+        if (null === $this->availableBundles) {
+            // TODO build via DI
+            $locator = new PimcoreBundleLocator([
+                PIMCORE_PROJECT_ROOT . '/src'
+            ]);
+
+            $this->availableBundles = $locator->findBundles();
+        }
+
+        return $this->availableBundles;
+    }
+
+    /**
+     * Lists enabled bundles (registered on Kernel)
+     *
      * @return PimcoreBundleInterface[]
      */
-    public function getBundles()
+    public function getEnabledBundles()
     {
         $bundles = [];
         foreach ($this->container->get('kernel')->getBundles() as $bundle) {
             if ($bundle instanceof PimcoreBundleInterface) {
-                $bundles[] = $bundle;
+                $identifier = get_class($bundle);
+
+                $bundles[$identifier] = $bundle;
             }
         }
 
@@ -56,7 +84,7 @@ class PimcoreBundleManager
      */
     public function getInstalledBundles()
     {
-        return array_filter($this->getBundles(), [$this, 'isInstalled']);
+        return array_filter($this->getEnabledBundles(), [$this, 'isInstalled']);
     }
 
     /**
@@ -67,7 +95,7 @@ class PimcoreBundleManager
     public function isInstalled(PimcoreBundleInterface $bundle)
     {
         if (null === $installer = $bundle->getInstaller($this->container)) {
-            // bundle has no dedicated installed, so we can treat it as installed
+            // bundle has no dedicated installer, so we can treat it as installed
             return true;
         }
 

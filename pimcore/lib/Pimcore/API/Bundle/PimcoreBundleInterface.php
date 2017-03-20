@@ -17,8 +17,9 @@ namespace Pimcore\API\Bundle;
 use Pimcore\API\Bundle\Installer\InstallerInterface;
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-interface PimcoreBundleInterface
+interface PimcoreBundleInterface extends BundleInterface
 {
     /**
      * If the plugin has an installation routine, an installer is responsible of handling installation related tasks
