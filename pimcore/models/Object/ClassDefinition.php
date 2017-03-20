@@ -283,16 +283,16 @@ class ClassDefinition extends Model\AbstractModel
 
 
         if ($saveDefinitionFile) {
-        $exportedClass = var_export($clone, true);
+            $exportedClass = var_export($clone, true);
 
-        $data = '<?php ';
-        $data .= "\n\n";
-        $data .= $infoDocBlock;
-        $data .= "\n\n";
+            $data = '<?php ';
+            $data .= "\n\n";
+            $data .= $infoDocBlock;
+            $data .= "\n\n";
 
-        $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= "\nreturn " . $exportedClass . ";\n";
 
-        \Pimcore\File::put($definitionFile, $data);
+            \Pimcore\File::put($definitionFile, $data);
         }
 
         // create class for object
