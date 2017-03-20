@@ -65,6 +65,12 @@ services:
       class: Pimcore\Bundle\PimcoreBundle\Service\Locale
       arguments: ['@request_stack']
 
+    # Formatting service for dates, times and numbers
+    pimcore.locale.intl_formatter:
+      class: Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService
+      arguments: ['@pimcore.locale']
+
+
     #
     # APPLICATION LOGGER
     #
