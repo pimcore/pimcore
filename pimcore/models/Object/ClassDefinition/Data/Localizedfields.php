@@ -89,6 +89,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public $labelWidth;
 
     /**
+     * @var
+     */
+    public $hideLabelsWhenTabsReached;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      * @var array
      */
@@ -1129,6 +1134,25 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         }
 
         return $data;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHideLabelsWhenTabsReached()
+    {
+        return $this->hideLabelsWhenTabsReached;
+    }
+
+    /**
+     * @param mixed $hideLabelsWhenTabsReached
+     * @return $this
+     */
+    public function setHideLabelsWhenTabsReached($hideLabelsWhenTabsReached)
+    {
+        $this->hideLabelsWhenTabsReached = $hideLabelsWhenTabsReached;
+
+        return $this;
     }
 
     /**

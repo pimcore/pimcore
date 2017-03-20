@@ -247,9 +247,11 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @param bool $saveDefinitionFile
+     *
      * @throws \Exception
      */
-    public function save()
+    public function save($saveDefinitionFile = true)
     {
         $isUpdate = false;
         if ($this->getId()) {
@@ -280,6 +282,7 @@ class ClassDefinition extends Model\AbstractModel
         self::cleanupForExport($clone->layoutDefinitions);
 
 
+        if ($saveDefinitionFile) {
         $exportedClass = var_export($clone, true);
 
         $data = '<?php ';
@@ -290,7 +293,7 @@ class ClassDefinition extends Model\AbstractModel
         $data .= "\nreturn " . $exportedClass . ";\n";
 
         \Pimcore\File::put($definitionFile, $data);
-
+        }
 
         // create class for object
         $extendClass = "Concrete";

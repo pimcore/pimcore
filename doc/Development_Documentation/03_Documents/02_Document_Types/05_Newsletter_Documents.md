@@ -36,7 +36,7 @@ Once a Address Source Adapter is selected, a test sending to a specified email a
 `Send Test-Newsletter`. 
 
 ### Sending the Newsletter
-With `Send Newsletter Now` the newsletter is sent to all recipients. The sending it self is done based on the system 
+With `Send Newsletter Now` the newsletter is sent to all recipients. The sending itself is done based on the system 
 settings of Pimcore. There you also can configure an external SMTP sending service for mass mail sending. 
 
 

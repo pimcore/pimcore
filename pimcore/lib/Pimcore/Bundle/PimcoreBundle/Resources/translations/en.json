@@ -4522,7 +4522,7 @@
     },
     {
         "term": "grid_current_language",
-        "definition": "Current Language"
+        "definition": "Current language"
     },
     {
         "term": "grid_column_config",
@@ -4699,6 +4699,10 @@
     {
         "term": "maximum_tabs",
         "definition": "Maximum number of tabs"
+    },
+    {
+        "term": "hide_locale_labels_when_tabs_reached",
+        "definition": "Hide locale labels after number of tabs"
     },
     {
         "term": "deeplink",

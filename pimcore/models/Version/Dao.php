@@ -88,7 +88,9 @@ class Dao extends Model\Dao\AbstractDao
     {
         $deadline = time() - (intval($days) * 86400);
 
+        $this->disableSlowQueryLog();
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", [$this->model->getCid(), $this->model->getCtype(), $deadline]);
+        $this->enableSlowQueryLog();
 
         return $versionIds;
     }
@@ -99,9 +101,35 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getOutdatedVersionsSteps($steps)
     {
+        $this->disableSlowQueryLog();
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", [$this->model->getCid(), $this->model->getCtype()]);
+        $this->enableSlowQueryLog();
 
         return $versionIds;
+    }
+
+    /**
+     *
+     */
+    protected function disableSlowQueryLog()
+    {
+        try {
+            $this->db->query("SET @@session.long_query_time = 300000;");
+        } catch (\Exception $e) {
+            Logger::err($e);
+        }
+    }
+
+    /**
+     *
+     */
+    protected function enableSlowQueryLog()
+    {
+        try {
+            $this->db->query("SET @@session.long_query_time=@@global.long_query_time;");
+        } catch (\Exception $e) {
+            Logger::err($e);
+        }
     }
 
     /**

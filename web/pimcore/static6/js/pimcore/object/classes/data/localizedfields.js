@@ -118,6 +118,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             fieldLabel: t("maximum_tabs"),
                             name: "maxTabs",
                             value: this.datax.maxTabs
+                        },
+                        {
+                            xtype: "numberfield",
+                            fieldLabel: t("hide_locale_labels_when_tabs_reached"),
+                            name: "hideLabelsWhenTabsReached",
+                            value: this.datax.hideLabelsWhenTabsReached
                         }
                     ]
                 }
