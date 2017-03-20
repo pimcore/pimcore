@@ -147,7 +147,7 @@ class IntlFormatterService {
      * @param string $format
      * @return bool|string
      */
-    public function formatDateTime(\DateTime $dateTime, $format = self::DATETIME_MEDIUM) {
+    public function formatDateTime($dateTime, $format = self::DATETIME_MEDIUM) {
 
         if(!$formatter = $this->dateFormatters[$format]) {
             $formatter = $this->buildDateTimeFormatters($format);
