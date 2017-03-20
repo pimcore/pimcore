@@ -62,9 +62,9 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'priority' => strtolower($record["level_name"]),
             'message' => $record["message"],
             'timestamp' => $record["datetime"]->format("Y-m-d H:i:s"),
-            'fileobject' => $record["context"]["fileObject"],
-            'relatedobject' => $record["context"]["relatedObject"],
-            'relatedobjecttype' => $record["context"]["relatedObjectType"],
+            'fileobject' => (array_key_exists('context', $record) && array_key_exists('fileObject', $record['context'])) ? $record["context"]["fileObject"] : null,
+            'relatedobject' => isset($record["context"]["relatedObject"]) ? $record["context"]["relatedObject"] : null,
+            'relatedobjecttype' => isset($record["context"]["relatedObjectType"]) ? $record["context"]["relatedObjectType"] : null,
             'component' => $record["context"]["component"],
             'source' => $record["context"]["source"]
         ];
