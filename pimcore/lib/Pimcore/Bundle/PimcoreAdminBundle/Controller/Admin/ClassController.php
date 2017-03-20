@@ -740,7 +740,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
-        if ($this->hasParam("allowedTypes")) {
+        if ($request->query->has("allowedTypes")) {
             $filteredList = [];
             $allowedTypes = explode(",", $request->get("allowedTypes"));
             /** @var $type Object\Fieldcollection\Definition */
@@ -994,7 +994,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
 
-        if ($this->hasParam("class_id") && $this->hasParam("field_name")) {
+        if ($request->query->has("class_id") && $request->query->has("field_name")) {
             $filteredList = [];
             $classId = $request->get("class_id");
             $fieldname = $request->get("field_name");
