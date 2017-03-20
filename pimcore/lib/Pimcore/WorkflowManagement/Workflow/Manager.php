@@ -499,7 +499,7 @@ class Manager
         \Pimcore::getEventManager()->trigger("workflowmanagement.preAction", $this, [
             'actionName' => $actionName
         ]);
-        
+
         //refresh the local copy after the event
         $formData = $this->getActionData();
 
@@ -562,7 +562,7 @@ class Manager
         $formData['oldStatus'] = $this->getElementStatus();
 
         if ($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
-            if (!$this->workflow->getAllowUnpublished() || in_array($this->getElementStatus(), $this->workflow->getPublishedStatuses())) {
+            if (!$this->workflow->getAllowUnpublished() || in_array($formData['newStatus'], $this->workflow->getPublishedStatuses())) {
                 $this->element->setPublished(true);
 
                 if ($this->element instanceof Concrete) {
