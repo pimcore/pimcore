@@ -551,7 +551,7 @@ class Staticroute extends AbstractModel
 
             // merge route params from static routes here
             $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-            if($request->attributes->get("_route_params")) {
+            if ($request->attributes->get("_route_params")) {
                 $requestParameters = array_merge($requestParameters, $request->attributes->get("_route_params"));
             }
 

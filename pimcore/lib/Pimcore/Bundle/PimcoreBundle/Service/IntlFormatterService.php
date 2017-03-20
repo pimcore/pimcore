@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Service;
 /**
  * Formatting service for dates, times and numbers
  */
-class IntlFormatterService {
-
+class IntlFormatterService
+{
     const DATE_SHORT = "date_short";
     const DATE_MEDIUM = "date_medium";
     const DATE_LONG = "date_long";
@@ -79,7 +79,8 @@ class IntlFormatterService {
      * @param $format
      * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
      */
-    protected function buildDateTimeFormatters($format) {
+    protected function buildDateTimeFormatters($format)
+    {
         switch ($format) {
             case self::DATE_SHORT:
                 return \IntlDateFormatter::create(
@@ -147,9 +148,9 @@ class IntlFormatterService {
      * @param string $format
      * @return bool|string
      */
-    public function formatDateTime(\DateTime $dateTime, $format = self::DATETIME_MEDIUM) {
-
-        if(!$formatter = $this->dateFormatters[$format]) {
+    public function formatDateTime(\DateTime $dateTime, $format = self::DATETIME_MEDIUM)
+    {
+        if (!$formatter = $this->dateFormatters[$format]) {
             $formatter = $this->buildDateTimeFormatters($format);
             $this->dateFormatters[$format] = $formatter;
         }
@@ -163,9 +164,10 @@ class IntlFormatterService {
      * @param $value
      * @return bool|string
      */
-    public function formatNumber($value) {
-        if(empty($this->numberFormatter)) {
-             $this->numberFormatter = new \NumberFormatter($this->locale, \NumberFormatter::DECIMAL);
+    public function formatNumber($value)
+    {
+        if (empty($this->numberFormatter)) {
+            $this->numberFormatter = new \NumberFormatter($this->locale, \NumberFormatter::DECIMAL);
         }
 
         return $this->numberFormatter->format($value);
@@ -178,12 +180,12 @@ class IntlFormatterService {
      * @param $currency
      * @return string
      */
-    public function formatCurrency($value, $currency) {
-        if(empty($this->currencyFormatter)) {
+    public function formatCurrency($value, $currency)
+    {
+        if (empty($this->currencyFormatter)) {
             $this->currencyFormatter = new \NumberFormatter($this->locale, \NumberFormatter::CURRENCY);
         }
 
         return $this->currencyFormatter->formatCurrency($value, $currency);
     }
-
 }
