@@ -739,7 +739,8 @@ CREATE TABLE `versions` (
   `serialized` tinyint(1) unsigned default '0',
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`)
+  KEY `ctype` (`ctype`),
+  KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
