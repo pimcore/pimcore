@@ -33,6 +33,8 @@
         language: "<?= $this->language ?>",
         enableCORS: true,
         noCloseButton: true,
+        fileFormat: "<?= (\Pimcore\File::getFileExtension($this->asset->getFilename()) == "png") ? "png" : "jpg" ?>",
+        jpgQuality: 90,
         onSave: function(imageID, newURL) {
             $.ajax({
                 url: "/admin/asset/image-editor-save/id/<?= $this->asset->getId() ?>",
