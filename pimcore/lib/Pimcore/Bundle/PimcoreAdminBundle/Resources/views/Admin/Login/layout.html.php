@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>Welcome to Pimcore!</title>
 
     <meta charset="UTF-8">
@@ -18,33 +17,6 @@
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
     <?php endforeach; ?>
-
-    <?php
-    // load plugin scripts
-    try {
-        $pluginBroker = $this->container()->get('pimcore.plugin_broker');
-        if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
-            foreach ($pluginBroker->getPlugins() as $plugin) {
-                if ($plugin->isInstalled()) {
-                    $cssPaths = $plugin->getCssPaths();
-                    if (!empty($cssPaths)) {
-                        foreach ($cssPaths as $cssPath) {
-                            $cssPath = trim($cssPath);
-                            if (!empty($cssPath)) {
-                                ?>
-                                <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= time() ?>"/>
-                                <?php
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    } catch (\Exception $e) {
-    }
-    ?>
-
 </head>
 <body>
 

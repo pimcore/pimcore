@@ -622,7 +622,6 @@ $pluginDcValue = time();
 if (PIMCORE_DEVMODE || $extjsDev) {
     $pluginDcValue = 1;
 }
-
 ?>
 
 <?php foreach ($this->pluginJsPaths as $pluginJsPath): ?>
@@ -632,45 +631,6 @@ if (PIMCORE_DEVMODE || $extjsDev) {
 <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
     <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
 <?php endforeach; ?>
-
-
-<?php
-try {
-    $pluginBroker = $this->container()->get('pimcore.plugin_broker');
-    if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
-        foreach ($pluginBroker->getSystemComponents() as $plugin) {
-            if ($plugin->isInstalled()) {
-                $jsPaths = $plugin->getJsPaths();
-                if (!empty($jsPaths)) {
-                    foreach ($jsPaths as $jsPath) {
-                        $jsPath = trim($jsPath);
-
-                        if (!empty($jsPath)) {
-                        ?>
-                            <script type="text/javascript" src="<?= $jsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
-                        <?php
-                        }
-                    }
-                }
-
-                $cssPaths = $plugin->getCssPaths();
-                if (!empty($cssPaths)) {
-                    foreach ($cssPaths as $cssPath) {
-                        $cssPath = trim($cssPath);
-
-                        if (!empty($cssPath)) {
-                        ?>
-                            <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-                        <?php
-                        }
-                    }
-            }
-            }
-        }
-    }
-} catch (\Exception $e) {
-}
-?>
 
 <?php // MUST BE THE LAST LINE ?>
 <script type="text/javascript" src="/pimcore/static6/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
