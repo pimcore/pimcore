@@ -38,6 +38,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
@@ -59,6 +60,11 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     protected $dispatcher;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @var HttpUtils
      */
     protected $httpUtils;
@@ -72,6 +78,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      * @param TokenStorageInterface $tokenStorage
      * @param RouterInterface $router
      * @param EventDispatcherInterface $dispatcher
+     * @param TranslatorInterface $translator
      * @param HttpUtils $httpUtils
      * @param BruteforceProtectionHandler $bruteforceProtectionHandler
      */
@@ -79,12 +86,14 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         TokenStorageInterface $tokenStorage,
         RouterInterface $router,
         EventDispatcherInterface $dispatcher,
+        TranslatorInterface $translator,
         HttpUtils $httpUtils,
         BruteforceProtectionHandler $bruteforceProtectionHandler
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->router       = $router;
         $this->dispatcher   = $dispatcher;
+        $this->translator   = $translator;
         $this->httpUtils    = $httpUtils;
 
         $this->bruteforceProtectionHandler = $bruteforceProtectionHandler;
@@ -249,8 +258,15 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        /** @var UserModel $user */
+        $user = $token->getUser()->getUser();
+
+        // set user language
+        $request->setLocale($user->getLanguage());
+        $this->translator->setLocale($user->getLanguage());
+
         // set user on runtime cache for legacy compatibility
-        Runtime::set('pimcore_admin_user', $token->getUser());
+        Runtime::set('pimcore_admin_user', $user);
 
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page

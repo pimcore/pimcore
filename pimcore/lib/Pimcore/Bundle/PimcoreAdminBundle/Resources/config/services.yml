@@ -53,6 +53,7 @@ services:
             - '@security.token_storage'
             - '@router'
             - '@event_dispatcher'
+            - '@translator'
             - '@security.http_utils'
             - '@pimcore_admin.security.bruteforce_protection_handler'
 
