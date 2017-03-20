@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductLis
 class Dao {
 
     /**
-     * @var \Zend_Db_Adapter_Abstract
+     * @var \Pimcore\Db\Connection
      */
     private $db;
 

@@ -22,15 +22,12 @@ use OnlineShop\Framework\OrderManager\IOrderList;
 use OnlineShop\Framework\OrderManager\IOrderListFilter;
 use Pimcore\Model\Object\OnlineShopOrderItem;
 use Pimcore\Model\Object\OnlineShopOrder;
-use Zend_Db_Expr;
-use Zend_Db_Select;
-
 use \Pimcore\Db;
 
 class Listing extends AbstractOrderList implements IOrderList
 {
     /**
-     * @var Zend_Db_Select
+     * @var Db\ZendCompatibility\QueryBuilder
      */
     protected $query;
 
@@ -63,7 +60,7 @@ class Listing extends AbstractOrderList implements IOrderList
 
     /**
      * get select query
-     * @return Zend_Db_Select
+     * @return Db\ZendCompatibility\QueryBuilder
      */
     public function getQuery()
     {
@@ -141,7 +138,7 @@ class Listing extends AbstractOrderList implements IOrderList
     public function setOrder($order)
     {
         $this->getQuery()
-            ->reset( Zend_Db_Select::ORDER )
+            ->reset( Db\ZendCompatibility\QueryBuilder::ORDER )
             ->order( $order )
         ;
 
@@ -154,7 +151,7 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinPricingRule()
     {
-        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+        $joins = $this->getQuery()->getPart( Db\ZendCompatibility\QueryBuilder::FROM );
 
         if(!array_key_exists('pricingRule', $joins)) {
 
@@ -174,7 +171,7 @@ class Listing extends AbstractOrderList implements IOrderList
     public function joinPaymentInfo()
     {
 
-        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+        $joins = $this->getQuery()->getPart( Db\ZendCompatibility\QueryBuilder::FROM );
 
         if(!array_key_exists('paymentInfo', $joins))
         {
@@ -198,7 +195,7 @@ class Listing extends AbstractOrderList implements IOrderList
 
             // join
             $this->getQuery()->joinLeft(
-                ['paymentInfo' => new Zend_Db_Expr( '(' . $paymentQuery . ')' )]
+                ['paymentInfo' => new Db\ZendCompatibility\Expression( '(' . $paymentQuery . ')' )]
                 , 'paymentInfo.o_id = `order`.oo_id'
                 , ''
             );
@@ -214,7 +211,7 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinOrderItemObjects()
     {
-        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+        $joins = $this->getQuery()->getPart( Db\ZendCompatibility\QueryBuilder::FROM );
 
         if(!array_key_exists('orderItemObjects', $joins))
         {
@@ -235,7 +232,7 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinProduct($classId)
     {
-        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+        $joins = $this->getQuery()->getPart( Db\ZendCompatibility\QueryBuilder::FROM );
 
         if(!array_key_exists('product', $joins))
         {
@@ -257,7 +254,7 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinCustomer($classId)
     {
-        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+        $joins = $this->getQuery()->getPart( Db\ZendCompatibility\QueryBuilder::FROM );
 
         if(!array_key_exists('customer', $joins)) {
             $this->getQuery()->join(
@@ -273,7 +270,7 @@ class Listing extends AbstractOrderList implements IOrderList
 
     /**
      * join for item / sub items
-     * @param Zend_Db_Select $select
+     * @param Db\ZendCompatibility\QueryBuilder $select
      *
      * @return $this
      */
@@ -294,7 +291,7 @@ class Listing extends AbstractOrderList implements IOrderList
             $orderClassId = OnlineShopOrder::classId();
             $orderItemClassId = OnlineShopOrderItem::classId();
             $select->join(
-                ['_orderItems' => new \Zend_Db_Expr( <<<SUBQUERY
+                ['_orderItems' => new Db\ZendCompatibility\Expression( <<<SUBQUERY
 (
     -- add items
     SELECT

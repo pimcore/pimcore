@@ -17,11 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use SeekableIterator;
 use Countable;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
-use Zend_Db_Select;
 use ArrayAccess;
 
 
@@ -37,7 +37,7 @@ interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapte
     const LIST_TYPE_ORDER_ITEM = 'item';
 
     /**
-     * @return Zend_Db_Select
+     * @return QueryBuilder
      */
     public function getQuery();
 
