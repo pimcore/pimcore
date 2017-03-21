@@ -47,7 +47,7 @@ class PimcoreBundleLocator
      */
     public function findBundles()
     {
-        $result = $this->findBundlesInPaths();
+        $result = $this->findBundlesInPaths($this->paths);
         if ($this->handleComposer) {
             $result = array_merge($result, $this->findComposerBundles());
         }
@@ -59,14 +59,16 @@ class PimcoreBundleLocator
     }
 
     /**
+     * @param array $paths
+     *
      * @return array
      */
-    private function findBundlesInPaths()
+    private function findBundlesInPaths(array $paths)
     {
-        $paths = [];
-        foreach ($this->paths as $path) {
+        $filteredPaths = [];
+        foreach ($paths as $path) {
             if (file_exists($path) && is_dir($path)) {
-                $paths[] = $path;
+                $filteredPaths[] = $path;
             }
         }
 
@@ -74,7 +76,7 @@ class PimcoreBundleLocator
 
         $finder = new Finder();
         $finder
-            ->in($paths)
+            ->in(array_unique($filteredPaths))
             ->name('*Bundle.php');
 
         /** @var SplFileInfo $file */
@@ -89,6 +91,14 @@ class PimcoreBundleLocator
     }
 
     /**
+     * Finds composer bundles in /vendor with the following prerequisites:
+     *
+     *  * Composer package type is "pimcore-bundle"
+     *  * If the [ extra: [ pimcore: [ bundles: [] ] ] entry is available in the config, it will use this config
+     *    as list of available bundle names
+     *  * If the config entry above is not available, it will scan the package directory with the same logic as for
+     *    the other paths
+     *
      * @return array
      */
     private function findComposerBundles()
@@ -98,22 +108,31 @@ class PimcoreBundleLocator
             return [];
         }
 
+        $composerPaths = [];
+
         $result = [];
         foreach ($json as $packageInfo) {
             if ($packageInfo['type'] !== 'pimcore-bundle') {
                 continue;
             }
 
-            if (!isset($packageInfo['extra']) || !isset($packageInfo['extra']['pimcore'])) {
-                continue;
-            }
-
-            $cfg = $packageInfo['extra']['pimcore'];
-            if (isset($cfg['bundles']) && is_array($cfg['bundles'])) {
-                foreach ($cfg['bundles'] as $bundle) {
-                    $this->processBundleClass($bundle, $result);
+            // if bundle explicitely defines bundles, use the config
+            if (isset($packageInfo['extra']) && isset($packageInfo['extra']['pimcore'])) {
+                $cfg = $packageInfo['extra']['pimcore'];
+                if (isset($cfg['bundles']) && is_array($cfg['bundles'])) {
+                    foreach ($cfg['bundles'] as $bundle) {
+                        $this->processBundleClass($bundle, $result);
+                    }
                 }
+            } else {
+                // add path to list of composer paths which will be processed via path search
+                $composerPaths[] = PIMCORE_COMPOSER_PATH . '/' . $packageInfo['name'];
             }
+        }
+
+        // wildcard process composer paths which didn't have a dedicated bundle config entry
+        if (count($composerPaths) > 0) {
+            $result = array_merge($result, $this->findBundlesInPaths($composerPaths));
         }
 
         return $result;
