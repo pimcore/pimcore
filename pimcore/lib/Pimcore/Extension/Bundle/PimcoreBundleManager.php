@@ -232,7 +232,7 @@ class PimcoreBundleManager
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
-        $this->validateBundleIdentifier($bundle);
+        $this->validateBundleIdentifier($identifier);
 
         return in_array($identifier, $this->getEnabledBundles());
     }
