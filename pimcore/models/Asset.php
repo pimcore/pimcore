@@ -303,7 +303,7 @@ class Asset extends Element\AbstractElement
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = "Asset";
-        if (isset($data["filename"]) && isset($data["sourcePath"]) ) {
+        if (isset($data["filename"]) && isset($data["sourcePath"])) {
             $mimeType = Mime::detect($data["sourcePath"], $data["filename"]);
             if (is_file($data["sourcePath"])) {
                 $data["stream"] = fopen($data["sourcePath"], "r+", false, File::getContext());

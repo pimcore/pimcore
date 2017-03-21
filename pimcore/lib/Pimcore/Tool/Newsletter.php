@@ -73,16 +73,16 @@ class Newsletter
                             // No tracking for mailto and hash only links
                             continue;
                         }
-                        $urlParts = parse_url( $link->href);
+                        $urlParts = parse_url($link->href);
                         $glue = "?";
                         $params = "utm_source=" . $newsletterDocument->getTrackingParameterSource() .
                                     "&utm_medium=" . $newsletterDocument->getTrackingParameterMedium() .
                                     "&utm_campaign=" . $newsletterDocument->getTrackingParameterName();
-                        if( isset( $urlParts['query'])) {
+                        if (isset($urlParts['query'])) {
                             $glue = "&";
                         }
-                        $link->href = preg_replace( '/[#].+$/', '', $link->href).$glue.$params;
-                        if( isset( $urlParts['fragment'])) {
+                        $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
+                        if (isset($urlParts['fragment'])) {
                             $link->href .= '#'.$urlParts['fragment'];
                         }
                     }

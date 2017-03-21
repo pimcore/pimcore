@@ -163,13 +163,13 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
         $elements = [];
 
-        foreach($this->elements as $element) {
-            if(
+        foreach ($this->elements as $element) {
+            if (
                 ($element instanceof Object && Object::doHideUnpublished())
                 ||
                 ($element instanceof Document && Document::doHideUnpublished())
             ) {
-                if(Element\Service::isPublished($element)) {
+                if (Element\Service::isPublished($element)) {
                     $elements[] = $element;
                 }
             } else {
