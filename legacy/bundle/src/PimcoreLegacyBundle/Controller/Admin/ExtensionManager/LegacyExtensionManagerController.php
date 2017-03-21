@@ -162,8 +162,8 @@ class LegacyExtensionManagerController extends AdminController
                     "id"            => static::LEGACY_ID_PREFIX . $config["plugin"]["pluginName"],
                     "extensionId"   => $config["plugin"]["pluginName"],
                     "type"          => "plugin",
-                    "name"          => isset($config["plugin"]["pluginNiceName"]) ? $config["plugin"]["pluginNiceName"] : '',
-                    "description"   => isset($config["plugin"]["pluginDescription"]) ? $config["plugin"]["pluginDescription"] : '',
+                    "name"          => isset($config["plugin"]["pluginNiceName"]) ? (string)$config["plugin"]["pluginNiceName"] : '',
+                    "description"   => isset($config["plugin"]["pluginDescription"]) ? (string)$config["plugin"]["pluginDescription"] : '',
                     "installable"   => false,
                     "uninstallable" => false,
                     "installed"     => $isEnabled ? $className::isInstalled() : null,
@@ -172,6 +172,10 @@ class LegacyExtensionManagerController extends AdminController
                     "updateable"    => $updateable,
                     "version"       => isset($config["plugin"]["pluginVersion"]) ? $config["plugin"]["pluginVersion"] : null
                 ];
+
+                if (empty($plugin['configuration'])) {
+                    $plugin['configuration'] = null;
+                }
 
                 if (null !== $plugin['installed']) {
                     if ($plugin['installed']) {
@@ -205,8 +209,8 @@ class LegacyExtensionManagerController extends AdminController
                 "id"            => static::LEGACY_ID_PREFIX . $id,
                 "extensionId"   => $id,
                 "type"          => "brick",
-                "name"          => $config->name,
-                "description"   => $config->description,
+                "name"          => (string)$config->name,
+                "description"   => (string)$config->description,
                 "installable"   => false,
                 "uninstallable" => false,
                 "updateable"    => $updateable,

@@ -362,7 +362,9 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 );
             }
 
-            return $iframePath;
+            if (!empty($iframePath)) {
+                return $iframePath;
+            }
         }
     }
 

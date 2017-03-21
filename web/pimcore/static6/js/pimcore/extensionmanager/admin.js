@@ -280,20 +280,27 @@ pimcore.extensionmanager.admin = Class.create({
                         var rec = grid.getStore().getAt(rowIndex);
                         var id = rec.get("id");
                         var type = rec.get("type");
-                        var iframeSrc = rec.get("configuration") + "?systemLocale="
-                                                                        + pimcore.globalmanager.get("user").language;
+
+                        var iframeSrc = rec.get("configuration");
+                        if (iframeSrc && iframeSrc.length > 0) {
+                            iframeSrc += "?systemLocale=" + pimcore.globalmanager.get("user").language;
+                        } else {
+                            iframeSrc = null;
+                        }
 
                         var handled = false;
+                        var extensionId = self.getExtensionId(rec);
+
                         if (self.isLegacyType(rec.get('type'))) {
                             // TODO DEPRECATED xml editor is deprecated as of pimcore 5
                             var xmlEditorFile = rec.get("xmlEditorFile");
 
                             if (xmlEditorFile) {
                                 try {
-                                    pimcore.globalmanager.get("extension_settings_" + id + "_" + type).activate();
+                                    pimcore.globalmanager.get("extension_settings_" + extensionId + "_" + type).activate();
                                 }
                                 catch (e) {
-                                    pimcore.globalmanager.add("extension_settings_" + id + "_" + type, new pimcore.extensionmanager.xmlEditor(id, type, xmlEditorFile));
+                                    pimcore.globalmanager.add("extension_settings_" + extensionId + "_" + type, new pimcore.extensionmanager.xmlEditor(extensionId, type, xmlEditorFile));
                                 }
 
                                 handled = true;
@@ -301,8 +308,7 @@ pimcore.extensionmanager.admin = Class.create({
                         }
 
                         if (!handled && iframeSrc) {
-                            pimcore.helpers.openGenericIframeWindow("extension_settings_" + id + "_" + type, iframeSrc, "pimcore_icon_plugin", id);
-                            handled = true;
+                            pimcore.helpers.openGenericIframeWindow("extension_settings_" + extensionId + "_" + type, iframeSrc, "pimcore_icon_plugin", extensionId);
                         }
                     }.bind(this)
                 }]

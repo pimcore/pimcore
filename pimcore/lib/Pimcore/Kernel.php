@@ -30,6 +30,7 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
@@ -140,9 +141,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $this->setSystemRequirements();
 
         // force load config
-        $config = \Pimcore::initConfiguration();
+        \Pimcore::initConfiguration();
 
-        // initialize extension managet config
+        // initialize extension manager config
         $extensionConfig = new Extension\Config();
         $this->processExtensionManagerConfig($extensionConfig);
 
@@ -153,7 +154,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $this->initializeContainer();
 
         // set the extension config on the container
-        $this->container->set('pimcore.extension.config', $extensionConfig);
+        $this->getContainer()->set('pimcore.extension.config', $extensionConfig);
 
         \Pimcore::initLogger();
 
