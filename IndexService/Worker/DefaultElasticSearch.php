@@ -130,7 +130,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
         if(empty($this->elasticSearchClient)) {
             $builder =  \Elasticsearch\ClientBuilder::create();
             if($this->tenantConfig->getClientConfig('logging')){
-                $logger = \Elasticsearch\ClientBuilder::defaultLogger(PIMCORE_LOG_DIRECTORY . '/elasticsearch.log', \Monolog\Logger::DEBUG);
+                $logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_es");
                 $builder->setLogger($logger);
             }
             $builder->setHosts($this->tenantConfig->getElasticSearchClientParams()['hosts']);
