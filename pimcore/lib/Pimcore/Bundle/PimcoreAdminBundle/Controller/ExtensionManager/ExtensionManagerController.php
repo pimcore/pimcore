@@ -23,13 +23,19 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
+use PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Handles all "new" extensions as of pimcore 5 (bundles, new areabrick layout) and pipes legacy extension requests
+ * to legacy controller when the legacy bundle is enabled.
+ */
 class ExtensionManagerController extends AdminController implements EventedControllerInterface
 {
     /**
@@ -79,8 +85,9 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $this->getBrickList()
         );
 
-        if (\Pimcore::isLegacyModeAvailable()) {
-            // TODO
+        $legacyController = $this->getLegacyController();
+        if ($legacyController) {
+            $extensions = array_merge($extensions, $legacyController->getExtensions());
         }
 
         return $this->json(['extensions' => $extensions]);
@@ -95,6 +102,10 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     public function toggleExtensionStateAction(Request $request)
     {
+        if (null !== $response = $this->handleLegacyRequest($request, __FUNCTION__)) {
+            return $response;
+        }
+
         $type   = $request->get('type');
         $id     = $request->get('id');
         $enable = $request->get('method', 'enable') === 'enable' ? true : false;
@@ -123,6 +134,10 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     public function installAction(Request $request)
     {
+        if (null !== $response = $this->handleLegacyRequest($request, __FUNCTION__)) {
+            return $response;
+        }
+
         return $this->handleInstallation($request, true);
     }
 
@@ -135,7 +150,49 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     public function uninstallAction(Request $request)
     {
+        if (null !== $response = $this->handleLegacyRequest($request, __FUNCTION__)) {
+            return $response;
+        }
+
         return $this->handleInstallation($request, false);
+    }
+
+    /**
+     * @return LegacyExtensionManagerController|null
+     */
+    private function getLegacyController()
+    {
+        if (\Pimcore::isLegacyModeAvailable()) {
+            if ($this->container->has('pimcore.legacy.controller.admin.extension_manager')) {
+                return $this->get('pimcore.legacy.controller.admin.extension_manager');
+            }
+        }
+    }
+
+    /**
+     * Pipe request to legacy controller
+     *
+     * @param Request $request
+     * @param $method
+     *
+     * @return JsonResponse|null
+     */
+    private function handleLegacyRequest(Request $request, $method)
+    {
+        if ($request->get('extension-type') !== 'legacy') {
+            return null;
+        }
+
+        $legacyController = $this->getLegacyController();
+        if (!$legacyController) {
+            throw new BadRequestHttpException(sprintf('Tried to call to legacy extension action %s, but legacy controller was not found', $method));
+        }
+
+        if (!method_exists($legacyController, $method)) {
+            throw new BadRequestHttpException(sprintf('Legacy extension action %s, does not exist on legacy controller', $method));
+        }
+
+        return call_user_func_array([$legacyController, $method], [$request]);
     }
 
     /**
@@ -198,6 +255,11 @@ class ExtensionManagerController extends AdminController implements EventedContr
         return array_values($results);
     }
 
+    /**
+     * @param $bundleName
+     *
+     * @return BundleInterface
+     */
     private function buildBundleInstance($bundleName)
     {
         try {

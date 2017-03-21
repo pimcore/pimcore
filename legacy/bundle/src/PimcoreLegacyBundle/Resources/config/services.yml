@@ -12,6 +12,13 @@ services:
     pimcore.legacy.plugin_broker:
         class: Pimcore\API\Plugin\Broker
 
+    # the legacy extension manager controller is defined as service as it is used
+    # by the extension manager controller to get the list of legacy extensions
+    pimcore.legacy.controller.admin.extension_manager:
+        class: PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController
+        calls:
+            - [setContainer, ['@service_container']]
+
     # executes ZF1 view helpers
     pimcore.legacy.zend_view_helper_bridge:
         class: PimcoreLegacyBundle\Zend\View\ViewHelperBridge

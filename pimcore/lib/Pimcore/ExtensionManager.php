@@ -26,6 +26,11 @@ class ExtensionManager
     private static $assetPaths;
 
     /**
+     * @var array
+     */
+    private static $validTypes = ['plugin', 'brick'];
+
+    /**
      * @static
      * @return Config\Config
      */
@@ -44,6 +49,16 @@ class ExtensionManager
     }
 
     /**
+     * @param string $type
+     */
+    private static function validateType($type)
+    {
+        if (!in_array($type, static::$validTypes)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is no valid ExtensionManager type', $type));
+        }
+    }
+
+    /**
      * @static
      * @param  $type
      * @param  $id
@@ -51,6 +66,8 @@ class ExtensionManager
      */
     public static function isEnabled($type, $id)
     {
+        static::validateType($type);
+
         $config = self::getConfig();
 
         if ($type == "brick") {
@@ -77,6 +94,8 @@ class ExtensionManager
      */
     public static function enable($type, $id)
     {
+        static::validateType($type);
+
         $config = self::getConfig();
         if (!isset($config->$type)) {
             $config->$type = new Config\Config([], true);
@@ -99,6 +118,8 @@ class ExtensionManager
      */
     public static function disable($type, $id)
     {
+        static::validateType($type);
+
         $config = self::getConfig();
         if (!isset($config->$type)) {
             $config->$type = new Config\Config([], true);
@@ -405,6 +426,8 @@ class ExtensionManager
      */
     public static function delete($id, $type)
     {
+        static::validateType($type);
+
         if ($type == "plugin") {
             $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id;
             if (is_writeable($pluginDir)) {
@@ -427,6 +450,8 @@ class ExtensionManager
      */
     public static function getPathForExtension($id, $type)
     {
+        static::validateType($type);
+
         $extensionDir = "";
 
         if ($type == "plugin") {

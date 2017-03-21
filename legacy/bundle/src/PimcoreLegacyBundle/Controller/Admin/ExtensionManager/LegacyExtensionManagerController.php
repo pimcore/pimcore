@@ -12,20 +12,132 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace PimcoreLegacyBundle\Controller\Admin\ExtensionManager;
+
+use Pimcore\API\Plugin\PluginInterface;
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\ExtensionManager;
 use Pimcore\File;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 
-class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
+/**
+ * This controller is not referenced anywhere but is used from the main ExtensionManagerController when the
+ * legacy bundle is enabled. Therefore we do the permission checks manually on every action.
+ */
+class LegacyExtensionManagerController extends AdminController
 {
-    public function init()
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function toggleExtensionStateAction(Request $request)
     {
-        parent::init();
+        $this->checkPermission('plugins');
 
-        $this->checkPermission("plugins");
+        $type   = $request->get("type");
+        $id     = $request->get("id");
+        $method = $request->get("method");
+
+        if ($type && $id) {
+            ExtensionManager::$method($type, $id);
+        }
+
+        // do not reload when toggle an area-brick
+        $reload = true;
+        if ($type == "brick") {
+            $reload = false;
+        }
+
+        return $this->json([
+            "success" => true,
+            "reload"  => $reload
+        ]);
     }
 
-    public function getExtensionsAction()
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function installAction(Request $request)
+    {
+        $this->checkPermission('plugins');
+
+        $type = $request->get("type");
+        $id   = $request->get("id");
+
+        if ($type == "plugin") {
+            try {
+                $config = ExtensionManager::getPluginConfig($id);
+
+                /** @var PluginInterface $className */
+                $className = $config["plugin"]["pluginClassName"];
+                $message   = $className::install();
+
+                return $this->json([
+                    "success" => true,
+                    "message" => $message,
+                    "reload"  => $className::needsReloadAfterInstall(),
+                    "status"  => [
+                        "installed" => $className::isInstalled()
+                    ]
+                ]);
+            } catch (\Exception $e) {
+                Logger::error($e);
+
+                return $this->json([
+                    "message" => $e->getMessage(),
+                    "success" => false
+                ]);
+            }
+        }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function uninstallAction(Request $request)
+    {
+        $this->checkPermission('plugins');
+
+        $type = $request->get("type");
+        $id   = $request->get("id");
+
+        if ($type == "plugin") {
+            try {
+                $config = ExtensionManager::getPluginConfig($id);
+
+                /** @var PluginInterface $className */
+                $className = $config["plugin"]["pluginClassName"];
+                $message   = $className::uninstall();
+
+                return $this->json([
+                    "message"           => $message,
+                    "reload"            => $className::needsReloadAfterInstall(),
+                    "pluginJsClassName" => $className::getJsClassName(),
+                    "status"            => [
+                        "installed" => $className::isInstalled()
+                    ],
+                    "success"           => true
+                ]);
+            } catch (\Exception $e) {
+                return $this->json([
+                    "message" => $e->getMessage(),
+                    "success" => false
+                ]);
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtensions()
     {
         $configurations = [];
 
@@ -85,97 +197,20 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
                 "updateable" => $updateable,
                 "version" => $config->version
             ];
+
             $configurations[] = $brick;
         }
 
-        $this->_helper->json(["extensions" => $configurations]);
+        return $configurations;
     }
 
-    public function toggleExtensionStateAction()
-    {
-        $type = $this->getParam("type");
-        $id = $this->getParam("id");
-        $method = $this->getParam("method");
-        $reload = true;
-
-        if ($type && $id) {
-            ExtensionManager::$method($type, $id);
-        }
-
-        // do not reload when toggle an area-brick
-        if ($type == "brick") {
-            $reload = false;
-        }
-
-        $this->_helper->json(["success" => true, "reload" => $reload]);
-    }
-
-
-    public function installAction()
-    {
-        $type = $this->getParam("type");
-        $id = $this->getParam("id");
-
-        if ($type == "plugin") {
-            try {
-                $config = ExtensionManager::getPluginConfig($id);
-                $className = $config["plugin"]["pluginClassName"];
-
-                $message = $className::install();
-
-                $this->_helper->json([
-                    "message" => $message,
-                    "reload" => $className::needsReloadAfterInstall(),
-                    "status" => [
-                        "installed" => $className::isInstalled()
-                    ],
-                    "success" => true
-                ]);
-            } catch (\Exception $e) {
-                Logger::error($e);
-
-                $this->_helper->json([
-                    "message" => $e->getMessage(),
-                    "success" => false
-                ]);
-            }
-        }
-    }
-
-    public function uninstallAction()
-    {
-        $type = $this->getParam("type");
-        $id = $this->getParam("id");
-
-        if ($type == "plugin") {
-            try {
-                $config = ExtensionManager::getPluginConfig($id);
-                $className = $config["plugin"]["pluginClassName"];
-
-                $message = $className::uninstall();
-
-                $this->_helper->json([
-                    "message" => $message,
-                    "reload" => $className::needsReloadAfterInstall(),
-                    "pluginJsClassName" => $className::getJsClassName(),
-                    "status" => [
-                        "installed" => $className::isInstalled()
-                    ],
-                    "success" => true
-                ]);
-            } catch (\Exception $e) {
-                $this->_helper->json([
-                    "message" => $e->getMessage(),
-                    "success" => false
-                ]);
-            }
-        }
-    }
-
+    /**
+     * @deprecated
+     */
     public function deleteAction()
     {
-        $type = $this->getParam("type");
-        $id = $this->getParam("id");
+        $type = $request->get("type");
+        $id = $request->get("id");
 
         ExtensionManager::delete($id, $type);
 
@@ -184,10 +219,13 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
+    /**
+     * @deprecated
+     */
     public function createAction()
     {
         $success = false;
-        $name = ucfirst($this->getParam("name"));
+        $name = ucfirst($request->get("name"));
         $examplePluginPath = realpath(PIMCORE_PATH . "/modules/extensionmanager/example-plugin");
         $pluginDestinationPath = realpath(PIMCORE_PLUGINS_PATH) . DIRECTORY_SEPARATOR . $name;
 
@@ -222,6 +260,9 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
+    /**
+     * @deprecated
+     */
     public function uploadAction()
     {
         $success = true;
