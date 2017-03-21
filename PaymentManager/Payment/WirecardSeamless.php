@@ -309,7 +309,7 @@ class WirecardSeamless implements IPayment
                     'seamless_amount' => ''
                     , 'seamless_paymentType' => ''
                     , 'seamless_paymentState' => ''
-                    , 'seamless_response' => \Zend_Json::encode($response)
+                    , 'seamless_response' => json_encode($response)
                 ]
             );
 
@@ -668,9 +668,9 @@ class WirecardSeamless implements IPayment
      */
     public static function extractSeamlessResponse(\OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo) {
         if ($providerData = $paymentInfo->getProviderData()) {
-            $providerData = \Zend_Json::decode($providerData);
+            $providerData = json_decode($providerData);
             if ($providerData['seamless_response']) {
-                return \Zend_Json::decode($providerData['seamless_response']);
+                return json_decode($providerData['seamless_response']);
             }
         }
 

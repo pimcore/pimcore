@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
@@ -753,7 +754,7 @@ class DefaultMysql implements IProductList
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return \Zend_Paginator_Adapter_Interface
+     * @return AdapterInterface
      */
     public function getPaginatorAdapter() {
         return $this;

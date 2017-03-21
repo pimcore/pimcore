@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Zend\Paginator\Adapter\AdapterInterface;
 
 class DefaultFindologic implements IProductList
 {
@@ -902,7 +903,7 @@ class DefaultFindologic implements IProductList
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return \Zend_Paginator_Adapter_Interface
+     * @return AdapterInterface
      */
     public function getPaginatorAdapter()
     {

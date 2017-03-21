@@ -605,7 +605,6 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
     public function getCurrency()
     {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setPaymentInfo is not implemented for " . get_class($this));
-//        return new \Zend_Currency($this->getOrder()->getCurrency(), $this->factory->getEnvironment()->getCurrencyLocale());
     }
 
     /**
