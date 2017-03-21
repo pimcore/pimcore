@@ -796,7 +796,6 @@ class DefaultFindologic implements IProductList
      * @param array $params
      *
      * @return \SimpleXMLElement
-     * @throws \Zend_Http_Client_Exception
      */
     protected function sendRequest(array $params)
     {
@@ -829,20 +828,19 @@ class DefaultFindologic implements IProductList
 
         // start request
         $start = microtime(true);
-        $client = new \Zend_Http_Client($url, [
+        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $response = $client->request('GET', $url, [
             'timeout' => $this->timeout
         ]);
-        $client->setMethod(\Zend_Http_Client::GET);
-        $response = $client->request();
         $this->getLogger()->info('Duration: ' . number_format(microtime(true) - $start, 3));
 
 
-        if($response->getStatus() != 200)
+        if($response->getStatusCode() != 200)
         {
-            throw new \Exception($response->getBody());
+            throw new \Exception((string)$response->getBody());
         }
 
-        $data = simplexml_load_string($response->getBody());
+        $data = simplexml_load_string((string)$response->getBody());
 
         return $data;
     }

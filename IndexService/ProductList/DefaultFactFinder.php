@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Psr\Http\Message\ResponseInterface;
 
 class DefaultFactFinder implements IProductList
 {
@@ -773,17 +774,15 @@ class DefaultFactFinder implements IProductList
      * @param string $url The URL to call
      * @param int $trys internal counter - don't pass a value!
      *
-     * @return \Zend_Http_Response
+     * @return ResponseInterface
      * @throws \Exception
-     * @throws \Zend_Http_Client_Exception
      */
     protected function doRequest($url,$trys = 0){
         // start request
         $this->getLogger()->info('Request: ' . $url);
-        $client = new \Zend_Http_Client( $url );
-        $client->setMethod(\Zend_Http_Client::GET);
-        $response = $client->request();
 
+        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $response = $client->request('GET', $url);
 
         $factFinderTimeout = $response->getHeader('X-FF-Timeout');
         if($factFinderTimeout === 'true'){
@@ -896,7 +895,6 @@ class DefaultFactFinder implements IProductList
      * @param $params
      *
      * @return array
-     * @throws Zend_Http_Client_Exception
      */
     protected function sendRequest()
     {
@@ -904,7 +902,7 @@ class DefaultFactFinder implements IProductList
         $url  = $this->getQuery();
         $this->requestUrl = $url;
         $response = $this->doRequest($url);
-        $data = json_decode($response->getBody(), true);
+        $data = json_decode((string)$response->getBody(), true);
 
         if(!$data) {
             throw new \Exception('Request didn\'t return anything');

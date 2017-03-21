@@ -1025,21 +1025,7 @@ class DefaultElasticSearch implements IProductList {
         /**
          * @var $esClient \Elasticsearch\Client
          */
-
-        // ElasticSearch Client
         $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
-
-        // Zend HTTP Client
-        $config =  $this->tenantConfig->getElasticSearchClientParams();
-        /*$esClient = new Zend_Http_Client(sprintf('http://%s:9200/%s/%s/_search?%s'
-            , $config['hosts'][0]
-            , $params['index']
-            , $params['type']
-            , $params['search_type'] ?: ''
-            , $params['timeout'] = $this->getTimeout()
-        ));*/
-
-
 
         if($esClient instanceof \Elasticsearch\Client)
         {
@@ -1057,41 +1043,6 @@ class DefaultElasticSearch implements IProductList {
 
                 while(true) {
                     $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive]);
-
-                    if(count($additionalResult['hits']['hits'])) {
-                        $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
-                        $scrollId = $additionalResult['_scroll_id'];
-                    } else {
-                        break;
-                    }
-                }
-                $result['hits']['hits'] = array_merge($result['hits']['hits'], $additionalHits);
-            }
-        }
-        else if($esClient instanceof \Zend_Http_Client)
-        {
-            if($this->doScrollRequest) {
-                $esClient->setParameterGet('scroll', $this->scrollRequestKeepAlive);
-            }
-
-            $esClient->setMethod( \Zend_Http_Client::GET );
-            $esClient->setRawData( json_encode($params['body']) );
-
-            $result = $esClient->request();
-            $result = json_decode($result->getBody(), true);
-
-            if($this->doScrollRequest) {
-
-                $additionalHits = [];
-                $scrollId = $result['_scroll_id'];
-
-                while(true) {
-                    $scrollClient = new \Zend_Http_Client(sprintf('http://%s:9200/_search/scroll', $config['hosts'][0]));
-                    $scrollClient->setMethod( \Zend_Http_Client::GET );
-                    $scrollClient->setRawData(json_encode(['scroll' => $this->scrollRequestKeepAlive, 'scroll_id' => $scrollId]));
-
-                    $additionalResult = $scrollClient->request();
-                    $additionalResult = json_decode($additionalResult->getBody(), true);
 
                     if(count($additionalResult['hits']['hits'])) {
                         $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
