@@ -158,7 +158,7 @@ class LogController extends AdminController
     }
 
     /**
-     * @Route("/log/show-file-object-action")
+     * @Route("/log/show-file-object")
      * @param Request $request
      * @return Response
      */

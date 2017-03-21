@@ -146,7 +146,7 @@ pimcore.log.admin = Class.create({
                     dataIndex: 'fileobject',
                     flex: 70,
                     renderer: function(value, p, record){
-                        return Ext.String.format('<a href="/admin/log/show-file-object-action?filePath={0}" target="_blank">{1}</a>', record.data.fileobject, t("open"));
+                        return Ext.String.format('<a href="/admin/log/show-file-object?filePath={0}" target="_blank">{1}</a>', record.data.fileobject, t("open"));
                     },
                     sortable: true
                 },{
