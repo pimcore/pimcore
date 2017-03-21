@@ -157,6 +157,37 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
+     * @Route("/admin/update")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function updateAction(Request $request)
+    {
+        try {
+            $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
+
+            $this->bundleManager->update($bundle);
+
+            return $this->json([
+                'success' => true,
+                'bundle'  => $this->buildBundleInfo($bundle)
+            ]);
+        } catch (BundleNotFoundException $e) {
+            return $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
      * @return LegacyExtensionManagerController|null
      */
     private function getLegacyController()
@@ -308,7 +339,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $info = array_merge($info, [
                 'installable'   => $bm->canBeInstalled($bundle),
                 'uninstallable' => $bm->canBeUninstalled($bundle),
-                'updateable'    => false, // TODO
+                'updateable'    => $bm->canBeUpdated($bundle),
             ]);
         }
 
