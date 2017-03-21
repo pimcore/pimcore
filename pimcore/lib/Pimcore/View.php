@@ -41,7 +41,19 @@ class View extends \Zend_View
 
         try {
             if ($document instanceof Model\Document\PageSnippet) {
-                $tag = $document->getElement($name);
+                $md5Name = Model\Document\Tag::buildTagNameMd5($type,$name, $document);
+                $tag = $document->getElement($md5Name);
+                if (!($tag instanceof Model\Document\Tag)){
+                    $legacyName = Model\Document\Tag::buildTagName($type,$name, $document);
+                    $tag = $document->getElement($legacyName);
+                    if ($tag instanceof Model\Document\Tag){
+                        $name = $legacyName;
+                    }else{
+                        $name = $md5Name;
+                    }
+                }else{
+                    $name = $md5Name;
+                }
                 if ($tag instanceof Model\Document\Tag && $tag->getType() == $type) {
 
                     // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)

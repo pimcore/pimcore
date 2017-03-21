@@ -493,4 +493,57 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         return $name;
     }
+    
+    /**
+     * @param $type
+     * @param $name
+     * @param null $document
+     * @return string
+     * @throws \Exception
+     * @throws \Zend_Exception
+     */
+    public static function buildTagNameMd5($type, $name, $document = null)
+    {
+        if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
+            throw new \Exception("Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+), your name was: " . $name);
+        }
+
+        // check for persona content
+        if ($document && $document instanceof Document\Page && $document->getUsePersona()) {
+            $name = $document->getPersonaElementName($name);
+        }
+
+        // @todo add document-id to registry key | for example for embeded snippets
+        // set suffixes if the tag is inside a block
+        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
+            $blocks = \Zend_Registry::get("pimcore_tag_block_current");
+
+            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
+            if (is_array($blocks) and count($blocks) > 0) {
+                if ($type == "block") {
+                    $tmpBlocks = $blocks;
+                    $tmpNumeration = $numeration;
+                    array_pop($tmpBlocks);
+                    array_pop($tmpNumeration);
+
+                    $tmpName = $name;
+                    if (is_array($tmpBlocks)) {
+                        $tmpName = $name . implode("_", $tmpBlocks) . implode("_", $tmpNumeration);
+                    }
+
+                    if ($blocks[count($blocks) - 1] == $tmpName) {
+                        array_pop($blocks);
+                        array_pop($numeration);
+                    }
+                }
+                $name = "__md5__" . $name . '_' . $type . '_' . md5(implode("_", $blocks) . implode("_", $numeration));
+            }
+        }
+
+        if (strlen($name) > 750) {
+            throw new \Exception("Composite name is longer than 750 characters - use shorter names for your editables or reduce amount of nesting levels. Name is: " . $name);
+        }
+
+        return $name;
+    }
 }
