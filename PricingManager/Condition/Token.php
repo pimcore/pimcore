@@ -31,7 +31,7 @@ class Token implements \OnlineShop\Framework\PricingManager\ICondition
      */
     public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
     {
-        $token = $environment->getSession()->token;
+        $token = $environment->getSession()->get("token");
 
         return $token === $this->getToken();
     }
