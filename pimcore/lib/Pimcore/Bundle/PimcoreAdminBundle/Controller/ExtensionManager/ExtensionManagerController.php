@@ -22,7 +22,9 @@ use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
+use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -35,13 +37,27 @@ class ExtensionManagerController extends AdminController implements EventedContr
     protected $bundleManager;
 
     /**
+     * @var AreabrickManager
+     */
+    protected $areabrickManager;
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+
+        $this->bundleManager    = $this->get('pimcore.extension.bundle_manager');
+        $this->areabrickManager = $this->get('pimcore.area.brick_manager');
+    }
+
+    /**
      * @inheritDoc
      */
     public function onKernelController(FilterControllerEvent $event)
     {
         $this->checkPermission('plugins');
-
-        $this->bundleManager = $this->get('pimcore.extension.bundle_manager');
     }
 
     /**
@@ -84,17 +100,11 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $reload = true;
 
         if ($type === 'bundle') {
-            if ($enable) {
-                $this->bundleManager->enable($id);
-            } else {
-                $this->bundleManager->disable($id);
-            }
+            $this->bundleManager->setState($id, $enable);
         } else if ($type === 'areabrick') {
-
-        }
-
-        if ($type === 'areabrick') {
             $reload = false;
+
+            $this->areabrickManager->setState($id, $enable);
         }
 
         return $this->json([
@@ -262,7 +272,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'name'        => $brick->getName(),
             'description' => $brick->getDescription(),
             'installed'   => true,
-            'active'      => true,
+            'active'      => $this->areabrickManager->isEnabled($brick->getId()),
             'updateable'  => false,
             'version'     => $brick->getVersion()
         ];

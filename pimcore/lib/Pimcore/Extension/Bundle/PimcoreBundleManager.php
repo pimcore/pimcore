@@ -185,7 +185,7 @@ class PimcoreBundleManager
      * @param string|PimcoreBundleInterface $bundle
      * @param bool $state
      */
-    protected function setState($bundle, $state)
+    public function setState($bundle, $state)
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
