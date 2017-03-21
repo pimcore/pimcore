@@ -308,7 +308,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/services.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_plugin {
+.pimcore_icon_plugin, .pimcore_icon_bundle {
     background: url(/pimcore/static6/img/flat-color-icons/puzzle.svg) center center no-repeat !important;
 }
 
@@ -877,7 +877,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/clock.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_objectbricks, .pimcore_icon_brick {
+.pimcore_icon_objectbricks, .pimcore_icon_brick, .pimcore_icon_areabrick {
     background: url(/pimcore/static6/img/flat-color-icons/bricks.svg) center center no-repeat !important;
 }
 

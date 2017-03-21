@@ -26,6 +26,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -200,7 +201,11 @@ class ExtensionManagerController extends AdminController implements EventedContr
     private function buildBundleInstance($bundleName)
     {
         try {
-            return new $bundleName();
+            /** @var BundleInterface $bundle */
+            $bundle = new $bundleName();
+            $bundle->setContainer($this->container);
+
+            return $bundle;
         } catch (\Exception $e) {
             $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
                 'bundle' => $bundleName,
@@ -218,30 +223,52 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     private function buildBundleInfo(PimcoreBundleInterface $bundle, $enabled = false, $installed = false)
     {
-        $iframePath = null;
+        $bm = $this->bundleManager;
+
+        $info = [
+            'id'            => $bm->getBundleIdentifier($bundle),
+            'type'          => 'bundle',
+            'name'          => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
+            'description'   => $bundle->getDescription(),
+            'active'        => $enabled,
+            'installable'   => false,
+            'uninstallable' => false,
+            'updateable'    => false,
+            'installed'     => $installed,
+            'configuration' => $this->getIframePath($bundle),
+            'version'       => $bundle->getVersion()
+        ];
+
+        // only check for installation specifics if the bundle is enabled
+        if ($enabled) {
+            $info = array_merge($info, [
+                'installable'   => $bm->canBeInstalled($bundle),
+                'uninstallable' => $bm->canBeUninstalled($bundle),
+                'updateable'    => false, // TODO
+            ]);
+        }
+
+        return $info;
+    }
+
+    /**
+     * @param PimcoreBundleInterface $bundle
+     *
+     * @return string|null
+     */
+    private function getIframePath(PimcoreBundleInterface $bundle)
+    {
         if ($iframePath = $bundle->getAdminIframePath()) {
             if ($iframePath instanceof RouteReferenceInterface) {
-                $iframePath = $this->get('router')->generate(
+                return $this->get('router')->generate(
                     $iframePath->getRoute(),
                     $iframePath->getParameters(),
                     $iframePath->getType()
                 );
             }
+
+            return $iframePath;
         }
-
-        $info = [
-            'id'            => $this->bundleManager->getBundleIdentifier($bundle),
-            'type'          => 'bundle',
-            'name'          => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
-            'description'   => $bundle->getDescription(),
-            'active'        => $enabled,
-            'installed'     => $installed,
-            'configuration' => $iframePath,
-            'updateable'    => false,
-            'version'       => $bundle->getVersion()
-        ];
-
-        return $info;
     }
 
     /**
@@ -267,14 +294,16 @@ class ExtensionManagerController extends AdminController implements EventedContr
     private function buildBrickInfo(AreabrickInterface $brick)
     {
         return [
-            'id'          => $brick->getId(),
-            'type'        => 'areabrick',
-            'name'        => $brick->getName(),
-            'description' => $brick->getDescription(),
-            'installed'   => true,
-            'active'      => $this->areabrickManager->isEnabled($brick->getId()),
-            'updateable'  => false,
-            'version'     => $brick->getVersion()
+            'id'            => $brick->getId(),
+            'type'          => 'areabrick',
+            'name'          => $brick->getName(),
+            'description'   => $brick->getDescription(),
+            'installable'   => false,
+            'uninstallable' => false,
+            'updateable'    => false,
+            'installed'     => true,
+            'active'        => $this->areabrickManager->isEnabled($brick->getId()),
+            'version'       => $brick->getVersion()
         ];
     }
 }
