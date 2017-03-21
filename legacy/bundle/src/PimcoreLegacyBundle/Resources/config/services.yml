@@ -9,6 +9,9 @@ services:
         tags:
             - { name: router, priority: -200 }
 
+    pimcore.legacy.plugin_broker:
+        class: Pimcore\API\Plugin\Broker
+
     # executes ZF1 view helpers
     pimcore.legacy.zend_view_helper_bridge:
         class: PimcoreLegacyBundle\Zend\View\ViewHelperBridge

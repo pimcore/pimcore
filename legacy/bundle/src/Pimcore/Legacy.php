@@ -418,7 +418,7 @@ class Legacy {
                 }
 
                 /** @var \Pimcore\API\Plugin\Broker $broker */
-                $broker = \Pimcore::getContainer()->get('pimcore.plugin_broker');
+                $broker = \Pimcore::getContainer()->get('pimcore.legacy.plugin_broker');
 
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
