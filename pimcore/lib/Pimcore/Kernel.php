@@ -182,8 +182,8 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
     protected function processExtensionManagerConfig(Extension\Config $config)
     {
         $config = $config->loadConfig();
-        if (isset($config->bundles)) {
-            foreach ($config->bundles->toArray() as $bundleName => $state) {
+        if (isset($config->bundle)) {
+            foreach ($config->bundle->toArray() as $bundleName => $state) {
                 if ((bool) $state) {
                     $this->extensionManagerBundles[] = $bundleName;
                 }

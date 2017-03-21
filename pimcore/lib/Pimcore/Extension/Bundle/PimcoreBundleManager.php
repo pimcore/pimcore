@@ -121,11 +121,11 @@ class PimcoreBundleManager
     protected function getBundlesFromConfig()
     {
         $config = $this->config->loadConfig();
-        if (!isset($config->bundles)) {
+        if (!isset($config->bundle)) {
             return [];
         }
 
-        return $config->bundles->toArray();
+        return $config->bundle->toArray();
     }
 
     /**
@@ -192,11 +192,11 @@ class PimcoreBundleManager
         $this->validateBundleIdentifier($identifier);
 
         $config = $this->config->loadConfig();
-        if (!isset($config->bundles)) {
-            $config->bundles = new PimcoreConfig\Config([], true);
+        if (!isset($config->bundle)) {
+            $config->bundle = new PimcoreConfig\Config([], true);
         }
 
-        $config->bundles->$identifier = (bool) $state;
+        $config->bundle->$identifier = (bool) $state;
 
         $this->config->saveConfig($config);
     }

@@ -131,8 +131,8 @@ class AreabrickManager implements AreabrickManagerInterface
     private function getBrickConfig()
     {
         $config = $this->config->loadConfig();
-        if (isset($config->areabricks)) {
-            return $config->areabricks->toArray();
+        if (isset($config->areabrick)) {
+            return $config->areabrick->toArray();
         }
 
         return [];
