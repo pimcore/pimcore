@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Cache\Runtime;
+
 class CartItem extends AbstractCartItem implements ICartItem {
 
     /**
@@ -66,14 +68,14 @@ class CartItem extends AbstractCartItem implements ICartItem {
         $cacheKey = \OnlineShop\Framework\CartManager\CartItem\Dao::TABLE_NAME . "_" . $cartId . "_" . $parentKey . $itemKey;
 
         try {
-            $cartItem = \Zend_Registry::get($cacheKey);
+            $cartItem = Runtime::get($cacheKey);
         }
         catch (\Exception $e) {
             try {
                 $cartItem = new static();
                 $cartItem->getDao()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
                 $cartItem->getSubItems();
-                \Zend_Registry::set($cacheKey, $cartItem);
+                Runtime::set($cacheKey, $cartItem);
             } catch (\Exception $ex) {
                 \Logger::debug($ex->getMessage());
                 return null;

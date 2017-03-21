@@ -33,7 +33,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     {
         $cacheKey = Dao::TABLE_NAME . "_" . $id;
         try {
-            $rule = \Zend_Registry::get($cacheKey);
+            $rule = Runtime::get($cacheKey);
         }
         catch (\Exception $e) {
 
@@ -42,7 +42,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
                 $rule = new $ruleClass;
                 $rule->getDao()->getById($id);
 
-                \Zend_Registry::set($cacheKey, $rule);
+                Runtime::set($cacheKey, $rule);
             } catch (\Exception $ex) {
 
                 \Logger::debug($ex->getMessage());

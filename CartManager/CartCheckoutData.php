@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Cache\Runtime;
+
 class CartCheckoutData extends AbstractCartCheckoutData {
 
     public function save() {
@@ -27,14 +29,14 @@ class CartCheckoutData extends AbstractCartCheckoutData {
         $cacheKey = \OnlineShop\Framework\CartManager\CartCheckoutData\Dao::TABLE_NAME . "_" . $key . "_" . $cartId;
 
         try {
-            $checkoutDataItem = \Zend_Registry::get($cacheKey);
+            $checkoutDataItem = Runtime::get($cacheKey);
         }
         catch (\Exception $e) {
 
             try {
                 $checkoutDataItem = new self();
                 $checkoutDataItem->getDao()->getByKeyCartId($key, $cartId);
-                \Zend_Registry::set($cacheKey, $checkoutDataItem);
+                Runtime::set($cacheKey, $checkoutDataItem);
             } catch(\Exception $ex) {
                 \Logger::debug($ex->getMessage());
                 return null;

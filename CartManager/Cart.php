@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Cache\Runtime;
+
 class Cart extends AbstractCart implements ICart {
 
     /**
@@ -56,7 +58,7 @@ class Cart extends AbstractCart implements ICart {
         $this->setIgnoreReadonly();
 
         $cacheKey = \OnlineShop\Framework\CartManager\Cart\Dao::TABLE_NAME . "_" . $this->getId();
-        \Zend_Registry::set($cacheKey, null);
+        Runtime::set($cacheKey, null);
 
         \OnlineShop\Framework\CartManager\CartItem::removeAllFromCart($this->getId());
         \OnlineShop\Framework\CartManager\CartCheckoutData::removeAllFromCart($this->getId());
@@ -94,7 +96,7 @@ class Cart extends AbstractCart implements ICart {
     public static function getById($id) {
         $cacheKey = \OnlineShop\Framework\CartManager\Cart\Dao::TABLE_NAME . "_" . $id;
         try {
-            $cart = \Zend_Registry::get($cacheKey);
+            $cart = Runtime::get($cacheKey);
         }
         catch (\Exception $e) {
 
@@ -118,7 +120,7 @@ class Cart extends AbstractCart implements ICart {
 
                 $cart->unsetIgnoreReadonly();
 
-                \Zend_Registry::set($cacheKey, $cart);
+                Runtime::set($cacheKey, $cart);
             } catch (\Exception $ex) {
                 \Logger::debug($ex->getMessage());
                 return null;
