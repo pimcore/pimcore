@@ -273,7 +273,7 @@ $list->setOrderKey('name');
 $list->load();
 ```
 
-All used attributes need to be in the product index. The product list implements all iterator and paginator interfaces and can be used in foreach loops and in combination with Zend_Paginators. 
+All used attributes need to be in the product index. The product list implements all iterator and paginator interfaces and can be used in foreach loops and in combination with Zend\Paginators.
 
 
 If pimcore log level is set at least to INFO, all created index queries are logged into online-shop-sql.log in the website/var/log folder. 

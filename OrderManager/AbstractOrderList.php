@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
+use Zend\Paginator\Adapter\AdapterInterface;
 use Zend_Paginator_Adapter_Interface;
 
 use \OnlineShop\Framework\Model\AbstractOrder;
@@ -156,7 +157,7 @@ abstract class AbstractOrderList implements IOrderList
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return Zend_Paginator_Adapter_Interface
+     * @return AdapterInterface
      */
     public function getPaginatorAdapter()
     {

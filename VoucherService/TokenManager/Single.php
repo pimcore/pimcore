@@ -62,7 +62,6 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
      * @param $viewParamsBag
      * @param array $params
      * @return string
-     * @throws \Zend_Paginator_Exception
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
     {
@@ -100,7 +99,6 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
      * @param array $params
      * @return array
      * @throws \Exception
-     * @throws \Zend_Paginator_Exception
      */
     protected function getExportData(array $params)
     {

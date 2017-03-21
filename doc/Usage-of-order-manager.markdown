@@ -57,7 +57,7 @@ foreach($orderList as $order)
 
 
 // ALTERNATE: use zend paginator
-$paginator = Zend_Paginator::factory( $orderList);
+$paginator = new Zend\Paginator( $orderList);
 $paginator->setItemCountPerPage( 10 );
 $paginator->setCurrentPageNumber( $this->getParam('page', 1) );
 

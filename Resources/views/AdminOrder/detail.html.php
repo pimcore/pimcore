@@ -27,7 +27,8 @@ $order = $orderAgent->getOrder();
 $currency = $orderAgent->getCurrency();
 
 $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
-
+$locale = Pimcore::getContainer()->get('pimcore.locale');
+$regionArray = $locale->getDisplayRegions();
 ?>
 <div class="row order-detail">
     <div class="col-xs-7">
@@ -334,7 +335,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                                 ?>
                                 <?= $order->getCustomerStreet() ?><br/>
                                 <?= $order->getCustomerZip().' - '.$order->getCustomerCity() ?><br/>
-                                <?= strtoupper(Zend_Locale::getTranslation($order->getCustomerCountry(), 'territory')) ?><br/>
+                                <?= strtoupper($regionArray[$order->getCustomerCountry()]) ?><br/>
                                 <?php if($order->getCustomer() && method_exists($order->getCustomer(), 'email')): ?>
                                     <?= sprintf('<a href="mailto:%1$s">%1$s</a>', $order->getCustomer()->getEmail()) ?>
                                 <?php endif; ?>
@@ -363,7 +364,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                                 ?>
                                 <?= $order->getDeliveryStreet() ?><br/>
                                 <?= $order->getDeliveryZip().' - '.$order->getDeliveryCity() ?><br/>
-                                <?= strtoupper(Zend_Locale::getTranslation($order->getDeliveryCountry(), 'territory')) ?><br/>
+                                <?= strtoupper($regionArray[$order->getDeliveryCountry()]) ?><br/>
                             </address>
                         </div>
 

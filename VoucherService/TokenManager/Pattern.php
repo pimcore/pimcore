@@ -490,7 +490,6 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * @param $viewParamsBag
      * @param array $params
      * @return string
-     * @throws \Zend_Paginator_Exception
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
     {
@@ -556,14 +555,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * @param array $params
      * @return array
      * @throws \Exception
-     * @throws \Zend_Paginator_Exception
      */
     protected function getExportData(array $params)
     {
         $tokens = new Token\Listing();
         $tokens->setFilterConditions($params['id'], $params);
 
-        $paginator = \Zend_Paginator::factory($tokens);
+        $paginator = new Paginator($tokens);
         $paginator->setItemCountPerPage(-1);
 
         $data = [];

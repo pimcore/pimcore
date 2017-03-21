@@ -351,7 +351,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
 
     /**
-     * @return \Pimcore\Model\Object\Listing|\Zend_Paginator_Adapter_Interface
+     * @return \Pimcore\Model\Object\Listing|AdapterInterface
      */
     public function getPaginatorAdapter()
     {

@@ -115,7 +115,7 @@ $this->view->filterService = $filterService;
 
 
 // init pagination
-$paginator = Zend_Paginator::factory( $products );
+$paginator = new Zend\Paginator( $products );
 $paginator->setCurrentPageNumber( $this->getParam('page') );
 $paginator->setItemCountPerPage( $filterDefinition->getPageLimit() );
 $paginator->setPageRange(10);

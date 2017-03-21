@@ -197,7 +197,6 @@ abstract class AbstractTokenManager implements ITokenManager
      * @param array $params
      * @return array
      * @throws \Exception
-     * @throws \Zend_Paginator_Exception
      */
     protected function getExportData(array $params)
     {

@@ -74,7 +74,7 @@ See the following examples
 class ShopController extends \Pimcore\Controller\Action\Frontend {
     public function listAction() {
         ...
-        $paginator = Zend_Paginator::factory( $products );
+        $paginator = new Zend\Paginator( $products );
         $paginator->setCurrentPageNumber( $this->getParam('page') );
 
         $trackingManager = \OnlineShop\Framework\Factory::getInstance()->getTrackingManager();
