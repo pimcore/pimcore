@@ -144,7 +144,7 @@ class PimcoreBundleLocator
     private function readComposerConfig()
     {
         // try to read composer.lock first
-        $json = $this->readComposerFile([PIMCORE_APP_ROOT, 'composer.lock']);
+        $json = $this->readComposerFile([PIMCORE_PROJECT_ROOT, 'composer.lock']);
         if ($json && isset($json['packages']) && is_array($json['packages'])) {
             return $json['packages'];
         }
