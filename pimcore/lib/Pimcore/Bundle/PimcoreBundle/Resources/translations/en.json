@@ -1950,7 +1950,7 @@
     },
     {
         "term": "please_dont_forget_to_reload_pimcore_after_modifications",
-        "definition": "Please don't forget to reload pimcore, after your modifications"
+        "definition": "Please don't forget to reload pimcore after your modifications"
     },
     {
         "term": "enable",

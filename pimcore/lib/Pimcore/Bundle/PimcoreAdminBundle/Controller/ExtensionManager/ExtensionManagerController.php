@@ -23,6 +23,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
+use Pimcore\Tool;
 use PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -108,13 +109,14 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $type   = $request->get('type');
         $id     = $request->get('id');
         $enable = $request->get('method', 'enable') === 'enable' ? true : false;
-        $reload = true;
+        $reload = false;
 
         if ($type === 'bundle') {
             $this->bundleManager->setState($id, $enable);
-        } else if ($type === 'areabrick') {
-            $reload = false;
 
+            $reload = true;
+            Tool::clearSymfonyCache($this->container);
+        } else if ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
         }
 
