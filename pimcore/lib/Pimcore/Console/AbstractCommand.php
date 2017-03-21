@@ -60,7 +60,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
 
         // skip if maintenance mode is on and the flag is not set
         if (Admin::isInMaintenanceMode() && !$input->getOption('ignore-maintenance-mode')) {
-            //throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
+            throw new \RuntimeException('In maintenance mode - set the flag --ignore-maintenance-mode to force execution!');
         }
     }
 
