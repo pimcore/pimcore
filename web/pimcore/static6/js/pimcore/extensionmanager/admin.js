@@ -358,18 +358,8 @@ pimcore.extensionmanager.admin = Class.create({
                             }
                         }.bind(this));
                     }.bind(this)
-                }, {
-                    text: t("upload_plugin") + " (ZIP)",
-                    iconCls: "pimcore_icon_upload",
-                    handler: function () {
-                        pimcore.helpers.uploadDialog('/admin/extensionmanager/admin/upload', "zip", function(res) {
-                            this.reload();
-                        }.bind(this), function () {
-                            Ext.MessageBox.alert(t("error"), t("error"));
-                        });
-                    }.bind(this)
-                }, "->" ,
-                "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"
+                },
+                "->" , "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"
             ]
         });
 
