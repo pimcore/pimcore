@@ -15,41 +15,40 @@
 namespace Pimcore\Extension\Bundle\Installer;
 
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
+use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 
 interface InstallerInterface
 {
     /**
-     * Installs the plugin
+     * Installs the bundle
      *
      * @throws InstallationException
-     * @return bool
      */
     public function install();
 
     /**
-     * Uninstalls the plugin
+     * Uninstalls the bundle
      *
      * @throws InstallationException
-     * @return bool
      */
     public function uninstall();
 
     /**
-     * Determine if plugin is installed
+     * Determine if bundle is installed
      *
      * @return bool
      */
     public function isInstalled();
 
     /**
-     * Determine if plugin is ready to be installed. Can be used to check prerequisites
+     * Determine if bundle is ready to be installed. Can be used to check prerequisites
      *
      * @return bool
      */
     public function canBeInstalled();
 
     /**
-     * Determine if plugin can be uninstalled
+     * Determine if bundle can be uninstalled
      *
      * @return bool
      */
@@ -61,4 +60,18 @@ interface InstallerInterface
      * @return bool
      */
     public function needsReloadAfterInstall();
+
+    /**
+     * Determine if bundle can be updated
+     *
+     * @return bool
+     */
+    public function canBeUpdated();
+
+    /**
+     * Updates the bundle
+     *
+     * @throws UpdateException
+     */
+    public function update();
 }

@@ -20,6 +20,7 @@ use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
+use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\Extension\Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -355,6 +356,61 @@ class PimcoreBundleManager
         }
 
         return $installer->isInstalled();
+    }
+
+    /**
+     * Determines if a reload is needed after installation
+     *
+     * @param PimcoreBundleInterface $bundle
+     *
+     * @return bool
+     */
+    public function needsReloadAfterInstall(PimcoreBundleInterface $bundle)
+    {
+        if (null === $installer = $bundle->getInstaller($this->container)) {
+            // bundle has no dedicated installer
+            return false;
+        }
+
+        return $installer->needsReloadAfterInstall();
+    }
+
+    /**
+     * Determines if a bundle can be updated
+     *
+     * @param PimcoreBundleInterface $bundle
+     *
+     * @return bool
+     */
+    public function canBeUpdated(PimcoreBundleInterface $bundle)
+    {
+        if (!$this->isEnabled($bundle)) {
+            return false;
+        }
+
+        if (null === $installer = $this->loadBundleInstaller($bundle)) {
+            return false;
+        }
+
+        return $installer->canBeUpdated();
+    }
+
+    /**
+     * Runs update routine for a bundle
+     *
+     * @param PimcoreBundleInterface $bundle
+     *
+     * @throws UpdateException If the bundle can not be updated or doesn't define an installer
+     */
+    public function update(PimcoreBundleInterface $bundle)
+    {
+        $installer = $this->loadBundleInstaller($bundle, true);
+
+        if (!$installer->canBeUpdated()) {
+            throw new UpdateException(sprintf('Bundle %s can not be updated', $bundle->getName()));
+        }
+
+        $installer->update();
     }
 
     /**

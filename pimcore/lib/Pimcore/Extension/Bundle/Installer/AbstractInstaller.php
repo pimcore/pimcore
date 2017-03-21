@@ -21,7 +21,6 @@ class AbstractInstaller implements InstallerInterface
      */
     public function install()
     {
-        return true;
     }
 
     /**
@@ -29,7 +28,6 @@ class AbstractInstaller implements InstallerInterface
      */
     public function uninstall()
     {
-        return true;
     }
 
     /**
@@ -62,5 +60,20 @@ class AbstractInstaller implements InstallerInterface
     public function needsReloadAfterInstall()
     {
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function canBeUpdated()
+    {
+        false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update()
+    {
     }
 }

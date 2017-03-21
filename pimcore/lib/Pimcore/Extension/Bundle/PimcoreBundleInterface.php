@@ -43,9 +43,10 @@ interface PimcoreBundleInterface extends BundleInterface
     public function getVersion();
 
     /**
-     * If the plugin has an installation routine, an installer is responsible of handling installation related tasks
+     * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
      *
      * @param ContainerInterface $container
+     *
      * @return InstallerInterface|null
      */
     public function getInstaller(ContainerInterface $container);

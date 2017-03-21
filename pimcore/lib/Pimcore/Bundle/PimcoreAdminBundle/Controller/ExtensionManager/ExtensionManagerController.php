@@ -27,7 +27,6 @@ use PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManager
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -212,7 +211,10 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 $this->bundleManager->uninstall($bundle);
             }
 
-            return $this->json(['success' => true]);
+            return $this->json([
+                'success' => true,
+                'reload'  => $this->bundleManager->needsReloadAfterInstall($bundle)
+            ]);
         } catch (BundleNotFoundException $e) {
             return $this->json([
                 'success' => false,
