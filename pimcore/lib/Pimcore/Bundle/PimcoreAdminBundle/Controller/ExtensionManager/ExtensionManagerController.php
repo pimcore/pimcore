@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\ExtensionManager;
 
-use Pimcore\API\Bundle\Exception\BundleNotFoundException;
-use Pimcore\API\Bundle\PimcoreBundleInterface;
-use Pimcore\API\Bundle\PimcoreBundleManager;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
-use Pimcore\Document\Area\AreabrickInterface;
+use Pimcore\Document\Areabrick\AreabrickInterface;
+use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
+use Pimcore\Extension\Bundle\PimcoreBundleInterface;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;

@@ -31,7 +31,7 @@ class ExtensionManager
      */
     public static function getConfig()
     {
-        return \Pimcore::getContainer()->get('pimcore.extension_manager.config')->loadConfig();
+        return \Pimcore::getContainer()->get('pimcore.extension.config')->loadConfig();
     }
 
     /**
@@ -40,7 +40,7 @@ class ExtensionManager
      */
     public static function setConfig(Config\Config $config)
     {
-        return \Pimcore::getContainer()->get('pimcore.extension_manager.config')->saveConfig($config);
+        return \Pimcore::getContainer()->get('pimcore.extension.config')->saveConfig($config);
     }
 
     /**

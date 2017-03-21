@@ -10,15 +10,6 @@ services:
     pimcore.web_path_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
 
-
-    #
-    # PIMCORE BUNDLES/EXTENSIONS
-    #
-
-    pimcore.extension.bundle_manager:
-        class: Pimcore\API\Bundle\PimcoreBundleManager
-        arguments: ['@service_container']
-
     #
     # ROUTING
     #
@@ -174,11 +165,31 @@ services:
 
 
     #
+    # EXTENSIONS
+    #
+
+    # extension manager config will be built on kernel boot and injected
+    # into the container at runtime
+    pimcore.extension.config:
+        class: Pimcore\Extension\Config
+        synthetic: true
+
+
+    #
+    # PIMCORE BUNDLES
+    #
+
+    pimcore.extension.bundle_manager:
+        class: Pimcore\Extension\Bundle\PimcoreBundleManager
+        arguments: ['@service_container']
+
+
+    #
     # AREABRICKS
     #
 
     pimcore.area.brick_manager:
-        class: Pimcore\Document\Area\AreabrickManager
+        class: Pimcore\Extension\Document\Areabrick\AreabrickManager
 
     pimcore.area.brick.templating_base:
         abstract: true
@@ -239,12 +250,6 @@ services:
     # TODO inject user?
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
-
-    # extension manager config will be built on kernel boot and injected
-    # into the container at runtime
-    pimcore.extension_manager.config:
-        class: Pimcore\ExtensionManager\Config
-        synthetic: true
 
     pimcore.http_client:
         class: \GuzzleHttp\Client

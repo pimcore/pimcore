@@ -12,15 +12,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\API\Bundle;
+namespace Pimcore\Extension\Bundle;
 
-use Pimcore\API\Bundle\Exception\BundleNotFoundException;
-use Pimcore\API\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
+use Pimcore\Config as PimcoreConfig;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
-use Pimcore\ExtensionManager\Config;
-use Pimcore\Config as PimcoreConfig;
+use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
+use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
+use Pimcore\Extension\Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PimcoreBundleManager
@@ -31,7 +31,7 @@ class PimcoreBundleManager
     protected $container;
 
     /**
-     * @var Config
+     * @var \Pimcore\Extension\Config
      */
     protected $config;
 
@@ -53,7 +53,7 @@ class PimcoreBundleManager
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->config    = $container->get('pimcore.extension_manager.config');
+        $this->config    = $container->get('pimcore.extension.config');
     }
 
     /**

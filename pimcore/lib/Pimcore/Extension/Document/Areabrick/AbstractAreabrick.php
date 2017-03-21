@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Document\Area;
+namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Model\Document\Tag\Area\Info;
 

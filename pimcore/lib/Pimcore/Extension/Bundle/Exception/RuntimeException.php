@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\API\Bundle\Exception;
+namespace Pimcore\Extension\Bundle\Exception;
 
-class BundleNotFoundException extends \InvalidArgumentException
+class RuntimeException extends \RuntimeException
 {
 }

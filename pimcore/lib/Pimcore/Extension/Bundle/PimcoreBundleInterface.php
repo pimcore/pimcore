@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\API\Bundle;
+namespace Pimcore\Extension\Bundle;
 
-use Pimcore\API\Bundle\Installer\InstallerInterface;
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
+use Pimcore\Extension\Bundle\Installer\InstallerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 

@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler;
 
 use Doctrine\Common\Util\Inflector;
-use Pimcore\Document\Area\AbstractTemplateAreabrick;
-use Pimcore\Document\Area\AreabrickInterface;
+use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
+use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;

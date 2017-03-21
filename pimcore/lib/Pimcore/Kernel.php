@@ -18,7 +18,6 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Event\SystemEvents;
-use Pimcore\ExtensionManager;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -144,7 +143,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $config = \Pimcore::initConfiguration();
 
         // initialize extension managet config
-        $extensionConfig = new ExtensionManager\Config();
+        $extensionConfig = new Extension\Config();
         $this->processExtensionManagerConfig($extensionConfig);
 
         // init bundles
@@ -154,7 +153,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $this->initializeContainer();
 
         // set the extension config on the container
-        $this->container->set('pimcore.extension_manager.config', $extensionConfig);
+        $this->container->set('pimcore.extension.config', $extensionConfig);
 
         \Pimcore::initLogger();
 
@@ -178,9 +177,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
     /**
      * Reads enabled bundles from extension manager config
      *
-     * @param ExtensionManager\Config $config
+     * @param \Pimcore\Extension\Config $config
      */
-    protected function processExtensionManagerConfig(ExtensionManager\Config $config)
+    protected function processExtensionManagerConfig(Extension\Config $config)
     {
         $config = $config->loadConfig();
         if (isset($config->bundles)) {

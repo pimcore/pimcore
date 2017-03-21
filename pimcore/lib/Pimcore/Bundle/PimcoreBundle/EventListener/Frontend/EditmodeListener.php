@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\API\Bundle\PimcoreBundleManager;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;

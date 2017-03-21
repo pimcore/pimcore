@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\API\Bundle\Installer;
+namespace Pimcore\Extension\Bundle\Installer;
 
-use Pimcore\API\Bundle\Installer\Exception\InstallationException;
+use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 
 interface InstallerInterface
 {

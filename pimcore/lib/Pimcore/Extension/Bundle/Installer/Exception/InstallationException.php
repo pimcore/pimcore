@@ -12,24 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Document\Area;
+namespace Pimcore\Extension\Bundle\Installer\Exception;
 
-interface AreabrickManagerInterface
+class InstallationException extends \RuntimeException
 {
-    /**
-     * @param AreabrickInterface $brick
-     */
-    public function register(AreabrickInterface $brick);
-
-    /**
-     * @param string $id
-     *
-     * @return AreabrickInterface
-     */
-    public function getBrick($id);
-
-    /**
-     * @return AreabrickInterface[]
-     */
-    public function getBricks();
 }

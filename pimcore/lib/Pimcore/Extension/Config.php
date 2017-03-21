@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\ExtensionManager;
+namespace Pimcore\Extension;
 
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;

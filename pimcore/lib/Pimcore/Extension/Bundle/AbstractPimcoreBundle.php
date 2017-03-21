@@ -12,55 +12,56 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\API\Bundle\Installer;
+namespace Pimcore\Extension\Bundle;
 
-class AbstractInstaller implements InstallerInterface
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function install()
+    public function getInstaller(ContainerInterface $container)
     {
-        return true;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function uninstall()
+    public function getAdminIframePath()
     {
-        return true;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isInstalled()
+    public function getJsPaths()
     {
-        return true;
+        return [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function canBeInstalled()
+    public function getCssPaths()
     {
-        return false;
+        return [];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function canBeUninstalled()
+    public function getEditmodeJsPaths()
     {
-        return false;
+        return [];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function needsReloadAfterInstall()
+    public function getEditmodeCssPaths()
     {
-        return false;
+        return [];
     }
 }

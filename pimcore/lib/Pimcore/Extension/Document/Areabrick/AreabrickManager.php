@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Document\Area;
+namespace Pimcore\Extension\Document\Areabrick;
 
-use Pimcore\Document\Area\Exception\ConfigurationException;
+use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 
 class AreabrickManager implements AreabrickManagerInterface
 {

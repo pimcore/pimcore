@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\API\Bundle;
+namespace Pimcore\Extension\Bundle;
 
-use Pimcore\API\Bundle\Exception\RuntimeException;
+use Pimcore\Extension\Bundle\Exception\RuntimeException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -181,7 +181,7 @@ class PimcoreBundleLocator
     /**
      * Finds the fully qualified class name from a given PHP file by parsing the file content
      *
-     * @see      http://jarretbyrne.com/2015/06/197/
+     * @see http://jarretbyrne.com/2015/06/197/
      *
      * @param SplFileInfo $file
      *

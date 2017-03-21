@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Document\Area\Exception;
+namespace Pimcore\Extension\Document\Areabrick\Exception;
 
 class ConfigurationException extends \RuntimeException
 {
