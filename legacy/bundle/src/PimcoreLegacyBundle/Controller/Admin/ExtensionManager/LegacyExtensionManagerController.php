@@ -228,21 +228,6 @@ class LegacyExtensionManagerController extends AdminController
     /**
      * @deprecated
      */
-    public function deleteAction()
-    {
-        $type = $request->get("type");
-        $id = $request->get("id");
-
-        ExtensionManager::delete($id, $type);
-
-        $this->_helper->json([
-            "success" => true
-        ]);
-    }
-
-    /**
-     * @deprecated
-     */
     public function createAction()
     {
         $success = false;
