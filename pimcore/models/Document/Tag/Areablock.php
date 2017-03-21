@@ -615,17 +615,17 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @param $name
      * @return bool
      */
     public function isBrickEnabled($name)
     {
-        // TODO remove custom area path logic
         if ($this->isCustomAreaPath()) {
             return true;
         }
 
-        // TODO decide what to do with extensions.php
         return ExtensionManager::isEnabled("brick", $name);
     }
 

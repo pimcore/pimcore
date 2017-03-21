@@ -30,6 +30,16 @@ interface TagHandlerInterface
     public function supports($view);
 
     /**
+     * Determines if a brick is enabled
+     *
+     * @param Tag\Areablock $tag
+     * @param string $brick
+     *
+     * @return bool
+     */
+    public function isBrickEnabled(Tag\Areablock $tag, $brick);
+
+    /**
      * Get available areas for an areablock
      *
      * @param Tag\Areablock $tag

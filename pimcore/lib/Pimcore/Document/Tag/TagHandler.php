@@ -83,6 +83,14 @@ class TagHandler implements TagHandlerInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function isBrickEnabled(Tag\Areablock $tag, $brick)
+    {
+        return $this->brickManager->isEnabled($brick);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options)
@@ -94,7 +102,7 @@ class TagHandler implements TagHandlerInterface
         foreach ($this->brickManager->getBricks() as $brick) {
             // don't show disabled bricks
             if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$tag->isBrickEnabled($brick->getId())) {
+                if (!$this->brickManager->isEnabled($brick->getId())) {
                     continue;
                 }
             }

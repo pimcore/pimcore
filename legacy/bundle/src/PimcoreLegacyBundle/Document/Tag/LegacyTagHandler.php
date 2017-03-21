@@ -34,6 +34,18 @@ class LegacyTagHandler implements TagHandlerInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function isBrickEnabled(Tag\Areablock $tag, $brick)
+    {
+        if ($tag->isCustomAreaPath()) {
+            return true;
+        }
+
+        return ExtensionManager::isEnabled("brick", $brick);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options)
