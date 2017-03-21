@@ -104,10 +104,12 @@ class Service extends Model\Element\Service
 
         $params["document"] = $document;
 
+        $viewParamsBackup = [];
         foreach ($params as $key => $value) {
-            if (!$view->$key) {
-                $view->$key = $value;
+            if ($view->$key) {
+                $viewParamsBackup[$key] = $view->$key;
             }
+            $view->$key = $value;
         }
 
         $content = $view->action($document->getAction(), $document->getController(), $document->getModule(), $params);
@@ -160,6 +162,10 @@ class Service extends Model\Element\Service
 
         if (\Pimcore\Config::getSystemConfig()->outputfilters->less) {
             $content = \Pimcore\Tool\Less::processHtml($content);
+        }
+
+        foreach ($viewParamsBackup as $key => $value) {
+            $view->$key = $value;
         }
 
         return $content;
