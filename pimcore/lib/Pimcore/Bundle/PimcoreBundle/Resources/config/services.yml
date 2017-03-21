@@ -187,7 +187,12 @@ services:
 
     pimcore.extension.bundle_manager:
         class: Pimcore\Extension\Bundle\PimcoreBundleManager
-        arguments: ['@service_container']
+        arguments:
+            - '@pimcore.extension.config'
+            - '@pimcore.extension.bundle_locator'
+            - '@kernel'
+            - '@event_dispatcher'
+            - '@router'
 
 
     #

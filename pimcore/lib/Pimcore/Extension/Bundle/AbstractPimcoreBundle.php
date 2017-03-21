@@ -46,7 +46,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getInstaller(ContainerInterface $container)
+    public function getInstaller()
     {
     }
 

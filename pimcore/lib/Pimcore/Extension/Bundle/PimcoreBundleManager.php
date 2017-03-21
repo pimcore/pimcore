@@ -22,19 +22,36 @@ use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\Extension\Config;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class PimcoreBundleManager
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var \Pimcore\Extension\Config
+     * @var Config
      */
     protected $config;
+
+    /**
+     * @var PimcoreBundleLocator
+     */
+    protected $bundleLocator;
+
+    /**
+     * @var KernelInterface
+     */
+    protected $kernel;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
+     * @var RouterInterface
+     */
+    protected $router;
 
     /**
      * @var array
@@ -47,14 +64,24 @@ class PimcoreBundleManager
     protected $enabledBundles;
 
     /**
-     * We need to inject the container as the installer getter has access to the whole container.
-     *
-     * @param ContainerInterface $container
+     * @param Config $config
+     * @param PimcoreBundleLocator $bundleLocator
+     * @param KernelInterface $kernel
+     * @param EventDispatcherInterface $dispatcher
+     * @param RouterInterface $router
      */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-        $this->config    = $container->get('pimcore.extension.config');
+    public function __construct(
+        Config $config,
+        PimcoreBundleLocator $bundleLocator,
+        KernelInterface $kernel,
+        EventDispatcherInterface $dispatcher,
+        RouterInterface $router
+    ) {
+        $this->config         = $config;
+        $this->bundleLocator  = $bundleLocator;
+        $this->kernel         = $kernel;
+        $this->dispatcher     = $dispatcher;
+        $this->router         = $router;
     }
 
     /**
@@ -68,7 +95,7 @@ class PimcoreBundleManager
     public function getActiveBundles($onlyInstalled = true)
     {
         $bundles = [];
-        foreach ($this->container->get('kernel')->getBundles() as $bundle) {
+        foreach ($this->kernel->getBundles() as $bundle) {
             if ($bundle instanceof PimcoreBundleInterface) {
                 if ($onlyInstalled && !$this->isInstalled($bundle)) {
                     continue;
@@ -106,9 +133,7 @@ class PimcoreBundleManager
     public function getAvailableBundles()
     {
         if (null === $this->availableBundles) {
-            $locator = $this->container->get('pimcore.extension.bundle_locator');
-
-            $this->availableBundles = $locator->findBundles();
+            $this->availableBundles = $this->bundleLocator->findBundles();
         }
 
         return $this->availableBundles;
@@ -246,7 +271,7 @@ class PimcoreBundleManager
      */
     protected function loadBundleInstaller(PimcoreBundleInterface $bundle, $throwException = false)
     {
-        if (null === $installer = $bundle->getInstaller($this->container)) {
+        if (null === $installer = $bundle->getInstaller()) {
             if ($throwException) {
                 throw new InstallationException(sprintf('Bundle %s does not a define an installer', $bundle->getName()));
             }
@@ -342,7 +367,7 @@ class PimcoreBundleManager
      */
     public function isInstalled(PimcoreBundleInterface $bundle)
     {
-        if (null === $installer = $bundle->getInstaller($this->container)) {
+        if (null === $installer = $bundle->getInstaller()) {
             // bundle has no dedicated installer, so we can treat it as installed
             return true;
         }
@@ -359,7 +384,7 @@ class PimcoreBundleManager
      */
     public function needsReloadAfterInstall(PimcoreBundleInterface $bundle)
     {
-        if (null === $installer = $bundle->getInstaller($this->container)) {
+        if (null === $installer = $bundle->getInstaller()) {
             // bundle has no dedicated installer
             return false;
         }
@@ -474,15 +499,17 @@ class PimcoreBundleManager
         // getJsPaths, getEditmodeJsPaths
         $getter = sprintf('get%s%sPaths', $mode, $type);
 
-        $router = $this->container->get('router');
-
         $result = [];
         foreach ($this->getActiveBundles() as $bundle) {
             $paths = $bundle->$getter();
 
             foreach ($paths as $path) {
                 if ($path instanceof RouteReferenceInterface) {
-                    $result[] = $router->generate($path->getRoute(), $path->getParameters(), $path->getType());
+                    $result[] = $this->router->generate(
+                        $path->getRoute(),
+                        $path->getParameters(),
+                        $path->getType()
+                    );
                 } else {
                     $result[] = $path;
                 }
@@ -504,7 +531,7 @@ class PimcoreBundleManager
     {
         $event = new PathsEvent($paths);
 
-        $this->container->get('event_dispatcher')->dispatch($eventName, $event);
+        $this->dispatcher->dispatch($eventName, $event);
 
         return $event->getPaths();
     }
