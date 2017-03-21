@@ -126,21 +126,6 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
     }
 
     /**
-     *
-     * @param string $language
-     * @return string path to the translation file relative to plugin direcory
-     */
-    public static function getTranslationFile($language) {
-        if ($language == "de") {
-            return "/EcommerceFramework/texts/de.csv";
-        } else if ($language == "en") {
-            return "/EcommerceFramework/texts/en.csv";
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @param \Pimcore\Model\Object\AbstractObject $object
      * @return void
      */
@@ -174,68 +159,6 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
             $voucherService->cleanUpVoucherSeries($object);
         }
     }
-
-    /**
-     * @var \Zend_Log
-     */
-    private static $sqlLogger = null;
-
-    /**
-     * @return \Zend_Log
-     */
-    public static function getSQLLogger() {
-        if(!self::$sqlLogger) {
-
-
-            // check for big logfile, empty it if it's bigger than about 200M
-            $logfilename = PIMCORE_WEBSITE_PATH . '/var/log/online-shop-sql.log';
-            if (is_file($logfilename) && filesize($logfilename) > 200000000) {
-                file_put_contents($logfilename, "");
-            }
-
-            $prioMapping = array(
-                "debug" => \Zend_Log::DEBUG,
-                "info" => \Zend_Log::INFO,
-                "notice" => \Zend_Log::NOTICE,
-                "warning" => \Zend_Log::WARN,
-                "error" => \Zend_Log::ERR,
-                "critical" => \Zend_Log::CRIT,
-                "alert" => \Zend_Log::ALERT,
-                "emergency" => \Zend_Log::EMERG
-            );
-
-            $prios = array();
-            $conf = \Pimcore\Config::getSystemConfig();
-            if($conf && $conf->general->debugloglevel) {
-                $prioMapping = array_reverse($prioMapping);
-                foreach ($prioMapping as $level => $state) {
-                    $prios[] = $prioMapping[$level];
-                    if($level == $conf->general->debugloglevel) {
-                        break;
-                    }
-                }
-            }
-            else {
-                // log everything if config isn't loaded (eg. at the installer)
-                foreach ($prioMapping as $p) {
-                    $prios[] = $p;
-                }
-            }
-
-            $logger = new \Zend_Log();
-            $logger->addWriter(new \Zend_Log_Writer_Stream($logfilename));
-
-            foreach($prioMapping as $key => $mapping) {
-                if(!array_key_exists($mapping, $prios)) {
-                    $logger->addFilter(new \Zend_Log_Filter_Priority($mapping, "!="));
-                }
-            }
-
-            self::$sqlLogger = $logger;
-        }
-        return self::$sqlLogger;
-    }
-
 
     public function maintenance() {
         $checkoutManager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager(new \OnlineShop\Framework\CartManager\Cart());

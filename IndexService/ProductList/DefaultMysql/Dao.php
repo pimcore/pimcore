@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
+use Monolog\Logger;
+
 class Dao {
 
     /**
@@ -34,10 +36,16 @@ class Dao {
      */
     private $lastRecordCount;
 
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     public function __construct(\OnlineShop\Framework\IndexService\ProductList\IProductList $model) {
         $this->model = $model;
         $this->db = \Pimcore\Db::get();
+
+        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_sql");
     }
 
 
@@ -77,12 +85,10 @@ class Dao {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        //TODO
-//        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+        $this->logger->info("Query: " . $query);
         $result = $this->db->fetchAll($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
-        //TODO
-//        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+        $this->logger->info("Query done.");
         return $result;
     }
 
@@ -105,22 +111,21 @@ class Dao {
                     . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             }
 
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            $this->logger->info("Query: " . $query);
             $result = $this->db->fetchAll($query);
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            $this->logger->info("Query done.");
+
             return $result;
         } else {
             $query = "SELECT " . $this->db->quoteIdentifier($fieldname) . " FROM "
                 . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . " GROUP BY " . $this->db->quoteIdentifier($fieldname);
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+
+            $this->logger->info("Query: " . $query);
             $result = $this->db->fetchCol($query);
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            $this->logger->info("Query done.");
+
             return $result;
         }
     }
@@ -149,11 +154,10 @@ class Dao {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            $this->logger->info("Query: " . $query);
             $result = $this->db->fetchAll($query);
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            $this->logger->info("Query done.");
+
             return $result;
         } else {
             $query = "SELECT dest FROM " . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
@@ -166,12 +170,10 @@ class Dao {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            $this->logger->info("Query: " . $query);
             $result = $this->db->fetchCol($query);
+            $this->logger->info("Query done.");
 
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
             return $result;
         }
     }
@@ -204,11 +206,11 @@ class Dao {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        //TODO
-//        \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+
+        $this->logger->info("Query: " . $query);
         $result = $this->db->fetchOne($query);
-        //TODO
-//        \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+        $this->logger->info("Query done.");
+
         return $result;
     }
 
@@ -238,18 +240,15 @@ class Dao {
 
             $query = "SELECT " . $fieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a WHERE a.o_id = ?;";
 
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+            $this->logger->info("Query: " . $query);
             $objectValues = $this->db->fetchRow($query, $objectId);
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            $this->logger->info("Query done.");
 
             $query = "SELECT " . $maxFieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a";
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query: " . $query, \Zend_Log::INFO);
+
+            $this->logger->info("Query: " . $query);
             $maxObjectValues = $this->db->fetchRow($query);
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->log("Query done.", \Zend_Log::INFO);
+            $this->logger->info("Query done.");
 
             if(!empty($objectValues)) {
                 $subStatement = array();
@@ -263,9 +262,8 @@ class Dao {
                 }
 
                 $statement = "ABS(" . implode(" + ", $subStatement) . ")";
+                $this->logger->info("Similarity Statement: " . $statement);
 
-                //TODO
-//                \OnlineShop\Plugin::getSQLLogger()->log("Similarity Statement: " . $statement, \Zend_Log::INFO);
                 return $statement;
             } else {
                 throw new \Exception("Field array for given object id is empty");
@@ -274,8 +272,8 @@ class Dao {
 
 
         } catch(\Exception $e) {
-            //TODO
-//            \OnlineShop\Plugin::getSQLLogger()->err($e);
+            $this->logger->err($e);
+
             return "";
         }
     }

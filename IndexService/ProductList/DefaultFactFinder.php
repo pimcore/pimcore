@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
+use Monolog\Logger;
+
 class DefaultFactFinder implements IProductList
 {
     /**
@@ -135,7 +137,7 @@ class DefaultFactFinder implements IProductList
     protected $orderKey;
 
     /**
-     * @var \Zend_Log
+     * @var Logger
      */
     protected $logger;
 
@@ -224,11 +226,7 @@ class DefaultFactFinder implements IProductList
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = new \Zend_Log();
-        if($this->tenantConfig->getClientConfig('logging'))
-        {
-            $this->logger->addWriter(new \Zend_Log_Writer_Stream($this->tenantConfig->getClientConfig('logOutput')));
-        }
+        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_factfinder");
     }
 
     /**
@@ -473,7 +471,7 @@ class DefaultFactFinder implements IProductList
             }
             else
             {
-                $this->getLogger()->log(sprintf('object "%s" not found', $id), Zend_Log::ERR);
+                $this->getLogger()->err(sprintf('object "%s" not found', $id));
             }
         }
 
@@ -781,7 +779,7 @@ class DefaultFactFinder implements IProductList
      */
     protected function doRequest($url,$trys = 0){
         // start request
-        $this->getLogger()->log('Request: ' . $url, Zend_Log::INFO);
+        $this->getLogger()->info('Request: ' . $url);
         $client = new \Zend_Http_Client( $url );
         $client->setMethod(\Zend_Http_Client::GET);
         $response = $client->request();
@@ -790,10 +788,10 @@ class DefaultFactFinder implements IProductList
         $factFinderTimeout = $response->getHeader('X-FF-Timeout');
         if($factFinderTimeout === 'true'){
             $errorMessage = "FactFinder Read timeout:" . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys+1);
-            $this->getLogger()->log($errorMessage, Zend_Log::ERR);
+            $this->getLogger()->err($errorMessage);
             $trys++;
             if($trys > 2){
-                $this->getLogger()->log('FactFinder Read timeout: Max tries of 3 reached. Gave up.',Zend_Log::ERR);
+                $this->getLogger()->err('FactFinder Read timeout: Max tries of 3 reached. Gave up.');
                 return $response;
             }
             sleep(1);
@@ -899,7 +897,6 @@ class DefaultFactFinder implements IProductList
      *
      * @return array
      * @throws Zend_Http_Client_Exception
-     * @throws Zend_Log_Exception
      */
     protected function sendRequest()
     {
@@ -924,7 +921,7 @@ class DefaultFactFinder implements IProductList
 
 
     /**
-     * @return \Zend_Log
+     * @return Logger
      */
     protected function getLogger()
     {

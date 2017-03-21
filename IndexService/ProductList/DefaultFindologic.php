@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
+use Monolog\Logger;
+
 class DefaultFindologic implements IProductList
 {
     /**
@@ -122,7 +124,7 @@ class DefaultFindologic implements IProductList
     protected $orderKey;
 
     /**
-     * @var \Zend_Log
+     * @var Logger
      */
     protected $logger;
 
@@ -146,11 +148,7 @@ class DefaultFindologic implements IProductList
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = new \Zend_Log();
-        if($this->tenantConfig->getClientConfig('logging'))
-        {
-            $this->logger->addWriter(new \Zend_Log_Writer_Stream($this->tenantConfig->getClientConfig('logOutput')));
-        }
+        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_findologic");
 
 
         // set defaults for required params
@@ -406,7 +404,7 @@ class DefaultFindologic implements IProductList
             }
             else
             {
-                $this->getLogger()->log(sprintf('object "%s" not found', $id), \Zend_Log::ERR);
+                $this->getLogger()->err(sprintf('object "%s" not found', $id));
             }
         }
 
@@ -799,7 +797,6 @@ class DefaultFindologic implements IProductList
      *
      * @return \SimpleXMLElement
      * @throws \Zend_Http_Client_Exception
-     * @throws \Zend_Log_Exception
      */
     protected function sendRequest(array $params)
     {
@@ -827,7 +824,7 @@ class DefaultFindologic implements IProductList
         );
         $url .= http_build_query($params);
 
-        $this->getLogger()->log('Request: ' . $url, \Zend_Log::INFO);
+        $this->getLogger()->info('Request: ' . $url);
 
 
         // start request
@@ -837,7 +834,7 @@ class DefaultFindologic implements IProductList
         ]);
         $client->setMethod(\Zend_Http_Client::GET);
         $response = $client->request();
-        $this->getLogger()->log('Duration: ' . number_format(microtime(true) - $start, 3), \Zend_Log::INFO);
+        $this->getLogger()->info('Duration: ' . number_format(microtime(true) - $start, 3));
 
 
         if($response->getStatus() != 200)
@@ -852,7 +849,7 @@ class DefaultFindologic implements IProductList
 
 
     /**
-     * @return \Zend_Log
+     * @return Logger
      */
     protected function getLogger()
     {

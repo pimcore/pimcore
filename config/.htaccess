@@ -1,4 +1,0 @@
-<Files OnlineShopConfig.xml>
-    order deny,allow
-    deny from all
-</Files>

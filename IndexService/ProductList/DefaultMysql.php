@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
+use Monolog\Logger;
+
 /**
  * Implementation of product list which works based on the product index of the online shop framework
  */
@@ -73,11 +75,18 @@ class DefaultMysql implements IProductList
      */
     protected $inProductList = true;
 
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
 
     public function __construct(\OnlineShop\Framework\IndexService\Config\IMysqlConfig $tenantConfig) {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
         $this->resource = new DefaultMysql\Dao($this);
+
+        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_sql");
     }
 
     /**
@@ -574,8 +583,7 @@ class DefaultMysql implements IProductList
             $condition .= " AND " . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributeConfig(), $searchstring);
         }
 
-        //TODO
-//        \OnlineShop\Plugin::getSQLLogger()->log("Total Condition: " . $condition, \Zend_Log::INFO);
+        $this->logger->info("Total Condition: " . $condition);
         return $condition;
     }
 
@@ -609,8 +617,7 @@ class DefaultMysql implements IProductList
             }
         }
 
-        //TODO
-//        \OnlineShop\Plugin::getSQLLogger()->log("User specific Condition Part: " . $condition, \Zend_Log::INFO);
+        $this->logger->info("User specific Condition Part: " . $condition);
         return $condition;
     }
 
