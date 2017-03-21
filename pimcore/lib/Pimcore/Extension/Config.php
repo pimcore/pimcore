@@ -25,6 +25,11 @@ class Config
     private $config;
 
     /**
+     * @var string
+     */
+    private $file;
+
+    /**
      * @return PimcoreConfig\Config
      */
     public function loadConfig()
@@ -61,7 +66,11 @@ class Config
      */
     private function locateConfigFile()
     {
-        return PimcoreConfig::locateConfigFile('extensions.php');
+        if (null === $this->file) {
+            $this->file = PimcoreConfig::locateConfigFile('extensions.php');
+        }
+
+        return $this->file;
     }
 }
 

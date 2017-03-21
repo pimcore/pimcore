@@ -196,6 +196,7 @@ services:
 
     pimcore.area.brick_manager:
         class: Pimcore\Extension\Document\Areabrick\AreabrickManager
+        arguments: ['@pimcore.extension.config']
 
     pimcore.area.brick.templating_base:
         abstract: true
