@@ -179,6 +179,12 @@ services:
     # PIMCORE BUNDLES
     #
 
+    pimcore.extension.bundle_locator:
+        class: Pimcore\Extension\Bundle\PimcoreBundleLocator
+        arguments:
+            - '%pimcore.extensions.bundles.search_paths%'
+            - '%pimcore.extensions.bundles.handle_composer%'
+
     pimcore.extension.bundle_manager:
         class: Pimcore\Extension\Bundle\PimcoreBundleManager
         arguments: ['@service_container']

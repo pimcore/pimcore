@@ -64,6 +64,11 @@ cmf_routing:
 
 # Pimcore
 pimcore:
+    extensions:
+        bundles:
+            search_paths:
+                - !php/const:PIMCORE_APP_SRC
+
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
         admin:

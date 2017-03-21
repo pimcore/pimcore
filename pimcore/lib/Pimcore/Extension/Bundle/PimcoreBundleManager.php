@@ -105,10 +105,7 @@ class PimcoreBundleManager
     public function getAvailableBundles()
     {
         if (null === $this->availableBundles) {
-            // TODO build via DI
-            $locator = new PimcoreBundleLocator([
-                PIMCORE_PROJECT_ROOT . '/src'
-            ]);
+            $locator = $this->container->get('pimcore.extension.bundle_locator');
 
             $this->availableBundles = $locator->findBundles();
         }

@@ -34,6 +34,10 @@ class PimcoreExtension extends Extension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
+        // bundle manager/locator config
+        $container->setParameter('pimcore.extensions.bundles.search_paths', $config['extensions']['bundles']['search_paths']);
+        $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['extensions']['bundles']['handle_composer']);
+
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 

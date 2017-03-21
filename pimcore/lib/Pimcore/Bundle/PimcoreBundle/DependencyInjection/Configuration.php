@@ -33,8 +33,8 @@ class Configuration implements ConfigurationInterface
 
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
+        $this->addExtensionsNode($rootNode);
         $this->addAdminNode($rootNode);
-        $this->addDocumentsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -44,20 +44,40 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    protected function addDocumentsNode(ArrayNodeDefinition $rootNode)
+    protected function addExtensionsNode(ArrayNodeDefinition $rootNode)
     {
-        $documentsNode = $rootNode
+        $rootNode
             ->children()
-                ->arrayNode('documents')
-                    ->addDefaultsIfNotSet();
-
-        $documentsNode
-            ->children()
-                ->arrayNode('areas')
+                ->arrayNode('extensions')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('autoload')
-                            ->defaultTrue();
+                        ->arrayNode('bundles')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('search_paths')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                                ->booleanNode('handle_composer')
+                                    ->defaultTrue()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('documents')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('areas')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->booleanNode('autoload')
+                                            ->defaultTrue()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
