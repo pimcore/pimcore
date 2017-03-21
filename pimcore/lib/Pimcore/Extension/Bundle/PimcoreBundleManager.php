@@ -268,12 +268,8 @@ class PimcoreBundleManager
     {
         $installer = $this->loadBundleInstaller($bundle, true);
 
-        if (!$installer->canBeInstalled()) {
+        if (!$this->canBeInstalled($bundle)) {
             throw new InstallationException(sprintf('Bundle %s can not be installed', $bundle->getName()));
-        }
-
-        if ($installer->isInstalled()) {
-            throw new InstallationException(sprintf('Bundle %s is already installed', $bundle->getName()));
         }
 
         $installer->install();
@@ -290,12 +286,8 @@ class PimcoreBundleManager
     {
         $installer = $this->loadBundleInstaller($bundle, true);
 
-        if (!$installer->canBeUninstalled()) {
+        if (!$this->canBeUninstalled($bundle)) {
             throw new InstallationException(sprintf('Bundle %s can not be uninstalled', $bundle->getName()));
-        }
-
-        if (!$installer->isInstalled()) {
-            throw new InstallationException(sprintf('Bundle %s is not installed', $bundle->getName()));
         }
 
         $installer->uninstall();

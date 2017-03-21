@@ -172,7 +172,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
             return $this->json([
                 'success' => true,
-                'bundle'  => $this->buildBundleInfo($bundle)
+                'bundle'  => $this->buildBundleInfo($bundle, true, true)
             ]);
         } catch (BundleNotFoundException $e) {
             return $this->json([
