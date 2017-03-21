@@ -22,6 +22,27 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 interface PimcoreBundleInterface extends BundleInterface
 {
     /**
+     * Bundle name as shown in extension manager
+     *
+     * @return string
+     */
+    public function getNiceName();
+
+    /**
+     * Bundle description as shown in extension manager
+     *
+     * @return string
+     */
+    public function getDescription();
+
+    /**
+     * Bundle version as shown in extension manager
+     *
+     * @return string
+     */
+    public function getVersion();
+
+    /**
      * If the plugin has an installation routine, an installer is responsible of handling installation related tasks
      *
      * @param ContainerInterface $container

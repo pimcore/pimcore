@@ -20,6 +20,30 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
     /**
+     * @inheritDoc
+     */
+    public function getNiceName()
+    {
+        return $this->getName();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDescription()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getVersion()
+    {
+        return '';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getInstaller(ContainerInterface $container)

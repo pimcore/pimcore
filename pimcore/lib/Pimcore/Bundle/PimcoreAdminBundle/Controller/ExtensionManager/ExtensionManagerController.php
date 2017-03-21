@@ -18,10 +18,10 @@ use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
-use Pimcore\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -222,13 +222,13 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $info = [
             'id'            => $this->bundleManager->getBundleIdentifier($bundle),
             'type'          => 'bundle',
-            'name'          => $bundle->getName(), // TODO what to do with nice name and description?
-            'description'   => '',
+            'name'          => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
+            'description'   => $bundle->getDescription(),
             'active'        => $enabled,
             'installed'     => $installed,
             'configuration' => $iframePath,
             'updateable'    => false,
-            'version'       => null
+            'version'       => $bundle->getVersion()
         ];
 
         return $info;
@@ -264,7 +264,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'installed'   => true,
             'active'      => true,
             'updateable'  => false,
-            'version'     => null
+            'version'     => $brick->getVersion()
         ];
     }
 }

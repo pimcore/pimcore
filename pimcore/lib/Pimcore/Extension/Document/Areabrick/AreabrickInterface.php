@@ -40,6 +40,13 @@ interface AreabrickInterface
     public function getDescription();
 
     /**
+     * Area version as shown in extension manager.
+     *
+     * @return string
+     */
+    public function getVersion();
+
+    /**
      * Icon as absolute path, e.g. /bundles/websitedemo/img/areas/foo/icon.png
      *
      * @return string|null

@@ -35,6 +35,14 @@ abstract class AbstractAreabrick implements AreabrickInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getVersion()
+    {
+        return '';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getIcon()
