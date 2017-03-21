@@ -15,6 +15,7 @@
 namespace PimcoreLegacyBundle;
 
 use Pimcore\Cache;
+use Pimcore\Legacy;
 use PimcoreLegacyBundle\ClassLoader\LegacyClassLoader;
 use PimcoreLegacyBundle\DependencyInjection\Compiler\FallbackRouterPass;
 use PimcoreLegacyBundle\DependencyInjection\Compiler\LegacyAreaHandlerPass;
@@ -40,6 +41,9 @@ class PimcoreLegacyBundle extends Bundle
 
         $this->defineConstants();
         $this->registerAutoloadPaths();
+
+        // register plugins and set up autoload paths
+        Legacy::registerPlugins();
 
         if(php_sapi_name() == "cli") {
             $this->setupCliEnvironment();

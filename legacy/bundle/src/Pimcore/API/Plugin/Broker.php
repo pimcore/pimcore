@@ -14,6 +14,7 @@
 
 namespace Pimcore\API\Plugin;
 
+use Pimcore\API\AbstractAPI;
 use Pimcore\Logger;
 
 class Broker
@@ -21,7 +22,7 @@ class Broker
     /**
      * Array of instance of objects extending Pimcore_API_Plugin_Abstract
      *
-     * @var array
+     * @var PluginInterface[]|AbstractAPI[]
      */
     protected $_plugins = [];
 
@@ -79,9 +80,17 @@ class Broker
 
         ksort($this->_plugins);
 
-        $plugin->init();
-
         return $this;
+    }
+
+    /**
+     * Initialize all registered plugins
+     */
+    public function initPlugins()
+    {
+        foreach ($this->_plugins as $plugin) {
+            $plugin->init();
+        }
     }
 
     /**

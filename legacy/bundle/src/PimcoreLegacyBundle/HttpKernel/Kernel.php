@@ -70,9 +70,7 @@ class Kernel implements KernelInterface
     public function boot()
     {
         if (!$this->booted) {
-
             $this->setupTempDirectories();
-
             $this->initializePlugins();
 
             // prepare the ZF MVC stack - needed for more advanced view helpers like action()
@@ -92,7 +90,7 @@ class Kernel implements KernelInterface
      */
     protected function initializePlugins()
     {
-        Legacy::initPlugins(); // TODO move somewhere else?
+        $this->getContainer()->get('pimcore.legacy.plugin_broker')->initPlugins();
     }
 
     /**

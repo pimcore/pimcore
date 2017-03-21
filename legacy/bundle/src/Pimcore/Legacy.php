@@ -372,11 +372,12 @@ class Legacy {
     }
 
     /**
-     *
+     * Register plugins on plugin broker and set up autoloading
      */
-    public static function initPlugins()
+    public static function registerPlugins()
     {
-        // add plugin include paths
+        /** @var \Pimcore\API\Plugin\Broker $broker */
+        $broker = \Pimcore::getContainer()->get('pimcore.legacy.plugin_broker');
 
         /** @var ClassLoader $autoloader */
         $autoloader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
@@ -416,9 +417,6 @@ class Legacy {
                     }
 
                 }
-
-                /** @var \Pimcore\API\Plugin\Broker $broker */
-                $broker = \Pimcore::getContainer()->get('pimcore.legacy.plugin_broker');
 
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
