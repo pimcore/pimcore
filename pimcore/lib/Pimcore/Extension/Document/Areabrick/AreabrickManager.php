@@ -95,11 +95,16 @@ class AreabrickManager implements AreabrickManagerInterface
      */
     public function setState($id, $state)
     {
-        $brick = $this->getBrick($id);
+        $brick  = $this->getBrick($id);
         $config = $this->getBrickConfig();
 
-        // set true/false state here as it will be filtered out by setBrickConfig
-        $config[$brick->getId()] = (bool)$state;
+        if ((bool)$state) {
+            if (isset($config[$brick->getId()])) {
+                unset($config[$brick->getId()]);
+            }
+        } else {
+            $config[$brick->getId()] = false;
+        }
 
         $this->setBrickConfig($config);
     }
@@ -143,19 +148,10 @@ class AreabrickManager implements AreabrickManagerInterface
      */
     private function setBrickConfig(array $config)
     {
-        $filtered = [];
-        foreach ($config as $id => $state) {
-            // only write disabled bricks to config
-            // bricks without a config state are automatically enabled
-            if (!$state) {
-                $filtered[$id] = false;
-            }
-        }
+        $cfg            = $this->config->loadConfig();
+        $cfg->areabrick = $config;
 
-        $config = $this->config->loadConfig();
-        $config->areabricks = $filtered;
-
-        $this->config->saveConfig($config);
+        $this->config->saveConfig($cfg);
     }
 
     /**
