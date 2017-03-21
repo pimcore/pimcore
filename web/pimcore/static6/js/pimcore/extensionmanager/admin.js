@@ -56,30 +56,21 @@ pimcore.extensionmanager.admin = Class.create({
         return Ext.Array.contains(['plugin', 'brick'], type);
     },
 
-    /**
-     * State change requests for legacy types will be sent to another controller
-     *
-     * @param type
-     * @param url
-     * @returns {string}
-     */
-    buildRequestUrl: function (type, url) {
-        var path = '/admin/extensionmanager';
-        if (this.isLegacyType(type)) {
-            path += '/legacy';
-        } else {
-            path += '/admin';
+    getExtensionId: function (record) {
+        var extensionId = record.get('extensionId');
+        if (extensionId) {
+            return extensionId;
         }
 
-        return path + url;
+        return record.get('id');
     },
 
-    canBeInstalled: function (rec) {
+    getExtensionType: function (record) {
+        if (this.isLegacyType(record.get('type'))) {
+            return 'legacy';
+        }
 
-    },
-
-    canBeUninstalled: function (rec) {
-
+        return null;
     },
 
     getGrid: function () {
@@ -90,7 +81,7 @@ pimcore.extensionmanager.admin = Class.create({
             Ext.define(modelName, {
                 extend: 'Ext.data.Model',
                 fields: [
-                    "id", "type", "name", "description", "installed", "installable", "uninstallable", "active",
+                    "id", "extensionId", "type", "name", "description", "installed", "installable", "uninstallable", "active",
                     "configuration", "updateable", "xmlEditorFile", "version"
                 ],
                 proxy: {
@@ -115,7 +106,12 @@ pimcore.extensionmanager.admin = Class.create({
             function (value, metaData, record, rowIndex, colIndex, store) {
                 return '<div class="pimcore_icon_' + value + '" style="min-height: 16px;" title="' + t("value") +'"></div>';
             }},
-            {header: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1},
+            {
+                header: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1,
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    return self.getExtensionId(record);
+                }
+            },
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name', flex: 2},
             {header: t("version"), width: 80, sortable: false, dataIndex: 'version'},
             {header: t("description"), width: 200, sortable: true, dataIndex: 'description', flex: 4},
@@ -140,11 +136,12 @@ pimcore.extensionmanager.admin = Class.create({
                         var method = rec.get("active") ? "disable" : "enable";
                         
                         Ext.Ajax.request({
-                            url: self.buildRequestUrl(rec.get('type'), '/toggle-extension-state'),
+                            url: '/admin/extensionmanager/admin/toggle-extension-state',
                             params: {
                                 method: method,
-                                id: rec.get("id"),
-                                type: rec.get("type")
+                                id: self.getExtensionId(rec),
+                                type: rec.get("type"),
+                                extensionType: self.getExtensionType(rec)
                             },
                             success: function (transport) {
                                 var res = Ext.decode(transport.responseText);
@@ -191,10 +188,11 @@ pimcore.extensionmanager.admin = Class.create({
                         }
 
                         Ext.Ajax.request({
-                            url: self.buildRequestUrl(rec.get('type'), '/' + method),
+                            url: '/admin/extensionmanager/admin/' + method,
                             params: {
-                                id: rec.get("id"),
-                                type: rec.get("type")
+                                id: self.getExtensionId(rec),
+                                type: rec.get("type"),
+                                extensionType: self.getExtensionType(rec)
                             },
                             success: function (transport) {
                                 var res = Ext.decode(transport.responseText);
@@ -239,10 +237,11 @@ pimcore.extensionmanager.admin = Class.create({
                         }
 
                         Ext.Ajax.request({
-                            url: self.buildRequestUrl(rec.get('type'), '/update'),
+                            url: '/admin/extensionmanager/admin/update',
                             params: {
-                                id: rec.get("id"),
-                                type: rec.get("type")
+                                id: self.getExtensionId(rec),
+                                type: rec.get("type"),
+                                extensionType: self.getExtensionType(rec)
                             },
                             success: function (transport) {
                                 var res = Ext.decode(transport.responseText);

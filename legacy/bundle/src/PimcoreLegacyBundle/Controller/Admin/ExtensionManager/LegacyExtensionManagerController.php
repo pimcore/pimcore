@@ -28,6 +28,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class LegacyExtensionManagerController extends AdminController
 {
+    const LEGACY_ID_PREFIX = 'legacy-';
+
     /**
      * @param Request $request
      *
@@ -144,6 +146,7 @@ class LegacyExtensionManagerController extends AdminController
         // plugins
         $pluginConfigs = ExtensionManager::getPluginConfigs();
         foreach ($pluginConfigs as $config) {
+            /** @var PluginInterface $className */
             $className = $config["plugin"]["pluginClassName"];
             $updateable = false;
 
@@ -156,16 +159,27 @@ class LegacyExtensionManagerController extends AdminController
                 $isEnabled = ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
 
                 $plugin = [
-                    "id" => $config["plugin"]["pluginName"],
-                    "type" => "plugin",
-                    "name" => isset($config["plugin"]["pluginNiceName"]) ? $config["plugin"]["pluginNiceName"] : '',
-                    "description" => isset($config["plugin"]["pluginDescription"]) ? $config["plugin"]["pluginDescription"] : '',
-                    "installed" => $isEnabled ? $className::isInstalled() : null,
-                    "active" => $isEnabled,
+                    "id"            => static::LEGACY_ID_PREFIX . $config["plugin"]["pluginName"],
+                    "extensionId"   => $config["plugin"]["pluginName"],
+                    "type"          => "plugin",
+                    "name"          => isset($config["plugin"]["pluginNiceName"]) ? $config["plugin"]["pluginNiceName"] : '',
+                    "description"   => isset($config["plugin"]["pluginDescription"]) ? $config["plugin"]["pluginDescription"] : '',
+                    "installable"   => false,
+                    "uninstallable" => false,
+                    "installed"     => $isEnabled ? $className::isInstalled() : null,
+                    "active"        => $isEnabled,
                     "configuration" => isset($config["plugin"]["pluginIframeSrc"]) ? $config["plugin"]["pluginIframeSrc"] : null,
-                    "updateable" => $updateable,
-                    "version" => isset($config["plugin"]["pluginVersion"]) ? $config["plugin"]["pluginVersion"] : null
+                    "updateable"    => $updateable,
+                    "version"       => isset($config["plugin"]["pluginVersion"]) ? $config["plugin"]["pluginVersion"] : null
                 ];
+
+                if (null !== $plugin['installed']) {
+                    if ($plugin['installed']) {
+                        $plugin['uninstallable'] = true;
+                    } else {
+                        $plugin['installable'] = true;
+                    }
+                }
 
                 if (isset($config["plugin"]["pluginXmlEditorFile"]) && is_readable(PIMCORE_PROJECT_ROOT . $config["plugin"]["pluginXmlEditorFile"])) {
                     $plugin['xmlEditorFile'] = $config["plugin"]["pluginXmlEditorFile"];
@@ -188,14 +202,17 @@ class LegacyExtensionManagerController extends AdminController
 
             $isEnabled = ExtensionManager::isEnabled("brick", $id);
             $brick = [
-                "id" => $id,
-                "type" => "brick",
-                "name" => $config->name,
-                "description" => $config->description,
-                "installed" => true,
-                "active" => $isEnabled,
-                "updateable" => $updateable,
-                "version" => $config->version
+                "id"            => static::LEGACY_ID_PREFIX . $id,
+                "extensionId"   => $id,
+                "type"          => "brick",
+                "name"          => $config->name,
+                "description"   => $config->description,
+                "installable"   => false,
+                "uninstallable" => false,
+                "updateable"    => $updateable,
+                "installed"     => true,
+                "active"        => $isEnabled,
+                "version"       => $config->version
             ];
 
             $configurations[] = $brick;

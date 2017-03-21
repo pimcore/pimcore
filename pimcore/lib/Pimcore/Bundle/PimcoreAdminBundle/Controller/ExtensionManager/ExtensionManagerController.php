@@ -179,7 +179,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     private function handleLegacyRequest(Request $request, $method)
     {
-        if ($request->get('extension-type') !== 'legacy') {
+        if ($request->get('extensionType') !== 'legacy') {
             return null;
         }
 
@@ -258,12 +258,12 @@ class ExtensionManagerController extends AdminController implements EventedContr
     /**
      * @param $bundleName
      *
-     * @return BundleInterface
+     * @return PimcoreBundleInterface
      */
     private function buildBundleInstance($bundleName)
     {
         try {
-            /** @var BundleInterface $bundle */
+            /** @var PimcoreBundleInterface $bundle */
             $bundle = new $bundleName();
             $bundle->setContainer($this->container);
 
