@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -98,7 +98,7 @@ class DataLoader extends ImplementationLoader implements DataLoaderInterface
     /**
      * @inheritDoc
      */
-    public function build(string $name, array $params = []) : Data
+    public function build(string $name, array $params = []): Data
     {
         return parent::build($name, $params);
     }

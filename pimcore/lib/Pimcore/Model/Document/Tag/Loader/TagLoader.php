@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -38,7 +38,7 @@ class TagLoader extends ImplementationLoader implements TagLoaderInterface
     /**
      * @inheritDoc
      */
-    public function build(string $name, array $params = []) : Tag
+    public function build(string $name, array $params = []): Tag
     {
         return parent::build($name, $params);
     }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -46,7 +46,7 @@ class ClassMapLoader extends AbstractClassNameLoader implements ClassMapLoaderIn
     /**
      * @inheritdoc
      */
-    public function getClassMap() : array
+    public function getClassMap(): array
     {
         return $this->classMap;
     }
@@ -62,7 +62,7 @@ class ClassMapLoader extends AbstractClassNameLoader implements ClassMapLoaderIn
     /**
      * @inheritDoc
      */
-    public function supports(string $name) : bool
+    public function supports(string $name): bool
     {
         return isset($this->classMap[$name]);
     }

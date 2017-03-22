@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -41,7 +41,8 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
     public function __construct(
         ClassMapLoaderInterface $classMapLoader = null,
         PrefixLoaderInterface $prefixLoader = null
-    ) {
+    )
+    {
         if (null === $classMapLoader) {
             $classMapLoader = new ClassMapLoader();
         }
@@ -106,7 +107,7 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
     /**
      * @return LoaderInterface[]
      */
-    protected function getLoaders() : array
+    protected function getLoaders(): array
     {
         return [
             $this->classMapLoader,

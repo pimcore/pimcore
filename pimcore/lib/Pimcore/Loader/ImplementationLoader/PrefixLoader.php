@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -66,7 +66,7 @@ class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterf
     /**
      * @inheritDoc
      */
-    public function supports(string $name) : bool
+    public function supports(string $name): bool
     {
         return null !== $this->findClassName($name);
     }
@@ -110,7 +110,7 @@ class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterf
      *
      * @return string
      */
-    protected function buildClassName(array $prefix, $name) : string
+    protected function buildClassName(array $prefix, $name): string
     {
         return $prefix[0] . $this->normalizeName($name, $prefix[1]);
     }
@@ -121,7 +121,7 @@ class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterf
      *
      * @return string
      */
-    protected function normalizeName(string $name, callable $normalizer = null) : string
+    protected function normalizeName(string $name, callable $normalizer = null): string
     {
         if (null === $normalizer) {
             $normalizer = [Inflector::class, 'classify'];

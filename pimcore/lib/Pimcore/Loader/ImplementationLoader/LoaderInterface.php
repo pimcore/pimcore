@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -26,13 +26,13 @@ interface LoaderInterface
      *
      * @return bool
      */
-    public function supports(string $name) : bool;
+    public function supports(string $name): bool;
 
     /**
      * Builds an implementation instance
      *
      * @param string $name
-     * @param array  $params
+     * @param array $params
      *
      * @return mixed
      */

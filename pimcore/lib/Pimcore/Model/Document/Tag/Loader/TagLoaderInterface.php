@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -26,9 +26,9 @@ interface TagLoaderInterface extends LoaderInterface
      * Builds a tag instance
      *
      * @param string $name
-     * @param array  $params
+     * @param array $params
      *
      * @return Tag
      */
-    public function build(string $name, array $params = []) : Tag;
+    public function build(string $name, array $params = []): Tag;
 }

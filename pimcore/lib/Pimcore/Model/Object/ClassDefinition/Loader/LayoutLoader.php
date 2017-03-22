@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -38,7 +38,7 @@ class LayoutLoader extends ImplementationLoader implements LayoutLoaderInterface
     /**
      * @inheritDoc
      */
-    public function build(string $name, array $params = []) : Layout
+    public function build(string $name, array $params = []): Layout
     {
         return parent::build($name, $params);
     }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -26,9 +26,9 @@ interface DataLoaderInterface extends LoaderInterface
      * Builds a classdefinition data instance
      *
      * @param string $name
-     * @param array  $params
+     * @param array $params
      *
      * @return Data
      */
-    public function build(string $name, array $params = []) : Data;
+    public function build(string $name, array $params = []): Data;
 }
