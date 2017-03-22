@@ -32,6 +32,7 @@ pimcore.object.tree = Class.create({
 
         if (!config) {
             this.config = {
+                rootId: 1,
                 rootVisible: true,
                 allowedClasses: null,
                 loaderBaseParams: {},
@@ -99,7 +100,7 @@ pimcore.object.tree = Class.create({
 
 
         // objects
-        this.tree = Ext.create('pimcore.tree.Panel', {
+        this.tree = Ext.create('Ext.tree.Panel', {
             store: store,
             region: "center",
             autoLoad: false,
@@ -110,7 +111,7 @@ pimcore.object.tree = Class.create({
             animate: false,
             rootVisible: true,
             bufferedRenderer: false,
-            border: false,
+            bodyBorder: false,
             listeners: this.getTreeNodeListeners(),
             scrollable: true,
             viewConfig: {
@@ -133,8 +134,7 @@ pimcore.object.tree = Class.create({
                 type: "left",
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
-            }],
-            root: rootNodeConfig
+            }]
         });
 
         store.on("nodebeforeexpand", function (node) {

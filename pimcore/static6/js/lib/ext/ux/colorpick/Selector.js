@@ -129,6 +129,10 @@ Ext.define('Ext.ux.colorpick.Selector', {
             me.getPreviewAndButtons(childViewModel, config)
         ];
 
+        me.childViewModel.bind('{selectedColor}', function (color) {
+            me.setColor(color);
+        });
+
         me.callParent(arguments);
     },
 
@@ -240,12 +244,14 @@ Ext.define('Ext.ux.colorpick.Selector', {
     // Splits up view declaration for readability
     // Slider and H field 
     getSliderAndHField: function (childViewModel) {
-        var me = this;
+        var me = this,
+            fieldWidth = me.fieldWidth;
+
         return {
             xtype     : 'container',
             viewModel : childViewModel,
             cls       : Ext.baseCSSPrefix + 'colorpicker-escape-overflow',
-            width     : me.fieldWidth,
+            width     : fieldWidth,
             layout    : {
                 type  : 'vbox',
                 align : 'stretch'
@@ -258,6 +264,7 @@ Ext.define('Ext.ux.colorpick.Selector', {
                     bind: {
                         hue: '{selectedColor.h}'
                     },
+                    width: fieldWidth,
                     listeners: {
                         handledrag: 'onHueSliderHandleDrag'
                     }
@@ -266,7 +273,6 @@ Ext.define('Ext.ux.colorpick.Selector', {
                     xtype          : 'numberfield',
                     fieldLabel     : 'H',
                     labelAlign     : 'top',
-                    width          : me.fieldWidth,
                     labelSeparator : '',
                     bind           : '{hue}',
                     hideTrigger    : true,
@@ -282,12 +288,14 @@ Ext.define('Ext.ux.colorpick.Selector', {
     // Splits up view declaration for readability
     // Slider and S field 
     getSliderAndSField: function (childViewModel) {
-        var me = this;
+        var me = this,
+            fieldWidth = me.fieldWidth;
+
         return {
             xtype     : 'container',
             viewModel : childViewModel,
             cls       : Ext.baseCSSPrefix + 'colorpicker-escape-overflow',
-            width     : me.fieldWidth,
+            width     : fieldWidth,
             layout    : {
                 type  : 'vbox',
                 align : 'stretch'
@@ -305,6 +313,7 @@ Ext.define('Ext.ux.colorpick.Selector', {
                         saturation : '{saturation}',
                         hue        : '{selectedColor.h}'
                     },
+                    width: fieldWidth,
                     listeners : {
                         handledrag: 'onSaturationSliderHandleDrag'
                     }
@@ -328,12 +337,14 @@ Ext.define('Ext.ux.colorpick.Selector', {
     // Splits up view declaration for readability
     // Slider and V field 
     getSliderAndVField: function (childViewModel) {
-        var me = this;
+        var me = this,
+            fieldWidth = me.fieldWidth;
+
         return {
             xtype     : 'container',
             viewModel : childViewModel,
             cls       : Ext.baseCSSPrefix + 'colorpicker-escape-overflow',
-            width     : me.fieldWidth,
+            width     : fieldWidth,
             layout    : {
                 type  : 'vbox',
                 align : 'stretch'
@@ -347,6 +358,7 @@ Ext.define('Ext.ux.colorpick.Selector', {
                         value : '{value}',
                         hue   : '{selectedColor.h}'
                     },
+                    width: fieldWidth,
                     listeners : {
                         handledrag: 'onValueSliderHandleDrag'
                     }
@@ -370,12 +382,14 @@ Ext.define('Ext.ux.colorpick.Selector', {
     // Splits up view declaration for readability
     // Slider and A field 
     getSliderAndAField: function (childViewModel) {
-        var me = this;
+        var me = this,
+            fieldWidth = me.fieldWidth;
+
         return {
             xtype     : 'container',
             viewModel : childViewModel,
             cls       : Ext.baseCSSPrefix + 'colorpicker-escape-overflow',
-            width     : me.fieldWidth,
+            width     : fieldWidth,
             layout    : {
                 type  : 'vbox',
                 align : 'stretch'
@@ -395,6 +409,7 @@ Ext.define('Ext.ux.colorpick.Selector', {
                             deep: true
                         }
                     },
+                    width: fieldWidth,
                     listeners : {
                         handledrag: 'onAlphaSliderHandleDrag'
                     }

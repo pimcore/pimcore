@@ -52,7 +52,7 @@ Ext.define('Ext.ux.colorpick.Selection', {
 
     applyValue: function (color) {
         // Transform whatever incoming color we get to the proper format
-        var c = Ext.ux.colorpick.ColorUtils.parseColor(color);
+        var c = Ext.ux.colorpick.ColorUtils.parseColor(color || '#000000');
         return this.formatColor(c);
     },
 

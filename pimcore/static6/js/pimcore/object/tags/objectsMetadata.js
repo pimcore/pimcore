@@ -313,6 +313,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 // },
                 markDirty: false,
                 listeners: {
+                    drop: function(node, data, dropRec, dropPosition) {
+                        this.dataChanged = true;
+                    }.bind(this),
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)

@@ -135,6 +135,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     dragroup: 'element'
                 },
                 listeners: {
+                    drop: function(node, data, dropRec, dropPosition) {
+                        this.dataChanged = true;
+                    }.bind(this),
                     refresh: function(gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)

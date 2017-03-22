@@ -102,7 +102,7 @@ Ext.define("Ext.locale.lt.picker.Date", {
     prevText: 'Ankstesnis mėnuo (Control+Left)',
     monthYearText: 'Pasirinkti mėnesį (Control+Up/Down perėjimui tarp metų)',
     todayTip: "{0} (Tarpas)",
-    format: "y-m-d",
+    format: "Y-m-d",
     startDay: 1
 });
 
@@ -148,7 +148,7 @@ Ext.define("Ext.locale.lt.form.field.Date", {
     minText: "Šiame lauke data turi būti didesnė už {0}",
     maxText: "Šiame lauke data turi būti mažesnėė už {0}",
     invalidText: "{0} yra neteisinga data - ji turi būti įvesta formatu {1}",
-    format: "y-m-d",
+    format: "Y-m-d",
     altFormats: "y-m-d|y/m/d|Y-m-d|m/d|m-d|md|ymd|Ymd|d|Y-m-d"
 });
 

@@ -3,18 +3,24 @@
  * instead of plain text.
  */
 Ext.define('Ext.ux.ProgressBarPager', {
+    alias: 'plugin.ux-progressbarpager',
 
-    requires: ['Ext.ProgressBar'],
+    requires: [
+        'Ext.ProgressBar'
+    ],
+
     /**
      * @cfg {Number} width
      * <p>The default progress bar width.  Default is 225.</p>
     */
-    width   : 225,
+    width: 225,
+
     /**
      * @cfg {String} defaultText
     * <p>The text to display while the store is loading.  Default is 'Loading...'</p>
      */
-    defaultText    : 'Loading...',
+    defaultText: 'Loading...',
+
     /**
      * @cfg {Object} defaultAnimCfg
      * <p>A {@link Ext.fx.Anim Ext.fx.Anim} configuration object.</p>
@@ -33,9 +39,10 @@ Ext.define('Ext.ux.ProgressBarPager', {
             Ext.apply(this, config);
         }
     },
-    //public
-    init : function (parent) {
+
+    init: function (parent) {
         var displayItem;
+
         if (parent.displayInfo) {
             this.parent = parent;
 
@@ -67,29 +74,30 @@ Ext.define('Ext.ux.ProgressBarPager', {
     },
 
     /**
-     * @private
      * This method handles the click for the progress bar
+     * @private
      */
-    handleProgressBarClick : function(e){
+    handleProgressBarClick : function (e) {
         var parent = this.parent,
             displayItem = parent.displayItem,
             box = this.progressBar.getBox(),
             xy = e.getXY(),
             position = xy[0]- box.x,
-            pages = Math.ceil(parent.store.getTotalCount() / parent.pageSize),
+            store = parent.store,
+            pageSize = parent.pageSize || store.pageSize,
+            pages = Math.ceil(store.getTotalCount() / pageSize),
             newPage = Math.max(Math.ceil(position / (displayItem.width / pages)), 1);
 
-        parent.store.loadPage(newPage);
+        store.loadPage(newPage);
     },
 
     /**
      * @private
      */
-    parentOverrides  : {
-
+    parentOverrides: {
         /**
-         * @private
          * This method updates the information via the progress bar.
+         * @private
          */
         updateInfo : function(){
             if(this.displayItem){

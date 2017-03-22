@@ -106,13 +106,12 @@ pimcore.document.tree = Class.create({
                     view: this.config.customViewId
                 }
             },
-            pageSize: itemsPerPage,
-            root: rootNodeConfig
+            pageSize: itemsPerPage
         });
 
 
         // documents
-        this.tree = Ext.create('pimcore.tree.Panel', {
+        this.tree = Ext.create('Ext.tree.Panel', {
             region: "center",
             id: this.config.treeId,
             title: this.config.treeTitle,

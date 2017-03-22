@@ -145,7 +145,7 @@ Ext.define("Ext.locale.zh_CN.form.field.ComboBox", {
     valueNotFoundText: undefined
 }, function() {
     Ext.apply(Ext.form.field.ComboBox.prototype.defaultListConfig, {
-        loadingText: "加载中..."
+        loadingText: "读取中..."
     });
 });
 

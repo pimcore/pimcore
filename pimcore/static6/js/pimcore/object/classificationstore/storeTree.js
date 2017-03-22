@@ -97,6 +97,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
                 split:true,
                 width: 180,
                 rootVisible: false,
+                bodyBorder: false,
                 viewConfig: {
                     listeners: {
                         drop: function(node, data, overModel) {

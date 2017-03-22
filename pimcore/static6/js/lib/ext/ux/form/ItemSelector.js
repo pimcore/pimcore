@@ -269,6 +269,15 @@ Ext.define('Ext.ux.form.ItemSelector', {
         toStore.add(recs);
         fromStore.resumeEvents();
         toStore.resumeEvents();
+        
+        // If the list item was focused when moved (e.g. via double-click)
+        // then removing it will cause the focus to be thrown back to the
+        // document body. Which might disrupt things if ItemSelector is
+        // contained by a floating thingie like a Menu.
+        // Focusing the list itself will prevent that.
+        if (fromField.boundList.containsFocus) {
+            fromField.boundList.focus();
+        }
 
         fromField.boundList.refresh();
         toField.boundList.refresh();
@@ -339,11 +348,23 @@ Ext.define('Ext.ux.form.ItemSelector', {
     },
 
     onBindStore: function(store, initial) {
-        var me = this;
+        var me = this,
+            fromField = me.fromField,
+            toField = me.toField;
 
-        if (me.fromField) {
-            me.fromField.store.removeAll();
-            me.toField.store.removeAll();
+        if (fromField) {
+            fromField.store.removeAll();
+            toField.store.removeAll();
+
+            if (store.autoCreated) {
+                fromField.resolveDisplayField();
+                toField.resolveDisplayField();
+                me.resolveDisplayField();
+            }
+
+            if (!Ext.isDefined(me.valueField)) {
+                me.valueField = me.displayField;
+            }
 
             // Add everything to the from field as soon as the Store is loaded
             if (store.getCount()) {
@@ -390,7 +411,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
         });
     },
 
-    onDestroy: function(){
+    doDestroy: function(){
         this.bindStore(null);
         this.callParent();
     }

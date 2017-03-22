@@ -77,6 +77,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                 containerScroll: true,
                 width: 250,
                 split: true,
+                bodyBorder: false,
                 root: {
                     id: '0'
                 },

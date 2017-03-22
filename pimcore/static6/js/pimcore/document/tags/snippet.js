@@ -148,7 +148,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
 
     updateDimensions: function () {
         var body = this.getBody();
-        var parent = body.getParent();
+        var parent = body.parent(".x-panel");
         body.setStyle("height", "auto");
         parent.setStyle("height", "auto");
         body.removeCls("pimcore_tag_snippet_empty");

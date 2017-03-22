@@ -54,6 +54,7 @@ pimcore.object.classes.klass = Class.create({
             split: true,
             enableDD: true,
             autoScroll: true,
+            bodyBorder: false,
             root: {
                 id: "0",
                 root: true,

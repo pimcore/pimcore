@@ -63,6 +63,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                 scrollable: true,
                 folderSort:true,
                 split: true,
+                bodyBorder: false,
                 root: {
                     iconCls: "pimcore_icon_home",
                     type: "folder",

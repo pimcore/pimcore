@@ -198,13 +198,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             + "/height/" + height + "/contain/true" + "?" + Ext.urlEncode(this.crop);
 
 
+        body.removeCls("pimcore_droptarget_image");
+
+        body = body.down('.x-autocontainer-innerCt');
         body.setStyle({
             backgroundImage: "url(" + path + ")",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat"
         });
-
-        body.removeCls("pimcore_droptarget_image");
         body.repaint();
 
         this.getFileInfo(path);
@@ -288,8 +289,13 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.doClearData();
         }
         this.dirty = true;
-        this.component.removeAll();
-        this.createImagePanel();
+
+        var body = this.getBody();
+        body.addCls("pimcore_droptarget_image");
+        body.down('.x-autocontainer-innerCt').setStyle({
+            backgroundImage: ""
+        });
+        body.repaint();
     },
 
     getValue: function () {

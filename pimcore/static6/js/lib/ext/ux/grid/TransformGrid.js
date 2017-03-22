@@ -86,9 +86,9 @@ Ext.define('Ext.ux.grid.TransformGrid', {
         }
     },
 
-    onDestroy: function() {
-        this.callParent();
+    doDestroy: function() {
         this.table.remove();
-        delete this.table;
+        this.tabl = null;
+        this.callParent();
     }
 });

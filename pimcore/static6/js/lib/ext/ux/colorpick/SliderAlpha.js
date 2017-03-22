@@ -14,7 +14,7 @@ Ext.define('Ext.ux.colorpick.SliderAlpha', {
     gradientStyleTpl: Ext.create('Ext.XTemplate',
         Ext.isIE && Ext.ieVersion < 10
         ? 'filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=\'#FF{hex}\', endColorstr=\'#00{hex}\');' /* IE6-9 */
-        : 'background: -mox-linear-gradient(top, rgba({r}, {g}, {b}, 1) 0%, rgba({r}, {g}, {b}, 0) 100%);' +   /* FF3.6+ */
+        : 'background: -moz-linear-gradient(top, rgba({r}, {g}, {b}, 1) 0%, rgba({r}, {g}, {b}, 0) 100%);' +   /* FF3.6+ */
           'background: -webkit-linear-gradient(top,rgba({r}, {g}, {b}, 1) 0%, rgba({r}, {g}, {b}, 0) 100%);' + /* Chrome10+,Safari5.1+ */
           'background: -o-linear-gradient(top, rgba({r}, {g}, {b}, 1) 0%, rgba({r}, {g}, {b}, 0) 100%);' +      /* Opera 11.10+ */
           'background: -ms-linear-gradient(top, rgba({r}, {g}, {b}, 1) 0%, rgba({r}, {g}, {b}, 0) 100%);' +     /* IE10+ */
@@ -46,7 +46,7 @@ Ext.define('Ext.ux.colorpick.SliderAlpha', {
         // Position dragger
         el = dragHandle.getEl();
         el.setStyle({
-            top: top
+            top: top + 'px'
         });
     },
 
@@ -64,7 +64,7 @@ Ext.define('Ext.ux.colorpick.SliderAlpha', {
         // Determine HEX for new hue and set as background based on template
         hex = Ext.ux.colorpick.ColorUtils.rgb2hex(color.r, color.g, color.b);
 
-        el = container.getEl().down('.x-autocontainer-innerCt');
+        el = container.getEl().first();
         el.applyStyles(me.gradientStyleTpl.apply({hex: hex, r: color.r, g: color.g, b: color.b}));
     }
 });

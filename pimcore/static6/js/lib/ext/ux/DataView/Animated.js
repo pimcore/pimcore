@@ -2,6 +2,7 @@
  * Transition plugin for DataViews
  */
 Ext.define('Ext.ux.DataView.Animated', {
+    alias: 'plugin.ux-animated-dataview',
 
     /**
      * @property defaults

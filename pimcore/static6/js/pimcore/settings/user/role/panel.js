@@ -62,6 +62,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                 border: true,
                 split:true,
                 width: 180,
+                bodyBorder: false,
                 root: {
                     draggable:false,
                     id: '0',

@@ -144,6 +144,7 @@
     },
 
     /**
+     * @method
      * Called after a new button has been created and added to the toolbar. Add any required cleanup logic here
      */
     afterLayout: Ext.emptyFn

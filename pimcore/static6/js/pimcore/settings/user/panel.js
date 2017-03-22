@@ -61,6 +61,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 containerScroll: true,
                 split:true,
                 width: 180,
+                bodyBorder: false,
                 root: {
                     draggable:false,
                     id: '0',

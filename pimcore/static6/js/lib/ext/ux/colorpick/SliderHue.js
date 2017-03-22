@@ -62,7 +62,7 @@ Ext.define('Ext.ux.colorpick.SliderHue', {
         }
 
         // y-axis of slider with value 0-1 translates to reverse of "hue"
-        top = containerHeight * (360 - hue) / 360;
+        top = containerHeight * (1-hue);
 
         // Position dragger
         el = dragHandle.getEl();

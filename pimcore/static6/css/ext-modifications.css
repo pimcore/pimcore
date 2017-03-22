@@ -22,8 +22,17 @@
     background-color: #fff;
 }
 
-.x-tree-view .x-grid-item-container {
-    overflow: visible;
+.x-tree-view {
+    overflow-x: auto !important;
+}
+
+.do-not-select-text {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 /* Style overrides */
@@ -198,12 +207,12 @@ body > .x-mask {
     border-color: #d0d0d0;
 }
 
-.x-panel > .x-panel-default-outer-border-trl {
+.x-panel .x-panel-default-outer-border-trl {
     border-color: #d0d0d0 !important;
     border-style: solid;
 }
 
-.x-panel > .x-panel-default-outer-border-rbl {
+.x-panel .x-panel-default-outer-border-rbl {
     border-color: #d0d0d0 !important;
 }
 
@@ -237,6 +246,7 @@ body > .x-mask {
     vertical-align: middle;
 }*/
 
+/*
 .x-tree-drop-ok-above .x-dd-drop-icon {
     background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
 }
@@ -248,9 +258,18 @@ body > .x-mask {
 .x-tree-drop-ok-between .x-dd-drop-icon {
     background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
 }
+*/
 
 .x-form-item-default.x-item-disabled {
     opacity: 0.7;
+}
+
+.x-tree-node-text {
+    font-weight: 400;
+}
+
+.x-menu-item-text-default {
+    font-weight: 400;
 }
 
 /* ExtJS 6.0 bugfixes */

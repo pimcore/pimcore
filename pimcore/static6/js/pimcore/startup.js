@@ -49,6 +49,7 @@ var xhrActive = 0; // number of active xhr requests
 Ext.Loader.setConfig({
     enabled: true
 });
+Ext.ariaWarn = Ext.emptyFn;
 Ext.enableAriaButtons = false;
 
 Ext.Loader.setPath('Ext.ux', '/pimcore/static6/js/lib/ext/ux');

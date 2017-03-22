@@ -82,6 +82,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 containerScroll: true,
                 width: 200,
                 split: true,
+                bodyBorder: false,
                 root: {
                     //nodeType: 'async',
                     id: '0',

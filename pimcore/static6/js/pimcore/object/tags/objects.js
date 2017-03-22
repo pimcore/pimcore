@@ -281,9 +281,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 },
                 listeners: {
                     drop: function(node, data, dropRec, dropPosition) {
-                        var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                        //Ext.example.msg('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
-                    },
+                        this.dataChanged = true;
+                    }.bind(this),
                     refresh: function(gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)

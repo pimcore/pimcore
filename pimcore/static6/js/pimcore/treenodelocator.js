@@ -232,12 +232,12 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
 
     if (direction == -1) {
         searchData.maxPage = activePage - 1;
-        newPage = (searchData.minPage + searchData.maxPage) / 2;
+        var newPage = (searchData.minPage + searchData.maxPage) / 2;
         pimcore.treenodelocator.switchToPage(node, newPage, element, elementType, searchData, callback);
     } else if (direction == 1) {
 
         searchData.minPage = activePage + 1;
-        newPage = (searchData.minPage + searchData.maxPage) / 2;
+        var newPage = (searchData.minPage + searchData.maxPage) / 2;
         pimcore.treenodelocator.switchToPage(node, newPage, element, elementType, searchData, callback);
     } else {
         pimcore.treenodelocator.reportDone(node, node.data.elementType, callback);

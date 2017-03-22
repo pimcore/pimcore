@@ -235,6 +235,7 @@ pimcore.settings.email.log = Class.create({
                             store: store,
                             lines: true,
                             columnLines: true,
+                            bodyBorder: false,
                             columns:[
                                 new Ext.tree.Column({
                                     header: t('email_log_property'),

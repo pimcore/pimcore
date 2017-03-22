@@ -285,6 +285,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 split:true,
                 autoScroll:true,
                 disabled: true,
+                bodyBorder: false,
                 listeners:{
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
                     itemclick: this.onTreeNodeClick.bind(this)
@@ -509,6 +510,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             autoScroll: true,
             split: true,
             disabled: true,
+            bodyBorder: false,
             root: {
                 id: "0",
                 root: true,
