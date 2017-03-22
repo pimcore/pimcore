@@ -161,11 +161,16 @@ class LogController extends AdminController
      * @Route("/log/show-file-object")
      * @param Request $request
      * @return Response
+     * @throws \Exception
      */
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get("filePath");
         $filePath = PIMCORE_PROJECT_ROOT . "/" . $filePath;
+
+        if(!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY ."@", $filePath)) {
+            throw new \Exception("Accessing file out of scope");
+        }
 
         $response = new Response();
         $response->headers->set("Content-Type", "text/plain");
