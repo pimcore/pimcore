@@ -42,7 +42,7 @@ interface IPayment
      * @param array                       $config
      *
      * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
-     *                 an zend form which needs to submitted (e.g. datatrans and wirecard)
+     *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
      */
     public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config);
 

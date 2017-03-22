@@ -22,6 +22,10 @@ use OnlineShop\Framework\PaymentManager\Status;
 use OnlineShop\Framework\PriceSystem\IPrice;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Config\Config;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Forms;
 
 class Datatrans implements IPayment
 {
@@ -114,7 +118,7 @@ class Datatrans implements IPayment
      * @param IPrice $price
      * @param array                       $config
      *
-     * @return \Zend_Form
+     * @return \Symfony\Component\Form\FormBuilderInterface
      * @throws \Exception
      *
      * @see https://pilot.datatrans.biz/showcase/doc/Technical_Implementation_Guide.pdf
@@ -165,52 +169,75 @@ class Datatrans implements IPayment
         }
 
 
+        $formAttributes = [];
+        $formData = [];
+
+        // used for lightbox version
+        $formAttributes['data-language'] = $config['language'];
+        $formAttributes['data-merchant-id'] = $this->merchantId;
+        $formAttributes['data-sign'] = $sign;
+        $formAttributes['data-amount'] =  $paymentData['amount'];
+        $formAttributes['data-currency'] = $paymentData['currency'];
+        $formAttributes['data-refno'] = $config['refno'];
+        $formAttributes['data-reqtype'] = $paymentData['reqtype'];
+        $formAttributes['data-script'] = $this->endpoint['script'];
+        $formAttributes['data-success-url'] = $config['successUrl'];
+        $formAttributes['data-error-url'] = $config['errorUrl'];
+        $formAttributes['data-cancel-url'] = $config['cancelUrl'];
+        if($config['useAlias'])
+        {
+            $formAttributes['data-use-alias'] = 'true';
+        }
+
         // create form
-        $form = new \Zend_Form();
+        //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
+        $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
+            'attr' => $formAttributes
+        ]);
         $form->setAction( $this->endpoint['form'] );
         $form->setMethod( 'post' );
 
         // auth
-        $form->addElement( 'hidden', 'merchantId', ['value' => $this->merchantId] );
-        $form->addElement( 'hidden', 'sign', ['value' => $sign] );
+        $form->add('merchantId', HiddenType::class);
+        $formData['merchantId'] = $this->merchantId;
+
+        $form->add( 'hidden', 'sign', ['value' => $sign] );
+        $formData['sign'] = $sign;
 
         // return urls
-        $form->addElement( 'hidden', 'successUrl', ['value' => $config['successUrl']] );
-        $form->addElement( 'hidden', 'errorUrl', ['value' => $config['errorUrl']] );
-        $form->addElement( 'hidden', 'cancelUrl', ['value' => $config['cancelUrl']] );
+        $form->add('successUrl', HiddenType::class);
+        $formData['successUrl'] = $config['successUrl'];
+        $form->add('errorUrl', HiddenType::class);
+        $formData['errorUrl'] = $config['errorUrl'];
+        $form->add('cancelUrl', HiddenType::class);
+        $formData['cancelUrl'] = $config['cancelUrl'];
 
         // config
-        $form->addElement( 'hidden', 'language', ['value' => $config['language']] );
+        $form->add('language', HiddenType::class);
+        $formData['language'] = $config['language'];
 
         // order data
-        $form->addElement( 'hidden', 'amount', ['value' => $paymentData['amount']] );
-        $form->addElement( 'hidden', 'currency', ['value' => $paymentData['currency']] );
-        $form->addElement( 'hidden', 'refno', ['value' => $config['refno']] );
-        $form->addElement( 'hidden', 'reqtype', ['value' => $paymentData['reqtype']] );
+        $form->add('amount', HiddenType::class);
+        $formData['amount'] = $paymentData['amount'];
+        $form->add('currency', HiddenType::class);
+        $formData['currency'] = $paymentData['currency'];
+        $form->add('refno', HiddenType::class);
+        $formData['refno'] = $config['refno'];
+        $form->add('reqtype', HiddenType::class);
+        $formData['reqtype'] = $paymentData['reqtype'];
 
 
-        // used for lightbox version
-        $form->setAttrib( 'data-language', $config['language'] );
-        $form->setAttrib( 'data-merchant-id', $this->merchantId );
-        $form->setAttrib( 'data-sign', $sign );
-        $form->setAttrib( 'data-amount', $paymentData['amount'] );
-        $form->setAttrib( 'data-currency', $paymentData['currency'] );
-        $form->setAttrib( 'data-refno', $config['refno'] );
-        $form->setAttrib( 'data-reqtype', $paymentData['reqtype'] );
-        $form->setAttrib( 'data-script', $this->endpoint['script'] );
-        $form->setAttrib( 'data-success-url',  $config['successUrl'] );
-        $form->setAttrib( 'data-error-url',  $config['errorUrl'] );
-        $form->setAttrib( 'data-cancel-url', $config['cancelUrl'] );
+
 
         if($config['useAlias'])
         {
-            $form->addElement( 'hidden', 'useAlias', ['value' => 'yes'] );
-            $form->setAttrib( 'data-use-alias', 'true' );
+            $form->add( 'hidden', 'useAlias', ['value' => 'yes'] );
         }
 
 
         // add submit button
-        $form->addElement( 'submit', 'submitbutton' );
+        $form->add( 'submitbutton', SubmitType::class );
+        $form->setData($formData);
 
         return $form;
     }

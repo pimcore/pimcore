@@ -19,6 +19,10 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Config\Config;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Forms;
 
 class QPay implements IPayment
 {
@@ -145,13 +149,9 @@ class QPay implements IPayment
     }
 
     /**
-     * start payment
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
-     * @param array                       $config
-     *
-     * @return \Zend_Form
-     * @throws \Exception
-     * @throws \Zend_Form_Exception
+     * @param array $config
+     * @return \Symfony\Component\Form\FormBuilderInterface
      */
     public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
     {
@@ -200,9 +200,15 @@ class QPay implements IPayment
         $fingerprint = $this->computeFingerprint(array_values($paymentData));
 
         // create form
-        $form = new \Zend_Form(array('disableLoadDefaultDecorators' => false));
+        $formData = [];
+
+        //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
+        $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
+            'attr' => ['id' => 'paymentForm']
+        ]);
         $form->setAction('https://www.qenta.com/qpay/init.php');
         $form->setMethod('post');
+        $form->setAttribute("data-currency", "EUR");
 
         // omit these keys from the form
         $blacklistedFormKeys = ['secret'];
@@ -211,14 +217,19 @@ class QPay implements IPayment
                 continue;
             }
 
-            $form->addElement('hidden', $property, ['value' => $value]);
+            $form->add($property, HiddenType::class);
+            $formData[$property] = $value;
         }
 
         // add fingerprint to request
-        $form->addElement('hidden', 'requestFingerprint', ['value' => $fingerprint]);
+        $form->add('requestFingerprint', HiddenType::class);
+        $formData['requestFingerprint'] = $fingerprint;
+
 
         // add submit button
-        $form->addElement('submit', 'submitbutton');
+        $form->add('submitbutton', SubmitType::class, ['attr' => ['class' => 'btn']]);
+
+        $form->setData($formData);
 
         return $form;
     }
