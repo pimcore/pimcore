@@ -9,7 +9,7 @@ For production we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 5.6
+### PHP >= 7.0
 Both **mod_php** and **FCGI (FPM)** are supported.  
 **HHVM** should work quite well even though it's not tested.  
 
@@ -27,6 +27,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [zlib](http://php.net/zlib)
 - [zip](http://php.net/zip)
 - [bz2](http://php.net/bzip2)
+- [intl](http://www.php.net/intl)
 - [openssl](http://php.net/openssl)
 - [opcache](http://php.net/opcache)
 - CLI SAPI (for Cron Jobs)
@@ -37,11 +38,10 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 
-### MySQL / MariaDB >= 5.5.3 
+### MySQL / MariaDB >= 5.6 
 
 #### Features
 - InnoDB / XtraDB storage engine
-- MyISAM storage engine (only if InnoDB full-text indexes are not supported)
 - MEMORY storage engine
 
 #### Permissions
@@ -56,6 +56,12 @@ All permissions on database level, specifically:
 - Execute
 - Create view
 - Show view
+
+### Operating System
+Please ensure you have installed all required packages to ensure proper locale support by PHP.
+On Debian based systems, you can use the following command to install all required packages: 
+`apt-get install locales-all` (on some systems there may be a reboot required).
+
 
 ### Additional Server Software 
 - FFMPEG (>= 3)
