@@ -35,12 +35,11 @@ class Config
     public function loadConfig()
     {
         if (!$this->config) {
-            try {
-                $file = $this->locateConfigFile();
-                if (file_exists($file)) {
-                    $this->config = new PimcoreConfig\Config(include $file, true);
-                }
-            } catch (\Exception $e) {
+            if ($this->configFileExists()) {
+                $this->config = new PimcoreConfig\Config(include $this->locateConfigFile(), true);
+            }
+
+            if (!$this->config) {
                 $this->config = new PimcoreConfig\Config([], true);
             }
         }
@@ -64,13 +63,25 @@ class Config
     /**
      * @return string|null
      */
-    private function locateConfigFile()
+    public function locateConfigFile()
     {
         if (null === $this->file) {
             $this->file = PimcoreConfig::locateConfigFile('extensions.php');
         }
 
         return $this->file;
+    }
+
+    /**
+     * @return bool
+     */
+    public function configFileExists()
+    {
+        if (null !== $file = $this->locateConfigFile()) {
+            return file_exists($file);
+        }
+
+        return false;
     }
 }
 

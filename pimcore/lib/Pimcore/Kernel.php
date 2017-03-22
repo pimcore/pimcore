@@ -18,6 +18,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Event\SystemEvents;
+use Pimcore\Extension;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -30,6 +31,7 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -38,9 +40,9 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
     /**
-     * @var array
+     * @var Extension\Config
      */
-    protected $extensionManagerBundles = [];
+    protected $extensionConfig;
 
     /**
      * Returns an array of bundles to register.
@@ -78,22 +80,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 
             if ('dev' === $this->getEnvironment()) {
                 $bundles[] = new SensioGeneratorBundle();
-            }
-        }
-
-        return $bundles;
-    }
-
-    /**
-     * @param array $bundles
-     *
-     * @return array
-     */
-    protected function registerExtensionManagerBundles(array $bundles)
-    {
-        foreach ($this->extensionManagerBundles as $extensionManagerBundle) {
-            if (class_exists($extensionManagerBundle)) {
-                $bundles[] = new $extensionManagerBundle();
             }
         }
 
@@ -202,8 +188,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         \Pimcore::initConfiguration();
 
         // initialize extension manager config
-        $extensionConfig = new Extension\Config();
-        $this->processExtensionManagerConfig($extensionConfig);
+        $this->extensionConfig = new Extension\Config();
 
         // init bundles
         $this->initializeBundles();
@@ -211,8 +196,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         // init container
         $this->initializeContainer();
 
-        // set the extension config on the container
-        $this->getContainer()->set('pimcore.extension.config', $extensionConfig);
+        // set the extension config on the container and remove it from the kernel
+        $this->getContainer()->set('pimcore.extension.config', $this->extensionConfig);
+        $this->extensionConfig = null;
 
         \Pimcore::initLogger();
 
@@ -234,20 +220,37 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
     }
 
     /**
-     * Reads enabled bundles from extension manager config
+     * @param array $bundles
      *
-     * @param \Pimcore\Extension\Config $config
+     * @return array
      */
-    protected function processExtensionManagerConfig(Extension\Config $config)
+    protected function registerExtensionManagerBundles(array $bundles)
     {
-        $config = $config->loadConfig();
+        $config = $this->extensionConfig->loadConfig();
         if (isset($config->bundle)) {
             foreach ($config->bundle->toArray() as $bundleName => $state) {
                 if ((bool) $state) {
-                    $this->extensionManagerBundles[] = $bundleName;
+                    $bundles[] = new $bundleName();
                 }
             }
         }
+
+        return $bundles;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function buildContainer()
+    {
+        $container = parent::buildContainer();
+
+        // add extensions.php as container resource
+        if ($this->extensionConfig->configFileExists()) {
+            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
+        }
+
+        return $container;
     }
 
     /**
