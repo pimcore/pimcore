@@ -146,6 +146,7 @@ attach multiple events
 | `object.postDelete`   | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
 | `object.postCopy`     | `Pimcore\Model\Object\AbstractObject`   | `Pimcore\Model\Object\AbstractObject base_element` | base_element contains the base object used in copying process                 |
 
+*in preAdd and preUpdate can give object 'saveActionExtraJSONdata' member to append data to JSON response to browser.
 
 ### Asset
 
