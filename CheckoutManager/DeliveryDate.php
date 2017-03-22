@@ -53,7 +53,8 @@ class DeliveryDate extends AbstractStep implements ICheckoutStep {
         $data = new \stdClass();
         $data->instantly = $this->cart->getCheckoutData(self::INSTANTLY);
         if($this->cart->getCheckoutData(self::DATE)) {
-            $data->date = new \DateTime('@' . $this->cart->getCheckoutData(self::DATE));
+            $data->date = new \DateTime();
+            $data->date->setTimestamp($this->cart->getCheckoutData(self::DATE));
         } else {
             $data->instantly = true;
         }

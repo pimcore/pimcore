@@ -250,7 +250,12 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @return \DateTime|null
      */
     public function getAddedDate() {
-        return $this->addedDateTimestamp !== NULL ? new \DateTime('@' . $this->addedDateTimestamp) : null;
+        $datetime = null;
+        if($this->addedDateTimestamp) {
+            $datetime = new \DateTime();
+            $datetime->setTimestamp($this->addedDateTimestamp);
+        }
+        return $datetime;
     }
 
     /**

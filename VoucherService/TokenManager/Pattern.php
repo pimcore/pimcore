@@ -474,7 +474,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     protected function prepareUsageStatisticData(&$data, $usagePeriod)
     {
-        $now = new \DateTime("NOW");
+        $now = new \DateTime();
         $periodData = [];
         for ($i = $usagePeriod; $i > 0; $i--) {
             $index = $now->format("Y-m-d");

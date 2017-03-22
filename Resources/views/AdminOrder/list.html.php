@@ -130,9 +130,11 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
             </td>
             <td>
                 <?php
-                    $date = $item->getOrderDate() instanceof DateTime
-                        ? $item->getOrderDate()
-                        : new DateTime( '@' . $item->getOrderDate() );
+                    $date = $item->getOrderDate();
+                    if($date instanceof DateTime) {
+                        $date = new DateTime();
+                        $date->setTimestamp($item->getOrderDate());
+                    }
 
                     echo $formatter->formatDateTime($date, \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM);
                 ?>

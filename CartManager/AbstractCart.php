@@ -554,7 +554,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getCreationDate() {
         if(empty($this->creationDate) && $this->creationDateTimestamp) {
-            $this->creationDate = new \DateTime('@'.$this->creationDateTimestamp);
+            $this->creationDate = new \DateTime();
+            $this->creationDate->setTimestamp($this->creationDateTimestamp);
         }
         return $this->creationDate;
     }
@@ -597,7 +598,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getModificationDate() {
         if(empty($this->modificationDate) && $this->modificationDateTimestamp) {
-            $this->modificationDate = new \DateTime('@' . $this->modificationDateTimestamp);
+            $this->modificationDate = new \DateTime();
+            $this->modificationDate->setTimestamp($this->modificationDateTimestamp);
         }
 
         return $this->modificationDate;
