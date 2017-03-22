@@ -1,8 +1,7 @@
 imports:
-    - { resource: parameters.yml }
+    - { resource: config.yml }
     - { resource: "@PimcoreBundle/Resources/config/config_test.yml" }
-    - { resource: security.yml }
-    - { resource: services.yml }
+
 
 doctrine:
     dbal:
