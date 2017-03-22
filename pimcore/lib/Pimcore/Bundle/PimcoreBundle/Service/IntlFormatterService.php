@@ -37,7 +37,7 @@ class IntlFormatterService
     /**
      * @var \IntlDateFormatter[]
      */
-    protected $dateFormatters;
+    protected $dateFormatters = [];
 
     /**
      * @var \NumberFormatter
@@ -45,9 +45,16 @@ class IntlFormatterService
     protected $numberFormatter;
 
     /**
-     * @var \NumberFormatter
+     * @var \NumberFormatter[]
      */
-    protected $currencyFormatter;
+    protected $currencyFormatters = [];
+
+    /**
+     * ICU DecimalFormat definition per locale for currencies
+     * 
+     * @var string[]
+     */
+    protected $currencyFormats = [];
 
     /**
      * IntlFormatterService constructor.
@@ -56,7 +63,6 @@ class IntlFormatterService
     public function __construct(Locale $locale)
     {
         $this->locale = $locale->findLocale();
-        $this->dateFormatters = [];
     }
 
     /**
@@ -73,7 +79,29 @@ class IntlFormatterService
     public function setLocale($locale)
     {
         $this->locale = $locale;
+
+        //reset formatters
+        $this->dateFormatters = [];
+        $this->numberFormatter = null;
+        $this->currencyFormatters = [];
     }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyFormat($locale)
+    {
+        return $this->currencyFormats[$locale];
+    }
+
+    /**
+     * @param string $currencyFormat
+     */
+    public function setCurrencyFormat($locale, $currencyFormat)
+    {
+        $this->currencyFormats[$locale] = $currencyFormat;
+    }
+
 
     /**
      * @param $format
@@ -178,14 +206,23 @@ class IntlFormatterService
      *
      * @param $value
      * @param $currency
+     * @param $pattern
      * @return string
      */
-    public function formatCurrency($value, $currency)
+    public function formatCurrency($value, $currency, $pattern = 'default')
     {
-        if (empty($this->currencyFormatter)) {
-            $this->currencyFormatter = new \NumberFormatter($this->locale, \NumberFormatter::CURRENCY);
+        if (empty($this->currencyFormatters[$pattern])) {
+            $formatter = new \NumberFormatter($this->locale, \NumberFormatter::CURRENCY);
+
+            if ($pattern !== 'default') {
+                $formatter->setPattern($pattern);
+            } else if ($this->currencyFormats[$this->locale]) {
+                $formatter->setPattern($this->currencyFormats[$this->locale]);
+            }
+
+            $this->currencyFormatters[$pattern] = $formatter;
         }
 
-        return $this->currencyFormatter->formatCurrency($value, $currency);
+        return $this->currencyFormatters[$pattern]->formatCurrency($value, $currency);
     }
 }
