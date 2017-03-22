@@ -108,7 +108,9 @@ class SystemConfigParamResource
         foreach ($config as $key => $value) {
             $paramName = $prefix . '.' . $key;
 
-            if (is_array($value)) {
+            // only register associative array keys as param as otherwise items from a plain numeric
+            // array would be added as separate parameters
+            if (is_array($value) && array_values($value) !== $value) {
                 $this->processConfig($paramName, $value);
             } else {
                 if (!$this->container->hasParameter($paramName)) {
