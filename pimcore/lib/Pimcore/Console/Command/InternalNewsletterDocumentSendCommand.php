@@ -114,7 +114,11 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                 \Pimcore::collectGarbage();
             }
 
-            \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+            try {
+                \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+            } catch (\Exception $e) {
+                Logger::err('Exception while sending newsletter: '.$e->getMessage());
+            }
 
             $currentCount++;
         }
@@ -149,8 +153,12 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
             foreach ($sendingParamContainers as $sendingParamContainer) {
-                $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
-                \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+                try {
+                    $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
+                    \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+                } catch (\Exception $e) {
+                    Logger::err('Exception while sending newsletter: '.$e->getMessage());
+                }
 
 
                 if (empty($tmpStore)) {

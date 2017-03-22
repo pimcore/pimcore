@@ -119,10 +119,8 @@ class Multihref extends Model\Document\Tag implements \Iterator
         $this->setElements();
         $return = "";
 
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                $return .= Element\Service::getElementType($element) . ": " . $element->getFullPath() . "<br />";
-            }
+        foreach ($this->getElements() as $element) {
+            $return .= Element\Service::getElementType($element) . ": " . $element->getFullPath() . "<br />";
         }
 
         return $return;
@@ -163,7 +161,23 @@ class Multihref extends Model\Document\Tag implements \Iterator
     {
         $this->setElements();
 
-        return $this->elements;
+        $elements = [];
+
+        foreach ($this->elements as $element) {
+            if (
+                ($element instanceof Object && Object::doHideUnpublished())
+                ||
+                ($element instanceof Document && Document::doHideUnpublished())
+            ) {
+                if (Element\Service::isPublished($element)) {
+                    $elements[] = $element;
+                }
+            } else {
+                $elements[] = $element;
+            }
+        }
+
+        return $elements;
     }
 
     /**

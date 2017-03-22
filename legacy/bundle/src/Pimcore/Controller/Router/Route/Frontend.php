@@ -273,7 +273,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 }
                             }
 
-                            if ($redirectTargetUrl !== $originalPath) {
+                            if ($redirectTargetUrl !== $originalPath && !Tool::isFrontentRequestByAdmin()) {
                                 if ($_SERVER["QUERY_STRING"]) {
                                     $redirectTargetUrl .= "?" . $_SERVER["QUERY_STRING"];
                                 }

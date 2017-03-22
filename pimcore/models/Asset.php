@@ -303,42 +303,20 @@ class Asset extends Element\AbstractElement
      */
     public static function create($parentId, $data = [], $save = true)
     {
-
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = "\\Pimcore\\Model\\Asset";
-        if (array_key_exists("filename", $data) && (array_key_exists("data", $data) || array_key_exists("sourcePath", $data) || array_key_exists("stream", $data))) {
-            if (array_key_exists("data", $data) || array_key_exists("stream", $data)) {
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . uniqid() . "." . File::getFileExtension($data["filename"]);
-                if (array_key_exists("data", $data)) {
-                    File::put($tmpFile, $data["data"]);
-                } else {
-                    $streamMeta = stream_get_meta_data($data["stream"]);
-                    if (file_exists($streamMeta["uri"])) {
-                        // stream is a local file, so we don't have to write a tmp file
-                        $tmpFile = $streamMeta["uri"];
-                    } else {
-                        // write a tmp file because the stream isn't a pointer to the local filesystem
-                        rewind($data["stream"]);
-                        $dest = fopen($tmpFile, "w+", false, File::getContext());
-                        stream_copy_to_stream($data["stream"], $dest);
-                        fclose($dest);
-                    }
-                }
-                $mimeType = Mime::detect($tmpFile);
-                unlink($tmpFile);
-            } else {
-                $mimeType = Mime::detect($data["sourcePath"], $data["filename"]);
-                if (is_file($data["sourcePath"])) {
-                    $data["stream"] = fopen($data["sourcePath"], "r+", false, File::getContext());
-                }
-
-                unset($data["sourcePath"]);
+        if (isset($data["filename"]) && isset($data["sourcePath"])) {
+            $mimeType = Mime::detect($data["sourcePath"], $data["filename"]);
+            if (is_file($data["sourcePath"])) {
+                $data["stream"] = fopen($data["sourcePath"], "r+", false, File::getContext());
             }
+
+            unset($data["sourcePath"]);
 
             $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
             $class = "\\Pimcore\\Model\\Asset\\" . ucfirst($type);
-            if (array_key_exists("type", $data)) {
+            if (isset($data["type"])) {
                 unset($data["type"]);
             }
         }
@@ -1208,7 +1186,8 @@ class Asset extends Element\AbstractElement
     public function getStream()
     {
         if ($this->stream) {
-            if (!@rewind($this->stream)) {
+            $streamMeta = stream_get_meta_data($this->stream);
+            if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
                 $this->stream = null;
             }
         }

@@ -28,6 +28,7 @@ class PdfReactor8 extends Processor
         $params = [];
         $params['printermarks'] = $config->printermarks == "true";
         $params['screenResolutionImages'] = $config->screenResolutionImages == "true";
+        $params['colorspace'] = $config->colorspace;
 
         $this->updateStatus($document->getId(), 10, "start_html_rendering");
         $html = $document->renderDocument($params);
