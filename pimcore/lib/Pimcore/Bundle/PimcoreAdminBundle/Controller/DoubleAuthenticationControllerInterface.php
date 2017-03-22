@@ -15,6 +15,8 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 /**
+ * Controllers implementing this interface will be double-checked for admin authentication.
+ *
  * @see AdminAuthenticationDoubleCheckListener
  */
 interface DoubleAuthenticationControllerInterface

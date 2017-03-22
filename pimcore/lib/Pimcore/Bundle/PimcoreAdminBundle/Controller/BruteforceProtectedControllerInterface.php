@@ -13,11 +13,12 @@
  */
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+use Pimcore\Bundle\PimcoreAdminBundle\EventListener\BruteforceProtectionListener;
 
 /**
- * Use to protect certain controllers from brute force attacks
- * Interface BruteforceProtectedControllerInterface
- * @package Pimcore\Bundle\PimcoreAdminBundle\Controller
+ * Tagging interface used to protect certain controllers from brute force attacks
+ *
+ * @see BruteforceProtectionListener
  */
 interface BruteforceProtectedControllerInterface
 {
