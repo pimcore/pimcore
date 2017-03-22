@@ -113,9 +113,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
         if ($type === 'bundle') {
             $this->bundleManager->setState($id, $enable);
-
             $reload = true;
-            Tool::clearSymfonyCache($this->container);
         } else if ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
         }
