@@ -318,7 +318,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
                             this.chapterStore[this.currentPage] = chapterText;
                         }
 
-            var hotspots = this.metaDataWindow.getComponent("pageContainer").body.query(".pimcore_pdf_hotspot");
+            // var hotspots = this.metaDataWindow.getComponent("pageContainer").body.query(".pimcore_pdf_hotspot");
             var hotspot = null;
             var metaData = null;
 
@@ -326,25 +326,34 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             var originalWidth = imgEl.getWidth();
             var originalHeight = imgEl.getHeight();
 
+            var absoluteImgX = imgEl.dom.x;
+            var absoluteImgY = imgEl.dom.y;
+
             this.hotspotStore[this.currentPage] = [];
 
-            for(var i=0; i<hotspots.length; i++) {
-                hotspot = Ext.get(hotspots[i]);
+            for (var id in this.hotspotCmps) {
+                if (this.hotspotCmps.hasOwnProperty(id)) {
+                    var hotspotCmp = this.hotspotCmps[id];
+                    var hotspot = hotspotCmp.getEl();
 
-                var dimensions = hotspot.getStyle(["top","left","width","height"]);
+                    var dimensions = hotspot.getStyle(["top", "left", "width", "height"]);
 
-                metaData = null;
-                if(this.hotspotMetaData[hotspot.getAttribute("id")]) {
-                    metaData = this.hotspotMetaData[hotspot.getAttribute("id")];
+                    dimensions.left = intval(dimensions.left) - absoluteImgX;
+                    dimensions.top = intval(dimensions.top) - absoluteImgY;
+
+                    metaData = null;
+                    if (this.hotspotMetaData[hotspot.getAttribute("id")]) {
+                        metaData = this.hotspotMetaData[hotspot.getAttribute("id")];
+                    }
+
+                    this.hotspotStore[this.currentPage].push({
+                        top: intval(dimensions.top) * 100 / originalHeight,
+                        left: intval(dimensions.left) * 100 / originalWidth,
+                        width: intval(dimensions.width) * 100 / originalWidth,
+                        height: intval(dimensions.height) * 100 / originalHeight,
+                        data: metaData
+                    });
                 }
-
-                this.hotspotStore[this.currentPage].push({
-                    top: intval(dimensions.top) * 100 / originalHeight,
-                    left:  intval(dimensions.left) * 100 / originalWidth,
-                    width: intval(dimensions.width) * 100 / originalWidth,
-                    height: intval(dimensions.height) * 100 / originalHeight,
-                    data: metaData
-                });
             }
 
             if(this.hotspotStore[this.currentPage].length < 1) {
