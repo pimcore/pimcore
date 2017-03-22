@@ -146,8 +146,11 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
     public function showFileObjectAction()
     {
         $filePath = $this->getParam("filePath");
-        $filePath = PIMCORE_DOCUMENT_ROOT . "/" . $filePath;
+        $filePath = realpath(PIMCORE_DOCUMENT_ROOT . "/" . $filePath);
 
+        if(!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY ."@", $filePath)) {
+            throw new \Exception("Accessing file out of scope");
+        }
 
         header("Content-Type: text/plain");
 
