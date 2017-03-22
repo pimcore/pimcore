@@ -714,6 +714,7 @@ return  [
   'Pimcore\\Model\\WebsiteSetting\\Listing\\Dao' => $pdr . '/pimcore/models/WebsiteSetting/Listing/Dao.php',
   'Pimcore\\Model\\WebsiteSetting\\Dao' => $pdr . '/pimcore/models/WebsiteSetting/Dao.php',
   'Pimcore\\Model\\Dependency' => $pdr . '/pimcore/models/Dependency.php',
+  'Pimcore\\Model\\Object' => $pdr . '/pimcore/models/Object.php',
   'Pimcore\\Model\\Version\\Listing' => $pdr . '/pimcore/models/Version/Listing.php',
   'Pimcore\\Model\\Version\\Listing\\Dao' => $pdr . '/pimcore/models/Version/Listing/Dao.php',
   'Pimcore\\Model\\Version\\Dao' => $pdr . '/pimcore/models/Version/Dao.php',
