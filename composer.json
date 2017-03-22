@@ -45,7 +45,7 @@
     "ext-openssl": "*",
     "ext-mysqli": "*",
     "ext-pdo_mysql": "*",
-    "pimcore/core-version": "4.4.3",
+    "pimcore/core-version": "4.5.0",
     "zendframework/zendframework1": "~1.12",
     "symfony/console": "~3",
     "symfony/finder": "~3",
