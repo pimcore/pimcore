@@ -65,7 +65,7 @@ class NumberRangeSelection extends AbstractFilterType {
         }
 
 
-        return $this->view->partial($script, array(
+        return $this->render($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentValue,
@@ -81,14 +81,15 @@ class NumberRangeSelection extends AbstractFilterType {
 
     private function createLabel($data) {
         if(is_array($data)) {
+            $translator = \Pimcore::getContainer()->get('translator');
             if(!empty($data['from'])) {
                 if(!empty($data['to'])) {
                     return $data['from'] . " - " . $data['to'];
                 } else {
-                    return $this->view->translate("more than") . " " . $data['from'];
+                    return $translator->trans("more than") . " " . $data['from'];
                 }
             } else if(!empty($data['to'])) {
-                return $this->view->translate("less than") . " " . $data['to'];
+                return $translator->trans("less than") . " " . $data['to'];
             }
         } else {
             return "";

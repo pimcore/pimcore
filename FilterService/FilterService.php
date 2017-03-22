@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
+use Pimcore\Config\Config;
+
 /**
  * Class FilterService
  * @package OnlineShop\Framework\FilterService
@@ -26,12 +28,10 @@ class FilterService {
     protected $config;
 
     /**
-     * @param $config OnlineShop Configuration
-     * @param \Zend_View $view View in which the filters are rendered
+     * @param $config Config OnlineShop Configuration
      */
-    public function __construct($config, \Zend_View $view) {
+    public function __construct($config) {
         $this->config = $config;
-        $this->view = $view;
     }
 
     /**
@@ -43,7 +43,7 @@ class FilterService {
      */
     public function getFilterDefinitionClass($name) {
         if($this->config->$name) {
-            return new $this->config->$name->class($this->view, $this->config->$name->script,$this->config->$name);
+            return new $this->config->$name->class($this->config->$name->script,$this->config->$name);
         } else {
             return $name; //throw new \OnlineShop\Framework\Exception\UnsupportedException($name . " not as filter type configured.");
         }

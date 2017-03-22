@@ -51,7 +51,9 @@ class SelectCategory extends AbstractFilterType {
             }
         }
 
-        return $this->view->partial($script, array(
+        $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+
+        $parameterBag = array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
@@ -59,9 +61,12 @@ class SelectCategory extends AbstractFilterType {
             "fieldname" => $filterDefinition->getField(),
             "metaData" => $filterDefinition->getMetaData(),
             "rootCategory" => $filterDefinition->getRootCategory(),
-            "document" => $this->view->document,
+            "document" => $request->get("contentDocument"),
             "resultCount" => $productList->count()
-        ));
+        );
+
+
+        return $this->render($script, $parameterBag);
     }
 
     public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {

@@ -30,9 +30,9 @@ class ProxyFilter extends AbstractFilterType
     protected  $field;
 
 
-    function __construct($view, $script,$config)
+    function __construct($script,$config)
     {
-        parent::__construct($view,$script,$config);
+        parent::__construct($script, $config);
         if (!$config->proxyclass){
             throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting proxyclass is missing!");
         }
@@ -40,7 +40,7 @@ class ProxyFilter extends AbstractFilterType
             throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting field is missing!");
         }
 
-        $this->proxy = new $config->proxyclass($view,$script,$config);
+        $this->proxy = new $config->proxyclass($script, $config);
         $this->field= $config->field;
     }
 

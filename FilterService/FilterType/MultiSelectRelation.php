@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterTyp
 class MultiSelectRelation extends AbstractFilterType {
 
     public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
-        //return "";
         $field = $this->getField($filterDefinition);
 
         $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
@@ -44,7 +43,7 @@ class MultiSelectRelation extends AbstractFilterType {
         } else {
             $script = $this->script;
         }
-        return $this->view->partial($script, array(
+        return $this->render($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],

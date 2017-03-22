@@ -23,16 +23,13 @@ abstract class AbstractFilterType {
 
     const EMPTY_STRING = '$$EMPTY$$';
 
-    protected $view;
     protected $script;
     protected $config;
     /**
-     * @param $view view to render the filter frontend into
-     * @param $script script for rendering the filter frontend
-     * @param $config Config for more settings (optional)
+     * @param $script string - script for rendering the filter frontend
+     * @param $config Config - for more settings (optional)
      */
-    public function __construct($view, $script, $config = null) {
-        $this->view = $view;
+    public function __construct($script, $config = null) {
         $this->script = $script;
         $this->config = $config;
     }
@@ -104,5 +101,26 @@ abstract class AbstractFilterType {
     protected function sortResult(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, array $result)
     {
         return $result;
+    }
+
+    /**
+     * renders filter template
+     *
+     * @param $script string
+     * @param $parameterBag array
+     * @return string
+     */
+    protected function render($script, $parameterBag) {
+        $renderer = \Pimcore::getContainer()->get('templating');
+
+        try {
+            return $renderer->render($script, $parameterBag);
+        } catch (\Exception $e) {
+
+            //legacy fallback for view rendering
+            $prefix = PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts";
+            return $renderer->render($prefix . $script, $parameterBag);
+
+        }
     }
 }

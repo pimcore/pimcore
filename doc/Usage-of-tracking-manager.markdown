@@ -122,7 +122,7 @@ class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBui
         $item->setId($product->getOSProductNumber());
         
         // define a name for the impressions context (i.e. grid, search, ... )
-        $item->setList(\Zend_Controller_Front::getInstance()->getRequest()->getActionName());
+        $item->setList('grid');
 
         self::$impressionPosition++;
         $item->setPosition(self::$impressionPosition);

@@ -113,7 +113,7 @@ The configuration takes place in the OnlineShopConfig.php
 <?php
 $url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/checkout/payment-status?mode=";
 $config = [
-    'language' => Zend_Registry::get("Zend_Locale")->getLanguage()
+    'language' => 'en'
     , 'successURL' => $url . 'success'
     , 'cancelURL' => $url . 'cancel'
     , 'failureURL' => $url . 'failure'
@@ -137,7 +137,7 @@ $config = [
 $url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/checkout/payment-status?mode=";
 $config = [
     // checkout config
-    'language' => Zend_Registry::get("Zend_Locale")->getLanguage()
+    'language' => 'en'
     , 'refno' => $paymentInformation->getInternalPaymentId()
     , 'useAlias' => true
     , 'reqtype' => 'CAA'    // Authorisation and settlement

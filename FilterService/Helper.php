@@ -14,8 +14,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
+
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 
 /**
  * Class \OnlineShop\Framework\FilterService\Helper
@@ -29,14 +30,14 @@ class Helper
      * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
      * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
      * @param $params
-     * @param \Zend_View $view
+     * @param ViewModel $view
      * @param FilterService $filterService
      * @param $loadFullPage
      * @param bool $excludeLimitOfFirstpage
      */
     public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
                                             \OnlineShop\Framework\IndexService\ProductList\IProductList $productList,
-                                            $params, \Zend_View $view,
+                                            $params, $viewModel,
                                             FilterService $filterService,
                                             $loadFullPage, $excludeLimitOfFirstpage = false) {
 
@@ -75,7 +76,7 @@ class Helper
         }
 
         if($params["page"]) {
-            $view->currentPage = intval($params["page"]);
+            $viewModel->currentPage = intval($params["page"]);
             $offset = $pageLimit * ($params["page"]-1);
         }
         if($filterDefinition->getAjaxReload()) {
@@ -92,7 +93,7 @@ class Helper
         }
         $productList->setOffset($offset);
 
-        $view->pageLimit = $pageLimit;
+        $viewModel->pageLimit = $pageLimit;
 
 
 
@@ -102,7 +103,7 @@ class Helper
         $orderByDirection = $orderBy[1];
 
         if(array_key_exists($orderByField, $orderByOptions)) {
-            $view->currentOrderBy = htmlentities($params["orderBy"]);
+            $viewModel->currentOrderBy = htmlentities($params["orderBy"]);
 
             $productList->setOrderKey($orderByField);
             $productList->setOrder($orderByDirection);
@@ -116,18 +117,18 @@ class Helper
                     }
                 }
                 
-                $view->currentOrderBy = implode("#", reset($orderByList));
+                $viewModel->currentOrderBy = implode("#", reset($orderByList));
             }
             $productList->setOrderKey($orderByList);
             $productList->setOrder("ASC");
         }
 
         if($filterService) {
-            $view->currentFilter = $filterService->initFilterService($filterDefinition, $productList, $params);
+            $viewModel->currentFilter = $filterService->initFilterService($filterDefinition, $productList, $params);
         }
 
 
-        $view->orderByOptions = $orderByOptions;
+        $viewModel->orderByOptions = $orderByOptions;
 
     }
 

@@ -38,7 +38,7 @@ class NumberRange extends \OnlineShop\Framework\FilterService\FilterType\NumberR
             'label' => $value['label']];
         }
 
-        return $this->view->partial($script, array(
+        return $this->render($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$this->getField($filterDefinition)],

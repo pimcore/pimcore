@@ -26,16 +26,16 @@ class NumberRange extends AbstractFilterType {
             $script = $this->script;
         }
 
-        return $this->view->partial($script, array(
-                                                  "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-                                                  "label" => $filterDefinition->getLabel(),
-                                                  "currentValue" => $currentFilter[$this->getField($filterDefinition)],
-                                                  "values" => $productList->getGroupByValues($this->getField($filterDefinition), true),
-                                                  "definition" => $filterDefinition,
-                                                  "fieldname" => $this->getField($filterDefinition),
-                                                  "metaData" => $filterDefinition->getMetaData(),
-                                                  "resultCount" => $productList->count()
-                                             ));
+        return $this->render($script, array(
+              "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+              "label" => $filterDefinition->getLabel(),
+              "currentValue" => $currentFilter[$this->getField($filterDefinition)],
+              "values" => $productList->getGroupByValues($this->getField($filterDefinition), true),
+              "definition" => $filterDefinition,
+              "fieldname" => $this->getField($filterDefinition),
+              "metaData" => $filterDefinition->getMetaData(),
+              "resultCount" => $productList->count()
+         ));
     }
 
     public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {

@@ -95,7 +95,7 @@ FilterDefinition objects can be assigned to category objects to build up automat
 Once FilterTypes and FilterDefinitions are set up, it is quite easy to put it all together and use the FilterService in controller actions. 
  
 ### Controller
-For setting up the FilterService (including product-list with Zend_Paginator) within the controller use following snippet: 
+For setting up the FilterService (including product-list with Zend Paginator) within the controller use following snippet:
 ```php 
 <?php 
 

@@ -466,39 +466,39 @@ return [
             "helper" => "\\OnlineShop\\Framework\\FilterService\\FilterGroupHelper",
             "FilterNumberRange" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRange",
-                "script" => "/shop/filters/range.php"
+                "script" => ":Shop/filters:range.html.php"
             ],
             "FilterNumberRangeSelection" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRangeSelection",
-                "script" => "/shop/filters/numberrange.php"
+                "script" => ":Shop/filters:numberrange.html.php"
             ],
             "FilterSelect" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\Select",
-                "script" => "/shop/filters/select.php"
+                "script" => ":Shop/filters:select.html.php"
             ],
             "FilterSelectFromMultiSelect" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectFromMultiSelect",
-                "script" => "/shop/filters/select.php"
+                "script" => ":Shop/filters:select.html.php"
             ],
             "FilterMultiSelect" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelect",
-                "script" => "/shop/filters/multiselect.php"
+                "script" => ":Shop/filters:multiselect.html.php"
             ],
             "FilterMultiSelectFromMultiSelect" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectFromMultiSelect",
-                "script" => "/shop/filters/multiselect.php"
+                "script" => ":Shop/filters:multiselect.html.php"
             ],
             "FilterMultiRelation" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectRelation",
-                "script" => "/shop/filters/multiselect-relation.php"
+                "script" => ":Shop/filters:multiselect-relation.html.php"
             ],
             "FilterCategory" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectCategory",
-                "script" => "/shop/filters/select_category.php"
+                "script" => ":Shop/filters:select_category.html.php"
             ],
             "FilterRelation" => [
                 "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectRelation",
-                "script" => "/shop/filters/object_relation.php"
+                "script" => ":Shop/filters:object_relation.html.php"
             ]
         ],
 

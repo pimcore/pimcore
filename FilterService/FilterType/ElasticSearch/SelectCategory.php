@@ -44,7 +44,7 @@ class SelectCategory extends \OnlineShop\Framework\FilterService\FilterType\Sele
             $values[$v['value']] = array('value' => $v['value'], "count" => $v['count']);
         }
 
-        return $this->view->partial($script, array(
+        return $this->render($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],

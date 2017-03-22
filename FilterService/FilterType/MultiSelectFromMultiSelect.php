@@ -25,7 +25,7 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
      * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
      * @param                                                   $currentFilter
      *
-     * @return string[]
+     * @return string
      */
     public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
 
@@ -53,7 +53,7 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
             }
         }
 
-        return $this->view->partial($script, array(
+        return $this->render($script, array(
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],

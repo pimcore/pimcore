@@ -103,7 +103,7 @@ class SelectCategory extends \OnlineShop\Framework\FilterService\FilterType\Sele
         
         
         // done
-        return $this->view->partial($script, [
+        return $this->render($script, [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()])
             , 'label' => $filterDefinition->getLabel()
             , 'currentValue' => $currentFilter[$filterDefinition->getField()]

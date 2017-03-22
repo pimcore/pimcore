@@ -815,8 +815,8 @@ class DefaultMysql implements IProductList
     {
         $vars = get_object_vars($this);
 
-        //this is needed for ZF1 Pagiantor - because it serializes the adapter and PDO instance cannot be serialized
         unset($vars['resource']);
+        unset($vars['products']);
         return array_keys($vars);
     }
 
@@ -828,5 +828,13 @@ class DefaultMysql implements IProductList
         if(empty($this->resource)) {
             $this->resource = new DefaultMysql\Dao($this);
         }
+    }
+
+    /**
+     * this is needed for ZF1 Paginator
+     * @return string
+     */
+    public function getCacheIdentifier() {
+        return uniqid();
     }
 }
