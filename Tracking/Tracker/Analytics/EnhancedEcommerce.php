@@ -56,13 +56,12 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
     {
         $item = $this->getTrackingItemBuilder()->buildProductViewItem($product);
 
-        $view = $this->buildView();
-        $view->productData = $this->transformProductAction($item);
+        $parameterBag['productData'] = $this->transformProductAction($item);
 
-        unset($view->productData['price']);
-        unset($view->productData['quantity']);
+        unset($parameterBag['productData']['price']);
+        unset($parameterBag['productData']['quantity']);
 
-        $result = $view->render($this->getViewScript('product_view'));
+        $result = $this->renderer->render($this->getViewScript('product_view'), $parameterBag);
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
@@ -75,10 +74,9 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
     {
         $item = $this->getTrackingItemBuilder()->buildProductImpressionItem($product);
 
-        $view = $this->buildView();
-        $view->productData = $this->transformProductImpression($item);
+        $parameterBag['productData'] = $this->transformProductImpression($item);
 
-        $result = $view->render($this->getViewScript('product_impression'));
+        $result = $this->renderer->render($this->getViewScript('product_impression'), $parameterBag);
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
@@ -106,13 +104,10 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
         $item = $this->getTrackingItemBuilder()->buildProductActionItem($product);
         $item->setQuantity($quantity);
 
-        $view = $this->buildView();
-        $view->productData = $this->transformProductAction($item);
+        $parameterBag['productData'] = $this->transformProductAction($item);
+        $parameterBag['action'] = $action;
 
-
-        $view->action = $action;
-
-        $result = $view->render($this->getViewScript('product_action'));
+        $result = $this->renderer->render($this->getViewScript('product_action'), $parameterBag);
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
@@ -125,13 +120,12 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
     {
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
 
-        $view = $this->buildView();
-        $view->items = $items;
-        $view->calls = $this->buildCheckoutCalls($items);
+        $parameterBag['items'] = $items;
+        $parameterBag['calls'] = $this->buildCheckoutCalls($items);
 
-        $view->actionData = ["step" => 1];
+        $parameterBag['actionData'] = ["step" => 1];
 
-        $result = $view->render($this->getViewScript('checkout'));
+        $result = $this->renderer->render($this->getViewScript('checkout'), $parameterBag);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -147,9 +141,8 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
 
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
 
-        $view = $this->buildView();
-        $view->items = $items;
-        $view->calls = [];
+        $parameterBag['items'] = $items;
+        $parameterBag['calls'] = [];
         if (!is_null($stepNumber) || !is_null($checkoutOption)) {
             $actionData = ["step" => $stepNumber];
 
@@ -157,11 +150,11 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
                 $actionData["option"] = $checkoutOption;
             }
 
-            $view->actionData = $actionData;
+            $parameterBag['actionData'] = $actionData;
         }
 
 
-        $result = $view->render($this->getViewScript('checkout'));
+        $result = $this->renderer->render($this->getViewScript('checkout'), $parameterBag);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -176,13 +169,12 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
         $transaction = $this->getTrackingItemBuilder()->buildCheckoutTransaction($order);
         $items = $this->getTrackingItemBuilder()->buildCheckoutItems($order);
 
-        $view = $this->buildView();
-        $view->transaction = $this->transformTransaction($transaction);
-        $view->items = $items;
-        $view->calls = $this->buildCheckoutCompleteCalls($transaction, $items);
+        $parameterBag['transaction'] = $this->transformTransaction($transaction);
+        $parameterBag['items'] = $items;
+        $parameterBag['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
 
 
-        $result = $view->render($this->getViewScript('checkout_complete'));
+        $result = $this->renderer->render($this->getViewScript('checkout_complete'), $parameterBag);
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 

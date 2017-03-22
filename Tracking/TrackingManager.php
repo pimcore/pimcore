@@ -49,15 +49,9 @@ class TrackingManager implements ITrackingManager
     {
         $container = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, 'trackingmanager');
 
-        if(!isset($container->trackers->toArray()['tracker']['name'])) {
-            foreach ($container->trackers->tracker as $cfg) {
-                $this->processConfigEntry($cfg);
-            }
-        } else {
-            $this->processConfigEntry($container->trackers->tracker);
+        foreach ($container->trackers as $cfg) {
+            $this->processConfigEntry($cfg);
         }
-
-
     }
 
     /**

@@ -13,6 +13,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Google\Analytics;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 
 abstract class Tracker implements ITracker
@@ -26,11 +27,17 @@ abstract class Tracker implements ITracker
     protected $dependencies = [];
 
     /**
+     * @var EngineInterface
+     */
+    protected $renderer;
+
+    /**
      * @param ITrackingItemBuilder $trackingItemBuilder
      */
     public function __construct(ITrackingItemBuilder $trackingItemBuilder)
     {
         $this->trackingItemBuilder = $trackingItemBuilder;
+        $this->renderer = \Pimcore::getContainer()->get('templating');
     }
 
     /**
@@ -39,20 +46,6 @@ abstract class Tracker implements ITracker
     public function getTrackingItemBuilder()
     {
         return $this->trackingItemBuilder;
-    }
-
-    /**
-     * Build a view
-     *
-     * @return \Zend_View
-     */
-    protected function buildView()
-    {
-        //TODO
-        $view = new \Zend_View();
-        $view->setBasePath(PIMCORE_PROJECT_ROOT . '/pimcore/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/views/');
-
-        return $view;
     }
 
     /**
@@ -70,7 +63,7 @@ abstract class Tracker implements ITracker
      */
     protected function getViewScript($name)
     {
-        return sprintf('tracking/%s/%s.js.php', $this->getViewScriptPrefix(), $name);
+        return sprintf('PimcoreEcommerceFrameworkBundle:Tracking/%s:%s.js.php', $this->getViewScriptPrefix(), $name);
     }
 
     /**

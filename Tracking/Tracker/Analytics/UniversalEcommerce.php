@@ -39,12 +39,11 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
         $transaction = $this->getTrackingItemBuilder()->buildCheckoutTransaction($order);
         $items       = $this->getTrackingItemBuilder()->buildCheckoutItems($order);
 
-        $view = $this->buildView();
-        $view->transaction = $transaction;
-        $view->items       = $items;
-        $view->calls       = $this->buildCheckoutCompleteCalls($transaction, $items);
+        $parameterBag['transaction'] = $transaction;
+        $parameterBag['items']       = $items;
+        $parameterBag['calls']       = $this->buildCheckoutCompleteCalls($transaction, $items);
 
-        $result = $view->render($this->getViewScript('checkout_complete'));
+        $result = $this->renderer->render($this->getViewScript('checkout_complete'), $parameterBag);
         Analytics::addAdditionalCode($result, 'beforeEnd');
     }
 
