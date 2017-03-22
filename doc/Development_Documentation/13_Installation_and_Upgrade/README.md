@@ -16,5 +16,4 @@
 ## Advanced Topics
 - [Cluster Setup](03_System_Setup_and_Hosting/07_Cluster_Setup.md)
 - [Performance Guide](03_System_Setup_and_Hosting/09_Performance_Guide.md)
-- [Amazon AWS Setup Guide](03_System_Setup_and_Hosting/13_Amazon_AWS_Setup/README.md)
 

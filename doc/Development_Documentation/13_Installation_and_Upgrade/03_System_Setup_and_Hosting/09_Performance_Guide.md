@@ -2,7 +2,7 @@
 
 For high traffic websites we recommend the following software and configurations: 
 
-- Use a [high performance cache backend](../../09_Development_Tools_and_Details/09_Cache/README.md) for Pimcore (Redis2 is recommended).
+- Use a [high performance cache backend](../../09_Development_Tools_and_Details/09_Cache/README.md) for Pimcore (Redis is recommended).
 - Enable the [output-cache](../../09_Development_Tools_and_Details/09_Cache/03_Full_Page_Cache.md) in *Settings* > *System*.
 - Install and setup [varnish](https://www.varnish-cache.org/) cache (Pimcore sends already the right headers for varnish => ouput-cache lifetime, ... ).
 - Only use sessions when really necessary. The Pimcore Output-Cache detects the usage of sessions in the code and disables itself if necessary.
