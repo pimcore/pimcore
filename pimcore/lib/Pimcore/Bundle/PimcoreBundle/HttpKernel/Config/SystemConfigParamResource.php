@@ -31,11 +31,17 @@ class SystemConfigParamResource
     public function __construct(ContainerBuilder $container)
     {
         $this->container = $container;
+    }
 
+    /**
+     * Register system.php as container resource
+     */
+    public function register()
+    {
         // register system.php as resource to rebuild container in dev on change
         $systemConfigFile = Config::locateConfigFile('system.php');
         if (file_exists($systemConfigFile)) {
-            $container->addResource(new FileResource($systemConfigFile));
+            $this->container->addResource(new FileResource($systemConfigFile));
         }
     }
 
@@ -48,51 +54,60 @@ class SystemConfigParamResource
         if ($config) {
             $this->processConfig('pimcore_system_config', $config->toArray());
         } else {
-            // default config which is necessary to initialize the container even if pimcore isn't installed
-            // we only need parameters here which are referenced in the container to avoid compilation errors
-            $this->processConfig('pimcore_system_config', [
-                "database" => [
-                    "params" => [
-                        "host" => "localhost",
-                        "port" => 3306,
-                        "dbname" => "",
-                        "username" => "root",
-                        "password" => "",
+            $this->processConfig('pimcore_system_config', $this->getDefaultParameters());
+        }
+    }
+
+    /**
+     * Default config which is necessary to initialize the container even if pimcore isn't installed
+     * we only need parameters here which are referenced in the container to avoid compilation errors
+     *
+     * @return array
+     */
+    protected function getDefaultParameters()
+    {
+        return [
+            "database"   => [
+                "params" => [
+                    "host"     => "localhost",
+                    "port"     => 3306,
+                    "dbname"   => "",
+                    "username" => "root",
+                    "password" => "",
+                ]
+            ],
+            "email"      => [
+                "method" => "mail",
+                "smtp"   => [
+                    "host" => "",
+                    "port" => "",
+                    "ssl"  => null,
+                    "name" => "",
+                    "auth" => [
+                        "method"   => null,
+                        "username" => "",
+                        "password" => ""
                     ]
                 ],
-                "email" => [
-                    "method" => "mail",
-                    "smtp" => [
-                        "host" => "",
-                        "port" => "",
-                        "ssl" => null,
-                        "name" => "",
-                        "auth" => [
-                            "method" => null,
-                            "username" => "",
-                            "password" => ""
-                        ]
-                    ],
-                    "debug" => [
-                        "emailaddresses" => ""
-                    ]
-                ],
-                "newsletter" => [
-                    "method" => "mail",
-                    "smtp" => [
-                        "host" => "",
-                        "port" => "",
-                        "ssl" => null,
-                        "name" => "",
-                        "auth" => [
-                            "method" => null,
-                            "username" => "",
-                            "password" => ""
-                        ]
+                "debug"  => [
+                    "emailaddresses" => ""
+                ]
+            ],
+            "newsletter" => [
+                "method" => "mail",
+                "smtp"   => [
+                    "host" => "",
+                    "port" => "",
+                    "ssl"  => null,
+                    "name" => "",
+                    "auth" => [
+                        "method"   => null,
+                        "username" => "",
+                        "password" => ""
                     ]
                 ]
-            ]);
-        }
+            ]
+        ];
     }
 
     /**

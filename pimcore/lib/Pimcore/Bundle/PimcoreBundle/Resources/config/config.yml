@@ -1,6 +1,3 @@
-imports:
-    - { resource: system_config.php }
-
 parameters:
     locale: en
     swiftmailer.plugin.redirecting.class: 'Pimcore\Bundle\PimcoreBundle\Mail\Plugins\RedirectingPlugin'

@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
+use Pimcore\Bundle\PimcoreBundle\HttpKernel\Config\SystemConfigParamResource;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension;
@@ -244,6 +245,11 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
     protected function buildContainer()
     {
         $container = parent::buildContainer();
+
+        // add system.php as container resource and extract config values into params
+        $resource = new SystemConfigParamResource($container);
+        $resource->register();
+        $resource->setParameters();
 
         // add extensions.php as container resource
         if ($this->extensionConfig->configFileExists()) {
