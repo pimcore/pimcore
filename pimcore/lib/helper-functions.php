@@ -416,16 +416,12 @@ function recursiveCopy($source, $destination)
 }
 
 /**
- * @param  $var
+ *
  */
-function p_r($var)
+function p_r()
 {
-    if (function_exists("dump")) {
-        dump($var);
-    } else {
-        echo "<pre>";
-        print_r($var);
-        echo "</pre>";
+    foreach (func_get_args() as $var) {
+        \Symfony\Component\VarDumper\VarDumper::dump($var);
     }
 }
 
