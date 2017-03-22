@@ -19,6 +19,10 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
 use OnlineShop\Framework\PriceSystem\IModificatedPrice;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
 
 /**
  * Class CartPriceCalculator
@@ -97,7 +101,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
                     $currency = $item->getPrice()->getCurrency();
                 }
 
-                if($currency->compare( $item->getPrice()->getCurrency() ) != 0) {
+                if($currency->getShortName() != $item->getPrice()->getCurrency()->getShortName()) {
                     throw new \OnlineShop\Framework\Exception\UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
                 }
 
@@ -169,21 +173,21 @@ class CartPriceCalculator implements ICartPriceCalculator {
     /**
      * gets default currency object based on the default currency locale defined in the environment
      *
-     * @return \Zend_Currency
+     * @return Currency
      */
     protected function getDefaultCurrency() {
-        return new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     }
 
     /**
      * possibility to overwrite the price object that should be used
      *
      * @param $amount
-     * @param \Zend_Currency $currency
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @param Currency $currency
+     * @return IPrice
      */
-    protected function getDefaultPriceObject($amount, \Zend_Currency $currency) {
-        return new \OnlineShop\Framework\PriceSystem\Price($amount, $currency);
+    protected function getDefaultPriceObject($amount, Currency $currency) {
+        return new Price($amount, $currency);
     }
 
     /**

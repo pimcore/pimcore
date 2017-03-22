@@ -64,7 +64,7 @@ class Shipping implements IShipping
      */
     public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
-        $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
         $taxClass = $this->getTaxClass();
         if($taxClass) {

@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+
 /**
  * Interface for environment implementations of online shop framework
  */
@@ -139,9 +141,11 @@ interface IEnvironment extends IComponent {
     public function getCurrentCheckoutTenant();
 
     /**
-     * @return \Zend_Locale
+     * returns instance of default currency
+     *
+     * @return Currency
      */
-    public function getCurrencyLocale();
+    public function getDefaultCurrency();
 
     /**
      * @return boolean

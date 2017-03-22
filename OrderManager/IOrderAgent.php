@@ -17,10 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
-use Zend_Currency;
-
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Model\Element\Note;
 
 
@@ -84,7 +83,7 @@ interface IOrderAgent
 
 
     /**
-     * @return Zend_Currency
+     * @return Currency
      */
     public function getCurrency();
 

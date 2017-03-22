@@ -115,10 +115,11 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
     </thead>
     <tbody>
     <?php
-    $totalSum = new Zend_Currency( \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale() );
+    $totalSum = 0;
+    $defaultCurrency = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     foreach($paginator as $item):
         /* @var \OnlineShop\Framework\OrderManager\IOrderListItem $item */
-        $totalSum->add( $item->getTotalPrice() );
+        $totalSum += $item->getTotalPrice();
         ?>
         <tr>
             <td>
@@ -138,7 +139,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
             </td>
             <td><?= $item->getItems() ?></td>
             </td>
-            <td class="text-right"><?= $totalSum->toCurrency($item->getTotalPrice()) ?></td>
+            <td class="text-right"><?= $formatter->formatCurrency($item->getTotalPrice(), $item->getCurrency()) ?></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -146,7 +147,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
     <tr>
         <td colspan="3"></td>
         <td class="text-right">
-            <strong><?= $totalSum ?></strong>
+            <strong><?= $defaultCurrency->toCurrency($totalSum) ?></strong>
         </td>
     </tr>
     </tfoot>

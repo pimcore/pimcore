@@ -12,6 +12,7 @@ use OnlineShop\Framework\PriceSystem\AttributePriceSystem;
 use OnlineShop\Framework\PriceSystem\Price;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 class CartTaxManagementTest extends \Codeception\Test\Unit
@@ -60,7 +61,7 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
                 return $taxClass;
             },
             "getPriceClassInstance" => function($amount) {
-                return new Price($amount, new \Zend_Currency("EUR"));
+                return new Price($amount, new Currency("EUR"));
             },
             "calculateAmount" => function() use ($grossPrice) {
                 return $grossPrice;

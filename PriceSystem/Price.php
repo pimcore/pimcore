@@ -19,11 +19,12 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 
 class Price implements IPrice {
 
     /**
-     * @var \Zend_Currency
+     * @var Currency
      */
     private $currency;
 
@@ -56,10 +57,10 @@ class Price implements IPrice {
     /**
      * Price constructor.
      * @param $amount
-     * @param \Zend_Currency $currency
+     * @param Currency $currency
      * @param bool $minPrice
      */
-    function __construct($amount, \Zend_Currency $currency, $minPrice = false) {
+    function __construct($amount, Currency $currency, $minPrice = false) {
         $this->grossAmount = $amount;
         $this->currency = $currency;
         $this->minPrice = $minPrice;
@@ -110,14 +111,14 @@ class Price implements IPrice {
     }
 
     /**
-     * @param \Zend_Currency $currency
+     * @param Currency $currency
      */
-    public function setCurrency(\Zend_Currency $currency) {
+    public function setCurrency(Currency $currency) {
         $this->currency = $currency;
     }
 
     /**
-     * @return \Zend_Currency
+     * @return Currency
      */
     function getCurrency() {
         return $this->currency;

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Config\Config;
 
 class QPay implements IPayment
@@ -57,11 +58,6 @@ class QPay implements IPayment
     protected $authorizedData;
 
     /**
-     * @var \Zend_Locale
-     */
-    protected $currencyLocale;
-
-    /**
      * Whitelist of optional properties allowed for payment init
      * @var array
      */
@@ -97,7 +93,6 @@ class QPay implements IPayment
         $this->initHashAlgorithm($settings);
         $this->initOptionalPaymentProperties($settings);
 
-        $this->currencyLocale = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
     /**
@@ -284,7 +279,7 @@ class QPay implements IPayment
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new \Zend_Currency($authorizedData['currency'], \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new Currency($authorizedData['currency']));
 
 
         return new \OnlineShop\Framework\PaymentManager\Status(
@@ -373,7 +368,7 @@ class QPay implements IPayment
         else
         {
             // default clearing auth
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'], new \Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
+            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'], new Currency($this->authorizedData['currency']));
 
             $request = [
                 'customerId' => $this->customer

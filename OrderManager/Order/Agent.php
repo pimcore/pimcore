@@ -24,6 +24,7 @@ use Exception;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Pimcore\Model\Object\Concrete;
@@ -244,11 +245,11 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @return \Zend_Currency
+     * @return Currency
      */
     public function getCurrency()
     {
-        return new \Zend_Currency($this->getOrder()->getCurrency(), $this->factory->getEnvironment()->getCurrencyLocale());
+        return $this->factory->getEnvironment()->getDefaultCurrency();
     }
 
 

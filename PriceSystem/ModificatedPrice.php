@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+
 class ModificatedPrice extends Price implements IModificatedPrice {
 
     /**
@@ -24,7 +26,7 @@ class ModificatedPrice extends Price implements IModificatedPrice {
      */
     protected $description;
 
-    public function __construct($amount, \Zend_Currency $currency, $minPrice = false, $description = null) {
+    public function __construct($amount, Currency $currency, $minPrice = false, $description = null) {
         parent::__construct($amount, $currency, $minPrice);
         $this->description = $description;
     }

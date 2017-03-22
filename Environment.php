@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
@@ -55,6 +56,10 @@ class Environment implements IEnvironment {
     protected $currentCheckoutTenant = null;
 
     /**
+     * @var Currency
+     */
+    protected $defaultCurrency = null;
+    /**
      * current transient checkout tenant
      * this value will not be stored into the session and is only valid for current process
      * set with setCurrentCheckoutTenant('tenant', false');
@@ -66,12 +71,7 @@ class Environment implements IEnvironment {
     public function __construct($config) {
         $this->loadFromSession();
 
-        $locale = (string)$config->defaultlocale;
-        if(empty($locale)) {
-            $this->currencyLocale = \Zend_Registry::get("Zend_Locale");
-        } else {
-            $this->currencyLocale = new \Zend_Locale($locale);
-        }
+        $this->defaultCurrency = new Currency((string)$config->defaultCurrency);
     }
 
     protected function loadFromSession() {
@@ -235,10 +235,10 @@ class Environment implements IEnvironment {
     }
 
     /**
-     * @return null|\Zend_Locale
+     * @return Currency
      */
-    public function getCurrencyLocale() {
-        return $this->currencyLocale;
+    public function getDefaultCurrency() {
+        return $this->defaultCurrency;
     }
 
     /**

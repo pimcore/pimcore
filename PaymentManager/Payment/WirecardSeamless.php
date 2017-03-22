@@ -7,6 +7,7 @@ use OnlineShop\Framework\PaymentManager\IStatus;
 use OnlineShop\Framework\PaymentManager\Status;
 use OnlineShop\Framework\PriceSystem\IPrice;
 use OnlineShop\Framework\PriceSystem\Price;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopOrder;
 
@@ -372,7 +373,7 @@ class WirecardSeamless implements IPayment
 
 
         // restore price object for payment status
-        $price = new Price($authorizedData['amount'], new \Zend_Currency($authorizedData['currency'], Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
 
 
         $status = new Status(

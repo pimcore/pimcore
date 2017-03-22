@@ -6,7 +6,7 @@ return [
         "environment" => [
             "class" => "\\OnlineShop\\Framework\\Environment",
             "config" => [
-                "defaultlocale" => "de_AT"
+                "defaultCurrency" => "EUR"
             ]
         ],
         /* general settings for cart manager */

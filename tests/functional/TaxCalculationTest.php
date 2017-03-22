@@ -8,6 +8,7 @@ use OnlineShop\Framework\PriceSystem\AttributePriceSystem;
 use OnlineShop\Framework\PriceSystem\Price;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 class TaxCalculationTest extends \Codeception\Test\Unit
@@ -30,7 +31,7 @@ class TaxCalculationTest extends \Codeception\Test\Unit
     {
         $taxCalculationService = new TaxCalculationService();
 
-        $price = new Price(100, new \Zend_Currency("EUR"));
+        $price = new Price(100, new Currency("EUR"));
         $price->setNetAmount(90);
         $taxCalculationService->updateTaxes($price);
 
@@ -131,7 +132,7 @@ class TaxCalculationTest extends \Codeception\Test\Unit
                 return $taxClass;
             },
             "getPriceClassInstance" => function($amount) {
-                return new Price($amount, new \Zend_Currency("EUR"));
+                return new Price($amount, new Currency("EUR"));
             },
             "calculateAmount" => function() {
                 return 100;

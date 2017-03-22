@@ -18,6 +18,8 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 
 /**
  * Class AttributePriceSystem
@@ -104,10 +106,10 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
     /**
      * returns default currency based on environment settings
      *
-     * @return \Zend_Currency
+     * @return Currency
      */
     protected function getDefaultCurrency() {
-        return new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale());
+        return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     }
 
     /**

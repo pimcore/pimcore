@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Config\Config;
 
 class PayPal implements IPayment
@@ -194,7 +195,7 @@ class PayPal implements IPayment
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'], new \Zend_Currency($response['currency']));
+        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'], new Currency($response['currency']));
 
 
         // execute

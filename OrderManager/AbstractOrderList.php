@@ -18,8 +18,6 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use Zend\Paginator\Adapter\AdapterInterface;
-use Zend_Paginator_Adapter_Interface;
-
 use \OnlineShop\Framework\Model\AbstractOrder;
 
 use Pimcore\Resource;

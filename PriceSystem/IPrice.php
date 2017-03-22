@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 
 /**
  * Interface for price implementations of online shop framework
@@ -36,7 +37,7 @@ interface IPrice {
 
     /**
      * @abstract
-     * @return \Zend_Currency
+     * @return Currency
      */
     public function getCurrency();
 
