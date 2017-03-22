@@ -90,7 +90,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
     protected function registerExtensionManagerBundles(array $bundles)
     {
         foreach ($this->extensionManagerBundles as $extensionManagerBundle) {
-            $bundles[] = new $extensionManagerBundle();
+            if (class_exists($extensionManagerBundle)) {
+                $bundles[] = new $extensionManagerBundle();
+            }
         }
 
         return $bundles;
