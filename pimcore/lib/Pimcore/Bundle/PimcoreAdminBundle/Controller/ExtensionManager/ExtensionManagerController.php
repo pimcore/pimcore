@@ -393,8 +393,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
         return [
             'id'            => $brick->getId(),
             'type'          => 'areabrick',
-            'name'          => $brick->getName(),
-            'description'   => $brick->getDescription(),
+            'name'          => $this->trans($brick->getName()),
+            'description'   => $this->trans($brick->getDescription()),
             'installable'   => false,
             'uninstallable' => false,
             'updateable'    => false,
