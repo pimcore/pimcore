@@ -402,7 +402,7 @@ INSERT INTO `assets` VALUES ('27','26','video','home-trailer-english.mp4','/vide
 INSERT INTO `assets` VALUES ('29','1','folder','documents','/','','1368548619','1368632467','0','0','','0');
 INSERT INTO `assets` VALUES ('34','1','folder','screenshots','/','','1368560793','1368632470','0','0','','0');
 INSERT INTO `assets` VALUES ('35','34','image','glossary.png','/screenshots/','image/png','1368560809','1368632470','0','0','','0');
-INSERT INTO `assets` VALUES ('36','29','document','documentation.pdf','/documents/','application/pdf','1368562442','1368632467','0','0','','0');
+INSERT INTO `assets` VALUES ('36','29','document','pimcore_t-mobile.pdf','/documents/','application/pdf','1368562442','1368632467','0','0','','0');
 INSERT INTO `assets` VALUES ('37','7','folder','italy','/examples/','','1368596763','1368632468','0','0','','0');
 INSERT INTO `assets` VALUES ('38','37','image','dsc04346.jpg','/examples/italy/','image/jpeg','1368596767','1368632468','0','0','','0');
 INSERT INTO `assets` VALUES ('39','37','image','dsc04344.jpg','/examples/italy/','image/jpeg','1368596768','1368632468','0','0','','0');
@@ -2161,7 +2161,7 @@ INSERT INTO `properties` VALUES ('33','document','/en/advanced-examples/hard-lin
 INSERT INTO `properties` VALUES ('34','document','/en/advanced-examples/hard-link','navigation_name','text','Hard Link','0');
 INSERT INTO `properties` VALUES ('35','document','/en/advanced-examples/image-with-hotspots-and-markers','navigation_name','text','Image with Hotspots','0');
 INSERT INTO `properties` VALUES ('36','document','/en/advanced-examples/search','navigation_name','text','Search','0');
-INSERT INTO `properties` VALUES ('36','asset','/documents/documentation.pdf','document_page_count','text','39','0');
+INSERT INTO `properties` VALUES ('36','asset','/documents/pimcore_t-mobile.pdf','document_page_count','text','39','0');
 INSERT INTO `properties` VALUES ('37','document','/en/advanced-examples/contact-form','email','document','38','1');
 INSERT INTO `properties` VALUES ('37','document','/en/advanced-examples/contact-form','navigation_name','text','Contact Form','0');
 INSERT INTO `properties` VALUES ('40','document','/en','navigation_name','text','Home','0');
