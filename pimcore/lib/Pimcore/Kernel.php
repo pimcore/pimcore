@@ -31,6 +31,8 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
@@ -127,7 +129,61 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        $this->loadBundleConfigurations($loader);
+
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
+    }
+
+    /**
+     * Try to autoload configs from bundles if Resources/config/pimcore exists.
+     *
+     * Will first try to load config_<environment>.<suffix> and fall back to config.<suffix> if the
+     * environment specific lookup didn't find anything. All known suffixes are loaded, so if a config.yml
+     * and a config.php exist, both will be used.
+     *
+     * @param LoaderInterface $loader
+     */
+    protected function loadBundleConfigurations(LoaderInterface $loader)
+    {
+        foreach ($this->bundles as $bundle) {
+            $directory = $bundle->getPath() . '/Resources/config/pimcore';
+            if (!(file_exists($directory) && is_dir($directory))) {
+                continue;
+            }
+
+            // try to load environment specific file first, fall back to generic one if none found (config_dev.yml > config.yml)
+            $finder = $this->buildContainerConfigFinder($directory, true);
+            if ($finder->count() === 0) {
+                $finder = $this->buildContainerConfigFinder($directory, false);
+            }
+
+            foreach ($finder as $file) {
+                $loader->load($file->getRealPath());
+            }
+        }
+    }
+
+    /**
+     * @param string $directory
+     * @param bool $includeEnvironment
+     *
+     * @return Finder
+     */
+    protected function buildContainerConfigFinder($directory, $includeEnvironment = false)
+    {
+        $baseName = 'config';
+        if ($includeEnvironment) {
+            $baseName .= '_' . $this->getEnvironment();
+        }
+
+        $finder = new Finder();
+        $finder->in($directory);
+
+        foreach (['php', 'yml', 'xml'] as $extension) {
+            $finder->name(sprintf('%s.%s', $baseName, $extension));
+        }
+
+        return $finder;
     }
 
     /**
