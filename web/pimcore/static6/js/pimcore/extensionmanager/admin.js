@@ -327,39 +327,7 @@ pimcore.extensionmanager.admin = Class.create({
                     text: t("refresh"),
                     iconCls: "pimcore_icon_reload",
                     handler: this.reload.bind(this)
-                }, "-", {
-                    text: t("create_new_plugin_skeleton"),
-                    iconCls: "pimcore_icon_plugin pimcore_icon_overlay_add",
-                    handler: function () {
-                        Ext.MessageBox.prompt(t('create_new_plugin_skeleton'), t('enter_the_name_of_the_new_extension') + "(a-zA-Z0-9_)",  function (button, value) {
-                            var regresult = value.match(/[a-zA-Z0-9_]+/);
-
-                            if (button == "ok" && value.length > 2) {
-                                Ext.Ajax.request({
-                                    url: "/admin/extensionmanager/admin/create",
-                                    params: {
-                                        name: value
-                                    },
-                                    success: function (response) {
-                                        var data = Ext.decode(response.responseText);
-                                        if(data && data.success) {
-                                            this.reload();
-                                        } else {
-                                            Ext.Msg.alert(t('create_new_plugin_skeleton'), t('invalid_plugin_name'));
-                                        }
-                                    }.bind(this)
-                                });
-                            }
-                            else if (button == "cancel") {
-                                return;
-                            }
-                            else {
-                                Ext.Msg.alert(t('create_new_plugin_skeleton'), t('invalid_plugin_name'));
-                            }
-                        }.bind(this));
-                    }.bind(this)
-                },
-                "->" , "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"
+                }, "->" , "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"
             ]
         });
 
