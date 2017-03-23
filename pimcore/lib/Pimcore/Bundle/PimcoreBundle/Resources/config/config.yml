@@ -123,8 +123,6 @@ pimcore:
                         - \Object_Class_Data_
 
                 layout:
-                    map:
-
                     prefixes:
                         - \Pimcore\Model\Object\ClassDefinition\Layout\
                         - \Object_Class_Layout_

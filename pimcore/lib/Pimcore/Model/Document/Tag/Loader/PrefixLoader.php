@@ -15,18 +15,17 @@ declare(strict_types = 1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Object\ClassDefinition\Loader;
+namespace Pimcore\Model\Document\Tag\Loader;
 
-use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
-use Pimcore\Model\Object\ClassDefinition\Data;
+use Pimcore\Loader\ImplementationLoader\PrefixLoader as BasePrefixLoader;
 
-class DataLoader extends ImplementationLoader implements DataLoaderInterface
+class PrefixLoader extends BasePrefixLoader
 {
     /**
      * @inheritDoc
      */
-    public function build(string $name, array $params = []): Data
+    protected function normalizeName(string $name): string
     {
-        return parent::build($name, $params);
+        return ucfirst(strtolower($name));
     }
 }

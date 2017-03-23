@@ -20,20 +20,10 @@ namespace Pimcore\Loader\ImplementationLoader;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 
 /**
- * Core implementation loader delegating to classmap and prefix loaders.
+ * Core implementation loader delegating to a list of registered loaders
  */
-class ImplementationLoader implements LoaderInterface, ClassMapLoaderInterface, PrefixLoaderInterface
+class ImplementationLoader implements LoaderInterface
 {
-    /**
-     * @var ClassMapLoaderInterface
-     */
-    protected $classMapLoader;
-
-    /**
-     * @var PrefixLoaderInterface
-     */
-    protected $prefixLoader;
-
     /**
      * @var LoaderInterface[]
      */
@@ -45,78 +35,32 @@ class ImplementationLoader implements LoaderInterface, ClassMapLoaderInterface, 
     private $loaderCache = [];
 
     /**
-     * @param ClassMapLoaderInterface $classMapLoader
-     * @param PrefixLoaderInterface $prefixLoader
+     * @param LoaderInterface[] $loaders
      */
-    public function __construct(
-        ClassMapLoaderInterface $classMapLoader = null,
-        PrefixLoaderInterface $prefixLoader = null
-    )
+    public function __construct(array $loaders = [])
     {
-        if (null === $classMapLoader) {
-            $classMapLoader = new ClassMapLoader();
+        $this->setLoaders($loaders);
+    }
+
+    /**
+     * @param LoaderInterface[] $loaders
+     */
+    private function setLoaders(array $loaders)
+    {
+        $this->loaders     = [];
+        $this->loaderCache = [];
+
+        foreach ($loaders as $loader) {
+            $this->addLoader($loader);
         }
-
-        if (null === $prefixLoader) {
-            $prefixLoader = new PrefixLoader();
-        }
-
-        $this->classMapLoader = $classMapLoader;
-        $this->prefixLoader   = $prefixLoader;
-
-        $this->loaders = [
-            $this->classMapLoader,
-            $this->prefixLoader
-        ];
-
-        $this->init();
     }
 
     /**
-     * Initializes loader after construction
+     * @param LoaderInterface $loader
      */
-    protected function init()
+    private function addLoader(LoaderInterface $loader)
     {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addClassMap(string $name, string $className)
-    {
-        $this->classMapLoader->addClassMap($name, $className);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getClassMap(): array
-    {
-        $this->classMapLoader->getClassMap();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setClassMap(array $classMap)
-    {
-        $this->classMapLoader->setClassMap($classMap);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addPrefix(string $prefix, callable $normalizer = null)
-    {
-        $this->prefixLoader->addPrefix($prefix, $normalizer);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addPrefixes(array $prefixes, callable $normalizer = null)
-    {
-        $this->prefixLoader->addPrefixes($prefixes, $normalizer);
+        $this->loaders[] = $loader;
     }
 
     /**

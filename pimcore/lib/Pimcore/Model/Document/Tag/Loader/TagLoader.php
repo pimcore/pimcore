@@ -25,19 +25,6 @@ class TagLoader extends ImplementationLoader implements TagLoaderInterface
     /**
      * @inheritDoc
      */
-    protected function init()
-    {
-        $normalizer = function ($name) {
-            return ucfirst(strtolower($name));
-        };
-
-        $this->prefixLoader->addPrefix('\\Pimcore\\Model\\Document\\Tag\\', $normalizer);
-        $this->prefixLoader->addPrefix('\\Document_Tag_', $normalizer);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function build(string $name, array $params = []): Tag
     {
         return parent::build($name, $params);

@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types = 1);
-
 /**
  * Pimcore
  *
@@ -15,18 +12,8 @@ declare(strict_types = 1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Object\ClassDefinition\Loader;
+namespace Pimcore\Loader\ImplementationLoader\Exception;
 
-use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
-use Pimcore\Model\Object\ClassDefinition\Data;
-
-class DataLoader extends ImplementationLoader implements DataLoaderInterface
+class InvalidArgumentException extends \InvalidArgumentException
 {
-    /**
-     * @inheritDoc
-     */
-    public function build(string $name, array $params = []): Data
-    {
-        return parent::build($name, $params);
-    }
 }

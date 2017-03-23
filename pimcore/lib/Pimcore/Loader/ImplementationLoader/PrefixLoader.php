@@ -18,49 +18,51 @@ declare(strict_types = 1);
 namespace Pimcore\Loader\ImplementationLoader;
 
 use Doctrine\Common\Inflector\Inflector;
+use Pimcore\Loader\ImplementationLoader\Exception\InvalidArgumentException;
 use Pimcore\Tool;
 
 /**
  * Iterates an array of namespace prefixes and tries to load classes by namespace.
  */
-class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterface
+class PrefixLoader extends AbstractClassNameLoader
 {
     /**
      * @var array
      */
-    protected $prefixes = [];
+    private $prefixes = [];
 
     /**
      * @var array
      */
-    protected $cache = [];
+    private $cache = [];
 
     /**
      * @param array $prefixes
      */
     public function __construct(array $prefixes = [])
     {
-        foreach ($prefixes as $prefix) {
-            $this->addPrefix($prefix);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function addPrefix(string $prefix, callable $normalizer = null)
-    {
-        $this->prefixes[$prefix] = [$prefix, $normalizer];
+        $this->setPrefixes($prefixes);
     }
 
     /**
      * @inheritDoc
      */
-    public function addPrefixes(array $prefixes, callable $normalizer = null)
+    private function setPrefixes(array $prefixes)
     {
-        foreach ($prefixes as $prefix) {
-            $this->addPrefix($prefix, $normalizer);
+        if (empty($prefixes)) {
+            throw new InvalidArgumentException('Prefix loader needs a list of prefixes, empty array given');
         }
+
+        $this->prefixes = [];
+        foreach ($prefixes as $prefix) {
+            if (!is_string($prefix)) {
+                throw new InvalidArgumentException(sprintf('Prefix must be a string, %s given', gettype($prefix)));
+            }
+
+            $this->prefixes[] = $prefix;
+        }
+
+        $this->prefixes = array_unique($this->prefixes);
     }
 
     /**
@@ -86,7 +88,7 @@ class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterf
      *
      * @return mixed|string
      */
-    protected function findClassName(string $name)
+    private function findClassName(string $name)
     {
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
@@ -105,28 +107,23 @@ class PrefixLoader extends AbstractClassNameLoader implements PrefixLoaderInterf
     }
 
     /**
-     * @param array $prefix
+     * @param string $prefix
      * @param string $name
      *
      * @return string
      */
-    protected function buildClassName(array $prefix, $name): string
+    protected function buildClassName(string $prefix, string $name): string
     {
-        return $prefix[0] . $this->normalizeName($name, $prefix[1]);
+        return $prefix . $this->normalizeName($name);
     }
 
     /**
      * @param string $name
-     * @param callable $normalizer
      *
      * @return string
      */
-    protected function normalizeName(string $name, callable $normalizer = null): string
+    protected function normalizeName(string $name): string
     {
-        if (null === $normalizer) {
-            $normalizer = [Inflector::class, 'classify'];
-        }
-
-        return call_user_func($normalizer, $name);
+        return Inflector::classify($name);
     }
 }

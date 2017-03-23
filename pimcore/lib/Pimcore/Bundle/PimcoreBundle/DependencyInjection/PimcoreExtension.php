@@ -15,9 +15,13 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\PimcoreBundle\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
+use Pimcore\Loader\ImplementationLoader\PrefixLoader;
+use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -60,6 +64,7 @@ class PimcoreExtension extends Extension
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
 
+        $this->configureImplementationLoaders($container, $config);
         $this->configureCache($container, $loader, $config);
 
         // load engine specific configuration only if engine is active
@@ -76,6 +81,59 @@ class PimcoreExtension extends Extension
         }
 
         $this->addContextRoutes($container, $config['context']);
+    }
+
+    /**
+     * Configure implementation loaders from config
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
+    protected function configureImplementationLoaders(ContainerBuilder $container, $config)
+    {
+        $services = [
+            'pimcore.implementation_loader.document.tag'  => [
+                'config'       => $config['extensions']['documents']['tags'],
+                'prefixLoader' => DocumentTagPrefixLoader::class
+            ],
+            'pimcore.implementation_loader.object.data'  => [
+                'config'       => $config['extensions']['objects']['class_definitions']['data'],
+                'prefixLoader' => PrefixLoader::class
+            ],
+            'pimcore.implementation_loader.object.layout'  => [
+                'config'       => $config['extensions']['objects']['class_definitions']['layout'],
+                'prefixLoader' => PrefixLoader::class
+            ]
+        ];
+
+        // read config and add map/prefix loaders if configured - makes sure only needed objects are built
+        // loaders are defined as private services as we don't need them outside the main type loader
+        foreach ($services as $serviceId => $cfg) {
+            $loaders = [];
+
+            if ($cfg['config']['map']) {
+                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
+                $classMapLoader->setPublic(false);
+
+                $classMapLoaderId = $serviceId . '.class_map_loader';
+                $container->setDefinition($classMapLoaderId, $classMapLoader);
+
+                $loaders[] = new Reference($classMapLoaderId);
+            }
+
+            if ($cfg['config']['prefixes']) {
+                $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
+                $prefixLoader->setPublic(false);
+
+                $prefixLoaderId = $serviceId . '.prefix_loader';
+                $container->setDefinition($prefixLoaderId, $prefixLoader);
+
+                $loaders[] = new Reference($prefixLoaderId);
+            }
+
+            $service = $container->getDefinition($serviceId);
+            $service->setArguments([$loaders]);
+        }
     }
 
     /**
