@@ -81,14 +81,22 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
         $key = $this->createMockupCacheKey($objectId);
 
         //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
-        //TODO
-        $cache = \Pimcore\Cache::getInstance();
-        $success = $cache->save(serialize($mockup), \Pimcore\Cache::$cachePrefix . $key, [$this->getMockupCachePrefix()], null);
+        $hasLock = \Pimcore\Cache::getHandler()->getWriteLock()->hasLock();
+        if($hasLock) {
+            \Pimcore\Cache::getHandler()->getWriteLock()->disable();
+        }
+
+        $success = \Pimcore\Cache::save($mockup, $key, [$this->getMockupCachePrefix()], null, 0, true);
         $result = \Pimcore\Cache::load($key);
+
         if($success && $result) {
             $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE o_id = ? and tenant = ?", array($objectId, $this->name));
         } else {
             Logger::err("Element with ID $objectId could not be added to mockup-cache");
+        }
+
+        if($hasLock) {
+            \Pimcore\Cache::getHandler()->getWriteLock()->enable();
         }
 
         return $mockup;
