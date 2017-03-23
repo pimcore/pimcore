@@ -350,8 +350,6 @@ class Legacy {
         // disable build-in error handler
         $front->setParam('noErrorHandler', true);
 
-        // for admin an other modules directly in the core
-        $front->addModuleDirectory(PIMCORE_PATH . "/modules");
         // for plugins
         if (is_dir(PIMCORE_PLUGINS_PATH) && is_readable(PIMCORE_PLUGINS_PATH)) {
             $front->addModuleDirectory(PIMCORE_PLUGINS_PATH);
