@@ -20,6 +20,11 @@ use Psr\Log\LoggerInterface;
 interface CoreHandlerInterface
 {
     /**
+     * @return WriteLockInterface
+     */
+    public function getWriteLock();
+
+    /**
      * @return LoggerInterface
      */
     public function getLogger();

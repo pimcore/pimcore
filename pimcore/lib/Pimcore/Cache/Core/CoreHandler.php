@@ -141,6 +141,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getWriteLock()
+    {
+        return $this->writeLock;
+    }
+
+    /**
      * @codeCoverageIgnore
      *
      * @return LoggerInterface
