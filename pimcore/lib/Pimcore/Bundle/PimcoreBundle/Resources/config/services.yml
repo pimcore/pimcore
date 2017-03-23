@@ -14,6 +14,12 @@ services:
     # ROUTING
     #
 
+    pimcore.routing_loader.bundle_routes:
+        class: Pimcore\Bundle\PimcoreBundle\Routing\Loader\BundleRoutingLoader
+        arguments: ['@pimcore.bundle_config_locator']
+        tags:
+            - { name: routing.loader }
+
     pimcore.router.staticroute:
         class: Pimcore\Bundle\PimcoreBundle\Routing\Staticroute\Router
         arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
@@ -247,6 +253,10 @@ services:
     #
     # PIMCORE SERVICES
     #
+
+    pimcore.bundle_config_locator:
+        class: Pimcore\Config\BundleConfigLocator
+        arguments: ['@kernel']
 
     pimcore.http.request_helper:
         class: Pimcore\Http\RequestHelper

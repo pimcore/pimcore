@@ -1,35 +1,37 @@
 _pimcore_service_common_files:
-  path: /{filename}
-  defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
-  requirements:
-    filename: '(robobts\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
+    path: /{filename}
+    defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
+    requirements:
+        filename: '(robobts\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
 
 _pimcore_service_common_files_apple_touch_icon:
-  path: /{filename}
-  defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
-  requirements:
-    filename: 'apple\-touch\-icon.*'
+    path: /{filename}
+    defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
+    requirements:
+        filename: 'apple\-touch\-icon.*'
 
 _pimcore_service_hybridauth:
-  path: /hybridauth/{placeholder}
-  defaults: { _controller: PimcoreBundle:PublicServices:hybridauth }
-  requirements:
-    placeholder: '.*'
+    path: /hybridauth/{placeholder}
+    defaults: { _controller: PimcoreBundle:PublicServices:hybridauth }
+    requirements:
+        placeholder: '.*'
 
 _pimcore_service_qrcode:
-  path: /qr~-~code/{key}
-  defaults: { _controller: PimcoreBundle:PublicServices:qrcode }
-  requirements:
-    key: '[a-zA-Z0-9_\-]+'
+    path: /qr~-~code/{key}
+    defaults: { _controller: PimcoreBundle:PublicServices:qrcode }
+    requirements:
+        key: '[a-zA-Z0-9_\-]+'
 
 _pimcore_service_thumbnail:
-  path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
-  defaults: { _controller: PimcoreBundle:PublicServices:thumbnail}
-  requirements:
-    assetIdGroup: '\d+'
-    assetId: '\d+'
-    thumbnailName: '[a-zA-Z0-9_\-]+'
-    filename: '.*'
+    path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
+    defaults: { _controller: PimcoreBundle:PublicServices:thumbnail}
+    requirements:
+        assetIdGroup: '\d+'
+        assetId: '\d+'
+        thumbnailName: '[a-zA-Z0-9_\-]+'
+        filename: '.*'
 
-_pimcore_admin:
-    resource: "@PimcoreAdminBundle/Resources/config/routing.yml"
+# auto loads routes from all bundles in Resources/config/pimcore/routing.yml
+_pimcore_bundle_auto:
+    resource: .
+    type: pimcore_bundle
