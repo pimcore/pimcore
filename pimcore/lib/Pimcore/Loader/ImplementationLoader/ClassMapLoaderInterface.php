@@ -20,7 +20,7 @@ namespace Pimcore\Loader\ImplementationLoader;
 /**
  * Loads implementations from a fixed name => className map
  */
-interface ClassMapLoaderInterface
+interface ClassMapLoaderInterface extends LoaderInterface
 {
     /**
      * Add an entry to the classmap

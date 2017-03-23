@@ -22,7 +22,7 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 /**
  * Core implementation loader delegating to classmap and prefix loaders.
  */
-class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, ClassMapLoaderInterface
+class ImplementationLoader implements LoaderInterface, ClassMapLoaderInterface, PrefixLoaderInterface
 {
     /**
      * @var ClassMapLoaderInterface
@@ -33,6 +33,16 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
      * @var PrefixLoaderInterface
      */
     protected $prefixLoader;
+
+    /**
+     * @var LoaderInterface[]
+     */
+    protected $loaders;
+
+    /**
+     * @var array
+     */
+    private $loaderCache = [];
 
     /**
      * @param ClassMapLoaderInterface $classMapLoader
@@ -53,6 +63,11 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
 
         $this->classMapLoader = $classMapLoader;
         $this->prefixLoader   = $prefixLoader;
+
+        $this->loaders = [
+            $this->classMapLoader,
+            $this->prefixLoader
+        ];
 
         $this->init();
     }
@@ -105,25 +120,21 @@ class ImplementationLoader implements LoaderInterface, PrefixLoaderInterface, Cl
     }
 
     /**
-     * @return LoaderInterface[]
-     */
-    protected function getLoaders(): array
-    {
-        return [
-            $this->classMapLoader,
-            $this->prefixLoader
-        ];
-    }
-
-    /**
      * @param string $name
      *
      * @return LoaderInterface|null
      */
-    protected function getLoader(string $name)
+    private function getLoader(string $name)
     {
-        foreach ($this->getLoaders() as $loader) {
+        // loader cache contains index of loader previously found for given name
+        if (isset($this->loaderCache[$name])) {
+            return $this->loaders[$this->loaderCache[$name]];
+        }
+
+        foreach ($this->loaders as $idx => $loader) {
             if ($loader->supports($name)) {
+                $this->loaderCache[$name] = $idx;
+
                 return $loader;
             }
         }
