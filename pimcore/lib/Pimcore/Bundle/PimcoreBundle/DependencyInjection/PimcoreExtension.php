@@ -39,8 +39,8 @@ class PimcoreExtension extends Extension
         $config        = $this->processConfiguration($configuration, $configs);
 
         // bundle manager/locator config
-        $container->setParameter('pimcore.extensions.bundles.search_paths', $config['extensions']['bundles']['search_paths']);
-        $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['extensions']['bundles']['handle_composer']);
+        $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
+        $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
@@ -93,15 +93,15 @@ class PimcoreExtension extends Extension
     {
         $services = [
             'pimcore.implementation_loader.document.tag'  => [
-                'config'       => $config['extensions']['documents']['tags'],
+                'config'       => $config['documents']['tags'],
                 'prefixLoader' => DocumentTagPrefixLoader::class
             ],
             'pimcore.implementation_loader.object.data'  => [
-                'config'       => $config['extensions']['objects']['class_definitions']['data'],
+                'config'       => $config['objects']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class
             ],
             'pimcore.implementation_loader.object.layout'  => [
-                'config'       => $config['extensions']['objects']['class_definitions']['layout'],
+                'config'       => $config['objects']['class_definitions']['layout'],
                 'prefixLoader' => PrefixLoader::class
             ]
         ];

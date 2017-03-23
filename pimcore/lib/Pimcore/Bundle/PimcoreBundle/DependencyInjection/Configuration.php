@@ -29,29 +29,11 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('pimcore');
 
-        $this->addCacheNode($rootNode);
-        $this->addContextNode($rootNode);
-        $this->addExtensionsNode($rootNode);
-        $this->addAdminNode($rootNode);
+        $rootNode = $treeBuilder->root('pimcore');
+        $rootNode->addDefaultsIfNotSet();
 
-        return $treeBuilder;
-    }
-
-    /**
-     * Add document specific config
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    protected function addExtensionsNode(ArrayNodeDefinition $rootNode)
-    {
-        $extensionsNode = $rootNode
-            ->children()
-                ->arrayNode('extensions');
-
-        $extensionsNode
-            ->addDefaultsIfNotSet()
+        $rootNode
             ->children()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
@@ -63,10 +45,17 @@ class Configuration implements ConfigurationInterface
                             ->defaultTrue()
                         ->end()
                     ->end()
-                ->end();
+                ->end()
+            ->end();
 
-        $this->addObjectsNode($extensionsNode);
-        $this->addDocumentsNode($extensionsNode);
+        $this->addObjectsNode($rootNode);
+        $this->addDocumentsNode($rootNode);
+
+        $this->addCacheNode($rootNode);
+        $this->addContextNode($rootNode);
+        $this->addAdminNode($rootNode);
+
+        return $treeBuilder;
     }
 
     /**
