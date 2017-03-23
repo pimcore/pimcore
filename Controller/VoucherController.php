@@ -136,11 +136,11 @@ class VoucherController extends FrontendController
 
 //    /**
 //     * @param OnlineShopVoucherSeries $onlineShopVoucherSeries
-//     * @param \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager $tokenManager
+//     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager
 //     * @param array $params
 //     * @return Response
 //     */
-//    protected function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \OnlineShop\Framework\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
+//    protected function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
 //    {
 //        $paramsBag = [];
 //        $paramsBag['series'] = $onlineShopVoucherSeries;
@@ -218,7 +218,7 @@ class VoucherController extends FrontendController
      * Removes token reservations due to given duration.
      *
      * @Route("/cleanup-reservations", name="pimcore_ecommerce_backend_voucher_cleanup-reservations")
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function cleanupReservationsAction(Request $request)
     {

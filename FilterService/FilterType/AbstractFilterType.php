@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Config\Config;
 
 abstract class AbstractFilterType {
@@ -36,7 +38,7 @@ abstract class AbstractFilterType {
 
 
 
-    protected function getField(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition) {
+    protected function getField(AbstractFilterDefinitionType $filterDefinition) {
         $field = $filterDefinition->getField();
         if($field instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return $field->getField();
@@ -44,7 +46,7 @@ abstract class AbstractFilterType {
         return $field;
     }
 
-    protected function getPreSelect(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition) {
+    protected function getPreSelect(AbstractFilterDefinitionType $filterDefinition) {
         $field = $filterDefinition->getField();
         if($field instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
             return $field->getPreSelect();
@@ -60,45 +62,45 @@ abstract class AbstractFilterType {
      * based on settings in the filter definition and the current filter params.
      *
      * @abstract
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList $productList
      * @param $currentFilter
      * @return string
      */
-    public abstract function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter);
+    public abstract function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter);
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.
      *
      * @abstract
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList $productList
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
      * @return array
      */
-    public abstract function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false);
+    public abstract function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false);
 
     /**
      * calls prepareGroupByValues of productlist if necessary
      *
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList $productList
      */
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
         //by default do thing here
     }
 
 
     /**
      * sort result
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
+     * @param AbstractFilterDefinitionType $filterDefinition
      * @param array                                                    $result
      *
      * @return array
      */
-    protected function sortResult(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, array $result)
+    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $result)
     {
         return $result;
     }

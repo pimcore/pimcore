@@ -17,8 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
- * Class \OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig
  *
  * Sample implementation for sub-tenants based on mysql.
  */
@@ -41,7 +44,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql {
 
 
     public function getJoins() {
-        $currentSubTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
+        $currentSubTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
         if($currentSubTenant) {
             return " INNER JOIN " . $this->getTenantRelationTablename() . " b ON a.o_id = b.o_id ";
         } else {
@@ -51,7 +54,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql {
     }
 
     public function getCondition() {
-        $currentSubTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
+        $currentSubTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
         if($currentSubTenant) {
             return "b.subtenant_id = " . $currentSubTenant;
         } else {
@@ -59,7 +62,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql {
         }
     }
 
-    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function inIndex(IIndexable $object) {
         $tenants = $object->getTenants();
         return !empty($tenants);
     }
@@ -67,11 +70,11 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql {
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
     {
         $subTenantData = array();
         if($this->inIndex($object)) {

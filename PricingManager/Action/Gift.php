@@ -20,26 +20,26 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 class Gift implements IGift
 {
     /**
-     * @var \OnlineShop\Framework\Model\AbstractProduct
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct
      */
     protected $product;
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return IGift
      */
-    public function executeOnProduct(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function executeOnProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         // TODO: Implement executeOnProduct() method.
     }
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return IGift
      */
-    public function executeOnCart(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function executeOnCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $comment = $environment->getRule()->getDescription();
         $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, array(), array(), $comment);
@@ -47,18 +47,18 @@ class Gift implements IGift
 
     /**
      * set gift product
-     * @param \OnlineShop\Framework\Model\AbstractProduct $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product
      *
      * @return IGift
      */
-    public function setProduct(\OnlineShop\Framework\Model\AbstractProduct $product)
+    public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product)
     {
         $this->product = $product;
         return $this;
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct
      */
     public function getProduct()
     {
@@ -80,12 +80,12 @@ class Gift implements IGift
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        $product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $json->product );
+        $product = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct::getByPath( $json->product );
 
         if($product) {
             $this->setProduct( $product );
@@ -113,7 +113,7 @@ class Gift implements IGift
     public function __wakeup()
     {
         if($this->product != '') {
-            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->product );
+            $this->product = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct::getByPath( $this->product );
         }
 
     }

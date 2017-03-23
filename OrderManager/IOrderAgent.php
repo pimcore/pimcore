@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
@@ -26,10 +27,10 @@ use Pimcore\Model\Element\Note;
 interface IOrderAgent
 {
     /**
-     * @param \OnlineShop\Framework\Factory $factory
+     * @param Factory $factory
      * @param Order                        $order
      */
-    public function __construct(\OnlineShop\Framework\Factory $factory, Order $order);
+    public function __construct(Factory $factory, Order $order);
 
 
     /**
@@ -95,17 +96,17 @@ interface IOrderAgent
 
 
     /**
-     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment
      */
     public function getPaymentProvider();
 
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
      *
      * @return Order
      */
-    public function setPaymentProvider(\OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
+    public function setPaymentProvider(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
 
 
     /**
@@ -114,14 +115,14 @@ interface IOrderAgent
      * if true -> returns existing payment info
      * if false -> creates new payment info (and aborts existing PENDING payment infos)
      *
-     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation
      */
     public function startPayment();
 
     /**
      * Returns current payment info of order, or null if none exists
      *
-     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation
+     * @return null|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo();
 
@@ -133,18 +134,18 @@ interface IOrderAgent
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
 
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status
      *
      * @return IOrderAgent
      */
-    public function updatePayment(\OnlineShop\Framework\PaymentManager\IStatus $status);
+    public function updatePayment(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status);
 
 
     /**

@@ -25,14 +25,14 @@ class Cart extends AbstractCart implements ICart {
      * @return string
      */
     protected function getCartItemClassName() {
-        return '\OnlineShop\Framework\CartManager\CartItem';
+        return '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem';
     }
 
     /**
      * @return string
      */
     protected function getCartCheckoutDataClassName() {
-        return '\OnlineShop\Framework\CartManager\CartCheckoutData';
+        return '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData';
     }
 
     public function save() {
@@ -40,12 +40,12 @@ class Cart extends AbstractCart implements ICart {
         $items = $this->getItems();
 
         $this->getDao()->save();
-        \OnlineShop\Framework\CartManager\CartItem::removeAllFromCart($this->getId());
+        CartItem::removeAllFromCart($this->getId());
         foreach ((array)$items as $item) {
             $item->save();
         }
 
-        \OnlineShop\Framework\CartManager\CartCheckoutData::removeAllFromCart($this->getId());
+        CartCheckoutData::removeAllFromCart($this->getId());
         foreach ($this->checkoutData as $data) {
             $data->save();
         }
@@ -57,11 +57,11 @@ class Cart extends AbstractCart implements ICart {
     public function delete() {
         $this->setIgnoreReadonly();
 
-        $cacheKey = \OnlineShop\Framework\CartManager\Cart\Dao::TABLE_NAME . "_" . $this->getId();
+        $cacheKey = Cart\Dao::TABLE_NAME . "_" . $this->getId();
         Runtime::set($cacheKey, null);
 
-        \OnlineShop\Framework\CartManager\CartItem::removeAllFromCart($this->getId());
-        \OnlineShop\Framework\CartManager\CartCheckoutData::removeAllFromCart($this->getId());
+        CartItem::removeAllFromCart($this->getId());
+        CartCheckoutData::removeAllFromCart($this->getId());
 
         $this->clear();
         $this->getDao()->delete();
@@ -94,7 +94,7 @@ class Cart extends AbstractCart implements ICart {
      * @return Cart
      */
     public static function getById($id) {
-        $cacheKey = \OnlineShop\Framework\CartManager\Cart\Dao::TABLE_NAME . "_" . $id;
+        $cacheKey = Cart\Dao::TABLE_NAME . "_" . $id;
         try {
             $cart = Runtime::get($cacheKey);
         }
@@ -102,7 +102,7 @@ class Cart extends AbstractCart implements ICart {
 
             try {
                 $cartClass = get_called_class();
-                /* @var \OnlineShop\Framework\CartManager\ICart $cart */
+                /* @var ICart $cart */
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);
@@ -110,7 +110,7 @@ class Cart extends AbstractCart implements ICart {
                 $mod = $cart->getModificationDate();
                 $cart->setModificationDate( $mod );
 
-                $dataList = new \OnlineShop\Framework\CartManager\CartCheckoutData\Listing();
+                $dataList = new CartCheckoutData\Listing();
                 $dataList->setCondition("cartId = " . $dataList->quote($cart->getId()));
 
 
@@ -133,7 +133,7 @@ class Cart extends AbstractCart implements ICart {
 
     public function getItems() {
         if($this->items === null) {
-            $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
+            $itemList = new CartItem\Listing();
             $itemList->setCartItemClassName( $this->getCartItemClassName() );
             $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
             $itemList->setOrderKey(['sortIndex', 'addedDateTimestamp']);
@@ -162,7 +162,7 @@ class Cart extends AbstractCart implements ICart {
             return parent::getItemCount($countSubItems);
         } else {
             if($this->itemCount == null) {
-                $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
+                $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName( $this->getCartItemClassName() );
                 $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
                 $this->itemCount = $itemList->getTotalCount();
@@ -176,7 +176,7 @@ class Cart extends AbstractCart implements ICart {
             return parent::getItemAmount($countSubItems);
         } else {
             if($this->itemAmount == null) {
-                $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
+                $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName( $this->getCartItemClassName() );
                 $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
                 $this->itemAmount = $itemList->getTotalAmount();
@@ -191,7 +191,7 @@ class Cart extends AbstractCart implements ICart {
      * @return array
      */
     public static function getAllCartsForUser($userId) {
-        $list = new \OnlineShop\Framework\CartManager\Cart\Listing();
+        $list = new Cart\Listing();
         $db = \Pimcore\Db::get();
         $list->setCondition("userid = " . $db->quote($userId));
         $list->setCartClass( get_called_class() );

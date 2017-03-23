@@ -17,8 +17,8 @@ interface IProductActionAdd
     /**
      * Track product action add
      * 
-     * @param \OnlineShop\Framework\Model\IProduct $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product
      * @param int $quantity
      */
-    public function trackProductActionAdd(\OnlineShop\Framework\Model\IProduct $product, $quantity = 1);
+    public function trackProductActionAdd(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product, $quantity = 1);
 }

@@ -32,7 +32,7 @@ The configuration takes place in the OnlineShopConfig.php
                 ],
                 /*  special configuration for specific checkout tenants
                     - for not specified elements the default configuration is used as fallback
-                    - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant() */
+                    - active tenant is set at \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IEnvironment::setCurrentCheckoutTenant() */
                 "tenants" => [
                     "noShipping" => [
                         "pricecalculator" => [
@@ -61,7 +61,7 @@ Following elements are configured:
 #### Creating carts
 ```php
 <?php
-$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
+$manager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCartManager();
 $cartId = $manager->createCart(array('name' => $cartName));
 $cart = $manager->getCart( $cartId );
 ```
@@ -69,7 +69,7 @@ $cart = $manager->getCart( $cartId );
 #### Adding and removing products
 ```php
 <?php
-$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
+$manager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCartManager();
 $cart = $manager->getCartByName($cartName);
 
 $id = $cart->addItem( $product, $amount );
@@ -89,7 +89,7 @@ $manager->removeFromCart($cartItemId, $cartId);
 #### List products of cart
 ```php
 <?php
-$manager = \OnlineShop\Framework\Factory::getInstance()->getCartManager();
+$manager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCartManager();
 $cart = $manager->getCartByName($cartName);
 
 if (count($cart->getItems()) > 0) {
@@ -133,7 +133,7 @@ The current checkout tenant is set in the framework environment as follows. Once
 
 ```php
 <?php
-$environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+$environment = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getEnvironment();
 $environment->setCurrentCheckoutTenant('default');
 $environment->save();
 

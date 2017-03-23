@@ -17,6 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+
 /**
  * @deprecated
  *
@@ -45,8 +48,8 @@ class ProxyFilter extends AbstractFilterType
     }
 
     public function getFilterFrontend(
-        \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition,
-        \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter
+        AbstractFilterDefinitionType $filterDefinition,
+        IProductList $productList, $currentFilter
     )
     {
         $filterDefinition->field=$this->field;
@@ -54,8 +57,8 @@ class ProxyFilter extends AbstractFilterType
     }
 
     public function addCondition(
-        \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition,
-        \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params,
+        AbstractFilterDefinitionType $filterDefinition,
+        IProductList $productList, $currentFilter, $params,
         $isPrecondition = false
     ) {
         $filterDefinition->field=$this->field;

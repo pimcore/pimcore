@@ -40,7 +40,7 @@ The configuration takes place in the OnlineShopConfig.php
 <?php
 
 // create new order list
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 // get the newest 10 orders
@@ -72,12 +72,12 @@ foreach($paginator as $order)
 <?php
 
 // create new order list
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
 // create date time filter
-$filterDate = new \OnlineShop\Framework\OrderManager\Order\Listing\Filter\OrderDateTime();
+$filterDate = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime();
 $filterDate->setFrom( new DateTime('20.01.2015') );
 $filterDate->setTill( new DateTime('31.01.2015') );
 
@@ -93,13 +93,13 @@ $orderList->addFilter( $filterDate );
 <?php
 
 // create new order list
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
 // get only orders that are commited
 $orderList->setListType( $orderList::LIST_TYPE_ORDER_ITEM );
-$orderList->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED );
+$orderList->setOrderState( \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder::ORDER_STATE_COMMITTED );
 
 
 ```
@@ -111,7 +111,7 @@ $orderList->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STAT
 <?php
 
 // create new order list
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -136,7 +136,7 @@ $query->where('order.comment like ?', '%hallo world%');
 <?php
 
 // create new order list
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderList = $orderManager->createOrderList();
 
 
@@ -167,7 +167,7 @@ $orderList->getQuery()->where('product.productNumber = ?', 'CMD1191');
 
 ### Generic filter
 
-> Namespace: \OnlineShop\Framework\OrderManager\Order\Listing\Filter
+> Namespace: \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter
 
 | Filter          | Description |
 | --------------- | ----------- |
@@ -192,7 +192,7 @@ $orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
 $order = $orderItem->getOrder();
 
 // create new order agent
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderAgent = $orderManager->createOrderAgent( $order );
 
 // change amount to 5
@@ -214,7 +214,7 @@ $log->save();
 $order = Object_OnlineShopOrder::getById( $this->getParam('id') );
 
 // create new order agent
-$orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+$orderManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager();
 $orderAgent = $orderManager->createOrderAgent( $order );
 
 // get changelog

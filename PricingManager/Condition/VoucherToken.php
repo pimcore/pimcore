@@ -17,7 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
-class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
+class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
 {
     /**
      * @var array
@@ -27,11 +27,11 @@ class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return boolean
      */
-    public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
 
         if (!($cart = $environment->getCart())) {
@@ -50,7 +50,7 @@ class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
     }
 
     public function checkVoucherCode($code) {
-        if (in_array(\OnlineShop\Framework\VoucherService\Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
+        if (in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
             return true;
         }
         return false;
@@ -69,7 +69,7 @@ class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
 
         // add categories
         foreach ($this->getWhiteList() as $series) {
-            /* @var \OnlineShop\Framework\Model\AbstractVoucherSeries $series */
+            /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherSeries $series */
             $json['whiteList'][] = array(
                 $series->id,
                 $series->path
@@ -82,7 +82,7 @@ class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {

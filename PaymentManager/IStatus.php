@@ -50,7 +50,7 @@ interface IStatus
     public function getMessage();
 
     /**
-     * internal pimcore order status - see also constants \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_*
+     * internal pimcore order status - see also constants \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder::ORDER_STATE_*
      *
      * @return string
      */

@@ -16,13 +16,14 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
-use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
-use OnlineShop\Framework\PriceSystem\IModificatedPrice;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Class CartPriceCalculator
@@ -35,12 +36,12 @@ class CartPriceCalculator implements ICartPriceCalculator {
     protected $isCalculated = false;
 
     /**
-     * @var \OnlineShop\Framework\PriceSystem\IPrice
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     protected $subTotal;
 
     /**
-     * @var \OnlineShop\Framework\PriceSystem\IPrice
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     protected $gradTotal;
 
@@ -79,7 +80,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function calculate() {
 
@@ -102,7 +103,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
                 }
 
                 if($currency->getShortName() != $item->getPrice()->getCurrency()->getShortName()) {
-                    throw new \OnlineShop\Framework\Exception\UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
+                    throw new UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
                 }
 
                 $subTotalNet += $item->getTotalPrice()->getNetAmount();
@@ -144,7 +145,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
 
         $this->modifications = array();
         foreach($this->getModificators() as $modificator) {
-            /* @var \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator $modificator */
+            /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;
@@ -191,7 +192,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
     }
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $price
      */
     public function getGrandTotal() {
         if(!$this->isCalculated) {
@@ -212,7 +213,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
     }
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $price
      */
     public function getSubTotal() {
         if(!$this->isCalculated) {

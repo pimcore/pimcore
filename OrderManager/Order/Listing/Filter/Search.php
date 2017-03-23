@@ -17,9 +17,6 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use OnlineShop\Framework\OrderManager\IOrderList;
-use OnlineShop\Framework\OrderManager\IOrderListFilter;
-
 /**
  * Search filter with flexible column definition
  */

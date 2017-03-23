@@ -33,7 +33,7 @@ to OnlineShopOrderItem) to your OnlineShopOrder class. Otherwise a error log mes
 - After updating the plugin execute `plugins/EcommerceFramework/cli/updateToPhpConfigs.php`.
   The old xml config files will stay untouched, but will no longer be in use.
 - Following method signatures changed:
-  - `\OnlineShop\Framework\IndexService\Config\IConfig::__construct`
+  - `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig::__construct`
     ```php
     //old
         /**
@@ -53,7 +53,7 @@ to OnlineShopOrderItem) to your OnlineShopOrder class. Otherwise a error log mes
         public function __construct($tenantName, $tenantConfig, $totalConfig = null) {...}
     ```
 
-  - \OnlineShop\Framework\PaymentManager\Payment\IPayment::__construct`
+  - \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment::__construct`
     ```php
     //old
         /**

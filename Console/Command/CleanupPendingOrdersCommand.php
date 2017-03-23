@@ -2,8 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command;
 
-use OnlineShop\Framework\CartManager\Cart;
-use OnlineShop\Framework\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,7 +19,7 @@ class CleanupPendingOrdersCommand extends AbstractCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

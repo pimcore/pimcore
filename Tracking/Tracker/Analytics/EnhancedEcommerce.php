@@ -12,23 +12,21 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use OnlineShop\Framework\CartManager\ICart;
-use OnlineShop\Framework\Tracking\IProductActionRemove;
-use OnlineShop\Framework\Tracking\Tracker;
-use OnlineShop\Framework\Model\AbstractOrder;
-use OnlineShop\Framework\Model\IProduct;
-use OnlineShop\Framework\Tracking\ICheckout;
-use OnlineShop\Framework\Tracking\ICheckoutAction;
-use OnlineShop\Framework\Tracking\ICheckoutComplete;
-use OnlineShop\Framework\Tracking\ICheckoutStep;
-use OnlineShop\Framework\Tracking\IProductActionAdd;
-use OnlineShop\Framework\Tracking\IProductImpression;
-use OnlineShop\Framework\Tracking\IProductView;
-use OnlineShop\Framework\Tracking\ProductAction;
-use OnlineShop\Framework\Tracking\ProductImpression;
-use OnlineShop\Framework\Tracking\Transaction;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ICheckout;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ICheckoutComplete;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ICheckoutStep;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\IProductActionAdd;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\IProductActionRemove;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\IProductImpression;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\IProductView;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ProductAction;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ProductImpression;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Google\Analytics;
-use Pimcore\Model\Object\Concrete;
 
 class EnhancedEcommerce extends Tracker implements IProductView, IProductImpression, IProductActionAdd, IProductActionRemove,
     ICheckout, ICheckoutStep, ICheckoutComplete
@@ -131,12 +129,12 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
     }
 
     /**
-     * @param \OnlineShop\Framework\CheckoutManager\ICheckoutStep $step
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step
      * @param ICart $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(\OnlineShop\Framework\CheckoutManager\ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
 
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);

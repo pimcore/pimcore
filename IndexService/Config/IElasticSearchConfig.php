@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 /**
  * Interface for IndexService Tenant Configurations using elastic search as index
  *
- * Interface \OnlineShop\Framework\IndexService\Config\IElasticSearchConfig
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
  */
 interface IElasticSearchConfig extends IConfig {
 
@@ -43,7 +43,7 @@ interface IElasticSearchConfig extends IConfig {
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\ElasticSearch
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
     public function getTenantWorker();
 

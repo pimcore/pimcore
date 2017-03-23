@@ -18,13 +18,14 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 class DefaultFactFinder implements IProductList
 {
     /**
-     * @var \OnlineShop\Framework\Model\IIndexable[]
+     * @var IIndexable[]
      */
     protected $products = null;
 
@@ -47,7 +48,7 @@ class DefaultFactFinder implements IProductList
     protected $productPositionMap = [];
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IFactFinderConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig
      */
     protected $tenantConfig;
 
@@ -87,7 +88,7 @@ class DefaultFactFinder implements IProductList
     protected $offset = 0;
 
     /**
-     * @var \OnlineShop\Framework\Model\AbstractCategory
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     protected $category;
 
@@ -220,9 +221,9 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param \OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig
      */
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig)
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -232,7 +233,7 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
     public function getProducts()
     {
@@ -401,7 +402,7 @@ class DefaultFactFinder implements IProductList
     }
 
 
-    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category)
+    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category)
     {
         $this->products = null;
         $this->category = $category;
@@ -423,7 +424,7 @@ class DefaultFactFinder implements IProductList
 
 
     /**
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     public function load()
     {

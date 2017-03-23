@@ -19,57 +19,57 @@ interface ITrackingItemBuilder
     /**
      * Build a product view object
      *
-     * @param \OnlineShop\Framework\Model\IProduct|ElementInterface $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct|ElementInterface $product
      * @return ProductAction
      */
-    public function buildProductViewItem(\OnlineShop\Framework\Model\IProduct $product);
+    public function buildProductViewItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product);
 
     /**
      * Build a product action item object
      *
-     * @param \OnlineShop\Framework\Model\IProduct|ElementInterface $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct|ElementInterface $product
      * @return ProductAction
      */
-    public function buildProductActionItem(\OnlineShop\Framework\Model\IProduct $product);
+    public function buildProductActionItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product);
 
     /**
      * Build a product impression object
      *
-     * @param \OnlineShop\Framework\Model\IProduct|ElementInterface $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct|ElementInterface $product
      * @return ProductImpression
      */
-    public function buildProductImpressionItem(\OnlineShop\Framework\Model\IProduct $product);
+    public function buildProductImpressionItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product);
 
     /**
      * Build a checkout transaction object
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return Transaction
      */
-    public function buildCheckoutTransaction(\OnlineShop\Framework\Model\AbstractOrder $order);
+    public function buildCheckoutTransaction(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 
     /**
      * Build checkout items
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return ProductAction[]
      */
-    public function buildCheckoutItems(\OnlineShop\Framework\Model\AbstractOrder $order);
+    public function buildCheckoutItems(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 
     /**
      * Build checkout items by cart
      * 
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return mixed
      */
-    public function buildCheckoutItemsByCart(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function buildCheckoutItemsByCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
      * Build a checkout item object
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
-     * @param \OnlineShop\Framework\Model\AbstractOrderItem $orderItem
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem $orderItem
      * @return ProductAction
      */
-    public function buildCheckoutItem(\OnlineShop\Framework\Model\AbstractOrder $order, \OnlineShop\Framework\Model\AbstractOrderItem $orderItem);
+    public function buildCheckoutItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem $orderItem);
 }

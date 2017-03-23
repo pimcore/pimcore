@@ -18,7 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
- * Class \OnlineShop\Framework\CheckoutManager\DeliveryDate
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\DeliveryDate
  *
  * sample implementation for delivery date
  */
@@ -34,7 +34,7 @@ class DeliveryDate extends AbstractStep implements ICheckoutStep {
      */
     public function commit($data) {
         if(empty($data->instantly) && empty($data->date)) {
-            throw new \OnlineShop\Framework\Exception\InvalidConfigException("Instantly or Date not set.");
+            throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Instantly or Date not set.");
         }
 
         $this->cart->setCheckoutData(self::INSTANTLY, $data->instantly);

@@ -17,7 +17,7 @@ interface ICheckout
     /**
      * Track start checkout with first step
      *
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      */
-    public function trackCheckout(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function trackCheckout(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 }

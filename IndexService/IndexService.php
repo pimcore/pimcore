@@ -17,23 +17,27 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
 
 class IndexService {
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Worker\IWorker
+     * @var IWorker
      */
     protected $defaultWorker;
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Worker\IWorker[]
+     * @var IWorker[]
      */
     protected $tenantWorkers;
 
     public function __construct($config) {
         if(!(string)$config->disableDefaultTenant) {
-            $this->defaultWorker = new \OnlineShop\Framework\IndexService\Worker\DefaultMysql(new \OnlineShop\Framework\IndexService\Config\DefaultMysql("default", $config));
+            $this->defaultWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultMysql(new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql("default", $config));
         }
 
         $this->tenantWorkers = array();
@@ -47,7 +51,7 @@ class IndexService {
                 }
 
                 /**
-                 * @var $tenantConfig \OnlineShop\Framework\IndexService\Config\IConfig
+                 * @var $tenantConfig \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
                  */
                 $tenantConfig = new $tenantConfigClass($name, $tenantConfig, $config);
                 $worker = $tenantConfig->getTenantWorker();
@@ -61,7 +65,7 @@ class IndexService {
      *
      * @param string $name
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\IWorker
+     * @return IWorker
      */
     public function getTenantWorker($name){
         return $this->tenantWorkers[$name];
@@ -72,7 +76,7 @@ class IndexService {
      *
      * @param null $tenant
      * @return array
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getGeneralSearchColumns($tenant = null) {
         return $this->getGeneralSearchAttributes($tenant);
@@ -83,18 +87,18 @@ class IndexService {
      *
      * @param string $tenant
      * @return array
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getGeneralSearchAttributes($tenant = null) {
         if(empty($tenant)) {
-            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getGeneralSearchAttributes();
             } else {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -128,9 +132,9 @@ class IndexService {
     /**
      * deletes given element from index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
+    public function deleteFromIndex(IIndexable $object){
         if($this->defaultWorker) {
             $this->defaultWorker->deleteFromIndex($object);
         }
@@ -142,9 +146,9 @@ class IndexService {
     /**
      * updates given element in index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function updateIndex(IIndexable $object) {
         if($this->defaultWorker) {
             $this->defaultWorker->updateIndex($object);
         }
@@ -159,18 +163,18 @@ class IndexService {
      * @param bool $considerHideInFieldList
      * @param string $tenant
      * @return array
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getIndexAttributes($considerHideInFieldList = false, $tenant = null) {
         if(empty($tenant)) {
-            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getIndexAttributes($considerHideInFieldList);
             } else {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -187,7 +191,7 @@ class IndexService {
      * @param bool $considerHideInFieldList
      * @param null $tenant
      * @return mixed
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getIndexColumns($considerHideInFieldList = false, $tenant = null) {
         return $this->getIndexAttributes($considerHideInFieldList, $tenant);
@@ -198,18 +202,18 @@ class IndexService {
      *
      * @param string $tenant
      * @return array
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getAllFilterGroups($tenant = null) {
         if(empty($tenant)) {
-            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getAllFilterGroups();
             } else {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -227,18 +231,18 @@ class IndexService {
      * @param $filterType
      * @param string $tenant
      * @return array
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getIndexAttributesByFilterGroup($filterType, $tenant = null) {
         if(empty($tenant)) {
-            $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getIndexAttributesByFilterGroup($filterType);
             } else {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
@@ -255,7 +259,7 @@ class IndexService {
      * @param $filterType
      * @param null $tenant
      * @return mixed
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getIndexColumnsByFilterGroup($filterType, $tenant = null) {
         return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
@@ -265,25 +269,25 @@ class IndexService {
     /**
      * returns current tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Config\IConfig
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getCurrentTenantConfig() {
         return $this->getCurrentTenantWorker()->getTenantConfig();
     }
 
     /**
-     * @return \OnlineShop\Framework\IndexService\Worker\IWorker
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @return IWorker
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getCurrentTenantWorker() {
-        $tenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+        $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
 
         if($tenant) {
             if(array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant];
             } else {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         } else {
             return $this->defaultWorker;
@@ -291,8 +295,8 @@ class IndexService {
     }
 
     /**
-     * @return \OnlineShop\Framework\IndexService\ProductList\IProductList
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @return IProductList
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getProductListForCurrentTenant() {
         return $this->getCurrentTenantWorker()->getProductList();
@@ -300,15 +304,15 @@ class IndexService {
 
 
     /**
-     * @return \OnlineShop\Framework\IndexService\ProductList\IProductList
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @return IProductList
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getProductListForTenant($tenant) {
         if($tenant) {
             if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getProductList();
             } else {
-                throw new \OnlineShop\Framework\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         } else {
             return $this->defaultWorker->getProductList();

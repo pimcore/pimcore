@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Conditio
 class CatalogCategory extends AbstractObjectListCondition implements ICategory
 {
     /**
-     * @var \OnlineShop\Framework\Model\AbstractCategory[]
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
     protected $categories = array();
 
@@ -32,7 +32,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     protected $categoryIds = array();
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractCategory[] $categories
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[] $categories
      *
      * @return ICategory
      */
@@ -43,7 +43,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
     public function getCategories()
     {
@@ -64,7 +64,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
         // add categories
         foreach($this->getCategories() as $category)
         {
-            /* @var \OnlineShop\Framework\Model\AbstractCategory $category */
+            /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category */
             $json['categories'][] = array(
                 $category->getId(),
                 $category->getFullPath()
@@ -77,7 +77,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {
@@ -116,18 +116,18 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     }
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return boolean
      */
-    public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         foreach($environment->getCategories() as $category)
         {
-            /* @var \OnlineShop\Framework\Model\AbstractCategory $category */
+            /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category */
             foreach($this->getCategories() as $allow)
             {
-                /* @var \OnlineShop\Framework\Model\AbstractCategory $allow */
+                /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $allow */
                 if(strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

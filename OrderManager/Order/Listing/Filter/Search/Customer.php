@@ -17,7 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search;
 
-use OnlineShop\Framework\OrderManager\Order\Listing\Filter\AbstractSearch;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\AbstractSearch;
 
 class Customer extends AbstractSearch
 {

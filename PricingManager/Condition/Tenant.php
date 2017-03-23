@@ -17,7 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
-class Tenant implements \OnlineShop\Framework\PricingManager\ICondition
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+
+class Tenant implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
 {
     /**
      * @var string[]
@@ -26,13 +28,13 @@ class Tenant implements \OnlineShop\Framework\PricingManager\ICondition
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return boolean
      */
-    public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
-        $currentTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+        $currentTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         return in_array($currentTenant, $this->getTenant());
     }
 
@@ -53,7 +55,7 @@ class Tenant implements \OnlineShop\Framework\PricingManager\ICondition
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {

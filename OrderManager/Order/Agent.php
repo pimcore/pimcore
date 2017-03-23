@@ -17,14 +17,16 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order;
 
-use OnlineShop\Framework\OrderManager\IOrderAgent;
-use \OnlineShop\Framework\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderAgent;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
 use Exception;
 
-use \OnlineShop\Framework\Model\AbstractOrder as Order;
-use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Pimcore\Model\Object\Concrete;
@@ -41,12 +43,12 @@ class Agent implements IOrderAgent
     protected $order;
 
     /**
-     * @var \OnlineShop\Framework\PaymentManager\Payment\IPayment
+     * @var IPayment
      */
     protected $paymentProvider;
 
     /**
-     * @var \OnlineShop\Framework\Factory
+     * @var Factory
      */
     protected $factory;
 
@@ -57,10 +59,10 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @param \OnlineShop\Framework\Factory $factory
+     * @param Factory $factory
      * @param Order                        $order
      */
-    public function __construct(\OnlineShop\Framework\Factory $factory, Order $order)
+    public function __construct(Factory $factory, Order $order)
     {
         $this->order = $order;
         $this->factory = $factory;
@@ -254,7 +256,7 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
+     * @return IPayment
      */
     public function getPaymentProvider()
     {
@@ -300,11 +302,11 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @param IPayment $paymentProvider
      *
      * @return $this
      */
-    public function setPaymentProvider(\OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider)
+    public function setPaymentProvider(IPayment $paymentProvider)
     {
         $this->paymentProvider = $paymentProvider;
 
@@ -347,7 +349,7 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation
+     * @return null|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo() {
 
@@ -366,9 +368,9 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @return null|\OnlineShop\Framework\Model\AbstractPaymentInformation|PaymentInfo
+     * @return null|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation|PaymentInfo
      * @throws Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function startPayment()
     {
@@ -432,7 +434,7 @@ class Agent implements IOrderAgent
      *  - all product numbers
      *
      * @return int
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     protected function getFingerprintOfOrder() {
         $order = $this->getOrder();
@@ -450,7 +452,7 @@ class Agent implements IOrderAgent
     /**
      * @return Order
      * @throws Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment() {
         $order = $this->getOrder();
@@ -462,7 +464,7 @@ class Agent implements IOrderAgent
             $order->setOrderState(null);
             $order->save();
         } else {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Cancel started order payment not possible");
+            throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("Cancel started order payment not possible");
         }
 
 
@@ -471,12 +473,12 @@ class Agent implements IOrderAgent
 
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status
      * @return $this
      * @throws Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
-    public function updatePayment(\OnlineShop\Framework\PaymentManager\IStatus $status)
+    public function updatePayment(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status)
     {
         //log this for documentation
         \Pimcore\Log\Simple::log("update-payment", "Update payment called with status: " . print_r($status, true));
@@ -538,7 +540,7 @@ class Agent implements IOrderAgent
             $currentPaymentInformation->setMessage( $currentPaymentInformation->getMessage() . " -> order fingerprint changed since start payment. throwing exception!");
             $order->setOrderState(null);
             $order->save();
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("order fingerprint changed since start payment. Old internal status = " . $status->getInternalPaymentId() . " -> current internal status id = " . $currentOrderFingerPrint);
+            throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("order fingerprint changed since start payment. Old internal status = " . $status->getInternalPaymentId() . " -> current internal status id = " . $currentOrderFingerPrint);
 
         } else {
 
@@ -555,7 +557,7 @@ class Agent implements IOrderAgent
      * @param IStatus $status
      * @param PaymentInfo $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(\OnlineShop\Framework\PaymentManager\IStatus $status, PaymentInfo $currentPaymentInformation) {
+    protected function extractAdditionalPaymentInformation(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status, PaymentInfo $currentPaymentInformation) {
 
     }
 

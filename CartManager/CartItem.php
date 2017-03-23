@@ -65,7 +65,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
     }
 
     public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "") {
-        $cacheKey = \OnlineShop\Framework\CartManager\CartItem\Dao::TABLE_NAME . "_" . $cartId . "_" . $parentKey . $itemKey;
+        $cacheKey = CartItem\Dao::TABLE_NAME . "_" . $cartId . "_" . $parentKey . $itemKey;
 
         try {
             $cartItem = Runtime::get($cacheKey);
@@ -92,7 +92,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
     }
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getSubItems() {
 

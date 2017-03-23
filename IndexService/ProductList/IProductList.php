@@ -16,6 +16,7 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
 
@@ -51,7 +52,7 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
     /**
      * Returns all products valid for this search
      *
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     public function getProducts();
 
@@ -186,10 +187,10 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
      * @param $category
      * @return void
      */
-    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category);
+    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category);
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractCategory
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     public function getCategory();
 
@@ -207,7 +208,7 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
     /**
      * loads search results from index and returns them
      *
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     public function load();
 

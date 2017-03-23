@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
  * Implementation of product list which works based on the product index of the online shop framework
  */
@@ -24,7 +26,7 @@ class DefaultElasticSearch implements IProductList {
 
     const LIMIT_UNLIMITED = 'unlimited';
     /**
-     * @var null|\OnlineShop\Framework\Model\IIndexable[]
+     * @var null|IIndexable[]
      */
     protected $products = null;
 
@@ -47,7 +49,7 @@ class DefaultElasticSearch implements IProductList {
     protected $tenantName;
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IElasticSearchConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
      */
     protected $tenantConfig;
 
@@ -59,7 +61,7 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @var string
      */
-    protected $variantMode = \OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
 
     /**
      * @var integer
@@ -87,7 +89,7 @@ class DefaultElasticSearch implements IProductList {
     protected $offset;
 
     /**
-     * @var \OnlineShop\Framework\Model\AbstractCategory
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     protected $category;
 
@@ -166,7 +168,7 @@ class DefaultElasticSearch implements IProductList {
 
 
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IElasticSearchConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig $tenantConfig) {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
     }
@@ -193,7 +195,7 @@ class DefaultElasticSearch implements IProductList {
     /**
      * Returns all products valid for this search
      *
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     public function getProducts()
     {
@@ -359,7 +361,7 @@ class DefaultElasticSearch implements IProductList {
      */
     public function setOrderKey($orderKey) {
         $this->products = null;
-        if($orderKey == \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE) {
+        if($orderKey == IProductList::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
             $this->orderByPrice = false;
@@ -424,14 +426,14 @@ class DefaultElasticSearch implements IProductList {
      * @param $category
      * @return void
      */
-    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category) {
+    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category) {
         $this->category = $category;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractCategory
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     public function getCategory() {
         return $this->category;
@@ -457,7 +459,7 @@ class DefaultElasticSearch implements IProductList {
     /**
      * loads search results from index and returns them
      *
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     public function load() {
 
@@ -634,7 +636,7 @@ class DefaultElasticSearch implements IProductList {
      */
     protected function buildQuery(array $params, array $boolFilters, array $queryFilters)
     {
-        if($this->getVariantMode() == \OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT)
+        if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT)
         {
             $params['body']['query']['filtered']['query']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['filtered']['query']['has_child']['score_mode'] = 'avg';
@@ -752,7 +754,7 @@ class DefaultElasticSearch implements IProductList {
      * loads element by id
      *
      * @param $elementId
-     * @return array|\OnlineShop\Framework\Model\IIndexable
+     * @return array|IIndexable
      */
     protected function loadElementById($elementId) {
         return $this->tenantConfig->getObjectMockupById($elementId);
@@ -1008,7 +1010,7 @@ class DefaultElasticSearch implements IProductList {
     }
 
     /**
-     * @return \OnlineShop\Framework\IndexService\Config\IElasticSearchConfig
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
      */
     public function getTenantConfig(){
         return $this->tenantConfig;

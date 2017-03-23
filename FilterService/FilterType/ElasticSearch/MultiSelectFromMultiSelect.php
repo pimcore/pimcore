@@ -17,25 +17,28 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
-class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\FilterType\MultiSelectFromMultiSelect
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+
+class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
 {
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
         $field = $this->getField($filterDefinition);
         $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
     }
 
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList                  $productList
      * @param array                                             $currentFilter
      * @param                                                   $params
      * @param bool                                              $isPrecondition
      *
      * @return string[]
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
@@ -54,7 +57,7 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
                     unset($value[$key]);
                 }
             }
-        } else if(!empty($value) && in_array(\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        } else if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 

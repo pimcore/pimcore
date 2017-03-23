@@ -17,6 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+
 /**
  * Abstract base class for offer pimcore objects
  */
@@ -24,183 +27,183 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @return string
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function getOffernumber() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOffernumber is not implemented for " . get_class($this));
+        throw new UnsupportedException("getOffernumber is not implemented for " . get_class($this));
     }
 
     /**
      * @param string $offernumber
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function setOffernumber($offernumber) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setOffernumber is not implemented for " . get_class($this));
+        throw new UnsupportedException("setOffernumber is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return float
      */
     public function getTotalPrice() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
+        throw new UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param float $totalPrice
      */
     public function setTotalPriceBeforeDiscount($totalPrice) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalPriceBeforeDiscount is not implemented for " . get_class($this));
+        throw new UnsupportedException("setTotalPriceBeforeDiscount is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return float
      */
     public function getTotalPriceBeforeDiscount() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTotalPriceBeforeDiscount is not implemented for " . get_class($this));
+        throw new UnsupportedException("getTotalPriceBeforeDiscount is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param float $totalPrice
      */
     public function setTotalPrice($totalPrice) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
+        throw new UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return float
      */
     public function getDiscount() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getDiscount is not implemented for " . get_class($this));
+        throw new UnsupportedException("getDiscount is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param float $discount
      */
     public function setDiscount($discount) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setDiscount is not implemented for " . get_class($this));
+        throw new UnsupportedException("setDiscount is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return string
      */
     public function getDiscountType() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getDiscountType is not implemented for " . get_class($this));
+        throw new UnsupportedException("getDiscountType is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param string $discountType
      */
     public function setDiscountType($discountType) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setDiscountType is not implemented for " . get_class($this));
+        throw new UnsupportedException("setDiscountType is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return \DateTime
      */
     public function getDateCreated() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getDateCreated is not implemented for " . get_class($this));
+        throw new UnsupportedException("getDateCreated is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param \DateTime $dateCreated
      */
     public function setDateCreated($dateCreated) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setDateCreated is not implemented for " . get_class($this));
+        throw new UnsupportedException("setDateCreated is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return \DateTime
      */
     public function getDateValidUntil() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getDateValidUntil is not implemented for " . get_class($this));
+        throw new UnsupportedException("getDateValidUntil is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param \DateTime $dateValidUntil
      */
     public function setDateValidUntil($dateValidUntil) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setDateValidUntil is not implemented for " . get_class($this));
+        throw new UnsupportedException("setDateValidUntil is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return AbstractOfferItem[]
      */
     public function getItems() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getItems is not implemented for " . get_class($this));
+        throw new UnsupportedException("getItems is not implemented for " . get_class($this));
     }
 
     /**
      * @param AbstractOfferItem[] $items
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function setItems($items) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setItems is not implemented for " . get_class($this));
+        throw new UnsupportedException("setItems is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return AbstractOfferItem[]
      */
     public function getCustomItems() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getCustomItems is not implemented for " . get_class($this));
+        throw new UnsupportedException("getCustomItems is not implemented for " . get_class($this));
     }
 
     /**
      * @param AbstractOfferItem[] $customItems
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function setCustomItems($customItems) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setCustomItems is not implemented for " . get_class($this));
+        throw new UnsupportedException("setCustomItems is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return mixed
      */
     public function getCustomer() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getCustomer is not implemented for " . get_class($this));
+        throw new UnsupportedException("getCustomer is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param mixed $customer
      */
     public function setCustomer($customer) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setCustomer is not implemented for " . get_class($this));
+        throw new UnsupportedException("setCustomer is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return string
      */
     public function getCartId() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getCartId is not implemented for " . get_class($this));
+        throw new UnsupportedException("getCartId is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param string $cartId
      */
     public function setCartId($cartId) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setCartId is not implemented for " . get_class($this));
+        throw new UnsupportedException("setCartId is not implemented for " . get_class($this));
     }
 
 
@@ -213,7 +216,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete {
         $item = $this->getCustomItemByProduct($product);
         if(empty($item)) {
 
-            $service = \OnlineShop\Framework\Factory::getInstance()->getOfferToolService();
+            $service = Factory::getInstance()->getOfferToolService();
             $item = $service->getNewOfferItemObject();
             $item->setParent($this);
             $item->setPublished(true);

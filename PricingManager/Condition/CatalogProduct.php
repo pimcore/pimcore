@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Conditio
 class CatalogProduct extends AbstractObjectListCondition implements ICatalogProduct
 {
     /**
-     * @var \OnlineShop\Framework\Model\AbstractProduct[]
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
     protected $products = [];
 
@@ -32,11 +32,11 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     protected $productIds = [];
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return boolean
      */
-    public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         // init
         $productsPool = array();
@@ -63,10 +63,10 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
             // check all valid products
             foreach($this->getProducts() as $product)
             {
-                /* @var \OnlineShop\Framework\Model\AbstractProduct $allow */
+                /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $allow */
 
                 $currentProductCheck = $currentProduct;
-                while($currentProductCheck instanceof \OnlineShop\Framework\Model\ICheckoutable) {
+                while($currentProductCheck instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable) {
                     if($currentProductCheck->getId() === $product->getId())
                     {
                         return true;
@@ -93,7 +93,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
         // add categories
         foreach($this->getProducts() as $product)
         {
-            /* @var \OnlineShop\Framework\Model\AbstractProduct $product */
+            /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product */
             $json['products'][] = array(
                 $product->getId(),
                 $product->getFullPath()
@@ -106,7 +106,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {
@@ -145,7 +145,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     }
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractProduct[] $products
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[] $products
      *
      * @return ICatalogProduct
      */
@@ -156,7 +156,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
     public function getProducts()
     {

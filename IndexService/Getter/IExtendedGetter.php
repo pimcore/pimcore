@@ -24,5 +24,5 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter;
  */
 interface IExtendedGetter {
 
-    public static function get($object, $config = null, $subObjectId = null, \OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig = null);
+    public static function get($object, $config = null, $subObjectId = null, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig = null);
 }

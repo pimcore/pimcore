@@ -42,7 +42,7 @@ interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapte
     public function getQuery();
 
     /**
-     * @return \OnlineShop\Framework\OrderManager\IOrderListItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListItem[]
      */
     public function load();
 

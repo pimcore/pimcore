@@ -17,8 +17,16 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use OnlineShop\Framework\Exception\VoucherServiceException;
-use OnlineShop\Framework\VoucherService\Token;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Listing;
+use Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern;
+use Pimcore\Model\Object\OnlineShopVoucherToken;
 use Zend\Paginator\Paginator;
 
 /**
@@ -38,10 +46,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         'alpha' => "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
     ];
 
-    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
+    public function __construct(AbstractVoucherTokenType $configuration)
     {
         parent::__construct($configuration);
-        if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern) {
+        if ($configuration instanceof VoucherTokenTypePattern) {
             $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabPattern.html.php";
         } else {
             throw new VoucherServiceException("Invalid Configuration Class for Type VoucherTokenTypePattern.");
@@ -65,19 +73,19 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     public function cleanUpCodes($filter = [])
     {
-        return \OnlineShop\Framework\VoucherService\Token\Listing::cleanUpTokens($this->seriesId, $filter);
+        return Listing::cleanUpTokens($this->seriesId, $filter);
     }
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @throws VoucherServiceException
      * @return bool|int
      */
-    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function checkToken($code, ICart $cart)
     {
         parent::checkToken($code, $cart);
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
+        if ($token = Token::getByCode($code)) {
             if ($token->isUsed()) {
                 throw new VoucherServiceException('Token has already been used.', 1);
             }
@@ -91,14 +99,14 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @throws VoucherServiceException
      * @return bool
      */
-    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function reserveToken($code, ICart $cart)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
-            if (\OnlineShop\Framework\VoucherService\Reservation::create($code, $cart)) {
+        if ($token = Token::getByCode($code)) {
+            if (Reservation::create($code, $cart)) {
                 return true;
             } else {
                 throw new VoucherServiceException("Token Reservation not possible.", 3);
@@ -109,21 +117,21 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param ICart $cart
+     * @param AbstractOrder $order
      *
      * @throws VoucherServiceException
      *
-     * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
+     * @return bool|OnlineShopVoucherToken
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function applyToken($code, ICart $cart, AbstractOrder $order)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
+        if ($token = Token::getByCode($code)) {
             if ($token->isUsed()) {
                 throw new VoucherServiceException('Token has already been used.', 1);
             }
             if ($token->apply()) {
-                $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();
+                $orderToken = new OnlineShopVoucherToken();
                 $orderToken->setTokenId($token->getId());
                 $orderToken->setToken($token->getToken());
                 $series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
@@ -144,13 +152,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     /**
      * cleans up the token usage and the ordered token object if necessary
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param OnlineShopVoucherToken $tokenObject
+     * @param AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($tokenObject->getToken())) {
+        if ($token = Token::getByCode($tokenObject->getToken())) {
                 $token->unuse();
             $tokenObject->delete();
             return true;
@@ -162,12 +170,12 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @return bool
      */
-    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function releaseToken($code, ICart $cart)
     {
-        return \OnlineShop\Framework\VoucherService\Reservation::releaseToken($code);
+        return Reservation::releaseToken($code);
     }
 
     /**
@@ -176,7 +184,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     public function getCodes($filter = null)
     {
-        return \OnlineShop\Framework\VoucherService\Token\Listing::getCodes($this->seriesId, $filter);
+        return Token\Listing::getCodes($this->seriesId, $filter);
     }
 
 
@@ -185,11 +193,11 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     public function getStatistics($usagePeriod = null)
     {
-        $overallCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountBySeriesId($this->seriesId);
-        $usageCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByUsages(1, $this->seriesId);
-        $reservedTokenCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByReservation($this->seriesId);
+        $overallCount = Token\Listing::getCountBySeriesId($this->seriesId);
+        $usageCount = Token\Listing::getCountByUsages(1, $this->seriesId);
+        $reservedTokenCount = Token\Listing::getCountByReservation($this->seriesId);
 
-        $usage = \OnlineShop\Framework\VoucherService\Statistic::getBySeriesId($this->seriesId, $usagePeriod);
+        $usage = Statistic::getBySeriesId($this->seriesId, $usagePeriod);
         if (is_array($usage)) {
             $this->prepareUsageStatisticData($usage, $usagePeriod);
         }
@@ -261,7 +269,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     {
         $maxCount = $this->getMaxCount();
 
-        $dbCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByLength($this->getFinalTokenLength(), $this->seriesId);
+        $dbCount = Token\Listing::getCountByLength($this->getFinalTokenLength(), $this->seriesId);
 
         if ($dbCount !== null && $maxCount >= 0) {
             return ((int)$dbCount + $this->configuration->getCount()) / $maxCount;
@@ -359,7 +367,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     protected function buildInsertQuery($insertTokens)
     {
-        $query = 'INSERT INTO ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) ';
+        $query = 'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) ';
         $finalLength = $this->getFinalTokenLength();
 
         if (sizeof($insertTokens) > 0) {
@@ -434,7 +442,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                     // Check if any of the tokens in the temporary array checkTokens already exists,
                     // if not so, merge the checkTokens array with the array of tokens to insert and
                     // increase the overall count by the length of the checkArray i.e. the checkTokenStep
-                    if (!\OnlineShop\Framework\VoucherService\Token\Listing::tokensExist($checkTokens)) {
+                    if (!Token\Listing::tokensExist($checkTokens)) {
                         $insertTokens = array_merge($insertTokens, $checkTokens);
                         $insertCount += $tokenCheckStep;
                     }
@@ -497,7 +505,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
         $viewParamsBag['msg'] = [];
 
-        $tokens = new \OnlineShop\Framework\VoucherService\Token\Listing();
+        $tokens = new Token\Listing();
 
         try {
             $tokens->setFilterConditions($params['id'], $params);
@@ -587,7 +595,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     public function cleanUpReservations($duration = 0)
     {
-        return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($duration, $this->seriesId);
+        return Reservation::cleanUpReservations($duration, $this->seriesId);
     }
 
     /**

@@ -16,10 +16,11 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Class AttributePriceSystem
@@ -89,7 +90,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
                 $sum = 0;
                 foreach($products as $p) {
 
-                    if($p instanceof \OnlineShop\Framework\Model\AbstractSetProductEntry) {
+                    if($p instanceof AbstractSetProductEntry) {
                         $sum += $p->getProduct()->$getter() * $p->getQuantity();
                     } else {
                         $sum += $p->$getter();
@@ -113,17 +114,17 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
     }
 
     /**
-     * creates instance of \OnlineShop\Framework\PriceSystem\IPrice
+     * creates instance of IPrice
      *
      * @param $amount
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      * @throws \Exception
      */
     protected function getPriceClassInstance($amount) {
         if($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);
-            if(!$price instanceof \OnlineShop\Framework\PriceSystem\IPrice) {
-                throw new \Exception('Price Class does not implement \OnlineShop\Framework\PriceSystem\IPrice');
+            if(!$price instanceof IPrice) {
+                throw new \Exception('Price Class does not implement IPrice');
             }
         } else {
             $price = new Price($amount, $this->getDefaultCurrency(), false);

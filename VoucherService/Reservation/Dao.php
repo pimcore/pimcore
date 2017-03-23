@@ -30,10 +30,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool|string
      */
-    public function get($code, \OnlineShop\Framework\CartManager\ICart $cart = null)
+    public function get($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart = null)
     {
         $query = "SELECT * FROM " . self::TABLE_NAME . " WHERE token = ?";
         $params[] = $code;
@@ -61,7 +61,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     public function create($code, $cart)
     {
-        if (\OnlineShop\Framework\VoucherService\Reservation::reservationExists($code, $cart)) {
+        if (\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::reservationExists($code, $cart)) {
             return true;
         }
         try {

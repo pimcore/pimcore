@@ -62,7 +62,7 @@ Following elements are configured:
    * Mail configuration
 
 ## 2 - Setting up Checkout Steps
-For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation. This implementation is responsible for storage and loading of necessary checkout data for each step. It needs to extend `\OnlineShop\Framework\CheckoutManager\AbstractStep` and implement `\OnlineShop\Framework\CheckoutManager\ICheckoutStep`. 
+For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation. This implementation is responsible for storage and loading of necessary checkout data for each step. It needs to extend `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\AbstractStep` and implement `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep`.
 
 Following methods have to be implemented: 
 * commit($data): is called when step is finished and data needs to be saved
@@ -77,7 +77,7 @@ Following methods have to be implemented:
 namespace OnlineShop\Framework\CheckoutManager;
 
 /**
- * Class \OnlineShop\Framework\CheckoutManager\DeliveryAddress
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\DeliveryAddress
  *
  * sample implementation for delivery address
  */
@@ -123,7 +123,7 @@ class DeliveryAddress extends AbstractStep implements ICheckoutStep {
 ```php
 <?php
 
-$manager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager($cart);
+$manager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCheckoutManager($cart);
 $step = $manager->getCheckoutStep("deliveryaddress");
 $address = new stdClass();
 //fill address
@@ -139,18 +139,18 @@ $cart->save();
 After each checkout step is completed, the order can be committed. If no payment is needed, this is done as follows: 
 ```php
 <?php
-$manager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager($cart);
+$manager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCheckoutManager($cart);
 $order = $manager->commitOrder();
 ```
-While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `\OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor`. 
+While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor`.
 This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order confirmation mails, ...) is bundled. 
 
-The default implementation `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` provides basic functionality like creating an order object and sending an order confirmation mail.
- Order creation it self is delegated to the `\OnlineShop\Framework\OrderManager\IOrderManager`. 
+The default implementation `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor` provides basic functionality like creating an order object and sending an order confirmation mail.
+ Order creation it self is delegated to the `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderManager`.
 In simple use cases a website specific implementation needs 
 
-* to extend `\OnlineShop\Framework\OrderManager\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and 
-* to extend `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
+* to extend `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\OrderManager` and overwrite the method `applyCustomCheckoutDataToOrder` to add additional fields to the order object and
+* to extend `\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor` and overwrite the method `processOrder` where website specific functionality is integrated (sending orders to erp systems, ...).
 
 If additional information needs to be stored into the order, the OrderManager has to be 
  extended. For more Information 
@@ -159,21 +159,21 @@ A simple implementation of `Website_OnlineShop_Order_OrderManager` could look li
 
 ```php
 <?php
-class Website_OnlineShop_Order_OrderManager extends \OnlineShop\Framework\OrderManager\OrderManager {
+class Website_OnlineShop_Order_OrderManager extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\OrderManager {
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
-     * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 
-        /* @var \OnlineShop\Framework\Model\AbstractOrder $order*/
+        /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order*/
 
-        $checkout = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
+        $checkout = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCheckoutManager( $cart );
         $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress')->getData();
         /* @var Website_OnlineShop_Order_DeliveryAddress $deliveryAddress */
 
@@ -195,7 +195,7 @@ A simple implementation of `Website_OnlineShop_Order_Processor` could look like:
 
 ```php
 <?php
-class OnlineShop_CommitOrderProcessor extends \OnlineShop\Framework\CheckoutManager\CommitOrderProcessor {
+class OnlineShop_CommitOrderProcessor extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor {
  
    protected function processOrder(Object_OnlineShopOrder $order) {
       //send order to ERP-System
@@ -223,7 +223,7 @@ To integrate payment into the checkout process instead of calling ```$manager->c
 After each checkout step is completed, the payment can be started. This is done as follows: 
 ```php
 <?php
-$manager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager($cart);
+$manager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCheckoutManager($cart);
 
 // start order payment
 $paymentInformation= $manager->startOrderPayment();
@@ -268,7 +268,7 @@ A client side handling could look like as follows:
     {
         // init
         $cart = $this->getCart();
-        $checkoutManager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager( $cart );
+        $checkoutManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCheckoutManager( $cart );
 
         if($this->getParam('mode') == "cancel") {
             $checkoutManager->cancelStartedOrderPayment();
@@ -287,7 +287,7 @@ A client side handling could look like as follows:
             // its possible to execute this later (e.g. when shipment is done) - which is preferred
             $payment = $checkoutManager->getPayment();
             $paymentStatus = $payment->executeDebit();
-            $orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+            $orderAgent = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
             $orderAgent->updatePayment($paymentStatus);
 
             if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
@@ -318,8 +318,8 @@ A server side handling could look as follows:
 
         $params = $this->getAllParams();
 
-        $commitOrderProcessor = \OnlineShop\Framework\Factory::getInstance()->getCommitOrderProcessor();
-        $paymentProvider = \OnlineShop\Framework\Factory::getInstance()->getPaymentManager()->getProvider("qpay");
+        $commitOrderProcessor = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getCommitOrderProcessor();
+        $paymentProvider = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getPaymentManager()->getProvider("qpay");
 
         if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
             \Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
@@ -345,7 +345,7 @@ So different checkout steps, different payment providers etc. can be implemented
 
 ```php
 <?php
-$environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+$environment = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getEnvironment();
 $environment->setCurrentCheckoutTenant('default');
 $environment->save();
 

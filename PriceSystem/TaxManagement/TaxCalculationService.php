@@ -17,9 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 
-use OnlineShop\Framework\Exception\UnsupportedException;
-use OnlineShop\Framework\PriceSystem\IPrice;
 
 /**
  * Class TaxCalculationService

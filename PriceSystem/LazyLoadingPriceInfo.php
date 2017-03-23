@@ -51,7 +51,7 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
                 $priceInfo = $this->getPriceSystem()->$method($this->getProduct(), $this->getQuantity(), $this->getProducts());
 
             } else {
-                throw new \OnlineShop\Framework\Exception\UnsupportedException($name . " is not supported for " . get_class($this));
+                throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException($name . " is not supported for " . get_class($this));
             }
             if ($priceInfo != null && method_exists($priceInfo, "setPriceSystem")) {
                 $priceInfo->setPriceSystem($this->getPriceSystem());

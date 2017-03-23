@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
 class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchProcessingWorker {
@@ -49,12 +51,12 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     protected $indexVersion = 0;
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\ElasticSearch
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\ElasticSearch
      */
     protected $tenantConfig;
 
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\ElasticSearch $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\ElasticSearch $tenantConfig) {
         parent::__construct($tenantConfig);
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
         $this->determineAndSetCurrentIndexVersion();
@@ -153,24 +155,24 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     protected function getMappingParams($type)
     {
 
-        if($type == \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT) {
+        if($type == IProductList::PRODUCT_TYPE_OBJECT) {
             $params = [
                 'index' => $this->getIndexNameVersion(),
-                'type'  => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT,
+                'type'  => IProductList::PRODUCT_TYPE_OBJECT,
                 'body'  => [
-                    \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT => [
+                    IProductList::PRODUCT_TYPE_OBJECT => [
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
             ];
             return $params;
-        } else if ($type == \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT) {
+        } else if ($type == IProductList::PRODUCT_TYPE_VARIANT) {
             $params = [
                 'index' => $this->getIndexNameVersion(),
-                'type'  => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT,
+                'type'  => IProductList::PRODUCT_TYPE_VARIANT,
                 'body'  => [
-                    \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT => [
-                        '_parent'    => ['type' => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT],
+                    IProductList::PRODUCT_TYPE_VARIANT => [
+                        '_parent'    => ['type' => IProductList::PRODUCT_TYPE_OBJECT],
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
@@ -217,7 +219,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
         }
 
 
-        foreach([\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT, \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT] as $mappingType){
+        foreach([IProductList::PRODUCT_TYPE_VARIANT, IProductList::PRODUCT_TYPE_OBJECT] as $mappingType){
             $params = $this->getMappingParams($mappingType);
 
             try {
@@ -280,7 +282,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     if(!empty($attribute->interpreter)) {
                         $interpreter = $attribute->interpreter;
                         $interpreterObject = new $interpreter();
-                        if($interpreterObject instanceof \OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter) {
+                        if($interpreterObject instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
                             $type = "long";
                             $isRelation = true;
                         }
@@ -349,10 +351,10 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     /**
      * deletes given element from index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return void
      */
-    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function deleteFromIndex(IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -368,13 +370,13 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
     }
 
-    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
+    protected function doDeleteFromIndex($objectId, IIndexable $object = null) {
         $esClient = $this->getElasticSearchClient();
 
         if($object) {
             try {
                 $params = ['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId];
-                if ($object->getOSIndexType() == \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT) {
+                if ($object->getOSIndexType() == IProductList::PRODUCT_TYPE_VARIANT) {
                     $params['parent'] = $object->getOSParentId();
                 }
                 $esClient->delete($params);
@@ -394,7 +396,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
         } else {
             //object is empty so the object does not exist in pimcore any more. therefore it has to be deleted from the index, store table and mockup table
             try {
-                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => IProductList::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
             } catch(\Exception $e) {
                 Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
             }
@@ -411,10 +413,10 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     /**
      * updates given element in index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return void
      */
-    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function updateIndex(IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -560,7 +562,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
      * @return mixed
      */
     public function getProductList() {
-        return new \OnlineShop\Framework\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
     }
 
 

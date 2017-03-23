@@ -17,8 +17,16 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
-use \OnlineShop\Framework\Model\AbstractOrder as Order;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPriceInfo;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Config\Config;
 
 class OrderManager implements IOrderManager
@@ -49,7 +57,7 @@ class OrderManager implements IOrderManager
      */
     public function __construct(Config $config)
     {
-        $this->config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "ordermanager");
+        $this->config = new HelperContainer($config, "ordermanager");
     }
 
     /**
@@ -71,7 +79,7 @@ class OrderManager implements IOrderManager
      */
     public function createOrderAgent(Order $order)
     {
-        return new $this->config->orderAgent->class( \OnlineShop\Framework\Factory::getInstance(), $order );
+        return new $this->config->orderAgent->class( Factory::getInstance(), $order );
     }
 
 
@@ -142,19 +150,19 @@ class OrderManager implements IOrderManager
     /**
      * returns cart id for order object
      *
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @return string
      */
-    protected function createCartId(\OnlineShop\Framework\CartManager\ICart $cart) {
+    protected function createCartId(ICart $cart) {
         return get_class($cart) . "_" . $cart->getId();
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return null|\OnlineShop\Framework\Model\AbstractOrder
+     * @param ICart $cart
+     * @return null|AbstractOrder
      * @throws \Exception
      */
-    public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
+    public function getOrderFromCart(ICart $cart) {
         $cartId = $this->createCartId($cart);
 
         $orderList = $this->buildOrderList();
@@ -172,13 +180,13 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param ICart $cart
+     * @return AbstractOrder
      * @throws \Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      *
      */
-    public function getOrCreateOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
+    public function getOrCreateOrderFromCart(ICart $cart) {
         $order = $this->getOrderFromCart($cart);
 
         //No Order found, create new one
@@ -249,10 +257,10 @@ class OrderManager implements IOrderManager
 
     /**
      * @param array $items
-     * @param Order $order
+     * @param AbstractOrder $order
      * @return array
      */
-    protected function applyOrderItems(array $items, \OnlineShop\Framework\Model\AbstractOrder $order, $giftItems = false) {
+    protected function applyOrderItems(array $items, AbstractOrder $order, $giftItems = false) {
         $orderItems = [];
         foreach($items as $item) {
             $orderItem = $this->createOrderItem($item, $order, $giftItems);
@@ -280,13 +288,13 @@ class OrderManager implements IOrderManager
     }
 
 
-    protected function applyVoucherTokens(\OnlineShop\Framework\Model\AbstractOrder $order, \OnlineShop\Framework\CartManager\ICart $cart){
+    protected function applyVoucherTokens(AbstractOrder $order, ICart $cart){
 
         $voucherTokens = $cart->getVoucherTokenCodes();
         if (is_array($voucherTokens)) {
             $flippedVoucherTokens = array_flip($voucherTokens);
 
-            $service = \OnlineShop\Framework\Factory::getInstance()->getVoucherService();
+            $service = Factory::getInstance()->getVoucherService();
 
             if($tokenObjects = $order->getVoucherTokens()) {
                 foreach ($tokenObjects as $tokenObject) {
@@ -311,10 +319,10 @@ class OrderManager implements IOrderManager
     /**
      * hook to save individual data into order object
      *
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param Order $order
+     * @param ICart $cart
+     * @param AbstractOrder $order
      */
-    protected function applyCustomCheckoutDataToOrder(\OnlineShop\Framework\CartManager\ICart $cart, Order $order) {
+    protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order) {
         return $order;
     }
 
@@ -322,13 +330,13 @@ class OrderManager implements IOrderManager
      * hook to set customer into order
      * default implementation gets current customer from environment and sets it into order
      *
-     * @param Order $order
-     * @return Order
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param AbstractOrder $order
+     * @return AbstractOrder
+     * @throws UnsupportedException
      */
-    protected function setCurrentCustomerToOrder(\OnlineShop\Framework\Model\AbstractOrder $order) {
+    protected function setCurrentCustomerToOrder(AbstractOrder $order) {
         //sets customer to order - if available
-        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+        $env = Factory::getInstance()->getEnvironment();
 
         if(@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
@@ -349,7 +357,7 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return AbstractOrder
      * @throws \Exception
      */
     protected function getNewOrderObject() {
@@ -361,7 +369,7 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractOrderItem
+     * @return AbstractOrderItem
      * @throws \Exception
      */
     protected function getNewOrderItemObject() {
@@ -373,14 +381,14 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICartItem $item
+     * @param ICartItem $item
      * @param $parent
      * @param bool $isGiftItem
      *
-     * @return \OnlineShop\Framework\Model\AbstractOrderItem
+     * @return AbstractOrderItem
      * @throws \Exception
      */
-    protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item, $parent, $isGiftItem = false) {
+    protected function createOrderItem(ICartItem $item, $parent, $isGiftItem = false) {
 
         $key = $this->buildOrderItemKey($item);
 
@@ -423,7 +431,7 @@ class OrderManager implements IOrderManager
         if(!$isGiftItem) {
             // save active pricing rules
             $priceInfo = $item->getPriceInfo();
-            if($priceInfo instanceof \OnlineShop\Framework\PricingManager\IPriceInfo && method_exists($orderItem, 'setPricingRules'))
+            if($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules'))
             {
                 $priceRules = new \Pimcore\Model\Object\Fieldcollection();
                 foreach($priceInfo->getRules() as $rule)
@@ -465,10 +473,10 @@ class OrderManager implements IOrderManager
     /**
      * Build order item key from cart item
      *
-     * @param \OnlineShop\Framework\CartManager\ICartItem $item
+     * @param ICartItem $item
      * @return string
      */
-    protected function buildOrderItemKey(\OnlineShop\Framework\CartManager\ICartItem $item)
+    protected function buildOrderItemKey(ICartItem $item)
     {
         $key = \Pimcore\File::getValidFilename(sprintf(
             '%s_%s',
@@ -550,10 +558,10 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param IStatus $paymentStatus
+     * @return AbstractOrder
      */
-    public function getOrderByPaymentStatus(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus)
+    public function getOrderByPaymentStatus(IStatus $paymentStatus)
     {
         //this call is needed in order to really load most updated object from cache or DB (otherwise it could be loaded from process)
         \Pimcore::collectGarbage();

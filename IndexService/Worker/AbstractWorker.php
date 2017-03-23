@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 abstract class AbstractWorker implements IWorker {
     protected $name;
     protected $columnConfig;
@@ -29,11 +31,11 @@ abstract class AbstractWorker implements IWorker {
 
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
      */
     protected $tenantConfig;
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig) {
         $this->name = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
         $this->columnConfig = $tenantConfig->getAttributeConfig();
@@ -97,10 +99,10 @@ abstract class AbstractWorker implements IWorker {
     /**
      * cleans up all old zombie data
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param array $subObjectIds
      */
-    protected function doCleanupOldZombieData(\OnlineShop\Framework\Model\IIndexable $object, array $subObjectIds) {
+    protected function doCleanupOldZombieData(IIndexable $object, array $subObjectIds) {
         $cleanupIds = $this->tenantConfig->getSubIdsToCleanup($object, $subObjectIds);
         foreach($cleanupIds as $idToCleanup) {
             $this->doDeleteFromIndex($idToCleanup, $object);
@@ -111,10 +113,10 @@ abstract class AbstractWorker implements IWorker {
      * actually deletes all sub entries from index. original object is delivered too, but keep in mind, that this might be empty.
      *
      * @param $subObjectId
-     * @param \OnlineShop\Framework\Model\IIndexable $object - might be empty (when object doesn't exist any more in pimcore
+     * @param IIndexable $object - might be empty (when object doesn't exist any more in pimcore
      * @return mixed
      */
-    abstract protected function doDeleteFromIndex($subObjectId, \OnlineShop\Framework\Model\IIndexable $object = null);
+    abstract protected function doDeleteFromIndex($subObjectId, IIndexable $object = null);
 
 
     /**
@@ -125,7 +127,7 @@ abstract class AbstractWorker implements IWorker {
      */
     protected function convertArray($data) {
         if(is_array($data)) {
-            return \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . implode($data, \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER) . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
+            return IWorker::MULTISELECT_DELIMITER . implode($data, IWorker::MULTISELECT_DELIMITER) . IWorker::MULTISELECT_DELIMITER;
         }
         return $data;
     }

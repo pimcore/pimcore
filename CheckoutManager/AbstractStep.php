@@ -18,16 +18,16 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
- * Class \OnlineShop\Framework\CheckoutManager\AbstractStep
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\AbstractStep
  */
 abstract class AbstractStep implements ICheckoutStep {
 
     /**
-     * @var \OnlineShop\Framework\CartManager\ICart
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     protected $cart;
 
-    public function __construct(\OnlineShop\Framework\CartManager\ICart $cart) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart) {
         $this->cart = $cart;
     }
 

@@ -18,7 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
- * Interface \OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor
  */
 interface ICommitOrderProcessor {
 
@@ -26,13 +26,13 @@ interface ICommitOrderProcessor {
     /**
      * check if order is already committed and payment information with same internal payment id has same state
      *
-     * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return null|\OnlineShop\Framework\Model\AbstractOrder
+     * @param array|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $paymentResponseParams
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * @return null|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      * @throws \Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
 
     /**
      * facade method for
@@ -42,10 +42,10 @@ interface ICommitOrderProcessor {
      * can be used by controllers to commit orders with payment
      *
      * @param $paymentResponseParams
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
 
     /**
      * commits order payment
@@ -54,19 +54,19 @@ interface ICommitOrderProcessor {
      *
      * use this for committing order when payment is activated
      *
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $paymentStatus
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
-    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider);
+    public function commitOrderPayment(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $paymentStatus, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
 
     /**
      * commits order
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
-    public function commitOrder(\OnlineShop\Framework\Model\AbstractOrder $order);
+    public function commitOrder(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 
     /**
      * @param string $confirmationMail

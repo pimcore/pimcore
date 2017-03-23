@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 class DefaultFindologic implements IProductList
@@ -38,7 +39,7 @@ class DefaultFindologic implements IProductList
     protected $revision = '0.1';
 
     /**
-     * @var \OnlineShop\Framework\Model\IIndexable[]
+     * @var IIndexable[]
      */
     protected $products = null;
 
@@ -48,7 +49,7 @@ class DefaultFindologic implements IProductList
     protected $tenantName;
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IFindologicConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IFindologicConfig
      */
     protected $tenantConfig;
 
@@ -73,7 +74,7 @@ class DefaultFindologic implements IProductList
     protected $offset = 0;
 
     /**
-     * @var \OnlineShop\Framework\Model\AbstractCategory
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     protected $category;
 
@@ -141,9 +142,9 @@ class DefaultFindologic implements IProductList
 
 
     /**
-     * @param \OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig
      */
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IConfig $tenantConfig)
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -158,7 +159,7 @@ class DefaultFindologic implements IProductList
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
     public function getProducts()
     {
@@ -327,7 +328,7 @@ class DefaultFindologic implements IProductList
     }
 
 
-    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category)
+    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category)
     {
         $this->products = null;
         $this->category = $category;
@@ -349,7 +350,7 @@ class DefaultFindologic implements IProductList
 
 
     /**
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     public function load()
     {
@@ -508,11 +509,11 @@ class DefaultFindologic implements IProductList
 
     /**
      * create category path
-     * @param \OnlineShop\Framework\Model\AbstractCategory $currentCat
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $currentCat
      *
      * @return string
      */
-    public function buildCategoryTree(\OnlineShop\Framework\Model\AbstractCategory $currentCat) {
+    public function buildCategoryTree(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $currentCat) {
         $catTree = $currentCat->getId();
         while($currentCat->getParent() instanceof $currentCat) {
             $catTree = $currentCat->getParentId() . '_' . $catTree;
@@ -667,7 +668,7 @@ class DefaultFindologic implements IProductList
             $field = $this->groupedValues[ $fieldname ];
 
             // special handling for nested category filters
-            if($this->getCategory() && $fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
+            if($this->getCategory() && $fieldname === \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
                 $catTree = $this->buildCategoryTree($this->getCategory());
 
                 $categories = explode('_', $catTree);
@@ -677,7 +678,7 @@ class DefaultFindologic implements IProductList
                 }
 
             }
-            else if($fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME)
+            else if($fieldname === \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME)
             {
                 $rec = function (array $items) use (&$rec, &$groups) {
 
@@ -748,7 +749,7 @@ class DefaultFindologic implements IProductList
 
 
     /**
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @return IIndexable[]
      */
     protected function doLoadGroupByValues()
     {

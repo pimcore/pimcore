@@ -20,18 +20,18 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 /**
  * add a gift product to the given cart
  */
-interface IGift extends \OnlineShop\Framework\PricingManager\IAction
+interface IGift extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction
 {
     /**
      * set gift product
-     * @param \OnlineShop\Framework\Model\AbstractProduct $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product
      *
      * @return IGift
      */
-    public function setProduct(\OnlineShop\Framework\Model\AbstractProduct $product);
+    public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product);
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct
      */
     public function getProduct();
 }

@@ -18,6 +18,10 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -149,11 +153,11 @@ class QPay implements IPayment
     }
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param array $config
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
-    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
+    public function initPayment(IPrice $price, array $config)
     {
         // check params
         $required = [
@@ -237,7 +241,7 @@ class QPay implements IPayment
     /**
      * @param mixed $response
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -276,11 +280,11 @@ class QPay implements IPayment
         $fingerprint = $this->computeFingerprint($fingerprintParams);
         if ($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint']) {
             // fingerprint is wrong, ignore this response
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $response['orderIdent']
                 , $response['orderNumber']
                 , $response['avsResponseMessage'] ?: $response['message'] ?: 'fingerprint error'
-                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                , IStatus::STATUS_CANCELLED
             );
         }
 
@@ -290,16 +294,16 @@ class QPay implements IPayment
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($authorizedData['amount'], new Currency($authorizedData['currency']));
+        $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
 
 
-        return new \OnlineShop\Framework\PaymentManager\Status(
+        return new Status(
             $response['orderIdent']
             , $response['orderNumber']
             , $response['avsResponseMessage'] ?: $response['message']
             , $response['orderNumber'] !== NULL && $response['paymentState'] == 'SUCCESS'
-                ? \OnlineShop\Framework\PaymentManager\IStatus::STATUS_AUTHORIZED
-                : \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                ? IStatus::STATUS_AUTHORIZED
+                : IStatus::STATUS_CANCELLED
             , [
                 'qpay_amount' => (string)$price
                 , 'qpay_paymentType' => $response['paymentType']
@@ -332,13 +336,13 @@ class QPay implements IPayment
     /**
      * execute payment
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      * @throws \Exception
      */
-    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
+    public function executeDebit(IPrice $price = null, $reference = null)
     {
         # https://integration.wirecard.at/doku.php/wcp:toolkit_light:start
         # https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
@@ -379,7 +383,7 @@ class QPay implements IPayment
         else
         {
             // default clearing auth
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'], new Currency($this->authorizedData['currency']));
+            $price = new Price($this->authorizedData['amount'], new Currency($this->authorizedData['currency']));
 
             $request = [
                 'customerId' => $this->customer
@@ -416,11 +420,11 @@ class QPay implements IPayment
         {
             // Operation successfully done.
 
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $reference
                 , $response['paymentNumber'] ?: $response['orderNumber']
                 , ''
-                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
+                , IStatus::STATUS_CLEARED
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
@@ -438,11 +442,11 @@ class QPay implements IPayment
                 $error[] = $response['error_' . $e . '_error_message'];
             }
 
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $reference
                 , $response['paymentNumber'] ?: $response['orderNumber']
                 , implode("\n", $error)
-                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                , IStatus::STATUS_CANCELLED
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
@@ -459,13 +463,13 @@ class QPay implements IPayment
     /**
      * execute credit
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      */
-    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
+    public function executeCredit(IPrice $price, $reference, $transactionId)
     {
         // init request
         $request = [
@@ -504,11 +508,11 @@ class QPay implements IPayment
         {
             // Operation successfully done.
 
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $transactionId
                 , $reference
                 , 'executeCredit'
-                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
+                , IStatus::STATUS_CLEARED
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
@@ -520,11 +524,11 @@ class QPay implements IPayment
         {
             // https://integration.wirecard.at/doku.php/backend:response_parameters
 
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $transactionId
                 , $reference
                 , $response['message']
-                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                , IStatus::STATUS_CANCELLED
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']

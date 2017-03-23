@@ -17,10 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Config\Config;
 
 /**
- * Class \OnlineShop\Framework\Tools\Config\HelperContainer
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer
  *
  * Helper class for online shop config in combination with tenants
  *
@@ -67,7 +68,7 @@ class HelperContainer {
 
 
     public function __get($name) {
-        $currentCheckoutTenant = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
+        $currentCheckoutTenant = Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
 
         if($currentCheckoutTenant && $this->tenantConfigs[$currentCheckoutTenant]) {
             $option = $this->tenantConfigs[$currentCheckoutTenant]->$name;

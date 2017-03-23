@@ -17,6 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker;
+
 class IndexUpdater {
 
     /**
@@ -29,7 +32,7 @@ class IndexUpdater {
      * @param string $loggername
      */
     public static function updateIndex($objectListClass, $condition = "", $updateIndexStructures = false, $loggername = "indexupdater") {
-        $updater = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
+        $updater = Factory::getInstance()->getIndexService();
         if($updateIndexStructures) {
             $updater->createOrUpdateIndexStructures();
         }
@@ -72,11 +75,11 @@ class IndexUpdater {
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      *
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater") {
         if($tenants == null) {
-            $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
+            $tenants = Factory::getInstance()->getAllTenants();
         }
 
         if(!is_array($tenants)) {
@@ -89,13 +92,13 @@ class IndexUpdater {
             self::log($loggername, "Processing preparation queue for tenant: " . $tenant);
             self::log($loggername, "=========================");
 
-            $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+            $env = Factory::getInstance()->getEnvironment();
             $env->setCurrentAssortmentTenant($tenant);
 
-            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
+            $indexService = Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
-            if($worker instanceof \OnlineShop\Framework\IndexService\Worker\IBatchProcessingWorker) {
+            if($worker instanceof IBatchProcessingWorker) {
                 $round = 0;
                 $result = true;
                 while($result) {
@@ -123,11 +126,11 @@ class IndexUpdater {
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      * @param int $indexItemsPerRound - number of items to index per round
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater", $indexItemsPerRound = 200) {
         if($tenants == null) {
-            $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
+            $tenants = Factory::getInstance()->getAllTenants();
         }
 
         if(!is_array($tenants)) {
@@ -140,14 +143,14 @@ class IndexUpdater {
             self::log($loggername, "Processing update index elements for tenant: " . $tenant);
             self::log($loggername, "=========================");
 
-            $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+            $env = Factory::getInstance()->getEnvironment();
             $env->setCurrentAssortmentTenant($tenant);
 
-            $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
+            $indexService = Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
 
-            if($worker instanceof \OnlineShop\Framework\IndexService\Worker\IBatchProcessingWorker) {
+            if($worker instanceof IBatchProcessingWorker) {
                 $result = true;
                 $round = 0;
                 while($result) {

@@ -77,7 +77,7 @@ interface IIndexable {
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
      *
-     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
     public function getCategories();
 

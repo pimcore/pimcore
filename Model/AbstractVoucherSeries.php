@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+
 abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 {
 
@@ -27,8 +29,8 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 
 
     /**
-     * @return bool|\OnlineShop\Framework\VoucherService\TokenManager\ITokenManager
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @return bool|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getTokenManager()
     {
@@ -38,7 +40,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 
             // name of fieldcollection class
             $configuration = $items->get(0);
-            return \OnlineShop\Framework\Factory::getInstance()->getTokenManager($configuration);
+            return Factory::getInstance()->getTokenManager($configuration);
 
         }
         return false;
@@ -51,7 +53,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
         $db = \Pimcore\Db::get();
 
         $query = "
-            SELECT length, COUNT(*) AS count FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . "
+            SELECT length, COUNT(*) AS count FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . "
             WHERE voucherSeriesId = ?
             GROUP BY length";
 

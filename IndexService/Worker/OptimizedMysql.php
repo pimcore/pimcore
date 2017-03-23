@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Cache;
 use Pimcore\Logger;
 
@@ -25,7 +26,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup";
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\OptimizedMysql
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
      */
     protected $tenantConfig;
 
@@ -34,7 +35,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
      */
     protected $mySqlHelper;
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\OptimizedMysql $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\OptimizedMysql $tenantConfig) {
         parent::__construct($tenantConfig);
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig);
@@ -46,7 +47,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
         $this->createOrUpdateStoreTable();
     }
 
-    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
+    public function deleteFromIndex(IIndexable $object){
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -62,7 +63,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
 
     }
 
-    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
+    protected function doDeleteFromIndex($objectId, IIndexable $object = null) {
         try {
             $this->db->beginTransaction();
             $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($objectId));
@@ -80,7 +81,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
         }
     }
 
-    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function updateIndex(IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -169,7 +170,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
      * @return mixed
      */
     function getProductList() {
-        return new \OnlineShop\Framework\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
     }
 
 }

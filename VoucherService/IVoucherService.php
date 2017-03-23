@@ -29,29 +29,29 @@ interface IVoucherService
      * Gets the correct token manager and calls its checkToken() function.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool
-     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException
      */
-    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function checkToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
      * Gets the correct token manager and calls its reserveToken() function.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool
      */
-    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function reserveToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
      * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool
      */
-    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function releaseToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
      * Gets the correct token manager and calls its applyToken() function, which returns
@@ -59,11 +59,11 @@ interface IVoucherService
      * reservations gets released.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return bool
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order);
+    public function applyToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 
 
     /**
@@ -71,10 +71,10 @@ interface IVoucherService
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return mixed
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 
 
     /**

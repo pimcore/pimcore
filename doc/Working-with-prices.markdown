@@ -8,7 +8,7 @@ In terms of procuct availabilities and stocks, the very similar concept of avail
 ## 2 - Configuration of price systems
 There are two places where the configuration of price system takes place: 
 - **Product class**: each product has the method ```getPriceSystemName()``` which returns the name of its price system. 
-- **OnlineShopConfig.php**: in the pricesystems section the mapping between price system names and their implementation classes takes place. Price system implementations at least need to implement the interface ```\OnlineShop\Framework\PriceSystem\IPriceSystem```, but there exist already some useful concrete implementations. 
+- **OnlineShopConfig.php**: in the pricesystems section the mapping between price system names and their implementation classes takes place. Price system implementations at least need to implement the interface ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem```, but there exist already some useful concrete implementations.
 
 ```php
 "pricesystems" => [
@@ -32,11 +32,11 @@ There are two places where the configuration of price system takes place:
         ],
 ```
 
-> The simplest price system is ```\OnlineShop\Framework\PriceSystem\AttributePriceSystem``` which reads the price from an attribute of the product object. For implementing custom price systems have a look at method comments of ```\OnlineShop\Framework\PriceSystem\IPriceSystem``` and the implementations of the existing price systems. 
+> The simplest price system is ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\AttributePriceSystem``` which reads the price from an attribute of the product object. For implementing custom price systems have a look at method comments of ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem``` and the implementations of the existing price systems.
 
 
 ## 3 - Working with prices
-Once the price systems are set up correctly, working with prices should be quite easy. Each product has the method ```getOSPrice()``` which returns an ```\OnlineShop\Framework\PriceSystem\IPrice``` with the price of the product. 
+Once the price systems are set up correctly, working with prices should be quite easy. Each product has the method ```getOSPrice()``` which returns an ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice``` with the price of the product.
 
 Internally the product gets its price system and starts the price calculation to get the price. 
 
@@ -65,17 +65,17 @@ To print the applied rules in the frontend, the developer needs to add some line
 		<ul>
 			<?php foreach($priceInfo->getRules() as $rule ) { ?>
 				<?php foreach($rule->getActions() as $action) { ?>
-					<?php if($action instanceof \OnlineShop\Framework\PricingManager\Action\ProductDiscount) { ?>
+					<?php if($action instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action\ProductDiscount) { ?>
 						<?php if($action->getAmount() > 0) { ?>
 							<li><?= $rule->getLabel() ?> <?= $this->translate("shop.detail.your_benefit.discount.amount", $formatter->formatCurrency($action->getAmount(), "EUR")) ?></li>
 						<?php } else if($action->getPercent() > 0) { ?>
 							<li><?= $rule->getLabel() ?> <?= $this->translate("shop.detail.your_benefit.discount.percent", $action->getPercent()) ?></li>
 						<?php } ?>
-					<?php } else if($action instanceof \OnlineShop\Framework\PricingManager\Action\IGift) { ?>
+					<?php } else if($action instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action\IGift) { ?>
 							<li>
 								<?= $this->translate("shop.detail.your_benefit.discount.gift", '<a href="' . $action->getProduct()->getShopDetailLink($this, true) . '"> ' . $action->getProduct()->getName() . '</a>') ?>
 							</li>
-					<?php } else if($action instanceof \OnlineShop\Framework\PricingManager\Action\FreeShipping) { ?>
+					<?php } else if($action instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action\FreeShipping) { ?>
 						<li>
 							<?= $this->translate("shop.detail.your_benefit.discount.freeshipping") ?>
 						</li>
@@ -137,7 +137,7 @@ if ($token = strip_tags($this->getParam('voucherToken'))) {
 
 	try{
         $this->cart->addVoucherToken($token);
-    } catch( \OnlineShop\Framework\Exception\VoucherServiceException $e ){
+    } catch( \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException $e ){
         $voucherError = $this->view->t('cart.msg-error.' . $e->getCode());
     }
 }

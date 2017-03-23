@@ -17,7 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
 
 class PayPal implements IPayment
@@ -90,14 +94,14 @@ class PayPal implements IPayment
 
     /**
      * start payment
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param array                       $config
      *
      * @return string
      * @throws \Exception
      * @link https://devtools-paypal.com/apiexplorer/PayPalAPIs
      */
-    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
+    public function initPayment(IPrice $price, array $config)
     {
         // check params
         $required = [  'ReturnURL' => null
@@ -163,7 +167,7 @@ class PayPal implements IPayment
      * execute payment
      * @param mixed $response
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -195,7 +199,7 @@ class PayPal implements IPayment
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'], new Currency($response['currency']));
+        $price = new Price($response['amount'], new Currency($response['currency']));
 
 
         // execute
@@ -231,12 +235,12 @@ class PayPal implements IPayment
     /**
      * execute payment
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus
      */
-    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
+    public function executeDebit(IPrice $price = null, $reference = null)
     {
         // Execute payment
         $x = new \stdClass;
@@ -258,11 +262,11 @@ class PayPal implements IPayment
             // success
 
             $paymentInfo = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo;
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $reference
                 , $paymentInfo->TransactionID
                 , null
-                , \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED
+                , AbstractOrder::ORDER_STATE_COMMITTED
                 , [
                     'paypal_TransactionType' => $paymentInfo->TransactionType
                     , 'paypal_PaymentType' => $paymentInfo->PaymentType
@@ -285,11 +289,11 @@ class PayPal implements IPayment
             }
 
 
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $reference
                 , $ret->CorrelationID
                 , $message
-                , \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED
+                , AbstractOrder::ORDER_STATE_ABORTED
             );
         }
     }
@@ -297,24 +301,24 @@ class PayPal implements IPayment
     /**
      * execute credit
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus
      */
-    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
+    public function executeCredit(IPrice $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
     }
 
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      *
      * @return \stdClass
      */
-    protected function createPaymentDetails(\OnlineShop\Framework\PriceSystem\IPrice $price) # \OnlineShop\Framework\Model\AbstractOrder $order
+    protected function createPaymentDetails(IPrice $price) # \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
     {
         // create order total
         $paymentDetails = new \stdClass();

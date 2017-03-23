@@ -25,13 +25,13 @@ class MySql {
     protected $_sqlChangeLog = [];
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IMysqlConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
      */
     protected $tenantConfig;
 
     protected $db;
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IMysqlConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig) {
         $this->tenantConfig = $tenantConfig;
 
         $this->db = \Pimcore\Db::get();
@@ -114,7 +114,7 @@ class MySql {
                     if(!empty($column->interpreter)) {
                         $interpreter = $column->interpreter;
                         $interpreterObject = new $interpreter();
-                        if($interpreterObject instanceof \OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter) {
+                        if($interpreterObject instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
                             $doAdd = false;
                         }
                     }

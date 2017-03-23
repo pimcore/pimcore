@@ -18,7 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
- * Class \OnlineShop\Framework\CheckoutManager\DeliveryAddress
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\DeliveryAddress
  *
  * sample implementation for delivery address
  */

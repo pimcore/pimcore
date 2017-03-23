@@ -71,7 +71,7 @@ interface ICheckoutable {
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem
      */
     public function getPriceSystemImplementation();
 
@@ -79,7 +79,7 @@ interface ICheckoutable {
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation();
 
@@ -88,7 +88,7 @@ interface ICheckoutable {
      * returns price for given quantity scale
      *
      * @param int $quantityScale
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = 1);
 
@@ -99,7 +99,7 @@ interface ICheckoutable {
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
-     * @return \OnlineShop\Framework\PriceSystem\AbstractPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1);
 
@@ -109,7 +109,7 @@ interface ICheckoutable {
      * returns availability info based on given quantity
      *
      * @param int $quantity
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null);
 

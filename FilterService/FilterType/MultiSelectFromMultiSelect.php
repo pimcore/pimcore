@@ -17,17 +17,21 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
-class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\FilterType\SelectFromMultiSelect
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+
+class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
 {
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList                  $productList
      * @param                                                   $currentFilter
      *
      * @return string
      */
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
 
         $field = $this->getField($filterDefinition);
 
@@ -41,7 +45,7 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
 
         $values = array();
         foreach($rawValues as $v) {
-            $explode = explode(\OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(IWorker::MULTISELECT_DELIMITER, $v['value']);
             foreach($explode as $e) {
                 if(!empty($e)) {
                     if($values[$e]) {
@@ -66,15 +70,15 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
 
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                  $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList                  $productList
      * @param array                                             $currentFilter
      * @param                                                   $params
      * @param bool                                              $isPrecondition
      *
      * @return string[]
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
@@ -93,7 +97,7 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
                     unset($value[$key]);
                 }
             }
-        } else if(!empty($value) && in_array(\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        } else if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
@@ -107,7 +111,7 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
 
             $quotedValues = array();
             foreach($value as $v) {
-                $v =   "%" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $v .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "%" ;
+                $v =   "%" . IWorker::MULTISELECT_DELIMITER  . $v .  IWorker::MULTISELECT_DELIMITER . "%" ;
                 $quotedValues[] = $field . ' like '.$productList->quote($v);
             }
 

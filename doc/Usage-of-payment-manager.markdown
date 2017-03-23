@@ -235,14 +235,14 @@ After selection of the payment-type you can then form your redirect url by doing
 
         $config = [
             "successURL" => 'http://' .$_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS, 'prefix' => $this->language], 'action', true),
+                'state' => \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS, 'prefix' => $this->language], 'action', true),
             "failureURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 'prefix' => $this->language], 'action', true),
+                    'state' => \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 'prefix' => $this->language], 'action', true),
             "cancelURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL, 'prefix' => $this->language], 'action', true),
+                    'state' => \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL, 'prefix' => $this->language], 'action', true),
             "serviceURL" => Pimcore\Tool::getHostUrl(),
             "pendingURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING, 'prefix' => $this->language], 'action', true),
+                    'state' => \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING, 'prefix' => $this->language], 'action', true),
             "confirmURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'confirm-payment', 'elementsclientauth' => 'disabled'], 'action', true),
             "paymentInfo" => $paymentInformation,
             "paymentType" => $this->getParam('paymentType'),
@@ -258,7 +258,7 @@ In view script of your _completeAction_ you could then handle your response as f
 
 ```php
 <?php
-$isCommited = $this->order && $this->order->getOrderState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
+$isCommited = $this->order && $this->order->getOrderState() == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder::ORDER_STATE_COMMITTED;
 $state = $this->getParam('state');
 ?>
 
@@ -267,14 +267,14 @@ $state = $this->getParam('state');
     <!-- redirect to order completed page -->
 
 <? } elseif (in_array($state, [
-        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE,
-        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL
+        \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE,
+        \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL
     ])) { ?>
 
     <!-- output errors and handle failures and cancel  -->
     <!-- give retry possibility -->
 
-<? } elseif ($state == \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING) { ?>
+<? } elseif ($state == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING) { ?>
     <!-- handle payment pending state -->
 <? } else { ?>
     <!-- payment still running, poll for status updates (ie. refresh page) -->
@@ -294,7 +294,7 @@ $paymentInfo = $payment->handleResponse( $this->getAllParams() );
 $order = $this->checkoutManager->commitOrderPayment( $paymentInfo );
 
 // save payment provider
-$orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+$orderAgent = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
 $orderAgent->setPaymentProvider( $payment );
 
 ```
@@ -305,7 +305,7 @@ cron.php
 
 // init
 $order = OnlineShopOrder::getById( $this->getParam('id') );
-$orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
+$orderAgent = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getOrderManager()->createOrderAgent($order);
 
 
 // start payment
@@ -314,7 +314,7 @@ $paymentInfo = $orderAgent->startPayment();
 
 
 // execute payment
-$amount = new \OnlineShop\Framework\PriceSystem\Price( 125.95, $orderAgent->getCurrency() );
+$amount = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price( 125.95, $orderAgent->getCurrency() );
 $paymentStatus = $paymentProvider->executeDebit( $amount, $paymentInfo->getInternalPaymentId() );
 
 

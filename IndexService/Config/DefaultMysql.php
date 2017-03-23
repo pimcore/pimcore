@@ -17,8 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
- * Class \OnlineShop\Framework\IndexService\Config\DefaultMysql
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql
  *
  * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
  */
@@ -60,10 +63,10 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
     }
 
     /**
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return bool
      */
-    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function inIndex(IIndexable $object) {
         return true;
     }
 
@@ -71,11 +74,11 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
     {
         return null;
     }
@@ -110,18 +113,18 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
 
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Worker\DefaultMysql
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
      */
     protected $tenantWorker;
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\IWorker
+     * @return IWorker
      */
     public function getTenantWorker() {
         if(empty($this->tenantWorker)) {
-            $this->tenantWorker = new \OnlineShop\Framework\IndexService\Worker\DefaultMysql($this);
+            $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultMysql($this);
         }
         return $this->tenantWorker;
     }

@@ -17,17 +17,19 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+
 /**
  * Class AttributeAvailabilitySystem
  */
 class AttributeAvailabilitySystem implements IAvailabilitySystem {
     /**
-     * @param \OnlineShop\Framework\Model\ICheckoutable $abstractProduct
+     * @param ICheckoutable $abstractProduct
      * @param int $quantityScale
      * @param null $products
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
+     * @return IAvailability
      */
-    public function getAvailabilityInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
+    public function getAvailabilityInfo(ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
         return $abstractProduct;
     }
 

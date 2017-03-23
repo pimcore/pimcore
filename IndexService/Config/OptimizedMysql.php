@@ -17,26 +17,28 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
- * Class \OnlineShop\Framework\IndexService\Config\OptimizedMysql
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
  *
  * Configuration for the optimized mysql product index implementation.
  */
 class OptimizedMysql extends DefaultMysql implements IMockupConfig {
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Worker\DefaultMysql
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
      */
     protected $tenantWorker;
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\OptimizedMysql
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql
      */
     public function getTenantWorker() {
         if(empty($this->tenantWorker)) {
-            $this->tenantWorker = new \OnlineShop\Framework\IndexService\Worker\OptimizedMysql($this);
+            $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql($this);
         }
         return $this->tenantWorker;
     }
@@ -47,10 +49,10 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig {
      * @param $objectId
      * @param $data
      * @param $relations
-     * @return \OnlineShop\Framework\Model\DefaultMockup
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup
      */
     public function createMockupObject($objectId, $data, $relations) {
-        return new \OnlineShop\Framework\Model\DefaultMockup($objectId, $data, $relations);
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
     }
 
     /**
@@ -58,7 +60,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig {
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return \OnlineShop\Framework\Model\IIndexable | array
+     * @return IIndexable | array
      */
     public function getObjectMockupById($objectId) {
         $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);

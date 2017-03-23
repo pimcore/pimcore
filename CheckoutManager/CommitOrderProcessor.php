@@ -16,15 +16,17 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
-use OnlineShop\Framework\Factory;
-use OnlineShop\Framework\Model\AbstractOrder;
-use OnlineShop\Plugin;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
 use Pimcore\Model\Tool\Lock;
 
 /**
- * Class \OnlineShop\Framework\CheckoutManager\CommitOrderProcessor
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
  */
 class CommitOrderProcessor implements ICommitOrderProcessor {
 
@@ -47,10 +49,10 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
 
     /**
      * @param $paymentResponseParams
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return \OnlineShop\Framework\PaymentManager\Status|\OnlineShop\Framework\PaymentManager\IStatus
+     * @param IPayment $paymentProvider
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status|IStatus
      */
-    protected function getPaymentStatus($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
+    protected function getPaymentStatus($paymentResponseParams, IPayment $paymentProvider) {
         //since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
         try {
@@ -59,8 +61,8 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
             \Logger::err($e);
 
             //create payment status with error message and cancelled payment
-            $paymentStatus = new \OnlineShop\Framework\PaymentManager\Status(
-                $paymentResponseParams['orderIdent'], "unknown", "there was an error: " . $e->getMessage(), \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+            $paymentStatus = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status(
+                $paymentResponseParams['orderIdent'], "unknown", "there was an error: " . $e->getMessage(), IStatus::STATUS_CANCELLED
             );
         }
         return $paymentStatus;
@@ -68,11 +70,11 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
 
     /**
      * @param $paymentResponseParams
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @param IPayment $paymentProvider
      * @return AbstractOrder
      * @throws \Exception
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, IPayment $paymentProvider) {
 
         //check if order is already committed and payment information with same internal payment id has same state
         //if so, do nothing and return order
@@ -87,21 +89,21 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     /**
      * check if order is already committed and payment information with same internal payment id has same state
      *
-     * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @param array|IStatus $paymentResponseParams
+     * @param IPayment $paymentProvider
      * @return null|AbstractOrder
      * @throws \Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, IPayment $paymentProvider) {
 
-        if(!$paymentResponseParams instanceof \OnlineShop\Framework\PaymentManager\IStatus) {
+        if(!$paymentResponseParams instanceof IStatus) {
             $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
         } else {
             $paymentStatus = $paymentResponseParams;
         }
 
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
@@ -124,13 +126,13 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     }
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @param IStatus $paymentStatus
+     * @param IPayment $paymentProvider
      * @return AbstractOrder
      * @throws \Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
-    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
+    public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider) {
 
         //acquire lock to make sure only one process is committing order payment
         Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -141,7 +143,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
             return $committedOrder;
         }
 
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if(empty($order)) {
@@ -164,7 +166,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         } else if($order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
 
             //do not overwrite status if order is already committed. normally this shouldn't happen at all.
-            $logger = ApplicationLogger::getDbLogger(self::LOGGER_NAME);
+            $logger = ApplicationLogger::getInstance(self::LOGGER_NAME, true);
             $logger->setRelatedObject($order);
             $logger->setFileObject(new FileObject(print_r($paymentStatus, true)));
             $logger->critical("Order with ID " . $order->getId() . " got payment status after it was already committed.");
@@ -187,10 +189,10 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
      * Called in commitOrderPayment() just after updatePayment on OrderAgent is called
      *
      * @param AbstractOrder $order
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
-     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     * @param IStatus $paymentStatus
+     * @param IPayment $paymentProvider
      */
-    protected function applyAdditionalDataToOrder(AbstractOrder $order, \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
+    protected function applyAdditionalDataToOrder(AbstractOrder $order, IStatus $paymentStatus, IPayment $paymentProvider) {
         //nothing to do by default
     }
 

@@ -16,11 +16,12 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
-use OnlineShop\Framework\Model\AbstractOrder;
-use OnlineShop\Framework\PaymentManager\IStatus;
-use OnlineShop\Framework\PaymentManager\Status;
-use OnlineShop\Framework\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -287,7 +288,7 @@ class Datatrans implements IPayment
 
 
         // restore price object for payment status
-        $price = new \OnlineShop\Framework\PriceSystem\Price($response['amount'] / 100, new Currency($response['currency']));
+        $price = new Price($response['amount'] / 100, new Currency($response['currency']));
 
 
         $paymentState = null;
@@ -380,7 +381,7 @@ class Datatrans implements IPayment
 
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
+            $price = new Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -462,7 +463,7 @@ class Datatrans implements IPayment
     {
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
-            $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
+            $price = new Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(

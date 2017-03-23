@@ -74,19 +74,19 @@ Each attribute can have an additional ```<config>```-Element for additional conf
 
 #### Relations in product index
 Relations are treated in a special way within the product index and also need to be filtered in a different way in the product list. 
-In order to store relations correctly in the product index, relation attributes must have an interpreter defined, which implements the interface ```\OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter```. 
+In order to store relations correctly in the product index, relation attributes must have an interpreter defined, which implements the interface ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter```.
 
 
 #### Selection of available getters:
-- \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter: Gets data of an object brick
+- \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetter: Gets data of an object brick
 needed configuration: brickfield (fieldname of object brick), bricktype (type of object brick), fieldname (fieldname of attribute in object brick)
-- \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetterSequence: same as DefaultBrickGetter, but can use more than one source definition. Stores first found value in the product index. 
-- \OnlineShop\Framework\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect: like DefaultBrickGetterSequence, but stores all found values as a multi select into the product index. 
+- \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequence: same as DefaultBrickGetter, but can use more than one source definition. Stores first found value in the product index.
+- \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect: like DefaultBrickGetterSequence, but stores all found values as a multi select into the product index.
 
 
 #### Selection of available interpreters
-- \OnlineShop\Framework\IndexService\Interpreter\AssetId: stores only asset-id into product index. 
-\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects: default interpreter to store object relations as relations to the product index.
+- \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\AssetId: stores only asset-id into product index.
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\DefaultObjects: default interpreter to store object relations as relations to the product index.
 
 
 > Depending on the product index implementation, the product index configuration can be different. see sample configurations for specific product index implemenations. 
@@ -106,11 +106,11 @@ By default the system always uses one heavy-weight tenant (= DefaultMysql), but 
 ### Configuration of tenants
 For setting up a tenant, following things are necessary: 
 - **Implementation of a tenant config**
-The tenant config class is the central configuration of the tenant, defines which products are available for the tenant and provides the connection to the used product index implementation. It needs to implement ``` \OnlineShop\Framework\IndexService\Config\IConfig ```. For detailed information see insource documentation of the interface. Following implementations are provided by the framework and may be extended: 
-  - ```\OnlineShop\Framework\IndexService\Config\DefaultMysql```: provides a simple mysql implementation of the product index.
-  - ```\OnlineShop\Framework\IndexService\Config\OptimizedMysql```: provides an optimized mysql implementation of the product index.
-  - ```\OnlineShop\Framework\IndexService\Config\ElasticSearch```: provides a default elastic search implementation of the product index.
-  - ```\OnlineShop\Framework\IndexService\Config\DefaultFactFinder```: provides a default fact finder implementation of the product index.
+The tenant config class is the central configuration of the tenant, defines which products are available for the tenant and provides the connection to the used product index implementation. It needs to implement ``` \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig ```. For detailed information see insource documentation of the interface. Following implementations are provided by the framework and may be extended:
+  - ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql```: provides a simple mysql implementation of the product index.
+  - ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\OptimizedMysql```: provides an optimized mysql implementation of the product index.
+  - ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\ElasticSearch```: provides a default elastic search implementation of the product index.
+  - ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder```: provides a default fact finder implementation of the product index.
 
 
 - **Configuring tenants within OnlineShopConfig.php:** 
@@ -157,12 +157,12 @@ The current tenants have to be set in the application controllers, e.g. after th
 Example:
 ```php
 <?php
-      $environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+      $environment = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getEnvironment();
       $environment->setCurrentAssortmentTenant("elasticsearch");
 ```
 
 ## 4 - Data architecture and indexing
-Depending on the product index implementation, there are two different product index data architectures and ways for indexing. For indexing itself the helper class ```\OnlineShop\Framework\IndexService\Tool\IndexUpdater``` can be used. 
+Depending on the product index implementation, there are two different product index data architectures and ways for indexing. For indexing itself the helper class ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater``` can be used.
 
 ### Simple Mysql Architecture
 - In the simple architecture, object data is transferred directly to the product index. 
@@ -172,7 +172,7 @@ Depending on the product index implementation, there are two different product i
 
 ```php
 <?php
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
 ```
 
 If you need to create or update the index structures you can use:
@@ -180,12 +180,12 @@ If you need to create or update the index structures you can use:
 ```php
 <?php
 // Set the third parameter of updateIndex to true to force index structures update
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List", "", true);
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List", "", true);
 // Or directly call the following method
-\OnlineShop\Framework\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
 ```
 
-- Only used for \OnlineShop\Framework\IndexService\Config\DefaultMysql
+- Only used for \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql
 
 
 ![productindex-simple](images/productindex-simple.png)
@@ -211,14 +211,14 @@ For updating data in index following commands are available:
 
 ```php
 <?php
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processPreparationQueue();
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::processPreparationQueue();
 ```
 
 - To update the product index based on changes stored in the store table use the following command. This command should be executed periodically (e.g. all 10 mins)
 
 ```php
 <?php
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processUpdateIndexQueue();
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::processUpdateIndexQueue();
 ```
 - For manually update all pimcore objects to the index store use following command.  As stated before, this should only be
   necessary for an initial fill-up of the index. After that, at least Product Index Store and Pimcore objects should always be in sync.
@@ -226,7 +226,7 @@ For updating data in index following commands are available:
 
 ```php
 <?php
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
 ```
 
 - If you need to create or update the index structures you can use:
@@ -234,9 +234,9 @@ For updating data in index following commands are available:
 ```php
 <?php
 // Set the third parameter of updateIndex to true to force index structures update
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List", "", true);
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List", "", true);
 // Or directly call the following method
-\OnlineShop\Framework\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
 ```
 
 
@@ -261,11 +261,11 @@ Findologic then can use the endpoint `/plugin/OnlineShop/findologic/export`, whi
 
 
 ## 5 - Usage of product list
-The API for getting (and filtering, ...) products out of the product index are so called ProductLists. They all implement the interface ```\OnlineShop\Framework\IndexService\ProductList\IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation. 
+The API for getting (and filtering, ...) products out of the product index are so called ProductLists. They all implement the interface ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation.
 For getting a ProdutList instance suitable for the product index implementation and filter for products see following code: 
 ```php 
 <?php 
-$list = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+$list = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
 $list->addCondition("name = 'testproduct'", 'name');
 $list->addRelationCondition('category', "dest IN (1024,1025,1026)");
 $list->setOrder("ASC");

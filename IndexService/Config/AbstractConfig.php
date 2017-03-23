@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
 
 abstract class AbstractConfig implements IConfig {
@@ -115,16 +116,16 @@ abstract class AbstractConfig implements IConfig {
     /**
      * @return bool
      */
-    public function isActive(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function isActive(IIndexable $object) {
         return true;
     }
 
     /**
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
-     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    public function getCategories(\OnlineShop\Framework\Model\IIndexable $object)
+    public function getCategories(IIndexable $object)
     {
         return $object->getCategories();
     }
@@ -133,21 +134,21 @@ abstract class AbstractConfig implements IConfig {
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @param IIndexable $object
+     * @return IIndexable[]
      */
-    public function createSubIdsForObject(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function createSubIdsForObject(IIndexable $object) {
         return array($object->getId() => $object);
     }
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param array $subIds
      * @return mixed
      */
-    public function getSubIdsToCleanup(\OnlineShop\Framework\Model\IIndexable $object, array $subIds) {
+    public function getSubIdsToCleanup(IIndexable $object, array $subIds) {
         return array();
     }
 
@@ -155,11 +156,11 @@ abstract class AbstractConfig implements IConfig {
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param $subId
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(\OnlineShop\Framework\Model\IIndexable $object, $subId) {
+    public function createVirtualParentIdForSubId(IIndexable $object, $subId) {
         return $object->getOSParentId();
     }
 
@@ -182,7 +183,7 @@ abstract class AbstractConfig implements IConfig {
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return \OnlineShop\Framework\Model\IIndexable | array
+     * @return IIndexable | array
      */
     public function getObjectMockupById($objectId) {
         return $this->getObjectById($objectId);

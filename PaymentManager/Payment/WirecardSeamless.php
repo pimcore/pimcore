@@ -2,12 +2,14 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
-use OnlineShop\Framework\Factory;
-use OnlineShop\Framework\PaymentManager\IStatus;
-use OnlineShop\Framework\PaymentManager\Status;
-use OnlineShop\Framework\PriceSystem\IPrice;
-use OnlineShop\Framework\PriceSystem\Price;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopOrder;
 
@@ -612,7 +614,7 @@ class WirecardSeamless implements IPayment
                 $cart->setId($cartId[1]);
 
                 $env = Factory::getInstance()->getEnvironment();
-                $env->setCustomItem(\OnlineShop\Framework\CheckoutManager\CheckoutManager::FINISHED . "_" . $cart->getId(), true);
+                $env->setCustomItem(CheckoutManager::FINISHED . "_" . $cart->getId(), true);
 
                 return $cart;
             }
@@ -664,10 +666,10 @@ class WirecardSeamless implements IPayment
     /**
      * extracts seamless response of provider data from given payment information
      *
-     * @param \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo
+     * @param AbstractPaymentInformation $paymentInfo
      * @return null | array
      */
-    public static function extractSeamlessResponse(\OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo) {
+    public static function extractSeamlessResponse(AbstractPaymentInformation $paymentInfo) {
         if ($providerData = $paymentInfo->getProviderData()) {
             $providerData = json_decode($providerData);
             if ($providerData['seamless_response']) {

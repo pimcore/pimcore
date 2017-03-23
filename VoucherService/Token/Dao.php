@@ -51,11 +51,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * @return bool
      *
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      */
-    public function isReserved(\OnlineShop\Framework\CartManager\ICart $cart = null)
+    public function isReserved(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart = null)
     {
-        $reservation = \OnlineShop\Framework\VoucherService\Reservation::get($this->model->getToken(), $cart);
+        $reservation = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::get($this->model->getToken(), $cart);
         if (!$reservation->exists()) {
             return false;
         }

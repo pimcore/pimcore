@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
 class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
@@ -119,7 +120,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
                     if(!empty($column->interpreter)) {
                         $interpreter = $column->interpreter;
                         $interpreterObject = new $interpreter();
-                        if($interpreterObject instanceof \OnlineShop\Framework\IndexService\Interpreter\DefaultRelations) {
+                        if($interpreterObject instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations) {
                             $doAdd = false;
                         }
                     }
@@ -146,11 +147,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * deletes given element from index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
      * @return void
      */
-    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object)
+    public function deleteFromIndex(IIndexable $object)
     {
         // TODO: Implement deleteFromIndex() method.
     }
@@ -159,14 +160,14 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    public function prepareDataForIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function prepareDataForIndex(IIndexable $object) {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach($subObjectIds as $subObjectId => $object) {
             /**
-             * @var \OnlineShop\Framework\Model\IIndexable $object
+             * @var IIndexable $object
              */
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
@@ -255,11 +256,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * updates given element in index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
      * @return void
      */
-    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object)
+    public function updateIndex(IIndexable $object)
     {
         if(!$this->tenantConfig->isActive($object))
         {
@@ -299,7 +300,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
      */
     public function getProductList()
     {
-        return new \OnlineShop\Framework\IndexService\ProductList\DefaultFactFinder( $this->getTenantConfig() );
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultFactFinder( $this->getTenantConfig() );
     }
 
 
@@ -319,7 +320,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
      * @param int $objectId
      * @todo
      */
-    protected function doDeleteFromIndex($subObjectId, \OnlineShop\Framework\Model\IIndexable $object = null)
+    protected function doDeleteFromIndex($subObjectId, IIndexable $object = null)
     {
 
     }

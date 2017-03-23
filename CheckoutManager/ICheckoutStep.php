@@ -23,9 +23,9 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 interface ICheckoutStep {
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      */
-    public function __construct(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
      * @return string

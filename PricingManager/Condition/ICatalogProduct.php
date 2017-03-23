@@ -17,17 +17,17 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
-interface ICatalogProduct extends \OnlineShop\Framework\PricingManager\ICondition
+interface ICatalogProduct extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
 {
     /**
-     * @param \OnlineShop\Framework\Model\AbstractProduct[] $products
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[] $products
      *
      * @return ICatalogProduct
      */
     public function setProducts(array $products);
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
     public function getProducts();
 }

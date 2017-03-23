@@ -18,6 +18,8 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
@@ -27,7 +29,7 @@ class DefaultMysql implements IProductList
 {
 
     /**
-     * @var null|\OnlineShop\Framework\Model\IIndexable[]
+     * @var null|IIndexable[]
      */
     protected $products = null;
 
@@ -37,7 +39,7 @@ class DefaultMysql implements IProductList
     protected $tenantName;
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IMysqlConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
      */
     protected $tenantConfig;
 
@@ -62,7 +64,7 @@ class DefaultMysql implements IProductList
     protected $offset;
 
     /**
-     * @var \OnlineShop\Framework\Model\AbstractCategory
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     protected $category;
 
@@ -82,7 +84,7 @@ class DefaultMysql implements IProductList
     protected $logger;
 
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IMysqlConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig) {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
         $this->resource = new DefaultMysql\Dao($this);
@@ -91,7 +93,7 @@ class DefaultMysql implements IProductList
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractProduct[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
     public function getProducts() {
         if ($this->products === null) {
@@ -272,7 +274,7 @@ class DefaultMysql implements IProductList
     }
 
 
-    public function setCategory(\OnlineShop\Framework\Model\AbstractCategory $category) {
+    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category) {
         $this->products = null;
         $this->category = $category;
     }
@@ -365,7 +367,7 @@ class DefaultMysql implements IProductList
         }
         if(count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
-            $priceSystem = \OnlineShop\Framework\Factory::getInstance()->getPriceSystem($priceSystemName);
+            $priceSystem = Factory::getInstance()->getPriceSystem($priceSystemName);
             $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
         } else if(count($priceSystemArrays) == 0) {
             //nothing to do
@@ -673,7 +675,7 @@ class DefaultMysql implements IProductList
     }
 
     /**
-     * @return \OnlineShop\Framework\IndexService\Config\IMysqlConfig
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
      */
     public function getCurrentTenantConfig() {
         return $this->tenantConfig;

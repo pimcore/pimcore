@@ -316,7 +316,7 @@ class Environment implements IEnvironment {
             }
             $this->currentTransientCheckoutTenant = $tenant;
 
-            \OnlineShop\Framework\Factory::resetInstance();
+            Factory::resetInstance();
         }
     }
 

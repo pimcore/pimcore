@@ -17,7 +17,7 @@ interface IProductActionRemove
     /**
      * Track product remove from cart
      *
-     * @param \OnlineShop\Framework\Model\IProduct $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product
      */
-    public function trackProductActionRemove(\OnlineShop\Framework\Model\IProduct $product, $quantity = 1);
+    public function trackProductActionRemove(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product, $quantity = 1);
 }

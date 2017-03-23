@@ -17,10 +17,13 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
  * Interface for IndexService workers
  *
- * Interface \OnlineShop\Framework\IndexService\Worker\IWorker
+ * Interface IWorker
  */
 interface IWorker {
 
@@ -43,18 +46,18 @@ interface IWorker {
     /**
      * deletes given element from index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return void
      */
-    function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object);
+    function deleteFromIndex(IIndexable $object);
 
     /**
      * updates given element in index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return void
      */
-    function updateIndex(\OnlineShop\Framework\Model\IIndexable $object);
+    function updateIndex(IIndexable $object);
 
     /**
      * returns all index attributes
@@ -82,7 +85,7 @@ interface IWorker {
     /**
      * returns current tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Config\IConfig
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
      */
     function getTenantConfig();
 
@@ -90,7 +93,7 @@ interface IWorker {
     /**
      * returns product list implementation valid and configured for this worker/tenant
      *
-     * @return \OnlineShop\Framework\IndexService\ProductList\IProductList
+     * @return IProductList
      */
     function getProductList();
 

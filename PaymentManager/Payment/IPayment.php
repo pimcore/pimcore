@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Config\Config;
 
 /**
@@ -38,13 +40,13 @@ interface IPayment
 
     /**
      * start payment
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param array                       $config
      *
      * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
      *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
      */
-    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config);
+    public function initPayment(IPrice $price, array $config);
 
 
     /**
@@ -73,21 +75,21 @@ interface IPayment
 
     /**
      * execute payment
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      *
      * @return IStatus
      */
-    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null);
+    public function executeDebit(IPrice $price = null, $reference = null);
 
 
     /**
      * execute credit
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
      * @return IStatus
      */
-    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId);
+    public function executeCredit(IPrice $price, $reference, $transactionId);
 }

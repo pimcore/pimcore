@@ -3,16 +3,15 @@ namespace EcommerceFramework;
 
 
 use Codeception\Util\Stub;
-use OnlineShop\Framework\CartManager\CartPriceCalculator;
-use OnlineShop\Framework\CartManager\CartPriceModificator\Shipping;
-use OnlineShop\Framework\CartManager\ICart;
-use OnlineShop\Framework\CartManager\SessionCart;
-use OnlineShop\Framework\Model\AbstractProduct;
-use OnlineShop\Framework\PriceSystem\AttributePriceSystem;
-use OnlineShop\Framework\PriceSystem\Price;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceCalculator;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 class CartTaxManagementTest extends \Codeception\Test\Unit

@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command\Voucher;
 
-use OnlineShop\Framework\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Console\AbstractCommand;
 
 abstract class AbstractVoucherCommand extends AbstractCommand

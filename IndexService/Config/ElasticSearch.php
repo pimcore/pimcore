@@ -17,8 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
- * Class \OnlineShop\Framework\IndexService\Config\ElasticSearch
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\ElasticSearch
  *
  * Default configuration for elastic search as product index implementation.
  */
@@ -77,7 +79,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
             if($col['interpreter']){
                 $class = $col['interpreter'];
                 $tmp = new $class;
-                if($tmp instanceof \OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter){
+                if($tmp instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter){
                     $attributeType = 'relations';
                 }
             }
@@ -126,21 +128,21 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return bool
      */
-    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function inIndex(IIndexable $object) {
         return true;
     }
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null) {
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null) {
         return null;
     }
 
@@ -168,18 +170,18 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
 
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Worker\ElasticSearch
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
     protected $tenantWorker;
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\ElasticSearch
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
     public function getTenantWorker() {
         if(empty($this->tenantWorker)) {
-            $this->tenantWorker = new \OnlineShop\Framework\IndexService\Worker\DefaultElasticSearch($this);
+            $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch($this);
         }
         return $this->tenantWorker;
     }
@@ -193,7 +195,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @return mixed
      */
     public function createMockupObject($objectId, $data, $relations) {
-        return new \OnlineShop\Framework\Model\DefaultMockup($objectId, $data, $relations);
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
     }
 
     /**
@@ -201,7 +203,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return \OnlineShop\Framework\Model\IIndexable | array
+     * @return IIndexable | array
      */
     public function getObjectMockupById($objectId) {
         return $this->getTenantWorker()->getMockupFromCache($objectId);

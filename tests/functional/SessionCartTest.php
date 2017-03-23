@@ -2,8 +2,8 @@
 namespace EcommerceFramework;
 
 use Codeception\Util\Stub;
-use OnlineShop\Framework\CartManager\SessionCart;
-use OnlineShop\Framework\Model\AbstractProduct;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct;
 
 class SessionCartTest extends \Codeception\Test\Unit
 {

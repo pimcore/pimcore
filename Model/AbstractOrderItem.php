@@ -23,90 +23,90 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
-     * @return \OnlineShop\Framework\Model\ICheckoutable
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable
      */
     public function getProduct() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getProduct is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getProduct is not implemented for " . get_class($this));
     }
 
     /**
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function setProduct($product) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setProduct is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("setProduct is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getProductNumber() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getProductNumber is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getProductNumber is not implemented for " . get_class($this));
     }
 
     /**
      * @param string $productNumber
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function setProductNumber($productNumber) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setProductNumber is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("setProductNumber is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getProductName() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getProductName is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getProductName is not implemented for " . get_class($this));
     }
 
     /**
      * @param string $productName
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function setProductName($productName) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setProductName is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("setProductName is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return float
      */
     public function getAmount() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getAmount is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getAmount is not implemented for " . get_class($this));
     }
 
     /**
      * @param float $amount
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function setAmount($amount) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setAmount is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("setAmount is not implemented for " . get_class($this));
     }
 
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return float
      */
     public function getTotalPrice() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param float $totalPrice
      */
     public function setTotalPrice($totalPrice) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return float
      */
     public function getTotalNetPrice() {
@@ -115,7 +115,7 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param float $totalNetPrice
      */
     public function setTotalNetPrice($totalNetPrice) {
@@ -124,7 +124,7 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return array
      */
     public function getTaxInfo() {
@@ -133,7 +133,7 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param array $taxInfo
      */
     public function setTaxInfo($taxInfo) {
@@ -144,52 +144,52 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
 
     /**
      * @return AbstractOrderItem[]
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function getSubItems() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getSubItems is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getSubItems is not implemented for " . get_class($this));
     }
 
     /**
      * @param AbstractOrderItem[] $subItems
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function setSubItems($subItems) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setSubItems is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("setSubItems is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return \Pimcore\Model\Object\Fieldcollection
      */
     public function getPricingRules() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
     /**
      * @param \Pimcore\Model\Object\Fieldcollection $pricingRules
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return $this
      */
     public function setPricingRules ($pricingRules) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
     /**
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getOrderState() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
     /**
      * @param string $orderState
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return $this
      */
     public function setOrderState ($orderState) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
 

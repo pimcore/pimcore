@@ -25,34 +25,34 @@ interface IService {
     const DISCOUNT_TYPE_AMOUNT = "amount";
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\CartManager\ICartItem[] $excludeItems
-     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[] $excludeItems
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
-    public function createNewOfferFromCart(\OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array());
+    public function createNewOfferFromCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = array());
 
     /**
-     * @param \OnlineShop\Framework\OfferTool\AbstractOffer $offer
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @param array $excludeItems
-     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
-    public function updateOfferFromCart(\OnlineShop\Framework\OfferTool\AbstractOffer $offer, \OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array());
+    public function updateOfferFromCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = array());
 
     /**
-     * @param \OnlineShop\Framework\OfferTool\AbstractOffer $offer
-     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
-    public function updateTotalPriceOfOffer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer);
+    public function updateTotalPriceOfOffer(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer);
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop\Framework\OfferTool\AbstractOffer[]
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer[]
      */
-    public function getOffersForCart(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function getOffersForCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
-     * @return \OnlineShop\Framework\OfferTool\AbstractOfferItem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOfferItem
      */
     public function getNewOfferItemObject();
 

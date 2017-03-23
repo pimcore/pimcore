@@ -18,7 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use Zend\Paginator\Adapter\AdapterInterface;
-use \OnlineShop\Framework\Model\AbstractOrder;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 
 use Pimcore\Resource;
 
@@ -48,7 +48,7 @@ abstract class AbstractOrderList implements IOrderList
     /**
      * @var string
      */
-    protected $orderState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
+    protected $orderState = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder::ORDER_STATE_COMMITTED;
 
     /**
      * @var \ArrayIterator

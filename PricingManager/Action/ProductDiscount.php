@@ -30,11 +30,11 @@ class ProductDiscount implements IProductDiscount
     protected $percent = 0;
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return \OnlineShop\Framework\PricingManager\IAction
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction
      */
-    public function executeOnProduct(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function executeOnProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $priceinfo = $environment->getPriceInfo();
         $amount = $this->getAmount() !== 0 ? $this->getAmount() : ($priceinfo->getAmount() * ($this->getPercent() / 100));
@@ -45,11 +45,11 @@ class ProductDiscount implements IProductDiscount
     }
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return \OnlineShop\Framework\PricingManager\IAction
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction
      */
-    public function executeOnCart(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function executeOnCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         //nothing to to here
         return $this;
@@ -71,7 +71,7 @@ class ProductDiscount implements IProductDiscount
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {

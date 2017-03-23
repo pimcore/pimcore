@@ -17,8 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
-use \OnlineShop\Framework\Model\AbstractOrder as Order;
-use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 
 interface IOrderListItem
 {

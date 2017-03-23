@@ -17,6 +17,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Config\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +35,7 @@ class ConfigController extends AdminController
      */
     public function jsConfigAction() {
 
-        $config = \OnlineShop\Framework\Factory::getInstance()->getConfig();
+        $config = Factory::getInstance()->getConfig();
 
         $params = [];
 

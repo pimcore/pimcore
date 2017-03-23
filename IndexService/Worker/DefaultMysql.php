@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Cache;
 use Pimcore\Logger;
 
@@ -24,7 +25,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
     protected $_sqlChangeLog = array();
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\IMysqlConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
      */
     protected $tenantConfig;
 
@@ -33,7 +34,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
      */
     protected $mySqlHelper;
 
-    public function __construct(\OnlineShop\Framework\IndexService\Config\IMysqlConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig) {
         parent::__construct($tenantConfig);
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig);
@@ -44,7 +45,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
         $this->mySqlHelper->createOrUpdateIndexStructures();
     }
 
-    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
+    public function deleteFromIndex(IIndexable $object){
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -61,7 +62,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
 
     }
 
-    protected function doDeleteFromIndex($subObjectId, \OnlineShop\Framework\Model\IIndexable $object = null) {
+    protected function doDeleteFromIndex($subObjectId, IIndexable $object = null) {
         $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
         $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
         if($this->tenantConfig->getTenantRelationTablename()) {
@@ -69,7 +70,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
         }
     }
 
-    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function updateIndex(IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
             return;
@@ -92,12 +93,12 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                 if($categories) {
                     foreach($categories as $c) {
 
-                        if($c instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                        if($c instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory) {
                             $categoryIds[$c->getId()] = $c->getId();
                         }
 
                         $currentCategory = $c;
-                        while($currentCategory instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                        while($currentCategory instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory) {
                             $parentCategoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
                             if($currentCategory->getOSProductsInParentCategoryVisible()) {
@@ -169,7 +170,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                             $interpreter = $column->interpreter;
                             $value = $interpreter::interpret($value, $column->config);
                             $interpreterObject = new $interpreter();
-                            if($interpreterObject instanceof \OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter) {
+                            if($interpreterObject instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
                                 foreach($value as $v) {
                                     $relData = array();
                                     $relData['src'] = $subObjectId;
@@ -269,7 +270,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
      * @return mixed
      */
     function getProductList() {
-        return new \OnlineShop\Framework\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
     }
 }
 

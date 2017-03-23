@@ -77,7 +77,7 @@ class ShopController extends \Pimcore\Controller\Action\Frontend {
         $paginator = new Zend\Paginator( $products );
         $paginator->setCurrentPageNumber( $this->getParam('page') );
 
-        $trackingManager = \OnlineShop\Framework\Factory::getInstance()->getTrackingManager();
+        $trackingManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getTrackingManager();
         foreach($paginator as $product) {
             $trackingManager->trackProductImpression($product);
         }
@@ -93,7 +93,7 @@ class ShopController extends \Pimcore\Controller\Action\Frontend {
 class CheckoutController extends \Pimcore\Controller\Action\Frontend {
     public function startCheckoutAction() {
         ...
-        $trackingManager = \OnlineShop\Framework\Factory::getInstance()->getTrackingManager();
+        $trackingManager = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getTrackingManager();
         $trackingManager->trackCheckout($this->getCart());
         ...
     }
@@ -110,7 +110,7 @@ be configured in the `OnlineShopConfig.php`.
 ### Example for Additional Data in Poduct Impressions
 
 ```php
-class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBuilder {
+class TrackingItemBuilder extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\TrackingItemBuilder {
 
     private static $impressionPosition = 0;
     

@@ -22,62 +22,62 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 interface IEnvironment
 {
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      *
      * @return IEnvironment
      */
-    public function setCart(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function setCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart);
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICart
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     public function getCart();
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICartItem $cartItem
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem $cartItem
      *
      * @return IEnvironment
      */
-    public function setCartItem(\OnlineShop\Framework\CartManager\ICartItem $cartItem);
+    public function setCartItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem $cartItem);
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICartItem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem
      */
     public function getCartItem();
 
     /**
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product
      *
      * @return IEnvironment
      */
-    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product);
+    public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product);
 
     /**
-     * @return \OnlineShop\Framework\Model\ICheckoutable
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable
      */
     public function getProduct();
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IRule $rule
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule
      *
      * @return IEnvironment
      */
     public function setRule($rule);
 
     /**
-     * @return \OnlineShop\Framework\PricingManager\IRule
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule
      */
     public function getRule();
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IPriceInfo $priceInfo
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPriceInfo $priceInfo
      *
      * @return IEnvironment
      */
-    public function setPriceInfo(\OnlineShop\Framework\PricingManager\IPriceInfo $priceInfo);
+    public function setPriceInfo(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPriceInfo $priceInfo);
 
     /**
-     * @return \OnlineShop\Framework\PricingManager\IPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPriceInfo
      */
     public function getPriceInfo();
 
@@ -89,7 +89,7 @@ interface IEnvironment
     public function setCategories(array $categories);
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
     public function getCategories();
 

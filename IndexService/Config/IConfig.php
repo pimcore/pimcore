@@ -17,10 +17,13 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
  * Interface for IndexService Tenant Configurations
  *
- * Interface \OnlineShop\Framework\IndexService\Config\IConfig
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
  */
 interface IConfig {
 
@@ -61,37 +64,37 @@ interface IConfig {
      *
      * @return bool
      */
-    public function isActive(\OnlineShop\Framework\Model\IIndexable $object);
+    public function isActive(IIndexable $object);
 
 
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @return bool
      */
-    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object);
+    public function inIndex(IIndexable $object);
 
 
     /**
      * Returns categories for given object in context of the current tenant.
      * Possible hook to filter categories for specific tenants.
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
-     * @return \OnlineShop\Framework\Model\AbstractCategory[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    public function getCategories(\OnlineShop\Framework\Model\IIndexable $object);
+    public function getCategories(IIndexable $object);
 
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null);
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
 
 
     /**
@@ -108,7 +111,7 @@ interface IConfig {
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\IWorker
+     * @return IWorker
      */
     public function getTenantWorker();
 
@@ -117,31 +120,31 @@ interface IConfig {
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
-     * @return \OnlineShop\Framework\Model\IIndexable[]
+     * @param IIndexable $object
+     * @return IIndexable[]
      */
-    public function createSubIdsForObject(\OnlineShop\Framework\Model\IIndexable $object);
+    public function createSubIdsForObject(IIndexable $object);
 
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param array $subIds
      * @return mixed
      */
-    public function getSubIdsToCleanup(\OnlineShop\Framework\Model\IIndexable $object, array $subIds);
+    public function getSubIdsToCleanup(IIndexable $object, array $subIds);
 
 
     /**
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param $subId
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(\OnlineShop\Framework\Model\IIndexable $object, $subId);
+    public function createVirtualParentIdForSubId(IIndexable $object, $subId);
 
 
     /**
@@ -160,7 +163,7 @@ interface IConfig {
      * always returns a object mockup if available
      *
      * @param $objectId
-     * @return \OnlineShop\Framework\Model\IIndexable | array
+     * @return IIndexable | array
      */
     public function getObjectMockupById($objectId);
 }

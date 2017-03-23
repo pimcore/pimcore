@@ -43,7 +43,7 @@ class SessionCartItem extends AbstractCartItem implements ICartItem {
     }
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getSubItems() {
         return (array)$this->subItems;

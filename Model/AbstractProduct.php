@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
@@ -43,11 +45,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
      *
      * @param bool $inProductList
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return bool
      */
     public function isActive($inProductList = false) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("isActive is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("isActive is not supported for " . get_class($this));
     }
 
 
@@ -56,11 +58,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getPriceSystemName() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
     }
 
 
@@ -89,11 +91,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return array
      */
     public function getCategories() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getCategories is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getCategories is not supported for " . get_class($this));
     }
 
 
@@ -105,22 +107,22 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * called by default CommitOrderProcessor to get the product name to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getOSName() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getOSName is not supported for " . get_class($this));
     }
 
     /**
      * called by default CommitOrderProcessor to get the product number to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getOSProductNumber() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
 
@@ -129,7 +131,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return string
      */
     public function getAvailabilitySystemName() {
@@ -153,26 +155,26 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPriceSystem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem
      */
     public function getPriceSystemImplementation() {
-        return \OnlineShop\Framework\Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
+        return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailabilitySystem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
      */
     public function getAvailabilitySystemImplementation() {
-        return \OnlineShop\Framework\Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
+        return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
     /**
      * returns price for given quantity scale
      *
      * @param int $quantityScale
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = 1) {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
@@ -184,7 +186,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1) {
         return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);
@@ -194,7 +196,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * returns availability info based on given quantity
      *
      * @param int $quantity
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null) {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);

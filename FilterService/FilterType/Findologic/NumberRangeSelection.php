@@ -17,13 +17,16 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
-class NumberRangeSelection extends \OnlineShop\Framework\FilterService\FilterType\NumberRangeSelection {
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
+class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection {
+
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -81,15 +84,15 @@ class NumberRangeSelection extends \OnlineShop\Framework\FilterService\FilterTyp
         ));
     }
 
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $field = $filterDefinition->getField();
         $rawValue = $params[$field];
 
-        if(!empty($rawValue) && $rawValue != \OnlineShop\Framework\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if(!empty($rawValue) && $rawValue != \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $values = explode("-", $rawValue);
             $value['from'] = trim($values[0]);
             $value['to'] = trim($values[1]);
-        } else if($rawValue == \OnlineShop\Framework\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        } else if($rawValue == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
             $value['from'] = $filterDefinition->getPreSelectFrom();

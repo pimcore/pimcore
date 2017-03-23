@@ -12,11 +12,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use OnlineShop\Framework\Model\AbstractOrder;
-use OnlineShop\Framework\Tracking\ICheckoutComplete;
-use OnlineShop\Framework\Tracking\ProductAction;
-use OnlineShop\Framework\Tracking\Tracker;
-use OnlineShop\Framework\Tracking\Transaction;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ICheckoutComplete;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ProductAction;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Google\Analytics;
 
 class UniversalEcommerce extends Tracker implements ICheckoutComplete

@@ -32,24 +32,24 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool
-     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException
      */
-    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function checkToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
         }
-        throw new \OnlineShop\Framework\Exception\VoucherServiceException('No Token for code ' .$code . ' exists.', 3);
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException('No Token for code ' .$code . ' exists.', 3);
     }
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool
      */
-    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function reserveToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
@@ -59,10 +59,10 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return bool
      */
-    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function releaseToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
@@ -72,11 +72,11 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return bool
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function applyToken($code, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {
@@ -96,10 +96,10 @@ class DefaultService implements IVoucherService
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order)
     {
         if ($tokenManager = $tokenObject->getVoucherSeries()->getTokenManager()) {
             $tokenManager->removeAppliedTokenFromOrder($tokenObject, $order);
@@ -127,9 +127,9 @@ class DefaultService implements IVoucherService
     public function cleanUpReservations($seriesId = null)
     {
         if (isset($seriesId)) {
-            return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($this->sysConfig->reservations->duration, $seriesId);
+            return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::cleanUpReservations($this->sysConfig->reservations->duration, $seriesId);
         } else {
-            return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($this->sysConfig->reservations->duration);
+            return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::cleanUpReservations($this->sysConfig->reservations->duration);
         }
     }
 
@@ -139,7 +139,7 @@ class DefaultService implements IVoucherService
      */
     public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series)
     {
-        return \OnlineShop\Framework\VoucherService\Token\Listing::cleanUpAllTokens($series->getId());
+        return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Listing::cleanUpAllTokens($series->getId());
     }
 
     /**
@@ -148,19 +148,19 @@ class DefaultService implements IVoucherService
      */
     public function cleanUpStatistics($seriesId = null){
         if (isset($seriesId) ) {
-            return \OnlineShop\Framework\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration, $seriesId);
+            return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration, $seriesId);
         } else {
-            return \OnlineShop\Framework\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
+            return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
         }
     }
 
     /**
      * @param $code
-     * @return bool|\OnlineShop\Framework\VoucherService\TokenManager\ITokenManager
+     * @return bool|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
      */
     public function getTokenManager($code)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
+        if ($token = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token::getByCode($code)) {
             if ($series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId())) {
                 return $series->getTokenManager();
             }

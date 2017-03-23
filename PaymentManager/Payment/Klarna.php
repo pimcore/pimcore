@@ -17,6 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Config\Config;
 
 class Klarna implements IPayment
@@ -81,14 +84,14 @@ class Klarna implements IPayment
 
     /**
      * start payment
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param array                       $config
-     * @param \OnlineShop\Framework\CartManager\ICart  $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart  $cart
      *
      * @return string
      * @throws \Exception
      */
-    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config, \OnlineShop\Framework\CartManager\ICart $cart = null)
+    public function initPayment(IPrice $price, array $config, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart = null)
     {
         // check params
         $required = [  'purchase_country' => null
@@ -127,7 +130,7 @@ class Klarna implements IPayment
     /**
      * @param mixed $response
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -158,16 +161,16 @@ class Klarna implements IPayment
 
 
         $statMap = [
-            'checkout_complete' => \OnlineShop\Framework\PaymentManager\IStatus::STATUS_AUTHORIZED
-            , 'created' => \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
+            'checkout_complete' => IStatus::STATUS_AUTHORIZED
+            , 'created' => IStatus::STATUS_CLEARED
         ];
-        return new \OnlineShop\Framework\PaymentManager\Status(
+        return new Status(
             $order['merchant_reference']['orderid2']
             , $order['id']
             , $order['status']
             , array_key_exists($order['status'], $statMap)
                 ? $statMap[ $order['status'] ]
-                : \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                : IStatus::STATUS_CANCELLED
             , [
                 'klarna_amount' => $order['cart']['total_price_including_tax']
                 , 'klarna_marshal' => json_encode( $order->marshal() )
@@ -200,13 +203,13 @@ class Klarna implements IPayment
     /**
      * execute payment
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      * @throws \Exception
      */
-    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
+    public function executeDebit(IPrice $price = null, $reference = null)
     {
         if( $price )
         {
@@ -228,13 +231,13 @@ class Klarna implements IPayment
             }
 
 
-            return new \OnlineShop\Framework\PaymentManager\Status(
+            return new Status(
                 $reference
                 , $order['id']
                 , $order['status']
                 , $order['status'] == 'created'
-                ? \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
-                : \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                ? IStatus::STATUS_CLEARED
+                : IStatus::STATUS_CANCELLED
                 , [
                     'klarna_amount' => $order['cart']['total_price_including_tax']
                     , 'klarna_marshal' => json_encode( $order->marshal() )
@@ -246,14 +249,14 @@ class Klarna implements IPayment
     /**
      * execute credit
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param string                      $reference
      * @param                             $transactionId
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction
      */
-    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
+    public function executeCredit(IPrice $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');

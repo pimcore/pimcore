@@ -17,26 +17,26 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
-interface IPriceInfo extends \OnlineShop\Framework\PriceSystem\IPriceInfo
+interface IPriceInfo extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
 {
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo           $priceInfo
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo           $priceInfo
      * @param IEnvironment $environment
      */
-    public function __construct(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment);
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment);
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IRule $rule
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
-    public function addRule(\OnlineShop\Framework\PricingManager\IRule $rule);
+    public function addRule(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule);
 
     /**
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
-     * @return \OnlineShop\Framework\PricingManager\IRule[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule[]
      */
     public function getRules($forceRecalc = false);
 
@@ -53,12 +53,12 @@ interface IPriceInfo extends \OnlineShop\Framework\PriceSystem\IPriceInfo
     public function getAmount();
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOriginalPrice();
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOriginalTotalPrice();
 
@@ -70,7 +70,7 @@ interface IPriceInfo extends \OnlineShop\Framework\PriceSystem\IPriceInfo
     /**
      * @param IEnvironment $environment
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
     public function setEnvironment(IEnvironment $environment);
 
@@ -80,12 +80,12 @@ interface IPriceInfo extends \OnlineShop\Framework\PriceSystem\IPriceInfo
     public function hasDiscount();
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getDiscount();
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getTotalDiscount();
 

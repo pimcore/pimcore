@@ -16,9 +16,15 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer;
 
 /**
- * Class \OnlineShop\Framework\CheckoutManager\CheckoutManager
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\CheckoutManager
  */
 class CheckoutManager implements ICheckoutManager
 {
@@ -78,27 +84,27 @@ class CheckoutManager implements ICheckoutManager
     protected $commitOrderProcessorClassname;
 
     /**
-     * @var \OnlineShop\Framework\CartManager\ICart
+     * @var ICart
      */
     protected $cart;
 
     /**
      * Payment Provider
      *
-     * @var \OnlineShop\Framework\PaymentManager\Payment\IPayment
+     * @var IPayment
      */
     protected $payment;
 
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @param                            $config
      */
-    public function __construct(\OnlineShop\Framework\CartManager\ICart $cart, $config)
+    public function __construct(ICart $cart, $config)
     {
         $this->cart = $cart;
 
-        $config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "checkoutmanager");
+        $config = new HelperContainer($config, "checkoutmanager");
 
         $this->commitOrderProcessorClassname = $config->commitorderprocessor->class;
         $this->confirmationMail = (string)$config->mails->confirmation;
@@ -110,7 +116,7 @@ class CheckoutManager implements ICheckoutManager
 
 
         //getting state information for checkout from custom environment items
-        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+        $env = Factory::getInstance()->getEnvironment();
         $this->finished = $env->getCustomItem(self::FINISHED . "_" . $this->cart->getId()) ? $env->getCustomItem(self::FINISHED . "_" . $this->cart->getId()) : false;
         $this->currentStep = $this->checkoutSteps[$env->getCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId())];
 
@@ -121,7 +127,7 @@ class CheckoutManager implements ICheckoutManager
 
         // init payment provider
         if ($config->payment) {
-            $this->payment = \OnlineShop\Framework\Factory::getInstance()->getPaymentManager()->getProvider($config->payment->provider);
+            $this->payment = Factory::getInstance()->getPaymentManager()->getProvider($config->payment->provider);
         }
 
     }
@@ -146,7 +152,7 @@ class CheckoutManager implements ICheckoutManager
      */
     public function hasActivePayment()
     {
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
         if($order) {
             $paymentInfo = $orderManager->createOrderAgent($order)->getCurrentPendingPaymentInfo();
@@ -156,29 +162,29 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation
      * @throws \Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function startOrderPayment()
     {
         if (!$this->isFinished()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
+            throw new UnsupportedException("Checkout not finished yet.");
         }
 
         if (!$this->payment) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
+            throw new UnsupportedException("Payment is not activated");
         }
 
         //Create Order
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
-        if ($order->getOrderState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed");
+        if ($order->getOrderState() == AbstractOrder::ORDER_STATE_COMMITTED) {
+            throw new UnsupportedException("Order already committed");
         }
 
-        $orderAgent = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        $orderAgent = Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
         $paymentInfo = $orderAgent->startPayment();
 
         //always set order state to payment pending when calling start payment
@@ -191,11 +197,11 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @return null|\OnlineShop\Framework\Model\AbstractOrder
+     * @return null|AbstractOrder
      */
     public function cancelStartedOrderPayment()
     {
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
         if($order) {
             $orderAgent = $orderManager->createOrderAgent( $order );
@@ -206,22 +212,22 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return AbstractOrder
      */
     public function getOrder()
     {
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         return $orderManager->getOrCreateOrderFromCart($this->cart);
     }
 
     /**
      * updates and cleans up environment after order is committed
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param AbstractOrder $order
+     * @throws UnsupportedException
      */
-    protected function updateEnvironmentAfterOrderCommit(\OnlineShop\Framework\Model\AbstractOrder $order) {
-        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+    protected function updateEnvironmentAfterOrderCommit(AbstractOrder $order) {
+        $env = Factory::getInstance()->getEnvironment();
         if(empty($order->getOrderState())) {
             //if payment not successful -> set current checkout step to last step and checkout to not finished
             //last step must be committed again in order to restart payment or e.g. commit without payment?
@@ -242,8 +248,8 @@ class CheckoutManager implements ICheckoutManager
 
     /**
      * @param $paymentResponseParams
-     * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return AbstractOrder
+     * @throws UnsupportedException
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams) {
 
@@ -254,15 +260,15 @@ class CheckoutManager implements ICheckoutManager
         }
 
         if (!$this->payment) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
+            throw new UnsupportedException("Payment is not activated");
         }
 
         if ($this->isCommitted()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed.");
+            throw new UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
+            throw new UnsupportedException("Checkout not finished yet.");
         }
 
         //delegate commit order to commit order processor
@@ -273,22 +279,22 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
-     * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status
+     * @return AbstractOrder
+     * @throws UnsupportedException
      */
-    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $status)
+    public function commitOrderPayment(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status)
     {
         if (!$this->payment) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Payment is not activated");
+            throw new UnsupportedException("Payment is not activated");
         }
 
         if ($this->isCommitted()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed.");
+            throw new UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
+            throw new UnsupportedException("Checkout not finished yet.");
         }
 
         //delegate commit order to commit order processor
@@ -299,21 +305,21 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractOrder
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return AbstractOrder
+     * @throws UnsupportedException
      */
     public function commitOrder()
     {
         if ($this->isCommitted()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Order already committed.");
+            throw new UnsupportedException("Order already committed.");
         }
 
         if (!$this->isFinished()) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Checkout not finished yet.");
+            throw new UnsupportedException("Checkout not finished yet.");
         }
 
         //delegate commit order to commit order processor
-        $order = \OnlineShop\Framework\Factory::getInstance()->getOrderManager()->getOrCreateOrderFromCart($this->cart);
+        $order = Factory::getInstance()->getOrderManager()->getOrCreateOrderFromCart($this->cart);
         $order = $this->getCommitOrderProcessor()->commitOrder($order);
 
         $this->updateEnvironmentAfterOrderCommit($order);
@@ -324,11 +330,11 @@ class CheckoutManager implements ICheckoutManager
     /**
      * generates classic google analytics e-commerce tracking code
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      * @return string
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
-    protected function generateGaEcommerceCode(\OnlineShop\Framework\Model\AbstractOrder $order)
+    protected function generateGaEcommerceCode(AbstractOrder $order)
     {
         $code = "";
 
@@ -394,11 +400,11 @@ class CheckoutManager implements ICheckoutManager
     /**
      * generates universal google analytics e-commerce tracking code
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      * @return string
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
-    protected function generateUniversalEcommerceCode(\OnlineShop\Framework\Model\AbstractOrder $order)
+    protected function generateUniversalEcommerceCode(AbstractOrder $order)
     {
         $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
 
@@ -461,7 +467,7 @@ class CheckoutManager implements ICheckoutManager
      * @param ICheckoutStep $step
      * @param mixed $data
      * @return bool
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function commitStep(ICheckoutStep $step, $data)
     {
@@ -471,14 +477,14 @@ class CheckoutManager implements ICheckoutManager
 
         // if indexCurrentStep is < index -> there are uncommitted previous steps
         if ($indexCurrentStep < $index) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("There are uncommitted previous steps.");
+            throw new UnsupportedException("There are uncommitted previous steps.");
         }
 
         //delegate commit to step implementation (for data storage etc.)
         $result = $step->commit($data);
 
         if ($result) {
-            $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+            $env = Factory::getInstance()->getEnvironment();
 
             $index++;
             if (count($this->checkoutStepOrder) > $index) {
@@ -503,7 +509,7 @@ class CheckoutManager implements ICheckoutManager
 
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICart
+     * @return ICart
      */
     public function getCart()
     {
@@ -548,7 +554,7 @@ class CheckoutManager implements ICheckoutManager
      */
     public function isCommitted()
     {
-        $orderManager = \OnlineShop\Framework\Factory::getInstance()->getOrderManager();
+        $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
 
         return $order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED;
@@ -556,7 +562,7 @@ class CheckoutManager implements ICheckoutManager
 
 
     /**
-     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
+     * @return IPayment
      */
     public function getPayment()
     {

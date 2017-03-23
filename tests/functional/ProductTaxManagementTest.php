@@ -3,12 +3,11 @@ namespace EcommerceFramework;
 
 
 use Codeception\Util\Stub;
-use OnlineShop\Framework\Model\AbstractProduct;
-use OnlineShop\Framework\PriceSystem\AttributePriceSystem;
-use OnlineShop\Framework\PriceSystem\Price;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 class ProductTaxManagementTest extends \Codeception\Test\Unit

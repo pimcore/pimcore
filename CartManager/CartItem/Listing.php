@@ -46,7 +46,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     }
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getCartItems() {
         if(empty($this->cartItems)) {
@@ -56,7 +56,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICartItem[] $cartItems
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[] $cartItems
      * @return void
      */
     public function setCartItems($cartItems) {

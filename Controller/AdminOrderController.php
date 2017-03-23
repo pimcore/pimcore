@@ -17,10 +17,15 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 
-use OnlineShop\Framework\OrderManager\Order\Listing\Filter;
 use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
 use Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderManager;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Localizedfield;
@@ -40,7 +45,7 @@ use Zend\Paginator\Paginator;
 class AdminOrderController extends FrontendController
 {
     /**
-     * @var OnlineShop\Framework\OrderManager\IOrderManager
+     * @var IOrderManager
      */
     protected $orderManager;
 
@@ -88,7 +93,7 @@ class AdminOrderController extends FrontendController
         $list->setListType( $request->get('type', $list::LIST_TYPE_ORDER) );
 
         // set order state
-        $list->setOrderState( \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED );
+        $list->setOrderState( AbstractOrder::ORDER_STATE_COMMITTED );
 
 
         // add select fields
@@ -113,14 +118,14 @@ class AdminOrderController extends FrontendController
             switch($search)
             {
                 case 'productType':
-                    $filterProductType = new Filter\ProductType();
+                    $filterProductType = new ProductType();
                     $filterProductType->setTypes( [$q] );
                     $list->addFilter( $filterProductType );
                     break;
 
                 case 'order':
                 default:
-                    $filterOrder = new Filter\OrderSearch();
+                    $filterOrder = new OrderSearch();
                     $filterOrder->setKeyword( $q );
                     $list->addFilter( $filterOrder );
                     break;
@@ -136,7 +141,7 @@ class AdminOrderController extends FrontendController
             $request->query->set('from', $from->format('d.m.Y'));
         }
 
-        $filterDate = new Filter\OrderDateTime();
+        $filterDate = new OrderDateTime();
         if($request->get('from') || $request->get('till') )
         {
             $from = $request->get('from') ? new \DateTime($request->get('from')) : null;
@@ -181,7 +186,7 @@ class AdminOrderController extends FrontendController
 
         // init
         $order = OnlineShopOrder::getById( $request->get('id') );
-        /* @var \OnlineShop\Framework\Model\AbstractOrder $order */
+        /* @var AbstractOrder $order */
         $orderAgent = $this->view->orderAgent = $this->orderManager->createOrderAgent( $order );
 
 
@@ -292,7 +297,7 @@ class AdminOrderController extends FrontendController
 
             // load reference
             $reference = Concrete::getById( $note->getCid() );
-            $title = $reference instanceof \OnlineShop\Framework\Model\AbstractOrderItem
+            $title = $reference instanceof AbstractOrderItem
                 ? $reference->getProduct()->getOSName()
                 : null
             ;

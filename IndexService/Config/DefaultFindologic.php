@@ -17,8 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
- * Class \OnlineShop\Framework\IndexService\Config\DefaultFindologic
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultFindologic
  *
  * Default implementation for FINDOLOGIC as product index backend
  */
@@ -56,11 +59,11 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
      * @return bool
      */
-    public function inIndex(\OnlineShop\Framework\Model\IIndexable $object)
+    public function inIndex(IIndexable $object)
     {
         return true;
     }
@@ -68,12 +71,12 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      * @param null                                              $subObjectId
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
     {
 
     }
@@ -95,13 +98,13 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\IWorker
+     * @return IWorker
      */
     public function getTenantWorker()
     {
         if(empty($this->tenantWorker))
         {
-            $this->tenantWorker = new \OnlineShop\Framework\IndexService\Worker\DefaultFindologic($this);
+            $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic($this);
         }
 
         return $this->tenantWorker;
@@ -128,6 +131,6 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
      */
     public function createMockupObject($objectId, $data, $relations)
     {
-        return new \OnlineShop\Framework\Model\DefaultMockup($objectId, $data, $relations);
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
     }
 }

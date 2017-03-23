@@ -27,14 +27,14 @@ class SessionCart extends AbstractCart implements ICart {
      * @return string
      */
     protected function getCartItemClassName() {
-        return '\OnlineShop\Framework\CartManager\SessionCartItem';
+        return '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCartItem';
     }
 
     /**
      * @return string
      */
     protected function getCartCheckoutDataClassName() {
-        return '\OnlineShop\Framework\CartManager\SessionCartCheckoutData';
+        return '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCartCheckoutData';
     }
 
     /**
@@ -107,7 +107,7 @@ class SessionCart extends AbstractCart implements ICart {
 
     /**
      * @param int $id
-     * @return \OnlineShop\Framework\CartManager\SessionCart
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\SessionCart
      */
     public static function getById($id) {
         $carts = static::getAllCartsForUser(-1);

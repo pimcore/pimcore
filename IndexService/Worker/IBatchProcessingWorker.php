@@ -17,19 +17,21 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+
 /**
  * Interface for IndexService workers which support patch processing of index data preparation and index updating
  *
- * Interface \OnlineShop\Framework\IndexService\Worker\IBatchProcessingWorker
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker
  */
 interface IBatchProcessingWorker extends IWorker {
 
     /**
      * fills queue based on path
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    public function fillupPreparationQueue(\OnlineShop\Framework\Model\IIndexable $object);
+    public function fillupPreparationQueue(IIndexable $object);
 
 
     /**

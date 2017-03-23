@@ -18,9 +18,9 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 /**
- * Class \OnlineShop\Framework\IndexService\Config\DefaultMysqlInheritColumnConfig
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysqlInheritColumnConfig
  *
- * Sample implementation based on the \OnlineShop\Framework\IndexService\Config\DefaultMysql
+ * Sample implementation based on the \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql
  * that inherits attribute configuration of the default tenant.
  */
 class DefaultMysqlInheritColumnConfig extends DefaultMysql {

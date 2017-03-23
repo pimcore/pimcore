@@ -17,11 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing;
 
-use OnlineShop\Framework\OrderManager;
-use OnlineShop\Framework\OrderManager\IOrderListItem;
-use OnlineShop\Framework\OrderManager\AbstractOrderListItem;
-use \OnlineShop\Framework\Model\AbstractOrder as Order;
-use \OnlineShop\Framework\Model\AbstractOrderItem as OrderItem;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\AbstractOrderListItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListItem;
 
 class Item extends AbstractOrderListItem implements IOrderListItem
 {

@@ -117,7 +117,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
 
         $db = \Pimcore\Db::get();
-        $query = "SELECT * FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
+        $query = "SELECT * FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
         $queryParams[] = $seriesId;
 
         if (!empty($params['token'])) {
@@ -172,7 +172,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
     public static function getCountByUsages($usages = 1, $seriesId = null)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE usages >= ? ";
+        $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE usages >= ? ";
         $params[] = $usages;
         if (isset($seriesId)) {
             $query .= " AND voucherSeriesId = ?";
@@ -189,7 +189,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
     public static function getCountBySeriesId($seriesId)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
+        $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
         $params[] = $seriesId;
 
         $db = \Pimcore\Db::get();
@@ -202,8 +202,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
     public static function getCountByReservation($seriesId = null)
     {
-        $query = 'SELECT COUNT(t.id) FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " as t
-            INNER JOIN " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " as r ON t.token = r.token";
+        $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " as t
+            INNER JOIN " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . " as r ON t.token = r.token";
         if (isset($seriesId)) {
             $query .= " WHERE voucherSeriesId = ?";
             $params[] = $seriesId;
@@ -224,7 +224,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
      */
     public static function getCountByLength($length, $seriesId = null)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . ' WHERE length = ?';
+        $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE length = ?';
         $params = [$length];
         if (isset($seriesId)) {
             $query .= " AND voucherSeriesId = ?";
@@ -263,13 +263,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $db = \Pimcore\Db::get();
 
-        $reservationsQuery = "DELETE r FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " AS t
-                        JOIN " . \OnlineShop\Framework\VoucherService\Reservation\Dao::TABLE_NAME . " AS r
+        $reservationsQuery = "DELETE r FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " AS t
+                        JOIN " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . " AS r
                         ON t.token = r.token
                         WHERE t.voucherSeriesId = ?";
 
 
-        $tokensQuery = "DELETE t FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " AS t WHERE t.voucherSeriesId = ?";
+        $tokensQuery = "DELETE t FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " AS t WHERE t.voucherSeriesId = ?";
         $params[] = $seriesId;
 
         $queryParts = [];
@@ -322,7 +322,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             $token = [$codes];
         }
 
-        $query = "SELECT EXISTS(SELECT id FROM " . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . " WHERE token IN ('" . implode("', '", $codes) . "'))";
+        $query = "SELECT EXISTS(SELECT id FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE token IN ('" . implode("', '", $codes) . "'))";
 
         $result = $db->fetchOne($query);
 

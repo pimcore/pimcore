@@ -16,20 +16,24 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
+use Pimcore\Model\Object\OnlineShopVoucherToken;
 
 /**
  * Interface ITokenManager
  *
- * Manager for specific token settings object of type \OnlineShop\Framework\Model\AbstractVoucherTokenType.
+ * Manager for specific token settings object of type AbstractVoucherTokenType.
  * Provides functionality for generating, checking, removing, applying, reserving tokens.
  * Also prepares the view of the Voucher Code Tab and specifies its template.
  */
 interface ITokenManager
 {
     /**
-     * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
+     * @param AbstractVoucherTokenType $configuration
      */
-    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration);
+    public function __construct(AbstractVoucherTokenType $configuration);
 
     /**
      * Checks if the configuration objects contains valid values to
@@ -53,55 +57,55 @@ interface ITokenManager
      * e.g. it is not reserved or used, or other tokenType specific settings.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
+     * @param ICart $cart
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException
      * @return bool
      */
-    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function checkToken($code, ICart $cart);
 
     /**
      * Adds a reservation to a specific token code.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      *
-     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      * @return bool
      */
-    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function reserveToken($code, ICart $cart);
 
     /**
      * Creates token object and adds it to order, increases token usage and
      * clears the reservation of the token.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param ICart $cart
+     * @param AbstractOrder $order
      *
-     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order);
+    public function applyToken($code, ICart $cart, AbstractOrder $order);
 
     /**
      * Removes the reservation of a token code.
      *
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @return bool
      */
-    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
+    public function releaseToken($code, ICart $cart);
 
     /**
      * cleans up the token usage and the ordered token object if necessary
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
 
     /**
      * Get the codes of a voucher series, optionally a filter array can be passed.
@@ -146,7 +150,7 @@ interface ITokenManager
 
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractVoucherTokenType
+     * @return AbstractVoucherTokenType
      */
     public function getConfiguration();
 }

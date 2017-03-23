@@ -17,18 +17,21 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\FactFinder;
 
-class SelectCategory extends \OnlineShop\Framework\FilterService\FilterType\SelectCategory
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+
+class SelectCategory extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
     /**
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                 $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
      * @param bool                                              $isPrecondition
      *
      * @return mixed
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
 
         // init
         $field = $this->getField($filterDefinition);
@@ -69,7 +72,7 @@ class SelectCategory extends \OnlineShop\Framework\FilterService\FilterType\Sele
     }
 
 
-    public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter)
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
         // init
         $script = $filterDefinition->getScriptPath() ?: $this->script;

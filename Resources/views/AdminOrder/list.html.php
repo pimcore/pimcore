@@ -79,7 +79,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                     </div>
                 </div>
                 <?php
-                $listPricingRule = new \OnlineShop\Framework\PricingManager\Rule\Listing();
+                $listPricingRule = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Listing();
                 $list = $listPricingRule->load();
                 if(count($list) > 0): ?>
                     <div class="form-group col-sm-4">
@@ -118,7 +118,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
     $totalSum = 0;
     $defaultCurrency = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     foreach($paginator as $item):
-        /* @var \OnlineShop\Framework\OrderManager\IOrderListItem $item */
+        /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListItem $item */
         $totalSum += $item->getTotalPrice();
         ?>
         <tr>

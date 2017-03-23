@@ -65,7 +65,7 @@ interface IPriceInfo {
      * relation to price system
      *
      * @abstract
-     * @param \OnlineShop\Framework\PriceSystem\IPriceSystem $priceSystem
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem $priceSystem
      * @return IPriceInfo
      */
     public function setPriceSystem($priceSystem);
@@ -73,16 +73,16 @@ interface IPriceInfo {
     /**
      * relation to product
      *
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product
      *
      * @return IPriceInfo
      */
-    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product);
+    public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product);
 
     /**
      * returns product
      *
-     * @return \OnlineShop\Framework\Model\ICheckoutable
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable
      */
     public function getProduct();
 }

@@ -12,6 +12,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
+
 class IdList implements IInterpreter {
 
     public static function interpret($value, $config = null) {
@@ -30,7 +32,7 @@ class IdList implements IInterpreter {
         $delimiter = ',';
 
         if($config && $config->multiSelectEncoded) {
-           $delimiter = \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
+           $delimiter = IWorker::MULTISELECT_DELIMITER;
         }
 
         $ids = implode($delimiter, $ids);

@@ -17,7 +17,7 @@ interface IProductImpression
     /**
      * Track product impression
      *
-     * @param \OnlineShop\Framework\Model\IProduct $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product
      */
-    public function trackProductImpression(\OnlineShop\Framework\Model\IProduct $product);
+    public function trackProductImpression(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product);
 }

@@ -16,10 +16,11 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator;
-use OnlineShop\Framework\CartManager\ICart;
-use OnlineShop\Framework\Factory;
-use OnlineShop\Framework\PriceSystem\IModificatedPrice;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
@@ -58,13 +59,13 @@ class Shipping implements IShipping
     }
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal
+     * @param IPrice $currentSubTotal
      * @param ICart $cart
      * @return IModificatedPrice
      */
-    public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
+    public function modify(IPrice $currentSubTotal, ICart $cart)
     {
-        $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
+        $modificatedPrice = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
         $taxClass = $this->getTaxClass();
         if($taxClass) {
@@ -81,7 +82,7 @@ class Shipping implements IShipping
     /**
      * @param float $charge
      *
-     * @return \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator
+     * @return ICartPriceModificator
      */
     public function setCharge($charge)
     {

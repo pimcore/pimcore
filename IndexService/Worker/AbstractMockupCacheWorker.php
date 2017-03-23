@@ -16,8 +16,9 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
-use OnlineShop\Framework\Exception\InvalidConfigException;
-use OnlineShop\Framework\IndexService\Config\IMockupConfig;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMockupConfig;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Logger;
 
 
@@ -62,7 +63,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
      *
      * @param $objectId
      * @param null $data
-     * @return \OnlineShop\Framework\Model\DefaultMockup
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup
      */
     public function saveToMockupCache($objectId, $data = null) {
         if(empty($data)) {
@@ -80,6 +81,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
         $key = $this->createMockupCacheKey($objectId);
 
         //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
+        //TODO
         $cache = \Pimcore\Cache::getInstance();
         $success = $cache->save(serialize($mockup), \Pimcore\Cache::$cachePrefix . $key, [$this->getMockupCachePrefix()], null);
         $result = \Pimcore\Cache::load($key);
@@ -96,7 +98,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
      * gets mockup from cache and if not in cache, adds it to cache
      *
      * @param $objectId
-     * @return \OnlineShop\Framework\Model\DefaultMockup
+     * @return DefaultMockup
      */
     public function getMockupFromCache($objectId) {
         $key = $this->createMockupCacheKey($objectId);
@@ -105,7 +107,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
         if(is_string($cachedItem)){
             $cachedItem = unserialize($cachedItem);
         }
-        if($cachedItem instanceof \OnlineShop\Framework\Model\DefaultMockup) {
+        if($cachedItem instanceof DefaultMockup) {
             return $cachedItem;
         }
 

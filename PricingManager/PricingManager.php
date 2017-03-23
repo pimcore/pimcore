@@ -17,7 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
-use OnlineShop\Framework\CartManager\CartPriceModificator\Discount;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Config\Config;
 
@@ -42,16 +45,16 @@ class PricingManager implements IPricingManager
      */
     public function __construct(Config $config)
     {
-        $this->config = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, "pricingmanager");
+        $this->config = new HelperContainer($config, "pricingmanager");
     }
 
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
      *
      * @return IPriceInfo
      */
-    public function applyProductRules(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo)
+    public function applyProductRules(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo)
     {
         if((string)$this->config->disabled == "true") {
             return $priceInfo;
@@ -76,11 +79,11 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return IPricingManager
      */
-    public function applyCartRules(\OnlineShop\Framework\CartManager\ICart $cart)
+    public function applyCartRules(ICart $cart)
     {
         if((string)$this->config->disabled == "true") {
             return $this;
@@ -184,13 +187,13 @@ class PricingManager implements IPricingManager
      * @param string $type
      *
      * @return ICondition
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function getCondition($type)
     {
         $class = $this->config->condition->$type->class;
         if($class == '')
-            throw new \OnlineShop\Framework\Exception\InvalidConfigException(sprintf('getCondition class "%s" not found.', $class));
+            throw new InvalidConfigException(sprintf('getCondition class "%s" not found.', $class));
 
         return new $class();
     }
@@ -208,12 +211,12 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
      *
      * @return IPriceInfo
-     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public function getPriceInfo(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo)
+    public function getPriceInfo(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo)
     {
         if((string)$this->config->disabled == "true") {
             return $priceInfo;
@@ -222,7 +225,7 @@ class PricingManager implements IPricingManager
         $class = $this->config->priceInfo->class;
         if($class == '')
         {
-            throw new \OnlineShop\Framework\Exception\InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
+            throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
         }
 
 

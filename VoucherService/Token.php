@@ -97,7 +97,7 @@ class Token extends \Pimcore\Model\AbstractModel
     public function check($maxUsages = null, $isCheckout = false)
     {
         if (isset($maxUsages)) {
-            if ($this->getUsages() + \OnlineShop\Framework\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
+            if ($this->getUsages() + \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
                 return true;
             }
             return false;
@@ -136,13 +136,13 @@ class Token extends \Pimcore\Model\AbstractModel
 
     public function release($cart)
     {
-        return \OnlineShop\Framework\VoucherService\Reservation::releaseToken($this, $cart);
+        return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::releaseToken($this, $cart);
     }
 
     public function apply()
     {
         if ($this->getDao()->apply()) {
-            \OnlineShop\Framework\VoucherService\Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
+            \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
             return true;
         }
         return false;

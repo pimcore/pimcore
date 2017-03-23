@@ -25,21 +25,21 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * returns mandatory products for a set product
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return AbstractSetProductEntry[]
      */
     public function getMandatoryProductEntries() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
     }
 
     /**
      * returns optional products for a set product
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @return AbstractSetProductEntry[]
      */
     public function getOptionalProductEntries() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
     }
 
 
@@ -77,10 +77,10 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * Delivers price of set product with given products
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
     public function getCalculatedPrice($products, $quantityScale = 1) {
@@ -90,7 +90,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * Delivers priceInfo of setproduct with given products
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return stdClass
@@ -105,10 +105,10 @@ class AbstractSetProduct extends AbstractProduct {
     /**
     * Delivers min price for given products or with default mandatory products of set product
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param null $quantityScale
      * @param null $products
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = null, $products = null) {
         if( $this->getOSPriceInfo($quantityScale,$products)) {
@@ -120,10 +120,10 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param int $quantityScale
      * @param null $products
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = null, $products = null) {
         if (!is_array($products)) {
@@ -135,7 +135,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * @param int $quantity
      * @param $products AbstractSetProductEntry[]
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = 1, $products = null) {
         if (!is_array($products)) {
@@ -148,7 +148,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * checks if all mandatory of set products are set in given product list
      *
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      * @param  AbstractSetProductEntry[] $products
      * @return void
      */
@@ -169,7 +169,7 @@ class AbstractSetProduct extends AbstractProduct {
         }
 
         if (count($mandatoryProductIds) > 0) {
-            throw new \OnlineShop\Framework\Exception\UnsupportedException("Not all mandatory Products in product list.");
+            throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("Not all mandatory Products in product list.");
         }
     }
 }

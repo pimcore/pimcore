@@ -17,7 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
-abstract class AbstractOrder implements \OnlineShop\Framework\PricingManager\ICondition
+abstract class AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
 {
     /**
      * persistenter cache für alle condition die von dieser ableiten
@@ -27,12 +27,12 @@ abstract class AbstractOrder implements \OnlineShop\Framework\PricingManager\ICo
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IRule $rule
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule
      * @param string                             $field
      *
      * @return mixed
      */
-    private function getData(\OnlineShop\Framework\PricingManager\IRule $rule, $field)
+    private function getData(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule, $field)
     {
         if(!array_key_exists($rule->getId(), self::$cache))
         {
@@ -99,22 +99,22 @@ SQL;
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IRule $rule
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule
      *
      * @return int
      */
-    protected function getSoldCount(\OnlineShop\Framework\PricingManager\IRule $rule)
+    protected function getSoldCount(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule)
     {
         return (int)$this->getData($rule, 'soldCount');
     }
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IRule $rule
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule
      *
      * @return float
      */
-    protected function getSalesAmount(\OnlineShop\Framework\PricingManager\IRule $rule)
+    protected function getSalesAmount(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule)
     {
         return (float)$this->getData($rule, 'salesAmount');
     }

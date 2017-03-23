@@ -17,7 +17,15 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use OnlineShop\Framework\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle;
+use Pimcore\Model\Object\OnlineShopVoucherToken;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -26,10 +34,10 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     protected $template;
 
-    public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
+    public function __construct(AbstractVoucherTokenType $configuration)
     {
         parent::__construct($configuration);
-        if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle) {
+        if ($configuration instanceof VoucherTokenTypeSingle) {
             $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabSingle.html.php";
         } else {
             throw new InvalidConfigException("Invalid Configuration Class for type VoucherTokenTypeSingle.");
@@ -55,7 +63,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     public function cleanupReservations($duration = 0, $seriesId = null)
     {
-        return \OnlineShop\Framework\VoucherService\Reservation::cleanUpReservations($duration, $seriesId);
+        return Reservation::cleanUpReservations($duration, $seriesId);
     }
 
     /**
@@ -125,7 +133,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         $db = \Pimcore\Db::get();
         try {
             $query =
-                'INSERT INTO ' . \OnlineShop\Framework\VoucherService\Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) VALUES (?,?,?)
+                'INSERT INTO ' . Token\Dao::TABLE_NAME . '(token,length,voucherSeriesId) VALUES (?,?,?)
                     ON DUPLICATE KEY UPDATE token = ?, length = ?';
 
             $db->query($query, [trim($this->configuration->getToken()), $this->getFinalTokenLength(), $this->getSeriesId(), trim($this->configuration->getToken()), $this->getFinalTokenLength()]);
@@ -140,7 +148,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
      */
     public function getCodes($params = null)
     {
-        return \OnlineShop\Framework\VoucherService\Token\Listing::getCodes($this->seriesId, $params);
+        return Token\Listing::getCodes($this->seriesId, $params);
     }
 
     protected function prepareUsageStatisticData(&$data, $usagePeriod){
@@ -160,10 +168,10 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     public function getStatistics($usagePeriod = null)
     {
         $overallCount = $this->configuration->getUsages();
-        $usageCount = \OnlineShop\Framework\VoucherService\Token::getByCode($this->configuration->getToken())->getUsages();
-        $reservedTokenCount = \OnlineShop\Framework\VoucherService\Token\Listing::getCountByReservation($this->seriesId);
+        $usageCount = Token::getByCode($this->configuration->getToken())->getUsages();
+        $reservedTokenCount = Token\Listing::getCountByReservation($this->seriesId);
 
-        $usage = \OnlineShop\Framework\VoucherService\Statistic::getBySeriesId($this->seriesId, $usagePeriod);
+        $usage = Statistic::getBySeriesId($this->seriesId, $usagePeriod);
         $this->prepareUsageStatisticData($usage, $usagePeriod);
 
         return [
@@ -177,13 +185,13 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @return bool
      */
-    public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function reserveToken($code, ICart $cart)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
-            if (\OnlineShop\Framework\VoucherService\Reservation::create($code, $cart)) {
+        if ($token = Token::getByCode($code)) {
+            if (Reservation::create($code, $cart)) {
                 return true;
             }
         }
@@ -193,14 +201,14 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param ICart $cart
+     * @param AbstractOrder $order
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
-    public function applyToken($code, \OnlineShop\Framework\CartManager\ICart $cart, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function applyToken($code, ICart $cart, AbstractOrder $order)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
+        if ($token = Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages(), true)) {
                 if ($token->apply()) {
                     $orderToken = \Pimcore\Model\Object\OnlineShopVoucherToken::getByToken($code, 1);
@@ -227,13 +235,13 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     /**
      * cleans up the token usage and the ordered token object if necessary
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param OnlineShopVoucherToken $tokenObject
+     * @param AbstractOrder $order
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \OnlineShop\Framework\Model\AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
     {
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($tokenObject->getToken())) {
+        if ($token = Token::getByCode($tokenObject->getToken())) {
             return $token->unuse();
         }
         return false;
@@ -241,23 +249,23 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @return bool
      */
-    public function releaseToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function releaseToken($code, ICart $cart)
     {
-        return \OnlineShop\Framework\VoucherService\Reservation::releaseToken($code, $cart);
+        return Reservation::releaseToken($code, $cart);
     }
 
     /**
      * @param string $code
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
+     * @param ICart $cart
      * @return bool
      */
-    public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
+    public function checkToken($code, ICart $cart)
     {
         parent::checkToken($code, $cart);
-        if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
+        if ($token = Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages())) {
                 return true;
             }

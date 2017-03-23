@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+
 class Listing extends \Pimcore\Model\Listing\AbstractListing {
 
     /**
@@ -25,7 +27,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     public $carts;
 
     public function __construct() {
-        $this->getDao()->setCartClass(\OnlineShop\Framework\Factory::getInstance()->getCartManager()->getCartClassName());
+        $this->getDao()->setCartClass(Factory::getInstance()->getCartManager()->getCartClassName());
     }
 
     /**

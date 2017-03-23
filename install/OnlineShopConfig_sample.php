@@ -37,7 +37,7 @@ return [
                 ],
                 /*  special configuration for specific checkout tenants
                     - for not specified elements the default configuration is used as fallback
-                    - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant() */
+                    - active tenant is set at \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IEnvironment::setCurrentCheckoutTenant() */
                 "tenants" => [
                     "noShipping" => [
                         "pricecalculator" => [

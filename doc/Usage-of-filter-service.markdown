@@ -13,7 +13,7 @@ Each product listing has different filters like dropdowns, multi selects, input 
 - special presentation in the view
 - special filter conditions for the product index
 
-The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which extend the abstract class ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` and are responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented. 
+The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which extend the abstract class ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType``` and are responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented.
 
 
 The configuration of the FilterTypes takes place in the OnlineShopConfig.php
@@ -104,13 +104,13 @@ $params = $this->getAllParams();
 $this->view->filterDefinitionObject = $filterDefinition;
 
 // create product list
-$products = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+$products = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
 $this->view->products = $products;
 
 // create and init filter service
-$filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);
+$filterService = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getFilterService($this->view);
 
-\OnlineShop\Framework\FilterService\Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
 $this->view->filterService = $filterService;
 
 

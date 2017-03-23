@@ -16,8 +16,8 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
-use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
-use OnlineShop\Framework\Model\ICheckoutable;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 /**
@@ -28,12 +28,12 @@ interface IPriceSystem {
     /**
      * creates price info object for given product and quantity scale
      *
-     * @param \OnlineShop\Framework\Model\ICheckoutable $abstractProduct
-     * @param null|int|string $quantityScale - numeric or string (allowed values: \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE)
-     * @param \OnlineShop\Framework\Model\ICheckoutable[] $products
+     * @param ICheckoutable $abstractProduct
+     * @param null|int|string $quantityScale - numeric or string (allowed values: \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo::MIN_PRICE)
+     * @param ICheckoutable[] $products
      * @return IPriceInfo
      */
-    public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
+    public function getPriceInfo(ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
 
     /**
      * filters and orders given product ids based on price information

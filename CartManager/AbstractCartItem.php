@@ -17,10 +17,15 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProduct;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem {
 
     /**
-     * @var \OnlineShop\Framework\Model\ICheckoutable
+     * @var ICheckoutable
      */
     protected $product;
     protected $productId;
@@ -32,7 +37,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $subItems = null;
 
     /**
-     * @var \OnlineShop\Framework\CartManager\ICart
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     protected $cart;
     protected $cartId;
@@ -57,13 +62,13 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->count;
     }
 
-    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product) {
+    public function setProduct(ICheckoutable $product) {
         $this->product = $product;
         $this->productId = $product->getId();
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct() {
         if ($this->product) {
@@ -146,7 +151,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param  \OnlineShop\Framework\CartManager\ICartItem[] $subItems
+     * @param  \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[] $subItems
      * @return void
      */
     public function setSubItems($subItems) {
@@ -158,7 +163,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getPrice()
     {
@@ -168,17 +173,17 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
     public function getPriceInfo() {
 
-        if ($this->getProduct() instanceof \OnlineShop\Framework\Model\AbstractSetProduct) {
+        if ($this->getProduct() instanceof AbstractSetProduct) {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(), $this->getSetEntries());
         } else {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
 
-        if($priceInfo instanceof \OnlineShop\Framework\PricingManager\IPriceInfo)
+        if($priceInfo instanceof IPriceInfo)
         {
             $priceInfo->getEnvironment()->setCart( $this->getCart() );
             $priceInfo->getEnvironment()->setCartItem( $this );
@@ -188,10 +193,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getAvailabilityInfo() {
-        if ($this->getProduct() instanceof \OnlineShop\Framework\Model\AbstractSetProduct) {
+        if ($this->getProduct() instanceof AbstractSetProduct) {
             return $this->getProduct()->getOSAvailabilityInfo($this->getCount(), $this->getSetEntries());
 
         } else {
@@ -200,13 +205,13 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractSetProductEntry[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry[]
      */
     public function getSetEntries() {
         $products = array();
         if($this->getSubItems()) {
             foreach ($this->getSubItems() as $item) {
-                $products[] = new \OnlineShop\Framework\Model\AbstractSetProductEntry($item->getProduct(), $item->getCount());
+                $products[] = new AbstractSetProductEntry($item->getProduct(), $item->getCount());
             }
         }
         return $products;
@@ -229,7 +234,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getTotalPrice() {
         return $this->getPriceInfo()->getTotalPrice();

@@ -16,10 +16,11 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
-use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
-use OnlineShop\Framework\Model\ICheckoutable;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
@@ -38,13 +39,13 @@ abstract class AbstractPriceSystem implements IPriceSystem {
 
 
      /**
-     * @param \OnlineShop\Framework\Model\ICheckoutable $abstractProduct
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct
      * @param int | string $quantityScale
-     *    quantityScale - numeric or string (allowed values: \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE
-     * @param \OnlineShop\Framework\Model\ICheckoutable[] $products
+     *    quantityScale - numeric or string (allowed values: \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo::MIN_PRICE
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable[] $products
      * @return IPriceInfo
      */
-    public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
+    public function getPriceInfo(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
         return $this->initPriceInfoInstance($quantityScale,$abstractProduct,$products);
     }
 
@@ -70,7 +71,7 @@ abstract class AbstractPriceSystem implements IPriceSystem {
         $priceInfo->setPriceSystem($this);
 
         // apply pricing rules
-        $priceInfoWithRules = \OnlineShop\Framework\Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
+        $priceInfoWithRules = Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
 
         return $priceInfoWithRules;
 

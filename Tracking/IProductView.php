@@ -17,7 +17,7 @@ interface IProductView
     /**
      * Track product view
      *
-     * @param \OnlineShop\Framework\Model\IProduct $product
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product
      */
-    public function trackProductView(\OnlineShop\Framework\Model\IProduct $product);
+    public function trackProductView(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product);
 }

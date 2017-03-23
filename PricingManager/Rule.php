@@ -17,8 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
-use OnlineShop\Framework\PricingManager\Action\IProductDiscount;
-use OnlineShop\Framework\PricingManager\Rule\Dao;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action\IProductDiscount;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition\IBracket;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Tool;
 
@@ -76,7 +77,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     protected $description;
 
     /**
-     * @var \OnlineShop\Framework\PricingManager\Condition\IBracket
+     * @var IBracket
      */
     protected $condition;
 

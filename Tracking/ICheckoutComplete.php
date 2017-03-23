@@ -17,7 +17,7 @@ interface ICheckoutComplete
     /**
      * Track checkout complete
      * 
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      */
-    public function trackCheckoutComplete(\OnlineShop\Framework\Model\AbstractOrder $order);
+    public function trackCheckoutComplete(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 }

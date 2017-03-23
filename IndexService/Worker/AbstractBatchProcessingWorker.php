@@ -16,6 +16,9 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
 
@@ -29,7 +32,7 @@ use Pimcore\Logger;
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker {
 
     /**
-     * @var \OnlineShop\Framework\IndexService\Config\AbstractConfig
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\AbstractConfig
      */
     protected $tenantConfig;
 
@@ -85,9 +88,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    protected function getDefaultDataForIndex(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId){
+    protected function getDefaultDataForIndex(IIndexable $object, $subObjectId){
         $categories = $object->getCategories();
         $categoryIds = [];
         $parentCategoryIds =[];
@@ -95,12 +98,12 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
         if($categories) {
             foreach($categories as $c) {
 
-                if($c instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                if($c instanceof AbstractCategory) {
                     $categoryIds[$c->getId()] = $c->getId();
                 }
 
                 $currentCategory = $c;
-                while($currentCategory instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                while($currentCategory instanceof AbstractCategory) {
                     $parentCategoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
                     if($currentCategory->getOSProductsInParentCategoryVisible()) {
@@ -116,7 +119,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 while ($workingCategory) {
                     $tmpIds[] = $workingCategory->getId();
                     $workingCategory = $workingCategory->getParent();
-                    if (!$workingCategory instanceof  \OnlineShop\Framework\Model\AbstractCategory) {
+                    if (!$workingCategory instanceof  AbstractCategory) {
                         break;
                     }
                 }
@@ -168,14 +171,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    public function prepareDataForIndex(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function prepareDataForIndex(IIndexable $object) {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach($subObjectIds as $subObjectId => $object) {
             /**
-             * @var \OnlineShop\Framework\Model\IIndexable $object
+             * @var IIndexable $object
              */
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
@@ -219,7 +222,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                             $interpreter = $column->interpreter;
                             $value = $interpreter::interpret($value, $column->config);
                             $interpreterObject = new $interpreter();
-                            if($interpreterObject instanceof \OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter) {
+                            if($interpreterObject instanceof IRelationInterpreter) {
                                 foreach($value as $v) {
                                     $relData = array();
                                     $relData['src'] = $subObjectId;
@@ -312,9 +315,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     /**
      * fills queue based on path
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      */
-    public function fillupPreparationQueue(\OnlineShop\Framework\Model\IIndexable $object) {
+    public function fillupPreparationQueue(IIndexable $object) {
         if($object instanceof \Pimcore\Model\Object\Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
@@ -349,7 +352,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
                 $object = $this->tenantConfig->getObjectById($objectId, true);
-                if($object instanceof \OnlineShop\Framework\Model\IIndexable) {
+                if($object instanceof IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {
                     //delete entry with id which was retrieved from index before

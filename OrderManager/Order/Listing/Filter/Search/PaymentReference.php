@@ -17,8 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search;
 
-use OnlineShop\Framework\OrderManager\Order\Listing\Filter\AbstractSearch;
-use OnlineShop\Framework\OrderManager\IOrderList;
+
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\AbstractSearch;
 
 class PaymentReference extends AbstractSearch
 {

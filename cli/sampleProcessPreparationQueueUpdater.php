@@ -21,5 +21,5 @@ include_once("../../../pimcore/cli/startup.php");
 chdir($workingDirectory);
 
 
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processPreparationQueue();
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::processPreparationQueue();
  

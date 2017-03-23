@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+
 /**
  * interface for cart implementations of online shop framework
  */
@@ -36,7 +38,7 @@ interface ICart {
 
     /**
      * @abstract
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getItems();
 
@@ -56,40 +58,40 @@ interface ICart {
     /**
      * @param string $itemKey
      *
-     * @return \OnlineShop\Framework\CartManager\ICartItem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem
      */
     public function getItem($itemKey);
 
     /**
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getGiftItems();
 
     /**
      * @param string $itemKey
      *
-     * @return \OnlineShop\Framework\CartManager\ICartItem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem
      */
     public function getGiftItem($itemKey);
 
     /**
      * @abstract
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
-     * @param \OnlineShop\Framework\Model\AbstractSetProductEntry[] $subProducts
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry[] $subProducts
      * @param string $comment
      * @return string $itemKey
      */
-    public function addItem(\OnlineShop\Framework\Model\ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
      * @abstract
      * @param string $itemKey
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -97,7 +99,7 @@ interface ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateItem($itemKey, \OnlineShop\Framework\Model\ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * updates count of specific cart item
@@ -109,21 +111,21 @@ interface ICart {
     public function updateItemCount($itemKey, $count);
 
     /**
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
-     * @param \OnlineShop\Framework\Model\AbstractSetProductEntry[] $subProducts
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry[] $subProducts
      * @param string $comment
      * @return string $itemKey
      */
-    public function addGiftItem(\OnlineShop\Framework\Model\ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addGiftItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
      * @param string $itemKey
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -131,7 +133,7 @@ interface ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateGiftItem($itemKey, \OnlineShop\Framework\Model\ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateGiftItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * @abstract
@@ -170,7 +172,7 @@ interface ICart {
     /**
      * @param int $count
      *
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getRecentlyAddedItems($count);
 
@@ -179,7 +181,7 @@ interface ICart {
      * returns price calculator of cart
      *
      * @abstract
-     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartPriceCalculator
      */
     public function getPriceCalculator();
 
@@ -306,7 +308,7 @@ interface ICart {
     public function addVoucherToken($token);
 
     /**
-     * @param \OnlineShop\Framework\VoucherService\Token $token
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token $token
      * @return bool
      */
     public function removeVoucherToken($token);

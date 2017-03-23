@@ -17,18 +17,19 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
-use OnlineShop\Framework;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IComponent;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 
 /**
- * Interface \OnlineShop\Framework\CartManager\ICartManager
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartManager
  */
-interface ICartManager extends Framework\IComponent {
+interface ICartManager extends IComponent {
  
     /**
      * returns cart class name configured in the onlineshop config
      *
      * Is also responsible for checking if guest cart class should be used or not,
-     * by calling \OnlineShop\Framework\IEnvironment::getUseGuestCart();
+     * by calling \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IEnvironment::getUseGuestCart();
      *
      *
      * @return string
@@ -38,18 +39,18 @@ interface ICartManager extends Framework\IComponent {
     /**
      * adds item to given cart
      *
-     * @param \OnlineShop\Framework\Model\ICheckoutable  $product   - product to add
+     * @param ICheckoutable  $product   - product to add
      * @param float                                                 $count
      * @param string                                                $key       - optional key of cart where the item should be added to
      * @param null|string                                           $itemKey   - optional item key
      * @param bool                                                  $replace   - replace item if same key already exists
      * @param array                                                 $params    - optional addtional item information
-     * @param \OnlineShop\Framework\Model\AbstractSetProductEntry[]        $subProducts
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry[]        $subProducts
      * @param null|string                                           $comment
      *
      * @return string - item key
      */
-    public function addToCart(\OnlineShop\Framework\Model\ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addToCart(ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * removes item from given cart
@@ -64,7 +65,7 @@ interface ICartManager extends Framework\IComponent {
      * returns cart
      *
      * @param null|string  $key - optional identification of cart in case of multi cart
-     * @return \OnlineShop\Framework\CartManager\ICart
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     public function getCart($key = null);
 
@@ -72,14 +73,14 @@ interface ICartManager extends Framework\IComponent {
      * returns cart by name
      *
      * @param string $name
-     * @return \OnlineShop\Framework\CartManager\ICart
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     public function getCartByName($name);
 
     /**
      * returns all carts
      *
-     * @return \OnlineShop\Framework\CartManager\ICart[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart[]
      */
     public function getCarts();
 
@@ -111,9 +112,9 @@ interface ICartManager extends Framework\IComponent {
     /**
      * creates price calculator for given cart
      *
-     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartPriceCalculator
      */
-    public function getCartPriceCalculator(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function getCartPriceCalculator(ICart $cart);
 
     /**
      * @deprecated
@@ -121,9 +122,9 @@ interface ICartManager extends Framework\IComponent {
      * use getCartPriceCalculator instead
      *
      * @abstract
-     * @return \OnlineShop\Framework\CartManager\ICartPriceCalculator
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartPriceCalculator
      */
-    public function getCartPriceCalcuator(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function getCartPriceCalcuator(ICart $cart);
 
 
     /**

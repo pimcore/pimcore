@@ -18,7 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
- * Interface \OnlineShop\Framework\CheckoutManager\ICheckoutManager
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutManager
  */
 interface ICheckoutManager {
 
@@ -47,7 +47,7 @@ interface ICheckoutManager {
     /**
      * returns the cart the checkout is started with
      *
-     * @return \OnlineShop\Framework\CartManager\ICart
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     public function getCart();
 
@@ -80,7 +80,7 @@ interface ICheckoutManager {
      * starts payment for checkout - only possible if payment provider is configured
      * sets cart to read only mode since it must not changed during ongoing payment process
      *
-     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractPaymentInformation
      */
     public function startOrderPayment();
 
@@ -92,8 +92,8 @@ interface ICheckoutManager {
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return null|\OnlineShop\Framework\Model\AbstractOrder
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return null|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
+     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
 
@@ -101,7 +101,7 @@ interface ICheckoutManager {
      * returns order (creates it if not available yet)
      * - delegates to commit order processor
      *
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function getOrder();
 
@@ -116,7 +116,7 @@ interface ICheckoutManager {
      * delegates to commit order processor
      *
      * @param $paymentResponseParams
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
 
@@ -128,10 +128,10 @@ interface ICheckoutManager {
      * delegates to commit order processor
      *
      * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $status
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
-    public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $status);
+    public function commitOrderPayment(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus $status);
 
     /**
      * commits order - does not consider any payment
@@ -140,7 +140,7 @@ interface ICheckoutManager {
      *
      * delegates to commit order processor
      *
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function commitOrder();
 
@@ -155,7 +155,7 @@ interface ICheckoutManager {
     /**
      * returns payment adapter
      *
-     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment|null
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment|null
      */
     public function getPayment();
 

@@ -29,14 +29,14 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
     protected $priceInfos = array();
 
     public function loadPriceInfos($productEntries, $options) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
     public function clearPriceInfos($productEntries, $options) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
-    public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
+    public function getPriceInfo(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
         $pId = $abstractProduct->getId();
         if (!array_key_exists($pId, $this->priceInfos) || !is_array($this->priceInfos[$pId])){
             $this->priceInfos[$pId] = array();
@@ -49,7 +49,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
     }
 
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
     }
 
 }

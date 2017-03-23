@@ -35,7 +35,7 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData {
     }
 
 
-    public function setCart(\OnlineShop\Framework\CartManager\ICart $cart) {
+    public function setCart(ICart $cart) {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }

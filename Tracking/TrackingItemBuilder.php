@@ -12,15 +12,14 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
-use OnlineShop\Framework\CartManager\AbstractCartItem;
-use OnlineShop\Framework\CartManager\CartPriceModificator\IShipping;
-use OnlineShop\Framework\CartManager\ICart;
-use OnlineShop\Framework\Model\AbstractOrder;
-use OnlineShop\Framework\Model\AbstractOrderItem;
-use OnlineShop\Framework\Model\ICheckoutable;
-use OnlineShop\Framework\Model\IProduct;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\AbstractCartItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Object\Concrete;
 
 /**
  * Takes an object (e.g. a product, an order) and transforms it into a

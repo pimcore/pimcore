@@ -21,4 +21,4 @@ include_once("../../../pimcore/cli/startup.php");
 chdir($workingDirectory);
 
 
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
+\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");

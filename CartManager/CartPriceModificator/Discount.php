@@ -17,9 +17,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use OnlineShop\Framework\CartManager\ICart;
-use OnlineShop\Framework\Factory;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule;
 
 class Discount implements IDiscount
 {
@@ -29,15 +31,15 @@ class Discount implements IDiscount
     protected $amount = 0;
 
     /**
-     * @var null|\OnlineShop\Framework\PricingManager\IRule
+     * @var null|IRule
      */
     protected $rule = null;
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IRule $rule
+     * @param IRule $rule
      */
-    public function __construct(\OnlineShop\Framework\PricingManager\IRule $rule) {
+    public function __construct(IRule $rule) {
         $this->rule = $rule;
     }
 
@@ -58,12 +60,12 @@ class Discount implements IDiscount
     /**
      * modify price
      *
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $currentSubTotal
      * @param ICart  $cart
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
-    public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
+    public function modify(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
         if($this->getAmount() != 0) {
             $amount = $this->getAmount();
@@ -71,7 +73,7 @@ class Discount implements IDiscount
                 $amount = $currentSubTotal->getAmount() * -1;
             }
 
-            $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+            $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
 
             $taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
             if($taxClass) {
@@ -89,7 +91,7 @@ class Discount implements IDiscount
     /**
      * @param float $amount
      *
-     * @return \OnlineShop\Framework\CartManager\CartPriceModificator\IDiscount
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\IDiscount
      */
     public function setAmount($amount)
     {

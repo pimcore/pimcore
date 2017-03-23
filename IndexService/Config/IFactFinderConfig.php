@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 /**
  * Interface for IndexService Tenant Configurations using factfinder as index
  *
- * Interface \OnlineShop\Framework\IndexService\Config\IFactFinderConfig
+ * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig
  */
 interface IFactFinderConfig extends IConfig
 {
@@ -44,7 +44,7 @@ interface IFactFinderConfig extends IConfig
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \OnlineShop\Framework\IndexService\Worker\ElasticSearch
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
     public function getTenantWorker();
 

@@ -14,8 +14,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
+
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 /**
  * interface for cart item implementations of online shop framework
@@ -24,7 +29,7 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @return \OnlineShop\Framework\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct();
 
@@ -42,10 +47,10 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      * @return void
      */
-    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product);
+    public function setProduct(ICheckoutable $product);
 
     /**
      * @abstract
@@ -82,19 +87,19 @@ interface ICartItem {
 
     /**
      * @abstract
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getPrice();
 
     /**
      * @abstract
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getTotalPrice();
 
     /**
      * @abstract
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return IPriceInfo
      */
     public function getPriceInfo();
 
@@ -111,13 +116,13 @@ interface ICartItem {
     public function getComment();
 
     /**
-     * @return \OnlineShop\Framework\Model\AbstractSetProductEntry[]
+     * @return AbstractSetProductEntry[]
      */
     public function getSetEntries();
 
     /**
      * @abstract
-     * @return \OnlineShop\Framework\AvailabilitySystem\IAvailability
+     * @return IAvailability
      */
     public function getAvailabilityInfo();
 

@@ -17,7 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
-use OnlineShop\Framework\CartManager\CartPriceModificator\Discount;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment;
 
 class CartDiscount implements IDiscount
 {
@@ -32,21 +35,21 @@ class CartDiscount implements IDiscount
     protected $percent = 0;
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
-     * @return \OnlineShop\Framework\PricingManager\IAction
+     * @return IAction
      */
-    public function executeOnProduct(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function executeOnProduct(IEnvironment $environment)
     {
         return $this;
     }
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
-     * @return \OnlineShop\Framework\PricingManager\IAction
+     * @return IAction
      */
-    public function executeOnCart(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function executeOnCart(IEnvironment $environment)
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
@@ -85,7 +88,7 @@ class CartDiscount implements IDiscount
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {

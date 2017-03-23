@@ -17,7 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
-class Sales extends AbstractOrder implements \OnlineShop\Framework\PricingManager\ICondition
+class Sales extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
 {
     /**
      * @var int
@@ -31,11 +31,11 @@ class Sales extends AbstractOrder implements \OnlineShop\Framework\PricingManage
 
 
     /**
-     * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
      * @return boolean
      */
-    public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
+    public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $rule = $environment->getRule();
         if($rule)
@@ -65,7 +65,7 @@ class Sales extends AbstractOrder implements \OnlineShop\Framework\PricingManage
     /**
      * @param string $string
      *
-     * @return \OnlineShop\Framework\PricingManager\ICondition
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
     public function fromJSON($string)
     {
@@ -95,7 +95,7 @@ class Sales extends AbstractOrder implements \OnlineShop\Framework\PricingManage
 
 
 
-    protected function getCurrentAmount(\OnlineShop\Framework\PricingManager\IRule $rule)
+    protected function getCurrentAmount(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule)
     {
         if(!array_key_exists($rule->getId(), $this->currentSalesAmount))
         {

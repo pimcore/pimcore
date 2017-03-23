@@ -16,8 +16,9 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Interface for price implementations of online shop framework

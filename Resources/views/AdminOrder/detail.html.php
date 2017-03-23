@@ -141,7 +141,7 @@ $regionArray = $locale->getDisplayRegions();
                 </tfoot>
                 <tbody>
                 <?php foreach($order->getItems() as $item):
-                    /* @var \OnlineShop\Framework\Model\AbstractOrderItem $item */
+                    /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem $item */
                     ?>
                     <tr>
                         <td>

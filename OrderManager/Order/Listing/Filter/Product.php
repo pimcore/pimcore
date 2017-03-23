@@ -17,9 +17,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\AbstractItem;
-use OnlineShop\Framework\OrderManager\IOrderList;
-use OnlineShop\Framework\OrderManager\IOrderListFilter;
+
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListFilter;
 
 class Product implements IOrderListFilter
 {
@@ -46,7 +46,7 @@ class Product implements IOrderListFilter
             $this->product->getId()
         ];
 
-        $variants = $this->product->getChilds([
+        $variants = $this->product->getChildren([
             \Pimcore\Model\Object\Concrete::OBJECT_TYPE_VARIANT
         ]);
 

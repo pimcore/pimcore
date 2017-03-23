@@ -17,28 +17,31 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\FactFinder;
 
-class Select extends \OnlineShop\Framework\FilterService\FilterType\Select
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+
+class Select extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Select
 {
     /**
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                 $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList                 $productList
      */
-    public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
     {
 
     }
 
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList                 $productList
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param IProductList                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
      * @param bool                                              $isPrecondition
      *
      * @return array
      */
-    public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
     {
         // init
         $field = $this->getField($filterDefinition);
@@ -47,7 +50,7 @@ class Select extends \OnlineShop\Framework\FilterService\FilterType\Select
 
 
         // set defaults
-        if($value == \OnlineShop\Framework\FilterService\FilterType\AbstractFilterType::EMPTY_STRING){
+        if($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING){
             $value = null;
         } else if(empty($value) && !$params['is_reload']) {
             $value = $preSelect;

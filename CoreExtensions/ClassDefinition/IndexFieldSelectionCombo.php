@@ -16,6 +16,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Model\Object\ClassDefinition\Data\Select;
 
 class IndexFieldSelectionCombo extends Select {
@@ -40,7 +42,7 @@ class IndexFieldSelectionCombo extends Select {
         if(false && \OnlineShop\Plugin::isInstalled()) {
             $indexColumns = array();
             try {
-                $indexService = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
+                $indexService = Factory::getInstance()->getIndexService();
                 $indexColumns = $indexService->getIndexAttributes(true);
             } catch (\Exception $e) {
                 \Logger::err($e);
@@ -57,8 +59,8 @@ class IndexFieldSelectionCombo extends Select {
 
             if($this->getSpecificPriceField()) {
                 $options[] = array(
-                    "key" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE,
-                    "value" => \OnlineShop\Framework\IndexService\ProductList\IProductList::ORDERKEY_PRICE
+                    "key" => IProductList::ORDERKEY_PRICE,
+                    "value" => IProductList::ORDERKEY_PRICE
                 );
             }
 

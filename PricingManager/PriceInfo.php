@@ -17,7 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
-use OnlineShop\Framework\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 
 class PriceInfo implements IPriceInfo
 {
@@ -58,10 +59,10 @@ class PriceInfo implements IPriceInfo
 
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPriceInfo           $priceInfo
+     * @param IPriceInfo           $priceInfo
      * @param IEnvironment $environment
      */
-    public function __construct(\OnlineShop\Framework\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment)
+    public function __construct(IPriceInfo $priceInfo, IEnvironment $environment)
     {
         $this->priceInfo = $priceInfo;
         $this->environment = $environment;
@@ -71,7 +72,7 @@ class PriceInfo implements IPriceInfo
     /**
      * @param IRule $rule
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
+     * @return IPriceInfo
      */
     public function addRule(IRule $rule)
     {
@@ -149,7 +150,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getPrice()
     {
@@ -184,7 +185,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getTotalPrice()
     {
@@ -215,7 +216,7 @@ class PriceInfo implements IPriceInfo
 
     /**
      * @param int|string $quantity
-     * numeric quantity or constant \OnlineShop\Framework\PriceSystem\IPriceInfo::MIN_PRICE
+     * numeric quantity or constant IPriceInfo::MIN_PRICE
      */
     public function setQuantity($quantity)
     {
@@ -223,7 +224,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPriceSystem $priceSystem
+     * @param IPriceSystem $priceSystem
      *
      * @return IPriceInfo
      */
@@ -235,11 +236,11 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param \OnlineShop\Framework\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      *
      * @return IPriceInfo
      */
-    public function setProduct(\OnlineShop\Framework\Model\ICheckoutable $product)
+    public function setProduct(ICheckoutable $product)
     {
         $this->priceInfo->setProduct($product);
 
@@ -247,7 +248,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return \OnlineShop\Framework\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct()
     {
@@ -286,7 +287,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getOriginalPrice()
     {
@@ -294,7 +295,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getOriginalTotalPrice()
     {
@@ -313,7 +314,7 @@ class PriceInfo implements IPriceInfo
 
     /**
      * get discount rate
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getDiscount()
     {
@@ -328,7 +329,7 @@ class PriceInfo implements IPriceInfo
 
     /**
      * get total discount rate
-     * @return \OnlineShop\Framework\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getTotalDiscount()
     {

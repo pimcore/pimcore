@@ -18,6 +18,8 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool;
 
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+
 class DefaultService implements IService {
 
     public function __construct($offerClass, $offerItemClass, $parentFolderPath) {
@@ -30,11 +32,11 @@ class DefaultService implements IService {
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @param \OnlineShop\Framework\CartManager\ICartItem[] $excludeItems
-     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[] $excludeItems
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
-    public function createNewOfferFromCart(\OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array()) {
+    public function createNewOfferFromCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = array()) {
         $tempOfferNumber = uniqid("offer_");
         $offer = $this->getNewOfferObject($tempOfferNumber);
         $offer->setOfferNumber($tempOfferNumber);
@@ -76,7 +78,7 @@ class DefaultService implements IService {
     }
 
     /**
-     * @return \OnlineShop\Framework\OfferTool\AbstractOffer
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer
      * @throws \Exception
      */
     protected function getNewOfferObject($tempOfferNumber) {
@@ -86,7 +88,7 @@ class DefaultService implements IService {
         $offer = new $this->offerClass();
 
         /**
-         * @var $offer \OnlineShop\Framework\OfferTool\AbstractOffer
+         * @var $offer \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer
          */
         $offer->setParent(\Pimcore\Model\Object\Folder::getByPath($this->parentFolderPath));
         $offer->setCreationDate(time());
@@ -98,7 +100,7 @@ class DefaultService implements IService {
     }
 
     /**
-     * @return \OnlineShop\Framework\OfferTool\AbstractOfferItem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOfferItem
      * @throws \Exception
      */
     public function getNewOfferItemObject() {
@@ -109,11 +111,11 @@ class DefaultService implements IService {
     }
 
     /**
-     * @param \OnlineShop\Framework\CartManager\ICartItem $item
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem $item
      * @param $parent
-     * @return \OnlineShop\Framework\OfferTool\AbstractOfferItem
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOfferItem
      */
-    protected function createOfferItem(\OnlineShop\Framework\CartManager\ICartItem $item, $parent) {
+    protected function createOfferItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem $item, $parent) {
         $offerItem = $this->getNewOfferItemObject();
         $offerItem->setParent($parent);
         $offerItem->setPublished(true);
@@ -158,7 +160,7 @@ class DefaultService implements IService {
         return $offerItem;
     }
 
-    protected function updateOfferItem(\OnlineShop\Framework\CartManager\ICartItem $cartItem, \OnlineShop\Framework\OfferTool\AbstractOfferItem $offerItem) {
+    protected function updateOfferItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem $cartItem, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOfferItem $offerItem) {
         $offerItem->setAmount($cartItem->getCount());
         $offerItem->setProduct($cartItem->getProduct());
         if($offerItem->getProduct()) {
@@ -216,8 +218,8 @@ class DefaultService implements IService {
         return $price;
     }
 
-    protected function setCurrentCustomer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer) {
-        $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+    protected function setCurrentCustomer(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer) {
+        $env = Factory::getInstance()->getEnvironment();
 
         if(@class_exists("Object_Customer")) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
@@ -227,7 +229,7 @@ class DefaultService implements IService {
         return $offer;
     }
 
-    public function updateOfferFromCart(\OnlineShop\Framework\OfferTool\AbstractOffer $offer, \OnlineShop\Framework\CartManager\ICart $cart, array $excludeItems = array(), $save = true) {
+    public function updateOfferFromCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = array(), $save = true) {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
 
@@ -273,7 +275,7 @@ class DefaultService implements IService {
         return $offer;
     }
 
-    public function updateTotalPriceOfOffer(\OnlineShop\Framework\OfferTool\AbstractOffer $offer) {
+    public function updateTotalPriceOfOffer(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool\AbstractOffer $offer) {
 
         $totalPrice = 0;
 
@@ -296,7 +298,7 @@ class DefaultService implements IService {
         return $offer;
     }
 
-    public function getOffersForCart(\OnlineShop\Framework\CartManager\ICart $cart) {
+    public function getOffersForCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart) {
         $offerListClass = $this->offerClass . "_List";
         $list = new $offerListClass();
         $list->setCondition("cartId = ?", array($cart->getId()));

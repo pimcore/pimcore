@@ -12,11 +12,11 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
-use OnlineShop\Framework\CartManager\ICart;
-use OnlineShop\Framework\CheckoutManager\ICheckoutStep;
-use OnlineShop\Framework\Model\AbstractOrder;
-use OnlineShop\Framework\Model\IProduct;
-use OnlineShop\Framework\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct;
 use Pimcore\Config\Config;
 
 class TrackingManager implements ITrackingManager
@@ -47,7 +47,7 @@ class TrackingManager implements ITrackingManager
      */
     protected function processConfig(Config $config)
     {
-        $container = new \OnlineShop\Framework\Tools\Config\HelperContainer($config, 'trackingmanager');
+        $container = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer($config, 'trackingmanager');
 
         foreach ($container->trackers as $cfg) {
             $this->processConfigEntry($cfg);
@@ -119,7 +119,7 @@ class TrackingManager implements ITrackingManager
     /**
      * Get all registered trackers
      *
-     * @return \OnlineShop\Framework\Tracking\ITracker[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ITracker[]
      */
     public function getTrackers()
     {
@@ -254,7 +254,7 @@ class TrackingManager implements ITrackingManager
      *
      * @implements ICheckoutStep
      *
-     * @param \OnlineShop\Framework\CheckoutManager\ICheckoutStep $step
+     * @param ICheckoutStep $step
      * @param ICart $cart
      * @param null $stepNumber
      * @param null $checkoutOption
@@ -263,7 +263,7 @@ class TrackingManager implements ITrackingManager
     {
         $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
-            if ($tracker instanceof \OnlineShop\Framework\Tracking\ICheckoutStep) {
+            if ($tracker instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);
             }
         }

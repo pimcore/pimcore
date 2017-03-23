@@ -17,13 +17,13 @@ interface ICheckoutStep
     /**
      * Track checkout step
      *
-     * @param \OnlineShop\Framework\CheckoutManager\ICheckoutStep $step
-     * @param \OnlineShop\Framework\CartManager\ICart         $cart
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart         $cart
      * @param null                                $stepNumber
      *
      * @return
      */
-    public function trackCheckoutStep(\OnlineShop\Framework\CheckoutManager\ICheckoutStep $step,
-                                      \OnlineShop\Framework\CartManager\ICart $cart,
+    public function trackCheckoutStep(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step,
+                                      \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart,
                                       $stepNumber = null, $checkoutOption = null);
 }

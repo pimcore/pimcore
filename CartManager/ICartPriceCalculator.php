@@ -16,8 +16,8 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
-use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
-use OnlineShop\Framework\PriceSystem\IModificatedPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 
 /**
  * Interface ICartPriceCalculator
@@ -44,7 +44,7 @@ interface ICartPriceCalculator {
     /**
      * returns sub total of cart
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $price
      */
     public function getSubTotal();
 
@@ -58,7 +58,7 @@ interface ICartPriceCalculator {
     /**
      * returns grand total of cart
      *
-     * @return \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $price
      */
     public function getGrandTotal();
 
@@ -74,7 +74,7 @@ interface ICartPriceCalculator {
     /**
      * returns all modificators
      *
-     * @return \OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator[]
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator[]
      */
     public function getModificators();
 

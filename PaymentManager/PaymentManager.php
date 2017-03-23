@@ -30,7 +30,7 @@ class PaymentManager implements IPaymentManager
     protected $config;
 
     /**
-     * @var \OnlineShop\Framework\PaymentManager\Payment\IPayment[]
+     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment[]
      */
     protected $instance = [];
 
@@ -46,7 +46,7 @@ class PaymentManager implements IPaymentManager
     /**
      * @param $name
      *
-     * @return \OnlineShop\Framework\PaymentManager\Payment\IPayment
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment
      */
     public function getProvider($name)
     {

@@ -17,12 +17,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use OnlineShop\Framework\OrderManager\IOrderList;
-use OnlineShop\Framework\OrderManager\IOrderListFilter;
 
-use Pimcore\Model\Object\OnlineShopOrder;
-use Pimcore\Model\Object\OnlineShopOrderItem;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListFilter;
 
 class OrderSearch implements IOrderListFilter
 {

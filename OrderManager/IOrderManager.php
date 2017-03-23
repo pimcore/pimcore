@@ -16,7 +16,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
-use \OnlineShop\Framework\Model\AbstractOrder as Order;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
 
 interface IOrderManager
 {
@@ -27,11 +29,11 @@ interface IOrderManager
 
 
     /**
-     * @param Order $order
+     * @param AbstractOrder $order
      *
      * @return IOrderAgent
      */
-    public function createOrderAgent(Order $order);
+    public function createOrderAgent(AbstractOrder $order);
 
 
     /**
@@ -54,25 +56,25 @@ interface IOrderManager
      *
      * move to ordermanagers
      *
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return AbstractOrder
      */
-    public function getOrCreateOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function getOrCreateOrderFromCart(ICart $cart);
 
     /**
      * Looks if order object for given cart exists and returns it - it does not create it!
      *
-     * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param ICart $cart
+     * @return AbstractOrder
      */
-    public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart);
+    public function getOrderFromCart(ICart $cart);
 
     /**
      * gets order based on given payment status
      *
-     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param IStatus $paymentStatus
+     * @return AbstractOrder
      */
-    public function getOrderByPaymentStatus(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus);
+    public function getOrderByPaymentStatus(IStatus $paymentStatus);
 
     /**
      * Build order listing

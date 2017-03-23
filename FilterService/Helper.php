@@ -17,9 +17,10 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 
 /**
- * Class \OnlineShop\Framework\FilterService\Helper
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\Helper
  *
  * Helper Class for setting up a product list utilizing the filter service
  * based on a filter definition and set filter parameters
@@ -28,7 +29,7 @@ class Helper
 {
     /**
      * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
-     * @param \OnlineShop\Framework\IndexService\ProductList\IProductList $productList
+     * @param IProductList $productList
      * @param $params
      * @param ViewModel $view
      * @param FilterService $filterService
@@ -36,7 +37,7 @@ class Helper
      * @param bool $excludeLimitOfFirstpage
      */
     public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
-                                            \OnlineShop\Framework\IndexService\ProductList\IProductList $productList,
+                                            IProductList $productList,
                                             $params, $viewModel,
                                             FilterService $filterService,
                                             $loadFullPage, $excludeLimitOfFirstpage = false) {
@@ -157,7 +158,7 @@ class Helper
 
     /**
      * @param $conditions
-     * @return \OnlineShop\Framework\Model\AbstractCategory
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
     public static function getFirstFilteredCategory($conditions) {
         if(!empty($conditions)) {

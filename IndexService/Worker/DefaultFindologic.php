@@ -16,11 +16,12 @@
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
 /**
- * Class \OnlineShop\Framework\IndexService\Worker\DefaultFindologic
- * @method \OnlineShop\Framework\IndexService\Config\IFindologicConfig getTenantConfig()
+ * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic
+ * @method \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IFindologicConfig getTenantConfig()
  */
 class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
@@ -62,11 +63,11 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * deletes given element from index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
      * @return void
      */
-    public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object)
+    public function deleteFromIndex(IIndexable $object)
     {
         $this->doDeleteFromIndex( $object->getId(), $object );
     }
@@ -75,11 +76,11 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * updates given element in index
      *
-     * @param \OnlineShop\Framework\Model\IIndexable $object
+     * @param IIndexable $object
      *
      * @return void
      */
-    public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object)
+    public function updateIndex(IIndexable $object)
     {
         if(!$this->tenantConfig->isActive($object))
         {
@@ -214,7 +215,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
                                 $categoryIds = [];
 
                                 $currentCategory = \Pimcore\Model\Object\Concrete::getById($c);
-                                while($currentCategory instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                                while($currentCategory instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory) {
                                     $categoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
                                     if($currentCategory->getOSProductsInParentCategoryVisible()) {
@@ -274,7 +275,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * @param int $objectId
      */
-    protected function doDeleteFromIndex($objectId, \OnlineShop\Framework\Model\IIndexable $object = null)
+    protected function doDeleteFromIndex($objectId, IIndexable $object = null)
     {
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getStoreTableName(), $objectId));
@@ -336,10 +337,10 @@ SQL;
 
 
     /**
-     * @return \OnlineShop\Framework\IndexService\ProductList\DefaultFindologic
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic
      */
     public function getProductList()
     {
-        return new \OnlineShop\Framework\IndexService\ProductList\DefaultFindologic( $this->getTenantConfig() );
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic( $this->getTenantConfig() );
     }
 }

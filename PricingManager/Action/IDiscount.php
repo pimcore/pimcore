@@ -17,7 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
-interface IDiscount extends \OnlineShop\Framework\PricingManager\IAction
+interface IDiscount extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction
 {
     /**
      * @param float $amount
