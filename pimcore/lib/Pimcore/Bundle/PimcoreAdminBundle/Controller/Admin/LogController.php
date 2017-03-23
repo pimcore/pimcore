@@ -20,6 +20,7 @@ use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LogController extends AdminController
@@ -167,9 +168,10 @@ class LogController extends AdminController
     {
         $filePath = $request->get("filePath");
         $filePath = PIMCORE_PROJECT_ROOT . "/" . $filePath;
+        $filePath = realpath($filePath);
 
-        if (!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY ."@", $filePath)) {
-            throw new \Exception("Accessing file out of scope");
+        if (!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY . "@", $filePath)) {
+            throw new AccessDeniedHttpException("Accessing file out of scope");
         }
 
         $response = new Response();
@@ -179,6 +181,7 @@ class LogController extends AdminController
             $response->setContent(file_get_contents($filePath));
         } else {
             $response->setContent("Path `" . $filePath . "` not found.");
+            $response->setStatusCode(404);
         }
 
         return $response;
