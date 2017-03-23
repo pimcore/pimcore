@@ -96,7 +96,10 @@ Since the only value can be found on level 1 for the default language the tree i
 
 ```php
 // setter, group id = 1, key id id = 2, language = de
-$object->getClassificationStore2()->setLocalizedKeyValue(1, 2, "thevalue", "de");
+
+// the value is of type "quantity value" where 1 is the unit ID in this example
+$heightValue = new \Pimcore\Model\Object\Data\QuantityValue(13, 1);
+$object->getClassificationStore2()->setLocalizedKeyValue(1, 2, $heightValue, "de");
   
 // provide additional information about which collection the group belongs to
 // group 1 belongs to collection with ID 2
@@ -121,35 +124,21 @@ $allValues = $store->getItems();
 ### Adding new items to Classification Store through code
 
 ```php
+
 // KeyConfig
+
+// first of all, define the datatype which is quantity value in this example
+$definition = new \Pimcore\Model\Object\ClassDefinition\Data\QuantityValue();
+$definition->setName("height");
+$definition->setTitle(Height);
+
 $config = new \Pimcore\Model\Object\Classificationstore\KeyConfig();
 $config->setName($name);
 $config->setDescription($description);
 $config->setEnabled(true);
-$config->setType("input");
+$config->setType($definition->getFieldtype());
 $config->setDefinition(json_encode($definition)); // The definition is used in object editor to render fields
-$config->save();
-  
-// Definition example
-{ 
-   "name":"dcname",
-   "datatype":"data",
-   "fieldtype":"input",
-   "title":"title",
-   "tooltip":"",
-   "mandatory":false,
-   "noteditable":false,
-   "invisible":false,
-   "visibleGridView":false,
-   "visibleSearch":false,
-   "index":false,
-   "style":"",
-   "width":null,
-   "columnLength":null,
-   "regex":"",
-   "textfield-1856-inputEl":"",
-   "textfield-1883-inputEl":""
-}
+$config->save();  
   
 // Group
 $config = new \Pimcore\Model\Object\Classificationstore\GroupConfig();
