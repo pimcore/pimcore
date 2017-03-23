@@ -30,12 +30,6 @@ interface CoreHandlerInterface
     public function getLogger();
 
     /**
-     * @param bool $enabled
-     * @return $this
-     */
-    public function setEnabled($enabled);
-
-    /**
      * @return $this
      */
     public function init();

@@ -50,18 +50,34 @@ class EventDispatchingCoreHandler extends CoreHandler
     /**
      * @inheritDoc
      */
-    public function setEnabled($enabled)
+    public function enable()
     {
-        $result = parent::setEnabled($enabled);
+        parent::enable();
 
+        $this->setEnabled(false);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function disable()
+    {
+        parent::disable();
+
+        $this->setEnabled(false);
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    protected function setEnabled($enabled)
+    {
         $this->dispatcher->dispatch(
             $this->isEnabled()
                 ? CoreCacheEvents::ENABLE
                 : CoreCacheEvents::DISABLE,
             new Event()
         );
-
-        return $result;
     }
 
     /**

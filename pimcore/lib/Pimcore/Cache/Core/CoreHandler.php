@@ -159,30 +159,19 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
-     * @param bool $enabled
-     * @return $this
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = (bool)$enabled;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
+     * @inheritdoc
      */
     public function enable()
     {
-        return $this->setEnabled(true);
+        $this->enabled = true;
     }
 
     /**
-     * @return $this
+     * @inheritdoc
      */
     public function disable()
     {
-        return $this->setEnabled(false);
+        $this->enabled = false;
     }
 
     /**
