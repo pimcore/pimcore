@@ -1,0 +1,2 @@
+# InlineScript Templating Helper
+

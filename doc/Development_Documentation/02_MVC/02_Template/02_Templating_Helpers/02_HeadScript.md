@@ -1,0 +1,2 @@
+# HeadScript Templating Helper
+
