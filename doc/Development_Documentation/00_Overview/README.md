@@ -8,7 +8,7 @@ allows rapid application development and building customer solutions really fast
 Its API driven approach makes it easy to develop with Pimcore, allows integration into every IT infrastructure and makes it 
 easily extendable. Even headless execution of Pimcore is possible. 
 
-Pimcore is built for developers and should empower them to build great digital experiences easily. As a consequence Pimcore 
+Pimcore is built for developers and should empower them to build great digital experiences easily. As a consequence, Pimcore 
 is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Akeneo, WooCommerce, Shopify and others. You need a developer to get started. 
 
 ![Pimcore](../img/pimcore_basis.png)
@@ -36,7 +36,7 @@ any content and can be used to create webpages, print pages or any other output 
 ### [Objects](../05_Objects/README.md)
 Objects are the PIM/MDM part of Pimcore and are the way to go for managing structured data within Pimcore. Based on a class 
 definition that defines the structure and attributes, objects can be used for pretty much any structured data – may it be products, 
-categories, persons, customers, news, orders, blog entries, … For the attributes many data-types (simple ones and really 
+categories, persons, customers, news, orders, blog entries, … For the attributes, many data-types (simple ones and really 
 complex ones) are available.  
 
 

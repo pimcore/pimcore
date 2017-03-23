@@ -31,7 +31,7 @@ class ContentController extends AbstractController
 }
 ```
 
-For the moment we only have one single action `defaultAction()`.
+For the moment we only have one single action called `defaultAction()`.
 In the defaultAction, we can put some custom code or assign values to the template. For this example we
 don't need any custom code in our controller, so the action stays empty for the moment. 
 
@@ -62,8 +62,8 @@ $this->extend('layout.html.php');
     <?php } ?>
 ```
 
-Pimcore uses by default an improved version of the Symfony PHP templating engine (`PhpEngine`) and therefore plain php as template language. So you have the full power of
-Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like so called *editables*, 
+Pimcore uses by default an improved version of the Symfony PHP templating engine (`PhpEngine`) and therefore plain PHP as template language. So you have the full power of
+Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like the so called *editables*, 
 which add editable parts (placeholders) to the layout and some custom templating helpers. 
 
 We've improved the default [Symfony PHP engine](http://symfony.com/doc/current/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
@@ -172,7 +172,7 @@ scheme as well as a generated PHP class you can use to create, update, list and 
 More specific backgrounds and insights can be found in the [Objects section](../05_Objects/README.md)
 
 The product should have the following attributes: **SKU**, **picture**, **name** and **description**. 
-To add them follow these steps: 
+Follow these steps to add them: 
 
 * Go to the edit page of the class product 
 * Click right on *Base* and select *Add Layout Component -> Panel* - This is the main panel/container for the following product attributes
