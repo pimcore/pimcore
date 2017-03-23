@@ -17,6 +17,23 @@ namespace Pimcore\Cache\Core;
 interface WriteLockInterface
 {
     /**
+     * Enables the write lock
+     */
+    public function enable();
+
+    /**
+     * Disables the write lock
+     */
+    public function disable();
+
+    /**
+     * Determines if the write lock is enabled
+     *
+     * @return bool
+     */
+    public function isEnabled();
+
+    /**
      * Set a write lock (prevents items being written to cache)
      *
      * @param bool $force

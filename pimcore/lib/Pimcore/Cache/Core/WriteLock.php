@@ -63,6 +63,30 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function enable()
+    {
+        $this->enabled = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function disable()
+    {
+        $this->enabled = false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
      * Initialize lock value once from storage
      */
     protected function initializeLock()
