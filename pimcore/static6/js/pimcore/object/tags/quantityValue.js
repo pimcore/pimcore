@@ -53,11 +53,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
 
-        var input = {
-            fieldLabel: this.fieldConfig.title,
-            componentCls: "object_field",
-            labelWidth: 100
-        };
+        var input = {};
 
         var valueInvalid = false;
 
@@ -75,8 +71,9 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             input.width = this.fieldConfig.width;
         }
 
+        var labelWidth = 100;
         if (this.fieldConfig.labelWidth) {
-            input.labelWidth = this.fieldConfig.labelWidth;
+            labelWidth = this.fieldConfig.labelWidth;
         }
 
         var options = {
@@ -104,16 +101,13 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         this.inputField = new Ext.form.field.Number(input);
 
         this.component = new Ext.form.FieldContainer({
-            layout: {
-                type: 'table',
-                tdAttrs: {
-                    valign: 'center'
-                }
-            },
+            layout: 'hbox',
             margin: '0 0 10 0',
+            fieldLabel: this.fieldConfig.title,
+            labelWidth: labelWidth,
             combineErrors: false,
             items: [this.inputField, this.unitField],
-            cls: "object_field",
+            componentCls: "object_field",
             isDirty: function() {
                 return this.inputField.isDirty() || this.unitField.isDirty() || valueInvalid
             }.bind(this)
