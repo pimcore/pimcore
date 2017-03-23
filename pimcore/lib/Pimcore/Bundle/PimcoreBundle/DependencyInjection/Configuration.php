@@ -46,34 +46,97 @@ class Configuration implements ConfigurationInterface
      */
     protected function addExtensionsNode(ArrayNodeDefinition $rootNode)
     {
-        $rootNode
+        $extensionsNode = $rootNode
             ->children()
-                ->arrayNode('extensions')
+                ->arrayNode('extensions');
+
+        $extensionsNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('bundles')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('search_paths')
-                                    ->prototype('scalar')->end()
-                                ->end()
-                                ->booleanNode('handle_composer')
-                                    ->defaultTrue()
-                                ->end()
+                        ->arrayNode('search_paths')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->booleanNode('handle_composer')
+                            ->defaultTrue()
+                        ->end()
+                    ->end()
+                ->end();
+
+        $this->addObjectsNode($extensionsNode);
+        $this->addDocumentsNode($extensionsNode);
+    }
+
+    /**
+     * Add object specific extension config
+     *
+     * @param ArrayNodeDefinition $extensionsNode
+     */
+    protected function addObjectsNode(ArrayNodeDefinition $extensionsNode)
+    {
+        $objectsNode = $extensionsNode
+            ->children()
+                ->arrayNode('objects')
+                    ->addDefaultsIfNotSet();
+
+        $classDefinitionsNode = $objectsNode
+            ->children()
+                ->arrayNode('class_definitions')
+                    ->addDefaultsIfNotSet();
+
+        $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
+        $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add document specific extension config
+     *
+     * @param ArrayNodeDefinition $extensionsNode
+     */
+    protected function addDocumentsNode(ArrayNodeDefinition $extensionsNode)
+    {
+        $documentsNode = $extensionsNode
+            ->children()
+                ->arrayNode('documents')
+                    ->addDefaultsIfNotSet();
+
+        $this->addImplementationLoaderNode($documentsNode, 'tags');
+
+        $documentsNode
+            ->children()
+                ->arrayNode('areas')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->booleanNode('autoload')
+                                ->defaultTrue()
                             ->end()
                         ->end()
-                        ->arrayNode('documents')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('areas')
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->booleanNode('autoload')
-                                            ->defaultTrue()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Add implementation node config (map, prefixes)
+     *
+     * @param ArrayNodeDefinition $node
+     * @param string $name
+     */
+    protected function addImplementationLoaderNode(ArrayNodeDefinition $node, $name)
+    {
+        $node
+            ->children()
+                ->arrayNode($name)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('prefixes')
+                            ->prototype('scalar')->end()
                         ->end()
                     ->end()
                 ->end()
