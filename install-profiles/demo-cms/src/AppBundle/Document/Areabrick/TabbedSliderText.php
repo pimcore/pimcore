@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class TabbedSliderText extends AbstractTemplateAreabrick
+class TabbedSliderText extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

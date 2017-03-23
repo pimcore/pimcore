@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class Featurette extends AbstractTemplateAreabrick
+class Featurette extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

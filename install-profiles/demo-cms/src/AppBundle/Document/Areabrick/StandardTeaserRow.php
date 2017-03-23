@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class StandardTeaserRow extends AbstractTemplateAreabrick
+class StandardTeaserRow extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class Embed extends AbstractTemplateAreabrick
+class Embed extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

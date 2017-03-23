@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class TextAccordion extends AbstractTemplateAreabrick
+class TextAccordion extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

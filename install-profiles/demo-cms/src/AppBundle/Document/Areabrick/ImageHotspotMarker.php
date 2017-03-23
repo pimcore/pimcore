@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class ImageHotspotMarker extends AbstractTemplateAreabrick
+class ImageHotspotMarker extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

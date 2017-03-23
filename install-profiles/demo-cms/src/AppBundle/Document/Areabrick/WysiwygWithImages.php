@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class WysiwygWithImages extends AbstractTemplateAreabrick
+class WysiwygWithImages extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

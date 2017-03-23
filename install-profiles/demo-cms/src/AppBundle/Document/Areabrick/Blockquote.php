@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class Blockquote extends AbstractTemplateAreabrick
+class Blockquote extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

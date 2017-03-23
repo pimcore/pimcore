@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class GalleryCarousel extends AbstractTemplateAreabrick
+class GalleryCarousel extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}

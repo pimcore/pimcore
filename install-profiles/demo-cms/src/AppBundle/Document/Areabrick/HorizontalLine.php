@@ -2,9 +2,7 @@
 
 namespace AppBundle\Document\Areabrick;
 
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class HorizontalLine extends AbstractTemplateAreabrick
+class HorizontalLine extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}
