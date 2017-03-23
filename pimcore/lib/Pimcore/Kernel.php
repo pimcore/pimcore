@@ -156,7 +156,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 
         // on pimcore shutdown
         register_shutdown_function(function () {
-            \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SHUTDOWN);
+            $this->getContainer()->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
             \Pimcore::shutdown();
         });
 
