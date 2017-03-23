@@ -1,21 +1,32 @@
 # Directories Structure
 
-| Directory                                            | Description                                                                          |
-|------------------------------------------------------|--------------------------------------------------------------------------------------|
+After extracting the installation package of Pimcore you should see the folder structure described below.  
+The following tables should give you a quick overview about the purpose of this folders.  
+In general the directory structure follows the [best practice for Symfony projects](https://github.com/symfony/symfony-demo). 
+
+| Directory                                            | Description                               |
+|------------------------------------------------------|-------------------------------------------|
+| `/app/`     | The application configuration, templates and translations.                         |
+| `/bin/`     | Executable files (e.g. bin/console).                                               |
+| `/doc/`     | Core files of Pimcore, do not change anything here.                                |
 | `/pimcore/` | Core files of Pimcore, do not change anything here.                                |
-| `/plugins/` | Directory for [plugins / extensions](../Extending_Pimcore/Plugin_Developers_Guide/Example.md). |
-| `/vendor/`  | All third-party libraries are there. It's the default location for packages installed by [Composer](https://getcomposer.org/) / [Packagist](https://packagist.org/).                     |
-| `/website/` | Everything regarding your individual project/application (templates, controllers, settings, objects, ...). All your code goes there (see below).   |
-
+| `/src/`     | The project's PHP code (Services, Controllers, EventListeners, ...                 |
+| `/var/`     | Private generated files - not accessible via the web (cache, logs, etc.).          |
+| `/vendor/`  | All third-party libraries are there. It's the default location for packages installed by [Composer](https://getcomposer.org/) / [Packagist](https://packagist.org/). |
+| `/web/`     | This is the **document root** (public folder) for your project - point your vhost to this directory!  |
   
   
-### Contents of `/website` 
+### The `web/` Directory
 
-| Directory             | Description                                                                                                        |
-|-----------------------|--------------------------------------------------------------------------------------------------------------------|
-| `/website/controllers` | Controllers of your application.                                                                      |
-| `/website/config`      | Configuration files for cache, workflow modules, DI configuration, extensions additional configuration, ... [Examples](https://github.com/pimcore/pimcore/tree/master/website_demo/config)        |
-| `/website/lib`         | Custom libraries (if needed, use Composer to install dependencies whenever possible)                                                                                      |
-| `/website/models`      | Your custom models (if needed).                                                                                    |
-| `/website/var`         | This directory contains files created by Pimcore during runtime like assets, classes, thumbnails, ... (Pimcore needs [write access](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md) on this directory)             |
-| `/website/views`       | Your templates/views.                                                                                                    |
+The web root directory is the home of all public and static files like images, stylesheets and 
+JavaScript files. It is also where each front controller (the file that handles all requests 
+to your application) lives, such as the [production controller](https://github.com/pimcore/pimcore/blob/master/web/app.php)
+
+
+### The `app/` Directory
+The AppKernel class is the main entry point of the Symfony application configuration and as such, 
+it is stored in the `app/` directory.
+  
+  
+For more information about the folder structure and the architecture in general, please have a look at the 
+[Symfony documentation](http://symfony.com/doc/current/quick_tour/the_architecture.html). 

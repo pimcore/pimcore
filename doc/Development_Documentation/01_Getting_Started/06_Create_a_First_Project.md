@@ -1,5 +1,5 @@
 
-In this part, you are going to known required minimum of knowledge, crucial for start developing with Pimcore. 
+In this part, you are going to see a required minimum of knowledge, crucial for start developing with Pimcore. 
 
 [TOC]
 
@@ -10,9 +10,9 @@ In the first part you'll learn the basics for creating CMS pages with Pimcore Do
 ## Create Template, Layout and Controller
 
 ### New Controller
-First of all, we need our own controller. 
+First of all, we need a controller. 
 Let's call it `ContentController.php`. 
-You have to put the file into the `/website/controllers` directory.
+You have to put the file into the `/src/AppBundle/Controller` directory.
 
 ```php
 <?php
@@ -31,13 +31,14 @@ class ContentController extends AbstractController
 }
 ```
 
-There is the only one action `defaultAction()`.
-In the defaultAction, we can put some custom code or assign values to the template.
+For the moment we only have one single action `defaultAction()`.
+In the defaultAction, we can put some custom code or assign values to the template. For this example we
+don't need any custom code in our controller, so the action stays empty for the moment. 
 
 ### Create a Template
 Now we create a template for our page:
 * Create a new folder in `/app/Resources/views` and name it like the controller (in this case `Content`). 
-* Put a new PHP tempalte into this folder and name it like our action in lowercase (`default.html.php`).
+* Put a new PHP template into this folder and name it like our action in lowercase (`default.html.php`).
 
 Then we can put some template code into it, for example:
 
@@ -62,13 +63,13 @@ $this->extend('layout.html.php');
 ```
 
 Pimcore uses by default an improved version of the Symfony PHP templating engine (`PhpEngine`) and therefore plain php as template language. So you have the full power of
-  Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore additions like so called *editables*,
-  which add editable parts (placeholders) to the layout and some custom templating helpers. 
+Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like so called *editables*, 
+which add editable parts (placeholders) to the layout and some custom templating helpers. 
 
-  We've improved the default [Symfony PHP engine](http://symfony.com/doc/current/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
-  the `$view` variable or local variables when using the default Symfony syntax. However the default syntax is still available and ready to use.  
+We've improved the default [Symfony PHP engine](http://symfony.com/doc/current/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
+the `$view` variable or local variables when using the default Symfony syntax. However the default syntax is still available and ready to use.  
 
-  For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
+For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
 We can use Symfony`s [template inheritance and layout](http://symfony.com/doc/current/templating.html#template-inheritance-and-layouts) functionality 
@@ -78,7 +79,8 @@ to wrap our content page with another template which contains the main navigatio
 $this->extend('layout.html.php');
 ```
 We tell the engine that we want to use the layout `layout.html.php`. 
-Now create a new php file in the folder `/app/Resources/views` and name it `layout.html.php`.
+  
+Now create a new php template in the folder `/app/Resources/views` and name it `layout.html.php`.
 Then we can also put some HTML and template code into it:
 
 ```php
@@ -94,7 +96,7 @@ Then we can also put some HTML and template code into it:
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Example</title>
-    <link rel="stylesheet" type="text/css" href="/website/static/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/global.css" />
 </head>
 <body>
     <div id="site">
@@ -115,8 +117,9 @@ Then we can also put some HTML and template code into it:
 
 The code `<?php $this->slots()->output('_content') ?>` is the placeholder where the content of the page will be inserted.
 
-### Putting It Together with Pimcore Documents
-Now we need to connect the action to a page. This is done in the Pimcore backend.
+### Putting it all together with Pimcore Documents
+Now we need to connect the action to a page in the Pimcore backend, so that the page knows which action 
+(and therefore also which template) needs to be executed/processed.
 First, click right on *Home* in the *Documents* panel. 
 
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
@@ -139,7 +142,9 @@ You can organize them in a directory structure and assign them additional meta d
 Once uploaded, an asset can be used and linked in multiple places - e.g. documents or objects. 
 
 In terms of images or videos, always upload only one high quality version (best quality available). 
-[Thumbnails](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md) for different output channels are created directly [within Pimcore](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md) using custom configurations.
+[Thumbnails](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md) for different output 
+channels are created directly 
+[within Pimcore](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md) using custom configurations.
 
 For this tutorial, at least add one file which  you will use in an object later. 
 
@@ -156,8 +161,6 @@ In this chapter we will create a simple product database and use them in our CMS
 Objects are used to store any structured data independently from the output-channel and can be used anywhere in your project. 
 
 ## Create the Class Model/Definition
-
-Ok, let's create our first class for objects. 
 
 Go to: *Settings -> Object -> Classes* and click the button *Add Class*.
 
@@ -183,7 +186,9 @@ If everything goes well, the new class looks like in the picture:
 
 ![Product class](../img/Pimcore_Elements_product_class.png)
 
-**Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class with getters and setters. You can find our newly created class above class in `website/var/classes/Object/Product.php` 
+**Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class 
+with getters and setters. You can find the PHP class representation of our newly created class definition above in 
+`var/classes/Object/Product.php` 
 
 ## Add a new Object
 
@@ -238,7 +243,7 @@ class ContentController extends AbstractController
 }
 ```
 
-Then we also need a new template: `app/Resources/views/Content/product.html.php` 
+Then we also need a new template for our product action: `app/Resources/views/Content/product.html.php` 
 
 ```php
 <?php
@@ -259,7 +264,7 @@ $this->extend('layout.html.php');
         echo $this->href('product');
     else: ?>
 
-<!-- Product information-->
+    <!-- Product information-->
 
     <?php endif; ?>
 </div>
@@ -269,7 +274,8 @@ $this->extend('layout.html.php');
 `$this->editmode` is a standard variable (is always set) to check if the view is called from the Pimcore admin backend and gives you the 
  possibility to to different stuff in editmode and in frontend. 
 
-`$this->href('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool alternative for that, would be also the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
+`$this->href('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool 
+alternative for that, would be also the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
 Click [here](../03_Documents/01_Editables/README.md) for a full list of available editables in Pimcore.
 
 
@@ -278,7 +284,7 @@ Click [here](../03_Documents/01_Editables/README.md) for a full list of availabl
 The last thing is to show the product in the body of the document you created. 
 
 Let's go back to the documents section. Right click on *Home* then *Add Page* > *Empty Page*.
-In the settings label, choose the `product` action and the `content` controller, click save and go back to the edit tab.
+In the settings label, choose the `product` action and the `Content` controller, click save and go back to the edit tab.
 
 Now you can see the new editable element (`href`) which we added in the product template above.
 Drag the product object to that editable and press *Save & Publish*.
