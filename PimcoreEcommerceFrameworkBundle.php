@@ -2,10 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
-use Pimcore\API\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Installer;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
@@ -55,10 +54,9 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     }
 
     /**
-     * @param ContainerInterface $container
      * @return Installer
      */
-    public function getInstaller(ContainerInterface $container)
+    public function getInstaller()
     {
         return new Installer();
     }

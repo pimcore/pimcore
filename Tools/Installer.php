@@ -17,8 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools;
 
-use Pimcore\API\Bundle\Installer\AbstractInstaller;
 use Pimcore\Config;
+use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Logger;
 
 class Installer extends AbstractInstaller {
