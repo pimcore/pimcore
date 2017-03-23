@@ -84,4 +84,3 @@ class Config
         return false;
     }
 }
-

@@ -13,6 +13,7 @@
  */
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+
 use Pimcore\Bundle\PimcoreAdminBundle\EventListener\BruteforceProtectionListener;
 
 /**

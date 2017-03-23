@@ -51,7 +51,7 @@ class IntlFormatterService
 
     /**
      * ICU DecimalFormat definition per locale for currencies
-     * 
+     *
      * @var string[]
      */
     protected $currencyFormats = [];
@@ -216,7 +216,7 @@ class IntlFormatterService
 
             if ($pattern !== 'default') {
                 $formatter->setPattern($pattern);
-            } else if ($this->currencyFormats[$this->locale]) {
+            } elseif ($this->currencyFormats[$this->locale]) {
                 $formatter->setPattern($this->currencyFormats[$this->locale]);
             }
 

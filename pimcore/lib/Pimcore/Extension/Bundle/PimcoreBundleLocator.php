@@ -218,7 +218,7 @@ class PimcoreBundleLocator
             // start collecting as soon as we find the namespace token
             if (is_array($token) && $token[0] == T_NAMESPACE) {
                 $gettingNamespace = true;
-            } else if (is_array($token) && $token[0] === T_CLASS) {
+            } elseif (is_array($token) && $token[0] === T_CLASS) {
                 $gettingClass = true;
             }
 
@@ -226,7 +226,7 @@ class PimcoreBundleLocator
                 if (is_array($token) && in_array($token[0], [T_STRING, T_NS_SEPARATOR])) {
                     // append to namespace
                     $namespace .= $token[1];
-                } else if ($token === ';') {
+                } elseif ($token === ';') {
                     // namespace done
                     $gettingNamespace = false;
                 }

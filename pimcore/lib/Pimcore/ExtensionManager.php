@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Config;
+
 /**
  * @deprecated Superseded by PimcoreBundleManager and AreabrickManager in Pimcore 5
  */

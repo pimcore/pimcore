@@ -168,7 +168,7 @@ class LogController extends AdminController
         $filePath = $request->get("filePath");
         $filePath = PIMCORE_PROJECT_ROOT . "/" . $filePath;
 
-        if(!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY ."@", $filePath)) {
+        if (!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY ."@", $filePath)) {
             throw new \Exception("Accessing file out of scope");
         }
 
