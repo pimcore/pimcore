@@ -73,11 +73,11 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param Order $order
+     * @param AbstractOrder $order
      *
      * @return IOrderAgent
      */
-    public function createOrderAgent(Order $order)
+    public function createOrderAgent(AbstractOrder $order)
     {
         return new $this->config->orderAgent->class( Factory::getInstance(), $order );
     }

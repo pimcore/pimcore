@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+
 interface IPriceInfo extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
 {
     /**
@@ -26,17 +28,17 @@ interface IPriceInfo extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pri
     public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment);
 
     /**
-     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule
+     * @param IRule $rule
      *
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
-    public function addRule(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule);
+    public function addRule(IRule $rule);
 
     /**
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule[]
+     * @return IRule[]
      */
     public function getRules($forceRecalc = false);
 
@@ -53,12 +55,12 @@ interface IPriceInfo extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pri
     public function getAmount();
 
     /**
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getOriginalPrice();
 
     /**
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getOriginalTotalPrice();
 
@@ -80,12 +82,12 @@ interface IPriceInfo extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pri
     public function hasDiscount();
 
     /**
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getDiscount();
 
     /**
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return IPrice
      */
     public function getTotalDiscount();
 

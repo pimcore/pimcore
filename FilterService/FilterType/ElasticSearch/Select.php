@@ -22,7 +22,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitio
 
 class Select extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Select {
 
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductListt $productList) {
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
         $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 

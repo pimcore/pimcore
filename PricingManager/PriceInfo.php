@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem;
 
 class PriceInfo implements IPriceInfo
 {
@@ -62,7 +63,7 @@ class PriceInfo implements IPriceInfo
      * @param IPriceInfo           $priceInfo
      * @param IEnvironment $environment
      */
-    public function __construct(IPriceInfo $priceInfo, IEnvironment $environment)
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment)
     {
         $this->priceInfo = $priceInfo;
         $this->environment = $environment;
