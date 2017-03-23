@@ -197,9 +197,8 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         // init container
         $this->initializeContainer();
 
-        // set the extension config on the container and remove it from the kernel
+        // set the extension config on the container
         $this->getContainer()->set('pimcore.extension.config', $this->extensionConfig);
-        $this->extensionConfig = null;
 
         \Pimcore::initLogger();
 
