@@ -48,11 +48,15 @@ class Action extends Helper
      * @param array $params
      * @return mixed
      */
-    public function __invoke($action, $controller, $module, array $params = [])
+    public function __invoke($action, $controller, $module = null, array $params = [])
     {
         $document = isset($params['document']) ? $params['document'] : null;
         if ($document && $document instanceof PageSnippet) {
             $params = $this->actionRenderer->addDocumentParams($document, $params);
+        }
+
+        if(!$module) {
+            $module = "AppBundle";
         }
 
         $controller = $this->actionRenderer->createControllerReference(
