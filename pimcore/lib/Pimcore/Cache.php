@@ -65,10 +65,9 @@ class Cache
      * Returns the content of the requested cache entry
      *
      * @param string $key
-     * @param bool $doNotTestCacheValidity Not used anymore
      * @return mixed
      */
-    public static function load($key, $doNotTestCacheValidity = false)
+    public static function load($key)
     {
         return static::$handler->load($key);
     }
