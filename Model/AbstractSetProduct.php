@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
+
 /**
  * Abstract base class for pimcore objects who should be used as set products in the online shop framework
  */
@@ -25,21 +27,21 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * returns mandatory products for a set product
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return AbstractSetProductEntry[]
      */
     public function getMandatoryProductEntries() {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
+        throw new UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
     }
 
     /**
      * returns optional products for a set product
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return AbstractSetProductEntry[]
      */
     public function getOptionalProductEntries() {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
+        throw new UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
     }
 
 
@@ -77,7 +79,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * Delivers price of set product with given products
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
@@ -90,7 +92,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * Delivers priceInfo of setproduct with given products
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      * @return stdClass
@@ -105,7 +107,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
     * Delivers min price for given products or with default mandatory products of set product
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param null $quantityScale
      * @param null $products
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
@@ -120,7 +122,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param int $quantityScale
      * @param null $products
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
@@ -148,7 +150,7 @@ class AbstractSetProduct extends AbstractProduct {
     /**
      * checks if all mandatory of set products are set in given product list
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @param  AbstractSetProductEntry[] $products
      * @return void
      */
@@ -169,7 +171,7 @@ class AbstractSetProduct extends AbstractProduct {
         }
 
         if (count($mandatoryProductIds) > 0) {
-            throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("Not all mandatory Products in product list.");
+            throw new UnsupportedException("Not all mandatory Products in product list.");
         }
     }
 }

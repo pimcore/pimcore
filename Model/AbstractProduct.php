@@ -17,6 +17,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 
 /**
@@ -45,11 +46,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
      *
      * @param bool $inProductList
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return bool
      */
     public function isActive($inProductList = false) {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("isActive is not supported for " . get_class($this));
+        throw new UnsupportedException("isActive is not supported for " . get_class($this));
     }
 
 
@@ -58,11 +59,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return string
      */
     public function getPriceSystemName() {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
+        throw new UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
     }
 
 
@@ -91,11 +92,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * returns array of categories.
      * has to be overwritten either in pimcore object or mapped sub class.
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return array
      */
     public function getCategories() {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getCategories is not supported for " . get_class($this));
+        throw new UnsupportedException("getCategories is not supported for " . get_class($this));
     }
 
 
@@ -107,22 +108,22 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * called by default CommitOrderProcessor to get the product name to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return string
      */
     public function getOSName() {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new UnsupportedException("getOSName is not supported for " . get_class($this));
     }
 
     /**
      * called by default CommitOrderProcessor to get the product number to store it in the order item
      * should be overwritten in mapped sub classes of product classes
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return string
      */
     public function getOSProductNumber() {
-        throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
 
@@ -131,7 +132,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      * @return string
      */
     public function getAvailabilitySystemName() {

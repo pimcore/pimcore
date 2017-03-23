@@ -28,26 +28,26 @@ class AbstractSetProductEntry {
     private $quantity;
 
     /**
-     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable
+     * @var ICheckoutable
      */
     private $product;
 
-    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product, $quantity = 1) {
+    public function __construct(ICheckoutable $product, $quantity = 1) {
         $this->product = $product;
         $this->quantity = $quantity;
     }
 
 
     /**
-     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      * @return void
      */
-    public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product) {
+    public function setProduct(ICheckoutable $product) {
         $this->product = $product;
     }
 
     /**
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct() {
         return $this->product;
