@@ -166,7 +166,6 @@ specifies the name of the meta item and `data` stores the value
 | Field-Collections | see special data fields later | 
 | Objectbricks | see special data fields later | 
 | Localized Fields | see special data fields later |
-| Key/Value | varchar(255)
 
 
 ##### Geographic
