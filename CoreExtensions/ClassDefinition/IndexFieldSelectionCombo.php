@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDef
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Logger;
 use Pimcore\Model\Object\ClassDefinition\Data\Select;
 
@@ -39,8 +40,8 @@ class IndexFieldSelectionCombo extends Select {
 
     public function __construct() {
 
-        //TODO
-        if(false && \OnlineShop\Plugin::isInstalled()) {
+        $installer = new Installer();
+        if($installer->isInstalled()) {
             $indexColumns = array();
             try {
                 $indexService = Factory::getInstance()->getIndexService();

@@ -401,7 +401,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                 Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
             }
 
-            // TODO NOTE: we cannot delete variants from ES when we don't know their parents anymore.
+            // we cannot delete variants from ES when we don't know their parents anymore.
             // Delete won't work w/o a parent specified, as there is a parent-child-relationship.
             // So this might produce an invalid index.
 

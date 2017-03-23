@@ -42,7 +42,8 @@ class MySql {
     {
         $cacheKey = "plugin_ecommerce_productindex_columns_" . $table;
 
-        if (!$columns = Cache\Runtime::load($cacheKey)) {
+
+        if (!Cache\Runtime::isRegistered($cacheKey)) {
 
             $columns = array();
             $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
@@ -53,7 +54,7 @@ class MySql {
             Cache\Runtime::save($columns, $cacheKey);
         }
 
-        return $columns;
+        return Cache\Runtime::load($cacheKey);
     }
 
     public function doInsertData($data) {
