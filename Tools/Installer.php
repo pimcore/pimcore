@@ -184,7 +184,7 @@ class Installer extends AbstractInstaller {
         $existingTables = [];
         foreach(self::$tables as $name => $statement) {
             try {
-                $result = $db->describeTable($name);
+                $result = $db->query("DESCRIBE TABLE " . $db->quoteIdentifier($name))->fetchAll;
             } catch (\Exception $e) {
                 //nothing to do
             }
@@ -422,7 +422,7 @@ class Installer extends AbstractInstaller {
         $result = null;
         try{
             if(Config::getSystemConfig()) {
-                $result = \Pimcore\Db::get()->describeTable("plugin_onlineshop_cartitem");
+                $result = \Pimcore\Db::get()->query("DESCRIBE plugin_onlineshop_cartitem")->fetchAll();
             }
         } catch(\Exception $e){}
         return !empty($result);
