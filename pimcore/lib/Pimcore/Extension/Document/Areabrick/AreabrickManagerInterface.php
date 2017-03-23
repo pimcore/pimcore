@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /**
  * Pimcore
  *
@@ -24,20 +27,27 @@ interface AreabrickManagerInterface
     public function register(AreabrickInterface $brick);
 
     /**
+     * Registers a lazy loaded area brick service on the manager
+     *
+     * @param string $serviceId
+     */
+    public function registerService(string $serviceId);
+
+    /**
      * Fetches a brick by ID
      *
-     * @param string $id
+     * @param string|AreabrickInterface $id
      *
      * @return AreabrickInterface
      */
-    public function getBrick($id);
+    public function getBrick($id): AreabrickInterface;
 
     /**
      * Lists all registered areabricks
      *
      * @return AreabrickInterface[]
      */
-    public function getBricks();
+    public function getBricks(): array;
 
     /**
      * Enables an areabrick
@@ -61,5 +71,5 @@ interface AreabrickManagerInterface
      *
      * @return bool
      */
-    public function isEnabled($brick);
+    public function isEnabled($brick): bool;
 }

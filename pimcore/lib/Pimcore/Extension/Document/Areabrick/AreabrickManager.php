@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /**
  * Pimcore
  *
@@ -14,27 +17,40 @@
 
 namespace Pimcore\Extension\Document\Areabrick;
 
-use Pimcore\Extension\Config;
+use Pimcore\Extension;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AreabrickManager implements AreabrickManagerInterface
 {
+    /**
+     * @var Extension\Config
+     */
+    protected $config;
+
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
     /**
      * @var AreabrickInterface[]
      */
     protected $bricks = [];
 
     /**
-     * @var Config
+     * @var array
      */
-    protected $config;
+    protected $brickServiceIds = [];
 
     /**
-     * @param Config $config
+     * @param Extension\Config $config
+     * @param ContainerInterface $container
      */
-    public function __construct(Config $config)
+    public function __construct(Extension\Config $config, ContainerInterface $container)
     {
-        $this->config = $config;
+        $this->config    = $config;
+        $this->container = $container;
     }
 
     /**
@@ -52,8 +68,18 @@ class AreabrickManager implements AreabrickManagerInterface
     /**
      * @inheritdoc
      */
-    public function getBrick($id)
+    public function registerService(string $serviceId)
     {
+        $this->brickServiceIds[] = $serviceId;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBrick($id): AreabrickInterface
+    {
+        $this->resolveServiceDefinitions();
+
         $id = $this->getBrickIdentifier($id);
 
         if (!isset($this->bricks[$id])) {
@@ -66,9 +92,38 @@ class AreabrickManager implements AreabrickManagerInterface
     /**
      * @inheritdoc
      */
-    public function getBricks()
+    public function getBricks(): array
     {
+        $this->resolveServiceDefinitions();
+
         return $this->bricks;
+    }
+
+    /**
+     * Load services for registered brick service definitions
+     */
+    protected function resolveServiceDefinitions()
+    {
+        if (empty($this->brickServiceIds)) {
+            return;
+        }
+
+        while ($serviceId = array_shift($this->brickServiceIds)) {
+            if (!$this->container->has($serviceId)) {
+                throw new ConfigurationException(sprintf('Definition for areabrick %s does not exist', $serviceId));
+            }
+
+            $brick = $this->container->get($serviceId);
+            if (!($brick instanceof AreabrickInterface)) {
+                throw new ConfigurationException(sprintf(
+                    'Definition for areabrick %s does not implement AreabrickInterface (got %s)',
+                    $serviceId,
+                    is_object($brick) ? get_class($brick) : gettype($brick)
+                ));
+            }
+
+            $this->register($brick);
+        }
     }
 
     /**
@@ -117,7 +172,7 @@ class AreabrickManager implements AreabrickManagerInterface
      *
      * @return bool
      */
-    public function isEnabled($brick)
+    public function isEnabled($brick): bool
     {
         $id     = $this->getBrickIdentifier($brick);
         $config = $this->getBrickConfig();

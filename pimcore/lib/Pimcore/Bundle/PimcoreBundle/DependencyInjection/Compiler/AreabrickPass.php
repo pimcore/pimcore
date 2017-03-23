@@ -43,14 +43,14 @@ class AreabrickPass implements CompilerPassInterface
             $definition    = $container->getDefinition($id);
             $taggedAreas[] = $definition->getClass();
 
-            $areaManagerDefinition->addMethodCall('register', [new Reference($id)]);
+            $areaManagerDefinition->addMethodCall('registerService', [$id]);
         }
 
         // autoload areas from bundles if not yet defined via service config
         if ($config['documents']['areas']['autoload']) {
             $autoloadedIds = $this->autoloadAreabricks($container, $taggedAreas);
             foreach ($autoloadedIds as $autoloadedId) {
-                $areaManagerDefinition->addMethodCall('register', [new Reference($autoloadedId)]);
+                $areaManagerDefinition->addMethodCall('registerService', [$autoloadedId]);
             }
         }
     }
