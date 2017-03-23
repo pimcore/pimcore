@@ -32,3 +32,17 @@ public function testAction () {
     $recaptchaKeyPublic = $this->config->recaptchaPublic;
 }
 ```
+
+### Manipulate the values in a Controller
+If you want to change the value of a website setting from your PHP script, for example from a controller, you can use this code.
+```php
+public function testAction () {
+    $somesetting = \Pimcore\Model\WebsiteSetting::getByName('somenumber');
+    $currentnumber = $somesetting->getData();
+    //Now do something with the data or set new data
+    //Count up in this case
+    $newnumber = $currentnumber + 1;
+    $somesetting->setData($newnumber);
+    $somesetting->save();
+}
+```
