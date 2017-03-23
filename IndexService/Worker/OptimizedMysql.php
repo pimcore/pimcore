@@ -22,7 +22,7 @@ use Pimcore\Cache;
 use Pimcore\Logger;
 
 class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessingWorker {
-    const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store";
+    const STORE_TABLE_NAME = "ecommerceframework_productindex_store";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup";
 
     /**

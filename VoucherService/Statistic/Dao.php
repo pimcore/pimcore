@@ -20,12 +20,11 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statisti
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_statistics";
+    const TABLE_NAME = "ecommerceframework_vouchertoolkit_statistics";
 
     public function __construct()
     {
-        parent::__construct();
-        $this->db = \Pimcore\Resource::get();
+        $this->db = \Pimcore\Db::get();
     }
 
     /**

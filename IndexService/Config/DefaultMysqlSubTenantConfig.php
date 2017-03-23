@@ -30,15 +30,15 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql {
     // NOTE: this works only with a single-column primary key
 
     public function getTablename() {
-        return "plugin_onlineshop_productindex2";
+        return "ecommerceframework_productindex2";
     }
 
     public function getRelationTablename() {
-        return "plugin_onlineshop_productindex_relations2";
+        return "ecommerceframework_productindex_relations2";
     }
 
     public function getTenantRelationTablename() {
-        return "plugin_onlineshop_productindex_tenant_relations";
+        return "ecommerceframework_productindex_tenant_relations";
     }
 
 

@@ -21,7 +21,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservat
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_reservations";
+    const TABLE_NAME = "ecommerceframework_vouchertoolkit_reservations";
 
     public function __construct()
     {

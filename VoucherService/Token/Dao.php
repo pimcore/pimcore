@@ -21,7 +21,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "plugins_onlineshop_vouchertoolkit_tokens";
+    const TABLE_NAME = "ecommerceframework_vouchertoolkit_tokens";
 
     public function __construct()
     {

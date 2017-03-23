@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
-    const TABLE_NAME = "plugin_onlineshop_cartitem";
+    const TABLE_NAME = "ecommerceframework_cartitem";
 
     /**
      * Contains all valid columns in the database table

@@ -27,8 +27,8 @@ class Installer extends AbstractInstaller {
      * @var array - contains all tables that need to be created
      */
     private static $tables = [
-        "plugin_onlineshop_cart" =>
-            "CREATE TABLE `plugin_onlineshop_cart` (
+        "ecommerceframework_cart" =>
+            "CREATE TABLE `ecommerceframework_cart` (
               `id` int(20) NOT NULL AUTO_INCREMENT,
               `userid` int(20) NOT NULL,
               `name` varchar(250) COLLATE utf8_bin DEFAULT NULL,
@@ -36,15 +36,15 @@ class Installer extends AbstractInstaller {
               `modificationDateTimestamp` int(10) NOT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;",
-        "plugin_onlineshop_cartcheckoutdata" =>
-            "CREATE TABLE `plugin_onlineshop_cartcheckoutdata` (
+        "ecommerceframework_cartcheckoutdata" =>
+            "CREATE TABLE `ecommerceframework_cartcheckoutdata` (
               `cartId` int(20) NOT NULL,
               `key` varchar(150) COLLATE utf8_bin NOT NULL,
               `data` longtext,
               PRIMARY KEY (`cartId`,`key`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;",
-        "plugin_onlineshop_cartitem" =>
-            "CREATE TABLE `plugin_onlineshop_cartitem` (
+        "ecommerceframework_cartitem" =>
+            "CREATE TABLE `ecommerceframework_cartitem` (
               `productId` int(20) NOT NULL,
               `cartId` int(20) NOT NULL,
               `count` int(20) NOT NULL,
@@ -55,15 +55,15 @@ class Installer extends AbstractInstaller {
               `sortIndex` INT(10) UNSIGNED NULL DEFAULT '0',
               PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;",
-        "plugins_onlineshop_vouchertoolkit_statistics" =>
-            "CREATE TABLE `plugins_onlineshop_vouchertoolkit_statistics` (
+        "ecommerceframework_vouchertoolkit_statistics" =>
+            "CREATE TABLE `ecommerceframework_vouchertoolkit_statistics` (
                 `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
                 `voucherSeriesId` BIGINT(20) NOT NULL,
                 `date` DATE NOT NULL,
                 PRIMARY KEY (`id`)
             ) COLLATE='utf8_general_ci' ENGINE=InnoDB ;",
-        "plugins_onlineshop_vouchertoolkit_tokens" =>
-            "CREATE TABLE `plugins_onlineshop_vouchertoolkit_tokens` (
+        "ecommerceframework_vouchertoolkit_tokens" =>
+            "CREATE TABLE `ecommerceframework_vouchertoolkit_tokens` (
                 `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
                 `voucherSeriesId` BIGINT(20) NULL DEFAULT NULL,
                 `token` VARCHAR(250) NULL DEFAULT NULL COLLATE 'latin1_bin',
@@ -74,8 +74,8 @@ class Installer extends AbstractInstaller {
                 PRIMARY KEY (`id`),
                 UNIQUE INDEX `token` (`token`)
             ) COLLATE='utf8_general_ci' ENGINE=InnoDB;",
-        "plugins_onlineshop_vouchertoolkit_reservations" =>
-            "CREATE TABLE `plugins_onlineshop_vouchertoolkit_reservations` (
+        "ecommerceframework_vouchertoolkit_reservations" =>
+            "CREATE TABLE `ecommerceframework_vouchertoolkit_reservations` (
                 `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
                 `token` VARCHAR(250) NOT NULL,
                 `cart_id` VARCHAR(250) NOT NULL,
@@ -83,8 +83,8 @@ class Installer extends AbstractInstaller {
                 PRIMARY KEY (`id`),
                 INDEX `token` (`token`)
             ) COLLATE='utf8_general_ci' ENGINE=InnoDB;",
-        "plugin_onlineshop_pricing_rule" =>
-            "CREATE TABLE IF NOT EXISTS `plugin_onlineshop_pricing_rule` (
+        "ecommerceframework_pricing_rule" =>
+            "CREATE TABLE IF NOT EXISTS `ecommerceframework_pricing_rule` (
                 `id` INT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(50) NULL DEFAULT NULL,
                 `label` TEXT NULL,
@@ -388,14 +388,13 @@ class Installer extends AbstractInstaller {
      */
     public function uninstall() {
         $db = \Pimcore\Db::get();
-        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
-        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
-        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
-        $db->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
-        $db->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_reservations`");
-        $db->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_tokens`");
-        $db->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_statistics`");
-        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_cart`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_cartcheckoutdata`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_cartitem`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_vouchertoolkit_reservations`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_vouchertoolkit_tokens`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_vouchertoolkit_statistics`");
+        $db->query("DROP TABLE IF EXISTS `ecommerceframework_pricing_rule`");
 
         //remove permissions
         $key = 'plugin_onlineshop_pricing_rules';
@@ -423,7 +422,7 @@ class Installer extends AbstractInstaller {
         $result = null;
         try{
             if(Config::getSystemConfig()) {
-                $result = \Pimcore\Db::get()->query("DESCRIBE plugin_onlineshop_cartitem")->fetchAll();
+                $result = \Pimcore\Db::get()->query("DESCRIBE ecommerceframework_cartitem")->fetchAll();
             }
         } catch(\Exception $e){}
         return !empty($result);

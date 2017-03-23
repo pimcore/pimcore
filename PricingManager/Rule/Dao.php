@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule;
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
 
-    const TABLE_NAME = 'plugin_onlineshop_pricing_rule';
+    const TABLE_NAME = 'ecommerceframework_pricing_rule';
 
     /**
      * Contains all valid columns in the database table

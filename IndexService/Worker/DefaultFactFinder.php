@@ -22,7 +22,7 @@ use Pimcore\Logger;
 
 class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
-    const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_factfinder";
+    const STORE_TABLE_NAME = "ecommerceframework_productindex_store_factfinder";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_factfinder";
 
     protected function getSystemAttributes() {

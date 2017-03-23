@@ -23,7 +23,7 @@ use Pimcore\Logger;
 
 class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchProcessingWorker {
 
-    const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_elastic";
+    const STORE_TABLE_NAME = "ecommerceframework_productindex_store_elastic";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_elastic";
 
     /**

@@ -31,14 +31,14 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
      * @return string
      */
     public function getTablename() {
-        return "plugin_onlineshop_productindex";
+        return "ecommerceframework_productindex";
     }
 
     /**
      * @return string
      */
     public function getRelationTablename() {
-        return "plugin_onlineshop_productindex_relations";
+        return "ecommerceframework_productindex_relations";
     }
 
     /**

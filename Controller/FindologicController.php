@@ -116,6 +116,6 @@ XML;
      */
     protected function getExportTableName()
     {
-        return 'plugin_onlineshop_productindex_export_findologic';
+        return 'ecommerceframework_productindex_export_findologic';
     }
 }
