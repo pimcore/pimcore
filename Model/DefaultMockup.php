@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
+use Pimcore\Logger;
+
 class DefaultMockup {
 
     protected $id;
@@ -136,9 +138,9 @@ class DefaultMockup {
         }
         $msg = "Method $method not in Mockup implemented, delegating to object with id {$this->id}.";
         if(PIMCORE_DEBUG) {
-            \Logger::warn($msg);
+            Logger::warn($msg);
         } else {
-            \Logger::info($msg);
+            Logger::info($msg);
         }
 
         $object = $this->getOriginalObject();
@@ -151,7 +153,7 @@ class DefaultMockup {
 
 
     public function getOriginalObject() {
-        \Logger::notice("Getting original object {$this->id}.");
+        Logger::notice("Getting original object {$this->id}.");
         return \Pimcore\Model\Object\AbstractObject::getById($this->id);
     }
 

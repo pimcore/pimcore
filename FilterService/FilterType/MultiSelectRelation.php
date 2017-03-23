@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterTyp
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Logger;
 
 class MultiSelectRelation extends AbstractFilterType {
 
@@ -28,7 +29,7 @@ class MultiSelectRelation extends AbstractFilterType {
         $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $objects = array();
-        \Logger::info("Load Objects...");
+        Logger::info("Load Objects...");
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
@@ -39,7 +40,7 @@ class MultiSelectRelation extends AbstractFilterType {
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
-        \Logger::info("done.");
+        Logger::info("done.");
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

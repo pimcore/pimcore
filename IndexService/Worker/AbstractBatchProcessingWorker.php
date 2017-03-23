@@ -244,7 +244,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                         }
 
                     } catch(\Exception $e) {
-                        Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
+                        Logger::err("Exception in IndexService: " . $e);
                     }
 
                 }

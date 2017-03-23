@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Config\Config;
+use Pimcore\Logger;
 
 /**
  * Class FilterService
@@ -59,7 +60,7 @@ class FilterService {
         if(!$this->filterGroupHelper) {
             $classname = (string)$this->config->helper;
             if(!class_exists($classname)) {
-                \Logger::warn("FilterGroupHelper " . $classname . " does not exist, using default implementation.");
+                Logger::warn("FilterGroupHelper " . $classname . " does not exist, using default implementation.");
                 $classname = '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterGroupHelper';
             }
 

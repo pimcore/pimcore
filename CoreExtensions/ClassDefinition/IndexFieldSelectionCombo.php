@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDef
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Logger;
 use Pimcore\Model\Object\ClassDefinition\Data\Select;
 
 class IndexFieldSelectionCombo extends Select {
@@ -45,7 +46,7 @@ class IndexFieldSelectionCombo extends Select {
                 $indexService = Factory::getInstance()->getIndexService();
                 $indexColumns = $indexService->getIndexAttributes(true);
             } catch (\Exception $e) {
-                \Logger::err($e);
+                Logger::err($e);
             }
 
             $options = array();

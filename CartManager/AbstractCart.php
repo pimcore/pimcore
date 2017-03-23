@@ -21,6 +21,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\VoucherServiceExcep
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation;
+use Pimcore\Logger;
 
 abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICart {
 
@@ -888,7 +889,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         if ($item->getProduct() != null) {
             return true;
         }else {
-            \Logger::warn("product " . $item->getProductId() . " not found");
+            Logger::warn("product " . $item->getProductId() . " not found");
             return false;
         }
     }

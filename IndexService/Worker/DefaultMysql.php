@@ -192,7 +192,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                         }
 
                     } catch(\Exception $e) {
-                        Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
+                        Logger::err("Exception in IndexService: " . $e);
                     }
 
                 }
@@ -216,7 +216,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                         $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
                     }
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
+                    Logger::warn("Error during updating index relation table: " . $e);
                 }
             } else {
 
@@ -225,13 +225,13 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                 try {
                     $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index table: " . $e->getMessage(), $e);
+                    Logger::warn("Error during updating index table: " . $e);
                 }
 
                 try {
                     $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
+                    Logger::warn("Error during updating index relation table: " . $e);
                 }
 
                 try {
@@ -239,7 +239,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                         $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
                     }
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index tenant relation table: " . $e->getMessage(), $e);
+                    Logger::warn("Error during updating index tenant relation table: " . $e);
                 }
 
             }

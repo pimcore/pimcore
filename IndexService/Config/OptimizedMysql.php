@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Logger;
 
 /**
  * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
@@ -66,7 +67,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig {
         $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);
 
         if(empty($mockup)) {
-            \Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");
+            Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");
             return $this->getObjectById($objectId);
         } else {
             return $mockup;

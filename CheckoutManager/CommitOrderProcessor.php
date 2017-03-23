@@ -23,6 +23,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
+use Pimcore\Logger;
 use Pimcore\Model\Tool\Lock;
 
 /**
@@ -58,7 +59,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         try {
             $paymentStatus = $paymentProvider->handleResponse($paymentResponseParams);
         } catch(\Exception $e) {
-            \Logger::err($e);
+            Logger::err($e);
 
             //create payment status with error message and cancelled payment
             $paymentStatus = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status(
@@ -115,7 +116,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
                             return $order;
                         } else {
                             $message = "Payment state of order " . $order->getId() . " does not match with new request!";
-                            \Logger::error($message);
+                            Logger::error($message);
                             throw new \Exception($message);
                         }
                     }
@@ -148,7 +149,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
 
         if(empty($order)) {
             $message = "No order found for payment status: " . print_r($paymentStatus, true);
-            \Logger::error($message);
+            Logger::error($message);
             throw new \Exception($message);
         }
 
@@ -210,7 +211,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         try {
             $this->sendConfirmationMail($order);
         } catch(\Exception $e) {
-            \Logger::err("Error during sending confirmation e-mail: " . $e);
+            Logger::err("Error during sending confirmation e-mail: " . $e);
         }
         return $order;
     }
@@ -226,7 +227,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
             $mail->addTo($order->getCustomer()->getEmail());
             $mail->send();
         } else {
-            \Logger::err("No Customer found!");
+            Logger::err("No Customer found!");
         }
     }
 
@@ -255,7 +256,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         $list->setCondition("orderState = ? AND orderdate < ?", array(AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
 
         foreach($list as $order) {
-            \Logger::warn("Setting order " . $order->getId() . " to " . AbstractOrder::ORDER_STATE_ABORTED);
+            Logger::warn("Setting order " . $order->getId() . " to " . AbstractOrder::ORDER_STATE_ABORTED);
             $order->setOrderState(AbstractOrder::ORDER_STATE_ABORTED);
             $order->save();
         }
@@ -268,7 +269,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
             $payments = $order->getPaymentInfo();
             foreach($payments as $payment) {
                 if($payment->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->getTimestamp() < $timestamp) {
-                    \Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . AbstractOrder::ORDER_STATE_ABORTED);
+                    Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . AbstractOrder::ORDER_STATE_ABORTED);
                     $payment->setPaymentState(AbstractOrder::ORDER_STATE_ABORTED);
                 }
             }

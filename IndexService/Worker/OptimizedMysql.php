@@ -77,7 +77,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
             $this->db->commit();
         } catch(\Exception $e) {
             $this->db->rollBack();
-            Logger::warn("Error during deleting from index tables for object $objectId: " . $e->getMessage(), $e);
+            Logger::warn("Error during deleting from index tables for object $objectId: " . $e);
         }
     }
 
@@ -133,7 +133,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
                 $this->db->commit();
             } catch(\Exception $e) {
                 $this->db->rollBack();
-                Logger::warn("Error during updating index table for object $objectId: " . $e->getMessage(), $e);
+                Logger::warn("Error during updating index table for object $objectId: " . $e->getMessage());
             }
 
 

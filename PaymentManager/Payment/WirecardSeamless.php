@@ -11,6 +11,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
+use Pimcore\Logger;
 use Pimcore\Model\Object\OnlineShopOrder;
 
 class WirecardSeamless implements IPayment
@@ -203,7 +204,7 @@ class WirecardSeamless implements IPayment
         if (!$redirectURL) {
 
             if (PIMCORE_DEBUG) {
-                \Logger::error('seamless result: ' . var_export($result, true));
+                Logger::error('seamless result: ' . var_export($result, true));
             }
             throw new \Exception('redirect url could not be evalutated');
         }
@@ -292,7 +293,7 @@ class WirecardSeamless implements IPayment
             unset($response[$unset]);
         }
 
-        \Logger::debug('wirecard seamless response' . var_export($response, true));
+        Logger::debug('wirecard seamless response' . var_export($response, true));
 
         // check required fields
         $required = ['responseFingerprintOrder' => null
@@ -316,7 +317,7 @@ class WirecardSeamless implements IPayment
                 ]
             );
 
-            \Logger::debug('#wirecard response status: ' . var_export($status, true));
+            Logger::debug('#wirecard response status: ' . var_export($status, true));
 
             return $status;
         }
@@ -361,8 +362,8 @@ class WirecardSeamless implements IPayment
         // computes the fingerprint from the fingerprint string
         $fingerprint = hash("sha512", $fingerprintString);
 
-        \Logger::debug('#wirecard fingerprint: ' . $fingerprintString);
-        \Logger::debug('#wirecard response fingerprint: ' . $response['responseFingerprint']);
+        Logger::debug('#wirecard fingerprint: ' . $fingerprintString);
+        Logger::debug('#wirecard response fingerprint: ' . $response['responseFingerprint']);
 
 
         if (!((strcmp($fingerprint, $response['responseFingerprint']) == 0)
@@ -393,7 +394,7 @@ class WirecardSeamless implements IPayment
             ]
         );
 
-        \Logger::debug('#wirecard response status: ' . var_export($status, true));
+        Logger::debug('#wirecard response status: ' . var_export($status, true));
 
         return $status;
     }

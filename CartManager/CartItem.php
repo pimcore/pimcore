@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
+use Pimcore\Logger;
 
 class CartItem extends AbstractCartItem implements ICartItem {
 
@@ -77,7 +78,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
                 $cartItem->getSubItems();
                 Runtime::set($cacheKey, $cartItem);
             } catch (\Exception $ex) {
-                \Logger::debug($ex->getMessage());
+                Logger::debug($ex->getMessage());
                 return null;
             }
 
@@ -115,7 +116,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
                 if ($item->getProduct() != null) {
                     $this->subItems[] = $item;
                 } else {
-                    \Logger::warn("product " . $item->getProductId() . " not found");
+                    Logger::warn("product " . $item->getProductId() . " not found");
                 }
             }
         }

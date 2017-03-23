@@ -21,6 +21,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action\IProduc
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition\IBracket;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
+use Pimcore\Logger;
 use Pimcore\Tool;
 
 class Rule extends \Pimcore\Model\AbstractModel implements IRule
@@ -46,7 +47,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
                 Runtime::set($cacheKey, $rule);
             } catch (\Exception $ex) {
 
-                \Logger::debug($ex->getMessage());
+                Logger::debug($ex->getMessage());
                 return null;
             }
 

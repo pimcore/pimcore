@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
+use Pimcore\Logger;
 
 class Cart extends AbstractCart implements ICart {
 
@@ -122,7 +123,7 @@ class Cart extends AbstractCart implements ICart {
 
                 Runtime::set($cacheKey, $cart);
             } catch (\Exception $ex) {
-                \Logger::debug($ex->getMessage());
+                Logger::debug($ex->getMessage());
                 return null;
             }
 

@@ -314,7 +314,7 @@ A server side handling could look as follows:
 
     public function serverSideQPayAction() {
 
-        \Logger::info("Starting server side call");
+        Logger::info("Starting server side call");
 
         $params = $this->getAllParams();
 
@@ -322,11 +322,11 @@ A server side handling could look as follows:
         $paymentProvider = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory::getInstance()->getPaymentManager()->getProvider("qpay");
 
         if($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($params, $paymentProvider)) {
-            \Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
+            Logger::info("Order with same payment is already committed, doing nothing. OrderId is " . $committedOrder->getId());
         } else {
             $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment( $params, $paymentProvider );
 
-            \Logger::info("Finished server side call. OrderId is " . $order->getId());
+            Logger::info("Finished server side call. OrderId is " . $order->getId());
         }
 
         exit("success");

@@ -27,6 +27,7 @@ use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem as O
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Logger;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Pimcore\Model\Object\Concrete;
@@ -504,7 +505,7 @@ class Agent implements IOrderAgent
 
 
         if(empty($currentPaymentInformation)) {
-            \Logger::warn("Payment information with id " . $status->getInternalPaymentId() . " not found, creating new one.");
+            Logger::warn("Payment information with id " . $status->getInternalPaymentId() . " not found, creating new one.");
 
             //if payment information not found, create a new in order to document all payment updates
             $currentPaymentInformation = new PaymentInfo();

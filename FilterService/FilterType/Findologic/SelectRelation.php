@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterTyp
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Logger;
 
 class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectRelation {
 
@@ -33,7 +34,7 @@ class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
         $values = $productList->getGroupByValues($field, true);
 
         $objects = array();
-        \Logger::info("Load Objects...");
+        Logger::info("Load Objects...");
 
         $availableRelations = array();
         if($filterDefinition->getAvailableRelations()) {
@@ -45,7 +46,7 @@ class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
                 $objects[$v['label']] = \Pimcore\Model\Object\AbstractObject::getById($v['label']);
             }
         }
-        \Logger::info("done.");
+        Logger::info("done.");
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();

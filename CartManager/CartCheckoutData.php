@@ -18,6 +18,7 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
+use Pimcore\Logger;
 
 class CartCheckoutData extends AbstractCartCheckoutData {
 
@@ -38,7 +39,7 @@ class CartCheckoutData extends AbstractCartCheckoutData {
                 $checkoutDataItem->getDao()->getByKeyCartId($key, $cartId);
                 Runtime::set($cacheKey, $checkoutDataItem);
             } catch(\Exception $ex) {
-                \Logger::debug($ex->getMessage());
+                Logger::debug($ex->getMessage());
                 return null;
             }
 

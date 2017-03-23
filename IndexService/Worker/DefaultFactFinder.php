@@ -54,7 +54,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     }
 
     protected function logSql ($sql) {
-        \Logger::info($sql);
+        Logger::info($sql);
 
         $this->_sqlChangeLog[] = $sql;
     }
@@ -226,7 +226,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
                         }
 
                     } catch(\Exception $e) {
-                        Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
+                        Logger::err("Exception in IndexService: " . $e);
                     }
 
                 }

@@ -22,6 +22,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigExcept
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer;
+use Pimcore\Logger;
 use \Pimcore\Tool;
 
 /**
@@ -138,7 +139,7 @@ class MultiCartManager implements ICartManager {
                     $this->carts[$c->getId()] = $c;
                 } else {
                     //cart is already committed - cleanup cart and environment
-                    \Logger::warn("Deleting cart with id " . $c->getId() . " because linked order " . $order->getId() . " is already committed.");
+                    Logger::warn("Deleting cart with id " . $c->getId() . " because linked order " . $order->getId() . " is already committed.");
                     $c->delete();
 
                     $env = Factory::getInstance()->getEnvironment();

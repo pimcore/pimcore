@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools;
 
 use Pimcore\API\Bundle\Installer\AbstractInstaller;
 use Pimcore\Config;
+use Pimcore\Logger;
 
 class Installer extends AbstractInstaller {
 
@@ -266,7 +267,7 @@ class Installer extends AbstractInstaller {
             $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
             if(!$success){
-                \Logger::err("Could not import $key FieldCollection.");
+                Logger::err("Could not import $key FieldCollection.");
             }
         }
     }
@@ -288,7 +289,7 @@ class Installer extends AbstractInstaller {
 
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
             if(!$success){
-                \Logger::err("Could not import $classname Class.");
+                Logger::err("Could not import $classname Class.");
             }
         }
     }
@@ -317,7 +318,7 @@ class Installer extends AbstractInstaller {
             $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
             if(!$success){
-                \Logger::err("Could not import $key ObjectBrick.");
+                Logger::err("Could not import $key ObjectBrick.");
             }
         }
     }

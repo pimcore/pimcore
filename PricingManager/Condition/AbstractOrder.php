@@ -17,6 +17,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
+use Pimcore\Logger;
+
 abstract class AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
 {
     /**
@@ -89,7 +91,7 @@ SQL;
             }
             catch(\Exception $e)
             {
-                \Logger::error( $e );
+                Logger::error( $e );
             }
         }
 
