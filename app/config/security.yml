@@ -1,3 +1,2 @@
 imports:
     - { resource: "@PimcoreBundle/Resources/config/security.yml" }
-

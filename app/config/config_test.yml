@@ -2,7 +2,6 @@ imports:
     - { resource: config.yml }
     - { resource: "@PimcoreBundle/Resources/config/config_test.yml" }
 
-
 doctrine:
     dbal:
         connections:
