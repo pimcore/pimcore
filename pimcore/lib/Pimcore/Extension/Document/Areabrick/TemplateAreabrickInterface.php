@@ -15,37 +15,31 @@
 namespace Pimcore\Extension\Document\Areabrick;
 
 /**
- * Base brick with template autoloading capabilities.
- *
+ * Bricks implementing this interface auto-resolve view and edit templates if has*Template properties are set.
  * Depending on the result of getTemplateLocation and getTemplateSuffix the tag handler builds the following references:
  *
  * - <currentBundle>:Areas/<brickId>/(view|edit).<suffix>
  * - Areas/<brickId>/(view|edit).<suffix> -> resolves to app/Resources
  */
-abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements TemplateAreabrickInterface
+interface TemplateAreabrickInterface extends AreabrickInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function getViewTemplate()
-    {
-        // return null by default = auto-discover
-        return null;
-    }
+    const TEMPLATE_LOCATION_GLOBAL = 'global';
+    const TEMPLATE_LOCATION_BUNDLE = 'bundle';
+
+    const TEMPLATE_SUFFIX_PHP  = 'html.php';
+    const TEMPLATE_SUFFIX_TWIG = 'html.twig';
 
     /**
-     * @inheritDoc
+     * Determines if template should be auto-located in area bundle or in app/Resources
+     *
+     * @return string
      */
-    public function getTemplateLocation()
-    {
-        return static::TEMPLATE_LOCATION_BUNDLE;
-    }
+    public function getTemplateLocation();
 
     /**
-     * @inheritDoc
+     * Returns view suffix used to auto-build view names
+     *
+     * @return string
      */
-    public function getTemplateSuffix()
-    {
-        return static::TEMPLATE_SUFFIX_PHP;
-    }
+    public function getTemplateSuffix();
 }

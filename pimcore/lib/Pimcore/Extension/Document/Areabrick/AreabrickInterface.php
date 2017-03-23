@@ -19,7 +19,7 @@ use Pimcore\Model\Document\Tag\Area\Info;
 interface AreabrickInterface
 {
     /**
-     * Area ID - needs to be unique throughout the system.
+     * Brick ID - needs to be unique throughout the system.
      *
      * @return string
      */
@@ -54,11 +54,25 @@ interface AreabrickInterface
     public function getIcon();
 
     /**
+     * Determines if the brick has a view template
+     *
+     * @return bool
+     */
+    public function hasViewTemplate();
+
+    /**
      * Get view template
      *
      * @return string|null
      */
     public function getViewTemplate();
+
+    /**
+     * Determines if the brick has an edit template
+     *
+     * @return bool
+     */
+    public function hasEditTemplate();
 
     /**
      * Get edit template

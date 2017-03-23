@@ -19,15 +19,23 @@ use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
+use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Facade\Translate;
+use Pimcore\Logger;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
-class TagHandler implements TagHandlerInterface
+class TagHandler implements TagHandlerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var AreabrickManagerInterface
      */
@@ -52,6 +60,11 @@ class TagHandler implements TagHandlerInterface
      * @var ActionRenderer
      */
     protected $actionRenderer;
+
+    /**
+     * @var array
+     */
+    protected $brickTemplateCache = [];
 
     /**
      * @param AreabrickManagerInterface $brickManager
@@ -164,7 +177,7 @@ class TagHandler implements TagHandlerInterface
         // call action
         $brick->action($info);
 
-        if (null === $brick->getViewTemplate()) {
+        if (!$brick->hasViewTemplate()) {
             return;
         }
 
@@ -172,7 +185,7 @@ class TagHandler implements TagHandlerInterface
 
         echo $brick->getHtmlTagOpen($info);
 
-        if (null !== $brick->getEditTemplate() && $editmode) {
+        if ($brick->hasEditTemplate() && $editmode) {
             echo '<div class="pimcore_area_edit_button_' . $tag->getName() . ' pimcore_area_edit_button"></div>';
 
             // forces the editmode in view independent if there's an edit or not
@@ -182,19 +195,22 @@ class TagHandler implements TagHandlerInterface
         }
 
         // render view template
+        $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
         echo $this->templating->render(
-            $brick->getViewTemplate(),
+            $viewTemplate,
             $view->getParameters()->all()
         );
 
-        if (null !== $brick->getEditTemplate() && $editmode) {
+        if ($brick->hasEditTemplate() && $editmode) {
             $view->editmode = true;
 
             echo '<div class="pimcore_area_editmode_' . $tag->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
 
+            $editTemplate = $this->resolveBrickTemplate($brick, 'edit');
+
             // render edit template
             echo $this->templating->render(
-                $brick->getEditTemplate(),
+                $editTemplate,
                 $view->getParameters()->all()
             );
 
@@ -205,6 +221,81 @@ class TagHandler implements TagHandlerInterface
 
         // call post render
         $brick->postRenderAction($info);
+    }
+
+    /**
+     * Try to get the brick template from get*Template method. If method returns null and brick implements
+     * TemplateAreabrickInterface fall back to auto-resolving the template reference. See interface for examples.
+     *
+     * @param AreabrickInterface $brick
+     * @param $type
+     *
+     * @return mixed|null|string
+     */
+    protected function resolveBrickTemplate(AreabrickInterface $brick, $type)
+    {
+        $cacheKey = sprintf('%s.%s', $brick->getId(), $type);
+        if (isset($this->brickTemplateCache[$cacheKey])) {
+            return $this->brickTemplateCache[$cacheKey];
+        }
+
+        $template = null;
+        if ($type === 'view') {
+            $template = $brick->getViewTemplate();
+        } else if ($type === 'edit') {
+            $template = $brick->getEditTemplate();
+        }
+
+        if (null === $template) {
+            if ($brick instanceof TemplateAreabrickInterface) {
+                $template = $this->buildBrickTemplateReference($brick, $type);
+            } else {
+                $e = new ConfigurationException(sprintf(
+                    'Brick %s is configured to have a %s template but does not return a template path and does not implement %s',
+                    $brick->getId(),
+                    $type,
+                    TemplateAreabrickInterface::class
+                ));
+
+                $this->logger->error($e->getMessage());
+
+                throw $e;
+            }
+        }
+
+        $this->brickTemplateCache[$cacheKey] = $template;
+
+        return $template;
+    }
+
+    /**
+     * Return either bundle or global (= app/Resources) template reference
+     *
+     * @param TemplateAreabrickInterface $brick
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick, $type)
+    {
+        if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_BUNDLE) {
+            $bundle = $this->bundleLocator->getBundle($brick);
+
+            return sprintf(
+                '%s:Areas/%s:%s.%s',
+                $bundle->getName(),
+                $brick->getId(),
+                $type,
+                $brick->getTemplateSuffix()
+            );
+        } else {
+            return sprintf(
+                'Areas/%s/%s.%s',
+                $brick->getId(),
+                $type,
+                $brick->getTemplateSuffix()
+            );
+        }
     }
 
     /**

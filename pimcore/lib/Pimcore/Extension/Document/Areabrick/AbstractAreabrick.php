@@ -16,7 +16,7 @@ namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Model\Document\Tag\Area\Info;
 
-abstract class AbstractAreabrick implements AreabrickInterface
+abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabrickInterface
 {
     /**
      * {@inheritdoc}
@@ -46,6 +46,30 @@ abstract class AbstractAreabrick implements AreabrickInterface
      * {@inheritdoc}
      */
     public function getIcon()
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasViewTemplate()
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasEditTemplate()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEditTemplate()
     {
         return null;
     }

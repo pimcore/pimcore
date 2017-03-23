@@ -15,13 +15,10 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler;
 
 use Doctrine\Common\Util\Inflector;
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
 
 class AreabrickPass implements CompilerPassInterface
@@ -91,7 +88,7 @@ class AreabrickPass implements CompilerPassInterface
     }
 
     /**
-     * Register bundle area on the container. Handles AbstractTemplateAreabrick having constructor dependencies.
+     * Register bundle area on the container.
      *
      * @param ContainerBuilder $container
      * @param array $bundleArea
@@ -99,17 +96,8 @@ class AreabrickPass implements CompilerPassInterface
     protected function processBundleArea(ContainerBuilder $container, array $bundleArea)
     {
         /** @var \ReflectionClass $reflector */
-        $reflector = $bundleArea['reflector'];
-
-        /** @var Definition $definition */
-        $definition = null;
-        if ($reflector->isSubclassOf(AbstractTemplateAreabrick::class)) {
-            // make definition inherit from base templating definition (defines constructor arguments)
-            $definition = new DefinitionDecorator('pimcore.area.brick.templating_base');
-            $definition->setClass($reflector->getName());
-        } else {
-            $definition = new Definition($reflector->getName());
-        }
+        $reflector  = $bundleArea['reflector'];
+        $definition = new Definition($reflector->getName());
 
         $container->setDefinition($bundleArea['serviceId'], $definition);
     }

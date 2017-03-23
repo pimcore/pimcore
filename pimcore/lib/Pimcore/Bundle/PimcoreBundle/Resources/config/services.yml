@@ -209,10 +209,6 @@ services:
         class: Pimcore\Extension\Document\Areabrick\AreabrickManager
         arguments: ['@pimcore.extension.config', '@service_container']
 
-    pimcore.area.brick.templating_base:
-        abstract: true
-        arguments: ['@pimcore.bundle_locator']
-
 
     #
     # DOCUMENT TAG HANDLING (EDITABLES)
@@ -231,6 +227,10 @@ services:
             - '@pimcore.bundle_locator'
             - '@pimcore.web_path_resolver'
             - '@pimcore.templating.action_renderer'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: init }
 
     #
     # IMPLEMENTATION LOADERS
