@@ -4,10 +4,15 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
 use Pimcore\API\Bundle\AbstractPimcoreBundle;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Installer;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
 
+    /**
+     * @return array
+     */
     public function getCssPaths()
     {
         return [
@@ -16,6 +21,9 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getJsPaths()
     {
         return [
@@ -34,6 +42,9 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         ];
     }
 
+    /**
+     *
+     */
     public function boot()
     {
         parent::boot();
@@ -41,5 +52,14 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         //load legacy class mapping
         LegacyClassMappingTool::loadMapping();
 
+    }
+
+    /**
+     * @param ContainerInterface $container
+     * @return Installer
+     */
+    public function getInstaller(ContainerInterface $container)
+    {
+        return new Installer();
     }
 }

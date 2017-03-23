@@ -10,7 +10,7 @@ class CleanupCommand extends AbstractVoucherCommand
 {
     protected function configure()
     {
-        $this->setName('shop:voucher:cleanup');
+        $this->setName('ecommerce:voucher:cleanup');
     }
 
     /**

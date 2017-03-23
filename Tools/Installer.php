@@ -15,9 +15,12 @@
  */
 
 
-namespace OnlineShop;
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools;
 
-class Installer {
+use Pimcore\API\Bundle\Installer\AbstractInstaller;
+use Pimcore\Config;
+
+class Installer extends AbstractInstaller {
 
     /**
      * @var array - contains all tables that need to be created
@@ -151,28 +154,30 @@ class Installer {
      *
      * @throws \Exception
      */
-    public static function install() {
+    public function install() {
 
-        self::checkInstallPossible();
+        $this->canBeInstalled();
 
-        self::copyConfigFile();
+        $this->copyConfigFile();
 
-        self::createFieldCollections();
-        self::createClasses();
-        self::createObjectBricks();
+        $this->createFieldCollections();
+        $this->createClasses();
+        $this->createObjectBricks();
 
-        self::createTables();
+        $this->createTables();
 
-        self::importTranslations();
-        
-        self::addPermissions();
-        
+        $this->importTranslations();
+
+        $this->addPermissions();
+
+        return true;
     }
+
 
     /**
      * checks, if install is possible. otherwise throws exception
      */
-    private static function checkInstallPossible() {
+    public function canBeInstalled() {
 
         //check tables
         $db = \Pimcore\Db::get();
@@ -244,7 +249,7 @@ class Installer {
     /**
      * installs all field collections
      */
-    private static function createFieldCollections() {
+    private function createFieldCollections() {
 
         $fieldCollections = self::getFieldCollections();
         foreach($fieldCollections as $key => $filename) {
@@ -270,7 +275,7 @@ class Installer {
      * creates classes
      * @throws \Exception
      */
-    private static function createClasses() {
+    private function createClasses() {
         foreach(self::$classes as $classname => $filepath) {
             $class = \Pimcore\Model\Object\ClassDefinition::getByName($classname);
             if(!$class) {
@@ -291,7 +296,7 @@ class Installer {
     /**
      * installs all object bricks
      */
-    private static function createObjectBricks()
+    private function createObjectBricks()
     {
 
         $bricks = self::getObjectBricks();
@@ -320,7 +325,7 @@ class Installer {
     /**
      * creates tables
      */
-    private static function createTables() {
+    private function createTables() {
 
         $db = \Pimcore\Db::get();
         foreach(self::$tables as $name => $statement) {
@@ -332,29 +337,26 @@ class Installer {
     /**
      * copy sample config file - if not exists.
      */
-    private static function copyConfigFile() {
+    private function copyConfigFile() {
         //copy config file
-        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.php")) {
-            mkdir(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework", 0777, true);
-            copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/OnlineShopConfig_sample.php", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.php");
-            copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/.htaccess");
+        if(!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php")) {
+            copy(__DIR__ . "/../install/OnlineShopConfig_sample.php", PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php");
         }
-        Plugin::setConfig("/website/var/plugins/EcommerceFramework/OnlineShopConfig.php");
-        
+
     }
 
     /**
      * imports admin-translations
      * @throws \Exception
      */
-    private static function importTranslations() {
-        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/admin-translations/init.csv', true);
+    private function importTranslations() {
+        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(__DIR__ . '/../install/admin-translations/init.csv', true);
     }
 
     /**
      * adds admin permissions
      */
-    private static function addPermissions() {
+    private function addPermissions() {
 
         $keys = [
             'plugin_onlineshop_pricing_rules',
@@ -374,4 +376,55 @@ class Installer {
 
     }
 
+
+    public function canBeUninstalled()
+    {
+        return true;
+    }
+
+    /**
+     * uninstalls e-commerce framework
+     */
+    public function uninstall() {
+        $db = \Pimcore\Db::get();
+        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
+        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
+        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
+        $db->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
+        $db->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_reservations`");
+        $db->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_tokens`");
+        $db->query("DROP TABLE IF EXISTS `plugins_onlineshop_vouchertoolkit_statistics`");
+        $db->query("DROP TABLE IF EXISTS `plugin_onlineshop_pricing_rule`");
+
+        //remove permissions
+        $key = 'plugin_onlineshop_pricing_rules';
+        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key) );
+
+        $key = 'plugin_onlineshop_back-office_order';
+        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key) );
+
+        return true;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function needsReloadAfterInstall() {
+        return true;
+    }
+
+    /**
+     *  indicates wether this plugins is currently installed
+     * @return boolean
+     */
+    public function isInstalled() {
+        $result = null;
+        try{
+            if(Config::getSystemConfig()) {
+                $result = \Pimcore\Db::get()->describeTable("plugin_onlineshop_cartitem");
+            }
+        } catch(\Exception $e){}
+        return !empty($result);
+    }
 }

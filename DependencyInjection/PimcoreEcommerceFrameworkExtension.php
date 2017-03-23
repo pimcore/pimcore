@@ -32,7 +32,5 @@ class PimcoreEcommerceFrameworkExtension extends Extension
         );
 
         $loader->load('services.yml');
-////        $loader->load('routing.yml');
-//        $loader->load('services.yml');
     }
 }

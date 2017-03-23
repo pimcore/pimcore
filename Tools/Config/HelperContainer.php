@@ -55,7 +55,7 @@ class HelperContainer {
             $tenantConfig = $config->tenants->{$tenantName};
             if($tenantConfig instanceof Config) {
                 if($tenantConfig->file) {
-                    $tenantConfigFile = new Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenantConfig->file), true);
+                    $tenantConfigFile = new Config(require PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . ((string)$tenantConfig->file), true);
                     $this->tenantConfigs[$tenantName] = $tenantConfigFile->tenant;
                 } else {
                     $this->tenantConfigs[$tenantName] = $tenantConfig;

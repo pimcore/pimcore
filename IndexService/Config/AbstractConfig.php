@@ -46,7 +46,7 @@ abstract class AbstractConfig implements IConfig {
                 continue;
             }
 
-            $includeColumnConfig = include PIMCORE_DOCUMENT_ROOT . (string)$columnConfig['file'];
+            $includeColumnConfig = include PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . (string)$columnConfig['file'];
 
             /* if placeholders are defined, check for them in the included config */
             if (array_key_exists("placeholders", $columnConfig)) {

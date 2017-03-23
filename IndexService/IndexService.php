@@ -42,7 +42,7 @@ class IndexService {
                 $tenantConfigClass = (string) $tenant->class;
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    $tenantConfig = new Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), true);
+                    $tenantConfig = new Config(require PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . ((string)$tenant->file), true);
                     $tenantConfig = $tenantConfig->tenant;
                 }
 

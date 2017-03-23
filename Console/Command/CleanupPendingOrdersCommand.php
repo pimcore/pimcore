@@ -12,7 +12,7 @@ class CleanupPendingOrdersCommand extends AbstractCommand
 {
     protected function configure()
     {
-        $this->setName('shop:cleanup-pending-orders');
+        $this->setName('ecommerce:cleanup-pending-orders');
     }
 
     /**

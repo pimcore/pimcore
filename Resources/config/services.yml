@@ -3,3 +3,17 @@ services:
         class: Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator
         tags:
             - { name: pimcore.session.configurator }
+
+
+    pimcore.ecommerceframework.index_update_listener:
+        class: Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\EventListener\IndexUpdateListener
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: pimcore_ecommerce_indexupdater }
+
+    pimcore.ecommerceframework.system_listener:
+        class: Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\EventListener\SystemEventsListener
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: pimcore_ecommerce }
+

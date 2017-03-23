@@ -24,7 +24,7 @@ class Factory {
     /**
      * framework configuration file
      */
-    const CONFIG_PATH = "/EcommerceFramework/conf/OnlineShopConfig.php";
+    const CONFIG_PATH = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php";
 
     /**
      * @var Factory
@@ -134,12 +134,7 @@ class Factory {
 
     public function getConfig() {
         if(empty($this->config)) {
-//            $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
-
-//            TODO
-//            $this->config = new Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
-
-            $this->config = new Config(require PIMCORE_PROJECT_ROOT . '/legacy/website/var/plugins/EcommerceFramework/OnlineShopConfig.php', true);
+            $this->config = new Config(require self::CONFIG_PATH, true);
         }
 
         return $this->config;
