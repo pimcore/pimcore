@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 use Pimcore\Logger;
 
-class DefaultMockup {
+class DefaultMockup implements IProduct {
 
     protected $id;
     protected $params;
@@ -157,4 +157,25 @@ class DefaultMockup {
         return \Pimcore\Model\Object\AbstractObject::getById($this->id);
     }
 
+    /**
+     * called by default CommitOrderProcessor to get the product name to store it in the order item
+     * should be overwritten in mapped sub classes of product classes
+     *
+     * @return string
+     */
+    public function getOSName()
+    {
+        return $this->__call("getOSName", []);
+    }
+
+    /**
+     * called by default CommitOrderProcessor to get the product number to store it in the order item
+     * should be overwritten in mapped sub classes of product classes
+     *
+     * @return string
+     */
+    public function getOSProductNumber()
+    {
+        return $this->__call("getOSProductNumber", []);
+    }
 }
