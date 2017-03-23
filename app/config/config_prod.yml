@@ -1,4 +1,3 @@
 imports:
     - { resource: config.yml }
-    - { resource: "@PimcoreBundle/Resources/config/config_prod.yml" }
 

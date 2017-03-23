@@ -1,6 +1,5 @@
 imports:
-    - { resource: config.yml }
-    - { resource: "@PimcoreBundle/Resources/config/config_test.yml" }
+    - { resource: config_dev.yml }
 
 doctrine:
     dbal:
