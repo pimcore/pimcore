@@ -161,6 +161,16 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                 } elseif ($this->getParam("type") == "page" || $this->getParam("type") == "snippet" || $this->getParam("type") == "email") {
                     $createValues["controller"] = Config::getSystemConfig()->documents->default_controller;
                     $createValues["action"] = Config::getSystemConfig()->documents->default_action;
+                    // we look for sites, so same default module is used than the rootDocument
+                    $sitesList = new Site\Listing();
+                    $sitesObjects = $sitesList->load();
+                    foreach ($sitesObjects as $sitesObject) {
+                        if (strpos($intendedPath, $sitesObject->getRootDocument()->getRealFullPath()) === 0) {
+                            $module = $sitesObject->getRootDocument()->getModule();
+                            if ($module) $createValues["module"] = $module;
+                            break;
+                        }
+                    }
                 }
 
                 if ($this->getParam("inheritanceSource")) {
