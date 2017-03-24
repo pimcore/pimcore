@@ -8,9 +8,7 @@ The Document path and pretty URLs come third in the route processing priority.
  
 ## Document Path
  Every document has a path (in the document tree) that directly represents the address in the browser 
-  (e.g. https://demo.pimcore.org/en/basic-examples). When a visitor requests a page at a specific address, Pimcore 
-  uses a custom route in the front controller that determines if there is a suitable document for the 
-  requested address. 
+  (e.g. https://demo.pimcore.org/en/basic-examples). 
   
   ![Document Path](../../img/path-url.png)
   
@@ -42,24 +40,14 @@ The default route is also responsible to assemble the URL's for documents.
   
 <?php $document = Document::getById(2); ?>
 <a href="<?= $document->getFullPath() ?>">Test-Link</a>
-  
-// OR
-  
-<a href="<?= $this->url(["document" => Document::getById(2)], "default", true); ?>">Test-Link</a>
+   
 ```
 
 Links to `/about`
 
 ######  Link to Same Document (The Request Came From) Adding Parameters
 ```php 
-<a href="<?= $this->url(["key" => "value"]); ?>">Test-Link</a>
-```
-
-Links to `?key=value`
-
-###### Link to Different Document Adding Parameters
-```php 
-<a href="<?= $this->url(["document" => Document::getById(2), "key" => "value"], "default", true); ?>">Test-Link</a>
+<a href="<?= $this->pimcoreUrl(["key" => "value"]); ?>">Test-Link</a>
 ```
 
 Links to `/about?key=value`
