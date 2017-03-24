@@ -325,8 +325,12 @@ class SettingsController extends AdminController
         $valueArray['database']["params"]['password'] = "##SECRET_PASS##";
 
         // inject debug mode
+
         $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . "/debug-mode.php";
-        $debugMode = include $debugModeFile;
+        $debugMode = [];
+        if (file_exists($debugModeFile)) {
+            $debugMode = include $debugModeFile;
+        }
         $valueArray["general"]["debug"] = $debugMode["active"];
         $valueArray["general"]["debug_ip"] = $debugMode["ip"];
 
