@@ -48,7 +48,7 @@ class ElementTagsListener implements EventSubscriberInterface
         /** @var \Pimcore\Model\Element\AbstractElement $copiedElement */
         $copiedElement = $e->getElement();
         /** @var \Pimcore\Model\Element\AbstractElement $baseElement */
-        $baseElement = $e->getAttribute('base_element');
+        $baseElement = $e->getArgument('base_element');
         \Pimcore\Model\Element\Tag::setTagsForElement($elementType, $copiedElement->getId(),
             \Pimcore\Model\Element\Tag::getTagsForElement($elementType, $baseElement->getId()));
     }
