@@ -298,8 +298,15 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
                 $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
+
+                return $return;
             }
-            Logger::error("to string not possible - " . $e->getMessage());
+
+            Logger::error("toString() returned an exception: {exception}", [
+                'exception' => $e
+            ]);
+
+            return '';
         }
 
         if (is_string($return) || is_numeric($return)) {

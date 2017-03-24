@@ -24,7 +24,6 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Facade\Translate;
-use Pimcore\Logger;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
@@ -181,6 +180,20 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             return;
         }
 
+        // check if view template exists and throw error before open tag is rendered
+        $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
+        if (!$this->templating->exists($viewTemplate)) {
+            $e = new ConfigurationException(sprintf(
+                'The view template "%s" for areabrick %s does not exist',
+                $viewTemplate,
+                $brick->getId()
+            ));
+
+            $this->logger->error($e->getMessage());
+
+            throw $e;
+        }
+
         $editmode = $view->editmode;
 
         echo $brick->getHtmlTagOpen($info);
@@ -195,7 +208,6 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         }
 
         // render view template
-        $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
         echo $this->templating->render(
             $viewTemplate,
             $view->getParameters()->all()

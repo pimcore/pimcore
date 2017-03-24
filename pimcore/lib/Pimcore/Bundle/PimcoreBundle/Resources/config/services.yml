@@ -230,7 +230,7 @@ services:
         calls:
             - [setLogger, ['@logger']]
         tags:
-            - { name: monolog.logger, channel: init }
+            - { name: monolog.logger, channel: pimcore }
 
     #
     # IMPLEMENTATION LOADERS
