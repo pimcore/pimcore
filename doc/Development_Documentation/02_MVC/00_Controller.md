@@ -2,103 +2,79 @@
 
 ## Introduction
 
-Pimcore controller play the designated role in the MVC pattern. They bind the design patterns together and contain or delegate 
-the functionality of the web application. It is good practise to keep the controllers as lean as possible and capsualte
+Pimcore controllers play the designated role in the MVC pattern. They bind the design patterns together and contain or delegate 
+the functionality of the application. It is good practise to keep the controllers as lean as possible and encapsulate
 the business logic into models or services/libraries. 
 
-Pimcore offers an abstract class (`Pimcore\Controller\Action\Frontend`), which must be implemented by your controllers 
-(or better use `Website\Controller\Action` out of your website folder). This abstract class adds some Pimcore specific 
- dispatching features - especially in combination with Pimcore Documents, multilanguage Support etc. 
+Pimcore offers an abstract class (`Pimcore\Bundle\PimcoreBundle\Controller\FrontendController`), which can be implemented by your controllers 
+(or better use `AppBundle\Controller\AbstractController` out of your website folder). This abstract class adds some Pimcore specific 
+ dispatching features - especially in combination with Pimcore Documents, multi-language support etc. 
 
-The naming of the file and the class is the same as in Zend Framework. 
-Because `website` is configured as the default module in the front controller, you don't have to add a prefix to your 
-controller class names.
+The naming of the file and the class is just the same as in Symfony. 
 
 ## Pimcore Specialities and Examples
 
 | Controller Name | File Name                   | Class Name        | Default View Directory               |
 |-----------------|-----------------------------|-------------------|--------------------------------------|
-| content         | `ContentController.php` | ContentController | `/website/views/scripts/content` |
-| news            | `NewsController.php`    | NewsController    | `/website/views/scripts/news`    |
+| Content         | `src/AppBundle/Controller/ContentController.php` | `AppBundle\Controller\ContentController` | `/app/Resources/views/Content` |
+| News            | `src/AppBundle/Controller/NewsController.php`    | `AppBundle\Controller\NewsController`    | `/app/Resources/views/News`    |
 
 In controllers, for every action there exists a separate method ending with the `Action` suffix. 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
-the `defaultAction` in the `DefaultController` which uses the view `/website/views/scripts/default/default.php`. 
+the `defaultAction` in the `DefaultController` which uses the view `/app/Resources/views/Default/default.html.php`. 
 
 Views are tied to actions implicitly using the filename. 
-You can override this by using `$this->renderScript('directory/viewname.php')`
- like in the example below.
+You can override this by using `return $this->render(":Bar:foo.html.php", ["param" => "value"]);`
+ like in the example below or you can of course just return a `Response` object, just the way how Symfony works.
 
 ```php
-use Website\Controller\Action;
 use Pimcore\Model\Document;
  
-class DefaultController extends Action {
+class DefaultController extends AbstractController {
  
-    public function init() {
-        parent::init();
-        //Add a layout to all actions in this controller using the default layout at website/views/layouts/layout.php
-        $this->enableLayout();
+    /**
+     * Home page action. Will use the template /app/Resources/views/Default/home.html.php
+    */
+    public function homeAction(Request $request) {
+        //Set a view variable with the name "foo" and the value "bar"
+        $this->view->foo = 'bar';
     }
      
     /**
-     * Home page action. Will use the template /website/views/scripts/default/home.php as view.
+    * Default page action. Will use the template /app/Resources/views/Default/default.html.php
     */
-    public function homeAction() {
-        //Set a view variable with the name "bodyClass" with the value "home"
-        $this->view->bodyClass = 'home';
-        //Add a <link> tag to the <head> element in the layout.
-        $this->view->headLink()->appendStylesheet('/css/home.css');
-        //Add a JavaScript tag to the <head> element in the layout.
-        $this->view->headScript()->appendFile('/js/home.js');
-    }
-     
-    /**
-    * Default page action. Will use the template /website/views/scripts/default/default.php as view.
-    */
-    public function defaultAction() {
+    public function defaultAction(Request $request) {
         //it is perfectly fine for an action to be empty.
     }
     
     /**
     * Example using a different template than the name of the action.
-    * Will use the template /website/views/scripts/default/somethingelse.php as view.
+    * Will use the template /app/Resources/views/Default/different.html.php as view.
     */
     public function differentAction() {
-        $this->view->bodyClass = 'different';
-        $this->renderScript('default/somethingelse.php');
+        return $this->render(":Default:somethingelse.html.php", ["foo" => "bar"]);
     }
     
     /**
      * This action returns a JSON response. 
     */
-    public function jsonAction() {
-        $this->_helper->json(array('key' => 'value'));
+    public function jsonAction(Request $request) {
+        $this->json(array('key' => 'value'));
+    }
+    
+    /**
+     * This returns a standard symfony Response object 
+    */
+    public function customAction(Request $request) {
+        return new Response("Just some text");
     }
 ```
 
-Put your controllers in the following directory: `/website/controllers`
+Put your controllers in the following directory: `/src/AppBundle/Controller`
 
-There are some helpers defined in `Pimcore\Controller\Action\Frontend` (the abstract class your controller must extend). 
-But the best way is to use `Website\Controller\Action` (`/website/lib/Website/Controller/Action.php`) which is already shipped with Pimcore 
-and implements the `Pimcore\Controller\Action\Frontend` and can be modified and extended the way you need it.
-
-###### Methods Available
-
-| Method                | Arguments                                    | Description                                                                                                                                              |
-|-----------------------|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `enableLayout`          | none                                   | Register Zend_Layout for you, if called you can use this layout in your views.                                                                           |
-| `disableLayout`         | none                                   | The opposite of enableLayout.                                                                                                                            |
-| `disableViewAutoRender` | none                                   | Disables the auto renderer for the current action, for actions which don't need a view.                                                                  |
-| `removeViewRenderer`    | none                                   | Removes the view renderer. This is not only for the current action, once the renderer is removed you can't render a view anymore, no matter which scope. |
-| `forceRender`           | none                                   | Call this method to force rendering, this can be useful when you need the response directly.                                                             |
-| `setDocument`           | `Pimcore\Model\Document $document` | With this method you can set the default document for the current action which will be available in the view and the action with `$this->document.`  |
-
-If you want to use one of the methods (hooks) below which are offered by ZF you have to call their parent:
-
-* `preDispatch`
-* `postDispatch`
-* `init`
+There are some helpers defined in `\Pimcore\Bundle\PimcoreBundle\Controller\FrontendController`. 
+But the best way is to use `\AppBundle\Controller\AbstractController` which is already shipped with Pimcore 
+and extends the `FrontendController` and can be modified and extended the way you need it.
 
 ###### There are also some properties which can be useful:
 
@@ -107,35 +83,4 @@ If you want to use one of the methods (hooks) below which are offered by ZF you 
 | `$this->document` | Document | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean  | True if you are in editmode (admin)                      |
    
-  
-Example:
-
-```php
-use Pimcore\Model\Document;
- ...
  
-public function init() {
-    parent::init();
-     
-    // example of properties
-    if ($this->document instanceof Document\Page) {
-           // do something
-    }
-    ...
-    // your custom code
-    ...
-}
- 
-public function preDispatch() {
-    parent::preDispatch();
-     
-    if ($this->editmode) {
-           // do something only in editmode
-    }
-    ...
-    // your custom code
-    ...
-}
- 
-...
-```
