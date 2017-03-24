@@ -126,8 +126,9 @@ directory:
 
 ```php
 <?php
+// src/AppBundle/Document/Areabrick/Iframe.php
 
-namespace DemoBundle\Document\Areabrick;
+namespace AppBundle\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 
@@ -157,7 +158,7 @@ brick metadata. Our view is rendered through the PHP engine and has a suffix of 
 use Twig or other templating engines as you wish.
 
 ```php
-// app/Resources/views/Areas/iframe/view.html.php
+<?php // app/Resources/views/Areas/iframe/view.html.php ?>
 <?php if ($this->editmode): ?>
     <div>
         <h2>IFrame</h2>
@@ -234,7 +235,7 @@ template will be resolved the same way as the view template.
 ```php
 <?php
 
-namespace DemoBundle\Document\Areabrick;
+namespace AppBundle\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 
@@ -281,7 +282,7 @@ view. However, you can use the action method to prepare data for the view. The `
 ```php
 <?php
 
-namespace DemoBundle\Document\Areabrick;
+namespace AppBundle\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Tag\Area\Info;
