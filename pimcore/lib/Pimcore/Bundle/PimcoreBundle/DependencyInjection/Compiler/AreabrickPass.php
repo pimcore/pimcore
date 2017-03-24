@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler;
 
 use Doctrine\Common\Util\Inflector;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
+use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -40,15 +41,21 @@ class AreabrickPass implements CompilerPassInterface
             $definition    = $container->getDefinition($id);
             $taggedAreas[] = $definition->getClass();
 
-            $areaManagerDefinition->addMethodCall('registerService', [$id]);
+
+            // tags must define the id attribute which will be used to register the brick
+            // e.g. { name: pimcore.area.brick, id: blockquote }
+            foreach ($tags as $tag) {
+                if (!array_key_exists('id', $tag)) {
+                    throw new ConfigurationException(sprintf('Missing "id" attribute on areabrick DI tag for service %s', $id));
+                }
+
+                $areaManagerDefinition->addMethodCall('registerService', [$tag['id'], $id]);
+            }
         }
 
         // autoload areas from bundles if not yet defined via service config
         if ($config['documents']['areas']['autoload']) {
-            $autoloadedIds = $this->autoloadAreabricks($container, $taggedAreas);
-            foreach ($autoloadedIds as $autoloadedId) {
-                $areaManagerDefinition->addMethodCall('registerService', [$autoloadedId]);
-            }
+            $this->autoloadAreabricks($container, $areaManagerDefinition, $taggedAreas);
         }
     }
 
@@ -65,41 +72,29 @@ class AreabrickPass implements CompilerPassInterface
      *  - AppBundle\Document\Areabrick\Foo\Bar\Baz
      *
      * @param ContainerBuilder $container
+     * @param Definition $areaManagerDefinition
      * @param array $excludedClasses
-     *
-     * @return array
-     *      Array of generated service IDs
      */
-    protected function autoloadAreabricks(ContainerBuilder $container, array $excludedClasses = [])
+    protected function autoloadAreabricks(ContainerBuilder $container, Definition $areaManagerDefinition, array $excludedClasses = [])
     {
         $bundles = $container->getParameter('kernel.bundles_metadata');
-        $areaIds = [];
-
         foreach ($bundles as $bundleName => $bundleMetadata) {
-            $bundleAreas = $this->findBundleAreas($bundleName, $bundleMetadata, $excludedClasses);
+            $bundleAreas = $this->findBundleBricks($bundleName, $bundleMetadata, $excludedClasses);
 
             foreach ($bundleAreas as $bundleArea) {
-                $areaIds[] = $bundleArea['serviceId'];
-                $this->processBundleArea($container, $bundleArea);
+                /** @var \ReflectionClass $reflector */
+                $reflector = $bundleArea['reflector'];
+
+                // add brick definition to container
+                $container->setDefinition($bundleArea['serviceId'], new Definition($reflector->getName()));
+
+                // register brick on the areabrick manager
+                $areaManagerDefinition->addMethodCall('registerService', [
+                    $bundleArea['brickId'],
+                    $bundleArea['serviceId']
+                ]);
             }
         }
-
-        return $areaIds;
-    }
-
-    /**
-     * Register bundle area on the container.
-     *
-     * @param ContainerBuilder $container
-     * @param array $bundleArea
-     */
-    protected function processBundleArea(ContainerBuilder $container, array $bundleArea)
-    {
-        /** @var \ReflectionClass $reflector */
-        $reflector  = $bundleArea['reflector'];
-        $definition = new Definition($reflector->getName());
-
-        $container->setDefinition($bundleArea['serviceId'], $definition);
     }
 
     /**
@@ -108,9 +103,10 @@ class AreabrickPass implements CompilerPassInterface
      * @param $name
      * @param $metadata
      * @param array $excludedClasses
+     *
      * @return array
      */
-    protected function findBundleAreas($name, $metadata, array $excludedClasses = [])
+    protected function findBundleBricks($name, $metadata, array $excludedClasses = [])
     {
         $directory = implode(DIRECTORY_SEPARATOR, [
             $metadata['path'],
@@ -154,9 +150,11 @@ class AreabrickPass implements CompilerPassInterface
             if (class_exists($className)) {
                 $reflector = new \ReflectionClass($className);
                 if ($reflector->isInstantiable() && $reflector->implementsInterface(AreabrickInterface::class)) {
+                    $brickId   = $this->generateBrickId($reflector);
                     $serviceId = $this->generateServiceId($name, $subNamespace, $shortClassName);
 
                     $areas[] = [
+                        'brickId'        => $brickId,
                         'serviceId'      => $serviceId,
                         'bundleName'     => $name,
                         'bundleMetadata' => $metadata,
@@ -170,6 +168,21 @@ class AreabrickPass implements CompilerPassInterface
     }
 
     /**
+     * GalleryTeaserRow -> gallery-teaser-row
+     *
+     * @param \ReflectionClass $reflector
+     *
+     * @return string
+     */
+    protected function generateBrickId(\ReflectionClass $reflector)
+    {
+        $id = Inflector::tableize($reflector->getShortName());
+        $id = str_replace('_', '-', $id);
+
+        return $id;
+    }
+
+    /**
      * Generate service ID from bundle name and sub-namespace
      *
      *  - AppBundle\Document\Areabrick\Foo         -> app.area.brick.foo
@@ -178,6 +191,7 @@ class AreabrickPass implements CompilerPassInterface
      * @param $bundleName
      * @param $subNamespace
      * @param $className
+     *
      * @return string
      */
     protected function generateServiceId($bundleName, $subNamespace, $className)
