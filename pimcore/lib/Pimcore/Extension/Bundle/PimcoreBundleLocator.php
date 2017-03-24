@@ -15,6 +15,7 @@
 namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Extension\Bundle\Exception\RuntimeException;
+use Pimcore\Tool\ClassUtils;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -81,7 +82,7 @@ class PimcoreBundleLocator
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $className = $this->findClassName($file);
+            $className = ClassUtils::findClassName($file);
             if ($className) {
                 $this->processBundleClass($className, $result);
             }
@@ -195,57 +196,5 @@ class PimcoreBundleLocator
         }
 
         $result[$reflector->getName()] = $reflector->getName();
-    }
-
-    /**
-     * Finds the fully qualified class name from a given PHP file by parsing the file content
-     *
-     * @see http://jarretbyrne.com/2015/06/197/
-     *
-     * @param SplFileInfo $file
-     *
-     * @return string
-     */
-    private function findClassName(SplFileInfo $file)
-    {
-        $namespace = '';
-        $class     = '';
-
-        $gettingNamespace = false;
-        $gettingClass     = false;
-
-        foreach (token_get_all($file->getContents()) as $token) {
-            // start collecting as soon as we find the namespace token
-            if (is_array($token) && $token[0] == T_NAMESPACE) {
-                $gettingNamespace = true;
-            } elseif (is_array($token) && $token[0] === T_CLASS) {
-                $gettingClass = true;
-            }
-
-            if ($gettingNamespace) {
-                if (is_array($token) && in_array($token[0], [T_STRING, T_NS_SEPARATOR])) {
-                    // append to namespace
-                    $namespace .= $token[1];
-                } elseif ($token === ';') {
-                    // namespace done
-                    $gettingNamespace = false;
-                }
-            }
-
-            if ($gettingClass) {
-                if (is_array($token) && $token[0] === T_STRING) {
-                    $class = $token[1];
-
-                    // all done
-                    break;
-                }
-            }
-        }
-
-        if (empty($class)) {
-            throw new RuntimeException(sprintf('Failed to get find class name in file %s', $file->getPathInfo()));
-        }
-
-        return empty($namespace) ? $class : $namespace . '\\' . $class;
     }
 }
