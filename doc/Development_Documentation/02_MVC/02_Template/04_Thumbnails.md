@@ -3,7 +3,7 @@
 ## Introduction
 When displaying images in templates, they should be optimized (e.g. size) for the actual use case and device. 
 When source images are stored as Pimcore Assets (as they should be), Pimcore can do all the optimizing work for you. 
-  Just use the Thumbnail functionality and let Pimcore transform the images the way you need them. 
+Just use the Thumbnail functionality and let Pimcore transform the images the way you need them. 
   
 To get all the information about Thumbnails, which possibilities exist and how to configure them, 
 please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_Thumbnails.md/README.md). 
@@ -12,6 +12,8 @@ please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_
 
 ```php
 <?php 
+    use Pimcore\Model\Asset;
+
     // Use directly on the asset object - myThumbnail is the name of the thumbnail configured in thumbnail configuration
     $asset = Asset::getByPath("/path/to/image.jpg");
     echo $asset->getThumbnail("myThumbnail")->getHTML();

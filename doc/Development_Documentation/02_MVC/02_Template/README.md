@@ -2,16 +2,23 @@
 
 ## Introduction
 
-In MVC the view part defines what is going to be presented to the user. 
-In Pimcore templates represent the view part. 
-
-In general the templates are located in: `/website/views/scripts/[controller]/[action].php` 
+In general the templates are located in: `/app/Resources/views/[Controller]/[action].html.php` 
 (both controller as well as action without their suffix).  
 
-Pimcore uses `\Zend_View` as the templating engine. 
+Pimcore uses an improved version of [Symfony's PHP templating engine](http://symfony.com/doc/current/templating/PHP.html).  
 Therefore the standard template language is plain PHP. 
-But other template languages could be used so Pimcore does not restrict the output technology. 
-The documentation uses PHP as template language though. 
+But other templating languages such as Twig could be used so Pimcore does not restrict the output technology. 
+The documentation uses PHP as template language though (there may be docs for Twig in the future).
+  
+We've improved the default Symfony PHP engine, by adding the `$this` context and an object orientated access to properties 
+and templating helpers (eg. `$this->slots()` instead of `$view["slots"]`), which is basically the same as using 
+the `$view` variable with the array based syntax or local variables when using the default Symfony style. 
+However the default syntax is still available and ready to use.
+We've decided to implement the `$this` context for mainly 2 reasons: easier migration from Pimcore 4 and better IDE support
+since with the OOP approach we have the full power of auto-complete and code suggestions. 
+
+> It's recommended to have a look into [Symfony's Templating Component](http://symfony.com/doc/current/templating.html) 
+which covers much  more topics and goes a bit deeper into detail. 
 
 ## Pimcore Specialities and Examples
 
@@ -37,9 +44,7 @@ possible and use PHP just printing out data.
             THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE
         </div>
         <div class="time">
-            <?php 
-                echo date("Y-m-d H:i:s");
-            ?>
+            <?= date("Y-m-d H:i:s");  ?>
         </div>
     </div>
 </div>
@@ -51,7 +56,7 @@ possible and use PHP just printing out data.
 #### Pimcore Specialities
 Pimcore provides a few special functionalities to make templates even more powerful. 
 These are explained in following sub chapters:
-* [Layouts](./00_Layouts.md) - Use layouts to define everything that repeats on a page. 
+* [Template inheritance and Layouts](./00_Layouts.md) - Use layouts and template inheritance to define everything that repeats on a page. 
 * [View Helpers](./02_Templating_Helpers/README.md) - Use view helpers for things like includes, translations, cache, glossary, etc.
 * [Thumbnails](./04_Thumbnails.md) - Learn how to include images into templates with using Thumbnails. 
 
