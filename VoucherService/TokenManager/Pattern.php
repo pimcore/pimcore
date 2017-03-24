@@ -501,8 +501,6 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
     {
-        $translator = \Pimcore::getContainer()->get("translator");
-
         $viewParamsBag['msg'] = [];
 
         $tokens = new Token\Listing();
@@ -530,7 +528,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             $viewParamsBag['count'] = sizeof($tokens);
 
         } else {
-            $viewParamsBag['msg']['result'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-token-noresult', [], 'admin');
+            $viewParamsBag['msg']['result'] = 'plugin_onlineshop_voucherservice_msg-error-token-noresult';
         }
 
         $viewParamsBag['msg']['error'] = $params['error'];
@@ -538,10 +536,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [
-            $translator->trans('plugin_onlineshop_voucherservice_settings-count', [], 'admin') => $this->getConfiguration()->getCount(),
-            $translator->trans('plugin_onlineshop_voucherservice_settings-prefix', [], 'admin') => $this->getConfiguration()->getPrefix(),
-            $translator->trans('plugin_onlineshop_voucherservice_settings-length', [], 'admin') => $this->getConfiguration()->getLength(),
-            $translator->trans('plugin_onlineshop_voucherservice_settings-exampletoken', [], 'admin') => $this->getExampleToken(),
+            'plugin_onlineshop_voucherservice_settings-count' => $this->getConfiguration()->getCount(),
+            'plugin_onlineshop_voucherservice_settings-prefix' => $this->getConfiguration()->getPrefix(),
+            'plugin_onlineshop_voucherservice_settings-length' => $this->getConfiguration()->getLength(),
+            'plugin_onlineshop_voucherservice_settings-exampletoken' => $this->getExampleToken(),
         ];
 
         $statisticUsagePeriod = 30;

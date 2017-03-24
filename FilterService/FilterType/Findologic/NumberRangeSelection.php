@@ -123,14 +123,13 @@ class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBund
     private function createLabel($data) {
         if(is_array($data)) {
             if(!empty($data['from'])) {
-                $translator = \Pimcore::getContainer()->get('translator');
                 if(!empty($data['to'])) {
                     return $data['from'] . " - " . $data['to'];
                 } else {
-                    return $translator->trans("more than") . " " . $data['from'];
+                    return $this->translator->trans("more than") . " " . $data['from'];
                 }
             } else if(!empty($data['to'])) {
-                return $translator->trans("less than") . " " . $data['to'];
+                return $this->translator->trans("less than") . " " . $data['to'];
             }
         } else {
             return "";

@@ -23,6 +23,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigExcept
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Config\Config;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Class PricingManager
@@ -41,11 +42,17 @@ class PricingManager implements IPricingManager
     protected $rules;
 
     /**
+     * @var SessionInterface
+     */
+    protected $containerSession;
+
+    /**
      * @param Config $config
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, SessionInterface $containerSession )
     {
         $this->config = new HelperContainer($config, "pricingmanager");
+        $this->containerSession = $containerSession;
     }
 
 
@@ -169,7 +176,7 @@ class PricingManager implements IPricingManager
     public function getEnvironment()
     {
         $environment = new Environment();
-        $environment->setSession( \Pimcore::getContainer()->get("session")->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT) );
+        $environment->setSession( $this->containerSession->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT) );
         return $environment;
     }
 

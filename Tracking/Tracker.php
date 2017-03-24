@@ -34,10 +34,10 @@ abstract class Tracker implements ITracker
     /**
      * @param ITrackingItemBuilder $trackingItemBuilder
      */
-    public function __construct(ITrackingItemBuilder $trackingItemBuilder)
+    public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $renderer)
     {
         $this->trackingItemBuilder = $trackingItemBuilder;
-        $this->renderer = \Pimcore::getContainer()->get('templating');
+        $this->renderer = $renderer;
     }
 
     /**

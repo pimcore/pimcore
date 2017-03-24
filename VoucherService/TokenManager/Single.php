@@ -73,9 +73,8 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
     {
-        $translator = \Pimcore::getContainer()->get("translator");
         if ($this->getConfiguration()->getToken() != $this->getCodes()[0]['token']) {
-            $viewParamsBag['generateWarning'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-overwrite-single', [], 'admin');
+            $viewParamsBag['generateWarning'] = 'plugin_onlineshop_voucherservice_msg-error-overwrite-single';
             $viewParamsBag['settings']['Original Token'] = $this->getCodes()[0];
         }
 
@@ -88,8 +87,8 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         $viewParamsBag['msg']['success'] = $params['success'];
 
         $viewParamsBag['settings'] = [
-            $translator->trans('plugin_onlineshop_voucherservice_settings-token', [], 'admin') => $this->getConfiguration()->getToken(),
-            $translator->trans('plugin_onlineshop_voucherservice_settings-max-usages', [], 'admin') => $this->getConfiguration()->getUsages(),
+            'plugin_onlineshop_voucherservice_settings-token' => $this->getConfiguration()->getToken(),
+            'plugin_onlineshop_voucherservice_settings-max-usages' => $this->getConfiguration()->getUsages(),
         ];
 
         $statisticUsagePeriod = 30;

@@ -83,7 +83,7 @@ if ($this->paginator) {
                         <?php } elseif ($this->msg['success']) { ?>
                             <div class="alert alert-success js-fadeout"> <?= $this->msg['success'] ?>  </div>
                        <?php } elseif ($this->msg['result']) { ?>
-                            <div class="alert alert-info js-fadeout"> <?= $this->msg['result'] ?>  </div>
+                            <div class="alert alert-info js-fadeout"> <?= $this->translateAdmin($this->msg['result']) ?>  </div>
                         <?php } ?>
                     </div>
 

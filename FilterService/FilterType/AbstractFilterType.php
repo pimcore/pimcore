@@ -17,40 +17,61 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Config\Config;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AbstractFilterType {
+abstract class AbstractFilterType
+{
 
     const EMPTY_STRING = '$$EMPTY$$';
 
     protected $script;
     protected $config;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var EngineInterface
+     */
+    protected $renderer;
+
     /**
      * @param $script string - script for rendering the filter frontend
-     * @param $config Config - for more settings (optional)
+     * @param $config Config - for more settings
+     * @param $translator TranslatorInterface - translator for text translation im necessary
+     * @param $renderer EngineInterface - renderer for view snippet
      */
-    public function __construct($script, $config = null) {
+    public function __construct($script, $config, TranslatorInterface $translator, EngineInterface $renderer)
+    {
         $this->script = $script;
         $this->config = $config;
+        $this->translator = $translator;
+        $this->renderer = $renderer;
     }
 
 
-
-    protected function getField(AbstractFilterDefinitionType $filterDefinition) {
+    protected function getField(AbstractFilterDefinitionType $filterDefinition)
+    {
         $field = $filterDefinition->getField();
-        if($field instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
+        if ($field instanceof IndexFieldSelection) {
             return $field->getField();
         }
         return $field;
     }
 
-    protected function getPreSelect(AbstractFilterDefinitionType $filterDefinition) {
+    protected function getPreSelect(AbstractFilterDefinitionType $filterDefinition)
+    {
         $field = $filterDefinition->getField();
-        if($field instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
+        if ($field instanceof IndexFieldSelection) {
             return $field->getPreSelect();
-        } else if(method_exists($filterDefinition, "getPreSelect")) {
+        } else if (method_exists($filterDefinition, "getPreSelect")) {
             return $filterDefinition->getPreSelect();
         }
         return null;
@@ -88,7 +109,8 @@ abstract class AbstractFilterType {
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param IProductList $productList
      */
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         //by default do thing here
     }
 
@@ -96,7 +118,7 @@ abstract class AbstractFilterType {
     /**
      * sort result
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param array                                                    $result
+     * @param array $result
      *
      * @return array
      */
@@ -112,16 +134,15 @@ abstract class AbstractFilterType {
      * @param $parameterBag array
      * @return string
      */
-    protected function render($script, $parameterBag) {
-        $renderer = \Pimcore::getContainer()->get('templating');
-
+    protected function render($script, $parameterBag)
+    {
         try {
-            return $renderer->render($script, $parameterBag);
+            return $this->renderer->render($script, $parameterBag);
         } catch (\Exception $e) {
 
             //legacy fallback for view rendering
             $prefix = PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts";
-            return $renderer->render($prefix . $script, $parameterBag);
+            return $this->renderer->render($prefix . $script, $parameterBag);
 
         }
     }

@@ -17,10 +17,14 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Config\Config;
 use Pimcore\Logger;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class FilterService
@@ -31,10 +35,22 @@ class FilterService {
     protected $config;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var EngineInterface
+     */
+    protected $renderer;
+
+    /**
      * @param $config Config OnlineShop Configuration
      */
-    public function __construct($config) {
+    public function __construct($config, TranslatorInterface $translator, EngineInterface $renderer) {
         $this->config = $config;
+        $this->translator = $translator;
+        $this->renderer = $renderer;
     }
 
     /**
@@ -42,11 +58,11 @@ class FilterService {
      * just the name if the name is not defined in the OnlineShop configuration
      *
      * @param $name
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType | string
+     * @return AbstractFilterType | string
      */
     public function getFilterDefinitionClass($name) {
         if($this->config->$name) {
-            return new $this->config->$name->class($this->config->$name->script,$this->config->$name);
+            return new $this->config->$name->class($this->config->$name->script,$this->config->$name, $this->translator, $this->renderer);
         } else {
             return $name; //throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException($name . " not as filter type configured.");
         }
@@ -73,12 +89,12 @@ class FilterService {
     /**
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters
      *
-     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject filter definition object to use
+     * @param AbstractFilterDefinition $filterObject filter definition object to use
      * @param IProductList $productList product list to use and add conditions to
      * @param array $params request params with eventually set filter conditions
      * @return array returns set filters
      */
-    public function initFilterService(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject, IProductList $productList, $params = array()) {
+    public function initFilterService(AbstractFilterDefinition $filterObject, IProductList $productList, $params = array()) {
         $currentFilter = array();
 
         if ($filterObject->getFilters()) {

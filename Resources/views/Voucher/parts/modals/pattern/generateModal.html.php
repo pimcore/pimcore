@@ -33,7 +33,7 @@
                             <tbody>
                             <?php foreach ($this->settings as $name => $setting) { ?>
                                 <tr>
-                                    <td><?= $name ?></td>
+                                    <td><?= $this->translateAdmin($name) ?></td>
                                     <td>
                                         <?php if (is_numeric($setting)) {
                                             echo number_format($setting, 0, ',', ' ');

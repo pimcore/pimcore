@@ -19,6 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterTyp
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @deprecated
@@ -32,10 +34,17 @@ class ProxyFilter extends AbstractFilterType
     private $proxy;
     protected  $field;
 
-
-    function __construct($script,$config)
+    /**
+     * ProxyFilter constructor.
+     * @param string $script
+     * @param \Pimcore\Config\Config $config
+     * @param TranslatorInterface $translator
+     * @param EngineInterface $engine
+     * @throws \Exception
+     */
+    function __construct($script, $config, TranslatorInterface $translator, EngineInterface $engine)
     {
-        parent::__construct($script, $config);
+        parent::__construct($script, $config, $translator, $engine);
         if (!$config->proxyclass){
             throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting proxyclass is missing!");
         }
@@ -43,7 +52,7 @@ class ProxyFilter extends AbstractFilterType
             throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting field is missing!");
         }
 
-        $this->proxy = new $config->proxyclass($script, $config);
+        $this->proxy = new $config->proxyclass($script, $config, $translator, $engine);
         $this->field= $config->field;
     }
 

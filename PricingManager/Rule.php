@@ -17,12 +17,12 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action\IProductDiscount;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition\IBracket;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
-use Pimcore\Tool;
 
 class Rule extends \Pimcore\Model\AbstractModel implements IRule
 {
@@ -410,24 +410,6 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
             return (string) $language;
         }
 
-        // try to get the language from the service container
-        try {
-            $locale = null;
-
-            if (Runtime::isRegistered('model.locale')) {
-                $locale = Runtime::get('model.locale');
-            }
-
-            if (null === $locale) {
-                $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
-            }
-
-            if (Tool::isValidLanguage($locale)) {
-                return (string) $locale;
-            }
-            throw new \Exception("Not supported language");
-        } catch (\Exception $e) {
-            return Tool::getDefaultLanguage();
-        }
+        return Factory::getInstance()->getEnvironment()->getSystemLocale();
     }
 }

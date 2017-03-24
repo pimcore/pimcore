@@ -18,6 +18,7 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigExcept
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct;
 use Pimcore\Config\Config;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class TrackingManager implements ITrackingManager
 {
@@ -31,11 +32,17 @@ class TrackingManager implements ITrackingManager
     protected $trackingItemBuilders = [];
 
     /**
+     * @var EngineInterface
+     */
+    protected $renderer;
+
+    /**
      * @param Config $config
      * @throws InvalidConfigException
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, EngineInterface $renderer)
     {
+        $this->renderer = $renderer;
         $this->processConfig($config);
     }
 
@@ -68,7 +75,7 @@ class TrackingManager implements ITrackingManager
         }
 
         $itemBuilder = $this->getItemBuilder($cfg->trackingItemBuilder);
-        $tracker     = new $className($itemBuilder);
+        $tracker     = new $className($itemBuilder, $this->renderer);
 
         if($tracker instanceof ITracker) {
             $this->registerTracker($cfg->name, $tracker);

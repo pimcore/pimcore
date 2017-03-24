@@ -206,4 +206,10 @@ interface IEnvironment extends IComponent {
     public function getCurrentSubTenant();
 
 
+    /**
+     * gets current system locale
+     *
+     * @return null|string
+     */
+    public function getSystemLocale();
 }

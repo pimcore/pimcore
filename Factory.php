@@ -169,7 +169,11 @@ class Factory {
             throw new InvalidConfigException("No Environment class defined.");
         } else {
             if (class_exists($config->onlineshop->environment->class)) {
-                $this->environment = new $config->onlineshop->environment->class($config->onlineshop->environment->config);
+
+                $session = \Pimcore::getContainer()->get('session');
+                $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+
+                $this->environment = new $config->onlineshop->environment->class($config->onlineshop->environment->config, $session, $localeService);
                 if (!($this->environment instanceof IEnvironment)) {
                     throw new InvalidConfigException("Environment class " . $config->onlineshop->environment->class . ' does not implement IEnvironment.');
                 }
@@ -224,7 +228,7 @@ class Factory {
         if (!empty($config->onlineshop->trackingmanager->class)) {
             $trackingManagerClass = $config->onlineshop->trackingmanager->class;
             if (class_exists($trackingManagerClass)) {
-                $instance = new $trackingManagerClass($config->onlineshop->trackingmanager->config);
+                $instance = new $trackingManagerClass($config->onlineshop->trackingmanager->config, \Pimcore::getContainer()->get('templating'));
                 if ($instance instanceof ITrackingManager) {
                     $this->trackingManager = $instance;
                 } else {
@@ -349,7 +353,7 @@ class Factory {
             throw new InvalidConfigException("No PricingManager class defined.");
         } else {
             if (class_exists($config->onlineshop->pricingmanager->class)) {
-                $this->pricingManager = new $config->onlineshop->pricingmanager->class($config->onlineshop->pricingmanager->config);
+                $this->pricingManager = new $config->onlineshop->pricingmanager->class($config->onlineshop->pricingmanager->config, \Pimcore::getContainer()->get('session'));
                 if (!($this->pricingManager instanceof IPricingManager)) {
                     throw new InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . ' does not implement \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPricingManager.');
                 }
@@ -564,7 +568,10 @@ class Factory {
             $filterTypes = $this->config->onlineshop->filtertypes;
         }
 
-        return new FilterService($filterTypes);
+        $translator = \Pimcore::getContainer()->get('translator');
+        $renderer =  \Pimcore::getContainer()->get('templating');
+
+        return new FilterService($filterTypes, $translator, $renderer);
     }
 
 

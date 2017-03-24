@@ -17,10 +17,13 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Locale;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Cache\Runtime;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Environment implements IEnvironment {
     const SESSION_KEY_CUSTOM_ITEMS = "customitems";
@@ -30,8 +33,6 @@ class Environment implements IEnvironment {
     const SESSION_KEY_ASSORTMENT_SUB_TENANT = "currentassortmentsubtenant";
     const SESSION_KEY_CHECKOUT_TENANT = "currentcheckouttenant";
     const USER_ID_NOT_SET = -1;
-
-    protected $sessionNamespace = "onlineshop";
 
     /**
      * @var AttributeBagInterface
@@ -59,6 +60,19 @@ class Environment implements IEnvironment {
      * @var Currency
      */
     protected $defaultCurrency = null;
+
+    /**
+     * locale set on container
+     *
+     * @var Locale
+     */
+    protected $localeService = null;
+
+    /**
+     * @var SessionInterface
+     */
+    protected $containerSession = null;
+
     /**
      * current transient checkout tenant
      * this value will not be stored into the session and is only valid for current process
@@ -68,8 +82,12 @@ class Environment implements IEnvironment {
      */
     protected $currentTransientCheckoutTenant = null;
 
-    public function __construct($config) {
+    public function __construct($config, SessionInterface $containerSession, Locale $localeService) {
+        $this->localeService = $localeService;
+        $this->containerSession = $containerSession;
+
         $this->loadFromSession();
+
 
         $this->defaultCurrency = new Currency((string)$config->defaultCurrency);
     }
@@ -162,28 +180,28 @@ class Environment implements IEnvironment {
 
     public function clearEnvironment() {
         $key = self::SESSION_KEY_CUSTOM_ITEMS;
-        unset($this->session->$key);
+        $this->session->remove($key);
         $this->customItems = null;
 
         $key = self::SESSION_KEY_USERID;
-        unset($this->session->$key);
+        $this->session->remove($key);
         $this->userId = null;
 
         $key = self::SESSION_KEY_ASSORTMENT_TENANT;
-        unset($this->session->$key);
+        $this->session->remove($key);
         $this->currentAssortmentTenant = null;
 
         $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
-        unset($this->session->$key);
+        $this->session->remove($key);
         $this->currentAssortmentSubTenant = null;
 
         $key = self::SESSION_KEY_CHECKOUT_TENANT;
-        unset($this->session->$key);
+        $this->session->remove($key);
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
 
         $key = self::SESSION_KEY_USE_GUEST_CART;
-        unset($this->session->$key);
+        $this->session->remove($key);
         $this->useGuestCart = false;
     }
 
@@ -335,23 +353,33 @@ class Environment implements IEnvironment {
      */
     protected function buildSession()
     {
-        $session = \Pimcore::getContainer()->get("session");
-        /** @var NamespacedAttributeBag $bag */
-        return $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
+        return $this->containerSession->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
     }
 
     /**
-     * @return string
+     * gets current system locale
+     *
+     * @return null|string
      */
-    public function getSessionNamespace()
-    {
-        return $this->sessionNamespace;
-    }
-    /**
-     * @param string $sessionNamespace
-     */
-    public function setSessionNamespace($sessionNamespace)
-    {
-        $this->sessionNamespace = $sessionNamespace;
+    public function getSystemLocale() {
+        // try to get the language from the service container
+        try {
+            $locale = null;
+
+            if (Runtime::isRegistered('model.locale')) {
+                $locale = Runtime::get('model.locale');
+            }
+
+            if (null === $locale) {
+                $locale = $this->localeService->findLocale();
+            }
+
+            if (Tool::isValidLanguage($locale)) {
+                return (string) $locale;
+            }
+            throw new \Exception("Not supported language");
+        } catch (\Exception $e) {
+            return Tool::getDefaultLanguage();
+        }
     }
 }

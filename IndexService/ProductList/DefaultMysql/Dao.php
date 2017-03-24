@@ -42,11 +42,11 @@ class Dao {
      */
     protected $logger;
 
-    public function __construct(IProductList $model) {
+    public function __construct(IProductList $model, Logger $logger) {
         $this->model = $model;
         $this->db = \Pimcore\Db::get();
 
-        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_sql");
+        $this->logger = $logger;
     }
 
 

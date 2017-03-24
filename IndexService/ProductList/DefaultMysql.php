@@ -18,7 +18,10 @@
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 
@@ -39,7 +42,7 @@ class DefaultMysql implements IProductList
     protected $tenantName;
 
     /**
-     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
+     * @var IMysqlConfig
      */
     protected $tenantConfig;
 
@@ -64,7 +67,7 @@ class DefaultMysql implements IProductList
     protected $offset;
 
     /**
-     * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
+     * @var AbstractCategory
      */
     protected $category;
 
@@ -84,12 +87,12 @@ class DefaultMysql implements IProductList
     protected $logger;
 
 
-    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig) {
+    public function __construct(IMysqlConfig $tenantConfig) {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
-        $this->resource = new DefaultMysql\Dao($this);
 
         $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_sql");
+        $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
     /**
@@ -274,7 +277,7 @@ class DefaultMysql implements IProductList
     }
 
 
-    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category) {
+    public function setCategory(AbstractCategory $category) {
         $this->products = null;
         $this->category = $category;
     }
@@ -648,7 +651,7 @@ class DefaultMysql implements IProductList
             $orderByStringArray = array();
             foreach($directionOrderKeys as $keyDirection) {
                 $key = $keyDirection[0];
-                if($key instanceof \Pimcore\Model\Object\Data\IndexFieldSelection) {
+                if($key instanceof IndexFieldSelection) {
                     $key = $key->getField();
                 }
                 $direction = $keyDirection[1];
@@ -675,7 +678,7 @@ class DefaultMysql implements IProductList
     }
 
     /**
-     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
+     * @return IMysqlConfig
      */
     public function getCurrentTenantConfig() {
         return $this->tenantConfig;
