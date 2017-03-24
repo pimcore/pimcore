@@ -77,7 +77,6 @@ And you can see the effect, below:
 | `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                  |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
 | `areablock_toolbar` | array  | Array with option that allows you to change the position of the toolbar.                                                                                                                     |
-| `areaDir`           | string | Absolute path (from document-root) to an area directory, only areas out of this path will be shown eg. `/website/views/customAreas/`                                                         |
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ## Brick-specific Configuration

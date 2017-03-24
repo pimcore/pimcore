@@ -2,62 +2,169 @@
 
 ## Architecture of a Brick
 
-You can put your bricks into `/website/views/areas`.
-Two mandatory files for bricks are: `view.php` and `area.xml`. 
-There are also three optional files" `action.php`, `edit.php`, `icon.png`.
+A brick is an instance of `Pimcore\Extension\Document\Areabrick\AreabrickInterface` which can either be auto-loaded
+by saving the brick to a special namespace inside your bundle or by defining the brick as a service and adding it to the
+list of available bricks through a DI tag. The brick class is the only mandatory file for a brick, however most bricks
+will at least implement a view template which is rendered in frontend and editmode.
 
-If you put an icon.png (16x16 pixel) into the brick's folder, this icon is added automatically to the toolbar, 
-there's no need to specify the icon in the area.xml again.
- 
-The following screenshot shows the standard architecture of a brick:  
-![Bricks architecture overview](../../../img/bricks_architecture_overview.png)
+The templates itself are normal templates which are passed to the rendering engine. Therefore you can use all 
+existing templating helpers and [Pimcore editables](../README.md).
 
-The area.xml contains some meta-infos about the brick, 
-and the view.php is a simple `\Zend_View` - script where you can use all [Pimcore editables](../README.md).
+
+## Brick registration
+
+A brick will be registered on the system and is represented by a brick ID which has to be unique throughout the
+system. If a brick ID is registered twices (e.g. by multiple bundles), an error will be raised. The simple way to 
+register a brick is to just save it to a special namespace `Document\Areabrick` inside your bundle. Every bundle will
+be scanned for classes implementing `AreabrickInterface` and all found bricks will be automatically registered to 
+the system. The brick ID will be built from the class name of the implementing class by converting the class name to 
+dashed case. For example a brick named `MyCustomAreaBrick` will be automatically registered as `my-custom-area-brick`.
+
+A basic brick implementation could look like the following. As it is defined in the special namespace, Pimcore will
+implicitely auto-create a service `app.area.brick.iframe` and register it on the areabrick manager with the ID `iframe`.
+
+```php
+<?php
+
+namespace AppBundle\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
+
+class Iframe implements AreabrickInterface
+{
+    // implementing class methods
+}
+```
+
+If you need more control over the brick instance (e.g. because your brick has dependencies on other services or you
+want to specify the brick ID manually), you can add the service definition yourself and tag the service with the DI
+tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto-registration, even if they're
+defined in the special namespace. Let's define our brick as above, but assume it needs acess to a logger instance:
+
+```yml
+# a service.yml file defining services
+services:
+    app.area.brick.iframe:
+        class: AppBundle\Document\Areabrick\Iframe
+        arguments: ['@logger']
+        tags:
+            - { name: pimcore.area.brick, id: iframe }
+```
+
+This will register the brick as above, but you have control over the brick ID and are able to make use of the
+container for dependencies.
+
+> Although it might be tempting to overwrite the `getId()` method in your bricks, please make sure the brick always
+refers to the ID which is set via `setId($id)` when the brick is registered. Overriding `getId()` won't affect the
+brick ID as it is registered on the system as bricks are lazy-loaded. The areabrick manager will set the registered 
+ID when the brick instance is fetched.
+
+## Brick template auto discovery
+
+For convenience, you can create a new brick by extending `Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick`
+to make use of template auto-discovery (thus, needing a minimum of code to get started). The template area brick 
+implements the `TemplateAreabrickInterface` which defines the following methods you can use to control template 
+auto-discovery. Please make sure your brick is defined inside a bundle as otherwise your templates can't be 
+auto-discovered.
+
+```php
+interface TemplateAreabrickInterface extends AreabrickInterface
+{
+    const TEMPLATE_LOCATION_GLOBAL = 'global';
+    const TEMPLATE_LOCATION_BUNDLE = 'bundle';
+
+    const TEMPLATE_SUFFIX_PHP  = 'html.php';
+    const TEMPLATE_SUFFIX_TWIG = 'html.twig';
+
+    /**
+     * Determines if template should be auto-located in area bundle or in app/Resources
+     *
+     * @return string
+     */
+    public function getTemplateLocation();
+
+    /**
+     * Returns view suffix used to auto-build view names
+     *
+     * @return string
+     */
+    public function getTemplateSuffix();
+}
+```
+
+The template location defines the base path which will be used to find your templates. It resolves to the following 
+locations. `<bundlePath>` is the filesystem path of the bundle the brick resides in, `<brickId>` the ID of the brick 
+as registered on the areabrick manager (see below).
+
+| Location | Path                                           |
+|----------|------------------------------------------------|
+| global   | `app/Resources/views/Areas/<brickId>`          |
+| bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
+
+
+Depending on the template location, the following files will be used. You can always completely control locations by 
+implementing the methods for templates and icon yourself (see `AreabrickInterface`):
+
+| Type |  Location |
+|---------------------------|-------------------------------------------------------------------------------------------------|
+| view template | `<templateLocation>/view.<suffix>` |
+| edit template | `<templateLocation>/edit.<suffix>` | 
+
+
+If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
+in editmode. If the icon is at another location, you can override the `getIcon()` method and specify an URL to be 
+included as icon. When rendering editmode, the following location will be searched for the brick icon and is expected
+ to be a 16x16 pixel PNG: `<bundlePath>/Resources/public/areas/<brickId>/icon.png` which resolves to the URL  
+ `/bundles/<bundleUrl>/areas/<brickId>/icon.png` when included in editmode.
 
 ## How to Create a Brick
  
-Let's suppose, that our brick is responsible for generating an `<iframe>` containing contents from a specified url in the editmode.
+Let's suppose, that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
+from a specified url in the editmode. First of all, let's update the class to add metadata for the extension manager, to
+make use of template auto-discovery and to load the view template from `app/Resources/views` instead of the bundle
+directory:
 
-The directories structure in `website/views` looks like the following:  
-![Directories structure - the iframe brick](../../../img/bricks_iframe_directories.png)
+```php
+<?php
 
-First of all we need the area.xml file containing the meta-data: 
-```xml
-<?xml version="1.0"?>
-<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
-    <id>iframe</id>
-    <name>Iframe</name>
-    <description>Embed contents from other URL (websites) via iframe</description>
-    
-    <!-- the following infos are optional -->
-    <icon>/pimcore/static/img/icon/html.png</icon>
-    <version>1.0</version>
-    
-    <!-- you can add your custom configurations as well -->
-    <myCustomConfig>MyValue</myCustomConfig>
-</zend-config>
+namespace DemoBundle\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
+
+class Iframe extends AbstractTemplateAreabrick
+{
+    public function getName()
+    {
+        return 'IFrame';
+    }
+
+    public function getDescription()
+    {
+        return 'Embed contents from other URL (websites) via iframe';
+    }
+
+    public function getTemplateLocation()
+    {
+        return static::TEMPLATE_LOCATION_GLOBAL;
+    }
+}
 ```
 
-After `area.xml` you have to create the view script, called `view.php`.
+Let's create a view as next step. Views behave exactly as native controller views and you have access to the current 
+document, to editmode and to editables and templating helpers as everywhere else. In addition there's a `brick` 
+variable on the view which gives you access to the brick instance. A `info` variable (see below) gives you access to 
+brick metadata. Our view is rendered through the PHP engine and has a suffix of `.html.php` however you're free to 
+use Twig or other templating engines as you wish.
 
-There is an info-object provided which contains information about the current brick. 
-You can access this info-object within your view using `$this->brick`, the object contains the configuration from above (`\Zend_Config`) an some other metadata (described later).
-
-The `view.php` file would look like, below.
 ```php
-<?php if($this->editmode): ?>
-    <?php
-    // with $this->brick->getPath() you get the path of the area out of the info-object.
-    ?>
-    <link rel="stylesheet" type="text/css" href="<?= $this->brick->getPath(); ?>/editmode.css" />
-
+// app/Resources/views/Areas/iframe/view.html.php
+<?php if ($this->editmode): ?>
     <div>
         <h2>IFrame</h2>
         <div>
             URL: <?= $this->input("iframe_url"); ?>
         </div>
-        <br />
+        <br/>
         <b>Advanced Configuration</b>
         <div>
             Width: <?= $this->numeric("iframe_width"); ?>px (default: 100%)
@@ -70,24 +177,26 @@ The `view.php` file would look like, below.
         </div>
     </div>
 <?php else: ?>
-    <?php if(!$this->input("iframe_url")->isEmpty()): ?>
-    <?php
-            // defaults
-            $transparent = "false";
-            $width = "100%";
-            $height = "400";
+    <?php if (!$this->input("iframe_url")->isEmpty()): ?>
 
-            if(!$this->numeric("iframe_width")->isEmpty()) {
-                $width = (string) $this->numeric("iframe_width");
-            }
-            if(!$this->numeric("iframe_height")->isEmpty()) {
-                $height = (string) $this->numeric("iframe_height");
-            }
-            if($this->checkbox("iframe_transparent")->isChecked()) {
-                $transparent = "true";
-            }
+        <?php
+        // defaults
+        $transparent = "false";
+        $width       = "100%";
+        $height      = "400";
+
+        if (!$this->numeric("iframe_width")->isEmpty()) {
+            $width = (string)$this->numeric("iframe_width");
+        }
+        if (!$this->numeric("iframe_height")->isEmpty()) {
+            $height = (string)$this->numeric("iframe_height");
+        }
+        if ($this->checkbox("iframe_transparent")->isChecked()) {
+            $transparent = "true";
+        }
         ?>
-    <iframe src="<?= $this->input("iframe_url"); ?>" width="<?= $width; ?>" height="<?= $height; ?>" allowtransparency="<?= $transparent; ?>" frameborder="0" ></iframe>
+
+        <iframe src="<?= $this->input("iframe_url"); ?>" width="<?= $width; ?>" height="<?= $height; ?>" allowtransparency="<?= $transparent; ?>" frameborder="0"></iframe>
 
     <?php endif; ?>
 <?php endif; ?>
@@ -102,30 +211,54 @@ In editmode you can see the configuration for the Iframe brick:
 
 ## The Brick ***info-object***
 
-As mentioned before, the info-object contains useful information about the current brick.
-It is available as a common view variable (`$this->brick`) in your view scripts (`edit.php` and `view.php`).
- 
-All available methods in your view are listed below (both in edit.php and view.php):
+Brick views and methods will have access to an `Info` object containing metadata about the current brick. It is 
+exposed as `info` variable on views and passed to brick methods as argument. Many methods exist for historical 
+reasons, but a couple of methods could be useful when implementing your own bricks.
 
-| Method                      | Description                                                                                                        |
-|-----------------------------|--------------------------------------------------------------------------------------------------------------------|
-| `$this->brick->getId()`       | Returns the ID of the current brick                                                                                |
-| `$this->brick->getConfig()`   | Returns the configuration (`\Zend_Config`) out of `area.xml` (to get your custom properties, ... )                 |
-| `$this->brick->getIndex()`    | Returns the current index inside the areablock                                                                     |
-| `$this->brick->getPath()`     | Returns the (web-)path to the current brick, this is useful for embedding external stylesheets, javascripts, ...    |
+| Method                  | Description                                      |
+|-------------------------|--------------------------------------------------|
+| `$info->getTag()`       | Returns the tag rendering the brick              |
+| `$info->getRequest()`   | Returns the current request                      |
+| `$info->getView()`      | Returns the ViewModel to be rendered             |
+| `$info->getIndex()`     | Returns the current index inside the areablock   |
 
 ## Configuration in Editmode
-You can use the `edit.php` file to allow users to add data to the brick. The `edit.php` file can include HTML and editables.
-When this file is present an icon will appear for the user which can be clicked to display and edit the editable fields.
 
-> Using `edit.php` will disable all editables in `view.php` in editmode (they appear like in the frontend, but cannot be edited). 
+You can use the edit template to allow users to add data to the brick. The edit template file can include HTML and 
+editables. When this file is present an icon will appear for the user which can be clicked to display and edit the 
+editable fields.
 
-Example contents of the `edit.php` file:
+To configure your brick to use an edit template, the brick must be configured to have an edit template. The edit 
+template will be resolved the same way as the view template.
+
+```php
+<?php
+
+namespace DemoBundle\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
+
+class Iframe extends AbstractTemplateAreabrick
+{
+    // other methods defined above
+
+    public function hasEditTemplate()
+    {
+        return true;
+    }
+}
+```
+
+> Using an edit template will disable all editables in the view template in editmode (they appear like in the 
+frontend, but cannot be edited). 
+
+Example contents of an edit template (e.g. `edit.html.php`):
 ```php
 Class: <?= $this->input('class'); ?>
 ```
 
-Accessing the data in the `view.php` file:
+Accessing the data in the view template:
+
 ```php
 <?php
     $class = '';
@@ -136,71 +269,54 @@ Accessing the data in the `view.php` file:
 ```
 
 ## Actions for Bricks
-Sometimes a brick is more than just a view-script and contains some functionality which shouldn't be directly in the view. 
-In this case you can use the `action.php`. 
 
-The `action.php` doesn't contain a "real" ZF-compatible controller/action it is just a little helper to get some logic and code out of the view, but the behavior is like in a common ZF-controller but with limited functionalities (no helpers, no dispatcher, ...).
- To use this feature simply create a new file called `action.php` in your brick directory and insert the following code:
+Sometimes a brick is more than just a view-script and contains some functionality which shouldn't be directly in the view. 
+In this case you can use the `action()` method on the brick class. 
+
+The `action()` method is no real controller action, it is just a little helper to get some logic and code out of the 
+view. However, you can use the action method to prepare data for the view. The `action()` method is
+
+# TODO update action example
  
 ```php
 <?php
 
-namespace Pimcore\Model\Document\Tag\Area;
-use Pimcore\Model\Document;
+namespace DemoBundle\Document\Areabrick;
 
-/**
- * Class Iframe
- * @package Pimcore\Model\Document\Tag\Area
- */
-class Iframe extends Document\Tag\Area\AbstractArea
+use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
+use Pimcore\Model\Document\Tag\Area\Info;
+
+class Iframe extends AbstractTemplateAreabrick
 {
-    /**
-     * reuired
-    */
-    public function action () {
-        $myVar = $this->getParam("myParam");
-        //...
-        $this->view->myVar = $myVar;
+    // other methods defined above
+    // 
+    public function action(Info $info)
+    {
+        $myVar = $info->getRequest()->get('myParam');
+
+        $info->getView()->myVar = $myVar;
     }
 
-    // OPTINAL METHODS
-    /**
-     * optional 
-     * Executed after a brick is rendered
-     */
-    public function postRenderAction(){
-        //...
+    // OPTIONAL METHODS
+
+    // executed after a brick is rendered
+    public function postRenderAction(Info $info)
+    {
     }
 
-    /**
-     * optional 
-     * Returns a custom html wrapper element (return an empty string if you don't want a wrapper element)
-     */
-    public function getBrickHtmlTagOpen($brick){
+    // returns a custom html wrapper element (return an empty string if you don't want a wrapper element)
+    public function getHtmlTagOpen(Info $info)
+    {
         return '<span class="customWrapperDiv">';
     }
 
-    /**
-     * optional 
-     */
-    public function getBrickHtmlTagClose($brick){
+    public function getHtmlTagClose(Info $info)
+    {
         return '</span>';
     }
 }
 ```
 
-The method `action` is called automatically before rendering the `view.php` or `edit.php`.
-Ensure that your class extends `Pimcore\Model\Document\Tag\Area\AbstractArea`.
-
-The method `postRenderAction` is called after a brick is rendered.
-
-The methods `getBrickHtmlTagOpen` and `getBrickHtmlTagClose` allow you to use custom Brick wrappers (if the methods aren't specified - the regular "Pimcore-HTML-Brick-Wrappers" will be inserted).
-
-You can access the `action.php` object in your views with `$this->actionObject`
-
-Inside this class/object there are some general methods available (inherited from `Pimcore\Model\Document\Tag\Area\AbstractArea`) which offers you some handy features like the info-object (as described above), the config and much more... 
-To see it in detail check out the contents of `Pimcore\Model\Document\Tag\Area\AbstractArea`, the methods are self-describing .
-
 ## Examples
 
-You can find many examples in the [demo / quick start package](https://github.com/pimcore/pimcore/tree/master/website_demo/views/areas).
+You can find many examples in the [demo / quick start package](https://github.com/pimcore/pimcore/tree/master/install-profiles/demo-cms/src/AppBundle/Document/Areabrick).
