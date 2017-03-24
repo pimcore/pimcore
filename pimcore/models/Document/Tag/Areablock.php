@@ -191,7 +191,9 @@ class Areablock extends Model\Document\Tag
             }
         }
 
-        $this->getTagHandler()->renderAreaFrontend($info, $params);
+        $info->setParams($params);
+
+        $this->getTagHandler()->renderAreaFrontend($info);
 
         $this->current++;
     }

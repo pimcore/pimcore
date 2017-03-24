@@ -134,7 +134,9 @@ class Area extends Model\Document\Tag
             }
         }
 
-        $tagHandler->renderAreaFrontend($info, $params);
+        $info->setParams($params);
+
+        $tagHandler->renderAreaFrontend($info);
 
         $suffixes = [];
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {

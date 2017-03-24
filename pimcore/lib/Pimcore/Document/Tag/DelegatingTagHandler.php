@@ -118,11 +118,11 @@ class DelegatingTagHandler implements TagHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAreaFrontend(Info $info, array $params)
+    public function renderAreaFrontend(Info $info)
     {
         $handler = $this->getHandlerForTag($info->getTag());
 
-        return $handler->renderAreaFrontend($info, $params);
+        return $handler->renderAreaFrontend($info);
     }
 
     /**

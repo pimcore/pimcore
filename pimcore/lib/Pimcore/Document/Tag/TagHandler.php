@@ -24,6 +24,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Facade\Translate;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
@@ -61,6 +62,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     protected $actionRenderer;
 
     /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    /**
      * @var array
      */
     protected $brickTemplateCache = [];
@@ -71,19 +77,22 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
      * @param ActionRenderer $actionRenderer
+     * @param RequestHelper $requestHelper
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
-        ActionRenderer $actionRenderer
+        ActionRenderer $actionRenderer,
+        RequestHelper $requestHelper
     ) {
         $this->brickManager    = $brickManager;
         $this->templating      = $templating;
         $this->bundleLocator   = $bundleLocator;
         $this->webPathResolver = $webPathResolver;
         $this->actionRenderer  = $actionRenderer;
+        $this->requestHelper   = $requestHelper;
     }
 
     /**
@@ -168,14 +177,24 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAreaFrontend(Info $info, array $params)
+    public function renderAreaFrontend(Info $info)
     {
-        $tag   = $info->getTag();
+        $tag    = $info->getTag();
+        $params = $info->getParams();
+
+        /** @var ViewModelInterface $view */
         $view  = $tag->getView();
         $brick = $this->brickManager->getBrick($info->getId());
 
+        $info->setView($view);
+        $info->setRequest($this->requestHelper->getCurrentRequest());
+
         // assign parameters to view
-        $view->getParameters()->add($params);
+        $view->getParameters()->add();
+        $view->getParameters()->add([
+            'info'  => $info,
+            'brick' => $brick,
+        ]);
 
         // call action
         $brick->action($info);

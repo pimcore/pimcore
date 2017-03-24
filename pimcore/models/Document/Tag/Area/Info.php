@@ -16,7 +16,9 @@
 
 namespace Pimcore\Model\Document\Tag\Area;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document\Tag;
+use Symfony\Component\HttpFoundation\Request;
 
 class Info
 {
@@ -29,6 +31,21 @@ class Info
      * @var Tag|Tag\Area|Tag\Areablock
      */
     public $tag;
+
+    /**
+     * @var array
+     */
+    public $params;
+
+    /**
+     * @var Request
+     */
+    public $request;
+
+    /**
+     * @var ViewModelInterface
+     */
+    public $view;
 
     /**
      * @var string
@@ -108,6 +125,66 @@ class Info
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return $this
+     */
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+
+        return $this;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return $this
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * @return ViewModelInterface
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
+     * @param ViewModelInterface $view
+     *
+     * @return $this
+     */
+    public function setView(ViewModelInterface $view)
+    {
+        $this->view = $view;
 
         return $this;
     }

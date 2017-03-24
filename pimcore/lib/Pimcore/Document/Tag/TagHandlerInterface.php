@@ -53,9 +53,8 @@ interface TagHandlerInterface
      * Render the area frontend
      *
      * @param Info $info
-     * @param array $params
      */
-    public function renderAreaFrontend(Info $info, array $params);
+    public function renderAreaFrontend(Info $info);
 
     /**
      * Render a sub-action (snippet, renderlet)

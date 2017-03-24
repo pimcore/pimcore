@@ -227,6 +227,7 @@ services:
             - '@pimcore.bundle_locator'
             - '@pimcore.web_path_resolver'
             - '@pimcore.templating.action_renderer'
+            - '@pimcore.http.request_helper'
         calls:
             - [setLogger, ['@logger']]
         tags:

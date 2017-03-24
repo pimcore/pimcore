@@ -100,10 +100,12 @@ class LegacyTagHandler implements TagHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAreaFrontend(Info $info, array $params)
+    public function renderAreaFrontend(Info $info)
     {
         $tag  = $info->getTag();
         $type = $info->getId();
+
+        $params = $info->getParams();
 
         // prepare info object
         $info->setName($tag->getName());
