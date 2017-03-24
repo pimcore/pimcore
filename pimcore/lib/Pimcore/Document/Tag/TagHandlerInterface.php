@@ -32,12 +32,12 @@ interface TagHandlerInterface
     /**
      * Determines if a brick is enabled
      *
-     * @param Tag\Areablock $tag
+     * @param Tag $tag
      * @param string $brick
      *
      * @return bool
      */
-    public function isBrickEnabled(Tag\Areablock $tag, $brick);
+    public function isBrickEnabled(Tag $tag, $brick);
 
     /**
      * Get available areas for an areablock

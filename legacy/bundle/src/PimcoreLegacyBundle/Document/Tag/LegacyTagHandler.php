@@ -36,9 +36,9 @@ class LegacyTagHandler implements TagHandlerInterface
     /**
      * @inheritDoc
      */
-    public function isBrickEnabled(Tag\Areablock $tag, $brick)
+    public function isBrickEnabled(Tag $tag, $brick)
     {
-        if ($tag->isCustomAreaPath()) {
+        if ($tag instanceof Tag\Areablock && $tag->isCustomAreaPath()) {
             return true;
         }
 

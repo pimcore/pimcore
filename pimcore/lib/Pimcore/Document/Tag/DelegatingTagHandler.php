@@ -98,7 +98,7 @@ class DelegatingTagHandler implements TagHandlerInterface
     /**
      * @inheritDoc
      */
-    public function isBrickEnabled(Tag\Areablock $tag, $brick)
+    public function isBrickEnabled(Tag $tag, $brick)
     {
         $handler = $this->getHandlerForTag($tag);
 

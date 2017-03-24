@@ -97,7 +97,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
-    public function isBrickEnabled(Tag\Areablock $tag, $brick)
+    public function isBrickEnabled(Tag $tag, $brick)
     {
         if ($brick instanceof AreabrickInterface) {
             $brick = $brick->getId();
