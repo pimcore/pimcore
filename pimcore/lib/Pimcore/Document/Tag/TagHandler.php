@@ -242,7 +242,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $template = null;
         if ($type === 'view') {
             $template = $brick->getViewTemplate();
-        } else if ($type === 'edit') {
+        } elseif ($type === 'edit') {
             $template = $brick->getEditTemplate();
         }
 

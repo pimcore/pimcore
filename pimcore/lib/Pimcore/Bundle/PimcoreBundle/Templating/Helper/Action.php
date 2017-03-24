@@ -55,7 +55,7 @@ class Action extends Helper
             $params = $this->actionRenderer->addDocumentParams($document, $params);
         }
 
-        if(!$module) {
+        if (!$module) {
             $module = "AppBundle";
         }
 
