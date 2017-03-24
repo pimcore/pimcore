@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Facade\Translate;
 use Pimcore\Logger;
@@ -140,7 +141,7 @@ class Areablock extends Model\Document\Tag
                 $disabled = true;
             }
 
-            if (!$this->isBrickEnabled($index["type"]) && $options['dontCheckEnabled'] != true) {
+            if (!$this->getTagHandler()->isBrickEnabled($this, $index['type']) && $options['dontCheckEnabled'] != true) {
                 $disabled = true;
             }
 
@@ -182,17 +183,26 @@ class Areablock extends Model\Document\Tag
         }
 
         $params = [];
+
+        $options = $this->getOptions();
         if (isset($options["params"]) && is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
             if (is_array($options["params"][$this->currentIndex["type"]])) {
                 $params = $options["params"][$this->currentIndex["type"]];
             }
         }
 
-        // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
-        $tagHandler->renderAreaFrontend($info, $params);
+        $this->getTagHandler()->renderAreaFrontend($info, $params);
 
         $this->current++;
+    }
+
+    /**
+     * @return TagHandlerInterface
+     */
+    private function getTagHandler()
+    {
+        // TODO inject area handler via DI when tags are built through container
+        return \Pimcore::getContainer()->get('pimcore.document.tag.handler');
     }
 
     /**
@@ -412,10 +422,7 @@ class Areablock extends Model\Document\Tag
             $options["allowed"] = [];
         }
 
-        // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
-
-        $availableAreas = $tagHandler->getAvailableAreablockAreas($this, $options);
+        $availableAreas = $this->getTagHandler()->getAvailableAreablockAreas($this, $options);
         $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
         $options["types"] = $availableAreas;
@@ -622,11 +629,7 @@ class Areablock extends Model\Document\Tag
      */
     public function isBrickEnabled($name)
     {
-        if ($this->isCustomAreaPath()) {
-            return true;
-        }
-
-        return ExtensionManager::isEnabled("brick", $name);
+        return $this->getTagHandler()->isBrickEnabled($this, $name);
     }
 
     /**

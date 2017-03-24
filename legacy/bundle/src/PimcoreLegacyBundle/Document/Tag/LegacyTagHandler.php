@@ -60,7 +60,7 @@ class LegacyTagHandler implements TagHandlerInterface
         foreach ($areaConfigs as $areaName => $areaConfig) {
             // don't show disabled bricks
             if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$tag->isBrickEnabled($areaName)) {
+                if (!$this->isBrickEnabled($tag, $areaName)) {
                     continue;
                 }
             }

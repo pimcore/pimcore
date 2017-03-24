@@ -99,6 +99,10 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      */
     public function isBrickEnabled(Tag\Areablock $tag, $brick)
     {
+        if ($brick instanceof AreabrickInterface) {
+            $brick = $brick->getId();
+        }
+
         return $this->brickManager->isEnabled($brick);
     }
 
@@ -114,7 +118,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         foreach ($this->brickManager->getBricks() as $brick) {
             // don't show disabled bricks
             if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$this->brickManager->isEnabled($brick->getId())) {
+                if (!$this->isBrickEnabled($tag, $brick)) {
                     continue;
                 }
             }
