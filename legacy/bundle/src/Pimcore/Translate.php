@@ -76,6 +76,9 @@ class Translate extends \Zend_Translate_Adapter
      */
     public function translate($messageId, $locale = null)
     {
+        // in Pimcore 4, translation keys used to be case-insensitive while in Pimcore 5 they are not
+        $messageId = mb_strtolower($messageId);
+
         if(!$locale) {
             if (\Zend_Registry::isRegistered("Zend_Locale")) {
                 $locale = (string) \Zend_Registry::get("Zend_Locale");
