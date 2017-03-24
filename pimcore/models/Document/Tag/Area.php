@@ -94,8 +94,11 @@ class Area extends Model\Document\Tag
         $count = 0;
         $options = $this->getOptions();
 
+        // TODO inject area handler via DI when tags are built through container
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+
         // don't show disabled bricks
-        if (!ExtensionManager::isEnabled("brick", $options["type"]) && $options['dontCheckEnabled'] != true) {
+        if (!$tagHandler->isBrickEnabled($this, $options['type'] && $options['dontCheckEnabled'] != true)) {
             return;
         }
 
@@ -131,8 +134,6 @@ class Area extends Model\Document\Tag
             }
         }
 
-        // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
         $tagHandler->renderAreaFrontend($info, $params);
 
         $suffixes = [];
