@@ -77,10 +77,8 @@ function processTEXTContent($fileContent, $license) {
 $rootPath = "../";
 $excludedDirectories = [
     '../install',
-    '../static/img',
-    '../static/vendor',
-    '../static6/img',
-    '../static6/vendor',
+    '../Resources/public/img',
+    '../Resources/public/vendor',
     '../tests',
     '../texts',
     '../uml',
@@ -99,9 +97,7 @@ $license =
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    EcommerceFramework
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 ";

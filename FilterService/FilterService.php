@@ -8,18 +8,14 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    EcommerceFramework
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
-use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Config\Config;
 use Pimcore\Logger;
@@ -58,7 +54,7 @@ class FilterService {
      * just the name if the name is not defined in the OnlineShop configuration
      *
      * @param $name
-     * @return AbstractFilterType | string
+     * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType | string
      */
     public function getFilterDefinitionClass($name) {
         if($this->config->$name) {
@@ -89,12 +85,12 @@ class FilterService {
     /**
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters
      *
-     * @param AbstractFilterDefinition $filterObject filter definition object to use
+     * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject filter definition object to use
      * @param IProductList $productList product list to use and add conditions to
      * @param array $params request params with eventually set filter conditions
      * @return array returns set filters
      */
-    public function initFilterService(AbstractFilterDefinition $filterObject, IProductList $productList, $params = array()) {
+    public function initFilterService(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject, IProductList $productList, $params = array()) {
         $currentFilter = array();
 
         if ($filterObject->getFilters()) {
