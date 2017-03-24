@@ -14,7 +14,7 @@ services:
     website_demo.area.brick.blockquote:
         class: AppBundle\Document\Areabrick\Blockquote
         tags:
-            - { name: pimcore.area.brick }
+            - { name: pimcore.area.brick, id: blockquote }
 
     website_demo.language_switcher:
         class: AppBundle\Templating\LanguageSwitcher
