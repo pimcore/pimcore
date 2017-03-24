@@ -136,8 +136,13 @@
                     }
                 }
 
-                $setup->insertDump($dbDataFile);
-                $setup->createOrUpdateUser($contentConfig);
+                if(file_exists($dbDataFile)) {
+                    $setup->insertDump($dbDataFile);
+                    $setup->createOrUpdateUser($contentConfig);
+                } else {
+                    // empty installation
+                    $setup->contents($contentConfig);
+                }
             } else {
                 // empty installation
                 $setup->contents($contentConfig);
@@ -361,7 +366,7 @@ $scripts = array(
                         name: "profile",
                         fieldLabel: "<b>Install Profile</b>",
                         store: [
-                            ["", "Empty Installation"],
+                            ["empty", "Empty Installation"],
                             ["demo-cms", "CMS Demo Package"]
                         ],
                         mode: "local",
