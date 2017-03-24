@@ -151,9 +151,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 
         \Pimcore::initLogger();
 
-        // run website startup
-        $this->runWebsiteStartup();
-
         // on pimcore shutdown
         register_shutdown_function(function () {
             $this->getContainer()->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
@@ -248,14 +245,4 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         }
     }
 
-    /**
-     * Run custom website startup
-     */
-    protected function runWebsiteStartup()
-    {
-        $websiteStartup = Config::locateConfigFile('startup.php');
-        if (@is_file($websiteStartup)) {
-            include_once $websiteStartup;
-        }
-    }
 }
