@@ -42,3 +42,9 @@ services:
         class: PimcoreLegacyBundle\EventListener\PluginAssetListener
         tags:
             - { name: kernel.event_subscriber }
+
+    # decorates default pimcore_url helper and adds fallback to legacy static routes
+    pimcore.legacy.templating.view_helper.pimcore_url:
+        class: PimcoreLegacyBundle\Templating\Helper\PimcoreUrl
+        decorates: pimcore.templating.view_helper.pimcore_url
+        arguments: ['@router', '@pimcore.http.request_helper']
