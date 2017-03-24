@@ -19,6 +19,15 @@ use Pimcore\Model\Document\Tag\Area\Info;
 interface AreabrickInterface
 {
     /**
+     * The brick ID as registered on AreabrickManager
+     *
+     * @param string $id
+     *
+     * @return string
+     */
+    public function setId($id);
+
+    /**
      * Brick ID - needs to be unique throughout the system.
      *
      * @return string

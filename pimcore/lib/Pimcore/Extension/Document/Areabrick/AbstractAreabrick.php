@@ -14,16 +14,47 @@
 
 namespace Pimcore\Extension\Document\Areabrick;
 
+use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Model\Document\Tag\Area\Info;
 
 abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabrickInterface
 {
     /**
+     * @var string
+     */
+    protected $id;
+
+    /**
+     * @inheritDoc
+     */
+    public function setId($id)
+    {
+        // make sure ID is only set once
+        if (null !== $this->id) {
+            throw new ConfigurationException(sprintf(
+                'Brick ID is immutable (trying to set ID %s for brick %s)',
+                $id,
+                $this->id
+            ));
+        }
+
+        $this->id = $id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
     {
-        return ucfirst($this->getId());
+        return $this->id ? ucfirst($this->id) : '';
     }
 
     /**
