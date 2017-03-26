@@ -244,5 +244,4 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             Tool::exitWithError($m);
         }
     }
-
 }
