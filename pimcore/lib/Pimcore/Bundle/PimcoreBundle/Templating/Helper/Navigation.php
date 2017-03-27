@@ -121,9 +121,12 @@ class Navigation extends Helper
 
     /**
      * @param Container|null $container
+     * @return mixed
      */
     public function render(Container $container = null)
     {
+        $helper = $this->getRenderer($this->defaultRenderer);
+        return $helper->render($container);
     }
 
     /**
