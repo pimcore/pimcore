@@ -14,6 +14,7 @@
 
 namespace Pimcore\Console\Command;
 
+use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Tool\Console;
 use Symfony\Component\Console\Input\InputInterface;
@@ -106,6 +107,12 @@ class UpdateCommand extends AbstractCommand
 
             if (!$build) {
                 $this->writeError("Update with build / version " . $updateInfo . " not found.");
+                exit;
+            }
+
+            $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
+            if(!$debug) {
+                $this->writeError("Enable debug mode in system settings or set PIMCORE_ENVIRONMENT=dev");
                 exit;
             }
 

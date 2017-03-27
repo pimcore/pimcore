@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Update;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Config;
 use Pimcore\Update;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +29,18 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class IndexController extends AdminController implements EventedControllerInterface
 {
+    /**
+     * @Route("/check-debug-mode")
+     * @param Request $request
+     * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
+     */
+    public function checkDebugModeAction(Request $request) {
+        $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
+
+        return $this->json([
+            "success" => (bool) $debug
+        ]);
+    }
 
     /**
      * @Route("/check-composer-installed")

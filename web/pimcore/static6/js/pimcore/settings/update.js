@@ -61,7 +61,7 @@ pimcore.settings.update = Class.create({
             success: function (response) {
                 var res = Ext.decode(response.responseText);
                 if(res && res.success) {
-                    this.checkComposer();
+                    this.checkDebugMode();
                 } else {
                     this.window.removeAll();
                     this.window.add(new Ext.Panel({
@@ -69,6 +69,35 @@ pimcore.settings.update = Class.create({
                         bodyStyle: "padding: 20px;",
                         html: '<div class="pimcore_error"><b>Some file in /pimcore is not writeable!</b> <br />'
                         + 'Please ensure that the whole /pimcore directory is writeable.</div>'
+                    }));
+                    this.window.updateLayout();
+                }
+            }.bind(this)
+        });
+    },
+
+    checkDebugMode: function () {
+        this.window.removeAll();
+        this.window.add(new Ext.Panel({
+            title: "Liveupdate",
+            bodyStyle: "padding: 20px;",
+            html: "<b>Checking if debug mode is enabled</b><br /><br />"
+        }));
+        this.window.updateLayout();
+
+        Ext.Ajax.request({
+            url: "/admin/update/index/check-debug-mode",
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                if(res && res.success) {
+                    this.checkComposer();
+                } else {
+                    this.window.removeAll();
+                    this.window.add(new Ext.Panel({
+                        title: 'ERROR',
+                        bodyStyle: "padding: 20px;",
+                        html: '<div class="pimcore_error"><b>Debug Mode is not enabled.</b> <br />'
+                        + 'Please enable the debug mode in system settings and perform the update again.</div>'
                     }));
                     this.window.updateLayout();
                 }
