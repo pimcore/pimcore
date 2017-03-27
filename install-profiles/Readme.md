@@ -13,6 +13,7 @@ define('PIMCORE_APP_BUNDLE_CLASS_FILE', __DIR__ . "/../install-profiles/demo-cms
 ## Create the following symlinks
 ```
 ln -sr app/config/* install-profiles/demo-cms/app/config/
+ln -sr install-profiles/demo-cms/app/config/parameters.example.yml install-profiles/demo-cms/app/config/parameters.yml
 ln -sr app/*.php install-profiles/demo-cms/app/
 ln -sr install-profiles/demo-cms/web/static/ web/static
 ```
