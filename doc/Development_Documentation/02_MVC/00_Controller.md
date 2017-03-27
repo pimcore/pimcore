@@ -82,5 +82,6 @@ and extends the `FrontendController` and can be modified and extended the way yo
 |-----------------------|----------|----------------------------------------------------------|
 | `$this->document` | Document | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean  | True if you are in editmode (admin)                      |
+| `$this->view`     | ViewModel  | Used to assign variables to your view (`$this->view->foo = "bar"`) |
    
  
