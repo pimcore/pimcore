@@ -4,7 +4,7 @@
 
 Template Helpers are methods that offer special functionality to increase usability of view scripts. 
 This is a concept of the [Symfony Templating Component](http://symfony.com/doc/current/components/templating.html) 
-and you can of course use all of the built in functionalities of this component.  
+and you can of course use all of the built-in functionalities of this component.  
 
 Following an overview of some helpers provided by the Symfony Templating Component:   
 
@@ -30,7 +30,7 @@ In addition to the Symfony standard templating helpers, Pimcore adds some additi
   
 ## Pimcore Templating Helpers
 
-All helpers are described below in detail, the following tables gives just a short overview of all available helpers.
+All helpers are described below in detail, the following tables give just a short overview of all available helpers.
 
 | Method                                   | Description                                             |
 |------------------------------------------|---------------------------------------------------------|
