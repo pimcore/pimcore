@@ -56,7 +56,7 @@ services:
             arguments:
                 - '@pimcore.http.request_helper'
             tags:
-                - { name: templating.helper, alias: GetAllParams }
+                - { name: templating.helper, alias: getAllParams }
 
     pimcore.templating.view_helper.glossary:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Glossary
