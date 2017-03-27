@@ -66,6 +66,7 @@
     "vrana/adminer": "~4.2",
     "egulias/email-validator": "*",
     "neitanod/forceutf8": "~2",
+    "guzzlehttp/guzzle": "~6.0",
 
     "symfony/symfony": "3.2.*",
     "symfony/monolog-bundle": "^3.0.2",
