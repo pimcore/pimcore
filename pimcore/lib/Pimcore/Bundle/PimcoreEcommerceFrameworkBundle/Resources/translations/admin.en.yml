@@ -1,0 +1,59 @@
+index_field_selection_field: "Index Field Selection"
+indexFieldSelectionField: "Index Field Selection"
+indexFieldSelectionField_settings: "Settings (Multi Index Field Selection Field)"
+indexFieldSelectionFieldMulti: Multiple Index Field Selection
+index_field_selection_combo: "Index Field Combobox"
+indexFieldSelectionCombo: "Index Field Combobox"
+indexFieldSelectionCombo_settings: "Einstellungen (Index Field Combobox)"
+specificPriceField: "Specific Price Field"
+showAllFields: "Show all Fields"
+considerTenants:  "Consider Tenants"
+plugin_onlineshop_mainmenu: "Online Shop"
+plugin_onlineshop_pricing_rules: "Pricing Rules"
+plugin_onlineshop_pricing_config_saved_successfully: "Price rule saved successfully"
+plugin_onlineshop_pricing_config_behavior: "Behavior"
+plugin_onlineshop_pricing_config_additiv: "Additiv"
+plugin_onlineshop_pricing_config_stopExecute: "Last rule"
+plugin_onlineshop_pricing_config_add_rule: "Add rule"
+plugin_onlineshop_pricing_config_save_order: "Save"
+plugin_onlineshop_pricing_config_enter_the_name_of_the_new_rule: "Enter the name of the new rule"
+plugin_onlineshop_pricing_config_condition_daterange: "Date range"
+plugin_onlineshop_pricing_config_condition_daterange_from: "From"
+plugin_onlineshop_pricing_config_condition_daterange_until: "Until"
+plugin_onlineshop_pricing_config_condition_cart_amount: "Cart amount"
+plugin_onlineshop_pricing_config_condition_catalog_product: "Product"
+plugin_onlineshop_pricing_config_condition_products: "Products"
+plugin_onlineshop_pricing_config_condition_catalog_category: "Category"
+plugin_onlineshop_pricing_config_condition_token: "Token"
+plugin_onlineshop_pricing_config_condition_token_value: "Value"
+plugin_onlineshop_pricing_config_condition_sales: "Sales"
+plugin_onlineshop_pricing_config_condition_sales_amount: "Amount"
+plugin_onlineshop_pricing_config_condition_sold:  "Sold"
+plugin_onlineshop_pricing_config_condition_sold_count:  "Count"
+plugin_onlineshop_pricing_config_condition_sold_count_cart:  "Count Cart"
+plugin_onlineshop_pricing_config_condition_client-ip:  "Client IP"
+plugin_onlineshop_pricing_config_condition_client_ip:  "IP"
+plugin_onlineshop_pricing_config_condition_voucherToken:  "Voucher"
+plugin_onlineshop_pricing_config_action_gift: "Gift"
+plugin_onlineshop_pricing_config_action_gift_product: "Product"
+plugin_onlineshop_pricing_config_action_cart_discount: "Cart discount"
+plugin_onlineshop_pricing_config_action_cart_discount_percent: "Discount in %"
+plugin_onlineshop_pricing_config_action_cart_discount_amount: "Absolute Discount"
+plugin_onlineshop_pricing_config_action_product_discount: "Product discount"
+plugin_onlineshop_pricing_config_action_product_discount_percent: "Discount in %"
+plugin_onlineshop_pricing_config_action_product_discount_amount: "Absolute Discount"
+plugin_onlineshop_pricing_config_action_free_shipping: "Free shipping"
+ecommerce:  E-Commerce
+preSelectMode: Pre Select Mode
+remote_single: Single Select from Remote
+remote_multi: Multi Select from Remote
+local_single: Single Select from predefined List
+local_multi: Multi Select from predefined List
+indexFieldSelection: Index Field Selection
+indexFieldSelection_settings: Index Field Selection Settings
+filtergroups: Filter Groups
+preSelect: Pre Select
+predefined_pre_select_options: Predefined pre select options
+plugin_onlineshop_clear_config_cache: Clear configuration cache
+plugin_onlineshop_back-office_order: Back Office - Ordering
+plugin_onlineshop_vouchertoolkit_tab: Voucher Details

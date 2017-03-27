@@ -310,7 +310,7 @@ abstract class Frontend extends Action
                 $this->previousLocale = \Zend_Registry::get("Zend_Locale");
             }
         }
-        self::setLocale($locale);
+        $this->setLocale($locale);
     }
 
     /**
@@ -322,6 +322,8 @@ abstract class Frontend extends Action
             $locale = new \Zend_Locale($locale);
             \Zend_Registry::set('Zend_Locale', $locale);
             $this->getResponse()->setHeader("Content-Language", strtolower(str_replace("_", "-", (string) $locale)), true);
+
+            \Pimcore::getContainer()->get("request_stack")->getCurrentRequest()->setLocale((string) $locale);
 
             // now we prepare everything for setlocale()
             $localeList = [(string) $locale . ".utf8"];
@@ -404,6 +406,8 @@ abstract class Frontend extends Action
 
                 if (Tool::isValidLanguage($locale)) {
                     $translate->setLocale($locale);
+
+                    \Pimcore::getContainer()->get("translator")->setLocale((string) $locale);
                 } else {
                     Logger::error("You want to use an invalid language which is not defined in the system settings: " . $locale);
                     // fall back to the first (default) language defined
@@ -412,6 +416,8 @@ abstract class Frontend extends Action
                         Logger::error("Using '" . $languages[0] . "' as a fallback, because the language '".$locale."' is not defined in system settings");
                         $translate = new \Pimcore\Translate\Website($languages[0]); // reinit with new locale
                         $translate->setLocale($languages[0]);
+
+                        \Pimcore::getContainer()->get("translator")->setLocale($languages[0]);
                     } else {
                         throw new \Exception("You have not defined a language in the system settings (Website -> Frontend-Languages), please add at least one language.");
                     }

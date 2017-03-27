@@ -1,0 +1,46 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+
+.pimcore_icon_indexFieldSelectionField {
+    background: url("/pimcore/static6/img/flat-color-icons/empty_filter.svg") no-repeat center center !important;
+}
+
+.pimcore_icon_indexFieldSelectionCombo {
+    background: url("/pimcore/static/img/icon/objectid.png") no-repeat scroll center center transparent !important;
+}
+
+.pimcore_icon_indexFieldSelection {
+    background: url("/pimcore/static6/img/flat-color-icons/filled_filter.svg") no-repeat center center !important;
+}
+
+
+.pimcore_icon_data_group_ecommerce {
+    background: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") center center no-repeat !important;
+}
+
+.plugin_onlineshop_clear_config_cache {
+    background: url("/pimcore/static6/img/flat-color-icons/flash_on.svg") center center no-repeat !important;
+}
+
+.plugin_onlineshop_back-office_order {
+    background: url("/pimcore/static6/img/flat-color-icons/tachometer.svg") center center no-repeat !important;
+}
+
+.plugin_voucherservice_icon {
+    background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") center center no-repeat !important;
+}
+
+#pimcore_menu_onlineshop {
+    background-image: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") !important;
+}

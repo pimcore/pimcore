@@ -1,0 +1,20 @@
+{
+  "name": "pimcore-partner/ecommerce-framework",
+  "type": "pimcore-plugin",
+  "require": {
+    "pimcore/installer-plugin": ">=1",
+    "pimcore/core-version": ">=4.4.1"
+  },
+  "suggest": {
+    "klarna/checkout": "1.2.0"
+    , "elasticsearch/elasticsearch": "2.0.0"
+    , "codeception/codeception": "^2.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\": "models/Pimcore",
+      "OnlineShop\\": "lib/OnlineShop",
+      "OnlineShop\\": "models/OnlineShop"
+    }
+  }
+}
