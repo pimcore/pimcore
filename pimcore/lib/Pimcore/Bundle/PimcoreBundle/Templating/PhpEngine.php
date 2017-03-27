@@ -77,6 +77,7 @@ use Symfony\Bundle\FrameworkBundle\Templating\Helper\TranslatorHelper;
  * @method array getAllParams()
  * @method mixed getParam($key, $default = null)
  * @method Glossary glossary()
+ * @method Container placeholder($placeholderName)
  * @method HeadLink headLink(array $attributes = null, $placement = Container::APPEND)
  * @method HeadMeta headMeta($content = null, $keyValue = null, $keyType = 'name', $modifiers = array(), $placement = Container::APPEND)
  * @method HeadScript headScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')

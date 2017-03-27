@@ -78,6 +78,12 @@ services:
         tags:
             - { name: templating.helper, alias: pimcoreUrl }
 
+    pimcore.templating.view_helper.placeholder:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: placeholder }
+
     pimcore.templating.view_helper.head_title:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadTitle
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
