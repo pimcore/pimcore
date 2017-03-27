@@ -113,14 +113,6 @@ abstract class FrontendController extends Controller implements EventedControlle
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function getTemplateGuesser()
-    {
-        return $this->get('sensio_framework_extra.view.guesser');
-    }
-
-    /**
      * Loads a document editable
      *
      * e.g. `$this->getDocumentTag('input', 'foobar')`
