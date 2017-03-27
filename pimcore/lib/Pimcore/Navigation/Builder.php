@@ -17,7 +17,7 @@ namespace Pimcore\Navigation;
 use Pimcore\Model\Document;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Model\Site;
-use Pimcore\Navigation\Page\Url;
+use Pimcore\Navigation\Page\Document as DocumentUrl;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -111,7 +111,7 @@ class Builder
         // pages have priority, if we don't find any active page, we use all we found
         $tmpPages = [];
         foreach ($activePages as $page) {
-            if ($page instanceof Url && $page->getDocumentType() != "link") {
+            if ($page instanceof DocumentUrl && $page->getDocumentType() != "link") {
                 $tmpPages[] = $page;
             }
         }
@@ -136,7 +136,7 @@ class Builder
                     $activeTrail = true;
                 }
 
-                if ($page instanceof Url) {
+                if ($page instanceof DocumentUrl) {
                     if ($page->getDocumentType() == "link") {
                         if ($page->getUri() && strpos($activeDocument->getFullPath(), $page->getUri() . "/") === 0) {
                             $activeTrail = true;
