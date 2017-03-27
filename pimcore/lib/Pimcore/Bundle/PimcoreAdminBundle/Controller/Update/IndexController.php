@@ -34,7 +34,8 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param Request $request
      * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
      */
-    public function checkDebugModeAction(Request $request) {
+    public function checkDebugModeAction(Request $request)
+    {
         $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
 
         return $this->json([
