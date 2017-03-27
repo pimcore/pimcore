@@ -36,6 +36,8 @@ class Iframe implements AreabrickInterface
 }
 ```
 
+> Please note that you need to clear the cache after you added a brick to the special namespace.
+
 If you need more control over the brick instance (e.g. because your brick has dependencies on other services or you
 want to specify the brick ID manually), you can add the service definition yourself and tag the service with the DI
 tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto-registration, even if they're
@@ -116,6 +118,26 @@ in editmode. If the icon is at another location, you can override the `getIcon()
 included as icon. When rendering editmode, the following location will be searched for the brick icon and is expected
  to be a 16x16 pixel PNG: `<bundlePath>/Resources/public/areas/<brickId>/icon.png` which resolves to the URL  
  `/bundles/<bundleUrl>/areas/<brickId>/icon.png` when included in editmode.
+ 
+Given our `iframe` brick defined before, the following paths will be used.
+
+### `global` template location
+
+| Location      | Path                                                    |
+|---------------|---------------------------------------------------------|
+| view template | `app/Resources/views/Areas/iframe/view.html.(php|twig)` |
+| view template | `app/Resources/views/Areas/iframe/edit.html.(php|twig)` |
+| icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
+| icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
+
+### `bundle` template location
+
+The icon path and URL are the same as above, but the view scripts are expected inside the bundle.
+
+| Location      | Path                                                    |
+|---------------|---------------------------------------------------------|
+| view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.(php|twig)` |
+| view template | `src/AppBundle/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 
 ## How to Create a Brick
  
@@ -269,15 +291,16 @@ Accessing the data in the view template:
 ?>
 ```
 
-## Actions for Bricks
+## Methods on the brick class
 
 Sometimes a brick is more than just a view-script and contains some functionality which shouldn't be directly in the view. 
-In this case you can use the `action()` method on the brick class. 
+In this case you can use the `action()` and `postRenderAction()` method on the brick class which both get the info 
+object as parameter. The `action()` method is no real controller action, it is just a little helper to get some logic
+ and code out of the 
+view. However, you can use the action method to prepare data for the view (for example parse request params).
 
-The `action()` method is no real controller action, it is just a little helper to get some logic and code out of the 
-view. However, you can use the action method to prepare data for the view. The `action()` method is
-
-# TODO update action example
+If you need to influence the HTML open and close tag, you can do so by customizing `getHtmlTagOpen()` and 
+`getHtmlTagClose()` (see example below). 
  
 ```php
 <?php
