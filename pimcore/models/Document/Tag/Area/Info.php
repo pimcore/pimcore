@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Document\Tag\Area;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Tag;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -206,6 +207,22 @@ class Info
     public function getIndex()
     {
         return $this->index;
+    }
+
+    /**
+     * @return Document|Document\PageSnippet
+     */
+    public function getDocument()
+    {
+        $document = null;
+
+        if ($this->view && isset($this->view->document)) {
+            $document = $this->view->document;
+        } else {
+            $document = Document::getById($this->tag->getDocumentId());
+        }
+
+        return $document;
     }
 
     /**

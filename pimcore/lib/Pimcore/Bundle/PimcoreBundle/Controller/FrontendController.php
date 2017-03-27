@@ -119,4 +119,27 @@ abstract class FrontendController extends Controller implements EventedControlle
     {
         return $this->get('sensio_framework_extra.view.guesser');
     }
+
+    /**
+     * Loads a document editable
+     *
+     * e.g. `$this->getDocumentTag('input', 'foobar')`
+     *
+     * @param string $type
+     * @param string $inputName
+     * @param array $options
+     * @param Document\PageSnippet|null $document
+     *
+     * @return null|Document\Tag
+     */
+    public function getDocumentTag($type, $inputName, array $options = [], Document\PageSnippet $document = null)
+    {
+        if (null === $document) {
+            $document = $this->document;
+        }
+
+        $tagRenderer = $this->container->get('pimcore.templating.tag_renderer');
+
+        return $tagRenderer->getTag($document, $type, $inputName, $options);
+    }
 }

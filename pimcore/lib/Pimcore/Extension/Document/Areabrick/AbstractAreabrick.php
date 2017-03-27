@@ -15,10 +15,16 @@
 namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabrickInterface
+abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabrickInterface, ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var string
      */
@@ -135,5 +141,19 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     public function getHtmlTagClose(Info $info)
     {
         return '</div>';
+    }
+
+    /**
+     * @param PageSnippet $document
+     * @param string $type
+     * @param string $inputName
+     * @param array $options
+     * @return Tag|null
+     */
+    protected function getDocumentTag(PageSnippet $document, $type, $inputName, array $options = [])
+    {
+        $tagRenderer = $this->container->get('pimcore.templating.tag_renderer');
+
+        return $tagRenderer->getTag($document, $type, $inputName, $options);
     }
 }
