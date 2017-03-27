@@ -85,9 +85,13 @@ class Service extends Model\Element\Service
             $view->addScriptPath(PIMCORE_FRONTEND_MODULE . "/views/scripts");
         }
 
-        $documentBackup = null;
-        if ($view->document) {
-            $documentBackup = $view->document;
+        $params["document"] = $document;
+        $viewParamsBackup = [];
+        foreach ($params as $key => $value) {
+            if ($view->$key) {
+                $viewParamsBackup[$key] = $view->$key;
+            }
+            $view->$key = $value;
         }
         $view->document = $document;
 
@@ -100,16 +104,6 @@ class Service extends Model\Element\Service
                 }
             }
             $layout->setLayout("--modification-indicator--");
-        }
-
-        $params["document"] = $document;
-
-        $viewParamsBackup = [];
-        foreach ($params as $key => $value) {
-            if ($view->$key) {
-                $viewParamsBackup[$key] = $view->$key;
-            }
-            $view->$key = $value;
         }
 
         $content = $view->action($document->getAction(), $document->getController(), $document->getModule(), $params);
@@ -154,10 +148,6 @@ class Service extends Model\Element\Service
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
             }
-        }
-
-        if ($documentBackup) {
-            $view->document = $documentBackup;
         }
 
         if (\Pimcore\Config::getSystemConfig()->outputfilters->less) {
