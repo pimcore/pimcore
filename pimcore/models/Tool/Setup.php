@@ -159,8 +159,9 @@ class Setup extends Model\AbstractModel
 
 
         // generate parameters.yml
-        File::put(PIMCORE_APP_ROOT . "/config/parameters.yml",
-            "parameters:\n    secret: " . generateRandomSymfonySecret());
+        $parameters = file_get_contents(PIMCORE_APP_ROOT . "/config/parameters.example.yml");
+        $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
+        File::put(PIMCORE_APP_ROOT . "/config/parameters.yml", $parameters);
     }
 
     /**
