@@ -56,15 +56,17 @@ class TagRenderer implements LoggerAwareInterface
     }
 
     /**
+     * Loads a document tag
+     *
      * @param PageSnippet $document
      * @param $type
      * @param $inputName
      * @param array $options
-     * @return Tag|string|null
+     * @return Tag|null
      *
      * @see \Pimcore\View::tag
      */
-    public function render(PageSnippet $document, $type, $inputName, array $options = [])
+    public function getTag(PageSnippet $document, $type, $inputName, array $options = [])
     {
         $type = strtolower($type);
         $name = Tag::buildTagName($type, $inputName, $document);
@@ -102,6 +104,24 @@ class TagRenderer implements LoggerAwareInterface
             return $tag;
         } catch (\Exception $e) {
             $this->logger->warning($e);
+        }
+    }
+
+    /**
+     * Renders a tag
+     *
+     * @param PageSnippet $document
+     * @param $type
+     * @param $inputName
+     * @param array $options
+     * @return Tag|string|null
+     */
+    public function render(PageSnippet $document, $type, $inputName, array $options = [])
+    {
+        $tag = $this->getTag($document, $type, $inputName, $options);
+
+        if ($tag) {
+            return $tag;
         }
 
         return '';
