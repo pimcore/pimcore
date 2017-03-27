@@ -1,0 +1,1 @@
+![design_prinzipien_en](images/design-prinzipien_en.png)
