@@ -18,8 +18,10 @@ use Doctrine\Common\Util\Inflector;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
 
 class AreabrickPass implements CompilerPassInterface
@@ -41,7 +43,6 @@ class AreabrickPass implements CompilerPassInterface
             $definition    = $container->getDefinition($id);
             $taggedAreas[] = $definition->getClass();
 
-
             // tags must define the id attribute which will be used to register the brick
             // e.g. { name: pimcore.area.brick, id: blockquote }
             foreach ($tags as $tag) {
@@ -51,6 +52,8 @@ class AreabrickPass implements CompilerPassInterface
 
                 $areaManagerDefinition->addMethodCall('registerService', [$tag['id'], $id]);
             }
+
+            $this->handleContainerAwareDefinition($container, $definition);
         }
 
         // autoload areas from bundles if not yet defined via service config
@@ -85,8 +88,13 @@ class AreabrickPass implements CompilerPassInterface
                 /** @var \ReflectionClass $reflector */
                 $reflector = $bundleArea['reflector'];
 
+                $definition = new Definition($reflector->getName());
+
                 // add brick definition to container
-                $container->setDefinition($bundleArea['serviceId'], new Definition($reflector->getName()));
+                $container->setDefinition($bundleArea['serviceId'], $definition);
+
+                // handle bricks implementing ContainerAwareInterface
+                $this->handleContainerAwareDefinition($container, $definition, $reflector);
 
                 // register brick on the areabrick manager
                 $areaManagerDefinition->addMethodCall('registerService', [
@@ -94,6 +102,24 @@ class AreabrickPass implements CompilerPassInterface
                     $bundleArea['serviceId']
                 ]);
             }
+        }
+    }
+
+    /**
+     * Adds setContainer() call to bricks implementing ContainerAwareInterface
+     *
+     * @param ContainerBuilder $container
+     * @param Definition $definition
+     * @param \ReflectionClass|null $reflector
+     */
+    protected function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null)
+    {
+        if (null === $reflector) {
+            $reflector = new \ReflectionClass($definition->getClass());
+        }
+
+        if ($reflector->implementsInterface(ContainerAwareInterface::class)) {
+            $definition->addMethodCall('setContainer', [new Reference('service_container')]);
         }
     }
 
