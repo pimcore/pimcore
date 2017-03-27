@@ -82,7 +82,7 @@ class PimcoreUrl extends Helper
 
         // get name from current route
         if ($name === null) {
-            $name = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
+            $name = $this->requestHelper->getMasterRequest()->attributes->get('_route');
         }
 
         return $this->generator->generate($name, $parameters, $referenceType);
