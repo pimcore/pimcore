@@ -46,7 +46,10 @@ class MiscController extends AdminController
         if (is_dir($viewPath)) {
             $files = rscandir($viewPath);
             foreach ($files as $file) {
-                $templates[] = ["path" => $file];
+                if(is_file($file)) {
+                    $relativePath = preg_replace("@^" . preg_quote($viewPath, "@") . "@", "/", $file);
+                    $templates[] = ["path" => $relativePath];
+                }
             }
         }
 
