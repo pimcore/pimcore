@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;
 
-class Dao extends \Pimcore\Model\Dao\AbstractDao {
-
+class Dao extends \Pimcore\Model\Dao\AbstractDao
+{
     const TABLE_NAME = "ecommerceframework_cart";
 
     /**
@@ -24,16 +23,17 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @var array
      */
-    protected $validColumns = array();
+    protected $validColumns = [];
 
-    protected $fieldsToSave = array("name", "userid", "creationDateTimestamp");
+    protected $fieldsToSave = ["name", "userid", "creationDateTimestamp"];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
@@ -41,10 +41,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      * @param int $id
      * @return void
      */
-    public function getById($id) {
-
+    public function getById($id)
+    {
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE id=" . $this->db->quote($id));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception("Cart " . $id . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
@@ -56,8 +56,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @return boolean
      */
-    public function create() {
-        $this->db->insert(self::TABLE_NAME, array());
+    public function create()
+    {
+        $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
 
         $this->save();
@@ -68,18 +69,20 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         if ($this->model->getId()) {
             return $this->update();
         }
+
         return $this->create();
     }
 
     /**
      * @return void
      */
-    public function update() {
-
+    public function update()
+    {
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = "get" . ucfirst($field);
@@ -87,7 +90,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
                 if (is_array($value) || is_object($value)) {
                     $value = serialize($value);
-                } else  if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$field] = $value;
@@ -102,15 +105,16 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->deleteWhere(self::TABLE_NAME, "id=" . $this->db->quote($this->model->getId()));
     }
 
     /**
      * @param array $fields
      */
-    public function setFieldsToSave(array $fields) {
+    public function setFieldsToSave(array $fields)
+    {
         $this->fieldsToSave = $fields;
     }
-
 }

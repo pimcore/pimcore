@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Class for product entry of a set product - container for product and quantity
  */
-class AbstractSetProductEntry {
+class AbstractSetProductEntry
+{
 
     /**
      * @var int
@@ -30,7 +30,8 @@ class AbstractSetProductEntry {
      */
     private $product;
 
-    public function __construct(ICheckoutable $product, $quantity = 1) {
+    public function __construct(ICheckoutable $product, $quantity = 1)
+    {
         $this->product = $product;
         $this->quantity = $quantity;
     }
@@ -40,14 +41,16 @@ class AbstractSetProductEntry {
      * @param ICheckoutable $product
      * @return void
      */
-    public function setProduct(ICheckoutable $product) {
+    public function setProduct(ICheckoutable $product)
+    {
         $this->product = $product;
     }
 
     /**
      * @return ICheckoutable
      */
-    public function getProduct() {
+    public function getProduct()
+    {
         return $this->product;
     }
 
@@ -55,14 +58,16 @@ class AbstractSetProductEntry {
      * @param  int $quantity
      * @return void
      */
-    public function setQuantity($quantity) {
+    public function setQuantity($quantity)
+    {
         $this->quantity = $quantity;
     }
 
     /**
      * @return int
      */
-    public function getQuantity() {
+    public function getQuantity()
+    {
         return $this->quantity;
     }
 
@@ -71,10 +76,12 @@ class AbstractSetProductEntry {
      *
      * @return int
      */
-    public function getId() {
-        if($this->getProduct()) {
+    public function getId()
+    {
+        if ($this->getProduct()) {
             return $this->getProduct()->getId();
         }
+
         return null;
     }
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception;
 
 /**
@@ -21,5 +20,4 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception;
  */
 class VoucherServiceException extends \Exception
 {
-
 }

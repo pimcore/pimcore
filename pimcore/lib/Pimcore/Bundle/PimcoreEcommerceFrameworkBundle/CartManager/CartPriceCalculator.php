@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -26,7 +26,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\Tax
 /**
  * Class CartPriceCalculator
  */
-class CartPriceCalculator implements ICartPriceCalculator {
+class CartPriceCalculator implements ICartPriceCalculator
+{
 
     /**
      * @var bool
@@ -63,12 +64,13 @@ class CartPriceCalculator implements ICartPriceCalculator {
      * @param $config
      * @param ICart $cart
      */
-    public function __construct($config, ICart $cart) {
-        $this->modificators = array();
-        if(!empty($config->modificators) && is_object($config->modificators)) {
-            foreach($config->modificators as $modificator) {
+    public function __construct($config, ICart $cart)
+    {
+        $this->modificators = [];
+        if (!empty($config->modificators) && is_object($config->modificators)) {
+            foreach ($config->modificators as $modificator) {
                 $modificatorClass = new $modificator->class($modificator->config);
-                $this->addModificator( $modificatorClass );
+                $this->addModificator($modificatorClass);
             }
         }
 
@@ -80,7 +82,8 @@ class CartPriceCalculator implements ICartPriceCalculator {
     /**
      * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
      */
-    public function calculate() {
+    public function calculate()
+    {
 
         //sum up all item prices
         $subTotalNet = 0;
@@ -94,13 +97,13 @@ class CartPriceCalculator implements ICartPriceCalculator {
         $subTotalTaxes = [];
         $grandTotalTaxes = [];
 
-        foreach($this->cart->getItems() as $item) {
-            if(is_object($item->getPrice())) {
-                if(!$currency) {
+        foreach ($this->cart->getItems() as $item) {
+            if (is_object($item->getPrice())) {
+                if (!$currency) {
                     $currency = $item->getPrice()->getCurrency();
                 }
 
-                if($currency->getShortName() != $item->getPrice()->getCurrency()->getShortName()) {
+                if ($currency->getShortName() != $item->getPrice()->getCurrency()->getShortName()) {
                     throw new UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
                 }
 
@@ -108,23 +111,21 @@ class CartPriceCalculator implements ICartPriceCalculator {
                 $subTotalGross += $item->getTotalPrice()->getGrossAmount();
 
                 $taxEntries = $item->getTotalPrice()->getTaxEntries();
-                foreach($taxEntries as $taxEntry) {
-
+                foreach ($taxEntries as $taxEntry) {
                     $taxId = $taxEntry->getTaxId();
-                    if(empty($subTotalTaxes[$taxId])) {
+                    if (empty($subTotalTaxes[$taxId])) {
                         $subTotalTaxes[$taxId] = clone $taxEntry;
                         $grandTotalTaxes[$taxId] = clone $taxEntry;
                     } else {
                         $subTotalTaxes[$taxId]->setAmount($subTotalTaxes[$taxId]->getAmount() + $taxEntry->getAmount());
                         $grandTotalTaxes[$taxId]->setAmount($grandTotalTaxes[$taxId]->getAmount() + $taxEntry->getAmount());
                     }
-
                 }
             }
         }
 
         //by default currency is retrieved from item prices. if there are no items, its loaded from the default locale defined in the environment
-        if(!$currency) {
+        if (!$currency) {
             $currency = $this->getDefaultCurrency();
         }
 
@@ -141,19 +142,19 @@ class CartPriceCalculator implements ICartPriceCalculator {
         $currentSubTotal->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_FIXED);
 
 
-        $this->modifications = array();
-        foreach($this->getModificators() as $modificator) {
+        $this->modifications = [];
+        foreach ($this->getModificators() as $modificator) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator $modificator */
             $modification = $modificator->modify($currentSubTotal, $this->cart);
-            if($modification !== null) {
+            if ($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;
                 $currentSubTotal->setNetAmount($currentSubTotal->getNetAmount() + $modification->getNetAmount());
                 $currentSubTotal->setGrossAmount($currentSubTotal->getGrossAmount() + $modification->getGrossAmount());
 
                 $taxEntries = $modification->getTaxEntries();
-                foreach($taxEntries as $taxEntry) {
+                foreach ($taxEntries as $taxEntry) {
                     $taxId = $taxEntry->getTaxId();
-                    if(empty($grandTotalTaxes[$taxId])) {
+                    if (empty($grandTotalTaxes[$taxId])) {
                         $grandTotalTaxes[$taxId] = clone $taxEntry;
                     } else {
                         $grandTotalTaxes[$taxId]->setAmount($grandTotalTaxes[$taxId]->getAmount() + $taxEntry->getAmount());
@@ -174,7 +175,8 @@ class CartPriceCalculator implements ICartPriceCalculator {
      *
      * @return Currency
      */
-    protected function getDefaultCurrency() {
+    protected function getDefaultCurrency()
+    {
         return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     }
 
@@ -185,25 +187,29 @@ class CartPriceCalculator implements ICartPriceCalculator {
      * @param Currency $currency
      * @return IPrice
      */
-    protected function getDefaultPriceObject($amount, Currency $currency) {
+    protected function getDefaultPriceObject($amount, Currency $currency)
+    {
         return new Price($amount, $currency);
     }
 
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $price
      */
-    public function getGrandTotal() {
-        if(!$this->isCalculated) {
+    public function getGrandTotal()
+    {
+        if (!$this->isCalculated) {
             $this->calculate();
         }
+
         return $this->gradTotal;
     }
 
     /**
      * @return IModificatedPrice[] $priceModification
      */
-    public function getPriceModifications() {
-        if(!$this->isCalculated) {
+    public function getPriceModifications()
+    {
+        if (!$this->isCalculated) {
             $this->calculate();
         }
 
@@ -213,8 +219,9 @@ class CartPriceCalculator implements ICartPriceCalculator {
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $price
      */
-    public function getSubTotal() {
-        if(!$this->isCalculated) {
+    public function getSubTotal()
+    {
+        if (!$this->isCalculated) {
             $this->calculate();
         }
         
@@ -224,7 +231,8 @@ class CartPriceCalculator implements ICartPriceCalculator {
     /**
      * @return void
      */
-    public function reset() {
+    public function reset()
+    {
         $this->isCalculated = false;
     }
 
@@ -256,14 +264,12 @@ class CartPriceCalculator implements ICartPriceCalculator {
      */
     public function removeModificator(ICartPriceModificator $modificator)
     {
-        foreach($this->modificators as $key => $mod) {
-            if($mod === $modificator) {
+        foreach ($this->modificators as $key => $mod) {
+            if ($mod === $modificator) {
                 unset($this->modificators[$key]);
             }
         }
 
         return $this;
     }
-
-
 }

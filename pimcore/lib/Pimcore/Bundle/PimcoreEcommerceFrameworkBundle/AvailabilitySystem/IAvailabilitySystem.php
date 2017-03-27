@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
@@ -20,7 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 /**
  * Interface IAvailabilitySystem
  */
-interface IAvailabilitySystem {
+interface IAvailabilitySystem
+{
 
 
     /**
@@ -31,8 +31,4 @@ interface IAvailabilitySystem {
      * @return IAvailability
      */
     public function getAvailabilityInfo(ICheckoutable $abstractProduct, $quantityScale = 1, $products = null);
-
-
-
-
 }

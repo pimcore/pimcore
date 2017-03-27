@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\FactFinder;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -26,7 +25,6 @@ class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
      */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
     {
-
     }
 
 
@@ -47,12 +45,9 @@ class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
 
 
         // set defaults
-        if(empty($value) && !$params['is_reload'] && ($preSelect = $this->getPreSelect($filterDefinition)))
-        {
+        if (empty($value) && !$params['is_reload'] && ($preSelect = $this->getPreSelect($filterDefinition))) {
             $value = explode(",", $preSelect);
-        }
-        else if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value))
-        {
+        } elseif (!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
@@ -60,30 +55,22 @@ class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
 
 
 
-        if(!empty($value))
-        {
-            $quotedValues = array();
+        if (!empty($value)) {
+            $quotedValues = [];
 
-            foreach($value as $v)
-            {
-                if(!empty($v))
-                {
+            foreach ($value as $v) {
+                if (!empty($v)) {
                     $quotedValues[] = $v;
                 }
             }
 
 
-            if(!empty($quotedValues))
-            {
-                if($filterDefinition->getUseAndCondition())
-                {
-                    foreach ($quotedValues as $value)
-                    {
+            if (!empty($quotedValues)) {
+                if ($filterDefinition->getUseAndCondition()) {
+                    foreach ($quotedValues as $value) {
                         $productList->addCondition($value, $field);
                     }
-                }
-                else
-                {
+                } else {
                     $productList->addCondition($quotedValues, $field);
                 }
             }

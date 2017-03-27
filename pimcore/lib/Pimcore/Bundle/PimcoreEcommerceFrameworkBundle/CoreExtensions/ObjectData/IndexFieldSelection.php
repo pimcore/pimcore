@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ObjectData;
 
-
-class IndexFieldSelection {
+class IndexFieldSelection
+{
 
     /**
      * @var string
@@ -38,7 +37,7 @@ class IndexFieldSelection {
      * @param $preSelect
      * @param $tenant
      */
-    function __construct($tenant, $field, $preSelect)
+    public function __construct($tenant, $field, $preSelect)
     {
         $this->field = $field;
         $this->preSelect = $preSelect;
@@ -92,7 +91,4 @@ class IndexFieldSelection {
     {
         return $this->tenant;
     }
-
-
-
 }

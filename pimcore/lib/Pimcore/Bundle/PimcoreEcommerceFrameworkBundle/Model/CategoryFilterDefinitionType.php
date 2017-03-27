@@ -12,19 +12,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Abstract base class for filter definition type field collections for category filter
  */
-abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType {
+abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType
+{
 
     /**
      * @return string
      */
-    public function getField() {
-        if($this->getIncludeParentCategories()) {
+    public function getField()
+    {
+        if ($this->getIncludeParentCategories()) {
             return "parentCategoryIds";
         } else {
             return "categoryIds";
@@ -34,8 +35,8 @@ abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType
     /**
      * @return bool
      */
-    public function getIncludeParentCategories() {
+    public function getIncludeParentCategories()
+    {
         return false;
     }
-
 }

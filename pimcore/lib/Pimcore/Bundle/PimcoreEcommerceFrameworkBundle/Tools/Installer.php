@@ -12,14 +12,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools;
 
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Logger;
 
-class Installer extends AbstractInstaller {
+class Installer extends AbstractInstaller
+{
 
     /**
      * @var array - contains all tables that need to be created
@@ -117,7 +117,8 @@ class Installer extends AbstractInstaller {
     /**
      * @return array - contains all fieldcollections that need to be created
      */
-    private static function getFieldCollections() {
+    private static function getFieldCollections()
+    {
         $fieldCollections = [];
 
         $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources');
@@ -128,13 +129,15 @@ class Installer extends AbstractInstaller {
                 $fieldCollections[$key] = $filename;
             }
         }
+
         return $fieldCollections;
     }
 
     /**
      * @return array - contains all objectbricks that need to be created
      */
-    private static function getObjectBricks() {
+    private static function getObjectBricks()
+    {
         $objectBricks = [];
 
         $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources');
@@ -145,6 +148,7 @@ class Installer extends AbstractInstaller {
                 $fieldCollections[$key] = $filename;
             }
         }
+
         return $objectBricks;
     }
 
@@ -153,8 +157,8 @@ class Installer extends AbstractInstaller {
      *
      * @throws \Exception
      */
-    public function install() {
-
+    public function install()
+    {
         $this->canBeInstalled();
 
         $this->copyConfigFile();
@@ -176,95 +180,94 @@ class Installer extends AbstractInstaller {
     /**
      * checks, if install is possible. otherwise throws exception
      */
-    public function canBeInstalled() {
+    public function canBeInstalled()
+    {
 
         //check tables
         $db = \Pimcore\Db::get();
         $existingTables = [];
-        foreach(self::$tables as $name => $statement) {
+        foreach (self::$tables as $name => $statement) {
             try {
                 $result = $db->query("DESCRIBE TABLE " . $db->quoteIdentifier($name))->fetchAll;
             } catch (\Exception $e) {
                 //nothing to do
             }
-            if(!empty($result)) {
+            if (!empty($result)) {
                 $existingTables[] = $name;
             }
-
         }
-        if(!empty($existingTables)) {
+        if (!empty($existingTables)) {
             throw new \Exception("Table(s) " . implode(", ", $existingTables) . " already exist. Please remove them first.");
         }
 
         //check classes
         $existingClasses = [];
-        foreach(self::$classes as $name => $file) {
+        foreach (self::$classes as $name => $file) {
             $class = \Pimcore\Model\Object\ClassDefinition::getByName($name);
-            if(!empty($class)) {
+            if (!empty($class)) {
                 $existingClasses[] = $name;
             }
         }
-        if(!empty($existingClasses)) {
+        if (!empty($existingClasses)) {
             throw new \Exception("Class(es) " . implode(", ", $existingClasses) . " already exist. Please remove them first.");
         }
 
         //check fieldcollections
         $existingFieldCollections = [];
-        foreach(self::getFieldCollections() as $key => $file) {
+        foreach (self::getFieldCollections() as $key => $file) {
             try {
                 $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
             } catch (\Exception $e) {
                 //nothing to do
             }
 
-            if(!empty($fieldCollection)) {
+            if (!empty($fieldCollection)) {
                 $existingFieldCollections[] = $key;
             }
         }
-        if(!empty($existingFieldCollections)) {
+        if (!empty($existingFieldCollections)) {
             throw new \Exception("Fieldcollection(s) " . implode(", ", $existingFieldCollections) . " already exist. Please remove them first.");
         }
 
         //check object bricks
         $existingObjectBricks = [];
-        foreach(self::getObjectBricks() as $key => $file) {
+        foreach (self::getObjectBricks() as $key => $file) {
             try {
                 $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
             } catch (\Exception $e) {
                 //nothing to do
             }
 
-            if(!empty($brick)) {
+            if (!empty($brick)) {
                 $existingObjectBricks[] = $key;
             }
         }
-        if(!empty($existingObjectBricks)) {
+        if (!empty($existingObjectBricks)) {
             throw new \Exception("Fieldcollection(s) " . implode(", ", $existingObjectBricks) . " already exist. Please remove them first.");
         }
-
     }
 
 
     /**
      * installs all field collections
      */
-    private function createFieldCollections() {
-
+    private function createFieldCollections()
+    {
         $fieldCollections = self::getFieldCollections();
-        foreach($fieldCollections as $key => $filename) {
+        foreach ($fieldCollections as $key => $filename) {
             try {
                 $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
-                if($fieldCollection) {
+                if ($fieldCollection) {
                     throw new \Exception("Fieldcollection $key already exists");
                 }
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
                 $fieldCollection->setKey($key);
             }
 
             $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
-            if(!$success){
+            if (!$success) {
                 Logger::err("Could not import $key FieldCollection.");
             }
         }
@@ -274,10 +277,11 @@ class Installer extends AbstractInstaller {
      * creates classes
      * @throws \Exception
      */
-    private function createClasses() {
-        foreach(self::$classes as $classname => $filepath) {
+    private function createClasses()
+    {
+        foreach (self::$classes as $classname => $filepath) {
             $class = \Pimcore\Model\Object\ClassDefinition::getByName($classname);
-            if(!$class) {
+            if (!$class) {
                 $class = new \Pimcore\Model\Object\ClassDefinition();
                 $class->setName($classname);
             } else {
@@ -286,7 +290,7 @@ class Installer extends AbstractInstaller {
             $json = file_get_contents($filepath);
 
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
-            if(!$success){
+            if (!$success) {
                 Logger::err("Could not import $classname Class.");
             }
         }
@@ -297,25 +301,24 @@ class Installer extends AbstractInstaller {
      */
     private function createObjectBricks()
     {
-
         $bricks = self::getObjectBricks();
-        foreach($bricks as $key => $filename) {
+        foreach ($bricks as $key => $filename) {
             preg_match('/_(.*)_/', $filename, $matches);
             $key = $matches[1];
 
             try {
                 $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
-                if($brick) {
+                if ($brick) {
                     throw new \Exception("Brick $key already exists");
                 }
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $brick = new \Pimcore\Model\Object\Objectbrick\Definition();
                 $brick->setKey($key);
             }
 
             $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
-            if(!$success){
+            if (!$success) {
                 Logger::err("Could not import $key ObjectBrick.");
             }
         }
@@ -324,55 +327,53 @@ class Installer extends AbstractInstaller {
     /**
      * creates tables
      */
-    private function createTables() {
-
+    private function createTables()
+    {
         $db = \Pimcore\Db::get();
-        foreach(self::$tables as $name => $statement) {
+        foreach (self::$tables as $name => $statement) {
             $db->query($statement);
         }
-
     }
 
     /**
      * copy sample config file - if not exists.
      */
-    private function copyConfigFile() {
+    private function copyConfigFile()
+    {
         //copy config file
-        if(!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php")) {
+        if (!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php")) {
             copy(__DIR__ . "/../install/OnlineShopConfig_sample.php", PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php");
         }
-
     }
 
     /**
      * imports admin-translations
      * @throws \Exception
      */
-    private function importTranslations() {
+    private function importTranslations()
+    {
         \Pimcore\Model\Translation\Admin::importTranslationsFromFile(__DIR__ . '/../install/admin-translations/init.csv', true);
     }
 
     /**
      * adds admin permissions
      */
-    private function addPermissions() {
-
+    private function addPermissions()
+    {
         $keys = [
             'plugin_onlineshop_pricing_rules',
             'plugin_onlineshop_back-office_order',
         ];
 
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $permission = new \Pimcore\Model\User\Permission\Definition();
-            $permission->setKey( $key );
+            $permission->setKey($key);
 
             $res = new \Pimcore\Model\User\Permission\Definition\Dao();
-            $res->configure( \Pimcore\Db::get() );
-            $res->setModel( $permission );
+            $res->configure(\Pimcore\Db::get());
+            $res->setModel($permission);
             $res->save();
-
         }
-
     }
 
 
@@ -384,7 +385,8 @@ class Installer extends AbstractInstaller {
     /**
      * uninstalls e-commerce framework
      */
-    public function uninstall() {
+    public function uninstall()
+    {
         $db = \Pimcore\Db::get();
         $db->query("DROP TABLE IF EXISTS `ecommerceframework_cart`");
         $db->query("DROP TABLE IF EXISTS `ecommerceframework_cartcheckoutdata`");
@@ -396,10 +398,10 @@ class Installer extends AbstractInstaller {
 
         //remove permissions
         $key = 'plugin_onlineshop_pricing_rules';
-        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key) );
+        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key));
 
         $key = 'plugin_onlineshop_back-office_order';
-        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key) );
+        $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key));
 
         return true;
     }
@@ -408,7 +410,8 @@ class Installer extends AbstractInstaller {
      *
      * @return boolean
      */
-    public function needsReloadAfterInstall() {
+    public function needsReloadAfterInstall()
+    {
         return true;
     }
 
@@ -416,13 +419,16 @@ class Installer extends AbstractInstaller {
      *  indicates wether this plugins is currently installed
      * @return boolean
      */
-    public function isInstalled() {
+    public function isInstalled()
+    {
         $result = null;
-        try{
-            if(Config::getSystemConfig()) {
+        try {
+            if (Config::getSystemConfig()) {
                 $result = \Pimcore\Db::get()->query("DESCRIBE ecommerceframework_cartitem")->fetchAll();
             }
-        } catch(\Exception $e){}
+        } catch (\Exception $e) {
+        }
+
         return !empty($result);
     }
 }

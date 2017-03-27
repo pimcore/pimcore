@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;
@@ -21,8 +20,8 @@ use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class SystemEventsListener implements EventSubscriberInterface {
-
+class SystemEventsListener implements EventSubscriberInterface
+{
     public static function getSubscribedEvents()
     {
         return [
@@ -32,8 +31,8 @@ class SystemEventsListener implements EventSubscriberInterface {
     }
 
 
-    public function onConsoleInit(ConsoleEvent $event) {
-
+    public function onConsoleInit(ConsoleEvent $event)
+    {
         $application = $event->getApplication();
 
         // add a namespace to autoload commands from
@@ -43,13 +42,12 @@ class SystemEventsListener implements EventSubscriberInterface {
     }
 
 
-    public function onMaintenance() {
+    public function onMaintenance()
+    {
         $checkoutManager = Factory::getInstance()->getCheckoutManager(new Cart());
         $checkoutManager->cleanUpPendingOrders();
 
         Factory::getInstance()->getVoucherService()->cleanUpReservations();
         Factory::getInstance()->getVoucherService()->cleanUpStatistics();
     }
-
-
 }

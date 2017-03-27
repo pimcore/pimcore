@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -110,5 +109,4 @@ interface IEnvironment
      * @return string
      */
     public function getHash();
-
 }

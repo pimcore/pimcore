@@ -12,43 +12,42 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
-class CartCheckoutData extends AbstractCartCheckoutData {
-
-    public function save() {
+class CartCheckoutData extends AbstractCartCheckoutData
+{
+    public function save()
+    {
         $this->getDao()->save();
     }
 
-    public static function getByKeyCartId($key, $cartId) {
+    public static function getByKeyCartId($key, $cartId)
+    {
         $cacheKey = CartCheckoutData\Dao::TABLE_NAME . "_" . $key . "_" . $cartId;
 
         try {
             $checkoutDataItem = Runtime::get($cacheKey);
-        }
-        catch (\Exception $e) {
-
+        } catch (\Exception $e) {
             try {
                 $checkoutDataItem = new self();
                 $checkoutDataItem->getDao()->getByKeyCartId($key, $cartId);
                 Runtime::set($cacheKey, $checkoutDataItem);
-            } catch(\Exception $ex) {
+            } catch (\Exception $ex) {
                 Logger::debug($ex->getMessage());
+
                 return null;
             }
-
         }
 
         return $checkoutDataItem;
     }
 
-    public static function removeAllFromCart($cartId) {
+    public static function removeAllFromCart($cartId)
+    {
         $checkoutDataItem = new self();
         $checkoutDataItem->getDao()->removeAllFromCart($cartId);
     }
-
 }

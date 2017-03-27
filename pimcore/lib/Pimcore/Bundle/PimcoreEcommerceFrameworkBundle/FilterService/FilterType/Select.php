@@ -12,15 +12,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class Select extends AbstractFilterType {
-
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+class Select extends AbstractFilterType
+{
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -29,7 +29,8 @@ class Select extends AbstractFilterType {
         } else {
             $script = $this->script;
         }
-        return $this->render($script, array(
+
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -37,18 +38,19 @@ class Select extends AbstractFilterType {
             "fieldname" => $field,
             "metaData" => $filterDefinition->getMetaData(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
-        if($value == AbstractFilterType::EMPTY_STRING) {
+        if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;
         }
 
@@ -56,13 +58,14 @@ class Select extends AbstractFilterType {
         $currentFilter[$field] = $value;
 
 
-        if(!empty($value)) {
-            if($isPrecondition) {
+        if (!empty($value)) {
+            if ($isPrecondition) {
                 $productList->addCondition("TRIM(`" . $field . "`) = " . $productList->quote($value), "PRECONDITION_" . $field);
             } else {
                 $productList->addCondition("TRIM(`" . $field . "`) = " . $productList->quote($value), $field);
             }
         }
+
         return $currentFilter;
     }
 }

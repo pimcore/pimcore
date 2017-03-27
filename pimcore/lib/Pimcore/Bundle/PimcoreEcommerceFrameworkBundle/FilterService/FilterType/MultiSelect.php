@@ -12,15 +12,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class MultiSelect extends AbstractFilterType {
-
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+class MultiSelect extends AbstractFilterType
+{
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -29,7 +29,8 @@ class MultiSelect extends AbstractFilterType {
         } else {
             $script = $this->script;
         }
-        return $this->render($script, array(
+
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -37,59 +38,58 @@ class MultiSelect extends AbstractFilterType {
             "fieldname" => $field,
             "metaData" => $filterDefinition->getMetaData(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
-        if(!empty($value)) {
-            if(!is_array($value)) {
+        if (!empty($value)) {
+            if (!is_array($value)) {
                 $value = [$value];
             }
         }
 
-        if(empty($value) && !$params['is_reload']) {
-            if(!empty($preSelect) || $preSelect == '0') {
+        if (empty($value) && !$params['is_reload']) {
+            if (!empty($preSelect) || $preSelect == '0') {
                 $value = explode(",", $preSelect);
             }
-        } else if(!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
+        } elseif (!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
         $currentFilter[$field] = $value;
 
-        if(!empty($value)) {
-            $quotedValues = array();
-            foreach($value as $v) {
-                if(!empty($v)) {
+        if (!empty($value)) {
+            $quotedValues = [];
+            foreach ($value as $v) {
+                if (!empty($v)) {
                     $quotedValues[] = $productList->quote($v);
                 }
             }
-            if(!empty($quotedValues)) {
-                if($filterDefinition->getUseAndCondition()) {
+            if (!empty($quotedValues)) {
+                if ($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
-                        if($isPrecondition) {
+                        if ($isPrecondition) {
                             $productList->addCondition($field . " = " . $value, "PRECONDITION_" . $field);
                         } else {
                             $productList->addCondition($field . " = " . $value, $field);
                         }
                     }
                 } else {
-                    if($isPrecondition) {
+                    if ($isPrecondition) {
                         $productList->addCondition($field . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $field);
                     } else {
                         $productList->addCondition($field . " IN (" . implode(",", $quotedValues) . ")", $field);
                     }
                 }
-
-
-
             }
         }
+
         return $currentFilter;
     }
 }

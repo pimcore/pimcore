@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -20,7 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedExceptio
 /**
  * Abstract base class for pimcore objects who should be used as set products in the online shop framework
  */
-class AbstractSetProduct extends AbstractProduct {
+class AbstractSetProduct extends AbstractProduct
+{
 
     /**
      * returns mandatory products for a set product
@@ -28,7 +28,8 @@ class AbstractSetProduct extends AbstractProduct {
      * @throws UnsupportedException
      * @return AbstractSetProductEntry[]
      */
-    public function getMandatoryProductEntries() {
+    public function getMandatoryProductEntries()
+    {
         throw new UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
     }
 
@@ -38,7 +39,8 @@ class AbstractSetProduct extends AbstractProduct {
      * @throws UnsupportedException
      * @return AbstractSetProductEntry[]
      */
-    public function getOptionalProductEntries() {
+    public function getOptionalProductEntries()
+    {
         throw new UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
     }
 
@@ -52,22 +54,24 @@ class AbstractSetProduct extends AbstractProduct {
      * @param AbstractSetProductEntry[] $products
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1, $products = null) {
-        if($this->isActive()) {
-            if(empty($products)) {
+    public function getOSIsBookable($quantityScale = 1, $products = null)
+    {
+        if ($this->isActive()) {
+            if (empty($products)) {
                 $products = $this->getMandatoryProductEntries();
             }
-            if(!empty($products)) {
-                foreach($products as $productEntry) {
-                    if($productEntry->getQuantity() > 0) {
-                        if(!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
+            if (!empty($products)) {
+                foreach ($products as $productEntry) {
+                    if ($productEntry->getQuantity() > 0) {
+                        if (!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
                             return false;
                         }
                     }
                 }
             }
             //set is only bookable when price is valid!!! //
-            $priceInfo =$this->getOSPriceInfo($quantityScale,$products);
+            $priceInfo =$this->getOSPriceInfo($quantityScale, $products);
+
             return $priceInfo!=null&&$priceInfo->isPriceValid();
         } else {
             return false;
@@ -83,7 +87,8 @@ class AbstractSetProduct extends AbstractProduct {
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
-    public function getCalculatedPrice($products, $quantityScale = 1) {
+    public function getCalculatedPrice($products, $quantityScale = 1)
+    {
         return $this->getOSPrice($quantityScale, $products);
     }
 
@@ -96,7 +101,8 @@ class AbstractSetProduct extends AbstractProduct {
      * @return stdClass
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
-    public function getCalculatedPriceInfo($products, $quantityScale = 1) {
+    public function getCalculatedPriceInfo($products, $quantityScale = 1)
+    {
         return $this->getOSPriceInfo($quantityScale, $products);
         //return $this->getPriceSystemImplementation()->getPriceInfo($this, $products);
     }
@@ -110,10 +116,12 @@ class AbstractSetProduct extends AbstractProduct {
      * @param null $products
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
-    public function getOSPrice($quantityScale = null, $products = null) {
-        if( $this->getOSPriceInfo($quantityScale,$products)) {
-            return $this->getOSPriceInfo($quantityScale,$products)->getPrice();
+    public function getOSPrice($quantityScale = null, $products = null)
+    {
+        if ($this->getOSPriceInfo($quantityScale, $products)) {
+            return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
         }
+
         return null;
     }
 
@@ -125,10 +133,12 @@ class AbstractSetProduct extends AbstractProduct {
      * @param null $products
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
-    public function getOSPriceInfo($quantityScale = null, $products = null) {
+    public function getOSPriceInfo($quantityScale = null, $products = null)
+    {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
         }
+
         return $this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale, $products);
     }
 
@@ -137,10 +147,12 @@ class AbstractSetProduct extends AbstractProduct {
      * @param $products AbstractSetProductEntry[]
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
-    public function getOSAvailabilityInfo($quantity = 1, $products = null) {
+    public function getOSAvailabilityInfo($quantity = 1, $products = null)
+    {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
         }
+
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity, $products);
     }
 
@@ -152,9 +164,10 @@ class AbstractSetProduct extends AbstractProduct {
      * @param  AbstractSetProductEntry[] $products
      * @return void
      */
-    protected function checkMandatoryProducts($products) {
+    protected function checkMandatoryProducts($products)
+    {
         $mandatoryProducts = $this->getMandatoryProductEntries();
-        $mandatoryProductIds = array();
+        $mandatoryProductIds = [];
         foreach ($mandatoryProducts as $p) {
             $mandatoryProductIds[$p->getId()] = $p->getQuantity();
         }

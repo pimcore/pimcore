@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
@@ -23,7 +22,8 @@ use Pimcore\Logger;
  *
  * Configuration for the optimized mysql product index implementation.
  */
-class OptimizedMysql extends DefaultMysql implements IMockupConfig {
+class OptimizedMysql extends DefaultMysql implements IMockupConfig
+{
 
     /**
      * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
@@ -35,10 +35,12 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig {
      *
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql
      */
-    public function getTenantWorker() {
-        if(empty($this->tenantWorker)) {
+    public function getTenantWorker()
+    {
+        if (empty($this->tenantWorker)) {
             $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql($this);
         }
+
         return $this->tenantWorker;
     }
 
@@ -50,7 +52,8 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig {
      * @param $relations
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup
      */
-    public function createMockupObject($objectId, $data, $relations) {
+    public function createMockupObject($objectId, $data, $relations)
+    {
         return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
     }
 
@@ -61,18 +64,16 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig {
      * @param $objectId
      * @return IIndexable | array
      */
-    public function getObjectMockupById($objectId) {
+    public function getObjectMockupById($objectId)
+    {
         $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);
 
-        if(empty($mockup)) {
+        if (empty($mockup)) {
             Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");
+
             return $this->getObjectById($objectId);
         } else {
             return $mockup;
         }
-
     }
-
-
-
 }

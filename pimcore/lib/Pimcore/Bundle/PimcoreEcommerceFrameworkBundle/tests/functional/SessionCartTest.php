@@ -14,7 +14,6 @@ class SessionCartTest extends \Codeception\Test\Unit
 
     protected function _before()
     {
-
     }
 
     protected function _after()
@@ -34,13 +33,14 @@ class SessionCartTest extends \Codeception\Test\Unit
          * @var $product AbstractProduct
          */
         $cart = Stub::construct("OnlineShop\\Framework\\CartManager\\SessionCart", [], [
-            "getSession" => function() {
+            "getSession" => function () {
                 return [];
             },
-            "isCartReadOnly" => function() {
+            "isCartReadOnly" => function () {
                 return false;
             },
-            "modified" => function() {}
+            "modified" => function () {
+            }
         ]);
 
         $cart->addItem($product, 2);
@@ -48,6 +48,5 @@ class SessionCartTest extends \Codeception\Test\Unit
 
         $this->assertEquals(count($items), 1, "item count");
         $this->assertEquals($cart->getItemAmount(), 2, "item amount");
-
     }
 }

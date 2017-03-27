@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 class Transaction extends AbstractData
@@ -62,6 +61,7 @@ class Transaction extends AbstractData
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -80,6 +80,7 @@ class Transaction extends AbstractData
     public function setAffiliation($affiliation)
     {
         $this->affiliation = $affiliation;
+
         return $this;
     }
 
@@ -98,6 +99,7 @@ class Transaction extends AbstractData
     public function setTotal($total)
     {
         $this->total = $total;
+
         return $this;
     }
 
@@ -116,6 +118,7 @@ class Transaction extends AbstractData
     public function setSubTotal($subTotal)
     {
         $this->subTotal = $subTotal;
+
         return $this;
     }
 
@@ -134,6 +137,7 @@ class Transaction extends AbstractData
     public function setTax($tax)
     {
         $this->tax = $tax;
+
         return $this;
     }
 
@@ -152,6 +156,7 @@ class Transaction extends AbstractData
     public function setShipping($shipping)
     {
         $this->shipping = $shipping;
+
         return $this;
     }
 
@@ -170,6 +175,7 @@ class Transaction extends AbstractData
     public function setCoupon($coupon)
     {
         $this->coupon = $coupon;
+
         return $this;
     }
 
@@ -188,6 +194,7 @@ class Transaction extends AbstractData
     public function setList($list)
     {
         $this->list = $list;
+
         return $this;
     }
 
@@ -206,6 +213,7 @@ class Transaction extends AbstractData
     public function setStep($step)
     {
         $this->step = $step;
+
         return $this;
     }
 
@@ -224,6 +232,7 @@ class Transaction extends AbstractData
     public function setOption($option)
     {
         $this->option = $option;
+
         return $this;
     }
 }

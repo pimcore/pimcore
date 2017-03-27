@@ -12,21 +12,21 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-class ObjectIdSum implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
-
+class ObjectIdSum implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
         $sum = 0;
-        if(is_array($value)) {
-            foreach($value as $object) {
-                if($object instanceof \Pimcore\Model\Element\ElementInterface) {
+        if (is_array($value)) {
+            foreach ($value as $object) {
+                if ($object instanceof \Pimcore\Model\Element\ElementInterface) {
                     $sum += $object->getId();
                 }
             }
         }
+
         return $sum;
     }
 }

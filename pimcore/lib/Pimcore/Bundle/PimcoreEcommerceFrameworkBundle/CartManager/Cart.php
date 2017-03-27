@@ -12,29 +12,32 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
-class Cart extends AbstractCart implements ICart {
+class Cart extends AbstractCart implements ICart
+{
 
     /**
      * @return string
      */
-    protected function getCartItemClassName() {
+    protected function getCartItemClassName()
+    {
         return '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem';
     }
 
     /**
      * @return string
      */
-    protected function getCartCheckoutDataClassName() {
+    protected function getCartCheckoutDataClassName()
+    {
         return '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData';
     }
 
-    public function save() {
+    public function save()
+    {
         //make sure the items have been loaded otherwise we might loose the products (e.g. when a voucher is added)
         $items = $this->getItems();
 
@@ -53,7 +56,8 @@ class Cart extends AbstractCart implements ICart {
     /**
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->setIgnoreReadonly();
 
         $cacheKey = Cart\Dao::TABLE_NAME . "_" . $this->getId();
@@ -92,13 +96,12 @@ class Cart extends AbstractCart implements ICart {
      * @param int $id
      * @return Cart
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         $cacheKey = Cart\Dao::TABLE_NAME . "_" . $id;
         try {
             $cart = Runtime::get($cacheKey);
-        }
-        catch (\Exception $e) {
-
+        } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
                 /* @var ICart $cart */
@@ -107,7 +110,7 @@ class Cart extends AbstractCart implements ICart {
                 $cart->getDao()->getById($id);
 
                 $mod = $cart->getModificationDate();
-                $cart->setModificationDate( $mod );
+                $cart->setModificationDate($mod);
 
                 $dataList = new CartCheckoutData\Listing();
                 $dataList->setCondition("cartId = " . $dataList->quote($cart->getId()));
@@ -122,23 +125,24 @@ class Cart extends AbstractCart implements ICart {
                 Runtime::set($cacheKey, $cart);
             } catch (\Exception $ex) {
                 Logger::debug($ex->getMessage());
+
                 return null;
             }
-
         }
 
         return $cart;
     }
 
-    public function getItems() {
-        if($this->items === null) {
+    public function getItems()
+    {
+        if ($this->items === null) {
             $itemList = new CartItem\Listing();
-            $itemList->setCartItemClassName( $this->getCartItemClassName() );
+            $itemList->setCartItemClassName($this->getCartItemClassName());
             $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
             $itemList->setOrderKey(['sortIndex', 'addedDateTimestamp']);
-            $items = array();
+            $items = [];
             foreach ($itemList->getCartItems() as $item) {
-                if(static::isValidCartItem($item)){
+                if (static::isValidCartItem($item)) {
                     $item->setCart($this);
                     $items[$item->getItemKey()] = $item;
                 }
@@ -148,6 +152,7 @@ class Cart extends AbstractCart implements ICart {
             $this->modified();
             $this->unsetIgnoreReadonly();
         }
+
         return $this->items;
     }
 
@@ -156,30 +161,34 @@ class Cart extends AbstractCart implements ICart {
      * @param bool|false $countSubItems
      * @return int
      */
-    public function getItemCount($countSubItems = false) {
-        if($countSubItems) {
+    public function getItemCount($countSubItems = false)
+    {
+        if ($countSubItems) {
             return parent::getItemCount($countSubItems);
         } else {
-            if($this->itemCount == null) {
+            if ($this->itemCount == null) {
                 $itemList = new CartItem\Listing();
-                $itemList->setCartItemClassName( $this->getCartItemClassName() );
+                $itemList->setCartItemClassName($this->getCartItemClassName());
                 $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
                 $this->itemCount = $itemList->getTotalCount();
             }
+
             return $this->itemCount;
         }
     }
 
-    public function getItemAmount($countSubItems = false) {
-        if($countSubItems) {
+    public function getItemAmount($countSubItems = false)
+    {
+        if ($countSubItems) {
             return parent::getItemAmount($countSubItems);
         } else {
-            if($this->itemAmount == null) {
+            if ($this->itemAmount == null) {
                 $itemList = new CartItem\Listing();
-                $itemList->setCartItemClassName( $this->getCartItemClassName() );
+                $itemList->setCartItemClassName($this->getCartItemClassName());
                 $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
                 $this->itemAmount = $itemList->getTotalAmount();
             }
+
             return $this->itemAmount;
         }
     }
@@ -189,11 +198,13 @@ class Cart extends AbstractCart implements ICart {
      * @param int $userId
      * @return array
      */
-    public static function getAllCartsForUser($userId) {
+    public static function getAllCartsForUser($userId)
+    {
         $list = new Cart\Listing();
         $db = \Pimcore\Db::get();
         $list->setCondition("userid = " . $db->quote($userId));
-        $list->setCartClass( get_called_class() );
+        $list->setCartClass(get_called_class());
+
         return $list->getCarts();
     }
 }

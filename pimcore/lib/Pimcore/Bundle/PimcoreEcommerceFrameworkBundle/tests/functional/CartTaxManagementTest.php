@@ -1,7 +1,6 @@
 <?php
 namespace EcommerceFramework;
 
-
 use Codeception\Util\Stub;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
@@ -29,12 +28,13 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
     {
     }
 
-    private function buildTaxClass($taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE) {
+    private function buildTaxClass($taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
+    {
         $taxClass = new OnlineShopTaxClass();
         $taxClass->setId(md5(serialize($taxes)));
         $taxEntries = new \Pimcore\Model\Object\Fieldcollection();
 
-        foreach($taxes as $name => $tax) {
+        foreach ($taxes as $name => $tax) {
             $entry = new \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry();
             $entry->setPercent($tax);
             $entry->setName($name);
@@ -46,35 +46,35 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
         return $taxClass;
     }
 
-    private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE) {
-
+    private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
+    {
         $taxClass = $this->buildTaxClass($taxes, $combinationType);
 
         $config = new \stdClass();
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$config], [
-            "getTaxClassForProduct" => function() use ($taxClass) {
+            "getTaxClassForProduct" => function () use ($taxClass) {
                 return $taxClass;
             },
-            "getTaxClassForPriceModification" => function() use ($taxClass) {
+            "getTaxClassForPriceModification" => function () use ($taxClass) {
                 return $taxClass;
             },
-            "getPriceClassInstance" => function($amount) {
+            "getPriceClassInstance" => function ($amount) {
                 return new Price($amount, new Currency("EUR"));
             },
-            "calculateAmount" => function() use ($grossPrice) {
+            "calculateAmount" => function () use ($grossPrice) {
                 return $grossPrice;
             }
         ]);
 
         return Stub::construct(AbstractProduct::class, [], [
-            "getId" => function() {
+            "getId" => function () {
                 return rand();
             },
-            "getPriceSystemImplementation" => function() use ($priceSystem) {
+            "getPriceSystemImplementation" => function () use ($priceSystem) {
                 return $priceSystem;
             },
-            "getCategories" => function() {
+            "getCategories" => function () {
                 return [];
             }
         ]);
@@ -83,15 +83,17 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
     /**
      * @return SessionCart
      */
-    private function setUpCart() {
+    private function setUpCart()
+    {
         return Stub::construct("OnlineShop\\Framework\\CartManager\\SessionCart", [], [
-            "getSession" => function() {
+            "getSession" => function () {
                 return [];
             },
-            "isCartReadOnly" => function() {
+            "isCartReadOnly" => function () {
                 return false;
             },
-            "modified" => function() {}
+            "modified" => function () {
+            }
         ]);
     }
 
@@ -99,12 +101,13 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
      * @param ICart $cart
      * @return CartPriceCalculator
      */
-    private function setUpCartCalculator(ICart $cart, $withModificators = false, $taxes = []) {
+    private function setUpCartCalculator(ICart $cart, $withModificators = false, $taxes = [])
+    {
         $config = new \stdClass();
 
         $calculator = new CartPriceCalculator($config, $cart);
 
-        if($withModificators) {
+        if ($withModificators) {
             $shipping = new Shipping();
             $shipping->setCharge(10);
             $shipping->setTaxClass($this->buildTaxClass($taxes));
@@ -142,7 +145,8 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
     }
 
 
-    public function testCartWithTaxEntriesCombine() {
+    public function testCartWithTaxEntriesCombine()
+    {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
         $product2 = $this->setUpProduct(50, [1 => 10], TaxEntry::CALCULATION_MODE_COMBINE);
 
@@ -176,12 +180,11 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
         $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), "grandtotal taxentry 1 amount");
         $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "grandtotal taxentry 2 percent");
         $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), "grandtotal taxentry 2 amount");
-
     }
 
 
-    public function testPriceSystemWithTaxEntriesOneAfterAnother() {
-
+    public function testPriceSystemWithTaxEntriesOneAfterAnother()
+    {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
         $product2 = $this->setUpProduct(50, [1 => 10], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
@@ -245,7 +248,8 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
     }
 
 
-    public function testCartWithTaxEntriesCombineWithModificators() {
+    public function testCartWithTaxEntriesCombineWithModificators()
+    {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
         $product2 = $this->setUpProduct(50, [1 => 10], TaxEntry::CALCULATION_MODE_COMBINE);
 
@@ -284,8 +288,8 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
     }
 
 
-    public function testPriceSystemWithTaxEntriesOneAfterAnotherWithModificators() {
-
+    public function testPriceSystemWithTaxEntriesOneAfterAnotherWithModificators()
+    {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
         $product2 = $this->setUpProduct(50, [1 => 10], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
@@ -323,5 +327,4 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
         $this->assertEquals(20, round($taxEntries['shipping-20']->getPercent(), 2), "grandtotal taxentry 3 percent");
         $this->assertEquals(1.67, round($taxEntries['shipping-20']->getAmount(), 2), "grandtotal taxentry 3 amount");
     }
-
 }

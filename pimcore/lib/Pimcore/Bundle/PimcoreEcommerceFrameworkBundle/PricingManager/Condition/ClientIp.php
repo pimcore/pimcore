@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class ClientIp implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
@@ -31,6 +30,7 @@ class ClientIp implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pricin
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
+
         return $clientIp == $this->getIp();
     }
 
@@ -57,7 +57,7 @@ class ClientIp implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pricin
     {
         $json = json_decode($string);
 
-        $this->setIp( $json->ip );
+        $this->setIp($json->ip);
 
         return $this;
     }

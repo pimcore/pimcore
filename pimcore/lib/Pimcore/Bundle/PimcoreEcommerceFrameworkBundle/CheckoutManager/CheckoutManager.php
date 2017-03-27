@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -127,7 +127,6 @@ class CheckoutManager implements ICheckoutManager
         if ($config->payment) {
             $this->payment = Factory::getInstance()->getPaymentManager()->getProvider($config->payment->provider);
         }
-
     }
 
     /**
@@ -141,6 +140,7 @@ class CheckoutManager implements ICheckoutManager
             $this->commitOrderProcessor = new $this->commitOrderProcessorClassname();
             $this->commitOrderProcessor->setConfirmationMail($this->confirmationMail);
         }
+
         return $this->commitOrderProcessor;
     }
 
@@ -152,10 +152,12 @@ class CheckoutManager implements ICheckoutManager
     {
         $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
-        if($order) {
+        if ($order) {
             $paymentInfo = $orderManager->createOrderAgent($order)->getCurrentPendingPaymentInfo();
+
             return !empty($paymentInfo);
         }
+
         return false;
     }
 
@@ -182,12 +184,12 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException("Order already committed");
         }
 
-        $orderAgent = Factory::getInstance()->getOrderManager()->createOrderAgent( $order );
+        $orderAgent = Factory::getInstance()->getOrderManager()->createOrderAgent($order);
         $paymentInfo = $orderAgent->startPayment();
 
         //always set order state to payment pending when calling start payment
-        if($order->getOrderState() != $order::ORDER_STATE_PAYMENT_PENDING) {
-            $order->setOrderState( $order::ORDER_STATE_PAYMENT_PENDING );
+        if ($order->getOrderState() != $order::ORDER_STATE_PAYMENT_PENDING) {
+            $order->setOrderState($order::ORDER_STATE_PAYMENT_PENDING);
             $order->save();
         }
         
@@ -201,8 +203,9 @@ class CheckoutManager implements ICheckoutManager
     {
         $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
-        if($order) {
-            $orderAgent = $orderManager->createOrderAgent( $order );
+        if ($order) {
+            $orderAgent = $orderManager->createOrderAgent($order);
+
             return $orderAgent->cancelStartedOrderPayment();
         } else {
             return null;
@@ -215,6 +218,7 @@ class CheckoutManager implements ICheckoutManager
     public function getOrder()
     {
         $orderManager = Factory::getInstance()->getOrderManager();
+
         return $orderManager->getOrCreateOrderFromCart($this->cart);
     }
 
@@ -224,9 +228,10 @@ class CheckoutManager implements ICheckoutManager
      * @param AbstractOrder $order
      * @throws UnsupportedException
      */
-    protected function updateEnvironmentAfterOrderCommit(AbstractOrder $order) {
+    protected function updateEnvironmentAfterOrderCommit(AbstractOrder $order)
+    {
         $env = Factory::getInstance()->getEnvironment();
-        if(empty($order->getOrderState())) {
+        if (empty($order->getOrderState())) {
             //if payment not successful -> set current checkout step to last step and checkout to not finished
             //last step must be committed again in order to restart payment or e.g. commit without payment?
             $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
@@ -249,11 +254,12 @@ class CheckoutManager implements ICheckoutManager
      * @return AbstractOrder
      * @throws UnsupportedException
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams) {
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams)
+    {
 
         //check if order is already committed and payment information with same internal payment id has same state
         //if so, do nothing and return order
-        if($committedOrder = $this->getCommitOrderProcessor()->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
+        if ($committedOrder = $this->getCommitOrderProcessor()->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
             return $committedOrder;
         }
 
@@ -363,7 +369,6 @@ class CheckoutManager implements ICheckoutManager
         $items = $order->getItems();
         if (!empty($items)) {
             foreach ($items as $item) {
-
                 $category = "";
                 $p = $item->getProduct();
                 if ($p && method_exists($p, "getCategories")) {
@@ -380,7 +385,7 @@ class CheckoutManager implements ICheckoutManager
                     _gaq.push(['_addItem',
                         '" . $order->getOrdernumber() . "',                                      // order ID - required
                         '" . $item->getProductNumber() . "',                                     // SKU/code - required
-                        '" . str_replace(array("\n"), array(" "), $item->getProductName()) . "', // product name
+                        '" . str_replace(["\n"], [" "], $item->getProductName()) . "', // product name
                         '" . $category . "',                                                     // category or variation
                         '" . $item->getTotalPrice() / $item->getAmount() . "',                   // unit price - required
                         '" . $item->getAmount() . "'                                             // quantity - required
@@ -430,7 +435,6 @@ class CheckoutManager implements ICheckoutManager
         $items = $order->getItems();
         if (!empty($items)) {
             foreach ($items as $item) {
-
                 $category = "";
                 $p = $item->getProduct();
                 if ($p && method_exists($p, "getCategories")) {
@@ -446,7 +450,7 @@ class CheckoutManager implements ICheckoutManager
                 $code .= "
                     ga('ecommerce:addItem', {
                       'id': '" . $order->getOrdernumber() . "',                      // Transaction ID. Required.
-                      'name': '" . str_replace(array("\n"), array(" "), $item->getProductName()) . "',                      // Product name. Required.
+                      'name': '" . str_replace(["\n"], [" "], $item->getProductName()) . "',                      // Product name. Required.
                       'sku': '" . $item->getProductNumber() . "',                     // SKU/code.
                       'category': '" . $category . "',                                // Category or variation.
                       'price': '" . $item->getTotalPrice() / $item->getAmount() . "', // Unit price.
@@ -502,6 +506,7 @@ class CheckoutManager implements ICheckoutManager
             $this->cart->save();
             $env->save();
         }
+
         return $result;
     }
 

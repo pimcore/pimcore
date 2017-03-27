@@ -20,4 +20,3 @@ chdir($workingDirectory);
 
 
 \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::processUpdateIndexQueue();
- 

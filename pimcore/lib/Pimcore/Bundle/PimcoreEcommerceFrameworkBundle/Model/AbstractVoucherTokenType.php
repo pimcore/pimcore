@@ -12,12 +12,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Abstract base class for voucher token type field collections
  */
-abstract class AbstractVoucherTokenType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
-
+abstract class AbstractVoucherTokenType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
+{
 }

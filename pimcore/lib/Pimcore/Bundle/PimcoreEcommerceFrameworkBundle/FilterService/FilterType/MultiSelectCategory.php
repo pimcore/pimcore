@@ -12,16 +12,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class MultiSelectCategory extends AbstractFilterType {
-
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
-
+class MultiSelectCategory extends AbstractFilterType
+{
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -29,31 +28,31 @@ class MultiSelectCategory extends AbstractFilterType {
         }
 
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
-        $values = array();
+        $values = [];
 
-        $availableRelations = array();
-        if($filterDefinition->getAvailableCategories()) {
-            foreach($filterDefinition->getAvailableCategories() as $rel) {
+        $availableRelations = [];
+        if ($filterDefinition->getAvailableCategories()) {
+            foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
             }
         }
 
 
-        foreach($rawValues as $v) {
+        foreach ($rawValues as $v) {
             $explode = explode(",", $v['value']);
-            foreach($explode as $e) {
-                if(!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
-                    if($values[$e]) {
+            foreach ($explode as $e) {
+                if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
+                    if ($values[$e]) {
                         $count = $values[$e]['count'] + $v['count'];
                     } else {
                         $count = $v['count'];
                     }
-                    $values[$e] = array('value' => $e, "count" => $count);
+                    $values[$e] = ['value' => $e, "count" => $count];
                 }
             }
         }
 
-        return $this->render($script, array(
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
@@ -61,15 +60,16 @@ class MultiSelectCategory extends AbstractFilterType {
             "fieldname" => $filterDefinition->getField(),
             "metaData" => $filterDefinition->getMetaData(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $value = $params[$filterDefinition->getField()];
 
-        if($value == AbstractFilterType::EMPTY_STRING) {
+        if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $filterDefinition->getPreSelect();
         }
 
@@ -77,9 +77,9 @@ class MultiSelectCategory extends AbstractFilterType {
 
 
         $conditions = [];
-        if(!empty($value)) {
-            foreach($value as $category) {
-                if(is_object($category)) {
+        if (!empty($value)) {
+            foreach ($value as $category) {
+                if (is_object($category)) {
                     $category = $category->getId();
                 }
 
@@ -91,19 +91,18 @@ class MultiSelectCategory extends AbstractFilterType {
             }
         }
 
-        if(sizeof($conditions)) {
-            if($filterDefinition->getUseAndCondition()) {
+        if (sizeof($conditions)) {
+            if ($filterDefinition->getUseAndCondition()) {
                 $conditions = implode(' AND ', $conditions);
             } else {
                 $conditions = '(' . implode(' OR ', $conditions) . ')';
             }
 
-            if($isPrecondition) {
+            if ($isPrecondition) {
                 $productList->addCondition($conditions, "PRECONDITION_" . $filterDefinition->getField());
             } else {
                 $productList->addCondition($conditions, $filterDefinition->getField());
             }
-
         }
 
         return $currentFilter;

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -22,7 +21,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool
  */
-class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements ICheckoutable {
+class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements ICheckoutable
+{
 
 // =============================================
 //     ICheckoutable Methods
@@ -34,7 +34,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @throws UnsupportedException
      * @return string
      */
-    public function getOSName() {
+    public function getOSName()
+    {
         throw new UnsupportedException("getOSName is not supported for " . get_class($this));
     }
 
@@ -44,7 +45,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @throws UnsupportedException
      * @return string
      */
-    public function getOSProductNumber() {
+    public function getOSProductNumber()
+    {
         throw new UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
     }
 
@@ -56,7 +58,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @throws UnsupportedException
      * @return string
      */
-    public function getAvailabilitySystemName() {
+    public function getAvailabilitySystemName()
+    {
         return "none";
     }
 
@@ -67,7 +70,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      *
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1) {
+    public function getOSIsBookable($quantityScale = 1)
+    {
         return true;
     }
 
@@ -89,7 +93,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      *
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceSystem
      */
-    public function getPriceSystemImplementation() {
+    public function getPriceSystemImplementation()
+    {
         return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
@@ -98,7 +103,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      *
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
      */
-    public function getAvailabilitySystemImplementation() {
+    public function getAvailabilitySystemImplementation()
+    {
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
@@ -108,9 +114,9 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @param int $quantityScale
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice
      */
-    public function getOSPrice($quantityScale = 1) {
+    public function getOSPrice($quantityScale = 1)
+    {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
-
     }
 
     /**
@@ -120,8 +126,9 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @param int $quantityScale
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
      */
-    public function getOSPriceInfo($quantityScale = 1) {
-        return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);
+    public function getOSPriceInfo($quantityScale = 1)
+    {
+        return $this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale);
     }
 
     /**
@@ -130,9 +137,9 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @param int $quantity
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
-    public function getOSAvailabilityInfo($quantity = null) {
+    public function getOSAvailabilityInfo($quantity = null)
+    {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
-
     }
 
     /**
@@ -140,12 +147,14 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @param int $id
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
         if ($object instanceof AbstractOfferToolProduct) {
             return $object;
         }
+
         return null;
     }
 
@@ -154,10 +163,8 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * @throws UnsupportedException
      * @return string
      */
-    public function getProductGroup() {
+    public function getProductGroup()
+    {
         throw new UnsupportedException("getProductGroup is not implemented for " . get_class($this));
     }
-
-
-
 }

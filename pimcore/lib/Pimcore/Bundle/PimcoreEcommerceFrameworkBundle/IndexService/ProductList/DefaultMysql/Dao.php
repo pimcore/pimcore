@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
 use Monolog\Logger;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 
-class Dao {
+class Dao
+{
 
     /**
      * @var \Pimcore\Db\Connection
@@ -40,7 +40,8 @@ class Dao {
      */
     protected $logger;
 
-    public function __construct(IProductList $model, Logger $logger) {
+    public function __construct(IProductList $model, Logger $logger)
+    {
         $this->model = $model;
         $this->db = \Pimcore\Db::get();
 
@@ -48,26 +49,26 @@ class Dao {
     }
 
 
-    public function load($condition, $orderBy = null, $limit = null, $offset = null) {
-
-        if($condition) {
+    public function load($condition, $orderBy = null, $limit = null, $offset = null)
+    {
+        if ($condition) {
             $condition = "WHERE " . $condition;
         }
 
-        if($orderBy) {
+        if ($orderBy) {
             $orderBy = " ORDER BY " . $orderBy;
         }
 
-        if($limit) {
-            if($offset) {
+        if ($limit) {
+            if ($offset) {
                 $limit = "LIMIT " . $offset . ", " . $limit;
             } else {
                 $limit = "LIMIT " . $limit;
             }
         }
 
-        if($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            if($orderBy) {
+        if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            if ($orderBy) {
                 $query = "SELECT SQL_CALC_FOUND_ROWS DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
                     . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                     . $this->model->getCurrentTenantConfig()->getJoins()
@@ -88,17 +89,18 @@ class Dao {
         $result = $this->db->fetchAll($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
         $this->logger->info("Query done.");
+
         return $result;
     }
 
-    public function loadGroupByValues($fieldname, $condition, $countValues = false) {
-
-        if($condition) {
+    public function loadGroupByValues($fieldname, $condition, $countValues = false)
+    {
+        if ($condition) {
             $condition = "WHERE " . $condition;
         }
 
-        if($countValues) {
-            if($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($countValues) {
+            if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                 $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT o_virtualProductId) as `count` FROM "
                     . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                     . $this->model->getCurrentTenantConfig()->getJoins()
@@ -129,14 +131,14 @@ class Dao {
         }
     }
 
-    public function loadGroupByRelationValues($fieldname, $condition, $countValues = false) {
-
-        if($condition) {
+    public function loadGroupByRelationValues($fieldname, $condition, $countValues = false)
+    {
+        if ($condition) {
             $condition = "WHERE " . $condition;
         }
 
-        if($countValues) {
-            if($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($countValues) {
+            if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                 $query = "SELECT dest as `value`, count(DISTINCT src_virtualProductId) as `count` FROM "
                     . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
                     . "WHERE fieldname = " . $this->quote($fieldname);
@@ -177,24 +179,25 @@ class Dao {
         }
     }
 
-    public function getCount($condition, $orderBy = null, $limit = null, $offset = null) {
-        if($condition) {
+    public function getCount($condition, $orderBy = null, $limit = null, $offset = null)
+    {
+        if ($condition) {
             $condition = "WHERE " . $condition;
         }
 
-        if($orderBy) {
+        if ($orderBy) {
             $orderBy = " ORDER BY " . $orderBy;
         }
 
-        if($limit) {
-            if($offset) {
+        if ($limit) {
+            if ($offset) {
                 $limit = "LIMIT " . $offset . ", " . $limit;
             } else {
                 $limit = "LIMIT " . $limit;
             }
         }
 
-        if($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             $query = "SELECT count(DISTINCT o_virtualProductId) FROM "
                 . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                 . $this->model->getCurrentTenantConfig()->getJoins()
@@ -213,7 +216,8 @@ class Dao {
         return $result;
     }
 
-    public function quote($value) {
+    public function quote($value)
+    {
         return $this->db->quote($value);
     }
 
@@ -223,13 +227,13 @@ class Dao {
      * @param $fields
      * @param $objectId
      */
-    public function buildSimularityOrderBy($fields, $objectId) {
-
+    public function buildSimularityOrderBy($fields, $objectId)
+    {
         try {
             $fieldString = "";
             $maxFieldString = "";
-            foreach($fields as $f) {
-                if(!empty($fieldString)) {
+            foreach ($fields as $f) {
+                if (!empty($fieldString)) {
                     $fieldString .= ",";
                     $maxFieldString .= ",";
                 }
@@ -249,9 +253,9 @@ class Dao {
             $maxObjectValues = $this->db->fetchRow($query);
             $this->logger->info("Query done.");
 
-            if(!empty($objectValues)) {
-                $subStatement = array();
-                foreach($fields as $f) {
+            if (!empty($objectValues)) {
+                $subStatement = [];
+                foreach ($fields as $f) {
                     $subStatement[] =
                         "(" .
                         $this->db->quoteIdentifier($f->getField()) . "/" . $maxObjectValues[$f->getField()] .
@@ -267,10 +271,7 @@ class Dao {
             } else {
                 throw new \Exception("Field array for given object id is empty");
             }
-
-
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->err($e);
 
             return "";
@@ -283,11 +284,13 @@ class Dao {
      * @param $fields
      * @param $searchstring
      */
-    public function buildFulltextSearchWhere($fields, $searchstring) {
-        $columnNames = array();
-        foreach($fields as $c) {
+    public function buildFulltextSearchWhere($fields, $searchstring)
+    {
+        $columnNames = [];
+        foreach ($fields as $c) {
             $columnNames[] = $this->db->quoteIdentifier($c);
         }
+
         return 'MATCH (' . implode(",", $columnNames) . ') AGAINST (' . $this->db->quote($searchstring) . ' IN BOOLEAN MODE)';
     }
 

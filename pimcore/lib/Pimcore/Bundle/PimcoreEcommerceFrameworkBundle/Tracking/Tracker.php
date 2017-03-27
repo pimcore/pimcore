@@ -12,12 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Google\Analytics;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-
 
 abstract class Tracker implements ITracker
 {
@@ -107,5 +105,4 @@ abstract class Tracker implements ITracker
             $this->dependenciesIncluded = true;
         }
     }
-
 }

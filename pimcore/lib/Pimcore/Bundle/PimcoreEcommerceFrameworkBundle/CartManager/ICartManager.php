@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IComponent;
@@ -21,7 +20,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 /**
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartManager
  */
-interface ICartManager extends IComponent {
+interface ICartManager extends IComponent
+{
  
     /**
      * returns cart class name configured in the onlineshop config
@@ -48,7 +48,7 @@ interface ICartManager extends IComponent {
      *
      * @return string - item key
      */
-    public function addToCart(ICheckoutable $product, $count,  $key = null, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addToCart(ICheckoutable $product, $count, $key = null, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * removes item from given cart

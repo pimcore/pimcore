@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
@@ -55,10 +54,11 @@ class CartDiscount implements IDiscount
         $amount *= -1;
 
         //make sure that one rule is applied only once
-        foreach($priceCalculator->getModificators() as &$modificator) {
-            if($modificator instanceof Discount && $modificator->getRuleId() == $environment->getRule()->getId()) {
+        foreach ($priceCalculator->getModificators() as &$modificator) {
+            if ($modificator instanceof Discount && $modificator->getRuleId() == $environment->getRule()->getId()) {
                 $modificator->setAmount($amount);
                 $priceCalculator->reset();
+
                 return $this;
             }
         }
@@ -76,11 +76,11 @@ class CartDiscount implements IDiscount
      */
     public function toJSON()
     {
-        return json_encode(array(
+        return json_encode([
                                 'type' => 'CartDiscount',
                                 'amount' => $this->getAmount(),
                                 'percent' => $this->getPercent()
-                           ));
+                           ]);
     }
 
     /**
@@ -91,10 +91,12 @@ class CartDiscount implements IDiscount
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        if($json->amount)
-            $this->setAmount( $json->amount );
-        if($json->percent)
-            $this->setPercent( $json->percent );
+        if ($json->amount) {
+            $this->setAmount($json->amount);
+        }
+        if ($json->percent) {
+            $this->setPercent($json->percent);
+        }
     }
 
     /**

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 class ProductImpression extends AbstractProductData
@@ -35,6 +34,4 @@ class ProductImpression extends AbstractProductData
     {
         $this->list = $list;
     }
-
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -63,7 +62,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 
         //load legacy class mapping
         LegacyClassMappingTool::loadMapping();
-
     }
 
     /**

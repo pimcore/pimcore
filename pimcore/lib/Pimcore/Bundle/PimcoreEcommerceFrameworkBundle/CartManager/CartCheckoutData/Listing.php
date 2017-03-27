@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing {
+class Listing extends \Pimcore\Model\Listing\AbstractListing
+{
 
     /**
      * @var array
@@ -25,20 +25,24 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     /**
      * @var array
      */
-    public function isValidOrderKey($key) {
-        if($key == "key" || $key == "cartId") {
+    public function isValidOrderKey($key)
+    {
+        if ($key == "key" || $key == "cartId") {
             return true;
         }
+
         return false;
     }
 
     /**
      * @return array
      */
-    function getCartCheckoutDataItems() {
-        if(empty($this->cartCheckoutDataItems)) {
+    public function getCartCheckoutDataItems()
+    {
+        if (empty($this->cartCheckoutDataItems)) {
             $this->load();
         }
+
         return $this->cartCheckoutDataItems;
     }
 
@@ -46,7 +50,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param array $cartCheckoutDataItems
      * @return void
      */
-    function setCartCheckoutDataItems($cartCheckoutDataItems) {
+    public function setCartCheckoutDataItems($cartCheckoutDataItems)
+    {
         $this->cartCheckoutDataItems = $cartCheckoutDataItems;
     }
 }

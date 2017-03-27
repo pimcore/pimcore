@@ -12,31 +12,31 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
 
-class SelectRelation extends AbstractFilterType {
-
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+class SelectRelation extends AbstractFilterType
+{
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         $field = $this->getField($filterDefinition);
 
 
         $values = $productList->getGroupByRelationValues($field, true);
 
-        $objects = array();
+        $objects = [];
         Logger::info("Load Objects...");
 
-        $availableRelations = array();
-        if($filterDefinition->getAvailableRelations()) {
+        $availableRelations = [];
+        if ($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
         }
 
-        foreach($values as $v) {
-            if(empty($availableRelations) || $availableRelations[$v['value']] === true) {
+        foreach ($values as $v) {
+            if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
@@ -47,7 +47,8 @@ class SelectRelation extends AbstractFilterType {
         } else {
             $script = $this->script;
         }
-        return $this->render($script, array(
+
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -56,52 +57,53 @@ class SelectRelation extends AbstractFilterType {
             "fieldname" => $field,
             "metaData" => $filterDefinition->getMetaData(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = array()) {
-        foreach($availableRelations as $rel) {
-            if($rel instanceof \Pimcore\Model\Object\Folder) {
+    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
+    {
+        foreach ($availableRelations as $rel) {
+            if ($rel instanceof \Pimcore\Model\Object\Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
             }
         }
+
         return $availableRelationsArray;
     }
 
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
 
         $value = $params[$field];
 
-        if(empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$params['is_reload']) {
             $o = $preSelect;
-            if(!empty($o)) {
-                if(is_object($o)) {
+            if (!empty($o)) {
+                if (is_object($o)) {
                     $value = $o->getId();
                 } else {
                     $value = $o;
                 }
-
             }
-        } else if($value == AbstractFilterType::EMPTY_STRING) {
+        } elseif ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         }
 
         $currentFilter[$field] = $value;
 
 
-        if(!empty($value)) {
-//            if($isPrecondition) {
+        if (!empty($value)) {
+            //            if($isPrecondition) {
 //                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
 //            } else {
-                $productList->addRelationCondition($field,  "dest = " . $productList->quote($value));
+                $productList->addRelationCondition($field, "dest = " . $productList->quote($value));
 //            }
-
         }
 
         return $currentFilter;

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\AbstractCartItem;
@@ -71,7 +70,8 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * @param int $quantity
      * @return ProductAction
      */
-    public function buildProductActionItem(IProduct $product, $quantity = 1) {
+    public function buildProductActionItem(IProduct $product, $quantity = 1)
+    {
         $item = new ProductAction();
         $item
             ->setId($product->getId())
@@ -134,8 +134,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         $items = [];
         if ($cart->getItems()) {
             foreach ($cart->getItems() as $cartItem) {
-                if($product = $cartItem->getProduct()) {
-
+                if ($product = $cartItem->getProduct()) {
                 }
                 $item = $this->buildProductActionItem($product, $cartItem->getCount());
                 $items[] = $item;
@@ -168,7 +167,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
     /**
      * Build a checkout item object by cart Item
-     * 
+     *
      * @param AbstractCartItem $cartItem
      * @return ProductAction
      */
@@ -244,7 +243,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     protected function getOrderTax(AbstractOrder $order)
     {
-        return 0;    
+        return 0;
     }
 
     /**

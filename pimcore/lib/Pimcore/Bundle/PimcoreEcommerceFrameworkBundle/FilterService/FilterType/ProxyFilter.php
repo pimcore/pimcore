@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -30,7 +29,7 @@ class ProxyFilter extends AbstractFilterType
 {
     /** @var $proxy AbstractFilterType*/
     private $proxy;
-    protected  $field;
+    protected $field;
 
     /**
      * ProxyFilter constructor.
@@ -40,13 +39,13 @@ class ProxyFilter extends AbstractFilterType
      * @param EngineInterface $engine
      * @throws \Exception
      */
-    function __construct($script, $config, TranslatorInterface $translator, EngineInterface $engine)
+    public function __construct($script, $config, TranslatorInterface $translator, EngineInterface $engine)
     {
         parent::__construct($script, $config, $translator, $engine);
-        if (!$config->proxyclass){
+        if (!$config->proxyclass) {
             throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting proxyclass is missing!");
         }
-        if (!$config->field){
+        if (!$config->field) {
             throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting field is missing!");
         }
 
@@ -57,10 +56,10 @@ class ProxyFilter extends AbstractFilterType
     public function getFilterFrontend(
         AbstractFilterDefinitionType $filterDefinition,
         IProductList $productList, $currentFilter
-    )
-    {
+    ) {
         $filterDefinition->field=$this->field;
-        return $this->proxy->getFilterFrontend($filterDefinition,$productList,$currentFilter);
+
+        return $this->proxy->getFilterFrontend($filterDefinition, $productList, $currentFilter);
     }
 
     public function addCondition(
@@ -69,9 +68,7 @@ class ProxyFilter extends AbstractFilterType
         $isPrecondition = false
     ) {
         $filterDefinition->field=$this->field;
-        return $this->proxy->addCondition($filterDefinition,$productList,$currentFilter,$params,$isPrecondition);
+
+        return $this->proxy->addCondition($filterDefinition, $productList, $currentFilter, $params, $isPrecondition);
     }
-
-
-
 }

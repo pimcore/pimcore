@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;

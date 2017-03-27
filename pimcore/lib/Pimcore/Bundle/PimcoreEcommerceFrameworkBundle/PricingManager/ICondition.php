@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
-interface ICondition {
+interface ICondition
+{
 
     /**
      * @param IEnvironment $environment

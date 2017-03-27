@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Class ICheckoutable
  */
-interface ICheckoutable {
+interface ICheckoutable
+{
 
 
     /**
@@ -110,8 +110,4 @@ interface ICheckoutable {
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null);
-
-
-
-
 }

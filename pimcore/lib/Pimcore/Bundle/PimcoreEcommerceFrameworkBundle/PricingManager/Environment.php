@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -47,7 +46,7 @@ class Environment implements IEnvironment
     /**
      * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    protected $categories = array();
+    protected $categories = [];
 
     /**
      * @var AttributeBagInterface
@@ -63,6 +62,7 @@ class Environment implements IEnvironment
     public function setCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart)
     {
         $this->cart = $cart;
+
         return $this;
     }
 
@@ -90,6 +90,7 @@ class Environment implements IEnvironment
     public function setCartItem(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem $cartItem)
     {
         $this->cartItem = $cartItem;
+
         return $this;
     }
 
@@ -101,6 +102,7 @@ class Environment implements IEnvironment
     public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product = null)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -120,6 +122,7 @@ class Environment implements IEnvironment
     public function setRule($rule)
     {
         $this->rule = $rule;
+
         return $this;
     }
 
@@ -139,6 +142,7 @@ class Environment implements IEnvironment
     public function setPriceInfo(IPriceInfo $priceInfo)
     {
         $this->priceInfo = $priceInfo;
+
         return $this;
     }
 
@@ -158,6 +162,7 @@ class Environment implements IEnvironment
     public function setCategories(array $categories)
     {
         $this->categories = $categories;
+
         return $this;
     }
 
@@ -198,23 +203,23 @@ class Environment implements IEnvironment
     public function getHash()
     {
         $hash = '';
-        if($this->getCart()) {
+        if ($this->getCart()) {
             $hash .= json_encode($this->getCart());
         }
 
-        if(count($this->getCategories()) > 0) {
+        if (count($this->getCategories()) > 0) {
             $hash .= json_encode($this->getCategories());
         }
 
-        if($this->getPriceInfo()) {
+        if ($this->getPriceInfo()) {
             $hash .= spl_object_hash($this->getPriceInfo());
         }
 
-        if($this->getProduct()) {
+        if ($this->getProduct()) {
             $hash .= spl_object_hash($this->getProduct());
         }
 
-        if($this->getRule()) {
+        if ($this->getRule()) {
             $hash .= spl_object_hash($this->getRule());
         }
 

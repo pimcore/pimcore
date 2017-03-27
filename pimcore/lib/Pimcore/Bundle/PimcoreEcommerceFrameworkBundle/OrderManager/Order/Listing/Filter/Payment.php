@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
@@ -55,7 +54,7 @@ class Payment implements IOrderListFilter
      */
     public function apply(IOrderList $orderList)
     {
-        switch($this->value) {
+        switch ($this->value) {
             case self::PAYMENT_STATE_OK:
                 $orderList->addCondition('order.paymentAuthorizedData_aliasCC IS NOT NULL');
                 break;

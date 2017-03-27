@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 /**
@@ -28,7 +27,7 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
         return parent::getInstance();
     }
 
-    protected $priceRegistry = array();
+    protected $priceRegistry = [];
 
 
     public function getPrice()
@@ -36,18 +35,16 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
         parent::getPrice();
     }
 
-    function __call($name, $arg)
+    public function __call($name, $arg)
     {
         if (array_key_exists($name, $this->priceRegistry)) {
             return $this->priceRegistry[$name];
         } else {
             if (method_exists($this, "_" . $name)) {
                 $priceInfo = $this->{"_" . $name}();
-
-            } else if (method_exists($this->getPriceSystem(), $name)) {
+            } elseif (method_exists($this->getPriceSystem(), $name)) {
                 $method = $name;
                 $priceInfo = $this->getPriceSystem()->$method($this->getProduct(), $this->getQuantity(), $this->getProducts());
-
             } else {
                 throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException($name . " is not supported for " . get_class($this));
             }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -62,6 +61,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         if ($this->characterPoolExists($this->configuration->getCharacterType()) && $this->configuration->getLength() > 0) {
             return true;
         }
+
         return false;
     }
 
@@ -157,8 +157,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
     {
         if ($token = Token::getByCode($tokenObject->getToken())) {
-                $token->unuse();
+            $token->unuse();
             $tokenObject->delete();
+
             return true;
         } else {
             return false;
@@ -228,10 +229,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             } else {
                 $db->query($this->buildInsertQuery($codeSets));
             }
-            return $codeSets;
 
+            return $codeSets;
         } catch (\Exception $e) {
-//            var_dump($e);
+            //            var_dump($e);
 //            \Pimcore\Log\Simple::log('VoucherSystem', $e);
             return false;
         }
@@ -252,6 +253,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             if (!empty($prefix)) {
                 return strlen($this->configuration->prefix) + 1 + floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
             }
+
             return floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
         }
 
@@ -272,6 +274,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         if ($dbCount !== null && $maxCount >= 0) {
             return ((int)$dbCount + $this->configuration->getCount()) / $maxCount;
         }
+
         return 1.0;
     }
 
@@ -284,6 +287,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         if ($insertProbability <= self::MAX_PROBABILITY) {
             return true;
         }
+
         return false;
     }
 
@@ -295,6 +299,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     protected function getMaxCount()
     {
         $count = strlen($this->getCharacterPool());
+
         return pow($count, $this->configuration->getLength());
     }
 
@@ -312,6 +317,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             $rand = mt_rand(0, $size - 1);
             $key .= $charPool[$rand];
         }
+
         return $key;
     }
 
@@ -331,10 +337,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             } else {
                 $code = implode($separator, str_split($code, $this->configuration->getSeparatorCount()));
             }
-
         } else {
             $code = $this->configuration->prefix . $code;
         }
+
         return $code;
     }
 
@@ -380,6 +386,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                     ")";
             }
         }
+
         return $query . "VALUES " . implode(",", $insertParts);
     }
 
@@ -467,8 +474,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             if (sizeof($insertTokens)) {
                 $resultTokenSet[] = $insertTokens;
             }
+
             return $resultTokenSet;
         }
+
         return false;
     }
 
@@ -511,7 +520,6 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         }
 
         if ($tokens) {
-
             $paginator = new Paginator($tokens);
 
             if ($params['tokensPerPage']) {
@@ -524,7 +532,6 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
             $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = sizeof($tokens);
-
         } else {
             $viewParamsBag['msg']['result'] = 'plugin_onlineshop_voucherservice_msg-error-token-noresult';
         }
@@ -691,5 +698,4 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     {
         return $this->seriesId;
     }
-
 }

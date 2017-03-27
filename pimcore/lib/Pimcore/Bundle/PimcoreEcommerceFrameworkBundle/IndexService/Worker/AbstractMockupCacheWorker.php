@@ -12,13 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMockupConfig;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Logger;
-
 
 /**
  * Class AbstractMockupCacheWorker
@@ -27,14 +26,15 @@ use Pimcore\Logger;
  *
  * @package OnlineShop\Framework\IndexService\Worker
  */
-abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
+abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
+{
 
     /**
      * returns prefix for cache key
      *
      * @return string
      */
-    protected abstract function getMockupCachePrefix();
+    abstract protected function getMockupCachePrefix();
 
     /**
      * creates mockup cache key
@@ -42,7 +42,8 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
      * @param $objectId
      * @return string
      */
-    protected function createMockupCacheKey($objectId) {
+    protected function createMockupCacheKey($objectId)
+    {
         return $this->getMockupCachePrefix() . "_" . $this->name . "_" . $objectId;
     }
 
@@ -51,7 +52,8 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
      *
      * @param $objectId
      */
-    protected function deleteFromMockupCache($objectId) {
+    protected function deleteFromMockupCache($objectId)
+    {
         $key = $this->getMockupCachePrefix() . "_" . $this->name . "_" . $objectId;
         \Pimcore\Cache::remove($key);
     }
@@ -63,13 +65,14 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
      * @param null $data
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup
      */
-    public function saveToMockupCache($objectId, $data = null) {
-        if(empty($data)) {
-            $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", array($objectId, $this->name));
+    public function saveToMockupCache($objectId, $data = null)
+    {
+        if (empty($data)) {
+            $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", [$objectId, $this->name]);
             $data = json_decode($data, true);
         }
 
-        if($this->tenantConfig instanceof IMockupConfig) {
+        if ($this->tenantConfig instanceof IMockupConfig) {
             $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
         } else {
             throw new InvalidConfigException("Tenant Config is not instance of IMockupConfig");
@@ -80,20 +83,20 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
 
         //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
         $hasLock = \Pimcore\Cache::getHandler()->getWriteLock()->hasLock();
-        if($hasLock) {
+        if ($hasLock) {
             \Pimcore\Cache::getHandler()->getWriteLock()->disable();
         }
 
         $success = \Pimcore\Cache::save($mockup, $key, [$this->getMockupCachePrefix()], null, 0, true);
         $result = \Pimcore\Cache::load($key);
 
-        if($success && $result) {
-            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE o_id = ? and tenant = ?", array($objectId, $this->name));
+        if ($success && $result) {
+            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE o_id = ? and tenant = ?", [$objectId, $this->name]);
         } else {
             Logger::err("Element with ID $objectId could not be added to mockup-cache");
         }
 
-        if($hasLock) {
+        if ($hasLock) {
             \Pimcore\Cache::getHandler()->getWriteLock()->enable();
         }
 
@@ -106,19 +109,20 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
      * @param $objectId
      * @return DefaultMockup
      */
-    public function getMockupFromCache($objectId) {
+    public function getMockupFromCache($objectId)
+    {
         $key = $this->createMockupCacheKey($objectId);
         $cachedItem = \Pimcore\Cache::load($key);
 
-        if(is_string($cachedItem)){
+        if (is_string($cachedItem)) {
             $cachedItem = unserialize($cachedItem);
         }
-        if($cachedItem instanceof DefaultMockup) {
+        if ($cachedItem instanceof DefaultMockup) {
             return $cachedItem;
         }
 
         Logger::info("Element with ID $objectId was not found in cache, trying to put it there.");
+
         return $this->saveToMockupCache($objectId);
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -52,20 +51,21 @@ abstract class AbstractTokenManager implements ITokenManager
     /**
      * @return bool
      */
-    public abstract function isValidSetting();
+    abstract public function isValidSetting();
 
     /**
      * @param array $filter
      * @return mixed
      */
-    public abstract function cleanUpCodes($filter = []);
+    abstract public function cleanUpCodes($filter = []);
 
     /**
      * @param string $code
      * @param ICart $cart
      * @return mixed
      */
-    public function checkToken($code, ICart $cart){
+    public function checkToken($code, ICart $cart)
+    {
         $this->checkAllowOncePerCart($code, $cart);
         $this->checkOnlyToken($cart);
     }
@@ -209,7 +209,7 @@ abstract class AbstractTokenManager implements ITokenManager
      * @param ICart $cart
      * @return bool
      */
-    public abstract function reserveToken($code, ICart $cart);
+    abstract public function reserveToken($code, ICart $cart);
 
     /**
      * @param string $code
@@ -217,53 +217,52 @@ abstract class AbstractTokenManager implements ITokenManager
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      * @return bool
      */
-    public abstract function applyToken($code, ICart $cart, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
+    abstract public function applyToken($code, ICart $cart, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);
 
     /**
      * @param string $code
      * @param ICart $cart
      * @return bool
      */
-    public abstract function releaseToken($code, ICart $cart);
+    abstract public function releaseToken($code, ICart $cart);
 
     /**
      * @param null $filter
      * @return array|bool
      */
-    public abstract function getCodes($filter = null);
+    abstract public function getCodes($filter = null);
 
     /**
      * @param null|int $usagePeriod
      * @return bool|array
      */
-    public abstract function getStatistics($usagePeriod = null);
+    abstract public function getStatistics($usagePeriod = null);
 
     /**
      * @return AbstractVoucherTokenType
      */
-    public abstract function getConfiguration();
+    abstract public function getConfiguration();
 
     /**
      * @return bool
      */
-    public abstract function insertOrUpdateVoucherSeries();
+    abstract public function insertOrUpdateVoucherSeries();
 
     /**
      * @return  int
      */
-    public abstract function getFinalTokenLength();
+    abstract public function getFinalTokenLength();
 
     /**
      * @param int $duration
      * @return bool
      */
-    public abstract function cleanUpReservations($duration = 0);
+    abstract public function cleanUpReservations($duration = 0);
 
     /**
      * @param $viewParamsBag
      * @param array $params
      * @return string The path of the template to display
      */
-    public abstract function prepareConfigurationView(&$viewParamsBag, $params);
-
+    abstract public function prepareConfigurationView(&$viewParamsBag, $params);
 }

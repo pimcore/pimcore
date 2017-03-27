@@ -12,14 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
 
-abstract class AbstractConfig implements IConfig {
-
+abstract class AbstractConfig implements IConfig
+{
     protected $tenantName;
     protected $attributeConfig;
     protected $searchAttributeConfig;
@@ -34,7 +33,8 @@ abstract class AbstractConfig implements IConfig {
      * @param $tenantConfig
      * @param null $totalConfig
      */
-    public function __construct($tenantName, $tenantConfig, $totalConfig = null) {
+    public function __construct($tenantName, $tenantConfig, $totalConfig = null)
+    {
         $this->tenantName = $tenantName;
         $attributeConfigArray = [];
 
@@ -66,10 +66,10 @@ abstract class AbstractConfig implements IConfig {
 
         $this->filterTypeConfig = $tenantConfig->filtertypes;
 
-        if(sizeof($tenantConfig->generalSearchColumns) == 1) {
+        if (sizeof($tenantConfig->generalSearchColumns) == 1) {
             $this->searchAttributeConfig[] = (string)$tenantConfig->generalSearchColumns->name;
-        } elseif($tenantConfig->generalSearchColumns) {
-            foreach($tenantConfig->generalSearchColumns as $c) {
+        } elseif ($tenantConfig->generalSearchColumns) {
+            foreach ($tenantConfig->generalSearchColumns as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }
         }
@@ -78,7 +78,8 @@ abstract class AbstractConfig implements IConfig {
     /**
      * @return string
      */
-    public function getTenantName() {
+    public function getTenantName()
+    {
         return $this->tenantName;
     }
 
@@ -87,7 +88,8 @@ abstract class AbstractConfig implements IConfig {
      *
      * @return mixed
      */
-    public function getAttributeConfig() {
+    public function getAttributeConfig()
+    {
         return $this->attributeConfig;
     }
 
@@ -96,7 +98,8 @@ abstract class AbstractConfig implements IConfig {
      *
      * @return array
      */
-    public function getSearchAttributeConfig() {
+    public function getSearchAttributeConfig()
+    {
         return $this->searchAttributeConfig;
     }
 
@@ -114,7 +117,8 @@ abstract class AbstractConfig implements IConfig {
     /**
      * @return bool
      */
-    public function isActive(IIndexable $object) {
+    public function isActive(IIndexable $object)
+    {
         return true;
     }
 
@@ -135,8 +139,9 @@ abstract class AbstractConfig implements IConfig {
      * @param IIndexable $object
      * @return IIndexable[]
      */
-    public function createSubIdsForObject(IIndexable $object) {
-        return array($object->getId() => $object);
+    public function createSubIdsForObject(IIndexable $object)
+    {
+        return [$object->getId() => $object];
     }
 
     /**
@@ -146,8 +151,9 @@ abstract class AbstractConfig implements IConfig {
      * @param array $subIds
      * @return mixed
      */
-    public function getSubIdsToCleanup(IIndexable $object, array $subIds) {
-        return array();
+    public function getSubIdsToCleanup(IIndexable $object, array $subIds)
+    {
+        return [];
     }
 
     /**
@@ -158,7 +164,8 @@ abstract class AbstractConfig implements IConfig {
      * @param $subId
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(IIndexable $object, $subId) {
+    public function createVirtualParentIdForSubId(IIndexable $object, $subId)
+    {
         return $object->getOSParentId();
     }
 
@@ -170,7 +177,8 @@ abstract class AbstractConfig implements IConfig {
      * @param $onlyMainObject - only returns main object
      * @return mixed
      */
-    public function getObjectById($objectId, $onlyMainObject = false) {
+    public function getObjectById($objectId, $onlyMainObject = false)
+    {
         return \Pimcore\Model\Object\AbstractObject::getById($objectId);
     }
 
@@ -183,7 +191,8 @@ abstract class AbstractConfig implements IConfig {
      * @param $objectId
      * @return IIndexable | array
      */
-    public function getObjectMockupById($objectId) {
+    public function getObjectMockupById($objectId)
+    {
         return $this->getObjectById($objectId);
     }
 
@@ -196,7 +205,7 @@ abstract class AbstractConfig implements IConfig {
      */
     public function getIdColumnType($isPrimary)
     {
-        if($isPrimary) {
+        if ($isPrimary) {
             return "int(11) NOT NULL default '0'";
         } else {
             return "int(11) NOT NULL";

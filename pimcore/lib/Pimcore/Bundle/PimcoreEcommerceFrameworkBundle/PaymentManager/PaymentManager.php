@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager;
 
 use Pimcore\Config\Config;
@@ -51,14 +50,11 @@ class PaymentManager implements IPaymentManager
         $arrProvider = $this->config->provider->class ? [$this->config->provider] : $this->config->provider;
 
 
-        foreach($arrProvider as $provider)
-        {
-            if($provider->name == $name)
-            {
-                if(!array_key_exists($name, $this->instance))
-                {
+        foreach ($arrProvider as $provider) {
+            if ($provider->name == $name) {
+                if (!array_key_exists($name, $this->instance)) {
                     $class = $provider->class;
-                    $this->instance[$name] = new $class( $provider );
+                    $this->instance[$name] = new $class($provider);
                 }
 
                 return $this->instance[$name];

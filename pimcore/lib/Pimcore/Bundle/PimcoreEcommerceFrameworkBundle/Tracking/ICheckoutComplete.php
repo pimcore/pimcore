@@ -12,14 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 interface ICheckoutComplete
 {
     /**
      * Track checkout complete
-     * 
+     *
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
      */
     public function trackCheckoutComplete(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order);

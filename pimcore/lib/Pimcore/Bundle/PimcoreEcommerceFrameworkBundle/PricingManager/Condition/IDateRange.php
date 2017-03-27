@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 interface IDateRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition

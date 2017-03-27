@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 interface ITrackingManager extends IProductImpression, IProductView, ICheckoutStep, ICheckoutComplete, ICheckout,

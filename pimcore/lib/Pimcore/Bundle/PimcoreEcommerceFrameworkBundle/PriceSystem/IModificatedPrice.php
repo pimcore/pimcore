@@ -12,18 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 /**
  * Interface for prices returned by price modifcators
  */
-interface IModificatedPrice extends IPrice {
+interface IModificatedPrice extends IPrice
+{
 
     /**
      * @return string
      */
     public function getDescription();
-
 }
- 

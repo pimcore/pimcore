@@ -12,14 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Abstract base class for filter definition type field collections
  */
-abstract class AbstractFilterDefinitionType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
-
+abstract class AbstractFilterDefinitionType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
+{
     protected $metaData = [];
 
     /**
@@ -38,6 +37,7 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\Object\Fieldc
     public function setMetaData($metaData)
     {
         $this->metaData = $metaData;
+
         return $this;
     }
 
@@ -45,23 +45,23 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Model\Object\Fieldc
     /**
     * @return string
     */
-    public abstract function getLabel();
+    abstract public function getLabel();
 
     /**
     * @return string
     */
-    public abstract function getField();
+    abstract public function getField();
 
     /**
      * @return string
      */
-    public abstract function getScriptPath();
+    abstract public function getScriptPath();
 
     /**
      * @return string
      */
-    public function getRequiredFilterField() {
+    public function getRequiredFilterField()
+    {
         return "";
     }
-
 }

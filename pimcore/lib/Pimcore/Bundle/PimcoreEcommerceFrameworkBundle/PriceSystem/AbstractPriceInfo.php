@@ -12,19 +12,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 /**
  * Abstract base class price info
  */
- class AbstractPriceInfo implements IPriceInfo {
+ class AbstractPriceInfo implements IPriceInfo
+ {
 
      /**
       * @static
       * @return AbstractPriceInfo
       */
-    public static function getInstance(){
+    public static function getInstance()
+    {
         return new static(func_get_args());
     }
 
@@ -52,14 +53,16 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
      * @param int|string $quantity
      * numeric quantity or constant IPriceInfo::MIN_PRICE
      */
-    public function setQuantity($quantity) {
+    public function setQuantity($quantity)
+    {
         $this->quantity = $quantity;
     }
 
     /**
      * @return int|string
      */
-    public function getQuantity() {
+    public function getQuantity()
+    {
         return $this->quantity;
     }
 
@@ -68,21 +71,24 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
     /**
      * @return bool
      */
-    public function isMinPrice(){
+    public function isMinPrice()
+    {
         return $this->getQuantity()===self::MIN_PRICE;
     }
 
     /**
      * @param IPriceSystem $priceSystem
      */
-    public function setPriceSystem($priceSystem) {
+    public function setPriceSystem($priceSystem)
+    {
         $this->priceSystem = $priceSystem;
     }
 
     /**
      * @return IPriceSystem
      */
-    protected  function getPriceSystem() {
+    protected function getPriceSystem()
+    {
         return $this->priceSystem;
     }
 
@@ -90,7 +96,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
       * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
       * @return IPrice
       */
-     public function getPrice() {
+     public function getPrice()
+     {
          throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
@@ -98,23 +105,28 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
       * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException
       * @return IPrice
       */
-     public function getTotalPrice() {
+     public function getTotalPrice()
+     {
          throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
-     public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product) {
+     public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product)
+     {
          $this->product = $product;
      }
 
-     public function getProduct() {
+     public function getProduct()
+     {
          return $this->product;
      }
 
-     public function setProducts($products) {
+     public function setProducts($products)
+     {
          $this->products = $products;
      }
 
-     public function getProducts() {
+     public function getProducts()
+     {
          return $this->products;
      }
-}
+ }

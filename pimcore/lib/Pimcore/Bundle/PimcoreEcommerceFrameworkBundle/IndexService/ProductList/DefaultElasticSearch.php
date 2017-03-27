@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
@@ -20,8 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 /**
  * Implementation of product list which works based on the product index of the online shop framework
  */
-class DefaultElasticSearch implements IProductList {
-
+class DefaultElasticSearch implements IProductList
+{
     const LIMIT_UNLIMITED = 'unlimited';
     /**
      * @var null|IIndexable[]
@@ -100,17 +99,17 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @var string[][]
      */
-    protected $filterConditions = array();
+    protected $filterConditions = [];
 
     /**
      * @var string[][]
      */
-    protected $queryConditions = array();
+    protected $queryConditions = [];
 
     /**
      * @var string[][]
      */
-    protected $relationConditions = array();
+    protected $relationConditions = [];
 
     /**
      * @var float
@@ -125,12 +124,12 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @var array
      */
-    protected $preparedGroupByValues = array();
+    protected $preparedGroupByValues = [];
 
     /**
      * @var array
      */
-    protected $preparedGroupByValuesResults = array();
+    protected $preparedGroupByValuesResults = [];
 
     /**
      * @var bool
@@ -166,7 +165,8 @@ class DefaultElasticSearch implements IProductList {
 
 
 
-    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig $tenantConfig)
+    {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
     }
@@ -187,6 +187,7 @@ class DefaultElasticSearch implements IProductList {
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
+
         return $this;
     }
 
@@ -200,6 +201,7 @@ class DefaultElasticSearch implements IProductList {
         if ($this->products === null) {
             $this->load();
         }
+
         return $this->products;
     }
 
@@ -221,6 +223,7 @@ class DefaultElasticSearch implements IProductList {
     public function setProductPositionMap($productPositionMap)
     {
         $this->productPositionMap = $productPositionMap;
+
         return $this;
     }
 
@@ -232,7 +235,8 @@ class DefaultElasticSearch implements IProductList {
      * @param string $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addCondition($condition, $fieldname = "") {
+    public function addCondition($condition, $fieldname = "")
+    {
         $this->filterConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -244,7 +248,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $fieldname
      * @return mixed
      */
-    public function resetCondition($fieldname) {
+    public function resetCondition($fieldname)
+    {
         unset($this->filterConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -256,7 +261,8 @@ class DefaultElasticSearch implements IProductList {
      * @param string $fieldname
      * @param string $condition
      */
-    public function addRelationCondition($fieldname, $condition) {
+    public function addRelationCondition($fieldname, $condition)
+    {
         $this->relationConditions['relations.' . $fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -265,10 +271,11 @@ class DefaultElasticSearch implements IProductList {
     /**
      * Resets all conditions of product list
      */
-    public function resetConditions() {
-        $this->relationConditions = array();
-        $this->filterConditions = array();
-        $this->queryConditions = array();
+    public function resetConditions()
+    {
+        $this->relationConditions = [];
+        $this->filterConditions = [];
+        $this->queryConditions = [];
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }
@@ -282,7 +289,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addQueryCondition($condition, $fieldname = "") {
+    public function addQueryCondition($condition, $fieldname = "")
+    {
         $this->queryConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -294,7 +302,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $fieldname
      * @return mixed
      */
-    public function resetQueryCondition($fieldname) {
+    public function resetQueryCondition($fieldname)
+    {
         unset($this->queryConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -307,7 +316,8 @@ class DefaultElasticSearch implements IProductList {
      * @param null|float $from
      * @param null|float $to
      */
-    public function addPriceCondition($from = null, $to = null) {
+    public function addPriceCondition($from = null, $to = null)
+    {
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
         $this->preparedGroupByValuesLoaded = false;
@@ -318,7 +328,8 @@ class DefaultElasticSearch implements IProductList {
      * @param boolean $inProductList
      * @return void
      */
-    public function setInProductList($inProductList) {
+    public function setInProductList($inProductList)
+    {
         $this->inProductList = $inProductList;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -327,7 +338,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return boolean
      */
-    public function getInProductList() {
+    public function getInProductList()
+    {
         return $this->inProductList;
     }
 
@@ -337,7 +349,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $order
      * @return void
      */
-    public function setOrder($order) {
+    public function setOrder($order)
+    {
         $this->order = strtolower($order);
         $this->products = null;
     }
@@ -347,7 +360,8 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return string
      */
-    public function getOrder() {
+    public function getOrder()
+    {
         return $this->order;
     }
 
@@ -357,9 +371,10 @@ class DefaultElasticSearch implements IProductList {
      * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
      * @return void
      */
-    public function setOrderKey($orderKey) {
+    public function setOrderKey($orderKey)
+    {
         $this->products = null;
-        if($orderKey == IProductList::ORDERKEY_PRICE) {
+        if ($orderKey == IProductList::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
             $this->orderByPrice = false;
@@ -371,7 +386,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return string
      */
-    public function getOrderKey() {
+    public function getOrderKey()
+    {
         return $this->orderKey;
     }
 
@@ -381,12 +397,13 @@ class DefaultElasticSearch implements IProductList {
      * @param $limit int
      * @return void
      */
-    public function setLimit($limit) {
-        if($this->limit != $limit) {
+    public function setLimit($limit)
+    {
+        if ($this->limit != $limit) {
             $this->products = null;
         }
 
-        if($limit == static::LIMIT_UNLIMITED) {
+        if ($limit == static::LIMIT_UNLIMITED) {
             $this->limit = 100;
             $this->doScrollRequest = true;
         } else {
@@ -398,7 +415,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return int
      */
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->limit;
     }
 
@@ -406,8 +424,9 @@ class DefaultElasticSearch implements IProductList {
      * @param $offset int
      * @return void
      */
-    public function setOffset($offset) {
-        if($this->offset != $offset) {
+    public function setOffset($offset)
+    {
+        if ($this->offset != $offset) {
             $this->products = null;
         }
         $this->offset = $offset;
@@ -416,7 +435,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return int
      */
-    public function getOffset() {
+    public function getOffset()
+    {
         return $this->offset;
     }
 
@@ -424,7 +444,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $category
      * @return void
      */
-    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category) {
+    public function setCategory(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category)
+    {
         $this->category = $category;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -433,7 +454,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->category;
     }
 
@@ -441,7 +463,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $variantMode
      * @return void
      */
-    public function setVariantMode($variantMode) {
+    public function setVariantMode($variantMode)
+    {
         $this->variantMode = $variantMode;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
@@ -450,7 +473,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return string
      */
-    public function getVariantMode() {
+    public function getVariantMode()
+    {
         return $this->variantMode;
     }
 
@@ -459,31 +483,27 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return IIndexable[]
      */
-    public function load() {
-
+    public function load()
+    {
         $objectRaws = [];
 
         //First case: no price filtering and no price sorting
-        if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
-        {
+        if (!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             $objectRaws = $this->loadWithoutPriceFilterWithoutPriceSorting();
         }
 
         //Second case: no price filtering but price sorting
-        else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
-        {
+        elseif ($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             $objectRaws = $this->loadWithoutPriceFilterWithPriceSorting();
         }
 
         //Third case: price filtering but no price sorting
-        else if(!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
-        {
+        elseif (!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
             $objectRaws = $this->loadWithPriceFilterWithoutPriceSorting();
         }
 
         //Forth case: price filtering and price sorting
-        else if($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
-        {
+        elseif ($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
             $objectRaws = $this->loadWithPriceFilterWithPriceSorting();
         }
 
@@ -491,9 +511,9 @@ class DefaultElasticSearch implements IProductList {
         // load elements
         $this->products = $this->productPositionMap = [];
         $i = 0;
-        foreach($objectRaws as $raw) {
+        foreach ($objectRaws as $raw) {
             $product = $this->loadElementById($raw);
-            if($product) {
+            if ($product) {
                 $this->products[] = $product;
                 $this->productPositionMap[$product->getId()] = $i;
                 $i++;
@@ -503,12 +523,13 @@ class DefaultElasticSearch implements IProductList {
         return $this->products;
     }
 
-    protected function getQueryType(){
-        if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT){
+    protected function getQueryType()
+    {
+        if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             return self::PRODUCT_TYPE_OBJECT;
-        }elseif($this->getVariantMode() == self::VARIANT_MODE_HIDE){
+        } elseif ($this->getVariantMode() == self::VARIANT_MODE_HIDE) {
             return self::PRODUCT_TYPE_VARIANT;
-        }else{
+        } else {
             return self::PRODUCT_TYPE_OBJECT . ','. self::PRODUCT_TYPE_VARIANT;
         }
     }
@@ -518,34 +539,35 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return array
      */
-    public function getQuery(){
-        $boolFilters = array();
-        $queryFilters = array();
+    public function getQuery()
+    {
+        $boolFilters = [];
+        $queryFilters = [];
 
         //pre conditions
         $boolFilters = $this->buildSystemConditions($boolFilters);
 
 
         //user specific filters
-        $boolFilters = $this->buildFilterConditions($boolFilters, array());
+        $boolFilters = $this->buildFilterConditions($boolFilters, []);
 
         //relation conditions
-        $boolFilters = $this->buildRelationConditions($boolFilters, array());
+        $boolFilters = $this->buildRelationConditions($boolFilters, []);
 
 
         //query conditions
-        $queryFilters = $this->buildQueryConditions($queryFilters, array());
+        $queryFilters = $this->buildQueryConditions($queryFilters, []);
 
-        $params = array();
+        $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getQueryType();
         $params['body']['_source'] = false;
         $params['body']['size'] = $this->getLimit();
         $params['body']['from'] = $this->getOffset();
 
-        if($this->orderKey) {
-            if(is_array($this->orderKey)) {
-                foreach($this->orderKey as $orderKey) {
+        if ($this->orderKey) {
+            if (is_array($this->orderKey)) {
+                foreach ($this->orderKey as $orderKey) {
                     $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => ($orderKey[1] ?: "asc")];
                 }
             } else {
@@ -553,14 +575,15 @@ class DefaultElasticSearch implements IProductList {
             }
         }
 
-        if($aggs = $this->getSearchAggregation()){
-            foreach($aggs as $name => $type){
+        if ($aggs = $this->getSearchAggregation()) {
+            foreach ($aggs as $name => $type) {
                 $params['body']['aggs'][$name] = $type;
             }
         }
 
         // build query for request
         $params = $this->buildQuery($params, $boolFilters, $queryFilters);
+
         return $params;
     }
 
@@ -573,12 +596,12 @@ class DefaultElasticSearch implements IProductList {
     {
         $params = $this->getQuery();
         // send request
-        $result = $this->sendRequest( $params );
+        $result = $this->sendRequest($params);
 
-        $objectRaws = array();
-        if($result['hits']) {
+        $objectRaws = [];
+        if ($result['hits']) {
             $this->totalCount = $result['hits']['total'];
-            foreach($result['hits']['hits'] as $hit) {
+            foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = $hit['_id'];
             }
         }
@@ -634,17 +657,14 @@ class DefaultElasticSearch implements IProductList {
      */
     protected function buildQuery(array $params, array $boolFilters, array $queryFilters)
     {
-        if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT)
-        {
+        if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             $params['body']['query']['filtered']['query']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['filtered']['query']['has_child']['score_mode'] = 'avg';
             $params['body']['query']['filtered']['query']['has_child']['query']['bool']['must'] = $queryFilters;
 
             $params['body']['query']['filtered']['filter']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['filtered']['filter']['has_child']['filter']['bool']['must'] = $boolFilters;
-        }
-        else
-        {
+        } else {
             $params['body']['query']['filtered']['query']['bool']['must'] = $queryFilters;
             $params['body']['query']['filtered']['filter']['bool']['must'] = $boolFilters;
         }
@@ -660,19 +680,20 @@ class DefaultElasticSearch implements IProductList {
      * @param array $boolFilters
      * @return array
      */
-    protected function buildSystemConditions(array $boolFilters) {
+    protected function buildSystemConditions(array $boolFilters)
+    {
         $boolFilters[] = ['term' => ['system.active' => true]];
         $boolFilters[] = ['term' => ['system.o_virtualProductActive' => true]];
-        if($this->inProductList) {
+        if ($this->inProductList) {
             $boolFilters[] = ['term' => ['system.inProductList' => true]];
         }
 
         $tenantCondition = $this->tenantConfig->getSubTenantCondition();
-        if($tenantCondition) {
+        if ($tenantCondition) {
             $boolFilters[] = $tenantCondition;
         }
 
-        if($this->getCategory()) {
+        if ($this->getCategory()) {
             $boolFilters[] = ['term' => ['system.parentCategoryIds' => $this->getCategory()->getId()]];
         }
 
@@ -687,9 +708,10 @@ class DefaultElasticSearch implements IProductList {
      * @param $excludedFieldnames
      * @return array
      */
-    protected function buildRelationConditions($boolFilters, $excludedFieldnames) {
+    protected function buildRelationConditions($boolFilters, $excludedFieldnames)
+    {
         foreach ($this->relationConditions as $fieldname => $relationConditionArray) {
-            if(!array_key_exists($fieldname, $excludedFieldnames)) {
+            if (!array_key_exists($fieldname, $excludedFieldnames)) {
                 foreach ($relationConditionArray as $relationCondition) {
                     if (is_array($relationCondition)) {
                         $boolFilters[] = $relationCondition;
@@ -699,6 +721,7 @@ class DefaultElasticSearch implements IProductList {
                 }
             }
         }
+
         return $boolFilters;
     }
 
@@ -709,11 +732,12 @@ class DefaultElasticSearch implements IProductList {
      * @param $excludedFieldnames
      * @return array
      */
-    protected function buildFilterConditions($boolFilters, $excludedFieldnames) {
+    protected function buildFilterConditions($boolFilters, $excludedFieldnames)
+    {
         foreach ($this->filterConditions as $fieldname => $filterConditionArray) {
-            if(!array_key_exists($fieldname, $excludedFieldnames)) {
-                foreach($filterConditionArray as $filterCondition) {
-                    if(is_array($filterCondition)) {
+            if (!array_key_exists($fieldname, $excludedFieldnames)) {
+                foreach ($filterConditionArray as $filterCondition) {
+                    if (is_array($filterCondition)) {
                         $boolFilters[] = $filterCondition;
                     } else {
                         $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $filterCondition]];
@@ -733,10 +757,11 @@ class DefaultElasticSearch implements IProductList {
      * @param $excludedFieldnames
      * @return array
      */
-    protected function buildQueryConditions($queryFilters, $excludedFieldnames) {
+    protected function buildQueryConditions($queryFilters, $excludedFieldnames)
+    {
         foreach ($this->queryConditions as $fieldname => $queryConditionArray) {
-            if(!array_key_exists($fieldname, $excludedFieldnames)) {
-                foreach($queryConditionArray as $queryCondition) {
+            if (!array_key_exists($fieldname, $excludedFieldnames)) {
+                foreach ($queryConditionArray as $queryCondition) {
                     if (is_array($queryCondition)) {
                         $queryFilters[] = $queryCondition;
                     } else {
@@ -745,6 +770,7 @@ class DefaultElasticSearch implements IProductList {
                 }
             }
         }
+
         return $queryFilters;
     }
 
@@ -754,7 +780,8 @@ class DefaultElasticSearch implements IProductList {
      * @param $elementId
      * @return array|IIndexable
      */
-    protected function loadElementById($elementId) {
+    protected function loadElementById($elementId)
+    {
         return $this->tenantConfig->getObjectMockupById($elementId);
     }
 
@@ -766,8 +793,9 @@ class DefaultElasticSearch implements IProductList {
      * @param string $fieldname
      * @return void
      */
-    public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        if($fieldname) {
+    public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
+        if ($fieldname) {
             $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)]= ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
             $this->preparedGroupByValuesLoaded = false;
         }
@@ -781,8 +809,9 @@ class DefaultElasticSearch implements IProductList {
      * @param string $fieldname
      * @return void
      */
-    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        if($fieldname) {
+    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
+        if ($fieldname) {
             $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
             $this->preparedGroupByValuesLoaded = false;
         }
@@ -796,7 +825,8 @@ class DefaultElasticSearch implements IProductList {
      * @param string $fieldname
      * @return void
      */
-    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
         $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
         $this->preparedGroupByValuesLoaded = false;
     }
@@ -807,10 +837,11 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return void
      */
-    public function resetPreparedGroupByValues() {
+    public function resetPreparedGroupByValues()
+    {
         $this->preparedGroupByValuesLoaded = false;
-        $this->preparedGroupByValues = array();
-        $this->preparedGroupByValuesResults = array();
+        $this->preparedGroupByValues = [];
+        $this->preparedGroupByValuesResults = [];
     }
 
     /**
@@ -823,7 +854,8 @@ class DefaultElasticSearch implements IProductList {
      * @return array
      * @throws \Exception
      */
-    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
         return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
     }
 
@@ -837,7 +869,8 @@ class DefaultElasticSearch implements IProductList {
      * @return array
      * @throws \Exception
      */
-    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
         return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
     }
 
@@ -851,7 +884,8 @@ class DefaultElasticSearch implements IProductList {
      * @return array
      * @throws \Exception
      */
-    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
         return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
     }
 
@@ -863,20 +897,22 @@ class DefaultElasticSearch implements IProductList {
      * @param bool $fieldnameShouldBeExcluded
      * @return array
      */
-    protected function doGetGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        if(!$this->preparedGroupByValuesLoaded) {
+    protected function doGetGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
+        if (!$this->preparedGroupByValuesLoaded) {
             $this->doLoadGroupByValues();
         }
 
         $results = $this->preparedGroupByValuesResults[$fieldname];
-        if($results) {
-            if($countValues) {
+        if ($results) {
+            if ($countValues) {
                 return $results;
             } else {
-                $resultsWithoutCounts = array();
-                foreach($results as $result) {
+                $resultsWithoutCounts = [];
+                foreach ($results as $result) {
                     $resultsWithoutCounts[] = $result['value'];
                 }
+
                 return $resultsWithoutCounts;
             }
         } else {
@@ -892,17 +928,18 @@ class DefaultElasticSearch implements IProductList {
      *
      * @throws \Exception
      */
-    protected function doLoadGroupByValues() {
+    protected function doLoadGroupByValues()
+    {
         // create general filters and queries
-        $toExcludeFieldnames = array();
-        foreach($this->preparedGroupByValues as $fieldname => $config) {
-            if($config['fieldnameShouldBeExcluded']) {
+        $toExcludeFieldnames = [];
+        foreach ($this->preparedGroupByValues as $fieldname => $config) {
+            if ($config['fieldnameShouldBeExcluded']) {
                 $toExcludeFieldnames[$fieldname] = $fieldname;
             }
         }
 
-        $boolFilters = array();
-        $queryFilters = array();
+        $boolFilters = [];
+        $queryFilters = [];
 
         //pre conditions
         $boolFilters = $this->buildSystemConditions($boolFilters);
@@ -914,35 +951,35 @@ class DefaultElasticSearch implements IProductList {
         $boolFilters = $this->buildRelationConditions($boolFilters, $toExcludeFieldnames);
 
         //query conditions
-        $queryFilters = $this->buildQueryConditions($queryFilters, array());
+        $queryFilters = $this->buildQueryConditions($queryFilters, []);
 
 
-        $aggregations = array();
+        $aggregations = [];
 
         //calculate already filtered attributes
-        $filteredFieldnames = array();
-        foreach($this->filterConditions as $fieldname => $condition) {
-            if(!array_key_exists($fieldname, $toExcludeFieldnames)) {
+        $filteredFieldnames = [];
+        foreach ($this->filterConditions as $fieldname => $condition) {
+            if (!array_key_exists($fieldname, $toExcludeFieldnames)) {
                 $filteredFieldnames[$fieldname] = $fieldname;
             }
         }
-        foreach($this->relationConditions as $fieldname => $condition) {
-            if(!array_key_exists($fieldname, $toExcludeFieldnames)) {
+        foreach ($this->relationConditions as $fieldname => $condition) {
+            if (!array_key_exists($fieldname, $toExcludeFieldnames)) {
                 $filteredFieldnames[$fieldname] = $fieldname;
             }
         }
 
-        foreach($this->preparedGroupByValues as $fieldname => $config) {
+        foreach ($this->preparedGroupByValues as $fieldname => $config) {
 
             //toexclude sind alle, die schon gefiltert wurden + fieldname
 
-            $specificFilters = array();
+            $specificFilters = [];
             //user specific filters
             $specificFilters = $this->buildFilterConditions($specificFilters, array_merge($filteredFieldnames, [$fieldname => $fieldname]));
             //relation conditions
             $specificFilters = $this->buildRelationConditions($specificFilters, array_merge($filteredFieldnames, [$fieldname => $fieldname]));
 
-            if($specificFilters) {
+            if ($specificFilters) {
                 $aggregations[$fieldname] = [
                     'filter' => [
                         'bool' => [
@@ -960,11 +997,10 @@ class DefaultElasticSearch implements IProductList {
                     "terms" => ['field' => $fieldname, 'size' => 0, "order" => ["_term" => "asc" ]]
                 ];
             }
-
         }
 
-        if($aggregations) {
-            $params = array();
+        if ($aggregations) {
+            $params = [];
             $params['index'] = $this->getIndexName();
             $params['type'] = $this->getQueryType();
             $params['search_type'] = "count";
@@ -978,20 +1014,20 @@ class DefaultElasticSearch implements IProductList {
             $params = $this->buildQuery($params, $boolFilters, $queryFilters);
 
             // send request
-            $result = $this->sendRequest( $params );
+            $result = $this->sendRequest($params);
 
 
-            if($result['aggregations']) {
-                foreach($result['aggregations'] as $fieldname => $aggregation) {
-                    if($aggregation['buckets']) {
+            if ($result['aggregations']) {
+                foreach ($result['aggregations'] as $fieldname => $aggregation) {
+                    if ($aggregation['buckets']) {
                         $buckets = $aggregation['buckets'];
                     } else {
                         $buckets = $aggregation[$fieldname]['buckets'];
                     }
 
-                    $groupByValueResult = array();
-                    if($buckets) {
-                        foreach($buckets as $bucket) {
+                    $groupByValueResult = [];
+                    if ($buckets) {
+                        foreach ($buckets as $bucket) {
                             $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['doc_count']];
                         }
                     }
@@ -1000,7 +1036,7 @@ class DefaultElasticSearch implements IProductList {
                 }
             }
         } else {
-            $this->preparedGroupByValuesResults = array();
+            $this->preparedGroupByValuesResults = [];
         }
 
 
@@ -1010,7 +1046,8 @@ class DefaultElasticSearch implements IProductList {
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
      */
-    public function getTenantConfig(){
+    public function getTenantConfig()
+    {
         return $this->tenantConfig;
     }
 
@@ -1027,9 +1064,8 @@ class DefaultElasticSearch implements IProductList {
          */
         $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
 
-        if($esClient instanceof \Elasticsearch\Client)
-        {
-            if($this->doScrollRequest) {
+        if ($esClient instanceof \Elasticsearch\Client) {
+            if ($this->doScrollRequest) {
                 $params = array_merge(['scroll' => $this->scrollRequestKeepAlive], $params);
                 //kind of dirty hack :/
                 unset($params['search_type']);
@@ -1037,14 +1073,14 @@ class DefaultElasticSearch implements IProductList {
 
             $result = $esClient->search($params);
 
-            if($this->doScrollRequest) {
+            if ($this->doScrollRequest) {
                 $additionalHits = [];
                 $scrollId = $result['_scroll_id'];
 
-                while(true) {
+                while (true) {
                     $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive]);
 
-                    if(count($additionalResult['hits']['hits'])) {
+                    if (count($additionalResult['hits']['hits'])) {
                         $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
                         $scrollId = $additionalResult['_scroll_id'];
                     } else {
@@ -1054,6 +1090,7 @@ class DefaultElasticSearch implements IProductList {
                 $result['hits']['hits'] = array_merge($result['hits']['hits'], $additionalHits);
             }
         }
+
         return $result;
     }
 
@@ -1063,9 +1100,10 @@ class DefaultElasticSearch implements IProductList {
      */
     protected function getIndexName()
     {
-        if(!$this->indexName){
+        if (!$this->indexName) {
             $this->indexName = ($this->tenantConfig->getClientConfig('indexName')) ? strtolower($this->tenantConfig->getClientConfig('indexName')) : strtolower($this->tenantConfig->getTenantName());
         }
+
         return $this->indexName;
     }
 
@@ -1085,8 +1123,10 @@ class DefaultElasticSearch implements IProductList {
      * <p>
      * The return value is cast to an integer.
      */
-    public function count() {
+    public function count()
+    {
         $this->getProducts();
+
         return $this->totalCount;
     }
     /**
@@ -1095,9 +1135,11 @@ class DefaultElasticSearch implements IProductList {
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      */
-    public function current() {
+    public function current()
+    {
         $this->getProducts();
         $var = current($this->products);
+
         return $var;
     }
 
@@ -1108,7 +1150,8 @@ class DefaultElasticSearch implements IProductList {
      * @param  integer $itemCountPerPage Number of items per page
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage) {
+    public function getItems($offset, $itemCountPerPage)
+    {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
 
@@ -1120,7 +1163,8 @@ class DefaultElasticSearch implements IProductList {
      *
      * @return \Zend_Paginator_Adapter_Interface
      */
-    public function getPaginatorAdapter() {
+    public function getPaginatorAdapter()
+    {
         return $this;
     }
 
@@ -1131,9 +1175,11 @@ class DefaultElasticSearch implements IProductList {
      * @return scalar scalar on success, integer
      * 0 on failure.
      */
-    public function key() {
+    public function key()
+    {
         $this->getProducts();
         $var = key($this->products);
+
         return $var;
     }
 
@@ -1143,9 +1189,11 @@ class DefaultElasticSearch implements IProductList {
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      */
-    public function next() {
+    public function next()
+    {
         $this->getProducts();
         $var = next($this->products);
+
         return $var;
     }
 
@@ -1155,7 +1203,8 @@ class DefaultElasticSearch implements IProductList {
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
-    public function rewind() {
+    public function rewind()
+    {
         $this->getProducts();
         reset($this->products);
     }
@@ -1167,9 +1216,10 @@ class DefaultElasticSearch implements IProductList {
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid() {
+    public function valid()
+    {
         $var = $this->current() !== false;
+
         return $var;
     }
-
 }

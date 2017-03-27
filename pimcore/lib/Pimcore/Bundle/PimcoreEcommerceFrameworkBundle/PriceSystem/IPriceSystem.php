@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Model\Object\OnlineShopTaxClass;
@@ -21,7 +21,8 @@ use Pimcore\Model\Object\OnlineShopTaxClass;
 /**
  * Interface IPriceSystem
  */
-interface IPriceSystem {
+interface IPriceSystem
+{
 
     /**
      * creates price info object for given product and quantity scale

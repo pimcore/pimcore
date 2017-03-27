@@ -12,19 +12,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRange {
-
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRange
+{
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -39,7 +40,7 @@ class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
             'label' => $value['label']];
         }
 
-        return $this->render($script, array(
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$this->getField($filterDefinition)],
@@ -47,14 +48,15 @@ class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
             "definition" => $filterDefinition,
             "fieldname" => $this->getField($filterDefinition),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $value = $params[$field];
 
-        if(empty($value)) {
+        if (empty($value)) {
             $value['from'] = $filterDefinition->getPreSelectFrom();
             $value['to'] = $filterDefinition->getPreSelectTo();
         }
@@ -64,21 +66,22 @@ class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
 
         $currentFilter[$field] = $value;
 
-        if($value['from'] || $value['to']) {
+        if ($value['from'] || $value['to']) {
             $v = [];
-            if($value['from']) {
+            if ($value['from']) {
                 $v['min'] = $value['from'];
-            }else {
+            } else {
                 $v['min'] = 0;
             }
 
-            if($value['to']) {
+            if ($value['to']) {
                 $v['max'] = $value['to'];
-            }else {
+            } else {
                 $v['max'] = 9999999999999999;       // findologic won't accept only one of max or min, always needs both
             }
             $productList->addCondition($v, $field);
         }
+
         return $currentFilter;
     }
 }

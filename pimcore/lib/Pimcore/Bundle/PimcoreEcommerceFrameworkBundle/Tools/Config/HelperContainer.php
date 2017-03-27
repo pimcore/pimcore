@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -26,7 +25,8 @@ use Pimcore\Config\Config;
  * tries to use config for current checkout tenant, uses default config if corresponding root attribute is not set
  *
  */
-class HelperContainer {
+class HelperContainer
+{
 
     /**
      * @var Config
@@ -42,18 +42,18 @@ class HelperContainer {
      * @param Config      $config     -> configuration to contain
      * @param string      $identifier -> cache identifier for caching sub files
      */
-    public function __construct(Config $config, $identifier) {
+    public function __construct(Config $config, $identifier)
+    {
         $this->defaultConfig = $config;
 
         if (!$config->tenants || empty($config->tenants)) {
             return;
         }
 
-        foreach($config->tenants->toArray() as $tenantName => $tenantConfig) {
-
+        foreach ($config->tenants->toArray() as $tenantName => $tenantConfig) {
             $tenantConfig = $config->tenants->{$tenantName};
-            if($tenantConfig instanceof Config) {
-                if($tenantConfig->file) {
+            if ($tenantConfig instanceof Config) {
+                if ($tenantConfig->file) {
                     $tenantConfigFile = new Config(require PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . ((string)$tenantConfig->file), true);
                     $this->tenantConfigs[$tenantName] = $tenantConfigFile->tenant;
                 } else {
@@ -65,21 +65,17 @@ class HelperContainer {
 
 
 
-    public function __get($name) {
+    public function __get($name)
+    {
         $currentCheckoutTenant = Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
 
-        if($currentCheckoutTenant && $this->tenantConfigs[$currentCheckoutTenant]) {
+        if ($currentCheckoutTenant && $this->tenantConfigs[$currentCheckoutTenant]) {
             $option = $this->tenantConfigs[$currentCheckoutTenant]->$name;
-            if($option) {
+            if ($option) {
                 return $option;
             }
         }
 
         return $this->defaultConfig->$name;
     }
-
-
-
-
-
 }

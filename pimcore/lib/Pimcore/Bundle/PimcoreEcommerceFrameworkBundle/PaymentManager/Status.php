@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager;
 
 class Status implements IStatus
@@ -47,7 +46,7 @@ class Status implements IStatus
 
     /**
      * additional payment data
-     * 
+     *
      * @var array
      */
     protected $data = [];

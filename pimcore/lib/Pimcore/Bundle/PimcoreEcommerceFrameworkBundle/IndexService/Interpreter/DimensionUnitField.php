@@ -12,25 +12,22 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-class DimensionUnitField implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
-
-        if(!empty($value) && $value instanceof \Object_Data_DimensionUnitField) {
-
-            if($config->onlyDimensionValue == "true") {
+class DimensionUnitField implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
+        if (!empty($value) && $value instanceof \Object_Data_DimensionUnitField) {
+            if ($config->onlyDimensionValue == "true") {
                 $unit = $value->getUnit();
                 $value = $value->getValue();
 
-                if($unit->getFactor()) {
+                if ($unit->getFactor()) {
                     $value *= $unit->getFactor();
                 }
 
                 return $value;
-
             } else {
                 return $value->__toString();
             }

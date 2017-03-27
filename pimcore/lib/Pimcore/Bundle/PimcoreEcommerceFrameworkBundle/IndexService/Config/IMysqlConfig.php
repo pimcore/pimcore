@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 /**
@@ -20,7 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
  *
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
  */
-interface IMysqlConfig extends IConfig {
+interface IMysqlConfig extends IConfig
+{
 
     /**
      * returns table name of product index
@@ -65,5 +65,4 @@ interface IMysqlConfig extends IConfig {
      * @return string
      */
     public function getIdColumnType($isPrimary);
-
 }

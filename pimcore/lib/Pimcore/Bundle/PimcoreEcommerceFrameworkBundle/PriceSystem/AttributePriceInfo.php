@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 /**
@@ -20,7 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
  *
  * attribute info for attribute price system
  */
-class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo {
+class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo
+{
 
     /**
      * @var IPrice
@@ -33,17 +33,20 @@ class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo {
     protected $totalPrice;
 
 
-    public function __construct(IPrice $price, $quantity, IPrice $totalPrice) {
+    public function __construct(IPrice $price, $quantity, IPrice $totalPrice)
+    {
         $this->price = $price;
         $this->totalPrice = $totalPrice;
         $this->quantity = $quantity;
     }
 
-    public function getPrice() {
+    public function getPrice()
+    {
         return $this->price;
     }
 
-    public function getTotalPrice() {
+    public function getTotalPrice()
+    {
         return $this->totalPrice;
     }
 
@@ -54,8 +57,8 @@ class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo {
      * @param $arguments
      * @return mixed
      */
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         return $this->product->$name($arguments);
     }
-
 }

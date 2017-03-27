@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 /**
  * Interface for PriceInfo implementations of online shop framework
  */
-interface IPriceInfo {
+interface IPriceInfo
+{
     const MIN_PRICE = "min";
 
     /**

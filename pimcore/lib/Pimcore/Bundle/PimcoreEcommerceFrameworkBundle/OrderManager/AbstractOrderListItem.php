@@ -12,9 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
-
 
 /**
  * Class AbstractListItem
@@ -40,5 +38,5 @@ abstract class AbstractOrderListItem
     /**
      * @return int
      */
-    abstract function getId();
+    abstract public function getId();
 }

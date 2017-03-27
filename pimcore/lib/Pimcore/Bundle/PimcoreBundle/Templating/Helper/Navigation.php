@@ -108,7 +108,7 @@ class Navigation extends Helper
     {
         if (!isset($this->renderer[$name])) {
             $renderClass = 'Pimcore\Bundle\PimcoreBundle\Templating\Helper\Navigation\Renderer\\' . ucfirst($name);
-            if(class_exists($renderClass)) {
+            if (class_exists($renderClass)) {
                 $this->renderer[$name] = new $renderClass;
                 $this->renderer[$name]->setHelper($this);
             } else {
@@ -126,6 +126,7 @@ class Navigation extends Helper
     public function render(Container $container = null)
     {
         $helper = $this->getRenderer($this->defaultRenderer);
+
         return $helper->render($container);
     }
 

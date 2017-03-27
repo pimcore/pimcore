@@ -12,39 +12,41 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRange {
-
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+class NumberRange extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRange
+{
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $value = $params[$field];
 
-        if(empty($value)) {
+        if (empty($value)) {
             $value['from'] = $filterDefinition->getPreSelectFrom();
             $value['to'] = $filterDefinition->getPreSelectTo();
         }
 
         $currentFilter[$field] = $value;
 
-        if(!empty($value)) {
+        if (!empty($value)) {
             $range = [];
-            if(!empty($value['from'])) {
+            if (!empty($value['from'])) {
                 $range['gte'] = $value['from'];
             }
-            if(!empty($value['to'])) {
+            if (!empty($value['to'])) {
                 $range['lte'] = $value['from'];
             }
             $productList->addCondition(['range' => ['attributes.' . $field => $range]], $field);
         }
+
         return $currentFilter;
     }
 }

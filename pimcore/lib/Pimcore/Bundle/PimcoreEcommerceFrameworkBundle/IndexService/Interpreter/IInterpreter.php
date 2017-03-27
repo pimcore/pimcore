@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-interface IInterpreter {
+interface IInterpreter
+{
     public static function interpret($value, $config = null);
 }

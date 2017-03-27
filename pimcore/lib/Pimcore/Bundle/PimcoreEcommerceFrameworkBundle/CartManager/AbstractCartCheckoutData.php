@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
-abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel {
-
+abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
+{
     protected $key;
     protected $data;
     /**
@@ -24,43 +23,50 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel {
      */
     protected $cart;
 
-    public function setCart(ICart $cart) {
+    public function setCart(ICart $cart)
+    {
         $this->cart = $cart;
     }
 
-    public function getCart() {
+    public function getCart()
+    {
         return $this->cart;
     }
 
-    public function getCartId() {
+    public function getCartId()
+    {
         return $this->getCart()->getId();
     }
 
-    public abstract function save();
+    abstract public function save();
 
-    public static function getByKeyCartId($key, $cartId) {
+    public static function getByKeyCartId($key, $cartId)
+    {
         throw new \Exception("Not implemented.");
     }
 
-    public static function removeAllFromCart($cartId) {
+    public static function removeAllFromCart($cartId)
+    {
         throw new \Exception("Not implemented.");
     }
 
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
     }
 
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
-    public function setData($data) {
+    public function setData($data)
+    {
         $this->data = $data;
     }
 
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
-
-
 }

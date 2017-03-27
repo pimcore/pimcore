@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\FactFinder;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -26,7 +25,6 @@ class Select extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterServi
      */
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
     {
-
     }
 
 
@@ -48,9 +46,9 @@ class Select extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterServi
 
 
         // set defaults
-        if($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING){
+        if ($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;
         }
 
@@ -60,8 +58,7 @@ class Select extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterServi
 
 
         // add condition
-        if(!empty($value))
-        {
+        if (!empty($value)) {
             $productList->addCondition(trim($value), $field);
         }
 

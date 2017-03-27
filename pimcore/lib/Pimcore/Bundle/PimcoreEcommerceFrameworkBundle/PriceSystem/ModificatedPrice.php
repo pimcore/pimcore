@@ -12,19 +12,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 
-class ModificatedPrice extends Price implements IModificatedPrice {
+class ModificatedPrice extends Price implements IModificatedPrice
+{
 
     /**
      * @var null|string
      */
     protected $description;
 
-    public function __construct($amount, Currency $currency, $minPrice = false, $description = null) {
+    public function __construct($amount, Currency $currency, $minPrice = false, $description = null)
+    {
         parent::__construct($amount, $currency, $minPrice);
         $this->description = $description;
     }
@@ -40,8 +41,8 @@ class ModificatedPrice extends Price implements IModificatedPrice {
     /**
      * @param string $description
      */
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
-
 }

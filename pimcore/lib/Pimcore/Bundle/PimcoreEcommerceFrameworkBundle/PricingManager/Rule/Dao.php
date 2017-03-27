@@ -12,12 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-
     const TABLE_NAME = 'ecommerceframework_pricing_rule';
 
     /**
@@ -25,17 +23,17 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @var array
      */
-    protected $validColumns = array();
+    protected $validColumns = [];
 
     /**
      * @var array
      */
-    protected $fieldsToSave = array('name', 'label', 'description', 'behavior', 'active', 'prio', 'condition', 'actions');
+    protected $fieldsToSave = ['name', 'label', 'description', 'behavior', 'active', 'prio', 'condition', 'actions'];
 
     /**
      * @var array
      */
-    protected $localizedFields = array('label', 'description');
+    protected $localizedFields = ['label', 'description'];
 
     /**
      * Get the valid columns from the database
@@ -55,7 +53,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function getById($id)
     {
         $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception('pricing rule ' . $id . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
@@ -69,7 +67,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert(self::TABLE_NAME, array());
+        $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
 
         $this->save();
@@ -82,8 +80,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function save()
     {
-        if ($this->model->getId())
+        if ($this->model->getId()) {
             return $this->update();
+        }
 
         return $this->create();
     }
@@ -97,25 +96,21 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             if (in_array($field, $this->validColumns)) {
                 $getter = 'get' . ucfirst($field);
 
-                if(in_array($field, $this->localizedFields))
-                {
+                if (in_array($field, $this->localizedFields)) {
                     // handle localized Fields
-                    $localizedValues = array();
-                    foreach(\Pimcore\Tool::getValidLanguages() as $lang)
-                    {
+                    $localizedValues = [];
+                    foreach (\Pimcore\Tool::getValidLanguages() as $lang) {
                         $localizedValues[ $lang ] = $value = $this->model->$getter($lang);
                     }
                     $value = $localizedValues;
-                }
-                else
-                {
+                } else {
                     // normal case
                     $value = $this->model->$getter();
                 }
 
                 if (is_array($value) || is_object($value)) {
                     $value = serialize($value);
-                } else  if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$field] = $value;
@@ -142,5 +137,4 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         $this->fieldsToSave = $fields;
     }
-
 }

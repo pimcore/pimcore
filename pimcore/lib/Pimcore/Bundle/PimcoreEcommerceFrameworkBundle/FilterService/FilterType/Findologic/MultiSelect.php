@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -20,7 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitio
 
 class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -38,22 +38,17 @@ class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
 
 
         // add current filter. workaround for findologic behavior
-        if(array_key_exists($field, $currentFilter) && $currentFilter[$field] != null)
-        {
-            foreach($currentFilter[$field] as $value)
-            {
+        if (array_key_exists($field, $currentFilter) && $currentFilter[$field] != null) {
+            foreach ($currentFilter[$field] as $value) {
                 $add = true;
-                foreach($values as $v)
-                {
-                    if($v['value'] == $value)
-                    {
+                foreach ($values as $v) {
+                    if ($v['value'] == $value) {
                         $add = false;
                         break;
                     }
                 }
 
-                if($add)
-                {
+                if ($add) {
                     array_unshift($values, [
                         'value' => $value
                         , 'label' => $value
@@ -66,14 +61,14 @@ class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
 
 
 
-        return $this->render($script, array(
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
             "values" => $values,
             "fieldname" => $field,
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
     /**
@@ -93,20 +88,18 @@ class MultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Filter
 
 
         // set defaults
-        if(empty($value) && !$params['is_reload'] && ($preSelect = $this->getPreSelect($filterDefinition)))
-        {
+        if (empty($value) && !$params['is_reload'] && ($preSelect = $this->getPreSelect($filterDefinition))) {
             $value = explode(",", $preSelect);
         }
 
 
-        if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        if (!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = [];
         }
 
         $currentFilter[$field] = $value;
 
-        if($value)
-        {
+        if ($value) {
             $productList->addCondition($value, $field);
         }
 

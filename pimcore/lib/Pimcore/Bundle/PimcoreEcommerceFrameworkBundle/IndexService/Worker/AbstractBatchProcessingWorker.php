@@ -12,13 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
-
 
 /**
  * Class AbstractMockupCacheWorker
@@ -27,7 +26,8 @@ use Pimcore\Logger;
  *
  * @package OnlineShop\Framework\IndexService\Worker
  */
-abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker {
+abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker
+{
 
     /**
      * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\AbstractConfig
@@ -39,20 +39,21 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      *
      * @return string
      */
-    protected abstract function getStoreTableName();
+    abstract protected function getStoreTableName();
 
 
     /**
      * @param $objectId
      * @param null $data
      */
-    protected abstract function doUpdateIndex($objectId, $data = null);
+    abstract protected function doUpdateIndex($objectId, $data = null);
 
 
     /**
      * creates store table
      */
-    protected function createOrUpdateStoreTable() {
+    protected function createOrUpdateStoreTable()
+    {
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
@@ -79,7 +80,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      *
      * @param $objectId
      */
-    protected function deleteFromStoreTable($objectId) {
+    protected function deleteFromStoreTable($objectId)
+    {
         $this->db->deleteWhere($this->getStoreTableName(), "o_id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
     }
 
@@ -88,23 +90,23 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      *
      * @param IIndexable $object
      */
-    protected function getDefaultDataForIndex(IIndexable $object, $subObjectId){
+    protected function getDefaultDataForIndex(IIndexable $object, $subObjectId)
+    {
         $categories = $object->getCategories();
         $categoryIds = [];
         $parentCategoryIds =[];
         $categoryIdPaths = [];
-        if($categories) {
-            foreach($categories as $c) {
-
-                if($c instanceof AbstractCategory) {
+        if ($categories) {
+            foreach ($categories as $c) {
+                if ($c instanceof AbstractCategory) {
                     $categoryIds[$c->getId()] = $c->getId();
                 }
 
                 $currentCategory = $c;
-                while($currentCategory instanceof AbstractCategory) {
+                while ($currentCategory instanceof AbstractCategory) {
                     $parentCategoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
-                    if($currentCategory->getOSProductsInParentCategoryVisible()) {
+                    if ($currentCategory->getOSProductsInParentCategoryVisible()) {
                         $currentCategory = $currentCategory->getParent();
                     } else {
                         $currentCategory = null;
@@ -123,12 +125,10 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 }
                 $tmpIds = array_reverse($tmpIds);
                 $s = '';
-                foreach($tmpIds as $id){
+                foreach ($tmpIds as $id) {
                     $s.= '/'.$id;
                     $categoryIdPaths[] = $s;
                 }
-
-
             }
         }
         $categoryIdPaths = (array)array_unique($categoryIdPaths);
@@ -137,16 +137,16 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
 
         $virtualProductId = $subObjectId;
         $virtualProductActive = $object->isActive();
-        if($object->getOSIndexType() == "variant") {
+        if ($object->getOSIndexType() == "variant") {
             $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
         }
 
         $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
-        if($virtualProduct && method_exists($virtualProduct, "isActive")) {
+        if ($virtualProduct && method_exists($virtualProduct, "isActive")) {
             $virtualProductActive = $virtualProduct->isActive();
         }
 
-        $data = array(
+        $data = [
             "o_id" => $subObjectId,
             "o_classId" => $object->getClassId(),
             "o_virtualProductId" => $virtualProductId,
@@ -160,7 +160,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
             "active" => $object->isActive(),
             "inProductList" => $object->isActive(true),
             "tenant" => $this->name,
-        );
+        ];
 
 
         return $data;
@@ -171,14 +171,15 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      *
      * @param IIndexable $object
      */
-    public function prepareDataForIndex(IIndexable $object) {
+    public function prepareDataForIndex(IIndexable $object)
+    {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
-        foreach($subObjectIds as $subObjectId => $object) {
+        foreach ($subObjectIds as $subObjectId => $object) {
             /**
              * @var IIndexable $object
              */
-            if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
+            if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
                 $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
@@ -186,43 +187,41 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
                 \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
 
-                $data = $this->getDefaultDataForIndex($object,$subObjectId);
-                $relationData = array();
+                $data = $this->getDefaultDataForIndex($object, $subObjectId);
+                $relationData = [];
 
                 $columnConfig = $this->columnConfig;
-                if(!empty($columnConfig->name)) {
-                    $columnConfig = array($columnConfig);
+                if (!empty($columnConfig->name)) {
+                    $columnConfig = [$columnConfig];
+                } elseif (empty($columnConfig)) {
+                    $columnConfig = [];
                 }
-                else if(empty($columnConfig))
-                {
-                    $columnConfig = array();
-                }
-                foreach($columnConfig as $column) {
+                foreach ($columnConfig as $column) {
                     try {
                         //$data[$column->name] = null;
                         $value = null;
-                        if(!empty($column->getter)) {
+                        if (!empty($column->getter)) {
                             $getter = $column->getter;
                             $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
                         } else {
-                            if(!empty($column->fieldname)) {
+                            if (!empty($column->fieldname)) {
                                 $getter = "get" . ucfirst($column->fieldname);
                             } else {
                                 $getter = "get" . ucfirst($column->name);
                             }
 
-                            if(method_exists($object, $getter)) {
+                            if (method_exists($object, $getter)) {
                                 $value = $object->$getter($column->locale);
                             }
                         }
 
-                        if(!empty($column->interpreter)) {
+                        if (!empty($column->interpreter)) {
                             $interpreter = $column->interpreter;
                             $value = $interpreter::interpret($value, $column->config);
                             $interpreterObject = new $interpreter();
-                            if($interpreterObject instanceof IRelationInterpreter) {
-                                foreach($value as $v) {
-                                    $relData = array();
+                            if ($interpreterObject instanceof IRelationInterpreter) {
+                                foreach ($value as $v) {
+                                    $relData = [];
                                     $relData['src'] = $subObjectId;
                                     $relData['src_virtualProductId'] = $data['o_virtualProductId'];
                                     $relData['dest'] = $v['dest'];
@@ -237,16 +236,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                             $data[$column->name] = $value;
                         }
 
-                        if(is_array($data[$column->name])) {
+                        if (is_array($data[$column->name])) {
                             $data[$column->name] = $this->convertArray($data[$column->name]);
                         }
-
-                    } catch(\Exception $e) {
+                    } catch (\Exception $e) {
                         Logger::err("Exception in IndexService: " . $e);
                     }
-
                 }
-                if($a) {
+                if ($a) {
                     \Pimcore::setAdminMode();
                 }
                 \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
@@ -254,14 +251,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
 
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
-                $jsonData = json_encode(array(
+                $jsonData = json_encode([
                     "data" => $data,
                     "relations" => ($relationData ? $relationData : []),
                     "subtenants" => ($subTenantData ? $subTenantData : [])
-                ));
+                ]);
 
                 $crc = crc32($jsonData);
-                $insertData = array(
+                $insertData = [
                     "o_id" => $subObjectId,
                     "o_virtualProductId" => $data['o_virtualProductId'],
                     "tenant" => $this->name,
@@ -270,9 +267,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                     "preparation_worker_timestamp" => 0,
                     "preparation_worker_id" => $this->db->quote(null),
                     "in_preparation_queue" => 0
-                );
+                ];
 
-                $this->insertDataToIndex($insertData,$subObjectId);
+                $this->insertDataToIndex($insertData, $subObjectId);
             } else {
                 Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
                 $this->doDeleteFromIndex($subObjectId, $object);
@@ -281,7 +278,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
 
         //cleans up all old zombie data
         $this->doCleanupOldZombieData($object, $subObjectIds);
-
     }
 
     /**
@@ -290,19 +286,21 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      * @param $data
      * @param $subObjectId
      */
-    protected function insertDataToIndex($data,$subObjectId){
-        $currentEntry = $this->db->fetchRow("SELECT crc_current, in_preparation_queue FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", array($subObjectId, $this->name));
-        if(!$currentEntry) {
+    protected function insertDataToIndex($data, $subObjectId)
+    {
+        $currentEntry = $this->db->fetchRow("SELECT crc_current, in_preparation_queue FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", [$subObjectId, $this->name]);
+        if (!$currentEntry) {
             $this->db->insert($this->getStoreTableName(), $data);
-        } else if($currentEntry['crc_current'] != $data['crc_current']) {
+        } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
             $this->db->updateWhere($this->getStoreTableName(), $data, "o_id = " . $this->db->quote((string)$subObjectId) . " AND tenant = " . $this->db->quote($this->name));
-        } else if($currentEntry['in_preparation_queue']) {
-            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?", array($subObjectId, $this->name));
+        } elseif ($currentEntry['in_preparation_queue']) {
+            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?", [$subObjectId, $this->name]);
         }
     }
 
 
-    protected function getWorkerTimeout() {
+    protected function getWorkerTimeout()
+    {
         return 300;
     }
 
@@ -315,16 +313,16 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      *
      * @param IIndexable $object
      */
-    public function fillupPreparationQueue(IIndexable $object) {
-        if($object instanceof \Pimcore\Model\Object\Concrete) {
+    public function fillupPreparationQueue(IIndexable $object)
+    {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
-            if($objects) {
-                $updateStatement = "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN (".implode(',',$objects).")";
-                $this->db->query($updateStatement, array($this->name));
+            $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", [$object->getFullPath() . "/%"]);
+            if ($objects) {
+                $updateStatement = "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN (".implode(',', $objects).")";
+                $this->db->query($updateStatement, [$this->name]);
             }
-
         }
     }
 
@@ -335,22 +333,22 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      * @param int $limit
      * @return int number of entries
      */
-    public function processPreparationQueue($limit = 200) {
-
+    public function processPreparationQueue($limit = 200)
+    {
         $workerId = uniqid();
         $workerTimestamp = time();
         $this->db->query("UPDATE " . $this->getStoreTableName() . " SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT " . intval($limit),
-            array($workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()));
+            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]);
 
         $entries = $this->db->fetchCol("SELECT o_id FROM " . $this->getStoreTableName() . " WHERE preparation_worker_id = ?",
-            array($workerId));
+            [$workerId]);
 
-        if($entries) {
-            foreach($entries as $objectId) {
+        if ($entries) {
+            foreach ($entries as $objectId) {
                 Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
                 $object = $this->tenantConfig->getObjectById($objectId, true);
-                if($object instanceof IIndexable) {
+                if ($object instanceof IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {
                     //delete entry with id which was retrieved from index before
@@ -358,6 +356,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                     $this->doDeleteFromIndex($objectId, $object);
                 }
             }
+
             return count($entries);
         } else {
             return 0;
@@ -371,29 +370,25 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      * @param int $limit
      * @return int number of entries processed
      */
-    public function processUpdateIndexQueue($limit = 200) {
-
+    public function processUpdateIndexQueue($limit = 200)
+    {
         $workerId = uniqid();
         $workerTimestamp = time();
         $this->db->query("UPDATE " . $this->getStoreTableName() . " SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
-            array($workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()));
+            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]);
 
-        $entries = $this->db->fetchAll("SELECT o_id, data FROM " . $this->getStoreTableName() . " WHERE worker_id = ?", array($workerId));
+        $entries = $this->db->fetchAll("SELECT o_id, data FROM " . $this->getStoreTableName() . " WHERE worker_id = ?", [$workerId]);
 
-        if($entries) {
-            foreach($entries as $entry) {
+        if ($entries) {
+            foreach ($entries as $entry) {
                 Logger::info("Worker $workerId updating index for element " . $entry['id']);
                 $data = json_decode($entry['data'], true);
                 $this->doUpdateIndex($entry['o_id'], $data);
-
             }
+
             return count($entries);
         } else {
             return 0;
         }
     }
-
-
-
-
 }

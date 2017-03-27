@@ -12,32 +12,32 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Model\Object\Data\ObjectMetadata;
 
-class DefaultRelations implements IRelationInterpreter {
+class DefaultRelations implements IRelationInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
+        $result = [];
 
-    public static function interpret($value, $config = null) {
-        $result = array();
-
-        if($value instanceof ObjectMetadata) {
+        if ($value instanceof ObjectMetadata) {
             $value = $value->getObject();
         }
 
-        if(is_array($value)) {
-            foreach($value as $v) {
-
-                if($v instanceof ObjectMetadata) {
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                if ($v instanceof ObjectMetadata) {
                     $v = $v->getObject();
                 }
 
-                $result[] = array("dest" => $v->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($v));
+                $result[] = ["dest" => $v->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($v)];
             }
-        } else if($value instanceof \Pimcore\Model\Element\AbstractElement) {
-            $result[] = array("dest" => $value->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($value));
+        } elseif ($value instanceof \Pimcore\Model\Element\AbstractElement) {
+            $result[] = ["dest" => $value->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($value)];
         }
+
         return $result;
     }
 }

@@ -12,12 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
 use Pimcore\Model\Object\ClassDefinition\Data\Textarea;
 
-class IndexFieldSelectionField extends Textarea {
+class IndexFieldSelectionField extends Textarea
+{
 
     /**
      * Static type of this element
@@ -31,27 +31,33 @@ class IndexFieldSelectionField extends Textarea {
     public $showAllFields = false;
     public $considerTenants = false;
 
-    public function setSpecificPriceField($specificPriceField) {
+    public function setSpecificPriceField($specificPriceField)
+    {
         $this->specificPriceField = $specificPriceField;
     }
 
-    public function getSpecificPriceField() {
+    public function getSpecificPriceField()
+    {
         return $this->specificPriceField;
     }
 
-    public function setShowAllFields($showAllFields) {
+    public function setShowAllFields($showAllFields)
+    {
         $this->showAllFields = $showAllFields;
     }
 
-    public function getShowAllFields() {
+    public function getShowAllFields()
+    {
         return $this->showAllFields;
     }
 
-    public function setConsiderTenants($considerTenants) {
+    public function setConsiderTenants($considerTenants)
+    {
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants() {
+    public function getConsiderTenants()
+    {
         return $this->considerTenants;
     }
 
@@ -60,12 +66,14 @@ class IndexFieldSelectionField extends Textarea {
      * @param $data
      * @return bool
      */
-    public function isEmpty($data) {
-        if(is_string($data)) {
+    public function isEmpty($data)
+    {
+        if (is_string($data)) {
             return (strlen($data) < 1);
-        } else if(is_array($data)) {
+        } elseif (is_array($data)) {
             return empty($data);
         }
+
         return true;
     }
 
@@ -75,12 +83,12 @@ class IndexFieldSelectionField extends Textarea {
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array()) {
-        if(is_array($data)) {
+    public function getDataFromEditmode($data, $object = null, $params = [])
+    {
+        if (is_array($data)) {
             $data = implode(",", $data);
         }
 
         return $data;
     }
-
 }

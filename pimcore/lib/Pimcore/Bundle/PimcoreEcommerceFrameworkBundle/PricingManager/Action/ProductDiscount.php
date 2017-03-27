@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
 class ProductDiscount implements IProductDiscount
@@ -37,7 +36,7 @@ class ProductDiscount implements IProductDiscount
         $priceinfo = $environment->getPriceInfo();
         $amount = $this->getAmount() !== 0 ? $this->getAmount() : ($priceinfo->getAmount() * ($this->getPercent() / 100));
         $amount = $priceinfo->getAmount() - $amount;
-        $priceinfo->setAmount( $amount > 0 ? $amount : 0);
+        $priceinfo->setAmount($amount > 0 ? $amount : 0);
 
         return $this;
     }
@@ -59,11 +58,11 @@ class ProductDiscount implements IProductDiscount
      */
     public function toJSON()
     {
-        return json_encode(array(
+        return json_encode([
                                 'type' => 'ProductDiscount',
                                 'amount' => $this->getAmount(),
                                 'percent' => $this->getPercent()
-                           ));
+                           ]);
     }
 
     /**
@@ -74,10 +73,12 @@ class ProductDiscount implements IProductDiscount
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        if($json->amount)
-            $this->setAmount( $json->amount );
-        if($json->percent)
-            $this->setPercent( $json->percent );
+        if ($json->amount) {
+            $this->setAmount($json->amount);
+        }
+        if ($json->percent) {
+            $this->setPercent($json->percent);
+        }
     }
 
     /**

@@ -12,9 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
-
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListFilter;
@@ -53,6 +51,7 @@ class ProductType implements IOrderListFilter
     public function setTypes(array $types)
     {
         $this->types = $types;
+
         return $this;
     }
 }

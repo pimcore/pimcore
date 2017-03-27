@@ -12,12 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListFilter;
-
 
 /**
  * Base filter for LIKE queries. For simple queries you'll just
@@ -73,6 +71,7 @@ abstract class AbstractSearch implements IOrderListFilter
         $value = $this->getConditionValue();
 
         $orderList->addCondition($query, $value);
+
         return $this;
     }
 

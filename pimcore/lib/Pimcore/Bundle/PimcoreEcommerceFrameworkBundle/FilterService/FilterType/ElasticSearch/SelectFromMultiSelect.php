@@ -12,27 +12,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class SelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect {
-
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+class SelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
+{
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         $productList->prepareGroupByValues($filterDefinition->getField(), true);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
-        if($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if ($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;
         }
 
@@ -40,9 +41,10 @@ class SelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBun
 
         $currentFilter[$field] = $value;
 
-        if(!empty($value)) {
+        if (!empty($value)) {
             $productList->addCondition(['term' => ["attributes." . $field => $value]], $field);
         }
+
         return $currentFilter;
     }
 }

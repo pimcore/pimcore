@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
@@ -64,8 +63,7 @@ XML;
 
         // add items
         $transmitIds = [];
-        foreach($items as $row)
-        {
+        foreach ($items as $row) {
             $xml .= $row['data'];
 
             $transmitIds[] = $row['id'];
@@ -80,33 +78,25 @@ XML;
 
 
         // output
-        if( $this->getParam('validate') )
-        {
+        if ($this->getParam('validate')) {
             $doc = new \DOMDocument();
-            $doc->loadXML( $xml );
+            $doc->loadXML($xml);
 
             $response = new Response();
-            var_dump( $doc->schemaValidate('plugins/EcommerceFramework/static/vendor/findologic/export.xsd') );
-        }
-        else
-        {
-
+            var_dump($doc->schemaValidate('plugins/EcommerceFramework/static/vendor/findologic/export.xsd'));
+        } else {
             $response = new Response($xml);
             $response->headers->set('Content-Type', 'text/xml');
 
 
             // mark items as transmitted
-            if($transmitIds)
-            {
-                $db->query(sprintf('UPDATE %1$s SET last_transmit = now() WHERE id in(%2$s)'
-                    , $this->getExportTableName()
-                    , implode(',', $transmitIds)
+            if ($transmitIds) {
+                $db->query(sprintf('UPDATE %1$s SET last_transmit = now() WHERE id in(%2$s)', $this->getExportTableName(), implode(',', $transmitIds)
                 ));
             }
         }
 
         return $response;
-
     }
 
 

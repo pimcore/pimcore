@@ -12,28 +12,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 use Pimcore\Logger;
 
-class DefaultMockup implements IProduct {
-
+class DefaultMockup implements IProduct
+{
     protected $id;
     protected $params;
     protected $relations;
 
-    public function __construct($id, $params, $relations) {
+    public function __construct($id, $params, $relations)
+    {
         $this->id = $id;
         $this->params = $params;
 
-        $this->relations = array();
-        if($relations) {
-            foreach($relations as $relation) {
-                $this->relations[$relation['fieldname']][] = array("id" => $relation['dest'], "type" => $relation['type']);
+        $this->relations = [];
+        if ($relations) {
+            foreach ($relations as $relation) {
+                $this->relations[$relation['fieldname']][] = ["id" => $relation['dest'], "type" => $relation['type']];
             }
         }
-
     }
 
     /**
@@ -49,7 +48,8 @@ class DefaultMockup implements IProduct {
      *
      * @return mixed
      */
-    public function getParam($key){
+    public function getParam($key)
+    {
         return $this->params[$key];
     }
     /**
@@ -60,6 +60,7 @@ class DefaultMockup implements IProduct {
     public function setParams($params)
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -79,6 +80,7 @@ class DefaultMockup implements IProduct {
     public function setRelations($relations)
     {
         $this->relations = $relations;
+
         return $this;
     }
 
@@ -94,64 +96,64 @@ class DefaultMockup implements IProduct {
 
 
 
-    public function getRelationAttribute($attributeName) {
-
-        $relationObjectArray = array();
-        if($this->relations[$attributeName]) {
-            foreach($this->relations[$attributeName] as $relation) {
+    public function getRelationAttribute($attributeName)
+    {
+        $relationObjectArray = [];
+        if ($this->relations[$attributeName]) {
+            foreach ($this->relations[$attributeName] as $relation) {
                 $relationObject = \Pimcore\Model\Element\Service::getElementById($relation['type'], $relation['id']);
-                if($relationObject) {
+                if ($relationObject) {
                     $relationObjectArray[] = $relationObject;
                 }
             }
         }
 
-        if(count($relationObjectArray) == 1) {
+        if (count($relationObjectArray) == 1) {
             return $relationObjectArray[0];
-        } else if(count($relationObjectArray) > 1) {
+        } elseif (count($relationObjectArray) > 1) {
             return $relationObjectArray;
         } else {
             return null;
         }
-
     }
 
 
-    public function __call($method, $args) {
-
-        if(substr($method, 0, 3) == "get") {
+    public function __call($method, $args)
+    {
+        if (substr($method, 0, 3) == "get") {
             $attributeName = lcfirst(substr($method, 3));
-            if(is_array($this->params) && array_key_exists($attributeName, $this->params)) {
+            if (is_array($this->params) && array_key_exists($attributeName, $this->params)) {
                 return $this->params[$attributeName];
             }
 
 
-            if(is_array($this->relations) && array_key_exists($attributeName, $this->relations)) {
+            if (is_array($this->relations) && array_key_exists($attributeName, $this->relations)) {
                 $relation = $this->getRelationAttribute($attributeName);
-                if($relation) {
+                if ($relation) {
                     return $relation;
                 }
             }
-
         }
         $msg = "Method $method not in Mockup implemented, delegating to object with id {$this->id}.";
-        if(PIMCORE_DEBUG) {
+        if (PIMCORE_DEBUG) {
             Logger::warn($msg);
         } else {
             Logger::info($msg);
         }
 
         $object = $this->getOriginalObject();
-        if($object) {
-            return call_user_func_array(array($object, $method), $args);
+        if ($object) {
+            return call_user_func_array([$object, $method], $args);
         } else {
             throw new \Exception("Object with {$this->id} not found.");
         }
     }
 
 
-    public function getOriginalObject() {
+    public function getOriginalObject()
+    {
         Logger::notice("Getting original object {$this->id}.");
+
         return \Pimcore\Model\Object\AbstractObject::getById($this->id);
     }
 

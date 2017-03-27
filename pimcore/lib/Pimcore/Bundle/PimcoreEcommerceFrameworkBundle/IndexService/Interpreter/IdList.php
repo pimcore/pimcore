@@ -12,30 +12,30 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
 
-class IdList implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
+class IdList implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
         $ids = [];
 
-        if(is_array($value)) {
-            foreach($value as $val) {
-                if(method_exists($val, 'getId')) {
+        if (is_array($value)) {
+            foreach ($value as $val) {
+                if (method_exists($val, 'getId')) {
                     $ids[] = $val->getId();
                 }
             }
-        } elseif(method_exists($value, 'getId')) {
+        } elseif (method_exists($value, 'getId')) {
             $ids[] = $value->getId();
         }
 
         $delimiter = ',';
 
-        if($config && $config->multiSelectEncoded) {
-           $delimiter = IWorker::MULTISELECT_DELIMITER;
+        if ($config && $config->multiSelectEncoded) {
+            $delimiter = IWorker::MULTISELECT_DELIMITER;
         }
 
         $ids = implode($delimiter, $ids);

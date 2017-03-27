@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -20,8 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitio
 
 class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
 {
-
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         $field = $this->getField($filterDefinition);
         $productList->prepareGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
     }
@@ -36,46 +35,47 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFramewo
      *
      * @return string[]
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
 
-        if(empty($value) && !$params['is_reload']) {
-            if(is_array($preSelect)) {
+        if (empty($value) && !$params['is_reload']) {
+            if (is_array($preSelect)) {
                 $value = $preSelect;
             } else {
                 $value = explode(",", $preSelect);
             }
 
-            foreach($value as $key => $v) {
-                if(!$v) {
+            foreach ($value as $key => $v) {
+                if (!$v) {
                     unset($value[$key]);
                 }
             }
-        } else if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        } elseif (!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
         $currentFilter[$field] = $value;
 
-        if(!empty($value)) {
-            if($filterDefinition->getUseAndCondition()) {
-                foreach($value as $entry) {
+        if (!empty($value)) {
+            if ($filterDefinition->getUseAndCondition()) {
+                foreach ($value as $entry) {
                     $productList->addCondition(['term' => ["attributes." . $field => $entry]], $field);
                 }
             } else {
                 $boolArray = [];
-                foreach($value as $entry) {
+                foreach ($value as $entry) {
                     $boolArray[] = ['term' => ["attributes." . $field => $entry]];
                 }
 
                 $productList->addCondition(['bool' => ['should' => $boolArray, 'minimum_should_match' => 1]], $field);
             }
         }
+
         return $currentFilter;
     }
-
 }

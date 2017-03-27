@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -29,7 +28,6 @@ use Zend\Paginator\Paginator;
 
 class Single extends AbstractTokenManager implements IExportableTokenManager
 {
-
     protected $template;
 
     public function __construct(AbstractVoucherTokenType $configuration)
@@ -90,7 +88,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         ];
 
         $statisticUsagePeriod = 30;
-        if(isset($params['statisticUsagePeriod'])){
+        if (isset($params['statisticUsagePeriod'])) {
             $statisticUsagePeriod = $params['statisticUsagePeriod'];
         }
         $viewParamsBag['statistics'] = $this->getStatistics($statisticUsagePeriod);
@@ -148,7 +146,8 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         return Token\Listing::getCodes($this->seriesId, $params);
     }
 
-    protected function prepareUsageStatisticData(&$data, $usagePeriod){
+    protected function prepareUsageStatisticData(&$data, $usagePeriod)
+    {
         $now = new \DateTime();
         $periodData = [];
         for ($i = $usagePeriod; $i > 0; $i--) {
@@ -192,6 +191,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
                 return true;
             }
         }
+
         return false;
     }
 
@@ -209,7 +209,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
             if ($token->check($this->configuration->getUsages(), true)) {
                 if ($token->apply()) {
                     $orderToken = \Pimcore\Model\Object\OnlineShopVoucherToken::getByToken($code, 1);
-                    if(!$orderToken instanceof \Pimcore\Model\Object\OnlineShopVoucherToken) {
+                    if (!$orderToken instanceof \Pimcore\Model\Object\OnlineShopVoucherToken) {
                         $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();
                         $orderToken->setTokenId($token->getId());
                         $orderToken->setToken($token->getToken());
@@ -225,6 +225,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
                 }
             }
         }
+
         return false;
     }
 
@@ -241,6 +242,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         if ($token = Token::getByCode($tokenObject->getToken())) {
             return $token->unuse();
         }
+
         return false;
     }
 

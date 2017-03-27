@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 /**
@@ -45,5 +44,4 @@ interface IFindologicConfig extends IConfig
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
     public function getTenantWorker();
-
 }

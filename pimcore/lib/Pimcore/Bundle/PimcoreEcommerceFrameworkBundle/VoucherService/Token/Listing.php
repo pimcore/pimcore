@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token;
 
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -20,7 +19,6 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
-
     public $tokens;
 
     /**
@@ -32,6 +30,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
         if ($key == "id" || $key == "token" || $key == "series_id" || $key == "usages" || $key == "timestamp") {
             return true;
         }
+
         return false;
     }
 
@@ -42,9 +41,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
      */
     public function setFilterConditions($seriesId, $filter = [])
     {
-        if(isset($seriesId)){
+        if (isset($seriesId)) {
             $this->addConditionParam("voucherSeriesId = ?", $seriesId);
-        }else{
+        } else {
             throw new \Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
         }
 
@@ -62,8 +61,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             }
 
             if ($filter['creation_to'] && $filter['creation_from']) {
-                $this->addConditionParam("Date(timestamp) BETWEEN STR_TO_DATE(?,'%Y-%m-%d')",$filter['creation_from']);
-                $this->addConditionParam("STR_TO_DATE(?,'%Y-%m-%d')",$filter['creation_to']);
+                $this->addConditionParam("Date(timestamp) BETWEEN STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
+                $this->addConditionParam("STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             } else {
                 if ($filter['creation_from']) {
                     $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
@@ -93,9 +92,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             $config = new self();
             $config->setCondition('series_id', $seriesId);
             $config->getDao()->load();
+
             return $config;
         } catch (\Exception $ex) {
-//            Logger::debug($ex->getMessage());
+            //            Logger::debug($ex->getMessage());
             return false;
         }
     }
@@ -108,12 +108,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
         if (empty($this->tokens)) {
             $this->load();
         }
+
         return $this->tokens;
     }
 
     public static function getCodes($seriesId, $params)
     {
-
         $db = \Pimcore\Db::get();
         $query = "SELECT * FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
         $queryParams[] = $seriesId;
@@ -233,6 +233,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
         try {
             $result = $db->fetchOne($query, $params);
+
             return $result;
         } catch (\Exception $e) {
             return null;
@@ -275,9 +276,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
         if (isset($filter['usage'])) {
             if ($filter['usage'] == 'used') {
                 $queryParts[] = "t.usages >= " . $maxUsages;
-            } else if ($filter['usage'] == 'unused') {
+            } elseif ($filter['usage'] == 'unused') {
                 $queryParts[] = "t.usages = 0";
-            } else if ($filter['usage'] == 'both') {
+            } elseif ($filter['usage'] == 'both') {
                 $queryParts[] = "t.usages >= 0";
             }
         }
@@ -300,9 +301,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             $db->executeQuery($reservationsQuery, $params);
             $db->executeQuery($tokensQuery, $params);
             $db->commit();
+
             return true;
         } catch (\Exception $e) {
             $db->rollBack();
+
             return false;
         }
     }
@@ -363,6 +366,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $this->getTokens();
         $var = current($this->tokens);
+
         return $var;
     }
 
@@ -373,6 +377,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $this->getTokens();
         $var = next($this->tokens);
+
         return $var;
     }
 
@@ -383,6 +388,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $this->getTOkens();
         $var = key($this->tokens);
+
         return $var;
     }
 
@@ -393,6 +399,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $this->getTokens();
         $var = $this->current() !== false;
+
         return $var;
     }
 
@@ -419,6 +426,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
+
         return $this->load();
     }
 
@@ -435,5 +443,4 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         return $this->getTotalCount();
     }
-
 }

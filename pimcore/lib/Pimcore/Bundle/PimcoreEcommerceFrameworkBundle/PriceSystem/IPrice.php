@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
@@ -21,8 +20,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\Tax
 /**
  * Interface for price implementations of online shop framework
  */
-interface IPrice {
-
+interface IPrice
+{
     const PRICE_MODE_NET = "net";
     const PRICE_MODE_GROSS = "gross";
 
@@ -119,6 +118,4 @@ interface IPrice {
      * @return void
      */
     public function setTaxEntryCombinationMode($taxEntryCombinationMode);
-
 }
- 

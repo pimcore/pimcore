@@ -12,15 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-class Round implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
-        if(is_numeric($value)) {
+class Round implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
+        if (is_numeric($value)) {
             return round($value, 0);
         }
+
         return $value;
     }
 }

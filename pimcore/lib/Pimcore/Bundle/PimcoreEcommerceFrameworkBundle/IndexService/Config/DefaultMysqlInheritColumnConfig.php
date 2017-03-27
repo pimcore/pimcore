@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 /**
@@ -21,24 +20,27 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
  * Sample implementation based on the \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql
  * that inherits attribute configuration of the default tenant.
  */
-class DefaultMysqlInheritColumnConfig extends DefaultMysql {
-
-    public function __construct($tenantConfig, $totalConfig = null) {
+class DefaultMysqlInheritColumnConfig extends DefaultMysql
+{
+    public function __construct($tenantConfig, $totalConfig = null)
+    {
         $this->attributeConfig = $totalConfig->columns;
 
-        $this->searchAttributeConfig = array();
-        if($totalConfig->generalSearchColumns) {
-            foreach($totalConfig->generalSearchColumns as $c) {
+        $this->searchAttributeConfig = [];
+        if ($totalConfig->generalSearchColumns) {
+            foreach ($totalConfig->generalSearchColumns as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }
         }
     }
 
-    public function getTablename() {
+    public function getTablename()
+    {
         return "ecommerceframework_productindex3";
     }
 
-    public function getRelationTablename() {
+    public function getRelationTablename()
+    {
         return "ecommerceframework_productindex_relations3";
     }
 }

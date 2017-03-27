@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
@@ -23,40 +22,46 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
  *
  * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
  */
-class DefaultMysql extends AbstractConfig implements IMysqlConfig {
+class DefaultMysql extends AbstractConfig implements IMysqlConfig
+{
 
     /**
      * @return string
      */
-    public function getTablename() {
+    public function getTablename()
+    {
         return "ecommerceframework_productindex";
     }
 
     /**
      * @return string
      */
-    public function getRelationTablename() {
+    public function getRelationTablename()
+    {
         return "ecommerceframework_productindex_relations";
     }
 
     /**
      * @return string
      */
-    public function getTenantRelationTablename() {
+    public function getTenantRelationTablename()
+    {
         return "";
     }
 
     /**
      * @return string
      */
-    public function getJoins() {
+    public function getJoins()
+    {
         return "";
     }
 
     /**
      * @return string
      */
-    public function getCondition() {
+    public function getCondition()
+    {
         return "";
     }
 
@@ -64,7 +69,8 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
      * @param IIndexable $object
      * @return bool
      */
-    public function inIndex(IIndexable $object) {
+    public function inIndex(IIndexable $object)
+    {
         return true;
     }
 
@@ -102,7 +108,7 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
      */
     public function getIdColumnType($isPrimary)
     {
-        if($isPrimary) {
+        if ($isPrimary) {
             return "int(11) NOT NULL default '0'";
         } else {
             return "int(11) NOT NULL";
@@ -120,10 +126,12 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig {
      *
      * @return IWorker
      */
-    public function getTenantWorker() {
-        if(empty($this->tenantWorker)) {
+    public function getTenantWorker()
+    {
+        if (empty($this->tenantWorker)) {
             $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultMysql($this);
         }
+
         return $this->tenantWorker;
     }
 }

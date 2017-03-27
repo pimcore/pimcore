@@ -21,7 +21,8 @@ include_once("../../../pimcore/cli/startup.php");
 chdir($workingDirectory);
 
 
-function processPHPContent($fileContent, $license) {
+function processPHPContent($fileContent, $license)
+{
     //remove phpstorm header
     $regex = '#^<\?php\s*\/\**\*\s*\**\s*Created by.*PhpStorm\.\s*\**\s*User[\s\S]*\*\/#U';
 
@@ -48,7 +49,8 @@ function processPHPContent($fileContent, $license) {
 }
 
 
-function processTEXTContent($fileContent, $license) {
+function processTEXTContent($fileContent, $license)
+{
     //remove phpstorm header
     $regex = '#^\s*\/\**\*\s*\**\s*Created by JetBrains PhpStorm\.\s*\**\s*User[\s\S]*\*\/\s*#U';
 
@@ -103,7 +105,7 @@ $license =
 ";
 
 $excludePatterns = [];
-foreach($excludedDirectories as $dir) {
+foreach ($excludedDirectories as $dir) {
     $excludePatterns[] = "(^" . str_replace('/', '\/', $dir) . ")";
 }
 $excludePatterns_flattened = '/'. implode('|', $excludePatterns) .'/';
@@ -111,9 +113,9 @@ echo $excludePatterns_flattened;
 
 $files = [];
 
-$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::SELF_FIRST );
+$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::SELF_FIRST);
 
-foreach ( $iterator as $path ) {
+foreach ($iterator as $path) {
 
     /**
      * @var $path SplFileInfo
@@ -130,7 +132,7 @@ foreach ( $iterator as $path ) {
 
 
 //php files
-foreach($files['php'] as $file) {
+foreach ($files['php'] as $file) {
     echo "process file " . $file . "...";
     $fileContent = file_get_contents($file);
     $fileContent = processPHPContent($fileContent, $license);
@@ -141,7 +143,7 @@ foreach($files['php'] as $file) {
 
 
 //css files
-foreach($files['css'] as $file) {
+foreach ($files['css'] as $file) {
     echo "process file " . $file . "...";
     $fileContent = file_get_contents($file);
     $fileContent = processTEXTContent($fileContent, $license);
@@ -151,7 +153,7 @@ foreach($files['css'] as $file) {
 }
 
 //txt files
-foreach($files['txt'] as $file) {
+foreach ($files['txt'] as $file) {
     echo "process file " . $file . "...";
     $fileContent = file_get_contents($file);
     $fileContent = processTEXTContent($fileContent, $license);
@@ -162,7 +164,7 @@ foreach($files['txt'] as $file) {
 
 
 //js files
-foreach($files['js'] as $file) {
+foreach ($files['js'] as $file) {
     echo "process file " . $file . "...";
     $fileContent = file_get_contents($file);
     $fileContent = processTEXTContent($fileContent, $license);

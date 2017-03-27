@@ -12,18 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 
-
 /**
  * Class TaxCalculationService
  */
-class TaxCalculationService {
-
+class TaxCalculationService
+{
     const CALCULATION_FROM_NET = "net";
     const CALCULATION_FROM_GROSS = "gross";
 
@@ -36,8 +34,8 @@ class TaxCalculationService {
      * @return IPrice
      * @throws UnsupportedException
      */
-    public function updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET) {
-
+    public function updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET)
+    {
         switch ($calculationMode) {
             case self::CALCULATION_FROM_NET:
                 return $this->calculationFromNet($price);
@@ -46,7 +44,6 @@ class TaxCalculationService {
             default:
                 throw new UnsupportedException("Calculation Mode [" . $calculationMode . "] not supported.");
         }
-
     }
 
     /**
@@ -56,8 +53,8 @@ class TaxCalculationService {
      * @return IPrice
      * @throws UnsupportedException
      */
-    protected function calculationFromNet(IPrice $price) {
-
+    protected function calculationFromNet(IPrice $price)
+    {
         switch ($price->getTaxEntryCombinationMode()) {
             case TaxEntry::CALCULATION_MODE_COMBINE:
 
@@ -65,7 +62,7 @@ class TaxCalculationService {
                 $netAmount = $price->getNetAmount();
                 $grossAmount = $netAmount;
 
-                if($taxEntries) {
+                if ($taxEntries) {
                     foreach ($taxEntries as $entry) {
                         $amount = $netAmount * $entry->getPercent() / 100;
                         $entry->setAmount($amount);
@@ -73,7 +70,6 @@ class TaxCalculationService {
                     }
 
                     $price->setGrossAmount($grossAmount);
-
                 } else {
                     $price->setGrossAmount($netAmount);
                 }
@@ -88,14 +84,13 @@ class TaxCalculationService {
                 $netAmount = $price->getNetAmount();
                 $grossAmount = $netAmount;
 
-                if($taxEntries) {
-                    foreach($taxEntries as $entry) {
+                if ($taxEntries) {
+                    foreach ($taxEntries as $entry) {
                         $amount = $grossAmount * $entry->getPercent() / 100;
-                        $entry->setAmount( $amount );
+                        $entry->setAmount($amount);
                         $grossAmount += $amount;
                     }
                     $price->setGrossAmount($grossAmount);
-
                 } else {
                     $price->setGrossAmount($netAmount);
                 }
@@ -121,27 +116,27 @@ class TaxCalculationService {
      * @return IPrice
      * @throws UnsupportedException
      */
-    protected function calculationFromGross(IPrice $price) {
-
+    protected function calculationFromGross(IPrice $price)
+    {
         switch ($price->getTaxEntryCombinationMode()) {
 
             case TaxEntry::CALCULATION_MODE_COMBINE:
 
                 $taxEntries = $price->getTaxEntries();
 
-                if($taxEntries) {
+                if ($taxEntries) {
                     $reverseTaxEntries = array_reverse($taxEntries);
 
                     $totalTaxAmount = 100;
-                    foreach($taxEntries as $entry) {
+                    foreach ($taxEntries as $entry) {
                         $totalTaxAmount += $entry->getPercent();
                     }
 
                     $grossAmount = $price->getGrossAmount();
 
-                    foreach($reverseTaxEntries as $entry) {
+                    foreach ($reverseTaxEntries as $entry) {
                         $amount = $grossAmount / $totalTaxAmount * $entry->getPercent();
-                        $entry->setAmount( $amount );
+                        $entry->setAmount($amount);
                     }
 
                     $price->setNetAmount($grossAmount / $totalTaxAmount * 100);
@@ -155,7 +150,7 @@ class TaxCalculationService {
 
                 $taxEntries = $price->getTaxEntries();
 
-                if($taxEntries) {
+                if ($taxEntries) {
                     $reverseTaxEntries = array_reverse($taxEntries);
 
                     $grossAmount = $price->getGrossAmount();
@@ -168,7 +163,6 @@ class TaxCalculationService {
                     }
 
                     $price->setNetAmount($currentGrossAmount);
-
                 } else {
                     $price->setNetAmount($price->getGrossAmount());
                 }
@@ -183,6 +177,4 @@ class TaxCalculationService {
 
         return $price;
     }
-
-
 }

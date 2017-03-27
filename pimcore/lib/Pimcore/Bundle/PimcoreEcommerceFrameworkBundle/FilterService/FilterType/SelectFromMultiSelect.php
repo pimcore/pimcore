@@ -12,17 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
-
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class SelectFromMultiSelect extends AbstractFilterType {
-
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+class SelectFromMultiSelect extends AbstractFilterType
+{
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -34,21 +33,21 @@ class SelectFromMultiSelect extends AbstractFilterType {
 
         $rawValues = $productList->getGroupByValues($field, true);
 
-        $values = array();
-        foreach($rawValues as $v) {
+        $values = [];
+        foreach ($rawValues as $v) {
             $explode = explode(IWorker::MULTISELECT_DELIMITER, $v['value']);
-            foreach($explode as $e) {
-                if(!empty($e)) {
-                    if($values[$e]) {
+            foreach ($explode as $e) {
+                if (!empty($e)) {
+                    if ($values[$e]) {
                         $values[$e]['count'] += $v['count'];
                     } else {
-                        $values[$e] = array('value' => $e, "count" => $v['count']);
+                        $values[$e] = ['value' => $e, "count" => $v['count']];
                     }
                 }
             }
         }
 
-        return $this->render($script, array(
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -56,18 +55,19 @@ class SelectFromMultiSelect extends AbstractFilterType {
             "fieldname" => $field,
             "metaData" => $filterDefinition->getMetaData(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
-        if($value == AbstractFilterType::EMPTY_STRING) {
+        if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;
         }
 
@@ -76,15 +76,15 @@ class SelectFromMultiSelect extends AbstractFilterType {
         $currentFilter[$field] = $value;
 
 
-        if(!empty($value)) {
+        if (!empty($value)) {
             $value =  "%" . IWorker::MULTISELECT_DELIMITER  . $value .  IWorker::MULTISELECT_DELIMITER . "%";
-            if($isPrecondition) {
+            if ($isPrecondition) {
                 $productList->addCondition($field . " LIKE " . $productList->quote($value), "PRECONDITION_" . $field);
             } else {
                 $productList->addCondition($field . " LIKE " . $productList->quote($value), $field);
             }
-
         }
+
         return $currentFilter;
     }
 }

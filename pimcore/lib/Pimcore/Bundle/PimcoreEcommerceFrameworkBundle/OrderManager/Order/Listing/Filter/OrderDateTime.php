@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
@@ -45,13 +44,11 @@ class OrderDateTime implements IOrderListFilter
         // init
         $query = $orderList->getQuery();
 
-        if($this->getFrom())
-        {
+        if ($this->getFrom()) {
             $query->where($this->getColumn() . ' >= ?', $this->getFrom()->getTimestamp());
         }
 
-        if($this->getTill())
-        {
+        if ($this->getTill()) {
             $query->where($this->getColumn() . ' <= ?', $this->getTill()->getTimestamp());
         }
     }
@@ -72,6 +69,7 @@ class OrderDateTime implements IOrderListFilter
     public function setFrom(\DateTime $from)
     {
         $this->from = $from;
+
         return $this;
     }
 
@@ -91,6 +89,7 @@ class OrderDateTime implements IOrderListFilter
     public function setTill(\DateTime $till)
     {
         $this->till = $till;
+
         return $this;
     }
 

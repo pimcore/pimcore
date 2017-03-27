@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -23,8 +22,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
  *
  * Interface IWorker
  */
-interface IWorker {
-
+interface IWorker
+{
     const MULTISELECT_DELIMITER = "#;#";
 
     /**
@@ -32,14 +31,14 @@ interface IWorker {
      *
      * @return array
      */
-    function getGeneralSearchAttributes();
+    public function getGeneralSearchAttributes();
 
     /**
      * creates or updates necessary index structures (like database tables and so on)
      *
      * @return void
      */
-    function createOrUpdateIndexStructures();
+    public function createOrUpdateIndexStructures();
 
     /**
      * deletes given element from index
@@ -47,7 +46,7 @@ interface IWorker {
      * @param IIndexable $object
      * @return void
      */
-    function deleteFromIndex(IIndexable $object);
+    public function deleteFromIndex(IIndexable $object);
 
     /**
      * updates given element in index
@@ -55,7 +54,7 @@ interface IWorker {
      * @param IIndexable $object
      * @return void
      */
-    function updateIndex(IIndexable $object);
+    public function updateIndex(IIndexable $object);
 
     /**
      * returns all index attributes
@@ -63,14 +62,14 @@ interface IWorker {
      * @param bool $considerHideInFieldList
      * @return array
      */
-    function getIndexAttributes($considerHideInFieldList = false);
+    public function getIndexAttributes($considerHideInFieldList = false);
 
     /**
      * returns all filter groups
      *
      * @return array
      */
-    function getAllFilterGroups();
+    public function getAllFilterGroups();
 
     /**
      * retruns all index attributes for a given filter group
@@ -78,14 +77,14 @@ interface IWorker {
      * @param string $filterGroup
      * @return array
      */
-    function getIndexAttributesByFilterGroup($filterGroup);
+    public function getIndexAttributesByFilterGroup($filterGroup);
 
     /**
      * returns current tenant configuration
      *
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
      */
-    function getTenantConfig();
+    public function getTenantConfig();
 
 
     /**
@@ -93,6 +92,5 @@ interface IWorker {
      *
      * @return IProductList
      */
-    function getProductList();
-
+    public function getProductList();
 }

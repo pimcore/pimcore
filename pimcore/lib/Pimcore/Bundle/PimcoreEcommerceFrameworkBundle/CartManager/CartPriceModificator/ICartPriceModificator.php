@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
@@ -21,7 +21,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice;
 /**
  * Interface ICartPriceModificator
  */
-interface ICartPriceModificator {
+interface ICartPriceModificator
+{
 
     /**
      * @return string
@@ -36,5 +37,4 @@ interface ICartPriceModificator {
      * @return IModificatedPrice
      */
     public function modify(IPrice $currentSubTotal, ICart $cart);
-
 }

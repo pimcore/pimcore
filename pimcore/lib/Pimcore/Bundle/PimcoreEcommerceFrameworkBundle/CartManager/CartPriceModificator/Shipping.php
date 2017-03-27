@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
@@ -42,8 +42,7 @@ class Shipping implements IShipping
      */
     public function __construct(Config $config = null)
     {
-        if($config && $config->charge)
-        {
+        if ($config && $config->charge) {
             $this->charge = floatval($config->charge);
         }
     }
@@ -66,7 +65,7 @@ class Shipping implements IShipping
         $modificatedPrice = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
         $taxClass = $this->getTaxClass();
-        if($taxClass) {
+        if ($taxClass) {
             $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
             $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
@@ -74,7 +73,6 @@ class Shipping implements IShipping
         }
 
         return $modificatedPrice;
-
     }
 
     /**
@@ -102,7 +100,7 @@ class Shipping implements IShipping
      */
     public function getTaxClass()
     {
-        if(empty($this->taxClass)) {
+        if (empty($this->taxClass)) {
             $this->taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
         }
 
@@ -116,5 +114,4 @@ class Shipping implements IShipping
     {
         $this->taxClass = $taxClass;
     }
-
 }

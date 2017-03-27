@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
@@ -66,7 +65,7 @@ class PayPal implements IPayment
         // create paypal interface
         $wsdl = 'https://www.' . $this->endpointUrlPart . '.com/wsdl/PayPalSvc.wsdl';
         $location = 'https://api-3t.' . $this->endpointUrlPart . '.com/2.0';
-        $this->client = new \SoapClient($wsdl, array('location' => $location));
+        $this->client = new \SoapClient($wsdl, ['location' => $location]);
 
         // auth
         $auth = new \stdClass();
@@ -109,8 +108,7 @@ class PayPal implements IPayment
         ];
         $config = array_intersect_key($config, $required);
 
-        if(count($required) != count($config))
-        {
+        if (count($required) != count($config)) {
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
 
@@ -124,14 +122,13 @@ class PayPal implements IPayment
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->CancelURL = $config['CancelURL'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->NoShipping = "1";
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->AllowNote = "0";
-        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->PaymentDetails = $this->createPaymentDetails( $price );
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->PaymentDetails = $this->createPaymentDetails($price);
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->OrderDescription = $config['OrderDescription'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->InvoiceID = $config['InvoiceID'];
 
 
         // add optional config
-        foreach($config as $name => $value)
-        {
+        foreach ($config as $name => $value) {
             $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->{$name} = $value;
         }
 
@@ -141,22 +138,18 @@ class PayPal implements IPayment
 
 
         // check Ack
-        if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
-        {
-            # pay url
+        if ($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning') {
+            // pay url
             return 'https://www.' . $this->endpointUrlPart . '.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $ret->Token;
-        }
-        else
-        {
+        } else {
             $messages = null;
             $errors = is_array($ret->Errors)
                 ? $ret->Errors
-                : array($ret->Errors);
-            foreach($errors as $error)
-            {
+                : [$ret->Errors];
+            foreach ($errors as $error) {
                 $messages .= $error->LongMessage ."\n";
             }
-            throw new \Exception( $messages );
+            throw new \Exception($messages);
         }
     }
 
@@ -185,15 +178,14 @@ class PayPal implements IPayment
 
         // check fields
         $response = array_intersect_key($response, $required);
-        if(count($required) != count($response))
-        {
-            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $response)))) );
+        if (count($required) != count($response)) {
+            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $response)))));
         }
 
 
         // handle
         $authorizedData = array_intersect_key($response, $authorizedData);
-        $this->setAuthorizedData( $authorizedData );
+        $this->setAuthorizedData($authorizedData);
 
 
         // restore price object for payment status
@@ -247,7 +239,7 @@ class PayPal implements IPayment
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails = new \stdClass();
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->Token = $this->authorizedData['token'];
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $this->authorizedData['PayerID'];
-        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails( $price );
+        $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails($price);
 
 
         // execute
@@ -255,43 +247,32 @@ class PayPal implements IPayment
 
 
         // check Ack
-        if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
-        {
+        if ($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning') {
             // success
 
             $paymentInfo = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo;
+
             return new Status(
-                $reference
-                , $paymentInfo->TransactionID
-                , null
-                , AbstractOrder::ORDER_STATE_COMMITTED
-                , [
+                $reference, $paymentInfo->TransactionID, null, AbstractOrder::ORDER_STATE_COMMITTED, [
                     'paypal_TransactionType' => $paymentInfo->TransactionType
                     , 'paypal_PaymentType' => $paymentInfo->PaymentType
                     , 'paypal_amount' => (string)$price
                 ]
             );
-
-        }
-        else
-        {
+        } else {
             // failed
 
             $message = '';
             $errors = is_array($ret->Errors)
                 ? $ret->Errors
-                : array($ret->Errors);
-            foreach($errors as $error)
-            {
+                : [$ret->Errors];
+            foreach ($errors as $error) {
                 $message .= $error->LongMessage . "\n";
             }
 
 
             return new Status(
-                $reference
-                , $ret->CorrelationID
-                , $message
-                , AbstractOrder::ORDER_STATE_ABORTED
+                $reference, $ret->CorrelationID, $message, AbstractOrder::ORDER_STATE_ABORTED
             );
         }
     }
@@ -316,7 +297,7 @@ class PayPal implements IPayment
      *
      * @return \stdClass
      */
-    protected function createPaymentDetails(IPrice $price) # \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
+    protected function createPaymentDetails(IPrice $price) // \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder $order
     {
         // create order total
         $paymentDetails = new \stdClass();
@@ -380,4 +361,3 @@ class PayPal implements IPayment
         return $paymentDetails;
     }
 }
-

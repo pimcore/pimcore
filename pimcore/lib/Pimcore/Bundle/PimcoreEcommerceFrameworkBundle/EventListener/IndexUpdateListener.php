@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -21,8 +20,8 @@ use Pimcore\Event\Model\ObjectEvent;
 use Pimcore\Event\ObjectEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class IndexUpdateListener implements EventSubscriberInterface {
-
+class IndexUpdateListener implements EventSubscriberInterface
+{
     public static function getSubscribedEvents()
     {
         return [
@@ -32,17 +31,18 @@ class IndexUpdateListener implements EventSubscriberInterface {
         ];
     }
 
-    public function onObjectUpdate(ObjectEvent $event) {
+    public function onObjectUpdate(ObjectEvent $event)
+    {
         $object = $event->getObject();
 
         if ($object instanceof IIndexable) {
             $indexService = Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
-
     }
 
-    public function onObjectDelete(ObjectEvent $event) {
+    public function onObjectDelete(ObjectEvent $event)
+    {
         $object = $event->getObject();
 
         if ($object instanceof IIndexable) {
@@ -51,11 +51,9 @@ class IndexUpdateListener implements EventSubscriberInterface {
         }
 
         // Delete tokens when a a configuration object gets removed.
-        if($object instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries){
+        if ($object instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
             $voucherService = Factory::getInstance()->getVoucherService();
             $voucherService->cleanUpVoucherSeries($object);
         }
-
     }
-
 }

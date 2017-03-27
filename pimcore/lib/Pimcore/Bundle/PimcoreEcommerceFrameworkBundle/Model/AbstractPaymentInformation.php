@@ -12,83 +12,82 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Abstract base class for payment information field collection
  */
-abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData {
+abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
+{
 
     /**
      * @return \DateTime
      */
-    public abstract function getPaymentStart ();
+    abstract public function getPaymentStart();
 
     /**
      * @param \DateTime $paymentStart
      * @return void
      */
-    public abstract function setPaymentStart ($paymentStart);
+    abstract public function setPaymentStart($paymentStart);
 
     /**
      * @return \DateTime
      */
-    public abstract function getPaymentFinish ();
+    abstract public function getPaymentFinish();
 
     /**
      * @param \DateTime $paymentStart
      * @return void
      */
-    public abstract function setPaymentFinish ($paymentFinish);
+    abstract public function setPaymentFinish($paymentFinish);
 
     /**
      * @return string
      */
-    public abstract function getPaymentReference ();
+    abstract public function getPaymentReference();
 
     /**
      * @param string $paymentReference
      * @return void
      */
-    public abstract function setPaymentReference ($paymentReference);
+    abstract public function setPaymentReference($paymentReference);
 
     /**
      * @return string
      */
-    public abstract function getPaymentState ();
+    abstract public function getPaymentState();
 
     /**
      * @param string $paymentState
      * @return void
      */
-    public abstract function setPaymentState ($paymentState);
+    abstract public function setPaymentState($paymentState);
 
     /**
      * @return string
      */
-    public abstract function getMessage ();
+    abstract public function getMessage();
 
     /**
      * @return string
      */
-    public abstract function getProviderData();
+    abstract public function getProviderData();
 
     /**
      * @param string $message
      * @return void
      */
-    public abstract function setMessage ($message);
+    abstract public function setMessage($message);
 
     /**
      * @return string
      */
-    public abstract function getInternalPaymentId ();
+    abstract public function getInternalPaymentId();
 
     /**
      * @param string $internalPaymentId
      * @return void
      */
-    public abstract function setInternalPaymentId ($internalPaymentId);
-
+    abstract public function setInternalPaymentId($internalPaymentId);
 }

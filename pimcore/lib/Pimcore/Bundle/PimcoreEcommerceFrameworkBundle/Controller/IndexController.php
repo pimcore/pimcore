@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
@@ -25,28 +24,30 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class IndexController
  * @Route("/index")
  */
-class IndexController extends AdminController {
+class IndexController extends AdminController
+{
 
     /**
      * @Route("/get-filter-groups")
      * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
      */
-    public function getFilterGroupsAction() {
+    public function getFilterGroupsAction()
+    {
         $indexService = Factory::getInstance()->getIndexService();
         $tenants = Factory::getInstance()->getAllTenants();
 
         $filterGroups = $indexService->getAllFilterGroups();
-        if($tenants) {
-            foreach($tenants as $tenant) {
+        if ($tenants) {
+            foreach ($tenants as $tenant) {
                 $filterGroups = array_merge($filterGroups, $indexService->getAllFilterGroups($tenant));
             }
         }
 
-        $data = array();
-        if($filterGroups) {
+        $data = [];
+        if ($filterGroups) {
             sort($filterGroups);
-            foreach($filterGroups as $group) {
-                $data[$group] = array("data" => $group);
+            foreach ($filterGroups as $group) {
+                $data[$group] = ["data" => $group];
             }
         }
 
@@ -57,16 +58,14 @@ class IndexController extends AdminController {
      * @Route("/get-values-for-filter-field")
      * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
      */
-    public function getValuesForFilterFieldAction(Request $request) {
-
-
+    public function getValuesForFilterFieldAction(Request $request)
+    {
         try {
-            $data = array();
+            $data = [];
             $factory = Factory::getInstance();
 
-            if($request->get("field")) {
-
-                if($request->get("tenant")) {
+            if ($request->get("field")) {
+                if ($request->get("tenant")) {
                     Factory::getInstance()->getEnvironment()->setCurrentAssortmentTenant($request->get("tenant"));
                 }
 
@@ -75,10 +74,10 @@ class IndexController extends AdminController {
 
                 $columnGroup = "";
                 $filterGroups = $indexService->getAllFilterGroups();
-                foreach($filterGroups as $filterGroup) {
+                foreach ($filterGroups as $filterGroup) {
                     $fields = $indexService->getIndexAttributesByFilterGroup($filterGroup);
-                    foreach($fields as $field) {
-                        if($field == $request->get("field")) {
+                    foreach ($fields as $field) {
+                        if ($field == $request->get("field")) {
                             $columnGroup = $filterGroup;
                             break 2;
                         }
@@ -89,13 +88,11 @@ class IndexController extends AdminController {
                 $productList = $factory->getIndexService()->getProductListForCurrentTenant();
                 $helper = $filterService->getFilterGroupHelper();
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $request->get("field"));
-
             }
 
 
             return $this->json(["data" => array_values($data)]);
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return $this->json(["message" => $e->getMessage()]);
         }
     }
@@ -105,43 +102,42 @@ class IndexController extends AdminController {
      * @param Request $request
      * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
      */
-    public function getFieldsAction(Request $request) {
-
+    public function getFieldsAction(Request $request)
+    {
         $indexService = Factory::getInstance()->getIndexService();
 
-        if($request->get("filtergroup")) {
+        if ($request->get("filtergroup")) {
             $filtergroups = $request->get("filtergroup");
             $filtergroups = explode(",", $filtergroups);
 
-            $indexColumns = array();
-            foreach($filtergroups as $filtergroup) {
+            $indexColumns = [];
+            foreach ($filtergroups as $filtergroup) {
                 $indexColumns = array_merge($indexColumns, $indexService->getIndexAttributesByFilterGroup($filtergroup, $request->get("tenant")));
             }
-
         } else {
-            if($request->get("show_all_fields") == "true") {
+            if ($request->get("show_all_fields") == "true") {
                 $indexColumns = $indexService->getIndexAttributes(false, $request->get("tenant"));
             } else {
                 $indexColumns = $indexService->getIndexAttributes(true, $request->get("tenant"));
             }
         }
 
-        if(!$indexColumns) {
-            $indexColumns = array();
+        if (!$indexColumns) {
+            $indexColumns = [];
         }
 
 
-        $fields = array();
+        $fields = [];
 
-        if($request->get("add_empty") == "true") {
-            $fields[" "] = array("key" => "", "name" => "(" . $this->trans("empty", [], "messages") . ")");
+        if ($request->get("add_empty") == "true") {
+            $fields[" "] = ["key" => "", "name" => "(" . $this->trans("empty", [], "messages") . ")"];
         }
 
-        foreach($indexColumns as $c) {
-            $fields[$c] = array("key" => $c, "name" => $this->trans($c));
+        foreach ($indexColumns as $c) {
+            $fields[$c] = ["key" => $c, "name" => $this->trans($c)];
         }
 
-        if($request->get("specific_price_field") == "true") {
+        if ($request->get("specific_price_field") == "true") {
             $fields[IProductList::ORDERKEY_PRICE] = [
                 "key" => IProductList::ORDERKEY_PRICE,
                 "name" => $this->trans(IProductList::ORDERKEY_PRICE)
@@ -157,16 +153,16 @@ class IndexController extends AdminController {
      * @Route("/get-all-tenants")
      * @return \Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse
      */
-    public function getAllTenantsAction() {
+    public function getAllTenantsAction()
+    {
         $tenants = Factory::getInstance()->getAllTenants();
-        $data = array(array("key" => "", "name" => $this->trans("default")));
-        if($tenants) {
-            foreach($tenants as $tenant) {
-                $data[] = array("key" => $tenant, "name" => $this->trans($tenant));
+        $data = [["key" => "", "name" => $this->trans("default")]];
+        if ($tenants) {
+            foreach ($tenants as $tenant) {
+                $data[] = ["key" => $tenant, "name" => $this->trans($tenant)];
             }
         }
-        return $this->json(array("data" => $data));
+
+        return $this->json(["data" => $data]);
     }
-
-
 }

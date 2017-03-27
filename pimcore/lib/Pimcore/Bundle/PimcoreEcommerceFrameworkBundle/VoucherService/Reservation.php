@@ -12,12 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService;
 
 class Reservation extends \Pimcore\Model\AbstractModel
 {
-
     public $id;
     public $token;
     public $timestamp;
@@ -33,9 +31,10 @@ class Reservation extends \Pimcore\Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->get($code, $cart);
+
             return $config;
         } catch (\Exception $ex) {
-//            Logger::debug($ex->getMessage());
+            //            Logger::debug($ex->getMessage());
             return false;
         }
     }
@@ -59,9 +58,10 @@ class Reservation extends \Pimcore\Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->create($code, $cart_id);
+
             return $config;
         } catch (\Exception $ex) {
-//            Logger::debug($ex->getMessage());
+            //            Logger::debug($ex->getMessage());
             return false;
         }
     }
@@ -85,6 +85,7 @@ class Reservation extends \Pimcore\Model\AbstractModel
 
         try {
             $db->query($query, $params);
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -118,6 +119,7 @@ class Reservation extends \Pimcore\Model\AbstractModel
         $db = \Pimcore\Db::get();
         try {
             $db->executeQuery($query, $params);
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -142,12 +144,12 @@ class Reservation extends \Pimcore\Model\AbstractModel
      */
     public static function getReservationCount($code)
     {
-
         $db = \Pimcore\Db::get();
         $query = "SELECT COUNT(*) FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . " WHERE token = ? ";
 
         try {
             $count = $db->fetchOne($query, $code);
+
             return (int)$count;
         } catch (\Exception $e) {
             return false;

@@ -12,14 +12,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
-class Price implements IPrice {
+class Price implements IPrice
+{
 
     /**
      * @var Currency
@@ -58,12 +58,14 @@ class Price implements IPrice {
      * @param Currency $currency
      * @param bool $minPrice
      */
-    function __construct($amount, Currency $currency, $minPrice = false) {
+    public function __construct($amount, Currency $currency, $minPrice = false)
+    {
         $this->grossAmount = $amount;
         $this->currency = $currency;
         $this->minPrice = $minPrice;
     }
-    function __toString(){
+    public function __toString()
+    {
         return $this->getCurrency()->toCurrency($this->grossAmount);
     }
 
@@ -71,7 +73,8 @@ class Price implements IPrice {
     /**
      * @return bool
      */
-    public function isMinPrice() {
+    public function isMinPrice()
+    {
         return $this->minPrice;
     }
 
@@ -83,7 +86,8 @@ class Price implements IPrice {
      * @param string $priceMode - default to PRICE_MODE_GROSS
      * @param bool $recalc - default to false
      */
-    public function setAmount($amount, $priceMode = self::PRICE_MODE_GROSS, $recalc = false) {
+    public function setAmount($amount, $priceMode = self::PRICE_MODE_GROSS, $recalc = false)
+    {
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
                 $this->grossAmount = $amount;
@@ -93,10 +97,9 @@ class Price implements IPrice {
                 break;
         }
 
-        if($recalc) {
+        if ($recalc) {
             $this->updateTaxes($priceMode);
         }
-
     }
 
     /**
@@ -104,21 +107,24 @@ class Price implements IPrice {
      *
      * @return float
      */
-    function getAmount() {
+    public function getAmount()
+    {
         return $this->grossAmount;
     }
 
     /**
      * @param Currency $currency
      */
-    public function setCurrency(Currency $currency) {
+    public function setCurrency(Currency $currency)
+    {
         $this->currency = $currency;
     }
 
     /**
      * @return Currency
      */
-    function getCurrency() {
+    public function getCurrency()
+    {
         return $this->currency;
     }
 
@@ -162,7 +168,7 @@ class Price implements IPrice {
     {
         $this->grossAmount = $grossAmount;
 
-        if($recalc) {
+        if ($recalc) {
             $this->updateTaxes(TaxCalculationService::CALCULATION_FROM_GROSS);
         }
     }
@@ -175,7 +181,7 @@ class Price implements IPrice {
     {
         $this->netAmount = $netAmount;
 
-        if($recalc) {
+        if ($recalc) {
             $this->updateTaxes(TaxCalculationService::CALCULATION_FROM_NET);
         }
     }
@@ -203,7 +209,8 @@ class Price implements IPrice {
      *
      * @param $calculationMode
      */
-    protected function updateTaxes($calculationMode) {
+    protected function updateTaxes($calculationMode)
+    {
         $taxCalculationService = new TaxCalculationService();
         $taxCalculationService->updateTaxes($this, $calculationMode);
     }

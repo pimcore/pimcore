@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
 class Gift implements IGift
@@ -40,7 +39,7 @@ class Gift implements IGift
     public function executeOnCart(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $comment = $environment->getRule()->getDescription();
-        $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, array(), array(), $comment);
+        $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, [], [], $comment);
     }
 
     /**
@@ -52,6 +51,7 @@ class Gift implements IGift
     public function setProduct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -69,10 +69,10 @@ class Gift implements IGift
      */
     public function toJSON()
     {
-        return json_encode(array(
+        return json_encode([
                                 'type' => 'Gift',
                                 'product' => $this->getProduct() ? $this->getProduct()->getFullPath() : null,
-                           ));
+                           ]);
     }
 
     /**
@@ -83,10 +83,10 @@ class Gift implements IGift
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        $product = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct::getByPath( $json->product );
+        $product = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct::getByPath($json->product);
 
-        if($product) {
-            $this->setProduct( $product );
+        if ($product) {
+            $this->setProduct($product);
         }
 
         return $this;
@@ -98,11 +98,11 @@ class Gift implements IGift
      */
     public function __sleep()
     {
-        if($this->product) {
+        if ($this->product) {
             $this->product = $this->product->getFullPath();
         }
 
-        return array('product');
+        return ['product'];
     }
 
     /**
@@ -110,9 +110,8 @@ class Gift implements IGift
      */
     public function __wakeup()
     {
-        if($this->product != '') {
-            $this->product = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct::getByPath( $this->product );
+        if ($this->product != '') {
+            $this->product = \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct::getByPath($this->product);
         }
-
     }
 }

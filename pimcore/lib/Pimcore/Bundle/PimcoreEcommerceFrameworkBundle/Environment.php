@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Locale;
@@ -23,7 +22,8 @@ use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class Environment implements IEnvironment {
+class Environment implements IEnvironment
+{
     const SESSION_KEY_CUSTOM_ITEMS = "customitems";
     const SESSION_KEY_USERID = "userid";
     const SESSION_KEY_USE_GUEST_CART = "useguestcart";
@@ -37,7 +37,7 @@ class Environment implements IEnvironment {
      */
     protected $session;
 
-    protected $customItems = array();
+    protected $customItems = [];
 
     /**
      * @var int
@@ -80,7 +80,8 @@ class Environment implements IEnvironment {
      */
     protected $currentTransientCheckoutTenant = null;
 
-    public function __construct($config, SessionInterface $containerSession, Locale $localeService) {
+    public function __construct($config, SessionInterface $containerSession, Locale $localeService)
+    {
         $this->localeService = $localeService;
         $this->containerSession = $containerSession;
 
@@ -90,13 +91,14 @@ class Environment implements IEnvironment {
         $this->defaultCurrency = new Currency((string)$config->defaultCurrency);
     }
 
-    protected function loadFromSession() {
-        if(php_sapi_name() != "cli") {
+    protected function loadFromSession()
+    {
+        if (php_sapi_name() != "cli") {
             $this->session = $this->buildSession();
 
             $this->customItems = $this->session->get(self::SESSION_KEY_CUSTOM_ITEMS);
-            if ($this->customItems==null){
-                $this->customItems=array();
+            if ($this->customItems==null) {
+                $this->customItems=[];
             }
 
             $this->userId = $this->session->get(self::SESSION_KEY_USERID);
@@ -112,9 +114,9 @@ class Environment implements IEnvironment {
         }
     }
 
-    public function save() {
-        if(php_sapi_name() != "cli")
-        {
+    public function save()
+    {
+        if (php_sapi_name() != "cli") {
             $this->session->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
 
             $this->session->set(self::SESSION_KEY_USERID, $this->userId);
@@ -129,15 +131,18 @@ class Environment implements IEnvironment {
         }
     }
 
-    public function getAllCustomItems() {
+    public function getAllCustomItems()
+    {
         return $this->customItems;
     }
 
-    public function getCustomItem($key) {
+    public function getCustomItem($key)
+    {
         return $this->customItems[$key];
     }
 
-    public function setCustomItem($key, $value) {
+    public function setCustomItem($key, $value)
+    {
         $this->customItems[$key] = $value;
     }
 
@@ -171,12 +176,14 @@ class Environment implements IEnvironment {
     }
 
 
-    public function removeCustomItem($key) {
+    public function removeCustomItem($key)
+    {
         unset($this->customItems[$key]);
     }
 
 
-    public function clearEnvironment() {
+    public function clearEnvironment()
+    {
         $key = self::SESSION_KEY_CUSTOM_ITEMS;
         $this->session->remove($key);
         $this->customItems = null;
@@ -211,7 +218,8 @@ class Environment implements IEnvironment {
      * @param string $currentTenant
      * @return mixed|void
      */
-    public function setCurrentTenant($currentTenant) {
+    public function setCurrentTenant($currentTenant)
+    {
         $this->setCurrentAssortmentTenant($currentTenant);
     }
 
@@ -222,7 +230,8 @@ class Environment implements IEnvironment {
      *
      * @return string
      */
-    public function getCurrentTenant() {
+    public function getCurrentTenant()
+    {
         return $this->getCurrentAssortmentTenant();
     }
 
@@ -234,7 +243,8 @@ class Environment implements IEnvironment {
      * @param mixed $currentSubTenant
      * @return mixed|void
      */
-    public function setCurrentSubTenant($currentSubTenant) {
+    public function setCurrentSubTenant($currentSubTenant)
+    {
         $this->setCurrentAssortmentSubTenant($currentSubTenant);
     }
 
@@ -246,14 +256,16 @@ class Environment implements IEnvironment {
      *
      * @return mixed
      */
-    public function getCurrentSubTenant() {
+    public function getCurrentSubTenant()
+    {
         return $this->getCurrentAssortmentSubTenant();
     }
 
     /**
      * @return Currency
      */
-    public function getDefaultCurrency() {
+    public function getDefaultCurrency()
+    {
         return $this->defaultCurrency;
     }
 
@@ -325,9 +337,8 @@ class Environment implements IEnvironment {
      */
     public function setCurrentCheckoutTenant($tenant, $persistent = true)
     {
-        if($this->currentCheckoutTenant != $tenant) {
-
-            if($persistent) {
+        if ($this->currentCheckoutTenant != $tenant) {
+            if ($persistent) {
                 $this->currentCheckoutTenant = $tenant;
             }
             $this->currentTransientCheckoutTenant = $tenant;
@@ -359,7 +370,8 @@ class Environment implements IEnvironment {
      *
      * @return null|string
      */
-    public function getSystemLocale() {
+    public function getSystemLocale()
+    {
         // try to get the language from the service container
         try {
             $locale = null;

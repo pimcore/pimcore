@@ -16,6 +16,7 @@ chdir($workingDirectory);
 function setFileExtension($path, $extension = "php")
 {
     $pathinfo = pathinfo($path);
+
     return $pathinfo['dirname'] . '/' . $pathinfo['filename'] . '.' . $extension;
 }
 
@@ -48,7 +49,6 @@ function createPhpConfigFileFor($filePath)
     } catch (Exception $e) {
         print $e->getMessage();
         print "\ncould not create " . $newPath . "\n";
-
     }
 }
 
@@ -84,10 +84,10 @@ function refactorProductIndexColumns(&$config)
     $config['onlineshop']['productindex']['generalSearchColumns'] = $config['onlineshop']['productindex']['generalSearchColumns']['column'];
     $config['onlineshop']['productindex']['columns'] = $config['onlineshop']['productindex']['columns']['column'];
 
-    if($config['tenant']['generalSearchColumns']['column']) {
+    if ($config['tenant']['generalSearchColumns']['column']) {
         $config['tenant']['generalSearchColumns'] = $config['tenant']['generalSearchColumns']['column'];
     }
-    if($config['tenant']['columns']['column']) {
+    if ($config['tenant']['columns']['column']) {
         $config['tenant']['columns'] = $config['tenant']['columns']['column'];
     }
 }

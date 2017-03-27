@@ -12,38 +12,38 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter;
 
-class DefaultBrickGetterSequenceToMultiselect implements IGetter {
-
-    public static function get($object, $config = null) {
+class DefaultBrickGetterSequenceToMultiselect implements IGetter
+{
+    public static function get($object, $config = null)
+    {
         $sourceList = $config->source;
 
-        $values = array();
+        $values = [];
 
-        if($sourceList->brickfield) {
-            $sourceList = array($sourceList);
+        if ($sourceList->brickfield) {
+            $sourceList = [$sourceList];
         }
 
-        foreach($sourceList as $source) {
+        foreach ($sourceList as $source) {
             $brickContainerGetter = "get" . ucfirst($source->brickfield);
 
-            if(method_exists($object, $brickContainerGetter)) {
+            if (method_exists($object, $brickContainerGetter)) {
                 $brickContainer = $object->$brickContainerGetter();
 
                 $brickGetter = "get" . ucfirst($source->bricktype);
                 $brick = $brickContainer->$brickGetter();
-                if($brick) {
+                if ($brick) {
                     $fieldGetter = "get" . ucfirst($source->fieldname);
                     $value = $brick->$fieldGetter();
 
-                    if($source->invert == "true") {
+                    if ($source->invert == "true") {
                         $value = !$value;
                     }
 
-                    if($value) {
-                        if(is_bool($value) || $source->forceBool == "true") {
+                    if ($value) {
+                        if (is_bool($value) || $source->forceBool == "true") {
                             $values[] = $source->fieldname;
                         } else {
                             $values[] = $value;
@@ -52,15 +52,15 @@ class DefaultBrickGetterSequenceToMultiselect implements IGetter {
                 }
             } else {
                 $fieldGetter = "get" . ucfirst($source->fieldname);
-                if(method_exists($object, $fieldGetter)) {
+                if (method_exists($object, $fieldGetter)) {
                     $value = $object->$fieldGetter();
 
-                    if($source->invert == "true") {
+                    if ($source->invert == "true") {
                         $value = !$value;
                     }
 
-                    if($value) {
-                        if(is_bool($value) || $source->forceBool == "true") {
+                    if ($value) {
+                        if (is_bool($value) || $source->forceBool == "true") {
                             $values[] = $source->fieldname;
                         } else {
                             $values[] = $value;
@@ -68,8 +68,6 @@ class DefaultBrickGetterSequenceToMultiselect implements IGetter {
                     }
                 }
             }
-
         }
-
     }
 }

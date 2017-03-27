@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class CatalogProduct extends AbstractObjectListCondition implements ICatalogProduct
@@ -37,36 +36,30 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         // init
-        $productsPool = array();
+        $productsPool = [];
 
         // get current product if we have one
-        if($environment->getProduct())
-        {
+        if ($environment->getProduct()) {
             $productsPool[] = $environment->getProduct();
         }
 
         // products from cart
-        if($environment->getCart())
-        {
-            foreach($environment->getCart()->getItems() as $item)
-            {
+        if ($environment->getCart()) {
+            foreach ($environment->getCart()->getItems() as $item) {
                 $productsPool[] = $item->getProduct();
             }
         }
 
 
         // test
-        foreach($productsPool as $currentProduct)
-        {
+        foreach ($productsPool as $currentProduct) {
             // check all valid products
-            foreach($this->getProducts() as $product)
-            {
+            foreach ($this->getProducts() as $product) {
                 /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $allow */
 
                 $currentProductCheck = $currentProduct;
-                while($currentProductCheck instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable) {
-                    if($currentProductCheck->getId() === $product->getId())
-                    {
+                while ($currentProductCheck instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable) {
+                    if ($currentProductCheck->getId() === $product->getId()) {
                         return true;
                     }
                     $currentProductCheck = $currentProductCheck->getParent();
@@ -83,19 +76,18 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     public function toJSON()
     {
         // basic
-        $json = array(
+        $json = [
             'type' => 'CatalogProduct',
-            'products' => array()
-        );
+            'products' => []
+        ];
 
         // add categories
-        foreach($this->getProducts() as $product)
-        {
+        foreach ($this->getProducts() as $product) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct $product */
-            $json['products'][] = array(
+            $json['products'][] = [
                 $product->getId(),
                 $product->getFullPath()
-            );
+            ];
         }
 
         return json_encode($json);
@@ -110,16 +102,14 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     {
         $json = json_decode($string);
 
-        $products = array();
-        foreach($json->products as $cat)
-        {
+        $products = [];
+        foreach ($json->products as $cat) {
             $product = $this->loadObject($cat->id);
-            if($product)
-            {
+            if ($product) {
                 $products[] = $product;
             }
         }
-        $this->setProducts( $products );
+        $this->setProducts($products);
 
         return $this;
     }
@@ -150,6 +140,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     public function setProducts(array $products)
     {
         $this->products = $products;
+
         return $this;
     }
 

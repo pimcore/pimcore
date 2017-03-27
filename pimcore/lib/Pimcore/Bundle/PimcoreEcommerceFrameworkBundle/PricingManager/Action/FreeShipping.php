@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
 class FreeShipping implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction
@@ -37,12 +36,11 @@ class FreeShipping implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
         $list = $priceCalculator->getModificators();
-        foreach($list as &$modificator)
-        {
+        foreach ($list as &$modificator) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator $modificator_ */
 
             // remove shipping charge
-            if($modificator instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping) {
+            if ($modificator instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping) {
                 $modificator->setCharge(0);
                 $priceCalculator->reset();
             }
@@ -57,9 +55,9 @@ class FreeShipping implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
      */
     public function toJSON()
     {
-        return json_encode(array(
+        return json_encode([
                                 'type' => 'FreeShipping'
-                           ));
+                           ]);
     }
 
     /**

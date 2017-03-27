@@ -12,12 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing {
+class Listing extends \Pimcore\Model\Listing\AbstractListing
+{
 
     /**
      * @var array|IRule
@@ -45,17 +45,18 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      */
     public function isValidOrderKey($key)
     {
-        return in_array($key, array('prio', 'name'));
+        return in_array($key, ['prio', 'name']);
     }
 
     /**
      * @return array
      */
-    function getRules()
+    public function getRules()
     {
         // load rules if not loaded yet
-        if(empty($this->rules))
+        if (empty($this->rules)) {
             $this->load();
+        }
 
         return $this->rules;
     }
@@ -64,9 +65,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param array $rules
      * @return void
      */
-    function setRules(array $rules)
+    public function setRules(array $rules)
     {
         $this->rules = $rules;
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Action;
 
 interface IDiscount extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IAction

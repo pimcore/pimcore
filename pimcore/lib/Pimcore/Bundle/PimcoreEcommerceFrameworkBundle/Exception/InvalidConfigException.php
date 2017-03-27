@@ -12,14 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception;
 
 /**
  * Class InvalidConfigException
  * @package OnlineShop\Framework\Exception
  */
-class InvalidConfigException extends \Exception {
-
-
+class InvalidConfigException extends \Exception
+{
 }

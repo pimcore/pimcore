@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
@@ -85,7 +84,8 @@ class DefaultMysql implements IProductList
     protected $logger;
 
 
-    public function __construct(IMysqlConfig $tenantConfig) {
+    public function __construct(IMysqlConfig $tenantConfig)
+    {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
@@ -96,10 +96,12 @@ class DefaultMysql implements IProductList
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct[]
      */
-    public function getProducts() {
+    public function getProducts()
+    {
         if ($this->products === null) {
             $this->load();
         }
+
         return $this->products;
     }
 
@@ -107,17 +109,17 @@ class DefaultMysql implements IProductList
     /**
      * @var string[]
      */
-    protected $conditions = array();
+    protected $conditions = [];
 
     /**
      * @var string[]
      */
-    protected $relationConditions = array();
+    protected $relationConditions = [];
 
     /**
      * @var string[][]
      */
-    protected $queryConditions = array();
+    protected $queryConditions = [];
 
     /**
      * @var float
@@ -133,12 +135,14 @@ class DefaultMysql implements IProductList
      * @param string $condition
      * @param string $fieldname
      */
-    public function addCondition($condition, $fieldname = "") {
+    public function addCondition($condition, $fieldname = "")
+    {
         $this->products = null;
         $this->conditions[$fieldname][] = $condition;
     }
 
-    public function resetCondition($fieldname) {
+    public function resetCondition($fieldname)
+    {
         $this->products = null;
         unset($this->conditions[$fieldname]);
     }
@@ -147,7 +151,8 @@ class DefaultMysql implements IProductList
      * @param string $fieldname
      * @param string $condition
      */
-    public function addRelationCondition($fieldname, $condition) {
+    public function addRelationCondition($fieldname, $condition)
+    {
         $this->products = null;
         $this->relationConditions[$fieldname][] = "`fieldname` = " . $this->quote($fieldname) . " AND "  . $condition;
     }
@@ -155,10 +160,11 @@ class DefaultMysql implements IProductList
     /**
      * resets all conditions of product list
      */
-    public function resetConditions() {
-        $this->conditions = array();
-        $this->relationConditions = array();
-        $this->queryConditions = array();
+    public function resetConditions()
+    {
+        $this->conditions = [];
+        $this->relationConditions = [];
+        $this->queryConditions = [];
         $this->conditionPriceFrom = null;
         $this->conditionPriceTo = null;
         $this->products = null;
@@ -195,7 +201,8 @@ class DefaultMysql implements IProductList
      * @param null|float $from
      * @param null|float $to
      */
-    public function addPriceCondition($from = null, $to = null) {
+    public function addPriceCondition($from = null, $to = null)
+    {
         $this->products = null;
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
@@ -205,7 +212,8 @@ class DefaultMysql implements IProductList
     /**
      * @param boolean $inProductList
      */
-    public function setInProductList($inProductList) {
+    public function setInProductList($inProductList)
+    {
         $this->products = null;
         $this->inProductList = $inProductList;
     }
@@ -213,7 +221,8 @@ class DefaultMysql implements IProductList
     /**
      * @return boolean
      */
-    public function getInProductList() {
+    public function getInProductList()
+    {
         return $this->inProductList;
     }
 
@@ -225,21 +234,24 @@ class DefaultMysql implements IProductList
 
     protected $orderByPrice = false;
 
-    public function setOrder($order) {
+    public function setOrder($order)
+    {
         $this->products = null;
         $this->order = $order;
     }
 
-    public function getOrder() {
+    public function getOrder()
+    {
         return $this->order;
     }
 
     /**
      * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey($orderKey) {
+    public function setOrderKey($orderKey)
+    {
         $this->products = null;
-        if($orderKey == IProductList::ORDERKEY_PRICE) {
+        if ($orderKey == IProductList::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
             $this->orderByPrice = false;
@@ -248,85 +260,90 @@ class DefaultMysql implements IProductList
         $this->orderKey = $orderKey;
     }
 
-    public function getOrderKey() {
+    public function getOrderKey()
+    {
         return $this->orderKey;
     }
 
-    public function setLimit($limit) {
-        if($this->limit != $limit) {
+    public function setLimit($limit)
+    {
+        if ($this->limit != $limit) {
             $this->products = null;
         }
         $this->limit = $limit;
     }
 
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->limit;
     }
 
-    public function setOffset($offset) {
-        if($this->offset != $offset) {
+    public function setOffset($offset)
+    {
+        if ($this->offset != $offset) {
             $this->products = null;
         }
         $this->offset = $offset;
     }
 
-    public function getOffset() {
+    public function getOffset()
+    {
         return $this->offset;
     }
 
 
-    public function setCategory(AbstractCategory $category) {
+    public function setCategory(AbstractCategory $category)
+    {
         $this->products = null;
         $this->category = $category;
     }
 
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->category;
     }
 
-    public function setVariantMode($variantMode) {
+    public function setVariantMode($variantMode)
+    {
         $this->products = null;
         $this->variantMode = $variantMode;
     }
 
-    public function getVariantMode() {
+    public function getVariantMode()
+    {
         return $this->variantMode;
     }
 
 
-    public function load() {
-
-        $objectRaws = array();
+    public function load()
+    {
+        $objectRaws = [];
 
         //First case: no price filtering and no price sorting
-        if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
-        {
+        if (!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             $objectRaws = $this->loadWithoutPriceFilterWithoutPriceSorting();
         }
 
         //Second case: no price filtering but price sorting
-        else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null)
-        {
+        elseif ($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             $objectRaws = $this->loadWithoutPriceFilterWithPriceSorting();
         }
 
         //Third case: price filtering but no price sorting
-        else if(!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
-        {
+        elseif (!$this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
             $objectRaws = $this->loadWithPriceFilterWithoutPriceSorting();
         }
 
         //Forth case: price filtering and price sorting
-        else if($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null))
-        {
+        elseif ($this->orderByPrice && ($this->conditionPriceFrom !== null || $this->conditionPriceTo !== null)) {
             $objectRaws = $this->loadWithPriceFilterWithPriceSorting();
         }
 
 
-        $this->products = array();
-        foreach($objectRaws as $raw) {
+        $this->products = [];
+        foreach ($objectRaws as $raw) {
             $product = $this->loadElementById($raw['o_id']);
-            if($product) {
+            if ($product) {
                 $this->products[] = $product;
             }
         }
@@ -362,20 +379,19 @@ class DefaultMysql implements IProductList
         $objectRaws = $this->resource->load($this->buildQueryFromConditions());
         $this->totalCount = $this->resource->getLastRecordCount();
 
-        $priceSystemArrays = array();
-        foreach($objectRaws as $raw) {
+        $priceSystemArrays = [];
+        foreach ($objectRaws as $raw) {
             $priceSystemArrays[$raw['priceSystemName']][] = $raw['o_id'];
         }
-        if(count($priceSystemArrays) == 1) {
+        if (count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
             $priceSystem = Factory::getInstance()->getPriceSystem($priceSystemName);
             $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$raw['priceSystemName']], null, null, $this->order, $this->getOffset(), $this->getLimit());
-        } else if(count($priceSystemArrays) == 0) {
+        } elseif (count($priceSystemArrays) == 0) {
             //nothing to do
         } else {
             throw new \Exception("Not implemented yet - multiple pricing systems are not supported yet");
-            foreach($priceSystemArrays as $priceSystemName => $priceSystemArray) {
-
+            foreach ($priceSystemArrays as $priceSystemName => $priceSystemArray) {
             }
         }
 
@@ -422,7 +438,8 @@ class DefaultMysql implements IProductList
      * @param $elementId
      * @return array|\Pimcore\Model\Object\AbstractObject
      */
-    protected function loadElementById($elementId) {
+    protected function loadElementById($elementId)
+    {
         return $this->getCurrentTenantConfig()->getObjectMockupById($elementId);
     }
 
@@ -497,14 +514,14 @@ class DefaultMysql implements IProductList
      * @return array
      * @throws \Exception
      */
-    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
+    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    {
         $excludedFieldName = $fieldname;
-        if (!$fieldnameShouldBeExcluded){
+        if (!$fieldnameShouldBeExcluded) {
             $excludedFieldName=null;
         }
-        if($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
+        if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);
-
         } else {
             throw new \Exception("Not supported yet");
         }
@@ -518,35 +535,36 @@ class DefaultMysql implements IProductList
      * @return array
      * @throws \Exception
      */
-    public function getGroupByRelationValues($fieldname, $countValues = false,$fieldnameShouldBeExcluded=true) {
+    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded=true)
+    {
         $excludedFieldName=$fieldname;
-        if (!$fieldnameShouldBeExcluded){
+        if (!$fieldnameShouldBeExcluded) {
             $excludedFieldName=null;
         }
-        if($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
+        if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);
-
         } else {
             throw new \Exception("Not supported yet");
         }
     }
 
 
-    protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null) {
-        if($variantMode == null) {
+    protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null)
+    {
+        if ($variantMode == null) {
             $variantMode = $this->getVariantMode();
         }
         $preCondition = "active = 1 AND o_virtualProductActive = 1";
-        if($this->inProductList) {
+        if ($this->inProductList) {
             $preCondition .= " AND inProductList = 1";
         }
 
         $tenantCondition = $this->getCurrentTenantConfig()->getCondition();
-        if($tenantCondition) {
+        if ($tenantCondition) {
             $preCondition .= " AND " . $tenantCondition;
         }
 
-        if($this->getCategory()) {
+        if ($this->getCategory()) {
             $preCondition .= " AND parentCategoryIds LIKE '%," . $this->getCategory()->getId() . ",%'";
         }
 
@@ -554,32 +572,31 @@ class DefaultMysql implements IProductList
 
         //variant handling and userspecific conditions
 
-        if($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            if(!$excludeConditions) {
+        if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            if (!$excludeConditions) {
                 $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-                if($userspecific) {
+                if ($userspecific) {
                     $condition .= " AND " . $userspecific;
                 }
             }
-
         } else {
-            if($variantMode == IProductList::VARIANT_MODE_HIDE) {
+            if ($variantMode == IProductList::VARIANT_MODE_HIDE) {
                 $condition .= " AND o_type != 'variant'";
             }
 
-            if(!$excludeConditions) {
+            if (!$excludeConditions) {
                 $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-                if($userspecific) {
+                if ($userspecific) {
                     $condition .= " AND " . $userspecific;
                 }
             }
         }
 
 
-        if($this->queryConditions) {
+        if ($this->queryConditions) {
             $searchstring = "";
-            foreach($this->queryConditions as $queryConditionPartArray) {
-                foreach($queryConditionPartArray as $queryConditionPart) {
+            foreach ($this->queryConditions as $queryConditionPartArray) {
+                foreach ($queryConditionPartArray as $queryConditionPart) {
                     $searchstring .= "+" . $queryConditionPart . "* ";
                 }
             }
@@ -588,16 +605,18 @@ class DefaultMysql implements IProductList
         }
 
         $this->logger->info("Total Condition: " . $condition);
+
         return $condition;
     }
 
 
-    protected function buildUserspecificConditions($excludedFieldname = null) {
+    protected function buildUserspecificConditions($excludedFieldname = null)
+    {
         $condition = "";
-        foreach($this->relationConditions as $fieldname => $condArray) {
-            if($fieldname !== $excludedFieldname) {
-                foreach($condArray as $cond) {
-                    if($condition) {
+        foreach ($this->relationConditions as $fieldname => $condArray) {
+            if ($fieldname !== $excludedFieldname) {
+                foreach ($condArray as $cond) {
+                    if ($condition) {
                         $condition .= " AND ";
                     }
 
@@ -606,10 +625,10 @@ class DefaultMysql implements IProductList
             }
         }
 
-        foreach($this->conditions as $fieldname => $condArray) {
-            if($fieldname !== $excludedFieldname) {
-                foreach($condArray as $cond) {
-                    if($condition) {
+        foreach ($this->conditions as $fieldname => $condArray) {
+            if ($fieldname !== $excludedFieldname) {
+                foreach ($condArray as $cond) {
+                    if ($condition) {
                         $condition .= " AND ";
                     }
                     
@@ -622,40 +641,41 @@ class DefaultMysql implements IProductList
         }
 
         $this->logger->info("User specific Condition Part: " . $condition);
+
         return $condition;
     }
 
-    protected function buildOrderBy() {
-        if(!empty($this->orderKey) && $this->orderKey !== IProductList::ORDERKEY_PRICE) {
-
+    protected function buildOrderBy()
+    {
+        if (!empty($this->orderKey) && $this->orderKey !== IProductList::ORDERKEY_PRICE) {
             $orderKeys = $this->orderKey;
-            if(!is_array($orderKeys)) {
-                $orderKeys = array($orderKeys);
+            if (!is_array($orderKeys)) {
+                $orderKeys = [$orderKeys];
             }
 
             // add sorting for primary id to prevent mysql paging problem...
             $orderKeys[] = 'o_id';
 
-            $directionOrderKeys = array();
-            foreach($orderKeys as $key) {
-                if(is_array($key)) {
+            $directionOrderKeys = [];
+            foreach ($orderKeys as $key) {
+                if (is_array($key)) {
                     $directionOrderKeys[] = $key;
                 } else {
-                    $directionOrderKeys[] = array($key, $this->order);
+                    $directionOrderKeys[] = [$key, $this->order];
                 }
             }
 
 
-            $orderByStringArray = array();
-            foreach($directionOrderKeys as $keyDirection) {
+            $orderByStringArray = [];
+            foreach ($directionOrderKeys as $keyDirection) {
                 $key = $keyDirection[0];
-                if($key instanceof IndexFieldSelection) {
+                if ($key instanceof IndexFieldSelection) {
                     $key = $key->getField();
                 }
                 $direction = $keyDirection[1];
 
-                if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                    if(strtoupper($this->order) == "DESC") {
+                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                    if (strtoupper($this->order) == "DESC") {
                         $orderByStringArray[] = "max(" . $key . ") " . $direction;
                     } else {
                         $orderByStringArray[] = "min(" . $key . ") " . $direction;
@@ -666,19 +686,21 @@ class DefaultMysql implements IProductList
             }
 
             return implode(",", $orderByStringArray);
-
         }
+
         return null;
     }
 
-    public function quote($value) {
+    public function quote($value)
+    {
         return $this->resource->quote($value);
     }
 
     /**
      * @return IMysqlConfig
      */
-    public function getCurrentTenantConfig() {
+    public function getCurrentTenantConfig()
+    {
         return $this->tenantConfig;
     }
 
@@ -689,10 +711,9 @@ class DefaultMysql implements IProductList
      * @param $fields
      * @param $objectId
      */
-    public function buildSimularityOrderBy($fields, $objectId) {
-
+    public function buildSimularityOrderBy($fields, $objectId)
+    {
         return $this->resource->buildSimularityOrderBy($fields, $objectId);
-
     }
 
 
@@ -702,7 +723,8 @@ class DefaultMysql implements IProductList
      * @param $fields
      * @param $searchstring
      */
-    public function buildFulltextSearchWhere($fields, $searchstring) {
+    public function buildFulltextSearchWhere($fields, $searchstring)
+    {
         return $this->resource->buildFulltextSearchWhere($fields, $searchstring);
     }
 
@@ -722,10 +744,12 @@ class DefaultMysql implements IProductList
      * <p>
      * The return value is cast to an integer.
      */
-    public function count() {
-        if($this->totalCount === null) {
+    public function count()
+    {
+        if ($this->totalCount === null) {
             $this->totalCount = $this->resource->getCount($this->buildQueryFromConditions());
         }
+
         return $this->totalCount;
     }
 
@@ -735,9 +759,11 @@ class DefaultMysql implements IProductList
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      */
-    public function current() {
+    public function current()
+    {
         $this->getProducts();
         $var = current($this->products);
+
         return $var;
     }
 
@@ -748,9 +774,11 @@ class DefaultMysql implements IProductList
      * @param  integer $itemCountPerPage Number of items per page
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage) {
+    public function getItems($offset, $itemCountPerPage)
+    {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
+
         return $this->getProducts();
     }
 
@@ -759,7 +787,8 @@ class DefaultMysql implements IProductList
      *
      * @return AdapterInterface
      */
-    public function getPaginatorAdapter() {
+    public function getPaginatorAdapter()
+    {
         return $this;
     }
 
@@ -770,9 +799,11 @@ class DefaultMysql implements IProductList
      * @return scalar scalar on success, integer
      * 0 on failure.
      */
-    public function key() {
+    public function key()
+    {
         $this->getProducts();
         $var = key($this->products);
+
         return $var;
     }
 
@@ -782,9 +813,11 @@ class DefaultMysql implements IProductList
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      */
-    public function next() {
+    public function next()
+    {
         $this->getProducts();
         $var = next($this->products);
+
         return $var;
     }
 
@@ -794,7 +827,8 @@ class DefaultMysql implements IProductList
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
-    public function rewind() {
+    public function rewind()
+    {
         $this->getProducts();
         reset($this->products);
     }
@@ -806,8 +840,10 @@ class DefaultMysql implements IProductList
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid() {
+    public function valid()
+    {
         $var = $this->current() !== false;
+
         return $var;
     }
 
@@ -820,6 +856,7 @@ class DefaultMysql implements IProductList
 
         unset($vars['resource']);
         unset($vars['products']);
+
         return array_keys($vars);
     }
 
@@ -828,7 +865,7 @@ class DefaultMysql implements IProductList
      */
     public function __wakeup()
     {
-        if(empty($this->resource)) {
+        if (empty($this->resource)) {
             $this->resource = new DefaultMysql\Dao($this);
         }
     }
@@ -837,7 +874,8 @@ class DefaultMysql implements IProductList
      * this is needed for ZF1 Paginator
      * @return string
      */
-    public function getCacheIdentifier() {
+    public function getCacheIdentifier()
+    {
         return uniqid();
     }
 }

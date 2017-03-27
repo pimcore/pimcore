@@ -12,44 +12,51 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
-class SessionCartCheckoutData extends AbstractCartCheckoutData {
-
+class SessionCartCheckoutData extends AbstractCartCheckoutData
+{
     protected $cartId;
 
-    public function save() {
+    public function save()
+    {
         throw new \Exception("Not implemented, should not be needed for this cart type.");
     }
 
-    public static function getByKeyCartId($key, $cartId) {
+    public static function getByKeyCartId($key, $cartId)
+    {
         throw new \Exception("Not implemented, should not be needed for this cart type.");
     }
 
-    public static function removeAllFromCart($cartId) {
+    public static function removeAllFromCart($cartId)
+    {
         $checkoutDataItem = new self();
-        $checkoutDataItem->getCart()->checkoutData = array();
+        $checkoutDataItem->getCart()->checkoutData = [];
     }
 
 
-    public function setCart(ICart $cart) {
+    public function setCart(ICart $cart)
+    {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }
 
-    public function getCart() {
+    public function getCart()
+    {
         if (empty($this->cart)) {
             $this->cart = SessionCart::getById($this->cartId);
         }
+
         return $this->cart;
     }
 
-    public function getCartId() {
+    public function getCartId()
+    {
         return $this->cartId;
     }
 
-    public function setCartId($cartId) {
+    public function setCartId($cartId)
+    {
         $this->cartId = $cartId;
     }
 
@@ -57,12 +64,13 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData {
     /**
      * @return array
      */
-    public function __sleep() {
+    public function __sleep()
+    {
         $vars = parent::__sleep();
 
-        $blockedVars = array("cart","product");
+        $blockedVars = ["cart", "product"];
 
-        $finalVars = array();
+        $finalVars = [];
         foreach ($vars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
@@ -71,5 +79,4 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData {
 
         return $finalVars;
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 /**
@@ -20,7 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
  *
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMockupConfig
  */
-interface IMockupConfig {
+interface IMockupConfig
+{
 
     /**
      * creates object mockup for given data
@@ -31,5 +31,4 @@ interface IMockupConfig {
      * @return mixed
      */
     public function createMockupObject($objectId, $data, $relations);
-
 }

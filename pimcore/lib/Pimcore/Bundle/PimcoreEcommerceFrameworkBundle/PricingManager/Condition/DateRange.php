@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class DateRange implements IDateRange
@@ -34,8 +33,7 @@ class DateRange implements IDateRange
      */
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
-        if($this->getStarting() && $this->getEnding())
-        {
+        if ($this->getStarting() && $this->getEnding()) {
             return $this->getStarting()->isEarlier(time()) && $this->getEnding()->isLater(time());
         }
 
@@ -50,6 +48,7 @@ class DateRange implements IDateRange
     public function setStarting(\DateTime $date)
     {
         $this->starting = $date;
+
         return $this;
     }
 
@@ -61,6 +60,7 @@ class DateRange implements IDateRange
     public function setEnding(\DateTime $date)
     {
         $this->ending = $date;
+
         return $this;
     }
 
@@ -85,11 +85,11 @@ class DateRange implements IDateRange
      */
     public function toJSON()
     {
-        return json_encode(array(
+        return json_encode([
             'type' => 'DateRange',
             'starting' => $this->getStarting()->toValue(),
             'ending' => $this->getEnding()->toValue()
-        ));
+        ]);
     }
 
     /**
@@ -102,7 +102,7 @@ class DateRange implements IDateRange
         $json = json_decode($string);
 
         $starting = new \DateTime(strtotime($json->starting));
-        $starting->setTime(0,0,0);
+        $starting->setTime(0, 0, 0);
 
         $ending = new \DateTime(strtotime($json->ending));
         $ending->setTime(23, 59, 59);

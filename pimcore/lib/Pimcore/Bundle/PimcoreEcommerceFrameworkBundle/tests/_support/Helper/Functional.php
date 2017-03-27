@@ -6,5 +6,4 @@ namespace EcommerceFramework\Helper;
 
 class Functional extends \Codeception\Module
 {
-
 }

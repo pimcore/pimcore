@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing {
+class Listing extends \Pimcore\Model\Listing\AbstractListing
+{
 
     /**
      * @var array
@@ -25,31 +25,35 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
     /**
      * @var array
      */
-    protected $order = array('ASC');
+    protected $order = ['ASC'];
 
     /**
      * @var array
      */
-    protected $orderKey = array('`sortIndex`', '`addedDateTimestamp`');
+    protected $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
 
     /**
      * @var array
      * @return boolean
      */
-    public function isValidOrderKey($key) {
-        if(in_array($key, ['productId', 'cartId', 'count', 'itemKey', 'addedDateTimestamp', 'sortIndex'])) {
+    public function isValidOrderKey($key)
+    {
+        if (in_array($key, ['productId', 'cartId', 'count', 'itemKey', 'addedDateTimestamp', 'sortIndex'])) {
             return true;
         }
+
         return false;
     }
 
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
-    public function getCartItems() {
-        if(empty($this->cartItems)) {
+    public function getCartItems()
+    {
+        if (empty($this->cartItems)) {
             $this->load();
         }
+
         return $this->cartItems;
     }
 
@@ -57,16 +61,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[] $cartItems
      * @return void
      */
-    public function setCartItems($cartItems) {
+    public function setCartItems($cartItems)
+    {
         $this->cartItems = $cartItems;
     }
 
     /**
      * @param string $className
      */
-    public function setCartItemClassName( $className )
+    public function setCartItemClassName($className)
     {
-        $this->getDao()->setClassName( $className );
+        $this->getDao()->setClassName($className);
     }
-
 }

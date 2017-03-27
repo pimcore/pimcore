@@ -12,9 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools;
-
 
 use Pimcore\Bundle\PimcoreBundle\Session\SessionConfiguratorInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;

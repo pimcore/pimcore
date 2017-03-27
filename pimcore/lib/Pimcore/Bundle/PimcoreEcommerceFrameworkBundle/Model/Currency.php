@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
-class Currency {
-
+class Currency
+{
     const LEFT = 'left';
     const RIGHT = 'right';
     const NO_SYMBOL = 'none';
@@ -81,9 +80,9 @@ class Currency {
      * @param string $pattern
      * @return string
      */
-    public function toCurrency($value, $pattern = 'default') {
-
-        if(is_array($pattern)) {
+    public function toCurrency($value, $pattern = 'default')
+    {
+        if (is_array($pattern)) {
             $symbol = $pattern['display'] ? $pattern['display'] : self::USE_SYMBOL;
             $position = $pattern['position'] ? $pattern['position'] : self::RIGHT;
 
@@ -96,32 +95,36 @@ class Currency {
     /**
      * @return string
      */
-    public function getShortName() {
+    public function getShortName()
+    {
         return $this->currencyShortName;
     }
 
     /**
      * @return string
      */
-    public function getSymbol() {
-        if(empty($this->currencySymbol)) {
+    public function getSymbol()
+    {
+        if (empty($this->currencySymbol)) {
             $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, "¤||");
             $parts = explode("||", $result);
             $this->currencySymbol = $parts[0];
         }
+
         return $this->currencySymbol;
     }
 
     /**
      * @return string
      */
-    public function getName() {
-        if(empty($this->currencyName)) {
+    public function getName()
+    {
+        if (empty($this->currencyName)) {
             $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, "¤¤¤||");
             $parts = explode("||", $result);
             $this->currencyName = $parts[0];
         }
+
         return $this->currencyName;
     }
-
 }

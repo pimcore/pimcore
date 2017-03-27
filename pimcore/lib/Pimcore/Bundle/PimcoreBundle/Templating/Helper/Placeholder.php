@@ -41,7 +41,6 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService;
 
-
 /**
  * Helper for passing data between otherwise segregated Views. It's called
  * Placeholder to make its typical usage obvious, but can be used just as easily
@@ -67,7 +66,8 @@ class Placeholder extends AbstractHelper
     protected $containers = [];
 
 
-    public function getName() {
+    public function getName()
+    {
         return 'placeholder';
     }
 
@@ -94,11 +94,10 @@ class Placeholder extends AbstractHelper
     public function __invoke($containerName = null)
     {
         $containerName = (string) $containerName;
-        if(empty($this->containers[$containerName])) {
+        if (empty($this->containers[$containerName])) {
             $this->containers[$containerName] = $this->containerService->getContainer($this->_regKey . "_" . $containerName);
         }
 
         return $this->containers[$containerName];
     }
-
 }

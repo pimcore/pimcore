@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token;
 
 // TODO - Log Errors
@@ -39,9 +38,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             }
             $this->assignVariablesToModel($result);
             $this->model->setValue('id', $result['id']);
-
         } catch (\Exception $e) {
-//            \Pimcore\Log\Simple::log('VoucherService',$e);
+            //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
     }
@@ -57,6 +55,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         if (!$reservation->exists()) {
             return false;
         }
+
         return true;
     }
 
@@ -103,6 +102,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         try {
             $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages+1 WHERE token = ?", [$this->model->getToken()]);
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -116,14 +116,14 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         try {
             $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages-1 WHERE token = ?", [$this->model->getToken()]);
+
             return true;
         } catch (\Exception $e) {
             return false;
         }
     }
 
-    public function check($cart){
-
+    public function check($cart)
+    {
     }
-
 }

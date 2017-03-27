@@ -12,36 +12,34 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter;
 
-class DefaultBrickGetterSequence implements IGetter {
-
-    public static function get($object, $config = null) {
+class DefaultBrickGetterSequence implements IGetter
+{
+    public static function get($object, $config = null)
+    {
         $sourceList = $config->source;
 
-        if($sourceList->brickfield) {
-            $sourceList = array($sourceList);
+        if ($sourceList->brickfield) {
+            $sourceList = [$sourceList];
         }
 
-        foreach($sourceList as $source) {
+        foreach ($sourceList as $source) {
             $brickContainerGetter = "get" . ucfirst($source->brickfield);
 
-            if(method_exists($object, $brickContainerGetter)) {
+            if (method_exists($object, $brickContainerGetter)) {
                 $brickContainer = $object->$brickContainerGetter();
 
                 $brickGetter = "get" . ucfirst($source->bricktype);
                 $brick = $brickContainer->$brickGetter();
-                if($brick) {
+                if ($brick) {
                     $fieldGetter = "get" . ucfirst($source->fieldname);
                     $value = $brick->$fieldGetter();
-                    if($value) {
-
+                    if ($value) {
                         return $value;
                     }
                 }
             }
-
         }
     }
 }

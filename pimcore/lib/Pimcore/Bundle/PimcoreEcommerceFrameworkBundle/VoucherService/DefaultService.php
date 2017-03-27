@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService;
 
 /**
@@ -20,7 +19,6 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService;
  */
 class DefaultService implements IVoucherService
 {
-
     public $sysConfig;
 
     public function __construct($config)
@@ -52,6 +50,7 @@ class DefaultService implements IVoucherService
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
         }
+
         return false;
     }
 
@@ -65,6 +64,7 @@ class DefaultService implements IVoucherService
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
         }
+
         return false;
     }
 
@@ -83,9 +83,11 @@ class DefaultService implements IVoucherService
                 $order->setVoucherTokens($voucherTokens);
 
                 $this->releaseToken($code, $cart);
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -105,8 +107,8 @@ class DefaultService implements IVoucherService
             $voucherTokens = $order->getVoucherTokens();
 
             $newVoucherTokens = [];
-            foreach($voucherTokens as $voucherToken) {
-                if($voucherToken->getId() != $tokenObject->getId()) {
+            foreach ($voucherTokens as $voucherToken) {
+                if ($voucherToken->getId() != $tokenObject->getId()) {
                     $newVoucherTokens[] = $voucherToken;
                 }
             }
@@ -115,6 +117,7 @@ class DefaultService implements IVoucherService
 
             return true;
         }
+
         return false;
     }
 
@@ -144,8 +147,9 @@ class DefaultService implements IVoucherService
      * @param null|string $seriesId
      * @return bool
      */
-    public function cleanUpStatistics($seriesId = null){
-        if (isset($seriesId) ) {
+    public function cleanUpStatistics($seriesId = null)
+    {
+        if (isset($seriesId)) {
             return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration, $seriesId);
         } else {
             return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic::cleanUpStatistics($this->sysConfig->statistics->duration);
@@ -163,7 +167,7 @@ class DefaultService implements IVoucherService
                 return $series->getTokenManager();
             }
         }
+
         return false;
     }
-
 }

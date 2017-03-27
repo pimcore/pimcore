@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
@@ -31,7 +30,6 @@ class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
      */
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
-
         if (!($cart = $environment->getCart())) {
             return false;
         }
@@ -47,10 +45,12 @@ class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
         return false;
     }
 
-    public function checkVoucherCode($code) {
+    public function checkVoucherCode($code)
+    {
         if (in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
             return true;
         }
+
         return false;
     }
 
@@ -60,18 +60,18 @@ class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
     public function toJSON()
     {
         // basic
-        $json = array(
+        $json = [
             'type' => 'VoucherToken',
             'whiteList' => []
-        );
+        ];
 
         // add categories
         foreach ($this->getWhiteList() as $series) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherSeries $series */
-            $json['whiteList'][] = array(
+            $json['whiteList'][] = [
                 $series->id,
                 $series->path
-            );
+            ];
         }
 
         return json_encode($json);
@@ -86,8 +86,8 @@ class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
     {
         $json = json_decode($string);
 
-        $whiteListIds = array();
-        $whiteList = array();
+        $whiteListIds = [];
+        $whiteList = [];
 
         foreach ($json->whiteList as $series) {
             $seriesId = $series->id;
@@ -144,6 +144,4 @@ class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
     {
         $this->whiteList = $whiteList;
     }
-
-
 }

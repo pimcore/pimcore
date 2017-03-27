@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Model\Element\ElementInterface;
@@ -61,7 +60,7 @@ interface ITrackingItemBuilder
 
     /**
      * Build checkout items by cart
-     * 
+     *
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
      * @return mixed
      */

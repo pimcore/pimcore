@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Class IIndexable
  */
-interface IIndexable {
+interface IIndexable
+{
 
     /**
      * @return int
@@ -85,6 +85,4 @@ interface IIndexable {
      * @return int
      */
     public function getClassId();
-
-
 }

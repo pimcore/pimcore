@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class Token implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
@@ -56,7 +55,7 @@ class Token implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingMa
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        $this->setToken( $json->token );
+        $this->setToken($json->token);
 
         return $this;
     }
@@ -76,5 +75,4 @@ class Token implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingMa
     {
         $this->token = $token;
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -65,7 +64,7 @@ class OrderManager implements IOrderManager
     {
         $orderList = new $this->config->orderList->class();
         /* @var IOrderList $orderList */
-        $orderList->setItemClassName( $this->config->orderList->classItem );
+        $orderList->setItemClassName($this->config->orderList->classItem);
 
         return $orderList;
     }
@@ -77,7 +76,7 @@ class OrderManager implements IOrderManager
      */
     public function createOrderAgent(AbstractOrder $order)
     {
-        return new $this->config->orderAgent->class( Factory::getInstance(), $order );
+        return new $this->config->orderAgent->class(Factory::getInstance(), $order);
     }
 
 
@@ -92,10 +91,12 @@ class OrderManager implements IOrderManager
     /**
      * @return string
      */
-    protected function getOrderClassName() {
-        if(empty($this->orderClassName)) {
+    protected function getOrderClassName()
+    {
+        if (empty($this->orderClassName)) {
             $this->orderClassName = (string) $this->config->orderstorage->orderClass;
         }
+
         return $this->orderClassName;
     }
 
@@ -111,10 +112,12 @@ class OrderManager implements IOrderManager
     /**
      * @return string
      */
-    protected function getOrderItemClassName() {
-        if(empty($this->orderItemClassName)) {
+    protected function getOrderItemClassName()
+    {
+        if (empty($this->orderItemClassName)) {
             $this->orderItemClassName = (string)$this->config->orderstorage->orderItemClass;
         }
+
         return $this->orderItemClassName;
     }
 
@@ -123,14 +126,15 @@ class OrderManager implements IOrderManager
      */
     public function setParentOrderFolder($id)
     {
-        if(is_numeric($id)) {
+        if (is_numeric($id)) {
             $this->orderParentFolder = \Pimcore\Model\Object\Folder::getById($id);
         }
     }
 
 
-    protected function getOrderParentFolder() {
-        if(empty($this->orderParentFolder)) {
+    protected function getOrderParentFolder()
+    {
+        if (empty($this->orderParentFolder)) {
             //processing config and setting options
             $parentFolderId = (string)$this->config->parentorderfolder;
             if (is_numeric($parentFolderId)) {
@@ -142,6 +146,7 @@ class OrderManager implements IOrderManager
             }
             $this->orderParentFolder = \Pimcore\Model\Object\Folder::getById($parentFolderId);
         }
+
         return $this->orderParentFolder;
     }
 
@@ -151,7 +156,8 @@ class OrderManager implements IOrderManager
      * @param ICart $cart
      * @return string
      */
-    protected function createCartId(ICart $cart) {
+    protected function createCartId(ICart $cart)
+    {
         return get_class($cart) . "_" . $cart->getId();
     }
 
@@ -160,20 +166,22 @@ class OrderManager implements IOrderManager
      * @return null|AbstractOrder
      * @throws \Exception
      */
-    public function getOrderFromCart(ICart $cart) {
+    public function getOrderFromCart(ICart $cart)
+    {
         $cartId = $this->createCartId($cart);
 
         $orderList = $this->buildOrderList();
-        $orderList->setCondition("cartId = ?", array($cartId));
+        $orderList->setCondition("cartId = ?", [$cartId]);
 
         $orders = $orderList->load();
-        if(count($orders) > 1) {
+        if (count($orders) > 1) {
             throw new \Exception("No unique order found for $cartId.");
         }
 
-        if(count($orders) == 1) {
+        if (count($orders) == 1) {
             return $orders[0];
         }
+
         return null;
     }
 
@@ -184,19 +192,19 @@ class OrderManager implements IOrderManager
      * @throws UnsupportedException
      *
      */
-    public function getOrCreateOrderFromCart(ICart $cart) {
+    public function getOrCreateOrderFromCart(ICart $cart)
+    {
         $order = $this->getOrderFromCart($cart);
 
         //No Order found, create new one
-        if(empty($order)) {
-
+        if (empty($order)) {
             $tempOrdernumber = $this->createOrderNumber();
 
             $order = $this->getNewOrderObject();
 
-            $order->setParent( $this->getOrderParentFolder() );
+            $order->setParent($this->getOrderParentFolder());
             $order->setCreationDate(time());
-            $order->setKey( \Pimcore\File::getValidFilename($tempOrdernumber) );
+            $order->setKey(\Pimcore\File::getValidFilename($tempOrdernumber));
             $order->setPublished(true);
 
             $order->setOrdernumber($tempOrdernumber);
@@ -205,7 +213,7 @@ class OrderManager implements IOrderManager
         }
 
         //check if pending payment. if one, do not update order from cart
-        if(!empty($order->getOrderState())) {
+        if (!empty($order->getOrderState())) {
             return $order;
         }
 
@@ -231,7 +239,7 @@ class OrderManager implements IOrderManager
 
         // set order currency
         $currency = $cart->getPriceCalculator()->getGrandTotal()->getCurrency();
-        $order->setCurrency( $currency->getShortName() );
+        $order->setCurrency($currency->getShortName());
 
 
         $order->save();
@@ -258,16 +266,16 @@ class OrderManager implements IOrderManager
      * @param AbstractOrder $order
      * @return array
      */
-    protected function applyOrderItems(array $items, AbstractOrder $order, $giftItems = false) {
+    protected function applyOrderItems(array $items, AbstractOrder $order, $giftItems = false)
+    {
         $orderItems = [];
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $orderItem = $this->createOrderItem($item, $order, $giftItems);
 
-            $orderSubItems = array();
+            $orderSubItems = [];
             $subItems = $item->getSubItems();
-            if(!empty($subItems)) {
-
-                foreach($subItems as $subItem) {
+            if (!empty($subItems)) {
+                foreach ($subItems as $subItem) {
                     $orderSubItem = $this->createOrderItem($subItem, $orderItem, $giftItems);
                     $orderSubItem->save();
 
@@ -279,22 +287,21 @@ class OrderManager implements IOrderManager
             $orderItem->save();
 
             $orderItems[] = $orderItem;
-
         }
 
         return $orderItems;
     }
 
 
-    protected function applyVoucherTokens(AbstractOrder $order, ICart $cart){
-
+    protected function applyVoucherTokens(AbstractOrder $order, ICart $cart)
+    {
         $voucherTokens = $cart->getVoucherTokenCodes();
         if (is_array($voucherTokens)) {
             $flippedVoucherTokens = array_flip($voucherTokens);
 
             $service = Factory::getInstance()->getVoucherService();
 
-            if($tokenObjects = $order->getVoucherTokens()) {
+            if ($tokenObjects = $order->getVoucherTokens()) {
                 foreach ($tokenObjects as $tokenObject) {
                     if (!array_key_exists($tokenObject->getToken(), $flippedVoucherTokens)) {
                         //remove applied tokens which are not in the cart anymore
@@ -320,7 +327,8 @@ class OrderManager implements IOrderManager
      * @param ICart $cart
      * @param AbstractOrder $order
      */
-    protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order) {
+    protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order)
+    {
         return $order;
     }
 
@@ -332,11 +340,12 @@ class OrderManager implements IOrderManager
      * @return AbstractOrder
      * @throws UnsupportedException
      */
-    protected function setCurrentCustomerToOrder(AbstractOrder $order) {
+    protected function setCurrentCustomerToOrder(AbstractOrder $order)
+    {
         //sets customer to order - if available
         $env = Factory::getInstance()->getEnvironment();
 
-        if(@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
+        if (@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
             $order->setCustomer($customer);
         }
@@ -350,7 +359,8 @@ class OrderManager implements IOrderManager
      *
      * @return string
      */
-    protected function createOrderNumber() {
+    protected function createOrderNumber()
+    {
         return uniqid("ord_");
     }
 
@@ -358,11 +368,13 @@ class OrderManager implements IOrderManager
      * @return AbstractOrder
      * @throws \Exception
      */
-    protected function getNewOrderObject() {
+    protected function getNewOrderObject()
+    {
         $orderClassName = $this->getOrderClassName();
-        if(!\Pimcore\Tool::classExists($orderClassName)) {
+        if (!\Pimcore\Tool::classExists($orderClassName)) {
             throw new \Exception("Order Class" . $orderClassName . " does not exist.");
         }
+
         return new $orderClassName();
     }
 
@@ -370,11 +382,13 @@ class OrderManager implements IOrderManager
      * @return AbstractOrderItem
      * @throws \Exception
      */
-    protected function getNewOrderItemObject() {
+    protected function getNewOrderItemObject()
+    {
         $orderItemClassName = $this->getOrderItemClassName();
-        if(!\Pimcore\Tool::classExists($orderItemClassName)) {
+        if (!\Pimcore\Tool::classExists($orderItemClassName)) {
             throw new \Exception("OrderItem Class" . $orderItemClassName . " does not exist.");
         }
+
         return new $orderItemClassName();
     }
 
@@ -386,19 +400,19 @@ class OrderManager implements IOrderManager
      * @return AbstractOrderItem
      * @throws \Exception
      */
-    protected function createOrderItem(ICartItem $item, $parent, $isGiftItem = false) {
-
+    protected function createOrderItem(ICartItem $item, $parent, $isGiftItem = false)
+    {
         $key = $this->buildOrderItemKey($item);
 
         $orderItemList = $this->buildOrderItemList();
-        $orderItemList->setCondition("o_parentId = ? AND o_key = ?", array($parent->getId(), $key));
+        $orderItemList->setCondition("o_parentId = ? AND o_key = ?", [$parent->getId(), $key]);
 
         $orderItems = $orderItemList->load();
-        if(count($orderItems) > 1) {
+        if (count($orderItems) > 1) {
             throw new \Exception("No unique order item found for $key.");
         }
 
-        if(count($orderItems) == 1) {
+        if (count($orderItems) == 1) {
             $orderItem = $orderItems[0];
         } else {
             $orderItem = $this->getNewOrderItemObject();
@@ -409,7 +423,7 @@ class OrderManager implements IOrderManager
 
         $orderItem->setAmount($item->getCount());
         $orderItem->setProduct($item->getProduct());
-        if($item->getProduct()) {
+        if ($item->getProduct()) {
             $orderItem->setProductName($item->getProduct()->getOSName());
             $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
         }
@@ -417,7 +431,7 @@ class OrderManager implements IOrderManager
 
         $price = 0;
         $netPrice = 0;
-        if(!$isGiftItem && is_object($item->getTotalPrice())) {
+        if (!$isGiftItem && is_object($item->getTotalPrice())) {
             $price = $item->getTotalPrice()->getGrossAmount();
             $netPrice = $item->getTotalPrice()->getNetAmount();
         }
@@ -426,25 +440,23 @@ class OrderManager implements IOrderManager
         $orderItem->setTotalNetPrice($netPrice);
         $orderItem->setTaxInfo($this->buildTaxArray($item->getTotalPrice()->getTaxEntries()));
 
-        if(!$isGiftItem) {
+        if (!$isGiftItem) {
             // save active pricing rules
             $priceInfo = $item->getPriceInfo();
-            if($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules'))
-            {
+            if ($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules')) {
                 $priceRules = new \Pimcore\Model\Object\Fieldcollection();
-                foreach($priceInfo->getRules() as $rule)
-                {
+                foreach ($priceInfo->getRules() as $rule) {
                     $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
-                    $priceRule->setRuleId( $rule->getId() );
+                    $priceRule->setRuleId($rule->getId());
 
-                    foreach(\Pimcore\Tool::getValidLanguages() as $language) {
-                        $priceRule->setName( $rule->getLabel(), $language );
+                    foreach (\Pimcore\Tool::getValidLanguages() as $language) {
+                        $priceRule->setName($rule->getLabel(), $language);
                     }
 
-                    $priceRules->add( $priceRule );
+                    $priceRules->add($priceRule);
                 }
 
-                $orderItem->setPricingRules( $priceRules );
+                $orderItem->setPricingRules($priceRules);
                 $orderItem->save();
             }
         }
@@ -456,15 +468,17 @@ class OrderManager implements IOrderManager
      * @param TaxEntry[] $taxItems
      * @return array
      */
-    protected function buildTaxArray(array $taxItems) {
+    protected function buildTaxArray(array $taxItems)
+    {
         $taxArray = [];
-        foreach($taxItems as $taxEntry) {
+        foreach ($taxItems as $taxEntry) {
             $taxArray[] = [
                 $taxEntry->getEntry()->getName(),
                 $taxEntry->getPercent() . "%",
                 $taxEntry->getAmount()
             ];
         }
+
         return $taxArray;
     }
 
@@ -567,6 +581,7 @@ class OrderManager implements IOrderManager
         $orderId = explode("~", $paymentStatus->getInternalPaymentId());
         $orderId = $orderId[1];
         $orderClass = $this->getOrderClassName();
+
         return $orderClass::getById($orderId);
     }
 }

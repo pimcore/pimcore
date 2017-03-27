@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class CartAmount implements ICartAmount
@@ -29,7 +28,7 @@ class CartAmount implements ICartAmount
      */
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
-        if(!$environment->getCart() || $environment->getProduct() !== null) {
+        if (!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
         }
 
@@ -45,6 +44,7 @@ class CartAmount implements ICartAmount
     public function setLimit($limit)
     {
         $this->limit = $limit;
+
         return $this;
     }
 
@@ -61,10 +61,10 @@ class CartAmount implements ICartAmount
      */
     public function toJSON()
     {
-        return json_encode(array(
+        return json_encode([
             'type' => 'CartAmount',
             'limit' => $this->getLimit()
-        ));
+        ]);
     }
 
     /**

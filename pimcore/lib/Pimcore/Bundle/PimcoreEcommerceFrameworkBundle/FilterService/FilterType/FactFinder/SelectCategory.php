@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\FactFinder;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -29,7 +28,8 @@ class SelectCategory extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
      *
      * @return mixed
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
 
         // init
         $field = $this->getField($filterDefinition);
@@ -40,9 +40,9 @@ class SelectCategory extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
         // set defaults
         //only works with Root categories!
 
-         if(empty($value) && !$params['is_reload']) {
-            $value[] = $preSelect->getId();
-        }
+         if (empty($value) && !$params['is_reload']) {
+             $value[] = $preSelect->getId();
+         }
 
 
 //        $value = trim($value);
@@ -50,14 +50,11 @@ class SelectCategory extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
 
 
         // add condition
-        if(!empty($value))
-        {
+        if (!empty($value)) {
             $field = 'CategoryPathROOT';
             $lastId = null;
-            foreach($value as $id)
-            {
-                if($lastId !== null)
-                {
+            foreach ($value as $id) {
+                if ($lastId !== null) {
                     $field .= '/' . $lastId;
                 }
 
@@ -75,29 +72,29 @@ class SelectCategory extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
         // init
         $script = $filterDefinition->getScriptPath() ?: $this->script;
         $rawValues = $productList->getGroupByValues('CategoryPath', true);
-        $values = array();
+        $values = [];
         
         
         // ...
-        $availableRelations = array();
-        if($filterDefinition->getAvailableCategories()) {
-            foreach($filterDefinition->getAvailableCategories() as $rel) {
+        $availableRelations = [];
+        if ($filterDefinition->getAvailableCategories()) {
+            foreach ($filterDefinition->getAvailableCategories() as $rel) {
                 $availableRelations[$rel->getId()] = true;
             }
         }
 
         
         // prepare values
-        foreach($rawValues as $v) {
+        foreach ($rawValues as $v) {
             $explode = explode(",", $v['value']);
-            foreach($explode as $e) {
-                if(!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
-                    if($values[$e]) {
+            foreach ($explode as $e) {
+                if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
+                    if ($values[$e]) {
                         $count = $values[$e]['count'] + $v['count'];
                     } else {
                         $count = $v['count'];
                     }
-                    $values[$e] = array('value' => $e, "count" => $count);
+                    $values[$e] = ['value' => $e, "count" => $count];
                 }
             }
         }

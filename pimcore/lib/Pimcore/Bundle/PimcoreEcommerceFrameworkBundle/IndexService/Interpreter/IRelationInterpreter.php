@@ -12,9 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-interface IRelationInterpreter extends IInterpreter {
-
+interface IRelationInterpreter extends IInterpreter
+{
 }

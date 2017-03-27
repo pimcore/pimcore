@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
-interface IComponent {
+interface IComponent
+{
 
     /**
      * @return mixed

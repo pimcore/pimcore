@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
@@ -39,12 +38,10 @@ class PricingController extends AdminController implements EventedControllerInte
     {
         // permission check
         $key = 'plugin_onlineshop_pricing_rules';
-        $access = $this->getUser()->getPermission( $key );
-        if(!$access)
-        {
+        $access = $this->getUser()->getPermission($key);
+        if (!$access) {
             throw new \Exception('this function requires "plugin_onlineshop_pricing_rules" permission!');
         }
-
     }
 
 
@@ -58,32 +55,28 @@ class PricingController extends AdminController implements EventedControllerInte
         $rules->setOrderKey('prio');
         $rules->setOrder('ASC');
 
-        $json = array();
-        foreach($rules->load() as $rule)
-        {
+        $json = [];
+        foreach ($rules->load() as $rule) {
             /* @var  IRule $rule */
 
-            if($rule->getActive())
-            {
+            if ($rule->getActive()) {
                 $icon = 'plugin_onlineshop_pricing_icon_rule_' . $rule->getBehavior();
                 $title = 'Verhalten: ' . $rule->getBehavior();
-            }
-            else
-            {
+            } else {
                 $icon = 'plugin_onlineshop_pricing_icon_rule_disabled';
                 $title = 'Deaktiviert';
             }
 
-            $json[] = array(
+            $json[] = [
                 'iconCls' => $icon,
                 'id' => $rule->getId(),
                 'text' => $rule->getName(),
-                'qtipCfg' => array(
+                'qtipCfg' => [
                     'xtype' => 'quicktip',
                     'title' => $rule->getLabel(),
                     'text' => $title
-                )
-            );
+                ]
+            ];
         }
 
         return $this->json($json);
@@ -98,21 +91,19 @@ class PricingController extends AdminController implements EventedControllerInte
     public function getAction(Request $request)
     {
         $rule = Rule::getById((int) $request->get('id'));
-        if($rule)
-        {
+        if ($rule) {
             // get data
             $condition = $rule->getCondition();
             $localizedLabel = [];
             $localizedDescription = [];
 
-            foreach(\Pimcore\Tool::getValidLanguages() as $lang)
-            {
-                $localizedLabel[ $lang ] = $rule->getLabel( $lang );
-                $localizedDescription[ $lang ] = $rule->getDescription( $lang );
+            foreach (\Pimcore\Tool::getValidLanguages() as $lang) {
+                $localizedLabel[ $lang ] = $rule->getLabel($lang);
+                $localizedDescription[ $lang ] = $rule->getDescription($lang);
             }
 
             // create json config
-            $json = array(
+            $json = [
                 'id' => $rule->getId(),
                 'name' => $rule->getName(),
                 'label' => $localizedLabel,
@@ -120,15 +111,14 @@ class PricingController extends AdminController implements EventedControllerInte
                 'behavior' => $rule->getBehavior(),
                 'active' => $rule->getActive(),
                 'condition' => $condition ? json_decode($condition->toJSON()) : '',
-                'actions' => array()
-            );
+                'actions' => []
+            ];
 
-            foreach($rule->getActions() as $action)
-            {
+            foreach ($rule->getActions() as $action) {
                 $json['actions'][] = json_decode($action->toJSON());
             }
 
-            return $this->json( $json );
+            return $this->json($json);
         }
     }
 
@@ -141,23 +131,20 @@ class PricingController extends AdminController implements EventedControllerInte
     public function addAction(Request $request)
     {
         // send json respone
-        $return = array(
+        $return = [
             'success' => false,
             'message' => ''
-        );
+        ];
 
         // save rule
-        try
-        {
+        try {
             $rule = new Rule();
-            $rule->setName( $request->get('name') );
+            $rule->setName($request->get('name'));
             $rule->save();
 
             $return['success'] = true;
             $return['id'] = $rule->getId();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             $return['message'] = $e->getMessage();
         }
 
@@ -174,20 +161,17 @@ class PricingController extends AdminController implements EventedControllerInte
     public function deleteAction(Request $request)
     {
         // send json respone
-        $return = array(
+        $return = [
             'success' => false,
             'message' => ''
-        );
+        ];
 
         // delete rule
-        try
-        {
-            $rule = Rule::getById( (int) $request->get('id') );
+        try {
+            $rule = Rule::getById((int) $request->get('id'));
             $rule->delete();
             $return['success'] = true;
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             $return['message'] = $e->getMessage();
         }
 
@@ -204,26 +188,24 @@ class PricingController extends AdminController implements EventedControllerInte
     public function saveAction(Request $request)
     {
         // send json respone
-        $return = array(
+        $return = [
             'success' => false,
             'message' => ''
-        );
+        ];
 
         // save rule config
-        try
-        {
+        try {
             $data = json_decode($request->get('data'));
-            $rule = Rule::getById( (int) $request->get('id') );
+            $rule = Rule::getById((int) $request->get('id'));
 
             // apply basic settings
-            $rule->setBehavior( $data->settings->behavior )
-                ->setActive( (bool)$data->settings->active );
+            $rule->setBehavior($data->settings->behavior)
+                ->setActive((bool)$data->settings->active);
 
             // apply lang fields
-            foreach(\Pimcore\Tool::getValidLanguages() as $lang)
-            {
-                $rule->setLabel( $data->settings->{'label.' . $lang}, $lang );
-                $rule->setDescription( $data->settings->{'description.' . $lang}, $lang );
+            foreach (\Pimcore\Tool::getValidLanguages() as $lang) {
+                $rule->setLabel($data->settings->{'label.' . $lang}, $lang);
+                $rule->setDescription($data->settings->{'description.' . $lang}, $lang);
             }
 
 
@@ -232,19 +214,17 @@ class PricingController extends AdminController implements EventedControllerInte
             $rootContainer->parent = null;
             $rootContainer->operator = null;
             $rootContainer->type = 'Bracket';
-            $rootContainer->conditions = array();
+            $rootContainer->conditions = [];
 
             // create a tree from the flat structure
             $currentContainer = $rootContainer;
-            foreach($data->conditions as $settings)
-            {
+            foreach ($data->conditions as $settings) {
                 // handle brackets
-                if($settings->bracketLeft == true)
-                {
+                if ($settings->bracketLeft == true) {
                     $newContainer = new \stdClass();
                     $newContainer->parent = $currentContainer;
                     $newContainer->type = 'Bracket';
-                    $newContainer->conditions = array();
+                    $newContainer->conditions = [];
 
                     // move condition from current item to bracket item
                     $newContainer->operator = $settings->operator;
@@ -256,8 +236,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
                 $currentContainer->conditions[] = $settings;
 
-                if( $settings->bracketRight == true )
-                {
+                if ($settings->bracketRight == true) {
                     $old = $currentContainer;
                     $currentContainer = $currentContainer->parent;
                     unset($old->parent);
@@ -265,17 +244,16 @@ class PricingController extends AdminController implements EventedControllerInte
             }
 
             // create rule condition
-            $condition = Factory::getInstance()->getPricingManager()->getCondition( $rootContainer->type );
-            $condition->fromJSON( json_encode($rootContainer) );
-            $rule->setCondition( $condition );
+            $condition = Factory::getInstance()->getPricingManager()->getCondition($rootContainer->type);
+            $condition->fromJSON(json_encode($rootContainer));
+            $rule->setCondition($condition);
 
 
             // save action
-            $arrActions = array();
-            foreach($data->actions as $setting)
-            {
-                $action = Factory::getInstance()->getPricingManager()->getAction( $setting->type );
-                $action->fromJSON( json_encode($setting) );
+            $arrActions = [];
+            foreach ($data->actions as $setting) {
+                $action = Factory::getInstance()->getPricingManager()->getAction($setting->type);
+                $action->fromJSON(json_encode($setting));
                 $arrActions[] = $action;
             }
             $rule->setActions($arrActions);
@@ -286,9 +264,7 @@ class PricingController extends AdminController implements EventedControllerInte
             // finish
             $return['success'] = true;
             $return['id'] = $rule->getId();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             $return['message'] = $e->getMessage();
         }
 
@@ -304,18 +280,18 @@ class PricingController extends AdminController implements EventedControllerInte
     public function saveOrderAction(Request $request)
     {
         // send json respone
-        $return = array(
+        $return = [
             'success' => false,
             'message' => ''
-        );
+        ];
 
         // save order
         $rules = json_decode($request->get('rules'));
-        foreach($rules as $id => $prio)
-        {
-            $rule = Rule::getById( (int)$id );
-            if($rule)
-                $rule->setPrio( (int)$prio )->save();
+        foreach ($rules as $id => $prio) {
+            $rule = Rule::getById((int)$id);
+            if ($rule) {
+                $rule->setPrio((int)$prio)->save();
+            }
         }
         $return['success'] = true;
 
@@ -331,24 +307,21 @@ class PricingController extends AdminController implements EventedControllerInte
     public function getConfigAction(Request $request)
     {
         // init
-        $json = array(
-            'condition' => array(),
-            'action' => array()
-        );
+        $json = [
+            'condition' => [],
+            'action' => []
+        ];
 
         // get config
         $pricingConfig = Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
-        if($pricingConfig)
-        {
-            $list = $pricingConfig->get('config')->get( 'condition' );
-            foreach($list as $name => $config)
-            {
+        if ($pricingConfig) {
+            $list = $pricingConfig->get('config')->get('condition');
+            foreach ($list as $name => $config) {
                 $json['condition'][] = $name;
             }
 
-            $list = $pricingConfig->get('config')->get( 'action' );
-            foreach($list as $name => $config)
-            {
+            $list = $pricingConfig->get('config')->get('action');
+            foreach ($list as $name => $config) {
                 $json['action'][] = $name;
             }
         }

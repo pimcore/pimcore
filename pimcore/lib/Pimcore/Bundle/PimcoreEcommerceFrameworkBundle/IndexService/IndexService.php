@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;
@@ -24,7 +23,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
 
-class IndexService {
+class IndexService
+{
 
     /**
      * @var IWorker
@@ -36,17 +36,18 @@ class IndexService {
      */
     protected $tenantWorkers;
 
-    public function __construct($config) {
-        if(!(string)$config->disableDefaultTenant) {
+    public function __construct($config)
+    {
+        if (!(string)$config->disableDefaultTenant) {
             $this->defaultWorker = new DefaultMysql(new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\DefaultMysql("default", $config));
         }
 
-        $this->tenantWorkers = array();
-        if($config->tenants && $config->tenants instanceof Config) {
-            foreach($config->tenants as $name => $tenant) {
+        $this->tenantWorkers = [];
+        if ($config->tenants && $config->tenants instanceof Config) {
+            foreach ($config->tenants as $name => $tenant) {
                 $tenantConfigClass = (string) $tenant->class;
                 $tenantConfig = $tenant;
-                if($tenant->file) {
+                if ($tenant->file) {
                     $tenantConfig = new Config(require PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . ((string)$tenant->file), true);
                     $tenantConfig = $tenantConfig->tenant;
                 }
@@ -68,7 +69,8 @@ class IndexService {
      *
      * @return IWorker
      */
-    public function getTenantWorker($name){
+    public function getTenantWorker($name)
+    {
         return $this->tenantWorkers[$name];
     }
 
@@ -79,7 +81,8 @@ class IndexService {
      * @return array
      * @throws InvalidConfigException
      */
-    public function getGeneralSearchColumns($tenant = null) {
+    public function getGeneralSearchColumns($tenant = null)
+    {
         return $this->getGeneralSearchAttributes($tenant);
     }
 
@@ -90,42 +93,45 @@ class IndexService {
      * @return array
      * @throws InvalidConfigException
      */
-    public function getGeneralSearchAttributes($tenant = null) {
-        if(empty($tenant)) {
+    public function getGeneralSearchAttributes($tenant = null)
+    {
+        if (empty($tenant)) {
             $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
-        if($tenant) {
-            if(array_key_exists($tenant, $this->tenantWorkers)) {
+        if ($tenant) {
+            if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getGeneralSearchAttributes();
             } else {
                 throw new InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        if($this->defaultWorker) {
+        if ($this->defaultWorker) {
             return $this->defaultWorker->getGeneralSearchAttributes();
         } else {
-            return array();
+            return [];
         }
     }
 
     /**
      * @deprecated
      */
-    public function createOrUpdateTable() {
+    public function createOrUpdateTable()
+    {
         $this->createOrUpdateIndexStructures();
     }
 
     /**
      *  creates or updates necessary index structures (like database tables and so on)
      */
-    public function createOrUpdateIndexStructures() {
-        if($this->defaultWorker) {
+    public function createOrUpdateIndexStructures()
+    {
+        if ($this->defaultWorker) {
             $this->defaultWorker->createOrUpdateIndexStructures();
         }
 
-        foreach($this->tenantWorkers as $name => $tenant) {
+        foreach ($this->tenantWorkers as $name => $tenant) {
             $tenant->createOrUpdateIndexStructures();
         }
     }
@@ -135,11 +141,12 @@ class IndexService {
      *
      * @param IIndexable $object
      */
-    public function deleteFromIndex(IIndexable $object){
-        if($this->defaultWorker) {
+    public function deleteFromIndex(IIndexable $object)
+    {
+        if ($this->defaultWorker) {
             $this->defaultWorker->deleteFromIndex($object);
         }
-        foreach($this->tenantWorkers as $name => $tenant) {
+        foreach ($this->tenantWorkers as $name => $tenant) {
             $tenant->deleteFromIndex($object);
         }
     }
@@ -149,11 +156,12 @@ class IndexService {
      *
      * @param IIndexable $object
      */
-    public function updateIndex(IIndexable $object) {
-        if($this->defaultWorker) {
+    public function updateIndex(IIndexable $object)
+    {
+        if ($this->defaultWorker) {
             $this->defaultWorker->updateIndex($object);
         }
-        foreach($this->tenantWorkers as $name => $tenant) {
+        foreach ($this->tenantWorkers as $name => $tenant) {
             $tenant->updateIndex($object);
         }
     }
@@ -166,23 +174,24 @@ class IndexService {
      * @return array
      * @throws InvalidConfigException
      */
-    public function getIndexAttributes($considerHideInFieldList = false, $tenant = null) {
-        if(empty($tenant)) {
+    public function getIndexAttributes($considerHideInFieldList = false, $tenant = null)
+    {
+        if (empty($tenant)) {
             $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
-        if($tenant) {
-            if(array_key_exists($tenant, $this->tenantWorkers)) {
+        if ($tenant) {
+            if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getIndexAttributes($considerHideInFieldList);
             } else {
                 throw new InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        if($this->defaultWorker) {
+        if ($this->defaultWorker) {
             return $this->defaultWorker->getIndexAttributes($considerHideInFieldList);
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -194,7 +203,8 @@ class IndexService {
      * @return mixed
      * @throws InvalidConfigException
      */
-    public function getIndexColumns($considerHideInFieldList = false, $tenant = null) {
+    public function getIndexColumns($considerHideInFieldList = false, $tenant = null)
+    {
         return $this->getIndexAttributes($considerHideInFieldList, $tenant);
     }
 
@@ -205,23 +215,24 @@ class IndexService {
      * @return array
      * @throws InvalidConfigException
      */
-    public function getAllFilterGroups($tenant = null) {
-        if(empty($tenant)) {
+    public function getAllFilterGroups($tenant = null)
+    {
+        if (empty($tenant)) {
             $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
-        if($tenant) {
-            if(array_key_exists($tenant, $this->tenantWorkers)) {
+        if ($tenant) {
+            if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getAllFilterGroups();
             } else {
                 throw new InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        if($this->defaultWorker) {
+        if ($this->defaultWorker) {
             return $this->defaultWorker->getAllFilterGroups();
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -234,23 +245,24 @@ class IndexService {
      * @return array
      * @throws InvalidConfigException
      */
-    public function getIndexAttributesByFilterGroup($filterType, $tenant = null) {
-        if(empty($tenant)) {
+    public function getIndexAttributesByFilterGroup($filterType, $tenant = null)
+    {
+        if (empty($tenant)) {
             $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
         }
 
-        if($tenant) {
-            if(array_key_exists($tenant, $this->tenantWorkers)) {
+        if ($tenant) {
+            if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getIndexAttributesByFilterGroup($filterType);
             } else {
                 throw new InvalidConfigException("Tenant $tenant doesn't exist.");
             }
         }
 
-        if($this->defaultWorker) {
+        if ($this->defaultWorker) {
             return $this->defaultWorker->getIndexAttributesByFilterGroup($filterType);
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -262,7 +274,8 @@ class IndexService {
      * @return mixed
      * @throws InvalidConfigException
      */
-    public function getIndexColumnsByFilterGroup($filterType, $tenant = null) {
+    public function getIndexColumnsByFilterGroup($filterType, $tenant = null)
+    {
         return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
     }
 
@@ -273,7 +286,8 @@ class IndexService {
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
      * @throws InvalidConfigException
      */
-    public function getCurrentTenantConfig() {
+    public function getCurrentTenantConfig()
+    {
         return $this->getCurrentTenantWorker()->getTenantConfig();
     }
 
@@ -281,11 +295,12 @@ class IndexService {
      * @return IWorker
      * @throws InvalidConfigException
      */
-    public function getCurrentTenantWorker() {
+    public function getCurrentTenantWorker()
+    {
         $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
 
-        if($tenant) {
-            if(array_key_exists($tenant, $this->tenantWorkers)) {
+        if ($tenant) {
+            if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant];
             } else {
                 throw new InvalidConfigException("Tenant $tenant doesn't exist.");
@@ -299,7 +314,8 @@ class IndexService {
      * @return IProductList
      * @throws InvalidConfigException
      */
-    public function getProductListForCurrentTenant() {
+    public function getProductListForCurrentTenant()
+    {
         return $this->getCurrentTenantWorker()->getProductList();
     }
 
@@ -308,8 +324,9 @@ class IndexService {
      * @return IProductList
      * @throws InvalidConfigException
      */
-    public function getProductListForTenant($tenant) {
-        if($tenant) {
+    public function getProductListForTenant($tenant)
+    {
+        if ($tenant) {
             if (array_key_exists($tenant, $this->tenantWorkers)) {
                 return $this->tenantWorkers[$tenant]->getProductList();
             } else {

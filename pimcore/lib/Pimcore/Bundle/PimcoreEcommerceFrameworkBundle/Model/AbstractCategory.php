@@ -12,25 +12,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Abstract base class for pimcore objects who should be used as product categories in the online shop framework
  */
-class AbstractCategory extends \Pimcore\Model\Object\Concrete {
+class AbstractCategory extends \Pimcore\Model\Object\Concrete
+{
 
     /**
      * @static
      * @param int $id
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if($object instanceof AbstractCategory) {
+        if ($object instanceof AbstractCategory) {
             return $object;
         }
+
         return null;
     }
 
@@ -45,8 +47,8 @@ class AbstractCategory extends \Pimcore\Model\Object\Concrete {
      *
      * @return bool
      */
-    public function getOSProductsInParentCategoryVisible() {
+    public function getOSProductsInParentCategoryVisible()
+    {
         return true;
     }
-
 }

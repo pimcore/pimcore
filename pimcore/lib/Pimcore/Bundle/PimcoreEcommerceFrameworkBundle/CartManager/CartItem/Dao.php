@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem;
 
-class Dao extends \Pimcore\Model\Dao\AbstractDao {
-
+class Dao extends \Pimcore\Model\Dao\AbstractDao
+{
     const TABLE_NAME = "ecommerceframework_cartitem";
 
     /**
@@ -24,19 +23,20 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @var array
      */
-    protected $validColumns = array();
+    protected $validColumns = [];
 
     /**
      * @var array
      */
-    protected $fieldsToSave = array("cartId", "productId", "count", "itemKey", "parentItemKey", "comment", "addedDateTimestamp", "sortIndex");
+    protected $fieldsToSave = ["cartId", "productId", "count", "itemKey", "parentItemKey", "comment", "addedDateTimestamp", "sortIndex"];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
@@ -45,9 +45,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      * @param int $cartId
      * @return void
      */
-    public function getByCartIdItemKey($cartId, $itemKey, $parentKey = "") {
+    public function getByCartIdItemKey($cartId, $itemKey, $parentKey = "")
+    {
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE itemKey=" . $this->db->quote($itemKey). " AND cartId = " . $this->db->quote($cartId) . " AND parentItemKey = " . $this->db->quote($parentKey));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception("CartItem for cartId " . $cartId . " and itemKey " . $itemKey . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
@@ -56,15 +57,16 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
     /**
      * Save object to database
      */
-    public function save() {
+    public function save()
+    {
         return $this->update();
     }
 
     /**
      * @return void
      */
-    public function update() {
-
+    public function update()
+    {
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = "get" . ucfirst($field);
@@ -72,7 +74,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
                 if (is_array($value) || is_object($value)) {
                     $value = serialize($value);
-                } else  if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$field] = $value;
@@ -81,8 +83,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
         try {
             $this->db->insert(self::TABLE_NAME, $data);
-        } catch(\Exception $e) {
-            $this->db->updateWhere(self::TABLE_NAME, $data,  "itemKey=" . $this->db->quote($this->model->getItemKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
+        } catch (\Exception $e) {
+            $this->db->updateWhere(self::TABLE_NAME, $data, "itemKey=" . $this->db->quote($this->model->getItemKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
         }
     }
 
@@ -91,12 +93,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->deleteWhere(self::TABLE_NAME, "itemKey=" . $this->db->quote($this->model->getItemKey()) . " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
     }
 
-    public function removeAllFromCart($cartId) {
+    public function removeAllFromCart($cartId)
+    {
         $this->db->deleteWhere(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
@@ -110,12 +109,12 @@ class DefaultFactFinder implements IProductList
     /**
      * @var string[]
      */
-    protected $conditions = array();
+    protected $conditions = [];
 
     /**
      * @var string[]
      */
-    protected $queryConditions = array();
+    protected $queryConditions = [];
 
     /**
      * @var float
@@ -158,6 +157,7 @@ class DefaultFactFinder implements IProductList
     public function setTransmitSessionId($transmitSessionId)
     {
         $this->transmitSessionId = $transmitSessionId;
+
         return $this;
     }
 
@@ -177,6 +177,7 @@ class DefaultFactFinder implements IProductList
     public function setUseAsn($useAsn)
     {
         $this->useAsn = $useAsn;
+
         return $this;
     }
 
@@ -204,6 +205,7 @@ class DefaultFactFinder implements IProductList
     public function setDefaultParams($defaultParams)
     {
         $this->defaultParams = $defaultParams;
+
         return $this;
     }
 
@@ -215,6 +217,7 @@ class DefaultFactFinder implements IProductList
     public function setProductPositionMap($productPositionMap)
     {
         $this->productPositionMap = $productPositionMap;
+
         return $this;
     }
 
@@ -235,8 +238,7 @@ class DefaultFactFinder implements IProductList
      */
     public function getProducts()
     {
-        if ($this->products === null)
-        {
+        if ($this->products === null) {
             $this->load();
         }
 
@@ -300,8 +302,8 @@ class DefaultFactFinder implements IProductList
      */
     public function resetConditions()
     {
-        $this->conditions = array();
-        $this->queryConditions = array();
+        $this->conditions = [];
+        $this->queryConditions = [];
         $this->conditionPriceFrom = null;
         $this->conditionPriceTo = null;
         $this->products = null;
@@ -342,7 +344,8 @@ class DefaultFactFinder implements IProductList
     /**
      * @return boolean
      */
-    public function getInProductList() {
+    public function getInProductList()
+    {
         return $this->inProductList;
     }
 
@@ -373,29 +376,34 @@ class DefaultFactFinder implements IProductList
         $this->orderKey = $orderKey;
     }
 
-    public function getOrderKey() {
+    public function getOrderKey()
+    {
         return $this->orderKey;
     }
 
-    public function setLimit($limit) {
-        if($this->limit != $limit) {
+    public function setLimit($limit)
+    {
+        if ($this->limit != $limit) {
             $this->products = null;
         }
         $this->limit = $limit;
     }
 
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->limit;
     }
 
-    public function setOffset($offset) {
-        if($this->offset != $offset) {
+    public function setOffset($offset)
+    {
+        if ($this->offset != $offset) {
             $this->products = null;
         }
         $this->offset = $offset;
     }
 
-    public function getOffset() {
+    public function getOffset()
+    {
         return $this->offset;
     }
 
@@ -406,7 +414,8 @@ class DefaultFactFinder implements IProductList
         $this->category = $category;
     }
 
-    public function getCategory() {
+    public function getCategory()
+    {
         return $this->category;
     }
 
@@ -416,7 +425,8 @@ class DefaultFactFinder implements IProductList
         $this->variantMode = $variantMode;
     }
 
-    public function getVariantMode() {
+    public function getVariantMode()
+    {
         return $this->variantMode;
     }
 
@@ -429,12 +439,11 @@ class DefaultFactFinder implements IProductList
         // send request
         $data = $this->sendRequest();
 
-        if(!is_array($data)){
-            throw new \Exception("Got no data from Factfinder " .print_r($data,true));
+        if (!is_array($data)) {
+            throw new \Exception("Got no data from Factfinder " .print_r($data, true));
         }
 
-        if(array_key_exists('error', $data))
-        {
+        if (array_key_exists('error', $data)) {
             throw new Exception($data['error']);
         }
         $searchResult = $data['searchResult'];
@@ -443,13 +452,11 @@ class DefaultFactFinder implements IProductList
         // load products found
         $this->products = $this->productPositionMap= [];
         $i = 0;
-        foreach($searchResult['records'] as $item)
-        {
+        foreach ($searchResult['records'] as $item) {
             $id = null;
 
             // variant handling
-            switch($this->getVariantMode())
-            {
+            switch ($this->getVariantMode()) {
                 case self::VARIANT_MODE_INCLUDE:
                 case self::VARIANT_MODE_HIDE:
                     $id = $item['id'];
@@ -460,18 +467,14 @@ class DefaultFactFinder implements IProductList
                     break;
             }
 
-            if($id)
-            {
-                $product = $this->tenantConfig->getObjectMockupById( $id );
-                if($product)
-                {
+            if ($id) {
+                $product = $this->tenantConfig->getObjectMockupById($id);
+                if ($product) {
                     $this->products[] = $product;
                     $this->productPositionMap[$product->getId()] = $i;
                     $i++;
                 }
-            }
-            else
-            {
+            } else {
                 $this->getLogger()->err(sprintf('object "%s" not found', $id));
             }
         }
@@ -480,15 +483,11 @@ class DefaultFactFinder implements IProductList
         // extract grouped values
         $this->groupedValues = [];
         $elements = $searchResult['groups'];
-        foreach($elements as $item)
-        {
+        foreach ($elements as $item) {
             // add selected
-            if($item['filterStyle'] == 'MULTISELECT' || $item['filterStyle'] == 'DEFAULT')
-            {
-                foreach($item['selectedElements'] as $selected)
-                {
-                    if($item['selectionType'] == 'singleHideUnselected')
-                    {
+            if ($item['filterStyle'] == 'MULTISELECT' || $item['filterStyle'] == 'DEFAULT') {
+                foreach ($item['selectedElements'] as $selected) {
+                    if ($item['selectionType'] == 'singleHideUnselected') {
                         $selected['recordCount'] = (int)$searchResult['resultCount'];
                     }
                     array_unshift($item['elements'], $selected);
@@ -518,18 +517,15 @@ class DefaultFactFinder implements IProductList
     {
         // add sub tenant filter
         $tenantCondition = $this->tenantConfig->getSubTenantCondition();
-        if($tenantCondition)
-        {
-            foreach($tenantCondition as $key => $value)
-            {
+        if ($tenantCondition) {
+            foreach ($tenantCondition as $key => $value) {
                 $filter[$key] = $value;
             }
         }
 
 
         // variant handling
-        switch($this->getVariantMode())
-        {
+        switch ($this->getVariantMode()) {
             case self::VARIANT_MODE_HIDE:
                 $filter['duplicateFilter'] = 'NONE';
                 break;
@@ -556,14 +552,11 @@ class DefaultFactFinder implements IProductList
      */
     protected function buildFilterConditions(array $params)
     {
-        foreach ($this->conditions as $fieldname => $condition)
-        {
+        foreach ($this->conditions as $fieldname => $condition) {
             $value = '';
-            if(is_array($condition))
-            {
+            if (is_array($condition)) {
                 $and = [];
-                foreach($condition as $or)
-                {
+                foreach ($condition as $or) {
                     $and[] = is_array($or)
                         ? implode('~~~', $or)   // OR
                         : $or
@@ -571,9 +564,7 @@ class DefaultFactFinder implements IProductList
                 }
 
                 $value = implode('___', $and);  // AND
-            }
-            else
-            {
+            } else {
                 $value = $condition;
             }
 
@@ -581,18 +572,12 @@ class DefaultFactFinder implements IProductList
         }
 
 
-        if($this->conditionPriceFrom || $this->conditionPriceTo)
-        {
+        if ($this->conditionPriceFrom || $this->conditionPriceTo) {
             // Format: 0+-+175
-            if(!$this->conditionPriceTo)
-            {
+            if (!$this->conditionPriceTo) {
                 $params['filterGRUNDPREIS'] = $this->conditionPriceFrom;
-            }
-            else
-            {
-                $params['filterGRUNDPREIS'] = sprintf('%d - %d'
-                    , $this->conditionPriceFrom
-                    , $this->conditionPriceTo
+            } else {
+                $params['filterGRUNDPREIS'] = sprintf('%d - %d', $this->conditionPriceFrom, $this->conditionPriceTo
                 );
             }
         }
@@ -611,17 +596,16 @@ class DefaultFactFinder implements IProductList
     {
         $query = '';
 
-        foreach ($this->queryConditions as $fieldname => $condition)
-        {
+        foreach ($this->queryConditions as $fieldname => $condition) {
             $query .= is_array($condition)
                 ? implode(' ', $condition)
                 : $condition
             ;
         }
 
-        if($query){
+        if ($query) {
             $params['query'] = $query;
-        }else{
+        } else {
             $params['navigation'] = 'true';
         }
 
@@ -637,10 +621,8 @@ class DefaultFactFinder implements IProductList
     protected function buildSorting(array $params)
     {
         // add sorting
-        if($this->getOrderKey())
-        {
-            $appendSort = function ($field, $order = null) use(&$params) {
-
+        if ($this->getOrderKey()) {
+            $appendSort = function ($field, $order = null) use (&$params) {
                 $field = $field === self::ORDERKEY_PRICE
                     ? 'GRUNDPREIS'
                     : $field
@@ -650,15 +632,11 @@ class DefaultFactFinder implements IProductList
             };
 
 
-            if(is_array($this->getOrderKey()))
-            {
-                foreach($this->getOrderKey() as $orderKey)
-                {
+            if (is_array($this->getOrderKey())) {
+                foreach ($this->getOrderKey() as $orderKey) {
                     $appendSort($orderKey[0], $orderKey[1]);
                 }
-            }
-            else
-            {
+            } else {
                 $appendSort($this->getOrderKey(), $this->getOrder());
             }
         }
@@ -744,12 +722,10 @@ class DefaultFactFinder implements IProductList
         // init
         $groups = [];
 
-        if(array_key_exists($fieldname, $this->groupedValues))
-        {
+        if (array_key_exists($fieldname, $this->groupedValues)) {
             $field = $this->groupedValues[ $fieldname ];
 
-            foreach($field['elements'] as $item)
-            {
+            foreach ($field['elements'] as $item) {
                 $groups[] = [
                     'value' => $item['name']
                     , 'count' => $item['recordCount']
@@ -777,7 +753,8 @@ class DefaultFactFinder implements IProductList
      * @return ResponseInterface
      * @throws \Exception
      */
-    protected function doRequest($url,$trys = 0){
+    protected function doRequest($url, $trys = 0)
+    {
         // start request
         $this->getLogger()->info('Request: ' . $url);
 
@@ -785,17 +762,19 @@ class DefaultFactFinder implements IProductList
         $response = $client->request('GET', $url);
 
         $factFinderTimeout = $response->getHeader('X-FF-Timeout');
-        if($factFinderTimeout === 'true'){
+        if ($factFinderTimeout === 'true') {
             $errorMessage = "FactFinder Read timeout:" . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys+1);
             $this->getLogger()->err($errorMessage);
             $trys++;
-            if($trys > 2){
+            if ($trys > 2) {
                 $this->getLogger()->err('FactFinder Read timeout: Max tries of 3 reached. Gave up.');
+
                 return $response;
             }
             sleep(1);
-            $response = $this->doRequest($url,$trys);
+            $response = $this->doRequest($url, $trys);
         }
+
         return $response;
     }
 
@@ -804,19 +783,20 @@ class DefaultFactFinder implements IProductList
      *
      * @return string
      */
-    protected function getSearchUrl(){
-        return sprintf('http://%s/%s/Search.ff?'
-            , $this->tenantConfig->getClientConfig('host')
-            , $this->tenantConfig->getClientConfig('customer')
+    protected function getSearchUrl()
+    {
+        return sprintf('http://%s/%s/Search.ff?', $this->tenantConfig->getClientConfig('host'), $this->tenantConfig->getClientConfig('customer')
         );
     }
 
-    public function getSearchParams(){
+    public function getSearchParams()
+    {
         $params = [];
-        if($data = $this->getLastResultData()){
-            $url = str_replace('/FACT-Finder/Search.ff?','',$data['searchResult']['searchParams']);
-            parse_str($url,$params);
+        if ($data = $this->getLastResultData()) {
+            $url = str_replace('/FACT-Finder/Search.ff?', '', $data['searchResult']['searchParams']);
+            parse_str($url, $params);
         }
+
         return $params;
     }
 
@@ -824,46 +804,46 @@ class DefaultFactFinder implements IProductList
      * returns the Fact-Finder query
      * @return string
      */
-    public function getQuery(){
+    public function getQuery()
+    {
         // init
         $params = $this->getDefaultParams();
 
 
         // add conditions
-        $params = $this->buildSystemConditions( $params );
+        $params = $this->buildSystemConditions($params);
 
-        $params = $this->buildFilterConditions( $params );
+        $params = $this->buildFilterConditions($params);
 
-        $params = $this->buildQueryConditions( $params );
+        $params = $this->buildQueryConditions($params);
 
-        $params = $this->buildSorting( $params );
+        $params = $this->buildSorting($params);
 
 
         // add paging
-        if($this->getOffset() == 0){
+        if ($this->getOffset() == 0) {
             $params['page']=1;
-        }else{
+        } else {
             $params['page'] = ceil($this->getOffset() / $this->getLimit())+1;
-
         }
         $params['productsPerPage'] = $this->getLimit();
         $params['idsOnly'] = 'true';
-        # $params['navigation'] = 'true';
+        // $params['navigation'] = 'true';
         $params['useAsn'] = $this->getUseAsn() ? 'true' : 'false';
-        if($this->getFollowSearchParam()){
+        if ($this->getFollowSearchParam()) {
             $params['followSearch'] = $this->getFollowSearchParam();
         }
 
-        if($this->getTransmitSessionId()){
+        if ($this->getTransmitSessionId()) {
             $params['sid'] = session_id();
         }
         $url = $this->getSearchUrl().'?';
         $url .= http_build_query($params);
         $url .= '&format=json';
 
-        $internalIPAddresses = explode_and_trim(',',$this->tenantConfig->getClientConfig('internalIPAddresses'));
-        if(!empty($internalIPAddresses)){
-            if(in_array(\Pimcore\Tool::getClientIp(),$internalIPAddresses)){
+        $internalIPAddresses = explode_and_trim(',', $this->tenantConfig->getClientConfig('internalIPAddresses'));
+        if (!empty($internalIPAddresses)) {
+            if (in_array(\Pimcore\Tool::getClientIp(), $internalIPAddresses)) {
                 $url .= '&log=internal';
             }
         }
@@ -888,6 +868,7 @@ class DefaultFactFinder implements IProductList
     public function setFollowSearchParam($followSearchParam)
     {
         $this->followSearchParam = $followSearchParam;
+
         return $this;
     }
 
@@ -898,17 +879,16 @@ class DefaultFactFinder implements IProductList
      */
     protected function sendRequest()
     {
-
         $url  = $this->getQuery();
         $this->requestUrl = $url;
         $response = $this->doRequest($url);
         $data = json_decode((string)$response->getBody(), true);
 
-        if(!$data) {
+        if (!$data) {
             throw new \Exception('Request didn\'t return anything');
         }
 
-        if($data['searchResult']['timedOut']){
+        if ($data['searchResult']['timedOut']) {
             throw new \Exception('FactFinder Read timeout in response JSON: ' . $url);
         }
         $this->resultData = $data;
@@ -940,6 +920,7 @@ class DefaultFactFinder implements IProductList
     public function count()
     {
         $this->getProducts();
+
         return $this->totalCount;
     }
 
@@ -953,6 +934,7 @@ class DefaultFactFinder implements IProductList
     {
         $this->getProducts();
         $var = current($this->products);
+
         return $var;
     }
 
@@ -988,9 +970,11 @@ class DefaultFactFinder implements IProductList
      * @return scalar on success, integer
      * 0 on failure.
      */
-    public function key() {
+    public function key()
+    {
         $this->getProducts();
         $var = key($this->products);
+
         return $var;
     }
 
@@ -1000,7 +984,8 @@ class DefaultFactFinder implements IProductList
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      */
-    public function next() {
+    public function next()
+    {
         $this->getProducts();
         next($this->products);
     }
@@ -1011,7 +996,8 @@ class DefaultFactFinder implements IProductList
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
-    public function rewind() {
+    public function rewind()
+    {
         $this->getProducts();
         reset($this->products);
     }
@@ -1023,12 +1009,15 @@ class DefaultFactFinder implements IProductList
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid() {
+    public function valid()
+    {
         $var = $this->current() !== false;
+
         return $var;
     }
 
-    public function getSearchResult() {
+    public function getSearchResult()
+    {
         return $this->searchResult;
     }
 }

@@ -12,15 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-class ObjectId implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
-        if(!empty($value) && $value instanceof \Pimcore\Model\Object\AbstractObject) {
+class ObjectId implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
+        if (!empty($value) && $value instanceof \Pimcore\Model\Object\AbstractObject) {
             return $value->getId();
         }
+
         return null;
     }
 }

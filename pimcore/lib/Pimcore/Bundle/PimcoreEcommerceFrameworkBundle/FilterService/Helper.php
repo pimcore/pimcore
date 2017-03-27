@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
@@ -39,22 +38,22 @@ class Helper
                                             IProductList $productList,
                                             $params, $viewModel,
                                             FilterService $filterService,
-                                            $loadFullPage, $excludeLimitOfFirstpage = false) {
-
-        $orderByOptions = array();
+                                            $loadFullPage, $excludeLimitOfFirstpage = false)
+    {
+        $orderByOptions = [];
         $orderKeysAsc = explode(",", $filterDefinition->getOrderByAsc());
-        if(!empty($orderKeysAsc)) {
-            foreach($orderKeysAsc as $orderByEntry) {
-                if(!empty($orderByEntry)) {
+        if (!empty($orderKeysAsc)) {
+            foreach ($orderKeysAsc as $orderByEntry) {
+                if (!empty($orderByEntry)) {
                     $orderByOptions[$orderByEntry]["asc"] = true;
                 }
             }
         }
 
         $orderKeysDesc = explode(",", $filterDefinition->getOrderByDesc());
-        if(!empty($orderKeysDesc)) {
-            foreach($orderKeysDesc as $orderByEntry) {
-                if(!empty($orderByEntry)) {
+        if (!empty($orderKeysDesc)) {
+            foreach ($orderKeysDesc as $orderByEntry) {
+                if (!empty($orderByEntry)) {
                     $orderByOptions[$orderByEntry]["desc"] = true;
                 }
             }
@@ -67,22 +66,22 @@ class Helper
         if (!$pageLimit) {
             $pageLimit = $filterDefinition->getPageLimit();
         }
-        if(!$pageLimit) {
+        if (!$pageLimit) {
             $pageLimit = 50;
         }
         $limitOnFirstLoad = $filterDefinition->getLimitOnFirstLoad();
-        if(!$limitOnFirstLoad) {
+        if (!$limitOnFirstLoad) {
             $limitOnFirstLoad = 6;
         }
 
-        if($params["page"]) {
+        if ($params["page"]) {
             $viewModel->currentPage = intval($params["page"]);
             $offset = $pageLimit * ($params["page"]-1);
         }
-        if($filterDefinition->getAjaxReload()) {
-            if($loadFullPage && !$excludeLimitOfFirstpage) {
+        if ($filterDefinition->getAjaxReload()) {
+            if ($loadFullPage && !$excludeLimitOfFirstpage) {
                 $productList->setLimit($pageLimit);
-            } else if($loadFullPage && $excludeLimitOfFirstpage) {
+            } elseif ($loadFullPage && $excludeLimitOfFirstpage) {
                 $offset += $limitOnFirstLoad;
                 $productList->setLimit($pageLimit - $limitOnFirstLoad);
             } else {
@@ -102,18 +101,18 @@ class Helper
         $orderByField = $orderBy[0];
         $orderByDirection = $orderBy[1];
 
-        if(array_key_exists($orderByField, $orderByOptions)) {
+        if (array_key_exists($orderByField, $orderByOptions)) {
             $viewModel->currentOrderBy = htmlentities($params["orderBy"]);
 
             $productList->setOrderKey($orderByField);
             $productList->setOrder($orderByDirection);
         } else {
             $orderByCollection = $filterDefinition->getDefaultOrderBy();
-            $orderByList = array();
-            if($orderByCollection) {
-                foreach($orderByCollection as $orderBy) {
-                    if($orderBy->getField()) {
-                        $orderByList[] = array($orderBy->getField(), $orderBy->getDirection());
+            $orderByList = [];
+            if ($orderByCollection) {
+                foreach ($orderByCollection as $orderBy) {
+                    if ($orderBy->getField()) {
+                        $orderByList[] = [$orderBy->getField(), $orderBy->getDirection()];
                     }
                 }
                 
@@ -123,34 +122,35 @@ class Helper
             $productList->setOrder("ASC");
         }
 
-        if($filterService) {
+        if ($filterService) {
             $viewModel->currentFilter = $filterService->initFilterService($filterDefinition, $productList, $params);
         }
 
 
         $viewModel->orderByOptions = $orderByOptions;
-
     }
 
     /**
      * @param $page
      * @return string
      */
-    public static function createPagingQuerystring($page) {
+    public static function createPagingQuerystring($page)
+    {
         $params = $_REQUEST;
         $params['page'] = $page;
         unset($params['fullpage']);
 
         $string = "?";
-        foreach($params as $k => $p) {
-            if(is_array($p)) {
-                foreach($p as $subKey => $subValue) {
+        foreach ($params as $k => $p) {
+            if (is_array($p)) {
+                foreach ($p as $subKey => $subValue) {
                     $string .= $k . "[" . $subKey . "]" . "=" . urlencode($subValue) . "&";
                 }
             } else {
                 $string .= $k . "=" . urlencode($p) . "&";
             }
         }
+
         return $string;
     }
 
@@ -159,14 +159,14 @@ class Helper
      * @param $conditions
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory
      */
-    public static function getFirstFilteredCategory($conditions) {
-        if(!empty($conditions)) {
-            foreach($conditions as $c) {
-                if($c instanceof \Pimcore\Model\Object\Fieldcollection\Data\FilterCategory) {
+    public static function getFirstFilteredCategory($conditions)
+    {
+        if (!empty($conditions)) {
+            foreach ($conditions as $c) {
+                if ($c instanceof \Pimcore\Model\Object\Fieldcollection\Data\FilterCategory) {
                     return $c->getPreSelect();
                 }
             }
         }
     }
-
 }

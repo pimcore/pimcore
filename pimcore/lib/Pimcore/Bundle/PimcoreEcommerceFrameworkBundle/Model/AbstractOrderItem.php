@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException;
@@ -21,13 +20,15 @@ use Pimcore\Logger;
 /**
  * Abstract base class for order item pimcore objects
  */
-class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
+class AbstractOrderItem extends \Pimcore\Model\Object\Concrete
+{
 
     /**
      * @throws UnsupportedException
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable
      */
-    public function getProduct() {
+    public function getProduct()
+    {
         throw new UnsupportedException("getProduct is not implemented for " . get_class($this));
     }
 
@@ -35,7 +36,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $product
      * @throws UnsupportedException
      */
-    public function setProduct($product) {
+    public function setProduct($product)
+    {
         throw new UnsupportedException("setProduct is not implemented for " . get_class($this));
     }
 
@@ -44,7 +46,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return string
      */
-    public function getProductNumber() {
+    public function getProductNumber()
+    {
         throw new UnsupportedException("getProductNumber is not implemented for " . get_class($this));
     }
 
@@ -52,7 +55,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param string $productNumber
      * @throws UnsupportedException
      */
-    public function setProductNumber($productNumber) {
+    public function setProductNumber($productNumber)
+    {
         throw new UnsupportedException("setProductNumber is not implemented for " . get_class($this));
     }
 
@@ -61,7 +65,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return string
      */
-    public function getProductName() {
+    public function getProductName()
+    {
         throw new UnsupportedException("getProductName is not implemented for " . get_class($this));
     }
 
@@ -69,7 +74,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param string $productName
      * @throws UnsupportedException
      */
-    public function setProductName($productName) {
+    public function setProductName($productName)
+    {
         throw new UnsupportedException("setProductName is not implemented for " . get_class($this));
     }
 
@@ -77,7 +83,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return float
      */
-    public function getAmount() {
+    public function getAmount()
+    {
         throw new UnsupportedException("getAmount is not implemented for " . get_class($this));
     }
 
@@ -85,7 +92,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param float $amount
      * @throws UnsupportedException
      */
-    public function setAmount($amount) {
+    public function setAmount($amount)
+    {
         throw new UnsupportedException("setAmount is not implemented for " . get_class($this));
     }
 
@@ -94,7 +102,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return float
      */
-    public function getTotalPrice() {
+    public function getTotalPrice()
+    {
         throw new UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }
 
@@ -102,7 +111,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @param float $totalPrice
      */
-    public function setTotalPrice($totalPrice) {
+    public function setTotalPrice($totalPrice)
+    {
         throw new UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
     }
 
@@ -110,7 +120,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return float
      */
-    public function getTotalNetPrice() {
+    public function getTotalNetPrice()
+    {
         //prevent throwing an exception for backward compatibility
         Logger::err("getTotalNetPrice not implemented for " . get_class($this));
     }
@@ -119,7 +130,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @param float $totalNetPrice
      */
-    public function setTotalNetPrice($totalNetPrice) {
+    public function setTotalNetPrice($totalNetPrice)
+    {
         //prevent throwing an exception for backward compatibility
         Logger::err("setTotalNetPrice not implemented for " . get_class($this));
     }
@@ -128,7 +140,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return array
      */
-    public function getTaxInfo() {
+    public function getTaxInfo()
+    {
         //prevent throwing an exception for backward compatibility
         Logger::err("getTaxInfo not implemented for " . get_class($this));
     }
@@ -137,7 +150,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @param array $taxInfo
      */
-    public function setTaxInfo($taxInfo) {
+    public function setTaxInfo($taxInfo)
+    {
         //prevent throwing an exception for backward compatibility
         Logger::err("setTaxInfo not implemented for " . get_class($this));
     }
@@ -147,7 +161,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @return AbstractOrderItem[]
      * @throws UnsupportedException
      */
-    public function getSubItems() {
+    public function getSubItems()
+    {
         throw new UnsupportedException("getSubItems is not implemented for " . get_class($this));
     }
 
@@ -155,7 +170,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param AbstractOrderItem[] $subItems
      * @throws UnsupportedException
      */
-    public function setSubItems($subItems) {
+    public function setSubItems($subItems)
+    {
         throw new UnsupportedException("setSubItems is not implemented for " . get_class($this));
     }
 
@@ -163,7 +179,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return \Pimcore\Model\Object\Fieldcollection
      */
-    public function getPricingRules() {
+    public function getPricingRules()
+    {
         throw new UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
@@ -172,7 +189,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return $this
      */
-    public function setPricingRules ($pricingRules) {
+    public function setPricingRules($pricingRules)
+    {
         throw new UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
@@ -180,7 +198,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return string
      */
-    public function getOrderState() {
+    public function getOrderState()
+    {
         throw new UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
@@ -189,7 +208,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @throws UnsupportedException
      * @return $this
      */
-    public function setOrderState ($orderState) {
+    public function setOrderState($orderState)
+    {
         throw new UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
@@ -236,8 +256,7 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
     public function getOrder()
     {
         $parent = $this;
-        while(!$parent instanceof AbstractOrder)
-        {
+        while (!$parent instanceof AbstractOrder) {
             $parent = $parent->getParent();
         }
 

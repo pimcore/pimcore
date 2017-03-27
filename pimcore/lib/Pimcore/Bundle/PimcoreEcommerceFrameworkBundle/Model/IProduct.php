@@ -12,9 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
-
 
 /**
  * Interface OnlineShop_Framework_ProductInterfaces_IProduct

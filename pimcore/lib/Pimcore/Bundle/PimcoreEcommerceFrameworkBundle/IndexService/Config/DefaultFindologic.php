@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
@@ -76,7 +75,6 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
      */
     public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
     {
-
     }
 
     /**
@@ -90,7 +88,6 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
     {
-
     }
 
     /**
@@ -100,8 +97,7 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
      */
     public function getTenantWorker()
     {
-        if(empty($this->tenantWorker))
-        {
+        if (empty($this->tenantWorker)) {
             $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic($this);
         }
 

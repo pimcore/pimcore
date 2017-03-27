@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -29,8 +28,8 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFramewo
      *
      * @return string
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
-
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         $field = $this->getField($filterDefinition);
 
         if ($filterDefinition->getScriptPath()) {
@@ -41,21 +40,21 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFramewo
 
         $rawValues = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
 
-        $values = array();
-        foreach($rawValues as $v) {
+        $values = [];
+        foreach ($rawValues as $v) {
             $explode = explode(IWorker::MULTISELECT_DELIMITER, $v['value']);
-            foreach($explode as $e) {
-                if(!empty($e)) {
-                    if($values[$e]) {
+            foreach ($explode as $e) {
+                if (!empty($e)) {
+                    if ($values[$e]) {
                         $values[$e]['count'] += $v['count'];
                     } else {
-                        $values[$e] = array('value' => $e, "count" => $v['count']);
+                        $values[$e] = ['value' => $e, "count" => $v['count']];
                     }
                 }
             }
         }
 
-        return $this->render($script, array(
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -63,7 +62,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFramewo
             "fieldname" => $field,
             "metaData" => $filterDefinition->getMetaData(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
 
@@ -76,26 +75,27 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFramewo
      *
      * @return string[]
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
 
-        if(empty($value) && !$params['is_reload']) {
-            if(is_array($preSelect)) {
+        if (empty($value) && !$params['is_reload']) {
+            if (is_array($preSelect)) {
                 $value = $preSelect;
             } else {
                 $value = explode(",", $preSelect);
             }
 
-            foreach($value as $key => $v) {
-                if(!$v) {
+            foreach ($value as $key => $v) {
+                if (!$v) {
                     unset($value[$key]);
                 }
             }
-        } else if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        } elseif (!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
 
@@ -104,33 +104,29 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\PimcoreEcommerceFramewo
         $currentFilter[$field] = $value;
 
 
-        if(!empty($value)) {
-
-
-            $quotedValues = array();
-            foreach($value as $v) {
+        if (!empty($value)) {
+            $quotedValues = [];
+            foreach ($value as $v) {
                 $v =   "%" . IWorker::MULTISELECT_DELIMITER  . $v .  IWorker::MULTISELECT_DELIMITER . "%" ;
                 $quotedValues[] = $field . ' like '.$productList->quote($v);
             }
 
-            if($filterDefinition->getUseAndCondition()) {
+            if ($filterDefinition->getUseAndCondition()) {
                 $quotedValues = implode(' and ', $quotedValues);
             } else {
                 $quotedValues = implode(' or ', $quotedValues);
             }
             $quotedValues = '('.$quotedValues.')';
 
-            if(!empty($quotedValues)) {
-
-                if($isPrecondition) {
+            if (!empty($quotedValues)) {
+                if ($isPrecondition) {
                     $productList->addCondition($quotedValues, "PRECONDITION_" . $field);
                 } else {
                     $productList->addCondition($quotedValues, $field);
                 }
             }
-
         }
+
         return $currentFilter;
     }
-
 }

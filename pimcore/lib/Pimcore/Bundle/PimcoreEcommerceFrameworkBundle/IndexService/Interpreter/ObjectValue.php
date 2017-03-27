@@ -12,12 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
 class ObjectValue implements IInterpreter
 {
-
     public static function interpret($value, $config = null)
     {
         $targetList = $config->target;
@@ -27,13 +25,13 @@ class ObjectValue implements IInterpreter
         }
 
         if ($value instanceof \Pimcore\Model\Object\AbstractObject) {
-
             $fieldGetter = "get" . ucfirst($targetList->fieldname);
 
             if (method_exists($value, $fieldGetter)) {
                 return $value->$fieldGetter($targetList->locale);
             }
         }
+
         return null;
     }
 }

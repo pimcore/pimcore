@@ -12,23 +12,23 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class Input extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Input {
-
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+class Input extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Input
+{
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $filterDefinition->getField($filterDefinition);
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
-        if($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if ($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;
         }
 
@@ -36,10 +36,11 @@ class Input extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterServic
         $currentFilter[$field] = $value;
 
 
-        if(!empty($value)) {
+        if (!empty($value)) {
             $value =  ".*\"" . $value .  "\".*";
             $productList->addCondition(['regexp' => ["attributes." . $field => $value]], $field);
         }
+
         return $currentFilter;
     }
 }

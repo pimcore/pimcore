@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
@@ -34,7 +33,7 @@ class PriceInfo implements IPriceInfo
     /**
      * @var IRule[]
      */
-    protected $rules = array();
+    protected $rules = [];
 
     /**
      * @var IRule[]
@@ -105,12 +104,15 @@ class PriceInfo implements IPriceInfo
      *
      * @return bool
      */
-    protected function environmentHashChanged() {
+    protected function environmentHashChanged()
+    {
         $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : "";
-        if($this->priceEnvironmentHash != $hash) {
+        if ($this->priceEnvironmentHash != $hash) {
             $this->validRules = null;
+
             return true;
         }
+
         return false;
     }
 
@@ -123,22 +125,17 @@ class PriceInfo implements IPriceInfo
      */
     public function getRules($forceRecalc = false)
     {
-
-        if($forceRecalc || $this->validRules === NULL)
-        {
+        if ($forceRecalc || $this->validRules === null) {
             $env = $this->getEnvironment();
-            $this->validRules = array();
-            foreach($this->rules as $rule)
-            {
-                $env->setRule( $rule );
+            $this->validRules = [];
+            foreach ($this->rules as $rule) {
+                $env->setRule($rule);
 
-                if($rule->check($env) === true)
-                {
+                if ($rule->check($env) === true) {
                     $this->validRules[] = $rule;
 
                     // is this a stop rule?
-                    if($rule->getBehavior() == 'stopExecute')
-                    {
+                    if ($rule->getBehavior() == 'stopExecute') {
                         break;
                     }
                 }
@@ -154,32 +151,31 @@ class PriceInfo implements IPriceInfo
     public function getPrice()
     {
         $price = clone $this->priceInfo->getPrice();
-        if($price == null) {
+        if ($price == null) {
             return null;
         }
 
-        if(!$this->rulesApplied || $this->environmentHashChanged()) {
-            $this->setAmount( $price->getAmount() );
+        if (!$this->rulesApplied || $this->environmentHashChanged()) {
+            $this->setAmount($price->getAmount());
             $env = $this->getEnvironment();
 
-            foreach($this->getRules() as $rule)
-            {
+            foreach ($this->getRules() as $rule) {
                 /* @var IRule $rule */
                 $env->setRule($rule);
 
                 // execute rule
-                $rule->executeOnProduct( $env );
+                $rule->executeOnProduct($env);
             }
             $this->rulesApplied = true;
 
-            if($this->getAmount() < 0)
-            {
-                $this->setAmount( 0 );
+            if ($this->getAmount() < 0) {
+                $this->setAmount(0);
             }
         }
 
 
-        $price->setAmount( $this->getAmount(), IPrice::PRICE_MODE_GROSS, true );
+        $price->setAmount($this->getAmount(), IPrice::PRICE_MODE_GROSS, true);
+
         return $price;
     }
 
@@ -188,12 +184,13 @@ class PriceInfo implements IPriceInfo
      */
     public function getTotalPrice()
     {
-        if($this->priceInfo->getPrice() == null) {
+        if ($this->priceInfo->getPrice() == null) {
             return null;
         }
 
         $price = clone $this->priceInfo->getPrice();
-        $price->setAmount( $this->getPrice()->getAmount() * $this->getQuantity(), IPrice::PRICE_MODE_GROSS, true );
+        $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity(), IPrice::PRICE_MODE_GROSS, true);
+
         return $price;
     }
 
@@ -262,6 +259,7 @@ class PriceInfo implements IPriceInfo
     public function setAmount($amount)
     {
         $this->amount = $amount;
+
         return $this;
     }
 
@@ -282,7 +280,7 @@ class PriceInfo implements IPriceInfo
      */
     public function __call($name, $arguments)
     {
-        return call_user_func_array(array($this->priceInfo, $name), $arguments);
+        return call_user_func_array([$this->priceInfo, $name], $arguments);
     }
 
     /**
@@ -320,7 +318,7 @@ class PriceInfo implements IPriceInfo
         $discount = $this->getPrice()->getAmount() - $this->getOriginalPrice()->getAmount();
         $price = clone $this->priceInfo->getPrice();
 
-        $price->setAmount( $discount );
+        $price->setAmount($discount);
 
         return $price;
     }
@@ -335,7 +333,7 @@ class PriceInfo implements IPriceInfo
         $discount = $this->getTotalPrice()->getAmount() - $this->getOriginalTotalPrice()->getAmount();
         $price = clone $this->priceInfo->getPrice();
 
-        $price->setAmount( $discount );
+        $price->setAmount($discount);
 
         return $price;
     }

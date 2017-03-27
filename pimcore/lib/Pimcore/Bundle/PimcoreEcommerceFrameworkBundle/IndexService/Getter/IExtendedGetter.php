@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter;
 
 /**
@@ -20,7 +19,7 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter;
  *
  * Interface for getter of product index colums which consider sub object ids and tenant configs
  */
-interface IExtendedGetter {
-
+interface IExtendedGetter
+{
     public static function get($object, $config = null, $subObjectId = null, \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig = null);
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Logger;
@@ -34,8 +33,7 @@ abstract class AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFramewor
      */
     private function getData(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule, $field)
     {
-        if(!array_key_exists($rule->getId(), self::$cache))
-        {
+        if (!array_key_exists($rule->getId(), self::$cache)) {
             $query = <<<'SQL'
 SELECT 1
 
@@ -76,20 +74,14 @@ WHERE 1
 LIMIT 1
 SQL;
 
-            try
-            {
-                $query = sprintf($query
-                    , \Pimcore\Model\Object\OnlineShopOrderItem::classId()
-                    , \Pimcore\Model\Object\OnlineShopOrder::classId()
-                    , $rule->getId()
+            try {
+                $query = sprintf($query, \Pimcore\Model\Object\OnlineShopOrderItem::classId(), \Pimcore\Model\Object\OnlineShopOrder::classId(), $rule->getId()
                 );
 
                 $conn = \Pimcore\Db::getConnection();
-                self::$cache[ $rule->getId() ] = $conn->fetchRow( $query );
-            }
-            catch(\Exception $e)
-            {
-                Logger::error( $e );
+                self::$cache[ $rule->getId() ] = $conn->fetchRow($query);
+            } catch (\Exception $e) {
+                Logger::error($e);
             }
         }
 

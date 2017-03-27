@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 /**
@@ -20,7 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
  *
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
  */
-interface IElasticSearchConfig extends IConfig {
+interface IElasticSearchConfig extends IConfig
+{
 
     /**
      * returns elastic search client parameters defined in the tenant config
@@ -44,5 +44,4 @@ interface IElasticSearchConfig extends IConfig {
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
     public function getTenantWorker();
-
 }

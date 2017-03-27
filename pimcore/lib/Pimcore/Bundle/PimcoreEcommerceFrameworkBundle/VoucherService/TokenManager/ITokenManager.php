@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractVoucherTokenType;

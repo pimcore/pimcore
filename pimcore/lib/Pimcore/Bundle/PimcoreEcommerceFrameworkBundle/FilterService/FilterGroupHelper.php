@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -43,7 +42,8 @@ class FilterGroupHelper
      * @param $columnGroup
      * @return string
      */
-    protected static function getColumnTypeForColumnGroup($columnGroup) {
+    protected static function getColumnTypeForColumnGroup($columnGroup)
+    {
         return $columnGroup;
     }
 
@@ -55,50 +55,50 @@ class FilterGroupHelper
      * @param string $field
      * @return array
      */
-    public static function getGroupByValuesForFilterGroup($columnGroup, IProductList $productList, $field) {
+    public static function getGroupByValuesForFilterGroup($columnGroup, IProductList $productList, $field)
+    {
         $columnType = self::getColumnTypeForColumnGroup($columnGroup);
 
-        $data = array();
+        $data = [];
 
-        if($columnType == "relation") {
+        if ($columnType == "relation") {
             $productList->prepareGroupByRelationValues($field);
             $values = $productList->getGroupByRelationValues($field);
 
-            foreach($values as $v) {
+            foreach ($values as $v) {
                 $obj = \Pimcore\Model\Object\AbstractObject::getById($v);
-                if($obj) {
+                if ($obj) {
                     $name = $obj->getKey();
-                    if(method_exists($obj, "getName")) {
+                    if (method_exists($obj, "getName")) {
                         $name = $obj->getName();
                     }
-                    $data[$v] = array("key" => $v, "value" => $name . " (" . $obj->getId() . ")");
+                    $data[$v] = ["key" => $v, "value" => $name . " (" . $obj->getId() . ")"];
                 }
             }
-
-        } else if($columnType == "multiselect") {
+        } elseif ($columnType == "multiselect") {
             $values = $productList->getGroupByValues($field);
 
             sort($values);
 
-            foreach($values as $v) {
+            foreach ($values as $v) {
                 $helper = explode(IWorker::MULTISELECT_DELIMITER, $v);
-                foreach($helper as $h) {
-                    $data[$h] = array("key" => $h, "value" => $h);
+                foreach ($helper as $h) {
+                    $data[$h] = ["key" => $h, "value" => $h];
                 }
             }
-        } else if($columnType == "category") {
+        } elseif ($columnType == "category") {
             $values = $productList->getGroupByValues($field);
 
-            foreach($values as $v) {
+            foreach ($values as $v) {
                 $helper = explode(",", $v);
-                foreach($helper as $h) {
+                foreach ($helper as $h) {
                     $obj = \Pimcore\Model\Object\AbstractObject::getById($h);
-                    if($obj) {
+                    if ($obj) {
                         $name = $obj->getKey();
-                        if(method_exists($obj, "getName")) {
+                        if (method_exists($obj, "getName")) {
                             $name = $obj->getName();
                         }
-                        $data[$h] = array("key" => $h, "value" => $name . " (" . $obj->getId() . ")");
+                        $data[$h] = ["key" => $h, "value" => $name . " (" . $obj->getId() . ")"];
                     }
                 }
             }
@@ -108,12 +108,11 @@ class FilterGroupHelper
 
             sort($values);
 
-            foreach($values as $v) {
-                $data[] = array("key" => $v, "value" => $v);
+            foreach ($values as $v) {
+                $data[] = ["key" => $v, "value" => $v];
             }
         }
 
         return $data;
     }
-
 }

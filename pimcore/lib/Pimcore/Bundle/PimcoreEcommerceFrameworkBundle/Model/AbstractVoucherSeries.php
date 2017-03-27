@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -23,7 +22,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
     /**
      * @return \Pimcore\Model\Object\Fieldcollection
      */
-    public abstract function getTokenSettings();
+    abstract public function getTokenSettings();
 
 
     /**
@@ -32,22 +31,23 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
      */
     public function getTokenManager()
     {
-
         $items = $this->getTokenSettings();
         if ($items && $items->get(0)) {
 
             // name of fieldcollection class
             $configuration = $items->get(0);
-            return Factory::getInstance()->getTokenManager($configuration);
 
+            return Factory::getInstance()->getTokenManager($configuration);
         }
+
         return false;
     }
 
     /**
      * @return array|bool
      */
-    public function getExistingLengths(){
+    public function getExistingLengths()
+    {
         $db = \Pimcore\Db::get();
 
         $query = "
@@ -59,13 +59,13 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
             $lengths = $db->fetchAll($query, [$this->getId()]);
 
             $result = [];
-            foreach($lengths as $lengthEntry) {
+            foreach ($lengths as $lengthEntry) {
                 $result[$lengthEntry['length']] = $lengthEntry['count'];
             }
+
             return $result;
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return false;
         }
     }
-
 }

@@ -48,7 +48,7 @@ return [
                         ]
                     ]
                     /* you also can use external files for additional configuration */
-                    /* "expensiveShipping" =>[ "file" => "\\website\\var\\plugins\\OnlineShopConfig\\cartmanager-expensiveShipping.php ] */ 
+                    /* "expensiveShipping" =>[ "file" => "\\website\\var\\plugins\\OnlineShopConfig\\cartmanager-expensiveShipping.php ] */
                 ],
                 
             ]

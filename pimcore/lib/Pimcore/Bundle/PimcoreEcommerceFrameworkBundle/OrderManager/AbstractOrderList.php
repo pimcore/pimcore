@@ -12,14 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use Zend\Paginator\Adapter\AdapterInterface;
 use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 
 use Pimcore\Resource;
-
 
 abstract class AbstractOrderList implements IOrderList
 {
@@ -76,6 +74,7 @@ abstract class AbstractOrderList implements IOrderList
     public function setItemClassName($className)
     {
         $this->itemClassName = $className;
+
         return $this;
     }
 
@@ -88,6 +87,7 @@ abstract class AbstractOrderList implements IOrderList
     protected function createResultItem(array $row)
     {
         $class = $this->getItemClassName();
+
         return new $class($row);
     }
 
@@ -100,6 +100,7 @@ abstract class AbstractOrderList implements IOrderList
     public function setListType($type)
     {
         $this->listType = $type;
+
         return $this;
     }
 
@@ -128,6 +129,7 @@ abstract class AbstractOrderList implements IOrderList
     public function setOrderState($orderState)
     {
         $this->orderState = $orderState;
+
         return $this;
     }
 
@@ -137,13 +139,12 @@ abstract class AbstractOrderList implements IOrderList
      */
     public function load()
     {
-        if($this->list === null)
-        {
+        if ($this->list === null) {
             // load
             $conn = Resource::getConnection();
 
-            $this->list = new \ArrayIterator($conn->fetchAll( $this->getQuery() ));
-            $this->rowCount = (int)$conn->fetchCol( 'SELECT FOUND_ROWS() as "cnt"')[0];
+            $this->list = new \ArrayIterator($conn->fetchAll($this->getQuery()));
+            $this->rowCount = (int)$conn->fetchCol('SELECT FOUND_ROWS() as "cnt"')[0];
         }
 
         return $this;
@@ -173,7 +174,7 @@ abstract class AbstractOrderList implements IOrderList
     {
         // load
         return $this
-            ->setLimit( $itemCountPerPage, $offset )
+            ->setLimit($itemCountPerPage, $offset)
             ->load();
     }
 
@@ -219,9 +220,8 @@ abstract class AbstractOrderList implements IOrderList
     public function current()
     {
         $this->load();
-        if($this->count() > 0)
-        {
-            return $this->createResultItem( $this->list->current() );
+        if ($this->count() > 0) {
+            return $this->createResultItem($this->list->current());
         }
     }
 
@@ -248,6 +248,7 @@ abstract class AbstractOrderList implements IOrderList
     public function key()
     {
         $this->load();
+
         return $this->list->key();
     }
 
@@ -262,6 +263,7 @@ abstract class AbstractOrderList implements IOrderList
     public function valid()
     {
         $this->load();
+
         return $this->list->valid();
     }
 
@@ -293,7 +295,7 @@ abstract class AbstractOrderList implements IOrderList
     public function seek($position)
     {
         $this->load();
-        $this->list->seek( $position );
+        $this->list->seek($position);
     }
 
     /**
@@ -309,6 +311,7 @@ abstract class AbstractOrderList implements IOrderList
     public function count()
     {
         $this->load();
+
         return $this->rowCount;
     }
 
@@ -330,6 +333,7 @@ abstract class AbstractOrderList implements IOrderList
     public function offsetExists($offset)
     {
         $this->load();
+
         return $this->list->offsetExists($offset);
     }
 
@@ -348,7 +352,8 @@ abstract class AbstractOrderList implements IOrderList
     public function offsetGet($offset)
     {
         $this->load();
-        return $this->createResultItem( $this->list->offsetGet($offset) );
+
+        return $this->createResultItem($this->list->offsetGet($offset));
     }
 
     /**

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
@@ -21,7 +20,6 @@ use Countable;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
 use ArrayAccess;
-
 
 /**
  * Interface IOrderList

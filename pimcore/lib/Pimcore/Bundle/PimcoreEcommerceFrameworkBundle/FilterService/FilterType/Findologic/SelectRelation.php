@@ -12,35 +12,36 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
 
-class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectRelation {
-
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
+{
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         $field = $this->getField($filterDefinition);
 
 
         $values = $productList->getGroupByValues($field, true);
 
-        $objects = array();
+        $objects = [];
         Logger::info("Load Objects...");
 
-        $availableRelations = array();
-        if($filterDefinition->getAvailableRelations()) {
+        $availableRelations = [];
+        if ($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
         }
 
-        foreach($values as $v) {
-            if(empty($availableRelations) || $availableRelations[$v['label']] === true) {
+        foreach ($values as $v) {
+            if (empty($availableRelations) || $availableRelations[$v['label']] === true) {
                 $objects[$v['label']] = \Pimcore\Model\Object\AbstractObject::getById($v['label']);
             }
         }
@@ -51,7 +52,8 @@ class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
         } else {
             $script = $this->script;
         }
-        return $this->render($script, array(
+
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -59,18 +61,19 @@ class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
             "objects" => $objects,
             "fieldname" => $field,
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
         $value = $params[$field];
 
-        if($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if ($value == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } else if(empty($value) && !$params['is_reload']) {
+        } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;
         }
 
@@ -78,9 +81,10 @@ class SelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Fil
         $currentFilter[$field] = $value;
 
 
-        if(!empty($value)) {
+        if (!empty($value)) {
             $productList->addCondition([$value], $field);
         }
+
         return $currentFilter;
     }
 }

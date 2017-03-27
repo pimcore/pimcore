@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Tool;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker;
 
-class IndexUpdater {
+class IndexUpdater
+{
 
     /**
      * Runs update index for all tenants
@@ -29,9 +29,10 @@ class IndexUpdater {
      * @param bool $updateIndexStructures
      * @param string $loggername
      */
-    public static function updateIndex($objectListClass, $condition = "", $updateIndexStructures = false, $loggername = "indexupdater") {
+    public static function updateIndex($objectListClass, $condition = "", $updateIndexStructures = false, $loggername = "indexupdater")
+    {
         $updater = Factory::getInstance()->getIndexService();
-        if($updateIndexStructures) {
+        if ($updateIndexStructures) {
             $updater->createOrUpdateIndexStructures();
         }
 
@@ -39,8 +40,7 @@ class IndexUpdater {
         $pageSize = 100;
         $count = $pageSize;
 
-        while($count > 0) {
-
+        while ($count > 0) {
             self::log($loggername, "=========================");
             self::log($loggername, "Update Index Page: " . $page);
             self::log($loggername, "=========================");
@@ -49,11 +49,11 @@ class IndexUpdater {
             $products->setUnpublished(true);
             $products->setOffset($page * $pageSize);
             $products->setLimit($pageSize);
-            $products->setObjectTypes(array("object", "folder", "variant"));
+            $products->setObjectTypes(["object", "folder", "variant"]);
             $products->setIgnoreLocalizedFields(true);
             $products->setCondition($condition);
 
-            foreach($products as $p) {
+            foreach ($products as $p) {
                 self::log($loggername, "Updating product " . $p->getId());
                 $updater->updateIndex($p);
             }
@@ -75,17 +75,17 @@ class IndexUpdater {
      *
      * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater") {
-        if($tenants == null) {
+    public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater")
+    {
+        if ($tenants == null) {
             $tenants = Factory::getInstance()->getAllTenants();
         }
 
-        if(!is_array($tenants)) {
-            $tenants = array($tenants);
+        if (!is_array($tenants)) {
+            $tenants = [$tenants];
         }
 
-        foreach($tenants as $tenant) {
-
+        foreach ($tenants as $tenant) {
             self::log($loggername, "=========================");
             self::log($loggername, "Processing preparation queue for tenant: " . $tenant);
             self::log($loggername, "=========================");
@@ -96,10 +96,10 @@ class IndexUpdater {
             $indexService = Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
-            if($worker instanceof IBatchProcessingWorker) {
+            if ($worker instanceof IBatchProcessingWorker) {
                 $round = 0;
                 $result = true;
-                while($result) {
+                while ($result) {
                     $round++;
                     self::log($loggername, "Starting round: " . $round);
 
@@ -108,8 +108,9 @@ class IndexUpdater {
 
                     \Pimcore::collectGarbage();
 
-                    if($maxRounds && $maxRounds == $round) {
+                    if ($maxRounds && $maxRounds == $round) {
                         self::log($loggername, "skipping process after $round rounds.");
+
                         return;
                     }
                 }
@@ -126,17 +127,17 @@ class IndexUpdater {
      * @param int $indexItemsPerRound - number of items to index per round
      * @throws \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater", $indexItemsPerRound = 200) {
-        if($tenants == null) {
+    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater", $indexItemsPerRound = 200)
+    {
+        if ($tenants == null) {
             $tenants = Factory::getInstance()->getAllTenants();
         }
 
-        if(!is_array($tenants)) {
-            $tenants = array($tenants);
+        if (!is_array($tenants)) {
+            $tenants = [$tenants];
         }
 
-        foreach($tenants as $tenant) {
-
+        foreach ($tenants as $tenant) {
             self::log($loggername, "=========================");
             self::log($loggername, "Processing update index elements for tenant: " . $tenant);
             self::log($loggername, "=========================");
@@ -148,10 +149,10 @@ class IndexUpdater {
             $worker = $indexService->getCurrentTenantWorker();
 
 
-            if($worker instanceof IBatchProcessingWorker) {
+            if ($worker instanceof IBatchProcessingWorker) {
                 $result = true;
                 $round = 0;
-                while($result) {
+                while ($result) {
                     $round++;
                     self::log($loggername, "Starting round: " . $round);
 
@@ -160,8 +161,9 @@ class IndexUpdater {
 
                     \Pimcore::collectGarbage();
 
-                    if($maxRounds && $maxRounds == $round) {
+                    if ($maxRounds && $maxRounds == $round) {
                         self::log($loggername, "skipping process after $round rounds.");
+
                         return;
                     }
                 }
@@ -169,10 +171,9 @@ class IndexUpdater {
         }
     }
 
-    private static function log($loggername, $message) {
+    private static function log($loggername, $message)
+    {
         \Pimcore\Log\Simple::log($loggername, $message);
         echo $message . "\n";
     }
-
-
 }

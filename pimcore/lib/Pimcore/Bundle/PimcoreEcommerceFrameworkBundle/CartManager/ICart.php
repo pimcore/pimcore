@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
@@ -20,7 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
 /**
  * interface for cart implementations of online shop framework
  */
-interface ICart {
+interface ICart
+{
 
     /**
      * @abstract
@@ -83,7 +83,7 @@ interface ICart {
      * @param string $comment
      * @return string $itemKey
      */
-    public function addItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
 
 
     /**
@@ -97,7 +97,7 @@ interface ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * updates count of specific cart item
@@ -118,7 +118,7 @@ interface ICart {
      * @param string $comment
      * @return string $itemKey
      */
-    public function addGiftItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function addGiftItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
 
 
     /**
@@ -131,7 +131,7 @@ interface ICart {
      * @param null $comment
      * @return string $itemKey
      */
-    public function updateGiftItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
+    public function updateGiftItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * @abstract

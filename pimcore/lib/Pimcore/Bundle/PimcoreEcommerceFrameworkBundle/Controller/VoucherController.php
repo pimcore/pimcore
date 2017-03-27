@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
@@ -39,7 +38,7 @@ class VoucherController extends FrontendController
     {
         // set language
         $user = $this->get('pimcore_admin.security.token_storage_user_resolver')->getUser();
-        if($user) {
+        if ($user) {
             $this->get("translator")->setLocale($user->getLanguage());
             $event->getRequest()->setLocale($user->getLanguage());
         }
@@ -74,9 +73,11 @@ class VoucherController extends FrontendController
             }
 
             $renderScript = $tokenManager->prepareConfigurationView($paramsBag, $request->query->all());
+
             return $this->render($renderScript, $paramsBag);
         } else {
             $paramsBag['errors'] = ['plugin_onlineshop_voucherservice_msg-error-config-missing'];
+
             return $this->render('PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php', $paramsBag);
         }
     }
@@ -186,7 +187,6 @@ class VoucherController extends FrontendController
         $onlineShopVoucherSeries = AbstractObject::getById($request->get('id'));
         if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
-
                 $translator = $this->get('translator');
 
                 // Prepare cleanUp parameter array.
@@ -196,7 +196,7 @@ class VoucherController extends FrontendController
 
                 if (empty($params['usage'])) {
                     $params['error'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-required-missing', [], 'admin');
-                } else if ($tokenManager->cleanUpCodes($params)) {
+                } elseif ($tokenManager->cleanUpCodes($params)) {
                     $params['success'] = $translator->trans('plugin_onlineshop_voucherservice_msg-success-cleanup', [], 'admin');
                 } else {
                     $params['error'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-cleanup', [], 'admin');
@@ -206,7 +206,6 @@ class VoucherController extends FrontendController
                     "pimcore_ecommerce_backend_voucher_voucher-code-tab",
                     $params
                 );
-
             }
         } else {
             throw new \InvalidArgumentException('Could not get voucher series, probably you did not provide a correct id.');
@@ -225,7 +224,7 @@ class VoucherController extends FrontendController
         $id = $request->get('id');
         $translator = $this->get("translator");
 
-        if(!isset($duration)) {
+        if (!isset($duration)) {
             return $this->redirectToRoute(
                 "pimcore_ecommerce_backend_voucher_voucher-code-tab",
                 ['error' => $translator->trans('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations-duration-missing', [], 'admin'), 'id' => $id]
@@ -236,12 +235,10 @@ class VoucherController extends FrontendController
         if ($onlineShopVoucherSeries instanceof OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 if ($tokenManager->cleanUpReservations($duration, $id)) {
-
                     return $this->redirectToRoute(
                         "pimcore_ecommerce_backend_voucher_voucher-code-tab",
                         ['success' => $translator->trans('plugin_onlineshop_voucherservice_msg-success-cleanup-reservations', [], 'admin'), 'id' => $id]
                     );
-
                 }
             }
         }
@@ -250,10 +247,5 @@ class VoucherController extends FrontendController
             "pimcore_ecommerce_backend_voucher_voucher-code-tab",
             ['error' => $translator->trans('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations', [], 'admin'), 'id' => $id]
         );
-
     }
-
 }
-
-
-

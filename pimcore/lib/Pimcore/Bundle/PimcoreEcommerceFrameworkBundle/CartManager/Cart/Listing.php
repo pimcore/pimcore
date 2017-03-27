@@ -12,39 +12,44 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 
-class Listing extends \Pimcore\Model\Listing\AbstractListing {
+class Listing extends \Pimcore\Model\Listing\AbstractListing
+{
 
     /**
      * @var array
      */
     public $carts;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->getDao()->setCartClass(Factory::getInstance()->getCartManager()->getCartClassName());
     }
 
     /**
      * @var array
      */
-    public function isValidOrderKey($key) {
-        if($key == "userId" || $key == "name") {
+    public function isValidOrderKey($key)
+    {
+        if ($key == "userId" || $key == "name") {
             return true;
         }
+
         return false;
     }
 
     /**
      * @return array
      */
-    function getCarts() {
-        if(empty($this->carts)) {
+    public function getCarts()
+    {
+        if (empty($this->carts)) {
             $this->load();
         }
+
         return $this->carts;
     }
 
@@ -52,8 +57,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing {
      * @param array $carts
      * @return void
      */
-    function setCarts($carts) {
+    public function setCarts($carts)
+    {
         $this->carts = $carts;
     }
-
 }

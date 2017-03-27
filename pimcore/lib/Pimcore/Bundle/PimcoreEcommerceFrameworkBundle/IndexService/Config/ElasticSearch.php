@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
@@ -22,8 +21,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
  *
  * Default configuration for elastic search as product index implementation.
  */
-class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSearchConfig {
-
+class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSearchConfig
+{
     protected $clientConfig = [];
 
     /**
@@ -61,23 +60,24 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param $tenantConfig
      * @param null $totalConfig
      */
-    public function __construct($tenantName, $tenantConfig, $totalConfig = null) {
+    public function __construct($tenantName, $tenantConfig, $totalConfig = null)
+    {
         parent::__construct($tenantName, $tenantConfig, $totalConfig);
 
         $this->indexSettings = json_decode($tenantConfig->indexSettingsJson, true);
         $this->elasticSearchClientParams = json_decode($tenantConfig->elasticSearchClientParamsJson, true);
 
-        if($tenantConfig->clientConfig){
+        if ($tenantConfig->clientConfig) {
             $this->clientConfig = $tenantConfig->clientConfig->toArray();
         }
 
         $config = $tenantConfig->toArray();
-        foreach($config['columns'] as $col){
+        foreach ($config['columns'] as $col) {
             $attributeType = 'attributes';
-            if($col['interpreter']){
+            if ($col['interpreter']) {
                 $class = $col['interpreter'];
                 $tmp = new $class;
-                if($tmp instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter){
+                if ($tmp instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
                     $attributeType = 'relations';
                 }
             }
@@ -91,7 +91,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param $fieldName
      * @return string
      */
-    public function getFieldNameMapped($fieldName){
+    public function getFieldNameMapped($fieldName)
+    {
         return $this->fieldMapping[$fieldName] ?: $fieldName;
     }
 
@@ -111,14 +112,16 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     /**
      * @return array
      */
-    public function getIndexSettings() {
+    public function getIndexSettings()
+    {
         return $this->indexSettings;
     }
 
     /**
      * @return array
      */
-    public function getElasticSearchClientParams() {
+    public function getElasticSearchClientParams()
+    {
         return $this->elasticSearchClientParams;
     }
 
@@ -129,7 +132,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param IIndexable $object
      * @return bool
      */
-    public function inIndex(IIndexable $object) {
+    public function inIndex(IIndexable $object)
+    {
         return true;
     }
 
@@ -140,7 +144,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param null $subObjectId
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null) {
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
+    {
         return null;
     }
 
@@ -152,7 +157,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param mixed $subObjectId
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null) {
+    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
+    {
         // nothing to do
         return;
     }
@@ -162,7 +168,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      *
      * @return array
      */
-    public function getSubTenantCondition() {
+    public function getSubTenantCondition()
+    {
         return;
     }
 
@@ -177,10 +184,12 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      *
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
      */
-    public function getTenantWorker() {
-        if(empty($this->tenantWorker)) {
+    public function getTenantWorker()
+    {
+        if (empty($this->tenantWorker)) {
             $this->tenantWorker = new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch($this);
         }
+
         return $this->tenantWorker;
     }
 
@@ -192,7 +201,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param $relations
      * @return mixed
      */
-    public function createMockupObject($objectId, $data, $relations) {
+    public function createMockupObject($objectId, $data, $relations)
+    {
         return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
     }
 
@@ -203,7 +213,8 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param $objectId
      * @return IIndexable | array
      */
-    public function getObjectMockupById($objectId) {
+    public function getObjectMockupById($objectId)
+    {
         return $this->getTenantWorker()->getMockupFromCache($objectId);
     }
 }

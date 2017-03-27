@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
 use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ObjectData;
 use Pimcore\Model\Object\ClassDefinition\Data;
 
-class IndexFieldSelection extends Data {
+class IndexFieldSelection extends Data
+{
 
     /**
      * Static type of this element
@@ -32,22 +32,22 @@ class IndexFieldSelection extends Data {
      *
      * @var string
      */
-    public $queryColumnType = array(
+    public $queryColumnType = [
         "tenant" => "varchar(100)",
         "field" => "varchar(200)",
         "preSelect" => "text"
-    );
+    ];
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = array(
+    public $columnType = [
         "tenant" => "varchar(100)",
         "field" => "varchar(200)",
         "preSelect" => "text"
-    );
+    ];
 
     /**
      * Type for the generated phpdoc
@@ -60,19 +60,21 @@ class IndexFieldSelection extends Data {
     public $considerTenants = false;
     public $multiPreSelect = false;
     public $filterGroups = "";
-    public $predefinedPreSelectOptions = array();
+    public $predefinedPreSelectOptions = [];
 
 
 
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
-    public function setConsiderTenants($considerTenants) {
+    public function setConsiderTenants($considerTenants)
+    {
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants() {
+    public function getConsiderTenants()
+    {
         return $this->considerTenants;
     }
 
@@ -126,20 +128,21 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return array
      */
-    public function getDataForResource($data, $object = null, $params = array()) {
+    public function getDataForResource($data, $object = null, $params = [])
+    {
         if ($data instanceof ObjectData\IndexFieldSelection) {
-            return array(
+            return [
                 $this->getName() . "__tenant" => $data->getTenant(),
                 $this->getName() . "__field" => $data->getField(),
                 $this->getName() . "__preSelect" => $data->getPreSelect()
-            );
+            ];
         }
-        return array(
+
+        return [
             $this->getName() . "__tenant" => null,
             $this->getName() . "__field" => null,
             $this->getName() . "__preSelect" => null
-        );
-
+        ];
     }
 
     /**
@@ -149,10 +152,12 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return mixed
      */
-    public function getDataFromResource($data, $object = null, $params = array()) {
-        if($data[$this->getName() . "__field"]) {
+    public function getDataFromResource($data, $object = null, $params = [])
+    {
+        if ($data[$this->getName() . "__field"]) {
             return new ObjectData\IndexFieldSelection($data[$this->getName() . "__tenant"], $data[$this->getName() . "__field"], $data[$this->getName() . "__preSelect"]);
         }
+
         return null;
     }
 
@@ -163,7 +168,8 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return array
      */
-    public function getDataForQueryResource($data, $object = null, $params = array()) {
+    public function getDataForQueryResource($data, $object = null, $params = [])
+    {
         return $this->getDataForResource($data, $object, $params);
     }
 
@@ -174,13 +180,14 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return mixed
      */
-    public function getDataForEditmode($data, $object = null, $params = array()) {
+    public function getDataForEditmode($data, $object = null, $params = [])
+    {
         if ($data instanceof ObjectData\IndexFieldSelection) {
-            return array(
+            return [
                 "tenant" => $data->getTenant(),
                 "field" => $data->getField(),
                 "preSelect" => $data->getPreSelect()
-            );
+            ];
         }
 
         return null;
@@ -193,15 +200,16 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return mixed
      */
-    public function getDataFromEditmode($data, $object = null, $params = array()) {
-        if($data["field"]) {
-
-            if(is_array($data['preSelect'])) {
+    public function getDataFromEditmode($data, $object = null, $params = [])
+    {
+        if ($data["field"]) {
+            if (is_array($data['preSelect'])) {
                 $data['preSelect'] = implode(",", $data['preSelect']);
             }
 
             return new ObjectData\IndexFieldSelection($data["tenant"], $data["field"], $data["preSelect"]);
         }
+
         return null;
     }
 
@@ -212,10 +220,12 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data, $object = null, $params = array()) {
-        if($data instanceof ObjectData\IndexFieldSelection) {
+    public function getVersionPreview($data, $object = null, $params = [])
+    {
+        if ($data instanceof ObjectData\IndexFieldSelection) {
             return $data->getTenant() . " " . $data->getField() . " " . $data->getPreSelect();
         }
+
         return "";
     }
 
@@ -226,13 +236,12 @@ class IndexFieldSelection extends Data {
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
-
-        if(!$omitMandatoryCheck && $this->getMandatory() &&
-            ($data === NULL || $data->getField() === NULL)){
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck && $this->getMandatory() &&
+            ($data === null || $data->getField() === null)) {
             throw new \Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
         }
-
     }
 
     /**
@@ -242,17 +251,20 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array()) {
-
+    public function getForCsvExport($object, $params = [])
+    {
         $key = $this->getName();
         $getter = "get".ucfirst($key);
-        if($object->$getter() instanceof ObjectData\IndexFieldSelection){
+        if ($object->$getter() instanceof ObjectData\IndexFieldSelection) {
             $preSelect = $object->$getter()->getPreSelect();
-            if(is_array($preSelect)) {
+            if (is_array($preSelect)) {
                 $preSelect = implode("%%", $preSelect);
             }
+
             return $object->$getter()->getTenant() . "%%%%" . $object->$getter()->getField() . "%%%%" . $preSelect ;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
 
@@ -263,7 +275,8 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return ObjectData\IndexFieldSelection
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array()) {
+    public function getFromCsvImport($importValue, $object = null, $params = [])
+    {
         $values = explode("%%%%", $importValue);
 
         $value = null;
@@ -271,6 +284,7 @@ class IndexFieldSelection extends Data {
             $preSelect = explode("%%", $value[2]);
             $value = new ObjectData\IndexFieldSelection($value[0], $values[1], $preSelect);
         }
+
         return $value;
     }
 
@@ -281,18 +295,20 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport ($object, $params = array()) {
-
+    public function getForWebserviceExport($object, $params = [])
+    {
         $key = $this->getName();
         $getter = "get".ucfirst($key);
 
         if ($object->$getter() instanceof ObjectData\IndexFieldSelection) {
-            return array(
+            return [
                 "tenant" => $object->$getter()->getTenant(),
                 "field" => $object->$getter()->getField(),
                 "preSelect" => implode("%%", $object->$getter()->getPreSelect())
-            );
-        } else return null;
+            ];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -302,10 +318,11 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport ($value, $relatedObject = null, $params = array(), $idMapper = null) {
-        if(empty($value)){
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
+    {
+        if (empty($value)) {
             return null;
-        }else if($value["field"] !== null) {
+        } elseif ($value["field"] !== null) {
             return new ObjectData\IndexFieldSelection($value["tenant"], $value["field"], explode("%%", $value["preSelect"]));
         } else {
             throw new \Exception(get_class($this).": cannot get values from web service import - invalid data");
@@ -318,7 +335,8 @@ class IndexFieldSelection extends Data {
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array()) {
+    public function isDiffChangeAllowed($object, $params = [])
+    {
         return false;
     }
 
@@ -337,5 +355,4 @@ class IndexFieldSelection extends Data {
     {
         $this->width = intval($width);
     }
-
 }

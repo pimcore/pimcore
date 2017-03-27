@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor
  */
-interface ICommitOrderProcessor {
+interface ICommitOrderProcessor
+{
 
 
     /**

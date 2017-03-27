@@ -12,14 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\Helper;
 
 use Pimcore\Logger;
 use Pimcore\Cache;
 
-class MySql {
-
+class MySql
+{
     protected $_sqlChangeLog = [];
 
     /**
@@ -29,11 +28,11 @@ class MySql {
 
     protected $db;
 
-    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig)
+    {
         $this->tenantConfig = $tenantConfig;
 
         $this->db = \Pimcore\Db::get();
-
     }
 
     public function getValidTableColumns($table)
@@ -42,8 +41,7 @@ class MySql {
 
 
         if (!Cache\Runtime::isRegistered($cacheKey)) {
-
-            $columns = array();
+            $columns = [];
             $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
             foreach ($data as $d) {
                 $columns[] = $d["Field"];
@@ -55,11 +53,11 @@ class MySql {
         return Cache\Runtime::load($cacheKey);
     }
 
-    public function doInsertData($data) {
-
+    public function doInsertData($data)
+    {
         $validColumns = $this->getValidTableColumns($this->tenantConfig->getTablename());
-        foreach($data as $column => $value) {
-            if(!in_array($column, $validColumns)) {
+        foreach ($data as $column => $value) {
+            if (!in_array($column, $validColumns)) {
                 unset($data[$column]);
             }
         }
@@ -68,11 +66,13 @@ class MySql {
     }
 
 
-    public function getSystemAttributes() {
-        return array("o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_virtualProductActive", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
+    public function getSystemAttributes()
+    {
+        return ["o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_virtualProductActive", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList"];
     }
 
-    public function createOrUpdateIndexStructures() {
+    public function createOrUpdateIndexStructures()
+    {
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
@@ -100,54 +100,52 @@ class MySql {
         $systemColumns = $this->getSystemAttributes();
 
         $columnsToDelete = $columns;
-        $columnsToAdd = array();
+        $columnsToAdd = [];
         $columnConfig = $this->tenantConfig->getAttributeConfig();
-        if(!empty($columnConfig->name)) {
-            $columnConfig = array($columnConfig);
+        if (!empty($columnConfig->name)) {
+            $columnConfig = [$columnConfig];
         }
-        if($columnConfig) {
-            foreach($columnConfig as $column) {
-                if(!array_key_exists($column->name, $columns)) {
-
+        if ($columnConfig) {
+            foreach ($columnConfig as $column) {
+                if (!array_key_exists($column->name, $columns)) {
                     $doAdd = true;
-                    if(!empty($column->interpreter)) {
+                    if (!empty($column->interpreter)) {
                         $interpreter = $column->interpreter;
                         $interpreterObject = new $interpreter();
-                        if($interpreterObject instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
+                        if ($interpreterObject instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
                             $doAdd = false;
                         }
                     }
 
-                    if($doAdd) {
+                    if ($doAdd) {
                         $columnsToAdd[$column->name] = $column->type;
                     }
                 }
                 unset($columnsToDelete[$column->name]);
             }
         }
-        foreach($columnsToDelete as $c) {
-            if(!in_array($c, $systemColumns)) {
+        foreach ($columnsToDelete as $c) {
+            if (!in_array($c, $systemColumns)) {
                 $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` DROP COLUMN `' . $c . '`;');
             }
         }
 
 
-        foreach($columnsToAdd as $c => $type) {
+        foreach ($columnsToAdd as $c => $type) {
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD `' . $c . '` ' . $type . ';');
         }
 
         $searchIndexColums = $this->tenantConfig->getSearchAttributeConfig();
-        if(!empty($searchIndexColums)) {
-
+        if (!empty($searchIndexColums)) {
             try {
                 $this->dbexec('ALTER TABLE ' . $this->tenantConfig->getTablename() . ' DROP INDEX search;');
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 Logger::info($e);
             }
 
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = MyISAM;');
-            $columnNames = array();
-            foreach($searchIndexColums as $c) {
+            $columnNames = [];
+            foreach ($searchIndexColums as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);
             }
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD FULLTEXT INDEX search (' . implode(",", $columnNames) . ');');
@@ -163,41 +161,42 @@ class MySql {
           PRIMARY KEY (`src`,`dest`,`fieldname`,`type`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 
-        if($this->tenantConfig->getTenantRelationTablename()) {
+        if ($this->tenantConfig->getTenantRelationTablename()) {
             $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getTenantRelationTablename() . "` (
               `o_id` $idColumnType,
               `subtenant_id` int(11) NOT NULL,
               PRIMARY KEY (`o_id`,`subtenant_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
         }
-
     }
 
-    protected function dbexec($sql) {
+    protected function dbexec($sql)
+    {
         $this->db->query($sql);
         $this->logSql($sql);
     }
 
-    protected function logSql ($sql) {
+    protected function logSql($sql)
+    {
         Logger::info($sql);
 
         $this->_sqlChangeLog[] = $sql;
     }
 
-    public function __destruct () {
+    public function __destruct()
+    {
 
         // write sql change log for deploying to production system
-        if(!empty($this->_sqlChangeLog)) {
+        if (!empty($this->_sqlChangeLog)) {
             $log = implode("\n\n\n", $this->_sqlChangeLog);
 
             $filename = "db-change-log_".time()."_productindex.sql";
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/".$filename;
-            if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
+            if (defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
                 $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
             }
 
             file_put_contents($file, $log);
         }
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -21,7 +20,8 @@ use Pimcore\Logger;
 
 class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         //return "";
         $field = $this->getField($filterDefinition);
 
@@ -29,22 +29,17 @@ class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundl
 
 
         // add current filter. workaround for findologic behavior
-        if(array_key_exists($field, $currentFilter) && $currentFilter[$field] != null)
-        {
-            foreach($currentFilter[$field] as $id)
-            {
+        if (array_key_exists($field, $currentFilter) && $currentFilter[$field] != null) {
+            foreach ($currentFilter[$field] as $id) {
                 $add = true;
-                foreach($values as $v)
-                {
-                    if($v['value'] == $id)
-                    {
+                foreach ($values as $v) {
+                    if ($v['value'] == $id) {
                         $add = false;
                         break;
                     }
                 }
 
-                if($add)
-                {
+                if ($add) {
                     array_unshift($values, [
                         'value' => $id
                         , 'label' => $id
@@ -56,15 +51,15 @@ class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundl
         }
 
 
-        $objects = array();
+        $objects = [];
         Logger::info("Load Objects...");
-        $availableRelations = array();
-        if($filterDefinition->getAvailableRelations()) {
+        $availableRelations = [];
+        if ($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
         }
 
-        foreach($values as $v) {
-            if(empty($availableRelations) || $availableRelations[$v['value']] === true) {
+        foreach ($values as $v) {
+            if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
@@ -79,7 +74,8 @@ class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundl
         } else {
             $script = $this->script;
         }
-        return $this->render($script, array(
+
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
@@ -87,7 +83,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundl
             "objects" => $objects,
             "fieldname" => $field,
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
 
@@ -99,29 +95,26 @@ class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundl
 
         $value = $params[$field];
 
-        if(empty($value) && !$params['is_reload']) {
+        if (empty($value) && !$params['is_reload']) {
             $objects = $preSelect;
-            $value = array();
+            $value = [];
 
-            if(!is_array($objects)) {
+            if (!is_array($objects)) {
                 $objects = explode(",", $objects);
             }
 
-            if (is_array($objects)){
-                foreach($objects as $o) {
-                    if(is_object($o)) {
+            if (is_array($objects)) {
+                foreach ($objects as $o) {
+                    if (is_object($o)) {
                         $value[] = $o->getId();
                     } else {
                         $value[] = $o;
                     }
                 }
             }
-
-        } else if(!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
-            foreach($value as $k => $v)
-            {
-                if($v == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING)
-                {
+        } elseif (!empty($value) && in_array(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+            foreach ($value as $k => $v) {
+                if ($v == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
                     unset($value[$k]);
                 }
             }
@@ -129,9 +122,10 @@ class MultiSelectRelation extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundl
 
         $currentFilter[$field] = $value;
 
-        if(!empty($value)) {
+        if (!empty($value)) {
             $productList->addRelationCondition($field, $value);
         }
+
         return $currentFilter;
     }
 }

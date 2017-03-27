@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -26,8 +25,8 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class FilterService
  * @package OnlineShop\Framework\FilterService
  */
-class FilterService {
-
+class FilterService
+{
     protected $config;
 
     /**
@@ -43,7 +42,8 @@ class FilterService {
     /**
      * @param $config Config OnlineShop Configuration
      */
-    public function __construct($config, TranslatorInterface $translator, EngineInterface $renderer) {
+    public function __construct($config, TranslatorInterface $translator, EngineInterface $renderer)
+    {
         $this->config = $config;
         $this->translator = $translator;
         $this->renderer = $renderer;
@@ -56,9 +56,10 @@ class FilterService {
      * @param $name
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType | string
      */
-    public function getFilterDefinitionClass($name) {
-        if($this->config->$name) {
-            return new $this->config->$name->class($this->config->$name->script,$this->config->$name, $this->translator, $this->renderer);
+    public function getFilterDefinitionClass($name)
+    {
+        if ($this->config->$name) {
+            return new $this->config->$name->class($this->config->$name->script, $this->config->$name, $this->translator, $this->renderer);
         } else {
             return $name; //throw new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\UnsupportedException($name . " not as filter type configured.");
         }
@@ -68,16 +69,18 @@ class FilterService {
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterGroupHelper
      * @throws \Exception
      */
-    public function getFilterGroupHelper() {
-        if(!$this->filterGroupHelper) {
+    public function getFilterGroupHelper()
+    {
+        if (!$this->filterGroupHelper) {
             $classname = (string)$this->config->helper;
-            if(!class_exists($classname)) {
+            if (!class_exists($classname)) {
                 Logger::warn("FilterGroupHelper " . $classname . " does not exist, using default implementation.");
                 $classname = '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterGroupHelper';
             }
 
             $this->filterGroupHelper = new $classname();
         }
+
         return $this->filterGroupHelper;
     }
 
@@ -90,11 +93,12 @@ class FilterService {
      * @param array $params request params with eventually set filter conditions
      * @return array returns set filters
      */
-    public function initFilterService(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject, IProductList $productList, $params = array()) {
-        $currentFilter = array();
+    public function initFilterService(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject, IProductList $productList, $params = [])
+    {
+        $currentFilter = [];
 
         if ($filterObject->getFilters()) {
-            foreach($filterObject->getFilters() as $filter) {
+            foreach ($filterObject->getFilters() as $filter) {
 
                 /**
                  * @var $filter AbstractFilterDefinitionType
@@ -107,17 +111,16 @@ class FilterService {
         }
 
         if ($filterObject->getConditions()) {
-            foreach($filterObject->getConditions() as $condition) {
+            foreach ($filterObject->getConditions() as $condition) {
 
                 /**
                  * @var $condition AbstractFilterDefinitionType
                  */
-                $this->addCondition($condition, $productList, $currentFilter, array(), true);
+                $this->addCondition($condition, $productList, $currentFilter, [], true);
             }
         }
 
         return $currentFilter;
-
     }
 
     /**
@@ -128,8 +131,8 @@ class FilterService {
      * @param $currentFilter array current filter for this filter definition
      * @return string view snippet
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
-
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         $frontend = $this->getFilterDefinitionClass($filterDefinition->getType())->getFilterFrontend($filterDefinition, $productList, $currentFilter);
 
         return $frontend;
@@ -145,8 +148,8 @@ class FilterService {
      * @param bool $isPrecondition
      * @return array updated currentFilter array
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         return $this->getFilterDefinitionClass($filterDefinition->getType())->addCondition($filterDefinition, $productList, $currentFilter, $params, $isPrecondition);
     }
-
 }

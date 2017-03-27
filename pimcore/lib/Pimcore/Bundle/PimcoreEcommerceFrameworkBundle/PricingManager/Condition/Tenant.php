@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -33,6 +32,7 @@ class Tenant implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingM
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $currentTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+
         return in_array($currentTenant, $this->getTenant());
     }
 
@@ -59,7 +59,7 @@ class Tenant implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingM
     {
         $json = json_decode($string);
 
-        $this->setTenant( explode(',', $json->tenant) );
+        $this->setTenant(explode(',', $json->tenant));
 
         return $this;
     }
@@ -80,6 +80,7 @@ class Tenant implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingM
     public function setTenant(array $tenant)
     {
         $this->tenant = $tenant;
+
         return $this;
     }
 }

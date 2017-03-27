@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;

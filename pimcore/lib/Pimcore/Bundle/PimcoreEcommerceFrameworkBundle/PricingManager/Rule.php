@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -34,9 +33,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
         $cacheKey = Dao::TABLE_NAME . "_" . $id;
         try {
             $rule = Runtime::get($cacheKey);
-        }
-        catch (\Exception $e) {
-
+        } catch (\Exception $e) {
             try {
                 $ruleClass = get_called_class();
                 $rule = new $ruleClass;
@@ -44,11 +41,10 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
 
                 Runtime::set($cacheKey, $rule);
             } catch (\Exception $ex) {
-
                 Logger::debug($ex->getMessage());
+
                 return null;
             }
-
         }
 
         return $rule;
@@ -83,7 +79,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     /**
      * @var array|IAction
      */
-    protected $action = array();
+    protected $action = [];
 
     /**
      * @var string
@@ -110,35 +106,31 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setValue($key, $value)
     {
         $method = "set" . $key;
-        if (method_exists($this, $method))
-        {
-            switch($method)
-            {
+        if (method_exists($this, $method)) {
+            switch ($method) {
                 // localized fields
                 case 'setlabel':
                 case 'setdescription':
                     $value = unserialize($value);
-                    if($value === false)
-                    {
+                    if ($value === false) {
                         return $this;
-                    }
-                    else
-                    {
+                    } else {
                         $this->$key = $value;
                     }
+
                     return $this;
 
                 // objects
                 case 'setactions':
                 case 'setcondition':
                     $value = unserialize($value);
-                    if($value === false)
-                    {
+                    if ($value === false) {
                         return $this;
                     }
             }
             $this->$method($value);
         }
+
         return $this;
     }
 
@@ -150,6 +142,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -170,6 +163,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setLabel($label, $locale = null)
     {
         $this->label[ $this->getLanguage($locale) ] = $label;
+
         return $this;
     }
 
@@ -200,6 +194,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setName($name, $locale = null)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -212,6 +207,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setDescription($description, $locale = null)
     {
         $this->description[ $this->getLanguage($locale) ] = $description;
+
         return $this;
     }
 
@@ -232,6 +228,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setBehavior($behavior)
     {
         $this->behavior = $behavior;
+
         return $this;
     }
 
@@ -250,6 +247,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setActive($active)
     {
         $this->active = $active;
+
         return $this;
     }
 
@@ -286,6 +284,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setActions(array $action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -304,6 +303,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function setPrio($prio)
     {
         $this->prio = (int)$prio;
+
         return $this;
     }
 
@@ -321,6 +321,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function save()
     {
         $this->getDao()->save();
+
         return $this;
     }
 
@@ -341,7 +342,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     public function check(IEnvironment $environment)
     {
         $condition = $this->getCondition();
-        if($condition) {
+        if ($condition) {
             return $condition->check($environment);
         }
 
@@ -353,10 +354,10 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      *
      * @return bool
      */
-    public function hasProductActions() {
-        foreach($this->getActions() as $action)
-        {
-            if($action instanceof IProductDiscount) {
+    public function hasProductActions()
+    {
+        foreach ($this->getActions() as $action) {
+            if ($action instanceof IProductDiscount) {
                 return true;
             }
         }
@@ -371,10 +372,9 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function executeOnProduct(IEnvironment $environment)
     {
-        foreach($this->getActions() as $action)
-        {
+        foreach ($this->getActions() as $action) {
             /* @var IAction $action */
-            $action->executeOnProduct( $environment );
+            $action->executeOnProduct($environment);
         }
 
         return $this;
@@ -387,10 +387,9 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function executeOnCart(IEnvironment $environment)
     {
-        foreach($this->getActions() as $action)
-        {
+        foreach ($this->getActions() as $action) {
             /* @var IAction $action */
-            $action->executeOnCart( $environment );
+            $action->executeOnCart($environment);
         }
 
         return $this;
@@ -403,7 +402,8 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      * @param $language
      * @return string
      */
-    protected function getLanguage($language = null) {
+    protected function getLanguage($language = null)
+    {
         if ($language) {
             return (string) $language;
         }

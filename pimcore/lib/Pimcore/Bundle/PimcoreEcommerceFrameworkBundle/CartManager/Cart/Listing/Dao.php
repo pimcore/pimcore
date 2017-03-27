@@ -12,23 +12,23 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart\Listing;
 
-class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao {
-
+class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
+{
     protected $cartClass = '\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart';
 
     /**
      * @return array
      */
-    public function load() {
-        $carts = array();
+    public function load()
+    {
+        $carts = [];
         $cartIds = $this->db->fetchCol("SELECT id FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart\Dao::TABLE_NAME .
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($cartIds as $id) {
-            $carts[] = call_user_func(array($this->getCartClass(), 'getById'), $id);
+            $carts[] = call_user_func([$this->getCartClass(), 'getById'], $id);
         }
 
         $this->model->setCarts($carts);
@@ -36,8 +36,10 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao {
         return $carts;
     }
 
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM `" . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart\Dao::TABLE_NAME . "`" . $this->getCondition());
+
         return $amount["amount"];
     }
 
@@ -50,5 +52,4 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao {
     {
         return $this->cartClass;
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -22,12 +21,12 @@ class Bracket implements IBracket
     /**
      * @var array|\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
      */
-    protected $conditions = array();
+    protected $conditions = [];
 
     /**
      * @var array|IBracket::OPERATOR_*
      */
-    protected $operator = array();
+    protected $operator = [];
 
     /**
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition $condition
@@ -39,6 +38,7 @@ class Bracket implements IBracket
     {
         $this->conditions[] = $condition;
         $this->operator[] = $operator;
+
         return $this;
     }
 
@@ -58,16 +58,14 @@ class Bracket implements IBracket
         $state = false;
 
         // check all conditions
-        foreach($this->conditions as $num => $condition)
-        {
+        foreach ($this->conditions as $num => $condition) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition $condition */
 
             // test condition
             $check = $condition->check($environment);
 
             // check
-            switch($this->operator[$num])
-            {
+            switch ($this->operator[$num]) {
                 // first condition
                 case null:
                     $state = $check;
@@ -75,24 +73,27 @@ class Bracket implements IBracket
 
                 // AND
                 case IBracket::OPERATOR_AND:
-                    if($check === false)
+                    if ($check === false) {
                         return false;
-                    else
+                    } else {
                         $state = true;
+                    }
                     break;
 
                 // AND FALSE
                 case IBracket::OPERATOR_AND_NOT:
-                    if($check === true)
+                    if ($check === true) {
                         return false;
-                    else
+                    } else {
                         $state = true;
+                    }
                     break;
 
                 // OR
                 case IBracket::OPERATOR_OR:
-                    if($check === true)
+                    if ($check === true) {
                         $state = $check;
+                    }
                     break;
             }
         }
@@ -105,18 +106,16 @@ class Bracket implements IBracket
      */
     public function toJSON()
     {
-        $json = array('type' => 'Bracket', 'conditions' => array());
-        foreach($this->conditions as $num => $condition)
-        {
-            if($condition) {
+        $json = ['type' => 'Bracket', 'conditions' => []];
+        foreach ($this->conditions as $num => $condition) {
+            if ($condition) {
                 /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition $condition */
-                $cond = array(
+                $cond = [
                     'operator' => $this->operator[$num],
                     'condition' => json_decode($condition->toJSON())
-                );
+                ];
                 $json['conditions'][] = $cond;
             }
-
         }
 
         return json_encode($json);
@@ -131,10 +130,9 @@ class Bracket implements IBracket
     {
         $json = json_decode($string);
 
-        foreach($json->conditions as $setting)
-        {
-            $subcond = Factory::getInstance()->getPricingManager()->getCondition( $setting->type );
-            $subcond->fromJSON( json_encode($setting) );
+        foreach ($json->conditions as $setting) {
+            $subcond = Factory::getInstance()->getPricingManager()->getCondition($setting->type);
+            $subcond->fromJSON(json_encode($setting));
 
             $this->addCondition($subcond, $setting->operator);
         }

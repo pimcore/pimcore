@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -66,7 +65,7 @@ class TrackingManager implements ITrackingManager
 
     /**
      * Used by processConfig to handle single config entry
-     * 
+     *
      * @param Config $cfg
      * @throws InvalidConfigException
      */
@@ -80,12 +79,11 @@ class TrackingManager implements ITrackingManager
         $itemBuilder = $this->getItemBuilder($cfg->trackingItemBuilder);
         $tracker     = new $className($itemBuilder, $this->renderer);
 
-        if($tracker instanceof ITracker) {
+        if ($tracker instanceof ITracker) {
             $this->registerTracker($cfg->name, $tracker);
         } else {
             throw new InvalidConfigException(sprintf('Tracker class %s not an insance of ITracker.', $className));
         }
-
     }
     /**
      * Get an item builder instance, fall back to default implementation
@@ -138,7 +136,7 @@ class TrackingManager implements ITrackingManager
 
 
     /**
-     * Ensure the dependency for enhanced e-commerce tracking "ec.js" 
+     * Ensure the dependency for enhanced e-commerce tracking "ec.js"
      * is included.
      */
     public function ensureDependencies()
@@ -244,7 +242,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        if(!$order->getProperty("os_tracked")) {
+        if (!$order->getProperty("os_tracked")) {
 
             //add property to order object in order to prevent multiple checkout complete tracking
             $order->setProperty("os_tracked", "bool", true);

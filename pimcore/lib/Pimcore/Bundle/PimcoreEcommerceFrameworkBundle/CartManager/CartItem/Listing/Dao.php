@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem\Listing;
 
-class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao {
+class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
+{
 
     /**
      * @var string
@@ -25,21 +25,24 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao {
     /**
      * @return array
      */
-    public function load() {
-        $items = array();
+    public function load()
+    {
+        $items = [];
         $cartItems = $this->db->fetchAll("SELECT cartid, itemKey, parentItemKey FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME .
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($cartItems as $item) {
-            $items[] = call_user_func(array($this->getClassName(), 'getByCartIdItemKey'), $item['cartid'], $item['itemKey'], $item['parentItemKey']);
+            $items[] = call_user_func([$this->getClassName(), 'getByCartIdItemKey'], $item['cartid'], $item['itemKey'], $item['parentItemKey']);
         }
         $this->model->setCartItems($items);
 
         return $items;
     }
 
-    public function getTotalCount() {
+    public function getTotalCount()
+    {
         $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM `" . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME . "`" . $this->getCondition());
+
         return $amount["amount"];
     }
 

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem\IAvailability;
@@ -24,7 +23,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 /**
  * interface for cart item implementations of online shop framework
  */
-interface ICartItem {
+interface ICartItem
+{
 
     /**
      * @abstract

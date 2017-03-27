@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 class ProductAction extends AbstractProductData
@@ -38,6 +37,7 @@ class ProductAction extends AbstractProductData
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
 
@@ -56,6 +56,7 @@ class ProductAction extends AbstractProductData
     public function setCoupon($coupon)
     {
         $this->coupon = $coupon;
+
         return $this;
     }
 }

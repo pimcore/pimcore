@@ -12,15 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Listing;
 
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-
     public function load()
     {
-        $tokens = array();
+        $tokens = [];
 
         $unitIds = $this->db->fetchAll("SELECT * FROM " .
             \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME .
@@ -52,5 +50,4 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 
         return $amount;
     }
-
 }

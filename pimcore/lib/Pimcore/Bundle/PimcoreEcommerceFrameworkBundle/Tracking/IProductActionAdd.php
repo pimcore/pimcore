@@ -12,14 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 interface IProductActionAdd
 {
     /**
      * Track product action add
-     * 
+     *
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IProduct $product
      * @param int $quantity
      */

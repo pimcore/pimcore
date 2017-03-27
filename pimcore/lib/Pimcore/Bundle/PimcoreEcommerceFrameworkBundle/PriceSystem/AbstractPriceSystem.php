@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable;
@@ -27,11 +27,12 @@ use Pimcore\Model\WebsiteSetting;
  *
  * abstract implementation for price systems
  */
-abstract class AbstractPriceSystem implements IPriceSystem {
-
+abstract class AbstractPriceSystem implements IPriceSystem
+{
     protected $config;
 
-    public function __construct($config) {
+    public function __construct($config)
+    {
         $this->config = $config;
     }
 
@@ -43,8 +44,9 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable[] $products
      * @return IPriceInfo
      */
-    public function getPriceInfo(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null) {
-        return $this->initPriceInfoInstance($quantityScale,$abstractProduct,$products);
+    public function getPriceInfo(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null)
+    {
+        return $this->initPriceInfoInstance($quantityScale, $abstractProduct, $products);
     }
 
 
@@ -56,11 +58,11 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @param $products
      * @return IPriceInfo
      */
-    protected function initPriceInfoInstance($quantityScale,$product,$products) {
-        $priceInfo = $this->createPriceInfoInstance($quantityScale,$product,$products);
+    protected function initPriceInfoInstance($quantityScale, $product, $products)
+    {
+        $priceInfo = $this->createPriceInfoInstance($quantityScale, $product, $products);
 
-        if($quantityScale !== IPriceInfo::MIN_PRICE)
-        {
+        if ($quantityScale !== IPriceInfo::MIN_PRICE) {
             $priceInfo->setQuantity($quantityScale);
         }
 
@@ -69,11 +71,9 @@ abstract class AbstractPriceSystem implements IPriceSystem {
         $priceInfo->setPriceSystem($this);
 
         // apply pricing rules
-        $priceInfoWithRules = Factory::getInstance()->getPricingManager()->applyProductRules( $priceInfo );
+        $priceInfoWithRules = Factory::getInstance()->getPricingManager()->applyProductRules($priceInfo);
 
         return $priceInfoWithRules;
-
-
     }
 
 
@@ -85,7 +85,7 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @internal param $infoConstructorParams
      * @return AbstractPriceInfo
      */
-    abstract function createPriceInfoInstance($quantityScale,$product,$products);
+    abstract public function createPriceInfoInstance($quantityScale, $product, $products);
 
     /**
      * Sample implementation for getting the correct OnlineShopTaxClass. In this case Tax Class is retrieved from
@@ -95,14 +95,15 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      *
      * @return OnlineShopTaxClass
      */
-    protected function getDefaultTaxClass() {
+    protected function getDefaultTaxClass()
+    {
         $taxClass =  WebsiteSetting::getByName("defaultTaxClass");
 
-        if($taxClass) {
+        if ($taxClass) {
             $taxClass = OnlineShopTaxClass::getById($taxClass->getData());
         }
 
-        if(empty($taxClass)) {
+        if (empty($taxClass)) {
             $taxClass = new OnlineShopTaxClass();
             $taxClass->setTaxEntryCombinationType(TaxEntry::CALCULATION_MODE_COMBINE);
         }
@@ -119,7 +120,8 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @param $environment
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForProduct(ICheckoutable $product) {
+    public function getTaxClassForProduct(ICheckoutable $product)
+    {
         return $this->getDefaultTaxClass();
     }
 
@@ -132,15 +134,16 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @param $environment
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForPriceModification(ICartPriceModificator $modificator) {
+    public function getTaxClassForPriceModification(ICartPriceModificator $modificator)
+    {
         return $this->getDefaultTaxClass();
     }
 
     /**
      * @return TaxCalculationService
      */
-    protected function getTaxCalculationService() {
+    protected function getTaxCalculationService()
+    {
         return new TaxCalculationService();
     }
 }
-

@@ -12,21 +12,21 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
  * Class \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\AbstractStep
  */
-abstract class AbstractStep implements ICheckoutStep {
+abstract class AbstractStep implements ICheckoutStep
+{
 
     /**
      * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart
      */
     protected $cart;
 
-    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart)
+    {
         $this->cart = $cart;
     }
-
 }

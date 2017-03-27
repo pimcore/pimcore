@@ -12,9 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement;
-
 
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
@@ -23,8 +21,8 @@ use Pimcore\Model\Object\OnlineShopTaxClass;
  *
  * @package OnlineShop\Framework\PriceSystem\TaxManagement
  */
-class TaxEntry {
-
+class TaxEntry
+{
     const CALCULATION_MODE_COMBINE = "combine";
     const CALCULATION_MODE_ONE_AFTER_ANOTHER = "oneAfterAnother";
     const CALCULATION_MODE_FIXED = "fixed";
@@ -138,17 +136,15 @@ class TaxEntry {
      * @param OnlineShopTaxClass $taxClass
      * @return TaxEntry[]
      */
-    public static function convertTaxEntries(OnlineShopTaxClass $taxClass) {
-
+    public static function convertTaxEntries(OnlineShopTaxClass $taxClass)
+    {
         $convertedTaxEntries = [];
-        if($taxClass->getTaxEntries()) {
-            foreach($taxClass->getTaxEntries() as $index => $entry) {
+        if ($taxClass->getTaxEntries()) {
+            foreach ($taxClass->getTaxEntries() as $index => $entry) {
                 $convertedTaxEntries[] = new TaxEntry($entry->getPercent(), 0, $entry->getName() . "-" . $entry->getPercent(), $entry);
             }
         }
 
         return $convertedTaxEntries;
-
     }
-
 }

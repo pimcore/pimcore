@@ -12,9 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
-interface ICartProduct extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition {
-
+interface ICartProduct extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
+{
 }

@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
@@ -25,7 +25,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\TaxManagement\Tax
  *
  * price system implementation for attribute price system
  */
-class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
+class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
+{
 
     /**
      * @param $productIds
@@ -36,7 +37,8 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @param $limit
      * @throws \Exception
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit) {
+    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
+    {
         throw new \Exception("not supported yet");
     }
 
@@ -48,8 +50,8 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @internal param $infoConstructorParams
      * @return AbstractPriceInfo
      */
-    function createPriceInfoInstance($quantityScale, $product, $products) {
-
+    public function createPriceInfoInstance($quantityScale, $product, $products)
+    {
         $taxClass = $this->getTaxClassForProduct($product);
 
         $amount = $this->calculateAmount($product, $products);
@@ -57,7 +59,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
         $totalPrice = $this->getPriceClassInstance($amount * $quantityScale);
 
 
-        if($taxClass) {
+        if ($taxClass) {
             $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
             $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
@@ -80,22 +82,21 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @return float
      * @throws \Exception
      */
-    protected function calculateAmount($product, $products) {
+    protected function calculateAmount($product, $products)
+    {
         $getter = "get" . ucfirst($this->config->attributename);
-        if(method_exists($product, $getter)) {
-
-            if(!empty($products)) {
+        if (method_exists($product, $getter)) {
+            if (!empty($products)) {
                 $sum = 0;
-                foreach($products as $p) {
-
-                    if($p instanceof AbstractSetProductEntry) {
+                foreach ($products as $p) {
+                    if ($p instanceof AbstractSetProductEntry) {
                         $sum += $p->getProduct()->$getter() * $p->getQuantity();
                     } else {
                         $sum += $p->$getter();
                     }
                 }
-                return $sum;
 
+                return $sum;
             } else {
                 return $product->$getter();
             }
@@ -107,7 +108,8 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      *
      * @return Currency
      */
-    protected function getDefaultCurrency() {
+    protected function getDefaultCurrency()
+    {
         return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     }
 
@@ -118,15 +120,17 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @return IPrice
      * @throws \Exception
      */
-    protected function getPriceClassInstance($amount) {
-        if($this->config->priceClass) {
+    protected function getPriceClassInstance($amount)
+    {
+        if ($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);
-            if(!$price instanceof IPrice) {
+            if (!$price instanceof IPrice) {
                 throw new \Exception('Price Class does not implement IPrice');
             }
         } else {
             $price = new Price($amount, $this->getDefaultCurrency(), false);
         }
+
         return $price;
     }
 }

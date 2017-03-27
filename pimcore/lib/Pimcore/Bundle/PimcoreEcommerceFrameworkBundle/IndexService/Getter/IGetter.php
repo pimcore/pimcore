@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Getter;
 
-interface IGetter {
+interface IGetter
+{
     public static function get($object, $config = null);
 }

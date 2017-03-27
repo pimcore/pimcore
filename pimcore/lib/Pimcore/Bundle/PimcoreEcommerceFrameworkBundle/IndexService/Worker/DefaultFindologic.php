@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
@@ -67,7 +67,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
      */
     public function deleteFromIndex(IIndexable $object)
     {
-        $this->doDeleteFromIndex( $object->getId(), $object );
+        $this->doDeleteFromIndex($object->getId(), $object);
     }
 
 
@@ -80,9 +80,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
      */
     public function updateIndex(IIndexable $object)
     {
-        if(!$this->tenantConfig->isActive($object))
-        {
+        if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
+
             return;
         }
 
@@ -115,14 +115,12 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
 
 
         // add optional fields
-        if(array_key_exists('salesFrequency', $data['data']))
-        {
+        if (array_key_exists('salesFrequency', $data['data'])) {
             $xml->addChild('salesFrequencies')
                 ->addChild('salesFrequency', (int)$data['data']['salesFrequency'])
             ;
         }
-        if(array_key_exists('dateAdded', $data['data']))
-        {
+        if (array_key_exists('dateAdded', $data['data'])) {
             $xml->addChild('dateAddeds')
                 ->addChild('dateAdded', date('c', $data['data']['dateAdded']))
             ;
@@ -137,10 +135,10 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
          *
          * @return \SimpleXMLElement
          */
-        $addChildWithCDATA = function (\SimpleXMLElement $parent, $name, $value = NULL) {
+        $addChildWithCDATA = function (\SimpleXMLElement $parent, $name, $value = null) {
             $new_child = $parent->addChild($name);
 
-            if ($new_child !== NULL) {
+            if ($new_child !== null) {
                 $node = dom_import_simplexml($new_child);
                 $no   = $node->ownerDocument;
                 $node->appendChild($no->createCDATASection($value));
@@ -151,21 +149,17 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
 
 
         // add default data
-        foreach($data['data'] as $field => $value)
-        {
+        foreach ($data['data'] as $field => $value) {
             // skip empty values
-            if((string)$value === '')
-            {
-                    continue;
+            if ((string)$value === '') {
+                continue;
             }
             $value = is_string($value) ? htmlspecialchars($value) : $value;
 
 
-            if(in_array($field, $this->supportedFields))
-            {
+            if (in_array($field, $this->supportedFields)) {
                 // supported field
-                switch($field)
-                {
+                switch ($field) {
                     case 'ordernumber':
                         $parent = $xml->allOrdernumbers->ordernumbers;
                         $parent->addChild('ordernumber', $value);
@@ -191,32 +185,26 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
                         $parent->addChild('price', $value);
                         break;
                 }
-
-            }
-            else
-            {
+            } else {
                 // unsupported, map all to attributes
-                switch($field)
-                {
+                switch ($field) {
                     // richtige reihenfolge der kategorie berücksichtigen
                     case 'categoryIds':
                         $value = trim($value, ',');
-                        if($value)
-                        {
+                        if ($value) {
                             $attribute = $attributes->addChild('attribute');
                             $attribute->addChild('key', 'cat');
                             $values = $attribute->addChild('values');
                             $categories = explode(',', $value);
 
-                            foreach($categories as $c)
-                            {
+                            foreach ($categories as $c) {
                                 $categoryIds = [];
 
                                 $currentCategory = \Pimcore\Model\Object\Concrete::getById($c);
-                                while($currentCategory instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory) {
+                                while ($currentCategory instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory) {
                                     $categoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
-                                    if($currentCategory->getOSProductsInParentCategoryVisible()) {
+                                    if ($currentCategory->getOSProductsInParentCategoryVisible()) {
                                         $currentCategory = $currentCategory->getParent();
                                     } else {
                                         $currentCategory = null;
@@ -229,8 +217,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
                         break;
 
                     default:
-                        if(!is_array($value))
-                        {
+                        if (!is_array($value)) {
                             $attribute = $attributes->addChild('attribute');
 
                             $attribute->addChild('key', $field);
@@ -244,18 +231,15 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
 
         // add relations
         $groups = [];
-        foreach($data['relations'] as $relation)
-        {
+        foreach ($data['relations'] as $relation) {
             $groups[ $relation['fieldname'] ][] = $relation['dest'];
         }
-        foreach($groups as $name => $values)
-        {
+        foreach ($groups as $name => $values) {
             $attribute = $attributes->addChild('attribute');
             $attribute->addChild('key', $name);
             $v = $attribute->addChild('values');
 
-            foreach($values as $value)
-            {
+            foreach ($values as $value) {
                 $v->addChild('value', $value);
             }
         }
@@ -292,7 +276,7 @@ INSERT INTO {$this->getExportTableName()} (`id`, `shop_key`, `data`, `last_updat
 VALUES (:id, :shop_key, :data, now())
 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `last_update` = VALUES(`last_update`)
 SQL;
-        $this->db->query( $query, [
+        $this->db->query($query, [
             'id' => $objectId
             , 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey')
             , 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML())
@@ -339,6 +323,6 @@ SQL;
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic( $this->getTenantConfig() );
+        return new \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic($this->getTenantConfig());
     }
 }

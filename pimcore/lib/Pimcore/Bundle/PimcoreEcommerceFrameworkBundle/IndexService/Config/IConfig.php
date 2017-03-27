@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IWorker;
@@ -23,7 +22,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
  *
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig
  */
-interface IConfig {
+interface IConfig
+{
 
     /**
      * returns tenant name

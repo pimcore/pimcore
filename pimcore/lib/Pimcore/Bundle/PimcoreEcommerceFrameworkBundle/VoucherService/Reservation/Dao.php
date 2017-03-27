@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation;
 
 // TODO - Log Exceptions
@@ -41,18 +40,19 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
 
         try {
-
             $result = $this->db->fetchRow($query, $params);
             if (empty($result)) {
-//                throw new Exception("Reservation for token " . $code . " not found.");
+                //                throw new Exception("Reservation for token " . $code . " not found.");
                 return false;
             }
             $this->assignVariablesToModel($result);
             $this->model->setValue('id', $result['id']);
             $this->model->setCartId($result['cart_id']);
+
             return true;
         } catch (\Exception $e) {
             var_dump($e);
+
             return false;
         }
     }
@@ -65,6 +65,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         try {
             // Single Type Token --> only one token per Cart! --> Update on duplicate key!
             $this->db->query("INSERT INTO " . self::TABLE_NAME . " (token,cart_id,timestamp) VALUES (?,?,NOW())", [$code, $cart->getId()]);
+
             return true;
         } catch (Exception $e) {
             return false;
@@ -79,6 +80,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         try {
             $this->db->deleteWhere(self::TABLE_NAME, ["token" => $this->model->getToken()]);
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -106,6 +108,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             if ($count === 0) {
                 return false;
             }
+
             return $count;
         } catch (\Exception $e) {
             return true;
@@ -127,10 +130,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             if ($db->fetchOne($query, $params) === 0) {
                 return false;
             }
+
             return true;
         } catch (\Exception $e) {
             return true;
         }
     }
-
 }

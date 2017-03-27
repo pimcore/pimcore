@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 abstract class AbstractData implements \JsonSerializable
@@ -35,6 +34,7 @@ abstract class AbstractData implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 

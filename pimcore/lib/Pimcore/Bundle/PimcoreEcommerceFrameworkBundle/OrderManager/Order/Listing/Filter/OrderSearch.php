@@ -12,10 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
-
-
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderListFilter;
@@ -39,8 +36,7 @@ class OrderSearch implements IOrderListFilter
         $query = $orderList->getQuery();
 
 
-        if($this->getKeyword())
-        {
+        if ($this->getKeyword()) {
             $condition = <<<'SQL'
 0
 OR `order`.ordernumber like ?
@@ -65,7 +61,6 @@ SQL;
 
             $query->where($condition, '%' . $this->getKeyword() . '%');
         }
-
     }
 
     /**
@@ -84,6 +79,7 @@ SQL;
     public function setKeyword($keyword)
     {
         $this->keyword = $keyword;
+
         return $this;
     }
 }

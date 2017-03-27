@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
@@ -21,7 +20,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Logger;
 use Pimcore\Model\Object\ClassDefinition\Data\Select;
 
-class IndexFieldSelectionCombo extends Select {
+class IndexFieldSelectionCombo extends Select
+{
 
     /**
      * Static type of this element
@@ -37,11 +37,11 @@ class IndexFieldSelectionCombo extends Select {
 
 
 
-    public function __construct() {
-
+    public function __construct()
+    {
         $installer = new Installer();
-        if($installer->isInstalled()) {
-            $indexColumns = array();
+        if ($installer->isInstalled()) {
+            $indexColumns = [];
             try {
                 $indexService = Factory::getInstance()->getIndexService();
                 $indexColumns = $indexService->getIndexAttributes(true);
@@ -49,49 +49,53 @@ class IndexFieldSelectionCombo extends Select {
                 Logger::err($e);
             }
 
-            $options = array();
+            $options = [];
 
             foreach ($indexColumns as $c) {
-                $options[] = array(
+                $options[] = [
                     "key" => $c,
                     "value" => $c
-                );
+                ];
             }
 
-            if($this->getSpecificPriceField()) {
-                $options[] = array(
+            if ($this->getSpecificPriceField()) {
+                $options[] = [
                     "key" => IProductList::ORDERKEY_PRICE,
                     "value" => IProductList::ORDERKEY_PRICE
-                );
+                ];
             }
 
             $this->setOptions($options);
         }
-
     }
 
-    public function setSpecificPriceField($specificPriceField) {
+    public function setSpecificPriceField($specificPriceField)
+    {
         $this->specificPriceField = $specificPriceField;
     }
 
-    public function getSpecificPriceField() {
+    public function getSpecificPriceField()
+    {
         return $this->specificPriceField;
     }
 
-    public function setShowAllFields($showAllFields) {
+    public function setShowAllFields($showAllFields)
+    {
         $this->showAllFields = $showAllFields;
     }
 
-    public function getShowAllFields() {
+    public function getShowAllFields()
+    {
         return $this->showAllFields;
     }
 
-    public function setConsiderTenants($considerTenants) {
+    public function setConsiderTenants($considerTenants)
+    {
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants() {
+    public function getConsiderTenants()
+    {
         return $this->considerTenants;
     }
-
 }

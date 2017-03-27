@@ -12,14 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception;
 
 /**
  * Class UnsupportedException
  * @package OnlineShop\Framework\Exception
  */
-class UnsupportedException extends \Exception {
-
-
+class UnsupportedException extends \Exception
+{
 }

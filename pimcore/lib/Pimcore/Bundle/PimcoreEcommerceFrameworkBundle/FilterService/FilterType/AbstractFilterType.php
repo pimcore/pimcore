@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
@@ -24,7 +23,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractFilterType
 {
-
     const EMPTY_STRING = '$$EMPTY$$';
 
     protected $script;
@@ -61,6 +59,7 @@ abstract class AbstractFilterType
         if ($field instanceof IndexFieldSelection) {
             return $field->getField();
         }
+
         return $field;
     }
 
@@ -69,9 +68,10 @@ abstract class AbstractFilterType
         $field = $filterDefinition->getField();
         if ($field instanceof IndexFieldSelection) {
             return $field->getPreSelect();
-        } else if (method_exists($filterDefinition, "getPreSelect")) {
+        } elseif (method_exists($filterDefinition, "getPreSelect")) {
             return $filterDefinition->getPreSelect();
         }
+
         return null;
     }
 
@@ -86,7 +86,7 @@ abstract class AbstractFilterType
      * @param $currentFilter
      * @return string
      */
-    public abstract function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter);
+    abstract public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter);
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.
@@ -99,7 +99,7 @@ abstract class AbstractFilterType
      * @param bool $isPrecondition
      * @return array
      */
-    public abstract function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false);
+    abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false);
 
     /**
      * calls prepareGroupByValues of productlist if necessary
@@ -140,8 +140,8 @@ abstract class AbstractFilterType
 
             //legacy fallback for view rendering
             $prefix = PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts";
-            return $this->renderer->render($prefix . $script, $parameterBag);
 
+            return $this->renderer->render($prefix . $script, $parameterBag);
         }
     }
 }

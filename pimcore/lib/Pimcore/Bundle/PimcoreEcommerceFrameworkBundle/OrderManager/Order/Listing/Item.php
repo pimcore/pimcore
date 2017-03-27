@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing;
 
 use \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder as Order;
@@ -41,18 +40,14 @@ class Item extends AbstractOrderListItem implements IOrderListItem
     public function __call($method, $args)
     {
         $field = substr($method, 3);
-        if(substr($method, 0, 3) == 'get' && array_key_exists($field, $this->resultRow))
-        {
+        if (substr($method, 0, 3) == 'get' && array_key_exists($field, $this->resultRow)) {
             return $this->resultRow[ $field ];
         }
 
         $object = $this->reference();
-        if($object)
-        {
-            return call_user_func_array(array($object, $method), $args);
-        }
-        else
-        {
+        if ($object) {
+            return call_user_func_array([$object, $method], $args);
+        } else {
             throw new \Exception("Object with {$this->getId()} not found.");
         }
     }
@@ -62,6 +57,6 @@ class Item extends AbstractOrderListItem implements IOrderListItem
      */
     public function reference()
     {
-        return \Pimcore\Model\Object\Concrete::getById( $this->getId() );
+        return \Pimcore\Model\Object\Concrete::getById($this->getId());
     }
 }

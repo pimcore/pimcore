@@ -12,25 +12,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model;
 
 /**
  * Abstract base class for filter definition pimcore objects
  */
-abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
+abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
+{
 
     /**
      * @static
      * @param int $id
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
-    public static function getById($id) {
+    public static function getById($id)
+    {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if($object instanceof AbstractFilterDefinition) {
+        if ($object instanceof AbstractFilterDefinition) {
             return $object;
         }
+
         return null;
     }
 
@@ -40,7 +42,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
      * @abstract
      * @return float
      */
-    public abstract function getPageLimit();
+    abstract public function getPageLimit();
 
    /**
      * returns list of available fields for sorting ascending
@@ -48,7 +50,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
      * @abstract
      * @return string
      */
-   public abstract function getOrderByAsc();
+   abstract public function getOrderByAsc();
 
     /**
      * returns list of available fields for sorting descending
@@ -56,7 +58,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
      * @abstract
      * @return string
     */
-    public abstract function getOrderByDesc();
+    abstract public function getOrderByDesc();
 
    /**
     * return array of field collections for preconditions
@@ -64,7 +66,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
     * @abstract
     * @return \Pimcore\Model\Object\Fieldcollection
     */
-   public abstract function getConditions();
+   abstract public function getConditions();
 
     /**
      * return array of field collections for filters
@@ -72,7 +74,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
      * @abstract
      * @return \Pimcore\Model\Object\Fieldcollection
      */
-   public abstract function getFilters();
+   abstract public function getFilters();
 
 
     /**
@@ -83,12 +85,10 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
      */
     public function preGetValue($key)
     {
-
         if ($this->getClass()->getAllowInherit()
             && \Pimcore\Model\Object\AbstractObject::doGetInheritedValues()
             && $this->getClass()->getFieldDefinition($key) instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections
         ) {
-
             $checkInheritanceKey = $key . "Inheritance";
             if ($this->{
                 'get' . $checkInheritanceKey
@@ -97,7 +97,8 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
                 $parentValue = $this->getValueFromParent($key);
                 $data = $this->$key;
                 if (!$data) {
-                    $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);;
+                    $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);
+                    ;
                 }
                 if (!$data) {
                     return $parentValue;
@@ -112,6 +113,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
                     } else {
                         $value = new \Pimcore\Model\Object\Fieldcollection($data->getItems());
                     }
+
                     return $value;
                 }
             }
@@ -119,5 +121,4 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
 
         return parent::preGetValue($key);
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Listing;
 
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
@@ -25,15 +24,17 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     /**
      * @return array
      */
-    public function load() {
-        $rules = array();
+    public function load()
+    {
+        $rules = [];
 
         // load objects
         $ruleIds = $this->db->fetchCol("SELECT id FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Rule\Dao::TABLE_NAME .
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
-        foreach ($ruleIds as $id)
-            $rules[] = call_user_func(array($this->getRuleClass(), 'getById'), $id);
+        foreach ($ruleIds as $id) {
+            $rules[] = call_user_func([$this->getRuleClass(), 'getById'], $id);
+        }
 
         $this->model->setRules($rules);
 
@@ -49,5 +50,4 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     {
         return $this->ruleClass;
     }
-
 }

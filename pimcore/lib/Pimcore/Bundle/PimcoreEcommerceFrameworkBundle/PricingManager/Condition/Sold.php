@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class Sold extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
@@ -41,29 +40,22 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFram
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $rule = $environment->getRule();
-        if($rule)
-        {
+        if ($rule) {
             $cartUsedCount = 0;
 
-            if($this->isCountCart())
-            {
-                if($environment->getCart() && $environment->getCartItem())
-                {
+            if ($this->isCountCart()) {
+                if ($environment->getCart() && $environment->getCartItem()) {
                     // cart view
                     $cartUsedCount = $this->getCartRuleCount($environment->getCart(), $rule, $environment->getCartItem());
-                }
-                else if(!$environment->getCart())
-                {
+                } elseif (!$environment->getCart()) {
                     // product view
                     $cart = $this->getCart();
                     $cartUsedCount = $this->getCartRuleCount($cart, $rule);
                 }
             }
 
-            return ($this->getSoldCount( $rule ) + $cartUsedCount) < $this->getCount();
-        }
-        else
-        {
+            return ($this->getSoldCount($rule) + $cartUsedCount) < $this->getCount();
+        } else {
             return false;
         }
     }
@@ -92,8 +84,8 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFram
     {
         $json = json_decode($string);
 
-        $this->setCount( $json->count );
-        $this->setCountCart( (bool)$json->countCart );
+        $this->setCount($json->count);
+        $this->setCountCart((bool)$json->countCart);
 
         return $this;
     }
@@ -130,6 +122,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFram
     public function setCountCart($countCart)
     {
         $this->countCart = (bool)$countCart;
+
         return $this;
     }
 
@@ -156,22 +149,16 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFram
         // init
         $counter = 0;
 
-        foreach($cart->getItems() as $item)
-        {
+        foreach ($cart->getItems() as $item) {
             $rules = [];
 
-            if($cartItem && $item->getItemKey() == $cartItem)
-            {
+            if ($cartItem && $item->getItemKey() == $cartItem) {
                 // skip self if we are on a cartItem
-            }
-            else
-            {
+            } else {
                 // get rules
                 $priceInfo = $item->getPriceInfo();
-                if($priceInfo instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPriceInfo)
-                {
-                    if(($cartItem && $priceInfo->hasRulesApplied()) || $cartItem === NULL)
-                    {
+                if ($priceInfo instanceof \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IPriceInfo) {
+                    if (($cartItem && $priceInfo->hasRulesApplied()) || $cartItem === null) {
                         $rules = $priceInfo->getRules();
                     }
                 }
@@ -179,10 +166,8 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFram
 
 
             // search for current rule
-            foreach($rules as $r)
-            {
-                if($r->getId() == $rule->getId())
-                {
+            foreach ($rules as $r) {
+                if ($r->getId() == $rule->getId()) {
                     $counter++;
                     break;
                 }

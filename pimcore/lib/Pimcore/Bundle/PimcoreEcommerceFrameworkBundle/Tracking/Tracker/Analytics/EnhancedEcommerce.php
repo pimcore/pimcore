@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -31,8 +30,14 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Google\Analytics;
 
-class EnhancedEcommerce extends Tracker implements IProductView, IProductImpression, IProductActionAdd, IProductActionRemove,
-    ICheckout, ICheckoutStep, ICheckoutComplete
+class EnhancedEcommerce extends Tracker implements
+    IProductView,
+    IProductImpression,
+    IProductActionAdd,
+    IProductActionRemove,
+    ICheckout,
+    ICheckoutStep,
+    ICheckoutComplete
 {
     /**
      * @return string
@@ -139,7 +144,6 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
      */
     public function trackCheckoutStep(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
-
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
 
         $parameterBag['items'] = $items;
@@ -186,7 +190,6 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
      */
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
     {
-
         $calls = [];
         foreach ($items as $item) {
             $calls[] = $this->transformProductAction($item);

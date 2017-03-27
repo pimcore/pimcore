@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart;
@@ -37,7 +36,8 @@ class Discount implements IDiscount
     /**
      * @param IRule $rule
      */
-    public function __construct(IRule $rule) {
+    public function __construct(IRule $rule)
+    {
         $this->rule = $rule;
     }
 
@@ -49,9 +49,10 @@ class Discount implements IDiscount
      */
     public function getName()
     {
-        if($this->rule) {
+        if ($this->rule) {
             return $this->rule->getName();
         }
+
         return "discount";
     }
 
@@ -65,16 +66,16 @@ class Discount implements IDiscount
      */
     public function modify(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
-        if($this->getAmount() != 0) {
+        if ($this->getAmount() != 0) {
             $amount = $this->getAmount();
-            if($currentSubTotal->getAmount() < ($amount * -1)) {
+            if ($currentSubTotal->getAmount() < ($amount * -1)) {
                 $amount = $currentSubTotal->getAmount() * -1;
             }
 
             $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
 
             $taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
-            if($taxClass) {
+            if ($taxClass) {
                 $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
                 $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
@@ -82,7 +83,6 @@ class Discount implements IDiscount
             }
 
             return $modificatedPrice;
-
         }
     }
 
@@ -94,6 +94,7 @@ class Discount implements IDiscount
     public function setAmount($amount)
     {
         $this->amount = $amount;
+
         return $this;
     }
 
@@ -105,8 +106,8 @@ class Discount implements IDiscount
         return $this->amount;
     }
 
-    public function getRuleId() {
+    public function getRuleId()
+    {
         return $this->rule ? $this->rule->getId() : null;
     }
-
 }

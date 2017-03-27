@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService;
 
 class Token extends \Pimcore\Model\AbstractModel
@@ -56,9 +55,10 @@ class Token extends \Pimcore\Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->getByCode($code);
+
             return $config;
         } catch (\Exception $ex) {
-//            Logger::debug($ex->getMessage());
+            //            Logger::debug($ex->getMessage());
             return false;
         }
     }
@@ -72,6 +72,7 @@ class Token extends \Pimcore\Model\AbstractModel
         if ($this->usages >= $maxUsages) {
             return true;
         }
+
         return false;
     }
 
@@ -79,12 +80,12 @@ class Token extends \Pimcore\Model\AbstractModel
     {
         try {
             $usages = self::getDao()->getTokenUsages($code);
+
             return $usages <= $maxUsages;
         } catch (\Exception $ex) {
-//            Logger::debug($ex->getMessage());
+            //            Logger::debug($ex->getMessage());
             return true;
         }
-
     }
 
     /**
@@ -98,6 +99,7 @@ class Token extends \Pimcore\Model\AbstractModel
             if ($this->getUsages() + \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
                 return true;
             }
+
             return false;
         } else {
             return !$this->isUsed() && !$this->isReserved();
@@ -141,8 +143,10 @@ class Token extends \Pimcore\Model\AbstractModel
     {
         if ($this->getDao()->apply()) {
             \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
+
             return true;
         }
+
         return false;
     }
 
@@ -151,6 +155,7 @@ class Token extends \Pimcore\Model\AbstractModel
         if ($this->getDao()->unuse()) {
             return true;
         }
+
         return false;
     }
 
@@ -262,6 +267,4 @@ class Token extends \Pimcore\Model\AbstractModel
     {
         $this->id = $id;
     }
-
-
 }

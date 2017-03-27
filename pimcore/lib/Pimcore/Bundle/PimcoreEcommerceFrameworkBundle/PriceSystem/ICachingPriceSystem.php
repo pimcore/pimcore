@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem;
 
 /**
  * Interface ICachingPriceSystem
  */
-interface ICachingPriceSystem extends IPriceSystem {
+interface ICachingPriceSystem extends IPriceSystem
+{
 
     /**
      * load price infos once for gives product entries and caches them
@@ -36,6 +36,5 @@ interface ICachingPriceSystem extends IPriceSystem {
      * @param $options
      * @return mixed
      */
-    public function clearPriceInfos($productEntries,$options);
-
+    public function clearPriceInfos($productEntries, $options);
 }

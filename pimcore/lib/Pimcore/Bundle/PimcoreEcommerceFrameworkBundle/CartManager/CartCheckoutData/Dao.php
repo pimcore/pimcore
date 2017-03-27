@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
-class Dao extends \Pimcore\Model\Dao\AbstractDao {
-
+class Dao extends \Pimcore\Model\Dao\AbstractDao
+{
     const TABLE_NAME = "ecommerceframework_cartcheckoutdata";
 
     /**
@@ -24,16 +23,17 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @var array
      */
-    protected $validColumns = array();
+    protected $validColumns = [];
 
-    protected $fieldsToSave = array("cartId", "key", "data");
+    protected $fieldsToSave = ["cartId", "key", "data"];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
@@ -43,9 +43,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      * @param  int $cartId
      * @return void
      */
-    public function getByKeyCartId($key, $cartId) {
+    public function getByKeyCartId($key, $cartId)
+    {
         $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE `key`=" . $this->db->quote($key). " AND cartId = " . $this->db->quote($cartId));
-        if(empty($classRaw)) {
+        if (empty($classRaw)) {
             throw new \Exception("CartItem for cartid " . $cartId . " and key " . $key . " not found.");
         }
         $this->assignVariablesToModel($classRaw);
@@ -54,14 +55,16 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
     /**
      * Save object to database
      */
-    public function save() {
+    public function save()
+    {
         return $this->update();
     }
 
     /**
      * @return void
      */
-    public function update() {
+    public function update()
+    {
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
                 $getter = "get" . ucfirst($field);
@@ -69,7 +72,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
                 if (is_array($value) || is_object($value)) {
                     $value = serialize($value);
-                } else  if(is_bool($value)) {
+                } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
                 $data[$field] = $value;
@@ -78,8 +81,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
 
         try {
             $this->db->insert(self::TABLE_NAME, $data);
-        } catch(\Exception $e) {
-            $this->db->updateWhere(self::TABLE_NAME, $data,  "`key`=" . $this->db->quote($this->model->getKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()));
+        } catch (\Exception $e) {
+            $this->db->updateWhere(self::TABLE_NAME, $data, "`key`=" . $this->db->quote($this->model->getKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()));
         }
     }
 
@@ -88,12 +91,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         $this->db->deleteWhere(self::TABLE_NAME, "productId=" . $this->db->quote($this->model->productId). " AND cartId = " . $this->db->quote($this->model->cartId));
     }
 
-    public function removeAllFromCart($cartId) {
+    public function removeAllFromCart($cartId)
+    {
         $this->db->deleteWhere(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
     }
-
 }

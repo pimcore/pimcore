@@ -12,11 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Legacy;
 
-class LegacyClassMappingTool {
-
+class LegacyClassMappingTool
+{
     private static $mappingClasses = [
         'OnlineShop\Plugin' => 'OnlineShop_Plugin',
         'OnlineShop\Framework\Environment' => 'OnlineShop_Framework_Impl_Environment',
@@ -623,37 +622,34 @@ class LegacyClassMappingTool {
     ];
 
 
-    public static function loadMapping() {
-
-        foreach(self::$symfonyMappingInterfaces as $newClass => $oldClass) {
+    public static function loadMapping()
+    {
+        foreach (self::$symfonyMappingInterfaces as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
-            if(self::$mappingInterfaces[$oldClass]) {
+            if (self::$mappingInterfaces[$oldClass]) {
                 class_alias($newClass, self::$mappingInterfaces[$oldClass]);
             }
         }
 
-        foreach(self::$symfonyMappingAbstractClasses as $newClass => $oldClass) {
+        foreach (self::$symfonyMappingAbstractClasses as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
-            if(self::$mappingAbstractClasses[$oldClass]) {
+            if (self::$mappingAbstractClasses[$oldClass]) {
                 class_alias($newClass, self::$mappingAbstractClasses[$oldClass]);
             }
         }
 
-        foreach(self::$symfonyMappingClasses as $newClass => $oldClass) {
+        foreach (self::$symfonyMappingClasses as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
-            if(self::$mappingClasses[$oldClass]) {
+            if (self::$mappingClasses[$oldClass]) {
                 class_alias($newClass, self::$mappingClasses[$oldClass]);
             }
         }
-
-
     }
 
-    public static function createNamespaceCompatibilityFile() {
-
+    public static function createNamespaceCompatibilityFile()
+    {
         $generatedCode = [];
-        foreach(self::$symfonyMappingInterfaces as $interfaceNew => $interfaceOld) {
-
+        foreach (self::$symfonyMappingInterfaces as $interfaceNew => $interfaceOld) {
             $parts = explode('\\', $interfaceOld);
 
             $className = array_pop($parts);
@@ -661,7 +657,7 @@ class LegacyClassMappingTool {
 
             $generatedCode[$namespace][] = self::generateClass($className, $interfaceNew, 'interface');
 
-            if(self::$mappingInterfaces[$interfaceOld]) {
+            if (self::$mappingInterfaces[$interfaceOld]) {
                 $interfaceOld = self::$mappingInterfaces[$interfaceOld];
 
                 $parts = explode('\\', $interfaceOld);
@@ -673,8 +669,7 @@ class LegacyClassMappingTool {
             }
         }
 
-        foreach(self::$symfonyMappingAbstractClasses as $classNew => $classOld) {
-
+        foreach (self::$symfonyMappingAbstractClasses as $classNew => $classOld) {
             $parts = explode('\\', $classOld);
 
             $className = array_pop($parts);
@@ -682,7 +677,7 @@ class LegacyClassMappingTool {
 
             $generatedCode[$namespace][] = self::generateClass($className, $classNew, 'abstract class');
 
-            if(self::$mappingAbstractClasses[$classOld]) {
+            if (self::$mappingAbstractClasses[$classOld]) {
                 $classOld = self::$mappingAbstractClasses[$classOld];
 
                 $parts = explode('\\', $classOld);
@@ -692,11 +687,9 @@ class LegacyClassMappingTool {
 
                 $generatedCode[$namespace][] = self::generateClass($className, $classNew, 'abstract class');
             }
-
         }
 
-        foreach(self::$symfonyMappingClasses as $classNew => $classOld) {
-
+        foreach (self::$symfonyMappingClasses as $classNew => $classOld) {
             $parts = explode('\\', $classOld);
 
             $className = array_pop($parts);
@@ -704,7 +697,7 @@ class LegacyClassMappingTool {
 
             $generatedCode[$namespace][] = self::generateClass($className, $classNew, 'class');
 
-            if(self::$mappingClasses[$classOld]) {
+            if (self::$mappingClasses[$classOld]) {
                 $classOld = self::$mappingClasses[$classOld];
 
                 $parts = explode('\\', $classOld);
@@ -714,7 +707,6 @@ class LegacyClassMappingTool {
 
                 $generatedCode[$namespace][] = self::generateClass($className, $classNew, 'class');
             }
-
         }
 
 
@@ -744,7 +736,7 @@ class LegacyClassMappingTool {
 
         ksort($generatedCode);
 
-        foreach($generatedCode as $namespace => $generatedCodeEntry) {
+        foreach ($generatedCode as $namespace => $generatedCodeEntry) {
             $fileContent .= "namespace " . $namespace . " {\n";
             $fileContent .= implode("\n", $generatedCodeEntry);
             $fileContent .= "} \n\n// -- end namespace " . $namespace . " ---------------------------------------------------------------------------------- \n\n\n\n";
@@ -753,8 +745,8 @@ class LegacyClassMappingTool {
         file_put_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/config/namespace_compatibility.php', $fileContent);
     }
 
-    protected static function generateClass($className, $parentClassName, $type) {
-
+    protected static function generateClass($className, $parentClassName, $type)
+    {
         $fileContent = '
 /**
  * @deprecated
@@ -768,15 +760,14 @@ class LegacyClassMappingTool {
         return $fileContent;
     }
 
-    public static function generateMarkdownTable() {
-
-        foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
+    public static function generateMarkdownTable()
+    {
+        foreach (self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
             echo "|" . $withoutNamespace . " | " . $withNamespace . " | \n";
         }
 
-        foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
+        foreach (self::$mappingClasses as $withNamespace => $withoutNamespace) {
             echo "|" . $withoutNamespace . " | " . $withNamespace . " | \n";
         }
     }
-
 }

@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
@@ -22,7 +21,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
  *
  * Interface \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker
  */
-interface IBatchProcessingWorker extends IWorker {
+interface IBatchProcessingWorker extends IWorker
+{
 
     /**
      * fills queue based on path
@@ -51,5 +51,4 @@ interface IBatchProcessingWorker extends IWorker {
      * @return $int number of entries processed
      */
     public function processUpdateIndexQueue($limit = 200);
-
 }

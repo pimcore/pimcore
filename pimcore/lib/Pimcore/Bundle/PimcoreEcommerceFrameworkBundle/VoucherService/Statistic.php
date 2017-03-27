@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService;
 
 class Statistic extends \Pimcore\Model\AbstractModel
@@ -40,9 +39,10 @@ class Statistic extends \Pimcore\Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->getById($id);
+
             return $config;
         } catch (\Exception $ex) {
-//            Logger::debug($ex->getMessageN());
+            //            Logger::debug($ex->getMessageN());
             return false;
         }
     }
@@ -68,9 +68,10 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
         try {
             $result = $db->fetchPairs($query, $params);
+
             return $result;
         } catch (\Exception $e) {
-//            \Pimcore\Log\Simple::log('VoucherService',$e);
+            //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
     }
@@ -84,9 +85,8 @@ class Statistic extends \Pimcore\Model\AbstractModel
         $db = $db = \Pimcore\Db::get();
         try {
             $db->query("INSERT INTO " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . " (voucherSeriesId,date) VALUES (?,NOW())", $seriesId);
-
         } catch (\Exception $e) {
-//            \Pimcore\Log\Simple::log('VoucherService',$e);
+            //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
     }
@@ -97,7 +97,8 @@ class Statistic extends \Pimcore\Model\AbstractModel
      * @param string|null $seriesId
      * @return bool
      */
-    public static function cleanUpStatistics($duration, $seriesId = null){
+    public static function cleanUpStatistics($duration, $seriesId = null)
+    {
         $query = "DELETE FROM " . \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . " WHERE DAY(DATEDIFF(date, NOW())) >= ?";
         $params[] = $duration;
 
@@ -109,6 +110,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         $db = \Pimcore\Db::get();
         try {
             $db->query($query, $params);
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -118,8 +120,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     /**
      * @return int
      */
-    public
-    function getId()
+    public function getId()
     {
         return $this->id;
     }
@@ -127,8 +128,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     /**
      * @param int $id
      */
-    public
-    function setId($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -136,8 +136,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     /**
      * @return string
      */
-    public
-    function getTokenSeriesId()
+    public function getTokenSeriesId()
     {
         return $this->tokenSeriesId;
     }
@@ -145,8 +144,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     /**
      * @param string $tokenSeriesId
      */
-    public
-    function setTokenSeriesId($tokenSeriesId)
+    public function setTokenSeriesId($tokenSeriesId)
     {
         $this->tokenSeriesId = $tokenSeriesId;
     }
@@ -154,8 +152,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
     /**
      * @return int
      */
-    public
-    function getDate()
+    public function getDate()
     {
         return $this->date;
     }
@@ -163,10 +160,8 @@ class Statistic extends \Pimcore\Model\AbstractModel
     /**
      * @param int $date
      */
-    public
-    function setDate($date)
+    public function setDate($date)
     {
         $this->date = $date;
     }
-
 }

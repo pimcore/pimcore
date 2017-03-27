@@ -6,5 +6,4 @@ namespace EcommerceFramework\Helper;
 
 class Unit extends \Codeception\Module
 {
-
 }

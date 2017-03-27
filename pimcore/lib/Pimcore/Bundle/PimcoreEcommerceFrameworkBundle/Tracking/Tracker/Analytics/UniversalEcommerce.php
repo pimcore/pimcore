@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;

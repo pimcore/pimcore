@@ -12,19 +12,20 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
-class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection {
-
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList) {
+class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
+{
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
         //$productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter) {
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -35,41 +36,41 @@ class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBund
 
         $groupByValues = $productList->getGroupByValues($filterDefinition->getField(), true);
 
-        $counts = array();
-        foreach($ranges->getData() as $row) {
+        $counts = [];
+        foreach ($ranges->getData() as $row) {
             $counts[$row['from'] . "_" . $row['to']] = 0;
         }
 
 
-        foreach($groupByValues as $groupByValue) {
-            if($groupByValue['label']) {
+        foreach ($groupByValues as $groupByValue) {
+            if ($groupByValue['label']) {
                 $value = floatval($groupByValue['label']);
 
-                if(!$value) {
+                if (!$value) {
                     $value = 0;
                 }
-                foreach($ranges->getData() as $row) {
-                    if((empty($row['from']) || ($row['from'] <= $value)) && (empty($row['to']) || $row['to'] >= $value)) {
+                foreach ($ranges->getData() as $row) {
+                    if ((empty($row['from']) || ($row['from'] <= $value)) && (empty($row['to']) || $row['to'] >= $value)) {
                         $counts[$row['from'] . "_" . $row['to']] += $groupByValue['count'];
                         break;
                     }
                 }
             }
         }
-        $values = array();
-        foreach($ranges->getData() as $row) {
-            if($counts[$row['from'] . "_" . $row['to']]) {
-                $values[] = array("from" => $row['from'], "to" => $row['to'], "label" => $this->createLabel($row), "count" => $counts[$row['from'] . "_" . $row['to']], "unit" => $filterDefinition->getUnit());
+        $values = [];
+        foreach ($ranges->getData() as $row) {
+            if ($counts[$row['from'] . "_" . $row['to']]) {
+                $values[] = ["from" => $row['from'], "to" => $row['to'], "label" => $this->createLabel($row), "count" => $counts[$row['from'] . "_" . $row['to']], "unit" => $filterDefinition->getUnit()];
             }
         }
 
         $currentValue = "";
-        if($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
+        if ($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
             $currentValue = implode($currentFilter[$filterDefinition->getField()], "-");
         }
 
 
-        return $this->render($script, array(
+        return $this->render($script, [
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentValue,
@@ -79,18 +80,19 @@ class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBund
             "definition" => $filterDefinition,
             "fieldname" => $filterDefinition->getField(),
             "resultCount" => $productList->count()
-        ));
+        ]);
     }
 
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    {
         $field = $filterDefinition->getField();
         $rawValue = $params[$field];
 
-        if(!empty($rawValue) && $rawValue != \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if (!empty($rawValue) && $rawValue != \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $values = explode("-", $rawValue);
             $value['from'] = trim($values[0]);
             $value['to'] = trim($values[1]);
-        } else if($rawValue == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        } elseif ($rawValue == \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
             $value['from'] = $filterDefinition->getPreSelectFrom();
@@ -100,33 +102,35 @@ class NumberRangeSelection extends \Pimcore\Bundle\PimcoreEcommerceFrameworkBund
         $currentFilter[$field] = $value;
 
 
-        if($value['from'] || $value['to']) {
+        if ($value['from'] || $value['to']) {
             $v = [];
-            if($value['from']) {
+            if ($value['from']) {
                 $v['min'] = $value['from'];
-            }else {
+            } else {
                 $v['min'] = 0;
             }
 
-            if($value['to']) {
+            if ($value['to']) {
                 $v['max'] = $value['to'];
-            }else {
+            } else {
                 $v['max'] = 9999999999999999;       // findologic won't accept only one of max or min, always needs both
             }
             $productList->addCondition($v, $field);
         }
+
         return $currentFilter;
     }
 
-    private function createLabel($data) {
-        if(is_array($data)) {
-            if(!empty($data['from'])) {
-                if(!empty($data['to'])) {
+    private function createLabel($data)
+    {
+        if (is_array($data)) {
+            if (!empty($data['from'])) {
+                if (!empty($data['to'])) {
                     return $data['from'] . " - " . $data['to'];
                 } else {
                     return $this->translator->trans("more than") . " " . $data['from'];
                 }
-            } else if(!empty($data['to'])) {
+            } elseif (!empty($data['to'])) {
                 return $this->translator->trans("less than") . " " . $data['to'];
             }
         } else {

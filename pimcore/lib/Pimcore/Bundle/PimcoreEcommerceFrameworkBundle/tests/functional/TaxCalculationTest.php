@@ -1,7 +1,6 @@
 <?php
 namespace EcommerceFramework;
 
-
 use Codeception\Util\Stub;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
@@ -116,37 +115,37 @@ class TaxCalculationTest extends \Codeception\Test\Unit
         $this->assertEquals(86.21, round($price->getNetAmount(), 2), "Tax 12% + 4% combine, calc from gross price");
         $this->assertEquals(10.34, round($taxEntries[0]->getAmount(), 2), "Tax 12% + 4% combine, tax entry 1 amount");
         $this->assertEquals(3.45, round($taxEntries[1]->getAmount(), 2), "Tax 12% + 4% combine, tax entry 2 amount");
-
     }
 
 
 
-    public function testPriceSystem() {
-
+    public function testPriceSystem()
+    {
         $config = new \stdClass();
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$config], [
-            "getTaxClassForProduct" => function() {
+            "getTaxClassForProduct" => function () {
                 $taxClass = new OnlineShopTaxClass();
                 $taxClass->setTaxEntryCombinationType(TaxEntry::CALCULATION_MODE_COMBINE);
+
                 return $taxClass;
             },
-            "getPriceClassInstance" => function($amount) {
+            "getPriceClassInstance" => function ($amount) {
                 return new Price($amount, new Currency("EUR"));
             },
-            "calculateAmount" => function() {
+            "calculateAmount" => function () {
                 return 100;
             }
         ]);
 
         $product = Stub::construct(AbstractProduct::class, [], [
-            "getId" => function() {
+            "getId" => function () {
                 return 5;
             },
-            "getPriceSystemImplementation" => function() use ($priceSystem) {
+            "getPriceSystemImplementation" => function () use ($priceSystem) {
                 return $priceSystem;
             },
-            "getCategories" => function() {
+            "getCategories" => function () {
                 return [];
             }
         ]);
@@ -155,6 +154,5 @@ class TaxCalculationTest extends \Codeception\Test\Unit
          * @var $product AbstractProduct
          */
         $this->assertEquals(100, round($product->getOSPrice()->getAmount(), 2), "Get Price Amount without any tax entries");
-
     }
 }

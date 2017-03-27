@@ -12,16 +12,18 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-class DefaultStructuredTable implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
-        if($value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
+class DefaultStructuredTable implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
+        if ($value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             $data = $value->getData();
+
             return $data[$config->row][$config->column];
         }
+
         return null;
     }
 }

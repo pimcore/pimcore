@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
-class CartItem extends AbstractCartItem implements ICartItem {
+class CartItem extends AbstractCartItem implements ICartItem
+{
 
     /**
      * @var int
@@ -43,17 +43,20 @@ class CartItem extends AbstractCartItem implements ICartItem {
     }
 
 
-    public function getCart() {
+    public function getCart()
+    {
         if (empty($this->cart)) {
             $this->cart = Cart::getById($this->cartId);
         }
+
         return $this->cart;
     }
 
 
 
 
-    public function save() {
+    public function save()
+    {
         $items = $this->getSubItems();
         if (!empty($this->subItems)) {
             foreach ($this->subItems as $item) {
@@ -63,13 +66,13 @@ class CartItem extends AbstractCartItem implements ICartItem {
         $this->getDao()->save();
     }
 
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "") {
+    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "")
+    {
         $cacheKey = CartItem\Dao::TABLE_NAME . "_" . $cartId . "_" . $parentKey . $itemKey;
 
         try {
             $cartItem = Runtime::get($cacheKey);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             try {
                 $cartItem = new static();
                 $cartItem->getDao()->getByCartIdItemKey($cartId, $itemKey, $parentKey);
@@ -77,15 +80,16 @@ class CartItem extends AbstractCartItem implements ICartItem {
                 Runtime::set($cacheKey, $cartItem);
             } catch (\Exception $ex) {
                 Logger::debug($ex->getMessage());
+
                 return null;
             }
-
         }
 
         return $cartItem;
     }
 
-    public static function removeAllFromCart($cartId) {
+    public static function removeAllFromCart($cartId)
+    {
         $cartItem = new static();
         $cartItem->getDao()->removeAllFromCart($cartId);
     }
@@ -93,15 +97,15 @@ class CartItem extends AbstractCartItem implements ICartItem {
     /**
      * @return \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICartItem[]
      */
-    public function getSubItems() {
-
+    public function getSubItems()
+    {
         if ($this->subItems == null) {
-            $this->subItems = array();
+            $this->subItems = [];
 
             $itemClass = get_class($this) . "\\Listing";
-            if(!\Pimcore\Tool::classExists($itemClass)) {
+            if (!\Pimcore\Tool::classExists($itemClass)) {
                 $itemClass = get_class($this) . "_List";
-                if(!\Pimcore\Tool::classExists($itemClass)) {
+                if (!\Pimcore\Tool::classExists($itemClass)) {
                     throw new \Exception("Class $itemClass does not exist.");
                 }
             }
@@ -118,9 +122,7 @@ class CartItem extends AbstractCartItem implements ICartItem {
                 }
             }
         }
+
         return $this->subItems;
     }
-
-
-
 }

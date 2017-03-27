@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
@@ -20,7 +19,8 @@ namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
  *
  * sample implementation for delivery address
  */
-class DeliveryAddress extends AbstractStep implements ICheckoutStep {
+class DeliveryAddress extends AbstractStep implements ICheckoutStep
+{
 
     /**
      * namespace key
@@ -31,7 +31,8 @@ class DeliveryAddress extends AbstractStep implements ICheckoutStep {
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return "deliveryaddress";
     }
 
@@ -41,8 +42,10 @@ class DeliveryAddress extends AbstractStep implements ICheckoutStep {
      * @param  $data
      * @return bool
      */
-    public function commit($data) {
+    public function commit($data)
+    {
         $this->cart->setCheckoutData(self::PRIVATE_NAMESPACE, json_encode($data));
+
         return true;
     }
 
@@ -51,8 +54,10 @@ class DeliveryAddress extends AbstractStep implements ICheckoutStep {
      *
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         $data = json_decode($this->cart->getCheckoutData(self::PRIVATE_NAMESPACE));
+
         return $data;
     }
 }

@@ -12,24 +12,23 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Interpreter;
 
-class StructuredTable implements IInterpreter {
-
-    public static function interpret($value, $config = null) {
-
-        if(empty($config->tablerow)) {
+class StructuredTable implements IInterpreter
+{
+    public static function interpret($value, $config = null)
+    {
+        if (empty($config->tablerow)) {
             throw new \Exception("Table row config missing.");
         }
-        if(empty($config->tablecolumn)) {
+        if (empty($config->tablecolumn)) {
             throw new \Exception("Table column config missing.");
         }
 
         $getter = "get" . ucfirst($config->tablerow) . "__" . ucfirst($config->tablecolumn);
 
-        if($value && $value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
-            if(!empty($config->defaultUnit)) {
+        if ($value && $value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
+            if (!empty($config->defaultUnit)) {
                 return $value->$getter() . " " . $config->defaultUnit;
             } else {
                 return $value->$getter();

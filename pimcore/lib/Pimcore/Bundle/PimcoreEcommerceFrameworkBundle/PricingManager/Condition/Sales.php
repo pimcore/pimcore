@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class Sales extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\ICondition
@@ -36,12 +35,9 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFra
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $rule = $environment->getRule();
-        if($rule)
-        {
-            return $this->getSalesAmount( $rule ) < $this->getAmount();
-        }
-        else
-        {
+        if ($rule) {
+            return $this->getSalesAmount($rule) < $this->getAmount();
+        } else {
             return false;
         }
     }
@@ -69,7 +65,7 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFra
     {
         $json = json_decode($string);
 
-        $this->setAmount( $json->amount );
+        $this->setAmount($json->amount);
 
         return $this;
     }
@@ -95,8 +91,7 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\PimcoreEcommerceFra
 
     protected function getCurrentAmount(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IRule $rule)
     {
-        if(!array_key_exists($rule->getId(), $this->currentSalesAmount))
-        {
+        if (!array_key_exists($rule->getId(), $this->currentSalesAmount)) {
             $query = <<<'SQL'
 SELECT 1
 
@@ -138,15 +133,12 @@ WHERE 1
 LIMIT 1
 SQL;
 
-            $query = sprintf($query
-                , \Pimcore\Model\Object\OnlineShopOrderItem::classId()
-                , \Pimcore\Model\Object\OnlineShopOrder::classId()
-                , $rule->getId()
+            $query = sprintf($query, \Pimcore\Model\Object\OnlineShopOrderItem::classId(), \Pimcore\Model\Object\OnlineShopOrder::classId(), $rule->getId()
             );
 
             $conn = \Pimcore\Db::getConnection();
 
-            $this->currentSalesAmount[ $rule->getId() ] = (int)$conn->fetchRow( $query )['amount'];
+            $this->currentSalesAmount[ $rule->getId() ] = (int)$conn->fetchRow($query)['amount'];
         }
 
 

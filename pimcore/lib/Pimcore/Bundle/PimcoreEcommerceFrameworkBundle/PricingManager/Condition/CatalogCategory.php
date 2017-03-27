@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\Condition;
 
 class CatalogCategory extends AbstractObjectListCondition implements ICategory
@@ -20,14 +19,14 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     /**
      * @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    protected $categories = array();
+    protected $categories = [];
 
     /**
      * Serialized category IDs
      *
      * @var array
      */
-    protected $categoryIds = array();
+    protected $categoryIds = [];
 
     /**
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory[] $categories
@@ -37,6 +36,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     public function setCategories(array $categories)
     {
         $this->categories = $categories;
+
         return $this;
     }
 
@@ -54,19 +54,18 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     public function toJSON()
     {
         // basic
-        $json = array(
+        $json = [
             'type' => 'CatalogCategory',
-            'categories' => array()
-        );
+            'categories' => []
+        ];
 
         // add categories
-        foreach($this->getCategories() as $category)
-        {
+        foreach ($this->getCategories() as $category) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category */
-            $json['categories'][] = array(
+            $json['categories'][] = [
                 $category->getId(),
                 $category->getFullPath()
-            );
+            ];
         }
 
         return json_encode($json);
@@ -81,16 +80,14 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     {
         $json = json_decode($string);
 
-        $categories = array();
-        foreach($json->categories as $cat)
-        {
+        $categories = [];
+        foreach ($json->categories as $cat) {
             $category = $this->loadObject($cat->id);
-            if($category)
-            {
+            if ($category) {
                 $categories[] = $category;
             }
         }
-        $this->setCategories( $categories );
+        $this->setCategories($categories);
 
         return $this;
     }
@@ -120,13 +117,11 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
      */
     public function check(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
-        foreach($environment->getCategories() as $category)
-        {
+        foreach ($environment->getCategories() as $category) {
             /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $category */
-            foreach($this->getCategories() as $allow)
-            {
+            foreach ($this->getCategories() as $allow) {
                 /* @var \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractCategory $allow */
-                if(strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
+                if (strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }
             }

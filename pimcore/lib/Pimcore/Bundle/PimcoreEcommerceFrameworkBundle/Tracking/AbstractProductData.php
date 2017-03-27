@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tracking;
 
 abstract class AbstractProductData extends AbstractData
@@ -53,6 +52,7 @@ abstract class AbstractProductData extends AbstractData
     public function setTransactionId($transactionId)
     {
         $this->transactionId = $transactionId;
+
         return $this;
     }
 
@@ -71,6 +71,7 @@ abstract class AbstractProductData extends AbstractData
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -89,6 +90,7 @@ abstract class AbstractProductData extends AbstractData
     public function setBrand($brand)
     {
         $this->brand = $brand;
+
         return $this;
     }
 
@@ -119,6 +121,7 @@ abstract class AbstractProductData extends AbstractData
     public function setCategories(array $categories)
     {
         $this->categories = $categories;
+
         return $this;
     }
 
@@ -137,6 +140,7 @@ abstract class AbstractProductData extends AbstractData
     public function setVariant($variant)
     {
         $this->variant = $variant;
+
         return $this;
     }
 
@@ -155,6 +159,7 @@ abstract class AbstractProductData extends AbstractData
     public function setPosition($position)
     {
         $this->position = $position;
+
         return $this;
     }
 
@@ -173,6 +178,7 @@ abstract class AbstractProductData extends AbstractData
     public function setPrice($price)
     {
         $this->price = $price;
+
         return $this;
     }
 }

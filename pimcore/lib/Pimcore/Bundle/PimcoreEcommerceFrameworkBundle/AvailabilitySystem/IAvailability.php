@@ -12,15 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\AvailabilitySystem;
 
-
-interface IAvailability {
+interface IAvailability
+{
     /**
      * @abstract
      * @return boolean
      */
     public function getAvailable();
-
 }

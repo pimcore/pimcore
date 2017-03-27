@@ -12,12 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\IIndexable;
 
-abstract class AbstractWorker implements IWorker {
+abstract class AbstractWorker implements IWorker
+{
     protected $name;
     protected $columnConfig;
     protected $searchColumnConfig;
@@ -33,7 +33,8 @@ abstract class AbstractWorker implements IWorker {
      */
     protected $tenantConfig;
 
-    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig) {
+    public function __construct(\Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig)
+    {
         $this->name = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
         $this->columnConfig = $tenantConfig->getAttributeConfig();
@@ -41,22 +42,25 @@ abstract class AbstractWorker implements IWorker {
         $this->db = \Pimcore\Db::get();
     }
 
-    public function getTenantConfig() {
+    public function getTenantConfig()
+    {
         return $this->tenantConfig;
     }
 
-    public function getGeneralSearchAttributes() {
+    public function getGeneralSearchAttributes()
+    {
         return $this->searchColumnConfig;
     }
 
-    public function getIndexAttributes($considerHideInFieldList = false) {
-        if(empty($this->indexColumns)) {
-            $this->indexColumns = array();
+    public function getIndexAttributes($considerHideInFieldList = false)
+    {
+        if (empty($this->indexColumns)) {
+            $this->indexColumns = [];
 
             $this->indexColumns["categoryIds"] = "categoryIds";
 
-            foreach($this->columnConfig as $column) {
-                if(!$considerHideInFieldList || ($considerHideInFieldList && $column->hideInFieldlistDatatype != "true")) {
+            foreach ($this->columnConfig as $column) {
+                if (!$considerHideInFieldList || ($considerHideInFieldList && $column->hideInFieldlistDatatype != "true")) {
                     $this->indexColumns[$column->name] = $column->name;
                 }
             }
@@ -66,21 +70,24 @@ abstract class AbstractWorker implements IWorker {
         return $this->indexColumns;
     }
 
-    public function getIndexAttributesByFilterGroup($filterGroup) {
+    public function getIndexAttributesByFilterGroup($filterGroup)
+    {
         $this->getAllFilterGroups();
+
         return $this->filterGroups[$filterGroup] ? $this->filterGroups[$filterGroup] : [];
     }
 
-    public function getAllFilterGroups() {
-        if(empty($this->filterGroups)) {
-            $this->filterGroups = array();
-            $this->filterGroups['system'] = array_diff($this->getSystemAttributes(), array("categoryIds"));
-            $this->filterGroups['category'] = array("categoryIds");
+    public function getAllFilterGroups()
+    {
+        if (empty($this->filterGroups)) {
+            $this->filterGroups = [];
+            $this->filterGroups['system'] = array_diff($this->getSystemAttributes(), ["categoryIds"]);
+            $this->filterGroups['category'] = ["categoryIds"];
 
 
-            if($this->columnConfig) {
-                foreach($this->columnConfig as $column) {
-                    if($column->filtergroup) {
+            if ($this->columnConfig) {
+                foreach ($this->columnConfig as $column) {
+                    if ($column->filtergroup) {
                         $this->filterGroups[(string)$column->filtergroup][] = (string)$column->name;
                     }
                 }
@@ -90,8 +97,9 @@ abstract class AbstractWorker implements IWorker {
         return array_keys($this->filterGroups);
     }
 
-    protected function getSystemAttributes() {
-        return array();
+    protected function getSystemAttributes()
+    {
+        return [];
     }
 
     /**
@@ -100,9 +108,10 @@ abstract class AbstractWorker implements IWorker {
      * @param IIndexable $object
      * @param array $subObjectIds
      */
-    protected function doCleanupOldZombieData(IIndexable $object, array $subObjectIds) {
+    protected function doCleanupOldZombieData(IIndexable $object, array $subObjectIds)
+    {
         $cleanupIds = $this->tenantConfig->getSubIdsToCleanup($object, $subObjectIds);
-        foreach($cleanupIds as $idToCleanup) {
+        foreach ($cleanupIds as $idToCleanup) {
             $this->doDeleteFromIndex($idToCleanup, $object);
         }
     }
@@ -123,10 +132,12 @@ abstract class AbstractWorker implements IWorker {
      * @param $data
      * @return string
      */
-    protected function convertArray($data) {
-        if(is_array($data)) {
+    protected function convertArray($data)
+    {
+        if (is_array($data)) {
             return IWorker::MULTISELECT_DELIMITER . implode($data, IWorker::MULTISELECT_DELIMITER) . IWorker::MULTISELECT_DELIMITER;
         }
+
         return $data;
     }
 }

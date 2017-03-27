@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CheckoutManager;
 
 /**
  * Interface for checkout step implementations of online shop framework
  */
-interface ICheckoutStep {
+interface ICheckoutStep
+{
 
     /**
      * @param \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\ICart $cart
@@ -44,5 +44,4 @@ interface ICheckoutStep {
      * @return bool
      */
     public function commit($data);
-
 }

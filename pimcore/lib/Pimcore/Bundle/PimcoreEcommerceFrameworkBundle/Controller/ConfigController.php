@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
@@ -32,8 +31,8 @@ class ConfigController extends AdminController
      * @Route("/js-config")
      * @return string
      */
-    public function jsConfigAction() {
-
+    public function jsConfigAction()
+    {
         $config = Factory::getInstance()->getConfig();
 
         $params = [];
@@ -41,7 +40,7 @@ class ConfigController extends AdminController
         if ($config->onlineshop->pimcore instanceof Config) {
             foreach ($config->onlineshop->pimcore as $confName => $conf) {
                 $entries = [];
-                foreach($conf as $entryName => $entry) {
+                foreach ($conf as $entryName => $entry) {
                     $entries[$entryName] = $entry->toArray();
                 }
                 $params[$confName] = $entries;

@@ -12,16 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager;
+
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 
 /**
  * Interface ICartPriceCalculator
  */
-interface ICartPriceCalculator {
-
+interface ICartPriceCalculator
+{
     public function __construct($config, ICart $cart);
 
     /**

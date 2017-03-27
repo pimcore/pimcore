@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
@@ -20,7 +19,8 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 /**
  * Interface for environment implementations of online shop framework
  */
-interface IEnvironment extends IComponent {
+interface IEnvironment extends IComponent
+{
 
     /**
      * returns current user id
