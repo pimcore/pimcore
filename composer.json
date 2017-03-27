@@ -100,8 +100,7 @@
   },
   "autoload": {
     "psr-4": {
-      "": ["src/", "legacy/bundle/src/"],
-      "AppBundle\\": "install-profiles/demo-cms/src/AppBundle",
+      "": ["src/", "legacy/bundle/src/", "install-profiles/demo-cms/src/"],
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
