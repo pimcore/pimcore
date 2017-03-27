@@ -64,7 +64,10 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 5], // higher priority - run before editmode and editable handlers
+            // priority must be before
+            // -> Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()
+            // -> Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\EditmodeListener::onKernelRequest()
+            KernelEvents::REQUEST => ['onKernelRequest', 20],
         ];
     }
 
