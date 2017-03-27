@@ -156,6 +156,12 @@ class Setup extends Model\AbstractModel
 
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
+
+
+        // generate parameters.yml
+        $parameters = file_get_contents(PIMCORE_APP_ROOT . "/config/parameters.example.yml");
+        $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
+        File::put(PIMCORE_APP_ROOT . "/config/parameters.yml", $parameters);
     }
 
     /**

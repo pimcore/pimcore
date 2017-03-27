@@ -63,7 +63,8 @@ cmf_routing:
 pimcore:
     bundles:
         search_paths:
-            - !php/const:PIMCORE_APP_SRC
+            - src
+            - pimcore/lib/Pimcore/Bundle
 
     objects:
         class_definitions:

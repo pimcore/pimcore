@@ -65,10 +65,10 @@ class Console
         }
 
         // use DI to provide the ability to customize / overwrite paths
-        if (\Pimcore::getDiContainer()->has("pimcore.executable." . $name)) {
-            $value = \Pimcore::getDiContainer()->get("pimcore.executable." . $name);
+        if (\Pimcore::getContainer()->hasParameter("pimcore_executable_" . $name)) {
+            $value = \Pimcore::getContainer()->getParameter("pimcore_executable_" . $name);
             if (!$value && $throwException) {
-                throw new \Exception("'$name' executable was disabled manually in di.php");
+                throw new \Exception("'$name' executable was disabled manually in parameters.yml");
             }
 
             return $value;

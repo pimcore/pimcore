@@ -16,6 +16,7 @@ namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Extension\Bundle\Exception\RuntimeException;
 use Pimcore\Tool\ClassUtils;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -37,8 +38,27 @@ class PimcoreBundleLocator
      */
     public function __construct(array $paths = [], $handleComposer = true)
     {
-        $this->paths          = $paths;
+        $this->setPaths($paths);
+
         $this->handleComposer = $handleComposer;
+    }
+
+    /**
+     * @param array $paths
+     */
+    private function setPaths(array $paths)
+    {
+        $fs = new Filesystem();
+
+        foreach ($paths as $path) {
+            if (!$fs->isAbsolutePath($path)) {
+                $path = PIMCORE_PROJECT_ROOT . '/' . $path;
+            }
+
+            if ($fs->exists($path)) {
+                $this->paths[] = $path;
+            }
+        }
     }
 
     /**
