@@ -30,7 +30,7 @@ Each redirect has a priority.
 ![Redirect Priority](../../img/redirects3.png)
  
 * 99 (override all): Redirects with priority 99 come second in route processing and therefore overwrite document paths and custom routes. 
-* 1 (lowest) - 10 (highest): Redirects with priority 1 to 10 come fifth in route processing and are processes after document paths and custom routes. 
+* 1 (lowest) - 10 (highest): Redirects with priority 1 to 10 come fifth in route processing and are processed after document paths and custom routes. 
 
 
 

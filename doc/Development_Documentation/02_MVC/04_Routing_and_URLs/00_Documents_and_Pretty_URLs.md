@@ -18,7 +18,7 @@ The Document path and pretty URLs come third in the route processing priority.
   
  
 ## Pretty URL (Custom Slugs / Clean URL)
-The Pretty URL setting overrides a documents full path only for the purpose of routing. 
+The Pretty URL setting overrides a document's full path only for the purpose of routing. 
 This is useful for when you would like to create shorter paths or friendly URLs for sharing. A Pretty URL does 
 not redirect to the original URL.
 

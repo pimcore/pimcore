@@ -73,7 +73,7 @@ Due to optional parameters, the above example matches for the following URL's:
 * /news-category/testcategory_12_category_2
 * /news-category/testcategory_12
 
-#### Generating url with Optional Parameters
+#### Generating URL with Optional Parameters
 
 Source url: `/some-other-url`
 

@@ -1,15 +1,15 @@
 # Routing and URLs 
 
 ## Introduction
-Routing definies which requests are delegated to which controller based on the URL they are sent to. Therefore routing
+Routing defines which requests are delegated to which controller based on the URL they are sent to. Therefore, routing
  is an essential part in each MVC web application. 
  
 Beside the pure technical aspect, (which controller is called) there are several other manners like 
  URL structure and hierarchy, SEO and multi domain sites that need to be considered in combination with routing.
    
 Knowing how routing works in Pimcore/Symfony is essential to understand how an application can be implemented and how 
- they actually work. Technically the entire routing process is based on the [Symfony routing](http://symfony.com/doc/current/routing.html). 
-In addition to the default routing provided by Symfony (which be be of course used as well), Pimcore has some special
+ routes actually work. Technically the entire routing process is based on the [Symfony routing](http://symfony.com/doc/current/routing.html). 
+In addition to the default routing provided by Symfony (which is of course used as well), Pimcore has some special
 routing capabilities for documents, custom routes, multi-site support and redirects. 
  
 ## Routing in Pimcore
