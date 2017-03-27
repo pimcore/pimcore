@@ -82,11 +82,15 @@
     "cache/tag-interop": "*",
     "debril/rss-atom-bundle": "^3.0",
 
-    "zendframework/zendframework1": "~1.12",
-
     "zendframework/zend-paginator": "^2.7",
-    "zendframework/zend-servicemanager": "^3.2"
+    "zendframework/zend-servicemanager": "^3.2",
+
+
+    "zendframework/zendframework1": "~1.12"
   },
+  "_comment": ["@TODO: zendframework/zendframework1 is a dependency of /legacy/bundle and isn't required by the core!",
+               "It will be removed as soon as the legacy bundle is moved into a dedicated composer package"],
+
   "require-dev": {
     "symfony/phpunit-bridge": "^3.0",
     "codeception/codeception": "^2.2",
