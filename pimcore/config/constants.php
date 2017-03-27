@@ -36,11 +36,6 @@ if (!defined('PIMCORE_WEB_ROOT')) {
     define('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/web');
 }
 
-// /src directory (used from config to defined directories which are auto-scanned for bundles)
-if (!defined('PIMCORE_APP_SRC')) {
-    define('PIMCORE_APP_SRC', PIMCORE_PROJECT_ROOT . '/src');
-}
-
 if (!defined('PIMCORE_PATH')) {
     define('PIMCORE_PATH', PIMCORE_PROJECT_ROOT . '/pimcore');
 }
