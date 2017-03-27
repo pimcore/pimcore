@@ -341,6 +341,21 @@ class Iframe extends AbstractTemplateAreabrick
 }
 ```
 
+## Migration from Pimcore 4 bricks
+
+Migration of existing bricks should be quite straightforward if you don't switch the templating engine. The following
+ steps should get you started:
+ 
+* Create a brick class which contains the data you need from the `area.xml` file and make sure the `ID` of the new 
+brick matches the `<id></id>` attribute from `area.xml` either by naming your class accordingly or by registering the
+ service manually.
+* Move the view scripts and an optional icon from `website/views/areas` to their new location (see above). Depending 
+on the complexity of your view scripts you might need to adapt them to the new templating engine (see MVC docs). Please
+note that the extension for PHP templating view scripts changed from `.php` to `.html.php`.
+
+> Bricks defined this way are only valid for views rendered through the Symfony stack. If you need bricks to work in 
+the compatibility they still need to be implemented the Pimcore 4 way in `website/views`.
+
 ## Examples
 
 You can find many examples in the [demo / quick start package](https://github.com/pimcore/pimcore/tree/master/install-profiles/demo-cms/src/AppBundle/Document/Areabrick).
