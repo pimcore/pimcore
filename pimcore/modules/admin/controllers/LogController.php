@@ -22,6 +22,11 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
     public function init()
     {
         parent::init();
+
+        if (!$this->getUser()->isAllowed("application_logging")) {
+            throw new \Exception("Permission denied, user needs 'application_logging' permission.");
+        }
+
     }
 
     public function showAction()
