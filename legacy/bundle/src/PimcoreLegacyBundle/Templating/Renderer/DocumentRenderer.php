@@ -15,7 +15,7 @@
 namespace PimcoreLegacyBundle\Templating\Renderer;
 
 
-use Pimcore\Bundle\PimcoreBundle\HttpKernel\LegacyKernel;
+use PimcoreLegacyBundle\HttpKernel\Kernel as LegacyKernel;
 use Pimcore\Model\Document;
 use Pimcore\View;
 
