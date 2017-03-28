@@ -166,9 +166,14 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
 \Pimcore::initLogger();
 
 if (\Pimcore\Config::getSystemConfig()) {
+    \Pimcore\Cache::init();
+
     // we do not initialize plugins if pimcore isn't installed properly
     // reason: it can be the case that plugins use the database in isInstalled() witch isn't available at this time
     \Pimcore::initPlugins();
+} else {
+    // initialize cache with in-memory handler as we don't have a system config
+    \Pimcore\Cache::init('pimcore.cache.core.pool.array');
 }
 
 // do some general stuff

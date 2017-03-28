@@ -840,6 +840,7 @@ class Pimcore
             $builder->ignorePhpDocErrors(true);
 
             $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
+            $builder->addDefinitions(PIMCORE_PATH . "/config/di/cache.php");
 
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
             if (file_exists($customFile)) {
@@ -1109,17 +1110,8 @@ class Pimcore
             fastcgi_finish_request();
         }
 
-        // clear tags scheduled for the shutdown
-        Cache::clearTagsOnShutdown();
-
-        // write collected items to cache backend and remove the write lock
-        if (php_sapi_name() != "cli") {
-            // makes only sense for HTTP(S)
-            // CLI are normally longer running scripts that tend to produce race conditions
-            // so CLI scripts are not writing to the cache at all
-            Cache::write();
-        }
-        Cache::removeWriteLock();
+        // write and clean up cache
+        Cache::shutdown();
 
         // release all open locks from this process
         Model\Tool\Lock::releaseAll();

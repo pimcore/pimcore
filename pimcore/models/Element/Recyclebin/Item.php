@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Element\Recyclebin;
 
+use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Tool\Serialize;
@@ -223,7 +224,7 @@ class Item extends Model\AbstractModel
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
         // with the property _fulldump set, because this would cause major issues in wakeUp()
-        \Pimcore\Cache::addClearedTag($element->getCacheTag());
+        Cache::addIgnoredTagOnSave($element->getCacheTag());
 
         if (method_exists($element, "getChilds")) {
             if ($element instanceof Object\AbstractObject) {
