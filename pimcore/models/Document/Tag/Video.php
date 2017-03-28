@@ -771,7 +771,7 @@ class Video extends Model\Document\Tag
             }
 
             // do not allow an empty controls tag
-            if(isset($attributes["controls"]) && !$attributes["controls"]) {
+            if (isset($attributes["controls"]) && !$attributes["controls"]) {
                 unset($attributes["controls"]);
             }
 

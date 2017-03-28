@@ -142,7 +142,7 @@ class Update
                         "type" => "postupdate",
                         "revision" => (string) $download->revision
                     ];
-                } else if ((string) $download->composer === "true") {
+                } elseif ((string) $download->composer === "true") {
                     $composerUpdateRevisions[(string) $download->revision] = (string) $download->revision;
                 }
             }
@@ -173,7 +173,7 @@ class Update
                 "revision" => $revision
             ];
 
-            if(in_array($revision, $composerUpdateRevisions)) {
+            if (in_array($revision, $composerUpdateRevisions)) {
                 $jobs["procedural"][] = [
                     "type" => "composer-dump-autoload"
                 ];
