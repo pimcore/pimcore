@@ -374,6 +374,12 @@ class Legacy {
      */
     public static function registerPlugins()
     {
+        // don't do anything if kernel is not set and therefore no container available
+        // this is especially a problem during the install process
+        if(!\Pimcore::getKernel()) {
+            return;
+        }
+
         /** @var \Pimcore\API\Plugin\Broker $broker */
         $broker = \Pimcore::getContainer()->get('pimcore.legacy.plugin_broker');
 
