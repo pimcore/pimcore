@@ -23,7 +23,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Routing\RouteReferenceInterface;
-use PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
+use Pimcore\Bundle\PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
