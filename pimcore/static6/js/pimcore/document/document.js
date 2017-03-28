@@ -511,6 +511,29 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             });
         }
 
+        var unlinkTranslationsMenu = [];
+        if(this.data["translations"]) {
+            var me = this;
+            Ext.iterate(this.data["translations"], function (language, documentId, myself) {
+                unlinkTranslationsMenu.push({
+                    text: pimcore.available_languages[language] + " [" + language + "]",
+                    iconCls: "pimcore_icon_language_" + language,
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/document/translation-delete",
+                            params: {
+                                sourceId: me.id,
+                                targetId: documentId
+                            },
+                            success: function (response) {
+                                me.reload();
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                });
+            });
+        }
+        
         return {
             tooltip: t("translation"),
             iconCls: "pimcore_icon_translations",
@@ -533,6 +556,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 text: t("link_existing_document"),
                 handler: this.linkTranslation.bind(this),
                 iconCls: "pimcore_icon_page pimcore_icon_overlay_reading"
+            }, {
+                text: t("unlink_existing_document"),
+                menu: unlinkTranslationsMenu,
+                hidden: !unlinkTranslationsMenu.length,
+                iconCls: "pimcore_icon_page pimcore_icon_overlay_delete"
             }, {
                 text: t("open_translation"),
                 menu: translationsMenu,

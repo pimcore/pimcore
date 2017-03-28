@@ -102,11 +102,26 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty("language");
         }
 
+        // Prevent self link and link loop (self link can happen if document translation is added when the reverse logic is already added between the two documents)
+        if ($translation->getId() === $sourceId) return;
+
         $this->db->insertOrUpdate("documents_translations", [
             "id" => $translation->getId(),
             "sourceId" => $sourceId,
             "language" => $language
         ]);
+    }
+
+    /**
+     * @param Document $document
+     * @param Document $translation
+     * @param $language
+     */
+    public function deleteTranslation(Document $sourceDocument, Document $targetDocument)
+    {
+        // Remove in both way
+        $this->db->delete("documents_translations", "id = " . $sourceDocument->getId() . " AND sourceId = ". $targetDocument->getId());
+        $this->db->delete("documents_translations", "id = " . $targetDocument->getId() . " AND sourceId = ". $sourceDocument->getId());
     }
 
     /**
