@@ -44,7 +44,7 @@ class FallbackRouter implements RouterInterface, VersatileGeneratorInterface
      * @var array
      */
     protected $routeDefaults = [
-        '_controller' => 'Pimcore\Bundle\PimcoreLegacyBundle:Fallback:fallback'
+        '_controller' => 'PimcoreLegacyBundle:Fallback:fallback'
     ];
 
     /**
