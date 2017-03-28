@@ -7,7 +7,7 @@ the functionality of the application. It is good practise to keep the controller
 the business logic into models or services/libraries. 
 
 Pimcore offers an abstract class (`Pimcore\Controller\FrontendController`), which can be implemented by your controllers 
-(or better use `AppBundle\Controller\AbstractController` out of your website folder). This abstract class adds some Pimcore specific 
+(or better use `AppBundle\Controller\AbstractController` out of your bundle). This abstract class adds some Pimcore specific 
  dispatching features - especially in combination with Pimcore Documents, multi-language support etc. 
 
 The naming of the file and the class is just the same as in Symfony. 

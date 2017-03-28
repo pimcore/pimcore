@@ -1,5 +1,7 @@
 # HeadStyle Templating Helper
 
+> The HeadStyle templating helper is an extension of the [Placeholder Templating Helper](./00_Placeholder.md)
+
 The HTML `<style>` element is used to include CSS stylesheets inline in the HTML <head> element.
 
 > **Note**: Use HeadLink to link CSS files

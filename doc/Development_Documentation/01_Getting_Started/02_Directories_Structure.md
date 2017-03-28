@@ -10,7 +10,7 @@ In general the directory structure follows the [best practice for Symfony projec
 | `/bin/`     | Executable files (e.g. bin/console).                                               |
 | `/doc/`     | Core files of Pimcore, do not change anything here.                                |
 | `/pimcore/` | Core files of Pimcore, do not change anything here.                                |
-| `/src/`     | The project's PHP code (Services, Controllers, EventListeners, ...                 |
+| `/src/`     | The project's PHP code (Services, Controllers, EventListeners, ...)                |
 | `/var/`     | Private generated files - not accessible via the web (cache, logs, etc.).          |
 | `/vendor/`  | All third-party libraries are there. It's the default location for packages installed by [Composer](https://getcomposer.org/) / [Packagist](https://packagist.org/). |
 | `/web/`     | This is the **document root** (public folder) for your project - point your vhost to this directory!  |

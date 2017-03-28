@@ -1,5 +1,7 @@
 # HeadScript Templating Helper
 
+> The HeadScript templating helper is an extension of the [Placeholder Templating Helper](./00_Placeholder.md)
+
 The HTML `<script>` element is used to either provide inline client-side scripting elements or link to a remote resource 
 containing client-side scripting code. The HeadScript helper allows you to manage both.
 

@@ -40,11 +40,12 @@ All helpers are described below in detail, the following tables give just a shor
 | `getAllParams()` | Returns all parameters on the request object                                    |
 | `getParam()`     | Returns a specific parameter from the request                                   |
 | `glossary()`     | Helper to control the glossary engine                                           |
+| `placeholder()`  | Adding and embedding custom placeholders, e.g. for special header tags, etc.    |
 | `headLink()`     | Embeding / managing referenced stylesheets (alternative to `assets()`)          |
 | `headMeta()`     | Managing your <meta> elements in your HTML document                             |
 | `headScript()`   | Managing your <scripts> elements                                                |
 | `headStyle()`    | Managing inline styles (pendant to `headLink()` for inline styles)              |
-| `headTitle()`    | Create and store the HTML document's `<title>` for later retrieval and output    |
+| `headTitle()`    | Create and store the HTML document's `<title>` for later retrieval and output   |
 | `inc()`          | Use this function to directly include a pimcore document.                       |
 | `inlineScript()` | Managing inline scripts (pendant to `headScript()` for inline scripts)          |
 | `navigation()`   | Embed and build navigations based on the document structure                     |
@@ -168,20 +169,23 @@ For details please see [Glossary Documentation](../../08_Tools_and_Features/21_G
 </section>
 ```
 
+### `$this->placeholder()` 
+See [Placeholder Template Helper](00_Placeholder.md)
+
 ### `$this->headLink()` 
-See [HeadLink Template Helper](00_HeadLink.md)
+See [HeadLink Template Helper](01_HeadLink.md)
 
 ### `$this->headMeta()` 
-See [HeadMeta Template Helper](01_HeadMeta.md)
+See [HeadMeta Template Helper](02_HeadMeta.md)
 
 ### `$this->headScript()` 
-See [HeadScript Template Helper](02_HeadScript.md)
+See [HeadScript Template Helper](03_HeadScript.md)
 
 ### `$this->headStyle()` 
-See [HeadStyle Template Helper](03_HeadStyle.md)
+See [HeadStyle Template Helper](04_HeadStyle.md)
 
 ### `$this->headTitle()` 
-See [HeadTitle Template Helper](04_HeadTitle.md)
+See [HeadTitle Template Helper](05_HeadTitle.md)
 
 
 ### `$this->inc()` 
@@ -221,7 +225,7 @@ echo $this->inc($doc, [
 
 
 ### `$this->inlineScript()` 
-See [InlineScript Template Helper](05_InlineScript.md)
+See [InlineScript Template Helper](06_InlineScript.md)
 
 ### `$this->navigation()` 
 See [Navigation](../../../03_Documents/03_Navigation.md)

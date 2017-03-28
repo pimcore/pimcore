@@ -1,5 +1,7 @@
 # InlineScript Templating Helper
 
+> The InlineScript templating helper is an extension of the [Placeholder Templating Helper](./00_Placeholder.md)
+
 The HTML `<script>` element is used to either provide inline client-side scripting elements or link to a remote resource 
 containing client-side scripting code. The InlineScript helper allows you to manage both. It is derived from [HeadScript](02_HeadScript.md), 
 and any method of that helper is available; however, use the `inlineScript()` method in place of `headScript()`.

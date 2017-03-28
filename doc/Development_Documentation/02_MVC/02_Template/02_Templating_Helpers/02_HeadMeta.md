@@ -1,5 +1,7 @@
 # HeadMeta Templating Helper
 
+> The HeadMeta templating helper is an extension of the [Placeholder Templating Helper](./00_Placeholder.md)
+
 The HTML `<meta>` element is used to provide meta information about your HTML document -- typically keywords, 
 document character set, caching pragmas, etc. Meta tags may be either of the `http-equiv` or `name` types, 
 must contain a `content` attribute, and can also have either of the `lang` or `scheme` modifier attributes.

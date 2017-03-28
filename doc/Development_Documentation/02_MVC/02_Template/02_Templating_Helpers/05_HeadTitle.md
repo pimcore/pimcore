@@ -1,5 +1,7 @@
 # HeadTitle Templating Helper
 
+> The HeadTitle templating helper is an extension of the [Placeholder Templating Helper](./00_Placeholder.md)
+
 The HTML `<title>` element is used to provide a title for an HTML document. 
 The HeadTitle helper allows you to programmatically create and store the title for later retrieval and output.
 

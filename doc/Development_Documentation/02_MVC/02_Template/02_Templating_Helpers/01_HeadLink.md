@@ -1,5 +1,7 @@
 # HeadLink Templating Helper
 
+> The HeadLink templating helper is an extension of the [Placeholder Templating Helper](./00_Placeholder.md)
+
 The HTML `<link>` element is increasingly used for linking a variety of resources for your site: stylesheets, feeds, 
 favicons, trackbacks, and more. The HeadLink helper provides a simple interface for creating and aggregating these 
 elements for later retrieval and output in your layout script.

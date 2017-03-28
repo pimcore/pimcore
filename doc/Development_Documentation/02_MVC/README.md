@@ -19,8 +19,8 @@ knowledge learning Pimcore will be much easier and faster.
 
 ## Basic file structure and naming conventions
 
-The most common module for working within the MVC in your Pimcore project is the `AppBundle`. So the most frequently used  
-folders and files concerning the MVC within the website module are the following:
+The most common module for working within the MVC in your Pimcore project is the `AppBundle`. So the most frequently 
+used folders and files concerning the MVC within the website module are the following:
  
 | Path   |  Description |  Example
 |--------|--------------|---------------------
