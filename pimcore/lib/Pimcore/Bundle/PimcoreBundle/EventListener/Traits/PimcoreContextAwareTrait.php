@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Traits;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 

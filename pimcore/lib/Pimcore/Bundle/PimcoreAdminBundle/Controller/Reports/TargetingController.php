@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Model\Tool\Targeting;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Document;
+use Pimcore\Model\Tool\Targeting;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;

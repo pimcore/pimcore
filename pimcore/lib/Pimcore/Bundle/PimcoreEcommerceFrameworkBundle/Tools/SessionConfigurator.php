@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools;
 
-use Pimcore\Bundle\PimcoreBundle\Session\SessionConfiguratorInterface;
+use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

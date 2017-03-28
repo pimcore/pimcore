@@ -14,17 +14,15 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 
 class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {

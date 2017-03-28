@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
+use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 abstract class AbstractController extends FrontendController

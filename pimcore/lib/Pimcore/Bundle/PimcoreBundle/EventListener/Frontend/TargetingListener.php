@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Service\Request\DocumentResolver;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 

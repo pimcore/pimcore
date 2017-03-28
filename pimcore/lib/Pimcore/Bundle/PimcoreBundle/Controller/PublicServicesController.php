@@ -14,18 +14,17 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Controller;
 
+use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Tool;
+use Pimcore\Model\Tool\TmpStore;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as FrameworkController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\Response;
-use Pimcore\Model\Tool;
 
 class PublicServicesController extends FrameworkController
 {
-
     /**
      * @param Request $request
      * @return BinaryFileResponse

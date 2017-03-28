@@ -14,11 +14,10 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External;
 
-use \Linfo\Exceptions\FatalException;
-use \Linfo\Linfo;
-use \Linfo\Common;
+use Linfo\Common;
+use Linfo\Linfo;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;

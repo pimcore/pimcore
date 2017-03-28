@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
+use Pimcore\Service\Request\PimcoreContextResolverAwareInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

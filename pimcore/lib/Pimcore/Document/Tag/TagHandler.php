@@ -14,20 +14,20 @@
 
 namespace Pimcore\Document\Tag;
 
-use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
-use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
-use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Facade\Translate;
 use Pimcore\Http\RequestHelper;
+use Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Service\WebPathResolver;
+use Pimcore\Templating\Model\ViewModel;
+use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;

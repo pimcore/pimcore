@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Config;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;

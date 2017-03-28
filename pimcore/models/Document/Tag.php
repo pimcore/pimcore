@@ -16,11 +16,11 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
+use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\View;
 
 /**

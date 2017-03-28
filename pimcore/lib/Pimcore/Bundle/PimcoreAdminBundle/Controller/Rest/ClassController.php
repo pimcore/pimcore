@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Object;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;

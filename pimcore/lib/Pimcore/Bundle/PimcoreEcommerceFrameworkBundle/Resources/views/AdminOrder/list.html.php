@@ -14,9 +14,9 @@
 
 
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */
 
 $this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
@@ -135,7 +135,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                         $date->setTimestamp($item->getOrderDate());
                     }
 
-                    echo $formatter->formatDateTime($date, \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM);
+                    echo $formatter->formatDateTime($date, \Pimcore\Service\IntlFormatterService::DATETIME_MEDIUM);
                 ?>
             </td>
             <td><?= $item->getItems() ?></td>

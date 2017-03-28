@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Tool;
-use Pimcore\Model\Object;
-use Pimcore\Model\Element;
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Element;
+use Pimcore\Model\Object;
+use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;

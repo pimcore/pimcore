@@ -14,10 +14,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Bundle\PimcoreBundle\Component\Translation\Translator;
-use Pimcore\Cache;
-use Symfony\Component\Translation\Exception\InvalidArgumentException;
-use Symfony\Component\Translation\TranslatorInterface;
+use Pimcore\Translation\Translator;
 
 class Translate extends \Zend_Translate_Adapter
 {

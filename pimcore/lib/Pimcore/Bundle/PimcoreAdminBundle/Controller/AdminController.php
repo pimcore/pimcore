@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as UserProxy;
-use Pimcore\Bundle\PimcoreBundle\Controller\Controller;
+use Pimcore\Controller\Controller;
 use Pimcore\Model\User;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Request;

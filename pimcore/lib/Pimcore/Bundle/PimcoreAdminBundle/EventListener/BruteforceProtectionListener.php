@@ -18,7 +18,7 @@ use Pimcore\Bundle\PimcoreAdminBundle\Controller\BruteforceProtectedControllerIn
 use Pimcore\Bundle\PimcoreAdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\Exception\BruteforceProtectionException;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;

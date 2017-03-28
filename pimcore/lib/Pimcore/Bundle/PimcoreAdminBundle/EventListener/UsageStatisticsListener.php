@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Log\Simple;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;

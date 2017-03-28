@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
+use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

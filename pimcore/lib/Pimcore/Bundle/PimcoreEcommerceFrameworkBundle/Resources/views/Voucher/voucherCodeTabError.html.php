@@ -14,7 +14,7 @@
 
 
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $this
  */
 
 ?>

@@ -1,8 +1,8 @@
 <?php
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

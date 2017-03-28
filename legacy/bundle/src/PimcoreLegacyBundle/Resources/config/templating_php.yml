@@ -1,7 +1,0 @@
-services:
-    # injects ZF1 view helpers into templating
-    pimcore.templating.helper_broker.legacy_zend_view:
-        class: PimcoreLegacyBundle\Templating\HelperBroker\ZendViewHelper
-        arguments: ['@pimcore.legacy.zend_view_helper_bridge']
-        tags:
-            - { name: pimcore.templating.helper_broker, priority: -10 }

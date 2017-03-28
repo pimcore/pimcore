@@ -1,27 +1,27 @@
 services:
     pimcore.mvc_config_normalizer:
-        class: Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer
+        class: Pimcore\Service\MvcConfigNormalizer
         arguments: ['@kernel']
 
     pimcore.bundle_locator:
-        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
+        class: Pimcore\HttpKernel\BundleLocator\BundleLocator
         arguments: ['@kernel']
 
     pimcore.web_path_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
+        class: Pimcore\Service\WebPathResolver
 
     #
     # ROUTING
     #
 
     pimcore.routing_loader.bundle_routes:
-        class: Pimcore\Bundle\PimcoreBundle\Routing\Loader\BundleRoutingLoader
+        class: Pimcore\Routing\Loader\BundleRoutingLoader
         arguments: ['@pimcore.bundle_config_locator']
         tags:
             - { name: routing.loader }
 
     pimcore.router.staticroute:
-        class: Pimcore\Bundle\PimcoreBundle\Routing\Staticroute\Router
+        class: Pimcore\Routing\Staticroute\Router
         arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
         calls:
             - [setLogger, ['@logger']]
@@ -29,7 +29,7 @@ services:
             - { name: router, priority: 100 }
 
     pimcore.router.dynamic_route_provider:
-        class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
+        class: Pimcore\Routing\DocumentRouteProvider
         arguments: ['@pimcore.document.nearest_path_resolver', '@pimcore.mvc_config_normalizer']
 
     #
@@ -40,14 +40,14 @@ services:
     # a collection of configurator instances which can be added via addConfigurator or by using the pimcore.session.configurator
     # DI tag. See the SessionConfiguratorPass for details.
     pimcore.session.configurator:
-        class: Pimcore\Bundle\PimcoreBundle\Session\SessionConfigurator
+        class: Pimcore\Session\SessionConfigurator
 
     #
     # TRANSLATOR
     #
 
     pimcore.translator:
-      class: Pimcore\Bundle\PimcoreBundle\Component\Translation\Translator
+      class: Pimcore\Translation\Translator
       decorates: translator
       arguments: ['@pimcore.translator.inner']
       calls:
@@ -59,12 +59,12 @@ services:
     #
 
     pimcore.locale:
-      class: Pimcore\Bundle\PimcoreBundle\Service\Locale
+      class: Pimcore\Service\Locale
       arguments: ['@request_stack']
 
     # Formatting service for dates, times and numbers
     pimcore.locale.intl_formatter:
-      class: Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService
+      class: Pimcore\Service\IntlFormatterService
       arguments: ['@pimcore.locale']
 
 
@@ -95,7 +95,7 @@ services:
     #
 
     pimcore.service.request_matcher_factory:
-        class: Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory
+        class: Pimcore\Service\RequestMatcherFactory
 
     #
     # REQUEST RESOLVERS
@@ -104,11 +104,11 @@ services:
     #
 
     pimcore.service.request.pimcore_context_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver
+        class: Pimcore\Service\Request\PimcoreContextResolver
         arguments: ['@request_stack', '@pimcore.service.request_matcher_factory']
 
     pimcore.service.request.editmode_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver
+        class: Pimcore\Service\Request\EditmodeResolver
         arguments: ['@request_stack', '@pimcore_admin.security.user_loader', '@pimcore.http.request_helper']
         calls:
             - [setLogger, ['@logger']]
@@ -116,19 +116,19 @@ services:
             - { name: monolog.logger, channel: init }
 
     pimcore.service.request.document_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver
+        class: Pimcore\Service\Request\DocumentResolver
         arguments: ['@request_stack']
 
     pimcore.service.request.template_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateResolver
+        class: Pimcore\Service\Request\TemplateResolver
         arguments: ['@request_stack', '@pimcore.mvc_config_normalizer']
 
     pimcore.service.request.template_vars_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver
+        class: Pimcore\Service\Request\TemplateVarsResolver
         arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
 
     pimcore.service.request.view_model_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\ViewModelResolver
+        class: Pimcore\Service\Request\ViewModelResolver
         arguments: ['@request_stack', '@pimcore.service.request.template_vars_resolver']
 
 
@@ -137,19 +137,19 @@ services:
     #
 
     pimcore.argument_resolver.document:
-        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\DocumentValueResolver
+        class: Pimcore\Controller\ArgumentValueResolver\DocumentValueResolver
         arguments: ['@pimcore.service.request.document_resolver']
         tags:
             - { name: controller.argument_value_resolver }
 
     pimcore.argument_resolver.view_model:
-        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\ViewModelValueResolver
+        class: Pimcore\Controller\ArgumentValueResolver\ViewModelValueResolver
         arguments: ['@pimcore.service.request.view_model_resolver']
         tags:
             - { name: controller.argument_value_resolver }
 
     pimcore.argument_resolver.template_vars:
-        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\TemplateVarsValueResolver
+        class: Pimcore\Controller\ArgumentValueResolver\TemplateVarsValueResolver
         arguments: ['@pimcore.service.request.template_vars_resolver']
         tags:
             - { name: controller.argument_value_resolver }
@@ -161,13 +161,13 @@ services:
     # this is only necessary if loading objects directly with only access to the container, e.g. templates
 
     pimcore.service.document:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService
+        class: Pimcore\Service\Document\DocumentService
 
     pimcore.service.asset:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Asset\AssetService
+        class: Pimcore\Service\Asset\AssetService
 
     pimcore.service.object:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Object\ObjectService
+        class: Pimcore\Service\Object\ObjectService
 
 
     #
@@ -267,7 +267,7 @@ services:
         class: Pimcore\Http\ResponseHelper
 
     pimcore.document.nearest_path_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Document\NearestPathResolver
+        class: Pimcore\Service\Document\NearestPathResolver
         arguments: ['@pimcore.document_service']
 
     # TODO inject user?
@@ -276,7 +276,7 @@ services:
 
     pimcore.http_client:
         class: \GuzzleHttp\Client
-        factory: ['Pimcore\Bundle\PimcoreBundle\Http\ClientFactory', createHttpClient]
+        factory: ['Pimcore\Http\ClientFactory', createHttpClient]
 
     pimcore.rest_client:
         class: Pimcore\Tool\RestClient

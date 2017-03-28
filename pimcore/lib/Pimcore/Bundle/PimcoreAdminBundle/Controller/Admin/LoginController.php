@@ -16,13 +16,13 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\BruteforceProtectedControllerInterface;
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
+use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User;
+use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

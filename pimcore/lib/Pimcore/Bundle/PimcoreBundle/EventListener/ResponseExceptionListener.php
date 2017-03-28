@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
-use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
 use Pimcore\Config;
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;

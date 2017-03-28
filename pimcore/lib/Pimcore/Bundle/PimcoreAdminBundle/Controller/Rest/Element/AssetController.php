@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice\Data\Asset\File\In as WebserviceAssetFileIn;
 use Pimcore\Model\Webservice\Data\Asset\Folder\In as WebserviceAssetFolderIn;

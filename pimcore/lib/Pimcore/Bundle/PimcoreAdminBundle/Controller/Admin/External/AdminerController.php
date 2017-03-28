@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External {
 
     use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-    use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+    use Pimcore\Controller\EventedControllerInterface;
     use Pimcore\Tool\Session;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;

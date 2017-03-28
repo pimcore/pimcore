@@ -15,14 +15,14 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserLoader;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Version;
+use Pimcore\Service\Request\DocumentResolver;
+use Pimcore\Service\Request\EditmodeResolver;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

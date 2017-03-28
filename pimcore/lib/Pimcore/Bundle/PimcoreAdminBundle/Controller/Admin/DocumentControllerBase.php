@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Tool\Session;
+use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
-use Pimcore\Logger;
+use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;

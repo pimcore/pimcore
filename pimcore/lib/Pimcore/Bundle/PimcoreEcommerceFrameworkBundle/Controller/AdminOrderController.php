@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
-use Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -23,12 +21,14 @@ use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\Object\OnlineShopOrder;
 use Pimcore\Model\Object\OnlineShopOrderItem;
 use Pimcore\Model\User;
+use Pimcore\Service\IntlFormatterService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -210,7 +210,7 @@ class AdminOrderController extends FrontendController
             // init
             $arrCustomerAccount = [];
             $customer = $order->getCustomer();
-            
+
 
             // register
             $register = new \DateTime($order->getCreationDate());

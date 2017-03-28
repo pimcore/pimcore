@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;

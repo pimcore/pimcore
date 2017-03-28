@@ -14,13 +14,13 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
+use Pimcore\Service\Request\DocumentResolver;
+use Pimcore\Service\Request\EditmodeResolver;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool\Authentication;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;

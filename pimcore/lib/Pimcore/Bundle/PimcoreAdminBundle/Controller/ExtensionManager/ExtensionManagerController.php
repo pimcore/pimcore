@@ -16,15 +16,14 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\ExtensionManager;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
-use Pimcore\Tool;
-use PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
+use Pimcore\Routing\RouteReferenceInterface;
+use Pimcore\Bundle\PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;

@@ -24,9 +24,9 @@ For more details about template inheritance and layouts, please have a look at t
 ```php
 <?php
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */ 
 ?>
 <!DOCTYPE html>
@@ -66,9 +66,9 @@ A complete example of a document page would look like the following:
 ```php
 <?php
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */
 
 $this->extend('layout.html.php');

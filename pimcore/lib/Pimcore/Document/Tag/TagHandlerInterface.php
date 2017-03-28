@@ -14,9 +14,9 @@
 
 namespace Pimcore\Document\Tag;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\View;
 
 interface TagHandlerInterface

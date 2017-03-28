@@ -1,5 +1,5 @@
 <?php
-/** @var $view \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine */
+/** @var $view \Pimcore\Templating\PhpEngine */
 ?>
 <!DOCTYPE html>
 <html>

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
@@ -22,6 +21,7 @@ use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\Extension\Config;
+use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;

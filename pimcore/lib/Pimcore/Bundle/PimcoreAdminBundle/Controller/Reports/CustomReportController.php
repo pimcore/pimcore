@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\CustomReport;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;

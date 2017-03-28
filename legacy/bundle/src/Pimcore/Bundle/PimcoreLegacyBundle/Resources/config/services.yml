@@ -1,0 +1,50 @@
+services:
+    pimcore.legacy_kernel:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\HttpKernel\Kernel
+        arguments: ['@kernel']
+
+    pimcore.legacy.fallback_router:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Routing\FallbackRouter
+        arguments: ['@router.request_context']
+        tags:
+            - { name: router, priority: -200 }
+
+    pimcore.legacy.plugin_broker:
+        class: Pimcore\API\Plugin\Broker
+
+    # the legacy extension manager controller is defined as service as it is used
+    # by the extension manager controller to get the list of legacy extensions
+    pimcore.legacy.controller.admin.extension_manager:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController
+        calls:
+            - [setContainer, ['@service_container']]
+
+    # executes ZF1 view helpers
+    pimcore.legacy.zend_view_helper_bridge:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Zend\View\ViewHelperBridge
+        arguments: ['@pimcore.legacy.zend_view_provider', '@pimcore.service.request.template_vars_resolver']
+
+    # creates configured Pimcore\View instances
+    pimcore.legacy.zend_view_provider:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Zend\View\ViewProvider
+
+    # legacy tag handler supporting Pimcore\View - injected into delegating tag handler in compiler pass
+    pimcore.document.tag.handler.legacy:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Document\Tag\LegacyTagHandler
+
+    # provides rendering of documents with legacy ZF1 stack
+    pimcore.templating.legacy_document_renderer:
+      class: Pimcore\Bundle\PimcoreLegacyBundle\Templating\Renderer\DocumentRenderer
+      arguments: ['@pimcore.legacy_kernel']
+
+    # adds legacy plugin assets to admin interface and editmode
+    pimcore.legacy.plugin_asset_listener:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\EventListener\PluginAssetListener
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # decorates default pimcore_url helper and adds fallback to legacy static routes
+    pimcore.legacy.templating.view_helper.pimcore_url:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Templating\Helper\PimcoreUrl
+        decorates: pimcore.templating.view_helper.pimcore_url
+        arguments: ['@router', '@pimcore.http.request_helper']

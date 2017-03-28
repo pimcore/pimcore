@@ -1,8 +1,8 @@
 <?php
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */
 ?>
 
@@ -12,13 +12,13 @@
 if ($this->pageCount): ?>
 	<ul class="pagination">
 	<!-- <li class="desc disabled"><a href="#"><?= $this->firstItemNumber; ?>-<?= $this->lastItemNumber; ?> / <?= $this->totalItemCount; ?></a></li> -->
-	
+
 	<?php if (isset($this->previous)): ?>
 		<li class="first"><a href="<?= $this->pimcoreUrl(['page' => $this->first]); ?>"><?= $this->first; ?> &larr;</a></li>
 	<?php endif; ?>
-	
 
-	
+
+
 <?php foreach ($this->pagesInRange as $page)
 {
 	$class = '';

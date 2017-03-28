@@ -14,10 +14,10 @@
 
 namespace Pimcore\Document\Tag;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Document\Tag\Exception\NotFoundException;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\View;
 
 class DelegatingTagHandler implements TagHandlerInterface
