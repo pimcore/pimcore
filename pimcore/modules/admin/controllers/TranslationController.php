@@ -978,6 +978,10 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             return '<![CDATA[' . $content . ']]>';
         }
 
+        // Handle text before the first HTML tag
+        $firstTagPosition = strpos($content, '<');
+        $preText = ($firstTagPosition > 0) ? '<![CDATA[' . substr($content, 0, $firstTagPosition) . ']]>' : '';
+
         foreach ($matches[0] as $match) {
             $parts = explode(">", $match);
             $parts[0] .= ">";
@@ -1007,7 +1011,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $content = implode("", $final);
+        $content = $preText . implode("", $final);
 
         return $content;
     }
