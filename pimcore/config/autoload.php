@@ -15,7 +15,7 @@
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-/** @var \Composer\Autoload\ClassLoader */
+/** @var $loader \Composer\Autoload\ClassLoader */
 $loader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
 
 // the following code is out of `app/autoload.php`
