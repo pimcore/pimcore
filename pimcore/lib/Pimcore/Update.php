@@ -128,6 +128,7 @@ class Update
 
         $jobs = [];
         $updateScripts = [];
+        $composerUpdateRevisions = [];
         $revisions = [];
 
         if (isset($xml->download)) {
@@ -141,6 +142,8 @@ class Update
                         "type" => "postupdate",
                         "revision" => (string) $download->revision
                     ];
+                } else if ((string) $download->composer === "true") {
+                    $composerUpdateRevisions[(string) $download->revision] = (string) $download->revision;
                 }
             }
         }
@@ -170,6 +173,11 @@ class Update
                 "revision" => $revision
             ];
 
+            if(in_array($revision, $composerUpdateRevisions)) {
+                $jobs["procedural"][] = [
+                    "type" => "composer-dump-autoload"
+                ];
+            }
 
             if ($updateScripts[$revision]["postupdate"]) {
                 $jobs["procedural"][] = $updateScripts[$revision]["postupdate"];
