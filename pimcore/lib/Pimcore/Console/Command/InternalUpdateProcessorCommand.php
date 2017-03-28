@@ -56,6 +56,10 @@ class InternalUpdateProcessorCommand extends AbstractCommand
                     $status = Update::executeScript($job["revision"], "postupdate");
                 } elseif ($job["type"] == "cleanup") {
                     Update::cleanup();
+                } elseif ($job["type"] == "composer-dump-autoload") {
+                    Update::composerDumpAutoload();
+                } elseif ($job["type"] == "composer-update") {
+                    Update::composerUpdate();
                 }
             }
         }

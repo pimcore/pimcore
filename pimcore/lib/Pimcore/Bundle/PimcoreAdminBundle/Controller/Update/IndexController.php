@@ -127,6 +127,8 @@ class IndexController extends AdminController implements EventedControllerInterf
             Update::cleanup();
         } elseif ($request->get("type") == "composer-dump-autoload") {
             $status = Update::composerDumpAutoload();
+        } elseif ($request->get("type") == "composer-update") {
+            $status = Update::composerUpdate();
         }
 
         // we use pure PHP here, otherwise this can cause issues with dependencies that changed during the update

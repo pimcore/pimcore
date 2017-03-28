@@ -175,7 +175,7 @@ class Update
 
             if (in_array($revision, $composerUpdateRevisions)) {
                 $jobs["procedural"][] = [
-                    "type" => "composer-dump-autoload"
+                    "type" => "composer-update"
                 ];
             }
 
@@ -401,6 +401,29 @@ class Update
      */
     public static function composerDumpAutoload()
     {
+        $outputMessage = "";
+
+        try {
+            $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
+            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_PROJECT_ROOT);
+            $process->setTimeout(300);
+            $process->mustRun();
+        } catch (\Exception $e) {
+            Logger::error($e);
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer dumpautoload</pre> Please run it manually on commandline!";
+        }
+
+        return [
+            "message" => $outputMessage,
+            "success" => true
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function composerUpdate()
+    {
         $composerLock = PIMCORE_PROJECT_ROOT . "/composer.lock";
         if (file_exists($composerLock)) {
             @unlink($composerLock);
@@ -408,15 +431,14 @@ class Update
 
         $outputMessage = "";
 
-        // dump autoload and regenerate composer.lock
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
-            $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_PROJECT_ROOT);
-            $process->setTimeout(300);
+            $process = new Process($composerPath . ' update -d ' . PIMCORE_PROJECT_ROOT);
+            $process->setTimeout(900);
             $process->mustRun();
         } catch (\Exception $e) {
             Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update nothing</pre> Please run it manually on commandline!";
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update</pre> Please run it manually on commandline!";
         }
 
         return [
