@@ -18,16 +18,18 @@ use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Tool\ArrayUtils;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PimcoreExtension extends Extension
+class PimcoreExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -233,5 +235,54 @@ class PimcoreExtension extends Extension
         }
 
         $container->setParameter($parameter, AnnotatedRouteControllerLoader::class);
+    }
+
+    /**
+     * The security component disallows definition of firewalls and access_control entries from different files to enforce
+     * security. However this limits our possibilities how to provide a security config for the admin area while making
+     * the security component usable for applications built on Pimcore. This merges multiple security configs togehter
+     * to create one single security config array which is passed to the security component.
+     *
+     * @see OroPlatformExtension in Oro Platform/CRM which does the same provides the array merge method used below.
+     *
+     * TODO load pimcore specific security.yml here and make sure no more than 2 security configs are merged to avoid further merging?
+     *
+     * @inheritDoc
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        $securityConfigs = $container->getExtensionConfig('security');
+
+        if (count($securityConfigs) > 1) {
+            $securityConfig = [];
+            foreach ($securityConfigs as $sec) {
+                $securityConfig = ArrayUtils::arrayMergeRecursiveDistinct($securityConfig, $sec);
+            }
+
+            $securityConfigs = [$securityConfig];
+
+            $this->setExtensionConfig($container, 'security', $securityConfigs);
+        }
+    }
+
+    /**
+     * TODO check if we can decorate ContainerBuilder and handle the flattening in getExtensionConfig instead of overwriting
+     * the property via reflection
+     *
+     * @param ContainerBuilder $container
+     * @param $name
+     * @param array $config
+     */
+    private function setExtensionConfig(ContainerBuilder $container, $name, array $config = [])
+    {
+        $reflector = new \ReflectionClass($container);
+        $property = $reflector->getProperty('extensionConfigs');
+        $property->setAccessible(true);
+
+        $extensionConfigs = $property->getValue($container);
+        $extensionConfigs[$name] = $config;
+
+        $property->setValue($container, $extensionConfigs);
+        $property->setAccessible(false);
     }
 }
