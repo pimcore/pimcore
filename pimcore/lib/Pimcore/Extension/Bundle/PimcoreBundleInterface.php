@@ -14,9 +14,8 @@
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Bundle\PimcoreBundle\Routing\RouteReferenceInterface;
 use Pimcore\Extension\Bundle\Installer\InstallerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 interface PimcoreBundleInterface extends BundleInterface

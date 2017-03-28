@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
+use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Service\Request\PimcoreContextResolverAwareInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;

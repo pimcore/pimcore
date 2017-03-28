@@ -16,11 +16,11 @@ namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
-use Pimcore\Bundle\PimcoreBundle\HttpKernel\Config\SystemConfigParamResource;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension;
+use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;

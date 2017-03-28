@@ -16,7 +16,7 @@
 
 namespace Pimcore\Model\Document\Tag\Area;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\View;
 
 abstract class AbstractArea

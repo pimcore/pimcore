@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateResolver;
+use Pimcore\Service\Request\TemplateResolver;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;

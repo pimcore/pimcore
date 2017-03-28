@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Google\Analytics as AnalyticsHelper;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class GoogleAnalyticsCodeListener extends AbstractFrontendListener

@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

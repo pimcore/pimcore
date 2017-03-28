@@ -14,7 +14,7 @@
 
 namespace PimcoreLegacyBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 

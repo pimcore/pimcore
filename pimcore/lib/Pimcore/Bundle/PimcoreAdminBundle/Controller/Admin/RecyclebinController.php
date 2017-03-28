@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Model\Element\Recyclebin;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\Recyclebin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;

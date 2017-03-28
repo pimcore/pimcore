@@ -15,11 +15,10 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
 use Pimcore\Model\Webservice\Data\Object\Concrete\Out as WebserviceObjectOut;
-use Pimcore\Model\Webservice\Data\Object\Element;
 use Pimcore\Model\Webservice\Data\Object\Folder\In as WebserviceFolderIn;
 use Pimcore\Model\Webservice\Data\Object\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;

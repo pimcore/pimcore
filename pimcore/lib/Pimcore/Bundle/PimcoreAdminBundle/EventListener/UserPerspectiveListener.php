@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
 use Pimcore\Model\User;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

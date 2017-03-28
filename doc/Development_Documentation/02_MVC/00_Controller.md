@@ -6,7 +6,7 @@ Pimcore controllers play the designated role in the MVC pattern. They bind the d
 the functionality of the application. It is good practise to keep the controllers as lean as possible and encapsulate
 the business logic into models or services/libraries. 
 
-Pimcore offers an abstract class (`Pimcore\Bundle\PimcoreBundle\Controller\FrontendController`), which can be implemented by your controllers 
+Pimcore offers an abstract class (`Pimcore\Controller\FrontendController`), which can be implemented by your controllers 
 (or better use `AppBundle\Controller\AbstractController` out of your website folder). This abstract class adds some Pimcore specific 
  dispatching features - especially in combination with Pimcore Documents, multi-language support etc. 
 
@@ -72,7 +72,7 @@ class DefaultController extends AbstractController {
 
 Put your controllers in the following directory: `/src/AppBundle/Controller`
 
-There are some helpers defined in `\Pimcore\Bundle\PimcoreBundle\Controller\FrontendController`. 
+There are some helpers defined in `\Pimcore\Controller\FrontendController`. 
 But the best way is to use `\AppBundle\Controller\AbstractController` which is already shipped with Pimcore 
 and extends the `FrontendController` and can be modified and extended the way you need it.
 
@@ -84,4 +84,3 @@ and extends the `FrontendController` and can be modified and extended the way yo
 | `$this->editmode` | boolean     | True if you are in editmode (admin)                      |
 | `$this->view`     | `ViewModel` | Used to assign variables to your view (`$this->view->foo = "bar"`) |
    
- 

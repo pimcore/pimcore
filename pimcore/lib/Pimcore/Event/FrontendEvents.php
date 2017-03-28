@@ -115,7 +115,7 @@ final class FrontendEvents
     const STATICROUTE_PATH = "pimcore.frontend.path.staticroute";
 
     /**
-     * Subject: 	\Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadLink
+     * Subject: 	\Pimcore\Templating\Helper\HeadLink
      * Arguments:
      *  - item | stdClass
      *
@@ -125,7 +125,7 @@ final class FrontendEvents
     const VIEW_HELPER_HEAD_LINK = "pimcore.frontend.view.helper.head-link";
 
     /**
-     * Subject: 	\Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadScript
+     * Subject: 	\Pimcore\Templating\Helper\HeadScript
      * Arguments:
      *  - item | stdClass
      *

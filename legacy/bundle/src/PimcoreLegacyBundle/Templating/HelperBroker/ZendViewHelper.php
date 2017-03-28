@@ -14,8 +14,8 @@
 
 namespace PimcoreLegacyBundle\Templating\HelperBroker;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
-use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
+use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
+use Pimcore\Templating\PhpEngine;
 use PimcoreLegacyBundle\Zend\View\ViewHelperBridge;
 
 class ZendViewHelper implements HelperBrokerInterface

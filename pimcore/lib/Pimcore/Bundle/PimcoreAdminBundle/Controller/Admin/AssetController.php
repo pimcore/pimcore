@@ -14,15 +14,15 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\AdminEvents;
 use Pimcore\File;
-use Pimcore\Tool;
+use Pimcore\Logger;
+use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
-use Pimcore\Model;
-use Pimcore\Logger;
+use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;

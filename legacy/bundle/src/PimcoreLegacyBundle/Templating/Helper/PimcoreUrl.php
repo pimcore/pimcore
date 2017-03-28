@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Class PimcoreUrl
  * decorates default pimcore_url helper and adds fallback to legacy static routes
  */
-class PimcoreUrl extends \Pimcore\Bundle\PimcoreBundle\Templating\Helper\PimcoreUrl {
+class PimcoreUrl extends \Pimcore\Templating\Helper\PimcoreUrl {
 
     /**
      * @param null $name

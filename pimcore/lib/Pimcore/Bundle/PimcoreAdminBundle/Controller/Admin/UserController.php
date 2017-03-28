@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Tool;
-use Pimcore\Model\User;
+use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Logger;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
-use Pimcore\Logger;
+use Pimcore\Model\User;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

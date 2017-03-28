@@ -1,14 +1,14 @@
 services:
     pimcore.templating.action_renderer:
-        class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer
+        class: Pimcore\Templating\Renderer\ActionRenderer
         arguments: ['@templating.helper.actions', '@pimcore.mvc_config_normalizer']
 
     pimcore.templating.include_renderer:
-        class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\IncludeRenderer
+        class: Pimcore\Templating\Renderer\IncludeRenderer
         arguments: ['@pimcore.templating.action_renderer']
 
     pimcore.templating.tag_renderer:
-        class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer
+        class: Pimcore\Templating\Renderer\TagRenderer
         arguments:
             - '@pimcore.implementation_loader.document.tag'
             - '@pimcore.service.request.editmode_resolver'
@@ -16,5 +16,5 @@ services:
             - [setLogger, ['@logger']]
 
     pimcore.templating.document_renderer:
-              class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\DocumentRenderer
+              class: Pimcore\Templating\Renderer\DocumentRenderer
               arguments: ['@pimcore.templating.action_renderer', '@fragment.renderer.inline']

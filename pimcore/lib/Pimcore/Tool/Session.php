@@ -14,7 +14,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBagInterface;
+use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;

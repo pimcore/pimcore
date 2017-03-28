@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables;
+use Pimcore\Templating\GlobalVariables\GlobalVariables;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

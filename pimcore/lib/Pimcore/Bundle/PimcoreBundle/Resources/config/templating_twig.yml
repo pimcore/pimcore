@@ -1,13 +1,13 @@
 services:
     pimcore.twig.document_tag_extension:
-        class: Pimcore\Bundle\PimcoreBundle\Twig\DocumentTagExtension
+        class: Pimcore\Twig\DocumentTagExtension
         arguments: ['@pimcore.templating.tag_renderer']
         public: false
         tags:
             - { name: twig.extension }
 
     pimcore.twig.subrequest_extension:
-        class: Pimcore\Bundle\PimcoreBundle\Twig\SubrequestExtension
+        class: Pimcore\Twig\SubrequestExtension
         arguments: ['@pimcore.templating.view_helper.inc', '@pimcore.templating.view_helper.action']
         public: false
         tags:

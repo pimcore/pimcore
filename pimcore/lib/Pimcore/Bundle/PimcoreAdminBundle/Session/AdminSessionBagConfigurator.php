@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Session;
 
-use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBag;
-use Pimcore\Bundle\PimcoreBundle\Session\SessionConfiguratorInterface;
+use Pimcore\Session\Attribute\LockableAttributeBag;
+use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AdminSessionBagConfigurator implements SessionConfiguratorInterface

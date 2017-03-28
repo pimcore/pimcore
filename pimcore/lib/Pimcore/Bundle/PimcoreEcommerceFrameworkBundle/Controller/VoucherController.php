@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\VoucherService\TokenManager\IExportableTokenManager;
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\Object\OnlineShopVoucherSeries;

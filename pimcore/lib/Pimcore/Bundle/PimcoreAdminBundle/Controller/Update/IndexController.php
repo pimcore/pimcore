@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Update;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Config;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Update;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

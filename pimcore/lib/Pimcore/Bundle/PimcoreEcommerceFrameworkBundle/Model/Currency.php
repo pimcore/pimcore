@@ -39,7 +39,7 @@ class Currency
     protected $currencyName;
 
     /**
-     * @var \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService
+     * @var \Pimcore\Service\IntlFormatterService
      */
     protected $formattingService;
 

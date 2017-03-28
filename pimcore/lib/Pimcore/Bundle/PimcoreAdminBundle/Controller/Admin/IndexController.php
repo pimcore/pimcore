@@ -15,13 +15,13 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
+use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Google;
 use Pimcore\Model;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
+use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;

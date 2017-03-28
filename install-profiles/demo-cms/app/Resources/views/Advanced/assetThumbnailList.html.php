@@ -1,13 +1,12 @@
 <?php
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */
 
-use Pimcore\Model\Asset\Video;
-use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Document;
+use Pimcore\Model\Asset\Video;
 
 $this->extend('layout.html.php');
 

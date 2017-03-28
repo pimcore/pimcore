@@ -16,9 +16,9 @@
 
 namespace Pimcore\Model\Document\Tag\Area;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Tag;
+use Pimcore\Templating\Model\ViewModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Info

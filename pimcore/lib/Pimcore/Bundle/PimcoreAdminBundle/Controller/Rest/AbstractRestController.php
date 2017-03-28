@@ -15,11 +15,11 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Webservice\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

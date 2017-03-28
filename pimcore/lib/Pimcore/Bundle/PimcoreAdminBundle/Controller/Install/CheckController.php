@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Install;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\User;
 use Pimcore\Update;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

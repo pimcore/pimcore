@@ -14,9 +14,9 @@
 
 
 /**
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view
- * @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
  */
 
 $this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
@@ -234,7 +234,7 @@ $regionArray = $locale->getDisplayRegions();
                         <tr>
                             <td width="130">
                                 <small>
-                                    <?= $item->getPaymentFinish() ? $formatter->formatDateTime($item->getPaymentFinish(), \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM) : '' ?>
+                                    <?= $item->getPaymentFinish() ? $formatter->formatDateTime($item->getPaymentFinish(), \Pimcore\Service\IntlFormatterService::DATETIME_MEDIUM) : '' ?>
                                 </small>
                             </td>
                             <td width="100">
@@ -455,7 +455,7 @@ $regionArray = $locale->getDisplayRegions();
 
             <!-- Separator -->
             <div class="separator text-muted">
-                <time><?= $formatter->formatDateTime($order->getOrderdate(), \Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService::DATETIME_MEDIUM) ?></time>
+                <time><?= $formatter->formatDateTime($order->getOrderdate(), \Pimcore\Service\IntlFormatterService::DATETIME_MEDIUM) ?></time>
             </div>
             <!-- /Separator -->
 

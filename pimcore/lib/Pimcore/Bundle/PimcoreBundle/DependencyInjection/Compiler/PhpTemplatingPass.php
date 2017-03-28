@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
-use Pimcore\Bundle\PimcoreBundle\Templating\TimedPhpEngine;
+use Pimcore\Templating\PhpEngine;
+use Pimcore\Templating\TimedPhpEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\TimedPhpEngine as BaseTimedPhpEngine;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

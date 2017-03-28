@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Locale;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Cache\Runtime;
+use Pimcore\Service\Locale;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;

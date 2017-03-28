@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
+use Pimcore\Service\Request\PimcoreContextResolverAwareInterface;
 
 abstract class AbstractFrontendListener implements PimcoreContextResolverAwareInterface
 {

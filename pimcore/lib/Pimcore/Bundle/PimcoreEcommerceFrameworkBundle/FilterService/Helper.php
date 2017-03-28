@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 
 /**
@@ -115,7 +115,7 @@ class Helper
                         $orderByList[] = [$orderBy->getField(), $orderBy->getDirection()];
                     }
                 }
-                
+
                 $viewModel->currentOrderBy = implode("#", reset($orderByList));
             }
             $productList->setOrderKey($orderByList);
