@@ -60,6 +60,7 @@ class SearchController extends AdminController
         }
 
         $query = str_replace("%", "*", $query);
+        $query = str_replace("@", "#", $query);
         $query = preg_replace("@([^ ])\-@", "$1 ", $query);
 
         $types = explode(",", $allParams["type"]);

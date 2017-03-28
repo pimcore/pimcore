@@ -464,6 +464,9 @@ class Data extends \Pimcore\Model\AbstractModel
             Logger::crit("Search\\Backend\\Data received an unknown element!");
         }
 
+        // replace all occurrences of @ to # because when using InnoDB @ is reserved for the @distance operator
+        $this->data = str_replace("@", "#", $this->data);
+
         if ($element instanceof Element\ElementInterface) {
             $this->data = "ID: " . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
         }
@@ -481,7 +484,8 @@ class Data extends \Pimcore\Model\AbstractModel
 
         $data = html_entity_decode($data, ENT_QUOTES, "UTF-8");
 
-        $data = str_replace([".", ",", ":", ";", "'", '"'], " ", $data);
+        // we don't remove ".", otherwise it would be impossible to search for email addresses
+        $data = str_replace([",", ":", ";", "'", '"'], " ", $data);
         $data = str_replace("\r\n", " ", $data);
         $data = str_replace("\n", " ", $data);
         $data = str_replace("\r", " ", $data);
