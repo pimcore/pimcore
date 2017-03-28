@@ -23,7 +23,7 @@ class Frontend
     /**
      * Returns the Website-Config
      * @return \Pimcore\Config\Config
-     * @depricated
+     * @deprecated
      */
     public static function getWebsiteConfig()
     {
