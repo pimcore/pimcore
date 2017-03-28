@@ -5,11 +5,10 @@
 The Pimcore Backend UI is based upon the Ext JS Framework. A plugin can add Ext components to the user interface or 
 execute any other Javascript required in the plugin context.
 
-All Javascript and CSS which should be included, needs to be defined in plugin.xml, as described in 
-[plugin anatomy and design](./01_Plugin_Anatomy.md). 
+All Javascript and CSS which should be included, needs to be defined in your bundle class, as described in 
+[Pimcore Bundles](./01_Pimcore_Bundles.md). 
 
-These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in plugin.xml.
-
+These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in the bundle class.
 
 Starting point for javascript development is the javascript plugin class (`plugin.js`). An instance of this class 
 needs to be registered as a plugin at the plugin broker, which notifies all registered plugins upon certain events.
