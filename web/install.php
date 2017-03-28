@@ -31,8 +31,14 @@
 
     // no installer if Pimcore is already installed
     if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-        header("Location: /admin?_dc=" . microtime(true));
-        exit;
+        //header("Location: /admin?_dc=" . microtime(true));
+        //exit;
+    }
+
+    // ensure that there's a parametes.yml, if not we'll create a temporary one, so that the requirement check works
+    $parametersYml = PIMCORE_APP_ROOT . "/config/parameters.yml";
+    if(!file_exists($parametersYml)) {
+        copy(PIMCORE_APP_ROOT . "/config/parameters.example.yml", $parametersYml);
     }
 
     if(!isset($_REQUEST["profile"])) {
@@ -183,8 +189,8 @@
             min-height: 600px;
         }
 
-        .invalid .x-form-trigger-wrap-default {
-            border-right-color: #a61717;
+        .invalid .x-form-item-body {
+            border-right: 5px solid #a61717;
         }
 
         #credential_error {
@@ -291,9 +297,9 @@ $scripts = array(
                 }
             });
 
-            $.each(["admin_username","admin_password"], function (index, value) {
+            $.each(["admin_username","admin_password", "profile"], function (index, value) {
                 var item = Ext.getCmp(value);
-                if(item.getValue().length < 1) {
+                if(!item.getValue()) {
                     validInstall = false;
                     item.addCls("invalid");
                 } else {
@@ -364,16 +370,21 @@ $scripts = array(
                     items: [{
                         xtype: "combo",
                         name: "profile",
+                        id: "profile",
                         fieldLabel: "<b>Install Profile</b>",
+                        labelWidth: 116,
                         store: [
                             ["empty", "Empty Installation"],
                             ["demo-cms", "CMS Demo Package"]
                         ],
                         mode: "local",
-                        value: "",
-                        width: 425,
+                        emptyText: "Please select a profile",
+                        width: 396,
                         editable: false,
-                        triggerAction: "all"
+                        triggerAction: "all",
+                        listeners: {
+                            "select": validateInput
+                        }
                     },{
                             title: "MySQL Settings",
                             xtype: "fieldset",
