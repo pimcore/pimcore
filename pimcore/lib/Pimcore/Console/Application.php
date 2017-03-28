@@ -106,6 +106,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
     {
         $defaultAutoloadNamespaces = [
             'Pimcore\\Console\\Command' => PIMCORE_PROJECT_ROOT . '/pimcore/lib/Pimcore/Console/Command',
+            'AppBundle\\Console\\Command' => PIMCORE_PROJECT_ROOT . '/src/AppBundle/Console/Command',
         ];
 
         foreach ($defaultAutoloadNamespaces as $namespace => $directory) {
