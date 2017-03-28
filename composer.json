@@ -80,7 +80,7 @@
     "sensio/distribution-bundle": "^5.0",
     "sensio/framework-extra-bundle": "^3.0.2",
 
-    "cache/tag-interop": "*",
+    "cache/tag-interop": "^1",
     "debril/rss-atom-bundle": "^3.0",
 
     "zendframework/zend-paginator": "^2.7",
