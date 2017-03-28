@@ -14,7 +14,7 @@ existing templating helpers and [Pimcore editables](../README.md).
 ## Brick registration
 
 A brick will be registered on the system and is represented by a brick ID which has to be unique throughout the
-system. If a brick ID is registered twices (e.g. by multiple bundles), an error will be raised. The simple way to 
+system. If a brick ID is registered twice (e.g. by multiple bundles), an error will be raised. The simple way to 
 register a brick is to just save it to a special namespace `Document\Areabrick` inside your bundle. Every bundle will
 be scanned for classes implementing `AreabrickInterface` and all found bricks will be automatically registered to 
 the system. The brick ID will be built from the class name of the implementing class by converting the class name to 
