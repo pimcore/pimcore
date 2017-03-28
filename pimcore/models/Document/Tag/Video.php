@@ -770,6 +770,11 @@ class Video extends Model\Document\Tag
                 }
             }
 
+            // do not allow an empty controls tag
+            if(isset($attributes["controls"]) && !$attributes["controls"]) {
+                unset($attributes["controls"]);
+            }
+
             foreach ($attributes as $key => $value) {
                 $attributesString .= " " . $key;
                 if (!empty($value)) {
