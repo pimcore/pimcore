@@ -40,7 +40,7 @@ see [https://github.com/pimcore/pimcore/blob/master/web/.htaccess](https://githu
                 Require all granted
         </Directory>
   
-        <Directory /home/PROJECT/www/>
+        <Directory /home/PROJECT/www/web>
                 Options FollowSymLinks
                 AllowOverride All
                 Require all granted
