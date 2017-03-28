@@ -73,9 +73,13 @@ class DocumentRenderer {
             $view->addScriptPath(PIMCORE_FRONTEND_MODULE . "/views/scripts");
         }
 
-        $documentBackup = null;
-        if ($view->document) {
-            $documentBackup = $view->document;
+        $params["document"] = $document;
+        $viewParamsBackup = [];
+        foreach ($params as $key => $value) {
+            if ($view->$key) {
+                $viewParamsBackup[$key] = $view->$key;
+            }
+            $view->$key = $value;
         }
         $view->document = $document;
 
@@ -88,16 +92,6 @@ class DocumentRenderer {
                 }
             }
             $layout->setLayout("--modification-indicator--");
-        }
-
-        $params["document"] = $document;
-
-        $viewParamsBackup = [];
-        foreach ($params as $key => $value) {
-            if ($view->$key) {
-                $viewParamsBackup[$key] = $view->$key;
-            }
-            $view->$key = $value;
         }
 
         $content = $view->action($document->getAction(), $document->getController(), $document->getModule(), $params);
@@ -142,10 +136,6 @@ class DocumentRenderer {
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
             }
-        }
-
-        if ($documentBackup) {
-            $view->document = $documentBackup;
         }
 
         if (\Pimcore\Config::getSystemConfig()->outputfilters->less) {
