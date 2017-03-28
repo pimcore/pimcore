@@ -390,6 +390,11 @@ class Data extends \Pimcore\Model\AbstractModel
                 if (is_array($elements) && !empty($elements)) {
                     foreach ($elements as $tag) {
                         if ($tag instanceof Document\Tag\TagInterface) {
+                            // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
+                            if ($tag instanceof Document\Tag\Area || $tag instanceof Document\Tag\Areablock) {
+                                continue;
+                            }
+
                             ob_start();
                             $this->data .= strip_tags($tag->frontend())." ";
                             $this->data .= ob_get_clean();
