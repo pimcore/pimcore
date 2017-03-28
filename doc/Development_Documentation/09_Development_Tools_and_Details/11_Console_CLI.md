@@ -7,22 +7,23 @@ There are two ways to getting up and running - simple CLI scripts and Pimcore Co
 
 ## Simple CLI Scripts
 It is pretty simple to create CLI scripts that can interact with Pimcore. 
-Just include `pimcore/cli/startup.php`. So Pimcore gets started headless and you can use the whole 
+Just include `pimcore/config/startup_cli.php`. So Pimcore gets started headless and you can use the whole 
 Pimcore API in your script. 
 
 The following script is a very basic cli script, which imports Pimcore objects.
 Although this method is working and very simple, we recommend using `Pimcore\Console` instead. 
 
-It can be executed from the directory where it is located like this: `php /website/cli/import.php -f`
+It can be executed from the directory where it is located like this: `php bin/import.php`
 
 Source Code for `import.php`:
 
 ```php
 <?php
  
-include("../../pimcore/cli/startup.php");
+include("../../pimcore/config/startup_cli.php");
  
 use \Pimcore\Model\Object;
+
 // create some random objects ;-)
 for ($i = 0; $i < 60; $i++) {
     $o = new Object\News();
@@ -37,24 +38,21 @@ for ($i = 0; $i < 60; $i++) {
 
 ## Pimcore Console
 
-Pimcore integrates the `Symfony\Console` component and provides `pimcore/cli/console.php` as single 
+Pimcore integrates the `Symfony\Console` component and provides `bin/console` as single 
 entry point to console commands registered to the `Symfony\Console` application. You can add custom
 commands either by hooking into an event or by placing your commands in predefined locations.
 
 ### Usage
-Call the `console.php` script from the command line to get a list of available commands. To call 
-a command, use `console.php <subcommand>`. 
+Call `bin/console list` script from the command line to get a list of available commands. To call 
+a command, use `bin/console <subcommand>`. 
 
 ##### Examples:
 ```php 
 # get a list of all registered commands
-$ php pimcore/cli/console.php
- 
-# or
-$ php pimcore/cli/console.php list
+$ ./bin/console list
  
 # call the foo:bar command
-$ php pimcore/cli/console.php foo:bar
+$ ./bin/console foo:bar
 ```
 
 
@@ -77,19 +75,19 @@ following namespaces are taken into consideration (more are likely to follow):
 | Namespace | Directory |
 | --------- | --------- |
 | `Pimcore\Console\Command` | `/pimcore/lib/Pimcore/Console/Command` |
-| `Website\Console\Command` | `/website/lib/Website/Console/Command` |
+| `AppBundle\Console\Command` | `/src/AppBundle/Console/Command` |
 
 To have your command autoloaded, it must match a couple of prerequisites:
 
 * It must be placed in one of the namespaces listed above 
-(e.g. `Website\Console\Command\AwesomeCommand` in `/website/lib/Website/Console/Command/AwesomeCommand.php`)
+(e.g. `AppBundle\Console\Command\AwesomeCommand` in `/src/AppBundle/Console/Command/AwesomeCommand.php`)
 * The class name must end in Command, e.g. `AwesomeCommand`
 * The class must inherit `Symfony\Component\Console\Command\Command`, ideally you achieve this by 
 extending `Pimcore\Console\AbstractCommand`
 
 
 #### Manually registered commands
-Upon initialization the console application emits the `system.console.init` event, which you can use 
+Upon initialization the console application emits the `\Pimcore\Event\SystemEvents::CONSOLE_INIT` event, which you can use 
 to hook into the initialization process and to add your commands. Again, there are 2 ways to do this:
 
 ##### Using the `ConsoleCommandPluginTrait` to add a list of commands
@@ -102,19 +100,34 @@ to hook into the initialization process and to add your commands. Again, there a
 See the trait mentioned above for an example on how to handle the event. You'll get the 
 `Pimcore\Console\Application` object passed as event target and can use its API to add commands. 
 
-An example:
+An example, in your `app/config/services.yml`
+```yml
+    app.event_listener.cli_initializer:
+        class: AppBundle\EventListener\CliInitializer
+        tags:
+            - { name: kernel.event_listener, event: pimcore.system.console.init, method: init }
+```
+
+and the corresponding class in `src/AppBundle/EventListener/CliInitializer.php` 
 ```php
 <?php
-\Pimcore::getEventManager()->attach('system.console.init', function(\Zend_EventManager_Event $e) {
-    /** @var \Pimcore\Console\Application $application */
-    $application = $e->getTarget();
- 
-    // add a namespace to autoload commands from
-    $application->addAutoloadNamespace('ConsoleDemoPlugin\\Console', PIMCORE_DOCUMENT_ROOT . '/plugins/ConsoleDemoPlugin/lib/ConsoleDemoPlugin/Console');
- 
-    // add a single command
-    $application->add(new My\Custom\Namespace\AwesomeCommand());
-});
+
+namespace AppBundle\EventListener; 
+
+use \Pimcore\Event\System\ConsoleEvent;
+
+class CliInitializer {
+    public function init(ConsoleEvent $e) {
+        $application = $e->getApplication();
+        
+        // add a namespace, eg. in a bundle
+        $application->addAutoloadNamespace('ConsoleDemoPlugin\\Console', PIMCORE_COMPOSER_PATH . '/foo/bar/src/ConsoleDemoPlugin/Console');
+     
+        // add a single command
+        $application->add(new My\Custom\Namespace\AwesomeCommand())
+    }
+}
+
 ```
 
 ### Helpers provided by `Pimcore\Console\AbstractConsoleCommand`
@@ -132,14 +145,14 @@ Usage:
 ```php
 <?php
  
-namespace Pimcore\Console\Command;
+namespace AppBundle\Console\Command;
  
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Dumper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
  
-class TestCoreCommand extends AbstractCommand
+class TestCommand extends AbstractCommand
 {
     protected function configure()
     {
