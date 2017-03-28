@@ -77,22 +77,22 @@ EcommerceFramework Plugin (latest release), following additional steps are neede
    - change `defaultlocale` to `defaultCurrency` and enter ISO code of currency.
    - adapt all `file` sections to new paths of sub files (relative to `/app/config/pimcore`).
 - Run following database updates: 
-   ```sql 
-   	RENAME TABLE plugin_onlineshop_cart TO ecommerceframework_cart; 
-   	RENAME TABLE plugin_onlineshop_cartcheckoutdata TO ecommerceframework_cartcheckoutdata; 
-   	RENAME TABLE plugin_onlineshop_cartitem TO ecommerceframework_cartitem; 
-   	RENAME TABLE plugin_onlineshop_pricing_rule TO ecommerceframework_pricing_rule; 
-   	RENAME TABLE plugins_onlineshop_vouchertoolkit_reservations TO ecommerceframework_vouchertoolkit_reservations;
-   	RENAME TABLE plugins_onlineshop_vouchertoolkit_statistics TO ecommerceframework_vouchertoolkit_statistics;
-   	RENAME TABLE plugins_onlineshop_vouchertoolkit_tokens TO ecommerceframework_vouchertoolkit_tokens;
-   
-    -- possibly you need to update some of these tables (or additional product index tables) too - depends on you configuration 
-   	RENAME TABLE plugin_onlineshop_productindex TO ecommerceframework_productindex; 
-   	RENAME TABLE plugin_onlineshop_productindex_relations TO ecommerceframework_productindex_relations; 
-   	RENAME TABLE plugin_onlineshop_productindex_store TO ecommerceframework_productindex_store; 
-   	RENAME TABLE plugin_onlineshop_optimized_productindex TO ecommerceframework_optimized_productindex; 
-   	RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommerceframework_optimized_productindex_relations;
-   ```
+```sql 
+RENAME TABLE plugin_onlineshop_cart TO ecommerceframework_cart; 
+RENAME TABLE plugin_onlineshop_cartcheckoutdata TO ecommerceframework_cartcheckoutdata; 
+RENAME TABLE plugin_onlineshop_cartitem TO ecommerceframework_cartitem; 
+RENAME TABLE plugin_onlineshop_pricing_rule TO ecommerceframework_pricing_rule; 
+RENAME TABLE plugins_onlineshop_vouchertoolkit_reservations TO ecommerceframework_vouchertoolkit_reservations;
+RENAME TABLE plugins_onlineshop_vouchertoolkit_statistics TO ecommerceframework_vouchertoolkit_statistics;
+RENAME TABLE plugins_onlineshop_vouchertoolkit_tokens TO ecommerceframework_vouchertoolkit_tokens;
+
+-- possibly you need to update some of these tables (or additional product index tables) too - depends on you configuration 
+RENAME TABLE plugin_onlineshop_productindex TO ecommerceframework_productindex; 
+RENAME TABLE plugin_onlineshop_productindex_relations TO ecommerceframework_productindex_relations; 
+RENAME TABLE plugin_onlineshop_productindex_store TO ecommerceframework_productindex_store; 
+RENAME TABLE plugin_onlineshop_optimized_productindex TO ecommerceframework_optimized_productindex; 
+RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommerceframework_optimized_productindex_relations;
+```
 - activate session in `/app/config/config.yml` with following entry (or additional configuration if needed): 
 ```yml 
   framework:
