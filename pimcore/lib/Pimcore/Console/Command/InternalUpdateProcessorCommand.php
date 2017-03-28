@@ -57,9 +57,11 @@ class InternalUpdateProcessorCommand extends AbstractCommand
                 } elseif ($job["type"] == "cleanup") {
                     Update::cleanup();
                 } elseif ($job["type"] == "composer-dump-autoload") {
-                    Update::composerDumpAutoload();
+                    $status = Update::composerDumpAutoload();
                 } elseif ($job["type"] == "composer-update") {
-                    Update::composerUpdate();
+                    $status = Update::composerUpdate();
+                } elseif ($job["type"] == "composer-invalidate-classmaps") {
+                    $status = Update::invalidateComposerAutoloadClassmap();
                 }
             }
         }

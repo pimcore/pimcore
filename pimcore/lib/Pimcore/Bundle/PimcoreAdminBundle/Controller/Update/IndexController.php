@@ -129,6 +129,8 @@ class IndexController extends AdminController implements EventedControllerInterf
             $status = Update::composerDumpAutoload();
         } elseif ($request->get("type") == "composer-update") {
             $status = Update::composerUpdate();
+        } elseif ($request->get("type") == "composer-invalidate-classmaps") {
+            $status = Update::invalidateComposerAutoloadClassmap();
         }
 
         // we use pure PHP here, otherwise this can cause issues with dependencies that changed during the update
