@@ -101,8 +101,6 @@ RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommercefram
 - migrate translations for order backoffice to adminTranslations
 - extend your payment page with following or a similar snippet if needed: 
 ```php
-extend payment page with following snippet: 
-
 <?php if ($form instanceof \Symfony\Component\Form\FormBuilderInterface) { ?>
     <p><img src="https://www.wirecard.at/fileadmin/templates/images/wirecard-logo.png"/></p>
 
