@@ -163,6 +163,10 @@ class Update
 
         $revisions = array_unique($revisions);
 
+        $jobs["procedural"][] = [
+            "type" => "composer-invalidate-classmaps"
+        ];
+
         foreach ($revisions as $revision) {
             if ($updateScripts[$revision]["preupdate"]) {
                 $jobs["procedural"][] = $updateScripts[$revision]["preupdate"];
@@ -176,6 +180,9 @@ class Update
             if (in_array($revision, $composerUpdateRevisions)) {
                 $jobs["procedural"][] = [
                     "type" => "composer-update"
+                ];
+                $jobs["procedural"][] = [
+                    "type" => "composer-invalidate-classmaps"
                 ];
             }
 
@@ -443,6 +450,31 @@ class Update
 
         return [
             "message" => $outputMessage,
+            "success" => true
+        ];
+    }
+
+    /**
+     *
+     */
+    public static function invalidateComposerAutoloadClassmap() {
+
+        // unfortunately \Composer\Autoload\ClassLoader has no method setClassMap()
+        // so we need to invalidate the existing classmap by replacing all mappings beginning with 'Pimcore'
+
+        $prefix = PIMCORE_COMPOSER_PATH . "/composer/";
+        $files = [
+            $prefix . "autoload_classmap.php",
+            $prefix . "autoload_static.php",
+        ];
+
+        foreach($files as $file) {
+            $newContent = file_get_contents($file);
+            $newContent = preg_replace("@'Pimcore([^']+)?(?<!\\\\)'@", "'xxxDisabledByUpdater$1'", $newContent);
+            file_put_contents($file, $newContent);
+        }
+
+        return [
             "success" => true
         ];
     }
