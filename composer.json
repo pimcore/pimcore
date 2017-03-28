@@ -86,6 +86,7 @@
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
 
+    "zendframework/zend-console": "^2.6",
 
     "zendframework/zendframework1": "~1.12"
   },
