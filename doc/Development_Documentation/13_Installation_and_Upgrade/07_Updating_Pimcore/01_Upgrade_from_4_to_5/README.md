@@ -7,7 +7,7 @@ This guide shows you how to migrate your Pimcore applications.
 
 Migration of applications to Pimcore 5 can be seen as a two step process: 
 
-## 1) Get your application up and running with the `Compatibility Bridge` of Pimcore 5. 
+## 1) Get your application up and running with the `Compatibility Bridge` of Pimcore 5 
 Pimcore 5 ships with a `Compatibility Bridge` that should enable Pimcore 5 to run Pimcore 4 applications with some file 
  moves and minor code updates.
  
@@ -20,7 +20,7 @@ this is not recommended and has some major consequences like
 
 See the [migration guide](./02_Migrate_for_Compatibility_Bridge.md) for details. 
 
-## 2) Migrate your application to Pimcore 5 symfony stack.
+## 2) Migrate your application to Pimcore 5 Symfony stack
 
 
  

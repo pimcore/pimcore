@@ -63,7 +63,7 @@ UPDATE documents_snippet SET legacy = 1;
 
 
 Now your application should be up and running again with the `Compatibility Bridge` and the old ZF1 stack. 
-The next step would be to migrate the application step by step to new symfony stack to take advantage of the full power 
+The next step would be to migrate the application step by step to new Symfony stack to take advantage of the full power 
 of Pimcore 5. 
 
 
