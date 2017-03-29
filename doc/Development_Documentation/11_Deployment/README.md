@@ -4,7 +4,7 @@
 
 Deployment scenarios are essential for enterprise systems. Since Pimcore is a framework that can be used in many different
 use cases, development workflows and environments, it cannot provide THE ONE solution for deployment. It only can 
-provide tools and best practises which can be utilized in the actual environment Pimcore is used. 
+provide tools and best practices which can be utilized in the actual environment Pimcore is used. 
 
 This chapter gives an overview of these tools and best practises by covering following topics: 
 

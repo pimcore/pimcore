@@ -5,7 +5,7 @@ configurations including a fallback mechanism.
 
 
 ## The `PIMCORE_ENVIRONMENT` Variable
-To switch to a different environment you have to set the environment variable `PIMCORE_ENVIRONMENT` with a value of 
+To switch to a different environment, you have to set the environment variable `PIMCORE_ENVIRONMENT` with a value of 
 your choice (eg. development or test). `PIMCORE_ENVIRONMENT` is an equivalent of Symfony's standard `SYMFONY_ENV` so 
 you can use whatever you prefer. 
  

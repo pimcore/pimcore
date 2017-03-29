@@ -7,7 +7,7 @@ Following tools are provided by Pimcore to support deployment processes.
 All Pimcore configurations are saved as YAML or PHP files on the file system. As a result they can be included into 
 [version control systems](./01_Version_Control_Systems.md) and by utilizing the 
 [multi environment feature](./03_Multi_Environment.md) different configuration files for different deployment stages 
-an be defined. 
+can be defined. 
 
 * <https://github.com/pimcore/pimcore/tree/symfony/app/config> 
 * <https://github.com/pimcore/pimcore/tree/symfony/app/config/pimcore>
@@ -57,10 +57,10 @@ To get a list of all available commands use `./bin/console list`.
 | classmap-generator                                   | Generate class maps to improve performance                                                      |
 | mysql-tools                                          | Optimize and warmup mysql database                                                              |
 | search-backend-reindex                               | Re-indexes the backend search of pimcore                                                        |
-| update                                               | Update pimcore to the desired version/build                                                     |
+| update                                               | Update Pimcore to the desired version/build                                                     |
 | pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                    |
 | cache:clear                                          | Clear Symfony caches                                                                                    |
-| pimcore:cache:warming                                        | Warm up caches                                                                                  |
+| pimcore:cache:warming                                | Warm up caches                                                                                  |
 | classificationstore:delete-store                     | Delete Classification Store                                                                     |
 | definition:import:class                              | Import Class definition from a JSON export                                                      |
 | definition:import:fieldcollection                    | Import FieldCollection definition from a JSON export                                            |
@@ -75,7 +75,7 @@ Find more about the Pimcore Console on the [dedicated page](../09_Development_To
 
 ## Content migration
 
-The content migration between environments is not provided by Pimcore and also it's not recommended.
+The content migration between environments is not provided by Pimcore and it's not recommended at all.
  
 The content should be created by editors in the production environment and visibility on the frontend can be managed 
 by built-in features like publishing / unpublishing / [versioning](../08_Tools_and_Features/01_Versioning.md) / 
