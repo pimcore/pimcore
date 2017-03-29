@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Session;
 
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+use Symfony\Component\HttpFoundation\Session\Storage\Proxy\AbstractProxy;
 
 class AdminSessionStorageFactory
 {
@@ -22,6 +24,11 @@ class AdminSessionStorageFactory
      * @var array
      */
     protected $options = [];
+
+    /**
+     * @var AbstractProxy|NativeSessionHandler|\SessionHandlerInterface|null
+     */
+    protected $handler;
 
     /**
      * @var array
@@ -34,10 +41,12 @@ class AdminSessionStorageFactory
     ];
 
     /**
+     * @param AbstractProxy|NativeSessionHandler|\SessionHandlerInterface|null $handler
      * @param array $options
      */
-    public function __construct(array $options = [])
+    public function __construct($handler, array $options = [])
     {
+        $this->handler = $handler;
         $this->options = array_merge($this->defaultOptions, $options);
     }
 
@@ -46,7 +55,7 @@ class AdminSessionStorageFactory
      */
     public function createStorage()
     {
-        return new NativeSessionStorage($this->options);
+        return new NativeSessionStorage($this->options, $this->handler);
     }
 
     /**

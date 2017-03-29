@@ -174,7 +174,7 @@ namespace {
                 public function permanentLogin($create = false)
                 {
                     // key used for permanent login
-                    return Session::getSession()->getId();
+                    return Session::getSessionId();
                 }
 
                 /**

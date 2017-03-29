@@ -95,7 +95,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
                 $adminSession->remove('user');
             }
 
-            Session::getSession()->invalidate();
+            Session::invalidate();
 
             return $event;
         });

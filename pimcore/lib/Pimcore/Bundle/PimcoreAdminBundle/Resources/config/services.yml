@@ -5,9 +5,14 @@ services:
 
     pimcore_admin.session.storage_factory:
         class: Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionStorageFactory
+        lazy: true
+        public: false
+        arguments: ['@session.handler']
 
     pimcore_admin.session.storage:
         class: Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
+        lazy: true
+        public: false
         factory: 'pimcore_admin.session.storage_factory:createStorage'
 
     pimcore_admin.session.configurator.admin_session_bags:
@@ -15,8 +20,18 @@ services:
 
     pimcore_admin.session:
         class: Symfony\Component\HttpFoundation\Session\Session
+        lazy: true
+        public: false
         configurator: ['@pimcore_admin.session.configurator.admin_session_bags', 'configure']
         arguments: ['@pimcore_admin.session.storage']
+
+    pimcore_admin.session.handler:
+        class: Pimcore\Session\AdminSessionHandler
+        arguments: ['@pimcore_admin.session', '@pimcore_admin.session.storage', '@pimcore_admin.session.storage_factory']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: session }
 
     #
     # SERIALIZER
