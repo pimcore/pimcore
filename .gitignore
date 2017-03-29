@@ -7,7 +7,6 @@
 !/var/cache
 /var/cache/*
 !var/cache/.gitkeep
-/bin/symfony_requirements
 
 !/var/logs
 /var/logs/*
@@ -28,10 +27,6 @@
 !legacy/bundle
 
 # pimcore private var directories
-!/var/backup
-/var/backup/*
-!var/backup/.gitkeep
-
 !/var/config
 /var/config/*
 !var/config/GeoLite2-City.mmdb
@@ -51,11 +46,6 @@
 /var/versions/*
 !var/versions/.gitkeep
 
-!/var/webdav
-/var/webdav/*
-!var/webdav/.gitkeep
-
-
 # pimcore public var directories
 !/web/var/
 /web/var/*
@@ -70,7 +60,6 @@
 !/web/var/tmp/.gitkeep
 
 # composer
-/composer.phar
 /composer.lock
 !/vendor
 /vendor/*
