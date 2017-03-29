@@ -129,7 +129,7 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
     Here is some desktop specific content
 <?php } ?>
 ```
-For details also see [Adaptive Design](../../09_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
+For details also see [Adaptive Design](../../../09_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
 
 ### `$this->getAllParams()`
