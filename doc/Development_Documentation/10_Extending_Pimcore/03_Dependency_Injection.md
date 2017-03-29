@@ -140,5 +140,5 @@ Until now this feature is only provided by classes based on `Element\ElementInte
 and their list implementations.
  
 The following link provides a more detailed example: 
-[https://github.com/pimcore/pimcore/blob/master/website_demo/config/di.example.php](https://github.com/pimcore/pimcore/blob/master/website_demo/config/di.example.php) 
+[https://github.com/pimcore/pimcore/blob/master/app/config/pimcore/di.example.php](https://github.com/pimcore/pimcore/blob/master/app/config/pimcore/di.example.php) 
 
