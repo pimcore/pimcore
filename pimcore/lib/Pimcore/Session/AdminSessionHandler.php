@@ -33,7 +33,7 @@ class AdminSessionHandler implements LoggerAwareInterface
      * there is still an open session, this is especially important if something doesn't use the method use() but get()
      * so the session isn't closed automatically after the action is done
      */
-    protected $openedSessions = 0;
+    private $openedSessions = 0;
 
     /**
      * when using mod_php, session_start() always adds an Set-Cookie header when called,
@@ -42,32 +42,32 @@ class AdminSessionHandler implements LoggerAwareInterface
      * to avoid problems with (reverse-)proxies such as Varnish who do not like too much Set-Cookie headers
      * @var bool
      */
-    protected $sessionCookieCleanupNeeded = false;
+    private $sessionCookieCleanupNeeded = false;
 
     /**
      * @var array
      */
-    protected $foreignSessionStack = [];
+    private $foreignSessionStack = [];
 
     /**
      * @var SessionInterface
      */
-    protected $session;
+    private $session;
 
     /**
      * @var NativeSessionStorage
      */
-    protected $storage;
+    private $storage;
 
     /**
      * @var AdminSessionStorageFactory
      */
-    protected $storageFactory;
+    private $storageFactory;
 
     /**
      * @var array
      */
-    protected $validSessionOptions;
+    private $validSessionOptions;
 
     /**
      * @param SessionInterface $session
@@ -342,7 +342,7 @@ class AdminSessionHandler implements LoggerAwareInterface
      *
      * @return bool
      */
-    protected function backupForeignSession()
+    private function backupForeignSession()
     {
         $sessionName      = session_name();
         $adminSessionName = $this->getSessionName();
@@ -395,7 +395,7 @@ class AdminSessionHandler implements LoggerAwareInterface
      *
      * @return bool
      */
-    protected function restoreForeignSession()
+    private function restoreForeignSession()
     {
         if (empty($this->foreignSessionStack)) {
             return false;
