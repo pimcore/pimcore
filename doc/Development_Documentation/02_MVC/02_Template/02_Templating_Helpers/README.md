@@ -155,7 +155,7 @@ Returns a parameter from the request object (get, post, .... ), it's an equivale
 
 ### `$this->glossary()`
 
-For details please see [Glossary Documentation](../../08_Tools_and_Features/21_Glossary.md).
+For details please see [Glossary Documentation](../../../08_Tools_and_Features/21_Glossary.md).
 
 ##### Example
 ```php
