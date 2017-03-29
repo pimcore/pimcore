@@ -832,6 +832,9 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $filteredList = [];
             $classId = $this->getParam("class_id");
             $fieldname = $this->getParam("field_name");
+            $classDefinition = Object\ClassDefinition::getById($classId);
+            $className = $classDefinition->getName();
+
             foreach ($list as $type) {
                 /** @var  $type Object\Objectbrick\Definition */
                 $clsDefs = $type->getClassDefinitions();
