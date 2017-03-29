@@ -45,9 +45,9 @@ class AdminSessionHandler implements LoggerAwareInterface
     protected $sessionCookieCleanupNeeded = false;
 
     /**
-     * @var array|null
+     * @var array
      */
-    protected $foreignSession;
+    protected $foreignSessionStack = [];
 
     /**
      * @var SessionInterface
@@ -213,28 +213,20 @@ class AdminSessionHandler implements LoggerAwareInterface
             $initSession = true;
         }
 
-        if ($initSession) {
-            $this->storageFactory->initializeStorage($this->storage);
-        }
-
         $sessionName = $this->getSessionName();
 
-        try {
-            try {
-                if ($initSession) {
-                    // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
-                    if (array_key_exists($sessionName, $_REQUEST) && !empty($_REQUEST[$sessionName]) && (!array_key_exists($sessionName, $_COOKIE) || empty($_COOKIE[$sessionName]))) {
-                        // get session work with session-id via get (since SwfUpload doesn't support cookies)
-                        $this->session->setId($_REQUEST[$sessionName]);
-                    }
-                }
-            } catch (\Exception $e) {
-                $this->logger->error("Problem while starting session");
-                $this->logger->error($e);
+        if ($initSession) {
+            $this->storageFactory->initializeStorage($this->storage);
+
+            if (isset($_COOKIE[$sessionName])) {
+                $this->session->setId($_COOKIE[$sessionName]);
             }
-        } catch (\Exception $e) {
-            $this->logger->emergency("there is a problem with admin session");
-            die();
+
+            // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
+            if (array_key_exists($sessionName, $_REQUEST) && !empty($_REQUEST[$sessionName]) && (!array_key_exists($sessionName, $_COOKIE) || empty($_COOKIE[$sessionName]))) {
+                // get session work with session-id via get (since SwfUpload doesn't support cookies)
+                $this->session->setId($_REQUEST[$sessionName]);
+            }
         }
 
         $this->openedSessions++;
@@ -364,27 +356,35 @@ class AdminSessionHandler implements LoggerAwareInterface
             return false;
         }
 
-        $sessionId = session_id();
-        $options   = ini_get_all('session', false);
+        $sessionId = null;
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $sessionId = session_id();
+        }
 
-        $this->logger->debug('Backing up foreign session {name} with ID {id}', [
-            'id'   => $sessionId,
-            'name' => $sessionName
-        ]);
+        $options = ini_get_all('session', false);
 
-        $this->foreignSession = [
-            'id '     => $sessionId,
+        $stackCount = count($this->foreignSessionStack) + 1;
+        if (null !== $sessionId) {
+            $this->logger->debug('Backing up active foreign session {name} with ID {id}. Total count on stack: {count}', [
+                'name'  => $sessionName,
+                'id'    => $sessionId,
+                'count' => $stackCount
+            ]);
+        } else {
+            $this->logger->debug('Backing up foreign session {name}. Total count on stack: {count}.', [
+                'name'  => $sessionName,
+                'count' => $stackCount
+            ]);
+        }
+
+        array_push($this->foreignSessionStack, [
+            'id'      => $sessionId,
             'name'    => $sessionName,
             'options' => $options
-        ];
+        ]);
 
         if ($sessionId) {
             @session_write_close();
-        }
-
-        // TODO can this be moved to loadSession?
-        if (isset($_COOKIE[$adminSessionName])) {
-            session_id($_COOKIE[$adminSessionName]);
         }
 
         return true;
@@ -397,19 +397,28 @@ class AdminSessionHandler implements LoggerAwareInterface
      */
     protected function restoreForeignSession()
     {
-        if (empty($this->foreignSession)) {
+        if (empty($this->foreignSessionStack)) {
             return false;
         }
 
-        $data      = $this->foreignSession;
-        $sessionId = array_key_exists('id', $data) ? $data['id'] : '';
+        $data      = array_pop($this->foreignSessionStack);
+        $sessionId = $data['id'];
 
-        $this->logger->debug('Restoring foreign session {name} with ID {id}', [
-            'id'   => $sessionId,
-            'name' => $data['name'],
-        ]);
+        $stackCount = count($this->foreignSessionStack);
+        if ($sessionId) {
+            $this->logger->debug('Restoring active foreign session {name} with ID {id}. Remaining count on stack: {count}', [
+                'name'  => $data['name'],
+                'id'    => $sessionId,
+                'count' => $stackCount
+            ]);
+        } else {
+            $this->logger->debug('Restoring foreign session {name}. Remaining count on stack: {count}', [
+                'name'  => $data['name'],
+                'count' => $stackCount
+            ]);
+        }
 
-        session_write_close();
+        $this->session->save(); // session_write_close
         session_name($data['name']);
 
         if ($sessionId) {
