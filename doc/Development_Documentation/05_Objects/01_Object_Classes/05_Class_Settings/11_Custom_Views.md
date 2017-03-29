@@ -126,9 +126,6 @@ The intention is to
 
 ## Customizing the Tree Context Menu
 
-> **Since build 3790**  
-> Experimental: Subject to change without notice.
-
 Allows you to hide certain context menu items via the customview's treeContextMenu configuration option.
 
 ```php
