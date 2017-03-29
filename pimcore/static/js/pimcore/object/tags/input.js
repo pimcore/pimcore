@@ -55,7 +55,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            itemCls: "object_field"
+            itemCls: "object_field",
+            listeners: {
+                afterrender : function( input , eOpts ){
+                    if(this.fieldConfig.isColor) {
+                        jQuery(this.getEl().dom).find("input").attr("type", "color");
+                    }
+                }.bind(this)
+            }
         };
 
         if (this.data) {

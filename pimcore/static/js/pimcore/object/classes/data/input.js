@@ -56,6 +56,11 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
+            }, {
+                xtype: "checkbox",
+                fieldLabel: t("is_color"),
+                name: "isColor",
+                checked: this.datax.isColor
             }
         ]);
 
@@ -139,6 +144,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 {
                     width: source.datax.width,
                     columnLength: source.datax.columnLength,
+                    isColor: source.datax.isColor,
                     regex: source.datax.regex
                 });
         }

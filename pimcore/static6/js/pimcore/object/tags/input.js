@@ -53,7 +53,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
             componentCls: "object_field",
-            labelWidth: 100
+            labelWidth: 100,
+            listeners: {
+                afterrender : function( input , eOpts ){
+                    if(this.fieldConfig.isColor) {
+                        jQuery(this.getEl().dom).find("input").attr("type", "color");
+                    }
+                }.bind(this)
+            }
         };
 
         if (this.data) {
