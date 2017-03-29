@@ -12,9 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Session;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Session;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionStorageFactory;
 use Pimcore\Session\Attribute\LockableAttributeBag;
 use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
