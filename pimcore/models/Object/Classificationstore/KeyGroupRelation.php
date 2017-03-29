@@ -189,7 +189,7 @@ class KeyGroupRelation extends Model\AbstractModel
      */
     public function setSorter($sorter)
     {
-        $this->sorter = $sorter;
+        $this->sorter = (int) $sorter;
     }
 
     /**

@@ -171,7 +171,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             "id" => $id,
             "name" => $config->getName(),
             "description" => $config->getDescription(),
-            "sorter" => $config->getSorter()
+            "sorter" => (int) $config->getSorter()
         ];
 
         $this->_helper->json($data);
@@ -475,7 +475,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $config = new Classificationstore\CollectionGroupRelation();
                 $config->setGroupId($groupId);
                 $config->setColId($colId);
-                $config->setSorter($sorter);
+                $config->setSorter((int) $sorter);
 
                 $config->save();
 
@@ -560,7 +560,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "groupName" => $config->getName(),
                     "groupDescription" => $config->getDescription(),
                     "id" => $config->getColId() . "-" . $config->getGroupId(),
-                    "sorter" => $config->getSorter()
+                    "sorter" => (int) $config->getSorter()
                 ];
                 $data[] = $item;
             }
@@ -803,7 +803,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "keyName" => $config->getName(),
                     "keyDescription" => $config->getDescription(),
                     "id" => $config->getGroupId() . "-" . $config->getKeyId(),
-                    "sorter" => $config->getSorter(),
+                    "sorter" => (int) $config->getSorter(),
                     "layout" => $definition,
                     "mandatory" => $config->isMandatory()
                 ];
