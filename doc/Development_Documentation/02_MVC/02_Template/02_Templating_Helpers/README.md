@@ -267,7 +267,7 @@ Parameters in the included template are then accessible through `$this->paramNam
 
 
 ### `$this->translate()`
-View helper for getting translation from shared translations. For details also see [Shared Translations](../../06_Multi_Language_i18n/04_Shared_Translations.md).
+View helper for getting translation from shared translations. For details also see [Shared Translations](../../../06_Multi_Language_i18n/04_Shared_Translations.md).
 
 `$this->t(string $key = "")`
 `$this->translate(string $key = "")`
