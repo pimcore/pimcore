@@ -167,7 +167,15 @@ class Less
         // use php implementation of lessc if it doesn't work
         if (empty($compiledContent)) {
             $parser = new \Less_Parser();
-            $parser->parse(file_get_contents($path));
+            $sourceMapFile = PIMCORE_TEMPORARY_DIRECTORY . "/less___" . File::getValidFilename(str_replace(".less", "", $source)) . "-" . filemtime($path) . ".map";
+            $parser->SetOptions([
+                'sourceMap'         => true,
+                'sourceMapWriteTo'  => $sourceMapFile,
+                'sourceMapURL'      => str_replace(PIMCORE_DOCUMENT_ROOT, "", $sourceMapFile),
+                "sourceMapRootpath" => "/",
+                "sourceMapBasepath" => PIMCORE_DOCUMENT_ROOT
+            ]);
+            $parser->parseFile($path, ROOT_URL . dirname(str_replace(PIMCORE_DOCUMENT_ROOT, "", $path)) . "/");
             $compiledContent = $parser->getCss();
 
             // add a comment to the css so that we know it's compiled by lessphp
