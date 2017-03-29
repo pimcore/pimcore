@@ -5,7 +5,7 @@ In addition to [dependency injection](./03_Dependency_Injection.md) (which can o
  
 So this is technically not a dependency injection, but is another way to add your own methods to an object class.
 
-To do so, definde a `Parent class` in the classes' basic configuration as in the screen below. 
+To do so, define a `Parent class` in the classes' basic configuration as in the screen below. 
 The class will then extend the given parent class.
 
 ![Parent Class Configuration](../img/parent-class.png)

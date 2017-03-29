@@ -3,10 +3,10 @@
 When building solutions with Pimcore, normally one starts with configuring an object data model, 
 create custom controller, actions and templates, creating documents and so on. Lots of things 
 are possible without extending Pimcore itself. 
-But depending on the desired result, sometimes it is necessary to extend default functionality
+But depending on the desired result, sometimes it is necessary to extend the default functionality
 of Pimcore. 
 
-For that Pimcore provides several ways for extension. Depending on the use case one or the other
+Pimcore provides several ways for extension for that purpose. Depending on the use case one or the other
 way may fit best. 
 
 Following a list of ways to extend Pimcore. See detail pages for additional information: 
@@ -33,4 +33,4 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
  
 * Add [**Custom Persistent Models**](./17_Custom_Persistent_Models.md) to save additional information. 
 
-* [**Create Pimcore Plugins**](./13_Plugin_Developers_Guide/README.md) when you want to add complex and extensive functionality to Pimcore. 
+* [**Create Pimcore Plugins**](./13_Plugin_Developers_Guide/README.md) when you want to add complex and extensive functionalities to Pimcore. 

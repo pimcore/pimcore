@@ -3,7 +3,7 @@
 It is possible to hook into the startup process of Pimcore. This is useful if you want to add some custom ZF routes to 
 the controller front or to add extend the functionality without creating a plugin. 
 
-To use the hook create a file called `startup.php` in `/website/config/` or just rename the existing `startup.php.example` 
+To use the hook, create a file called `startup.php` in `/website/config/` or just rename the existing `startup.php.example` 
 to `startup.php`.
 
 This file is included at the end `/pimcore/config/startup.php`.  

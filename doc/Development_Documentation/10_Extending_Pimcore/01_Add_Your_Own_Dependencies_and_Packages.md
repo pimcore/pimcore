@@ -1,6 +1,6 @@
 # Add your own Dependencies and Packages
 
-Pimcore is 100% compatible to composer and it's very easy to use additional libraries 
+Pimcore is 100% compatible with composer and it's very easy to use additional libraries 
 installed via composer ([http://getcomposer.org/](http://getcomposer.org/)) in Pimcore. 
 
 So additional functionality (like external libraries, ... ) needed in your application 
@@ -8,7 +8,7 @@ can be added and loaded.
 
 
 ## Basic Example
-In this example we want to use some components of Symfony2 within our Pimcore project. 
+In this example, we want to use some components of Symfony within our Pimcore project. 
 
 #### Let's start: 
 Go to the document-root of your project and just follow the usual composer setup. 
@@ -66,7 +66,7 @@ class TestController extends Action {
 
 
 ## Pimcore Plugins
-It is also possible to install Pimcore plugins via composer. To do so, the plugin has to have a `composer.json` with a special type and need to be accessably for composer. 
+It is also possible to install Pimcore plugins via composer. To do so, the plugin has to have a `composer.json` with a special type and needs to be accessible for composer. 
 
 ### Plugin `composer.json`
 In the plugins `composer.json` a special type (`pimcore-plugin`) and a additional requirement (`"pimcore/installer-plugin": ">=1"`) has to be defined. These two things enable composer to install plugins into */plugins* folder of Pimcore. 
@@ -116,7 +116,7 @@ In the website components `composer.json` a special type (`pimcore-website-compo
 ```
 
 ### Include Pimcore Website Component to Pimcore `composer.json`
-To install a Website Component into a Pimcore instance, just add it as requirement to Pimcores `composer.json` as follows. Maybe you also need to add an additional repository to tell composer where to find the plugin. 
+To install a Website Component into a Pimcore instance, just add it as requirement to Pimcore's `composer.json` as follows. Maybe you also need to add an additional repository to tell composer where to find the plugin. 
 
 ```json
 {
@@ -130,7 +130,7 @@ To install a Website Component into a Pimcore instance, just add it as requireme
 ```
 
 ## Version Checking
-To aviod compatibility problems with plugins or custom components, that are compatible with a special Pimcore version only, Pimcore
+To avoid compatibility problems with plugins or custom components, that are compatible with a special Pimcore version only, Pimcore
 has following requirement `pimcore/core-version` that defines its current version: 
 
 ```json
@@ -145,5 +145,5 @@ has following requirement `pimcore/core-version` that defines its current versio
 }
 ```
 
-If your compontens have the same requirement to the versions they can work with, composer prevents you from installing your components
+If your components have the same requirement to the versions they can work with, composer prevents you from installing your components
 to an unsupported version of Pimcore due to version conflicts to the requirement `pimcore/core-version`. 

@@ -1,7 +1,7 @@
 # Dependency Injection
 
-Depencendy Injection is a way for extending and overwriting internal Pimcore classes with custom implementations. 
-This is especially useful if you'd like to overwrite models of Pimcore, for details see later in this chapter. 
+Dependency Injection is a way for extending and overwriting internal Pimcore classes with custom implementations. 
+This is especially useful if you'd like to overwrite models of Pimcore, for further details continue reading this chapter. 
 
 Internally Pimcore uses [PHP-DI](http://php-di.org/). You can create you own [PHP-DI](http://php-di.org/) configuration 
 which extends or overwrites the core configuration.
@@ -11,7 +11,7 @@ Pimcore automatically looks for a configuration in `/website/config/di.php` (the
 can rename/reuse). 
 
 This configuration is a normal [PHP-DI configuration](http://php-di.org/doc/php-definitions.html), you can use every 
-feature from PHP-DI you like. Additionally you have also access to the container directly in 
+feature from PHP-DI you like. Additionally, you have also access to the container directly in 
 `/website/config/startup.php` ([example](https://github.com/pimcore/pimcore/blob/master/website_demo/config/startup.example.php#L45-L45)).
  
 ## Example Configuration
@@ -45,7 +45,7 @@ return [
 
 ## Overwrite Pimcore Models using Dependency Injection
 It's possible to map a custom class to a Pimcore model. That means that you can use your own classes inside Pimcore, 
-but an example will be more explanatory: 
+but the following example will be more explanatory: 
 
 ```php
 // define a custom class,  for example:
@@ -89,7 +89,7 @@ the namespace `Website` in this example the file should be placed at `/website/m
 Instead of the `Website` namespace you can use any other namespace that is registered, but we recommend to use Website, 
 since this one is already registered and works out of the box. 
 
-After registering the namespace have to make sure the right class is loaded, either by including it manually or placing
+After registering the namespace make sure the right class is loaded, either by including it manually or placing
  it somewhere in the include path.
 
 
@@ -106,7 +106,7 @@ After this you can use classes with a name like `Mynamespace` or `Mynamespace\Pr
 
 
 #### Using the Class Mapping
-After that, wherever you retrieve an `Object\News` you will get an `Website\Model\News`, also the following 
+After that, wherever you retrieve a `Object\News` object you will get a `Website\Model\News` instance. Besides that, the following 
 `Website\Model\News\Listing` will contain `Website\Model\News`. 
 
 ```php

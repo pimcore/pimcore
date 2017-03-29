@@ -1,12 +1,12 @@
 # Maintenance Mode
 
-Pimcore offers a maintenance mode, which limits the access to the user who enabled the maintenance mode. It is session based 
+Pimcore offers a maintenance mode, which restricts access to the admin user interface to the user that enabled the maintenance mode. It is session based 
 and no other user will be able to access the website or the admin interface. 
 
 All other users get a [default "Temporary not available" page](https://demo.pimcore.org/pimcore/static/html/maintenance.html) 
 displayed. 
 
-Also maintenance scripts and headless executions of Pimcore will be prevented.  
+Moreover, maintenance scripts and headless executions of Pimcore will be prevented.  
 
 The Maintenance Mode is activated by Pimcore during Pimcore Update.
  

@@ -2,10 +2,10 @@
 
 ## When to use Custom Models
 
-The Pimcore objects are very flexible but shouldn't be used to store all types of data. For example, it doesn't make sense 
+Pimcore objects are very flexible but shouldn't be used to store all types of data. For example, it doesn't make sense 
 to implement a rating-, comments- or a complex blog system on top of the Pimcore objects. Sometimes people also 
-implementing really interesting things just to get a unique object key or try to build n to n relationships. This produces 
-really ugly code, a lot of overhead, could be very slow, is hard to refactor and you will have a lot of pain if you have to merge multiple 
+try to implement quite interesting things just to get a unique object key or to build n to n relationships. This sometimes produces 
+really ugly code with a lot of overhead which could be very slow, hard to refactor, and you will have a lot of pain if you have to merge multiple 
 installations.
 
 Pimcore provides 2 possible ways of working with custom entities namely Doctrine ORM and Pimcore Dao.
@@ -19,8 +19,8 @@ Please check <http://symfony.com/doc/current/doctrine.html> for more details.
 This example will show you how you can save a custom model in the database.
 
 ## Database
-At first create the database structure for the model, for this example I'll use a very easy model called vote. it just 
-has an id, an username (just a string) and a score. If you want to write a model for a bundle you have to create the 
+As a first step, create the database structure for the model, for this example I'll use a very easy model called vote. it just 
+has an id, a username (just a string) and a score. If you want to write a model for a bundle you have to create the 
 table(s) during the installation.
 
 ```php
@@ -132,7 +132,7 @@ just depends on your DAO, just read on and have a look at the save method in the
 The `save` and `getById` methods just call the corresponding DAO methods.
 
 The `getDao` method looks for the nearest DAO. It just appends Dao to the class name, if the class exists you are ready 
-to use the DAO. If the class doesn't exists, it just continue searching using the next namespace.
+to use the DAO. If the class doesn't exist, it just continue searching using the next namespace.
 
 Small example: `AppBundle\Model\Vote` looks for `AppBundle\Model\Vote\Dao`, `AppBundle\Model\Dao`, `AppBundle\Dao`.
  
