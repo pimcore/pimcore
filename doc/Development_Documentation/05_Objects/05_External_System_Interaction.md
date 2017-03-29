@@ -12,11 +12,11 @@ To keep things simple, we're using simple CLI scripts in the following example, 
 
 ## Import
 The following example indicates the creation of a new object of the class `myclass`. 
-Put the following script into the file `website/cli/example.php` (or any other PHP file).
+Put the following script into the file `/app/Resources/cli/example.php` (or any other PHP file).
 ```php
 <?php 
 
-include_once(__DIR__ . "/../../pimcore/cli/startup.php");
+include_once(__DIR__ . "/../../../pimcore/config/startup_cli.php");
 
 use \Pimcore\Model\Object;
 
