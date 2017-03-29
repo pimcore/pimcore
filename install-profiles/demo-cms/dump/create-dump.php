@@ -1,57 +1,96 @@
 <?php
 
-include_once("../../pimcore/cli/startup.php");
+include_once("../../../pimcore/config/startup_cli.php");
 
 // get tables which are already in install.sql
-$installSql = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
+$installSql = file_get_contents(PIMCORE_PROJECT_ROOT . "/app/Resources/install/install.sql");
 preg_match_all("/CREATE TABLE `(.*)`/", $installSql, $matches);
 $existingTables = $matches[1];
 
 
-$backup = new \Pimcore\Backup($backupFile);
-$initInfo = $backup->init();
+$db = \Pimcore\Db::get();
+$databaseName = $db->getDatabase();
 
-$stepMethodMapping = [
-    "mysql" => "mysqlData"
-];
 
-if (empty($initInfo["errors"])) {
-    $backup->mysqlTables($existingTables);
+$tablesRaw = $db->fetchAll("SHOW FULL TABLES");
 
-    foreach ($initInfo["steps"] as $step) {
-        if (!is_array($step[1])) {
-            $step[1] = [];
-        }
+$views = [];
+$tables = [];
 
-        if (array_key_exists($step[0], $stepMethodMapping)) {
-
-            // skip these tables => content / data
-            if (in_array($step[1]["name"], ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "locks", "email_log", "tmp_store"])) {
-                continue;
-            }
-
-            verboseMessage("execute: " . $step[0] . " | with the following parameters: " . implode(",", $step[1]));
-            $return = call_user_func_array([$backup, $stepMethodMapping[$step[0]]], $step[1]);
-            if ($return["filesize"]) {
-                verboseMessage("current filesize of the backup is: " . $return["filesize"]);
-            }
-        }
+foreach($tablesRaw as $table) {
+    if($table["Table_type"] == "VIEW") {
+        $views[]  = current($table);
+    } else {
+        $tables[] = current($table);
     }
 }
 
-// do some modifications
-$dumpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql";
-$dumpData = file_get_contents($dumpFile);
+
+$dumpData = "\nSET NAMES utf8mb4;\n\n";
+
+// dump table schema, without the tables in install.sql
+foreach ($tables as $name) {
+    if (in_array($name, $existingTables)) {
+        continue;
+    }
+
+    $dumpData .= "\n\n";
+    $dumpData .= "DROP TABLE IF EXISTS `" . $name . "`;";
+    $dumpData .= "\n";
+
+    $tableData = $db->fetchRow("SHOW CREATE TABLE " . $name);
+
+    $dumpData .= $tableData["Create Table"] . ";";
+
+    $dumpData .= "\n\n";
+}
+
+$dumpData .= "\n\n";
+
+// dump data
+foreach ($tables as $name) {
+
+    if (in_array($name, ["tracking_events", "cache", "cache_tags", "http_error_log", "versions", "edit_lock", "locks", "email_log", "tmp_store"])) {
+        continue;
+    }
+
+    $tableData = $db->fetchAll("SELECT * FROM " . $name);
+
+    foreach ($tableData as $row) {
+        $cells = [];
+        foreach ($row as $cell) {
+            if (is_string($cell)) {
+                $cell = $db->quote($cell);
+            } elseif ($cell === null) {
+                $cell = "NULL";
+            }
+
+            $cells[] = $cell;
+        }
+
+        $dumpData .= "INSERT INTO " . $name . " VALUES (" . implode(",", $cells) . ");";
+        $dumpData .= "\n";
+    }
+}
+
+foreach($views as $name) {
+    // dump view structure
+    $dumpData .= "\n\n";
+    $dumpData .= "DROP VIEW IF EXISTS " . $name . ";";
+    $dumpData .= "\n";
+
+    try {
+        $viewData = $db->fetchRow("SHOW CREATE VIEW " . $name);
+        $dumpData .= $viewData["Create View"] . ";";
+    } catch (\Exception $e) {
+        echo $e->getMessage() . "\n";
+    }
+}
 
 // remove user specific data
 $dumpData = preg_replace("/DEFINER(.*)DEFINER/i", "", $dumpData);
 
-$finalDest = PIMCORE_WEBSITE_PATH . "/dump/data.sql";
+$finalDest = __DIR__ . "/data.sql";
 file_put_contents($finalDest, $dumpData);
 
-verboseMessage("Dump is here: " . $finalDest);
-
-function verboseMessage($m)
-{
-    echo $m . "\n";
-}
+echo "Dump is here: " . $finalDest . "\n";

@@ -333,14 +333,6 @@ pimcore.layout.toolbar = Class.create({
                 extrasItems.push("-");
             }
 
-            if (user.isAllowed("backup") && perspectiveCfg.inToolbar("extras.backup")) {
-                extrasItems.push({
-                    text: t("backup"),
-                    iconCls: "pimcore_icon_backup",
-                    handler: this.backup
-                });
-            }
-
             if (user.isAllowed("emails") && perspectiveCfg.inToolbar("extras.emails")) {
                 extrasItems.push({
                     text: t("email"),
@@ -1043,12 +1035,6 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("predefined_metadata", new pimcore.settings.metadata.predefined());
         }
-    },
-
-
-
-    backup: function () {
-        var backup = new pimcore.settings.backup();
     },
 
     recyclebin: function () {

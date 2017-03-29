@@ -268,7 +268,6 @@ $scripts = array(
     "pimcore/settings/update.js",
     "pimcore/settings/redirects.js",
     "pimcore/settings/glossary.js",
-    "pimcore/settings/backup.js",
     "pimcore/settings/recyclebin.js",
     "pimcore/settings/fileexplorer/file.js",
     "pimcore/settings/fileexplorer/explorer.js",
