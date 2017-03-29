@@ -988,13 +988,13 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 if (!empty($part)) {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace("/", "", $tag[1]);
-                        if (strpos($tag[1], "/") === false) {
-                            if (in_array($tagName, self::SELFCLOSING_TAGS)) {
-                                $part = '<ph id="' . $count . '"><![CDATA[' . $part . ']]></ph>';
-                            } else {
-                                $openTags[$count] = ["tag" => $tagName, "id" => $count];
-                                $part = '<bpt id="' . $count . '"><![CDATA[' . $part . ']]></bpt>';
-                            }
+                        if (in_array($tagName, self::SELFCLOSING_TAGS)) {
+                            $part = '<ph id="' . $count . '"><![CDATA[' . $part . ']]></ph>';
+
+                            $count++;
+                        } else if (strpos($tag[1], "/") === false) {
+                            $openTags[$count] = ["tag" => $tagName, "id" => $count];
+                            $part = '<bpt id="' . $count . '"><![CDATA[' . $part . ']]></bpt>';
 
                             $count++;
                         } else {
