@@ -10,7 +10,7 @@
 
 ### Example
 
-In this example we want to display the asset metadata title of the target asset.
+In this example, we want to display the asset metadata title of the target asset.
 
 ![Asset Metadata](../../../img/formatter_class_asset.png)
 

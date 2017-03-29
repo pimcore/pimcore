@@ -1,7 +1,7 @@
 # Additional Class Settings
 
-On class level, there are multiple additional settings and features available. These can be either configured in Pimcore
-backend or within code by a developer and have influence on appearance and behaviour of Pimcore. 
+On class level, there are multiple additional settings and features available which influence the appearance and behaviour of Pimcore. These can be either configured in the Pimcore
+backend or via code by a developer. 
 
 #### These features include: 
 * [Data Inheritance and Parent Class](./01_Inheritance.md)

@@ -1,6 +1,6 @@
 # Backup of Pimcore
 
-We recommend the usage of standard tools depending on your infrastructure for creating a backup of your Pimcore instance.
+We recommend the usage of standard tools depending on your infrastructure for creating a back up of your Pimcore instance.
 
 No matter which solution your're using, it's crucial to backup the following components: 
 - All files in your project root, however you can normally exclude the following directories 
@@ -17,7 +17,7 @@ man's backup can be quite handy :)
 # change directory to your project root 
 cd /var/www/your/project/
 
-# create an archive of the entire project root, exluding tempoaray files
+# create an archive of the entire project root, excluding temporary files
 tar cfv /tmp/my-poor-mans-backup.tar ./
 
 # create the mysql dump

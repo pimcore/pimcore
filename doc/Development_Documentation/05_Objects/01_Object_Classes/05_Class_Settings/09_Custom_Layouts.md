@@ -7,7 +7,7 @@ available to standard users through the workspace settings.
 In order to define a custom layout, open the Custom Layout Editor through the Configure Custom Layouts button in the 
 class editor. You can define as many layouts as you want. In the left panel you will see the master definition, 
 in the middle the custom layout you are currently editing and on the right the specific settings for the selected 
-field. You are able to modify all visual aspects of the field. Other settings concerning the data aspects are locked. 
+field. You can to modify all visual aspects of the field. Other settings concerning the data aspects are locked. 
 You can drag and drop elements from the master layout to the custom layout tree, or you can add layout components 
 using the context menu.
 
