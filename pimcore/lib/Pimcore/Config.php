@@ -53,7 +53,7 @@ class Config
                 $fileExt = File::getFileExtension($name);
                 $pureName = str_replace("." . $fileExt, "", $name);
                 foreach ($pathsToCheck as $path) {
-                    $tmpFile = $path . "/" . $pureName . "." . $env . "." . $fileExt;
+                    $tmpFile = $path . "/" . $pureName . "_" . $env . "." . $fileExt;
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
                         break;

@@ -4,13 +4,14 @@ Following tools are provided by Pimcore to support deployment processes.
 
 ## Pimcore Configurations
 
-All Pimcore configurations are saved as PHP files on the file system. As a result they can be included into 
+All Pimcore configurations are saved as YAML or PHP files on the file system. As a result they can be included into 
 [version control systems](./01_Version_Control_Systems.md) and by utilizing the 
 [multi environment feature](./03_Multi_Environment.md) different configuration files for different deployment stages 
 an be defined. 
 
-* <https://github.com/pimcore/pimcore/tree/master/website_demo/var/config> 
-* <https://github.com/pimcore/pimcore/tree/master/website_demo/config>
+* <https://github.com/pimcore/pimcore-5/tree/symfony/app/config> 
+* <https://github.com/pimcore/pimcore-5/tree/symfony/app/config/pimcore>
+* <https://github.com/pimcore/pimcore-5/tree/symfony/var/config>
 
 
 ## Pimcore Class Definitions
@@ -26,18 +27,18 @@ be added to version control systems and be deployed to different deployment stag
 After every code update you should use the `deployment:classes-rebuild` command to push changes to the database.
  
 ```bash
-php pimcore/cli/console.php deployment:classes-rebuild
+./bin/console deployment:classes-rebuild
 ```
 
 
 As an alternative also class export to json-files and the class import commands can be used. 
 
 ```bash
-php pimcore/cli/console.php definition:import:objectbrick /brick_jsonfile_path.json
+./bin/console definition:import:objectbrick /brick_jsonfile_path.json
 
-php pimcore/cli/console.php definition:import:fieldcollection /collection_jsonfile_path.json
+./bin/console definition:import:fieldcollection /collection_jsonfile_path.json
 
-php pimcore/cli/console.php definition:import:class /class_jsonfile_path.json
+./bin/console definition:import:class /class_jsonfile_path.json
 ```
 
 
@@ -47,7 +48,7 @@ The [Pimcore Console](../09_Development_Tools_and_Details/11_Console_CLI.md) pro
  These tasks can be integrated into custom deployment workflows and tools. One example for them would be the Pimcore
  class definitions as described above. 
 
-To get a list of all available commands use ```php pimcore/cli/console.php list````. 
+To get a list of all available commands use `./bin/console list`. 
 
 #### Potentially useful commands:
 
@@ -57,8 +58,9 @@ To get a list of all available commands use ```php pimcore/cli/console.php list`
 | mysql-tools                                          | Optimize and warmup mysql database                                                              |
 | search-backend-reindex                               | Re-indexes the backend search of pimcore                                                        |
 | update                                               | Update pimcore to the desired version/build                                                     |
-| cache:clear                                          | Clear caches                                                                                    |
-| cache:warming                                        | Warm up caches                                                                                  |
+| pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                    |
+| cache:clear                                          | Clear Symfony caches                                                                                    |
+| pimcore:cache:warming                                        | Warm up caches                                                                                  |
 | classificationstore:delete-store                     | Delete Classification Store                                                                     |
 | definition:import:class                              | Import Class definition from a JSON export                                                      |
 | definition:import:fieldcollection                    | Import FieldCollection definition from a JSON export                                            |
