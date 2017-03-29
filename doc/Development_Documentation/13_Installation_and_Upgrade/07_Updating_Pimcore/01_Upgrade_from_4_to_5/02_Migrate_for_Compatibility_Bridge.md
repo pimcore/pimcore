@@ -93,11 +93,6 @@ RENAME TABLE plugin_onlineshop_productindex_store TO ecommerceframework_producti
 RENAME TABLE plugin_onlineshop_optimized_productindex TO ecommerceframework_optimized_productindex; 
 RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommerceframework_optimized_productindex_relations;
 ```
-- activate session in `/app/config/config.yml` with following entry (or additional configuration if needed): 
-```yaml 
-  framework:
-      session: ~
-```
 - migrate translations for order backoffice to adminTranslations
 - extend your payment page with following or a similar snippet if needed: 
 ```php

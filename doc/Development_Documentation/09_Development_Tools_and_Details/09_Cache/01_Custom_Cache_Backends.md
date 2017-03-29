@@ -39,27 +39,6 @@ maxmemory-policy allkeys-lru
 save ""
 ```
 
-### MongoDB Backend
-```
-<?php
- 
-return [
-    "backend" => [
-        "type" => "\\Pimcore\\Cache\\Backend\\Mongodb",
-        "custom" => "true",
-        "options" => [
-            "dbname" => "myDbName",
-            "optional" => [
-                "db" => "myDbName",
-                "username" => "dbUser",
-                "password" => "dbPassord"
-            ]
-        ]
-    ]
-];
-```
-
-
 ## Setup a Custom Cache Frontend (e.g. for redis with id-prefix)
 You can also define a custom cache frontend, this can be also done in the `cache.php`
 
