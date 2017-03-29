@@ -43,7 +43,7 @@ The table below, describes the most useful of available options in the configura
 | Reference                                                      | Value                                        | Description                                                                                 |
 |----------------------------------------------------------------|----------------------------------------------|---------------------------------------------------------------------------------------------|
 | `[perspectiveName]["icon"]`                                    | string                                       | Path to the icon file.                                                                      |
-| `[parspectiveName]["iconCls"]`                                 | string                                       | The css class added to the icon.                                                            |
+| `[parspectiveName]["iconCls"]`                                 | string                                       | The CSS class added to the icon.                                                            |
 | `[perspectiveName]["elementTree"]`                             | array                                        | Array which contain the rows with configuration information like the tree type .            |
 | `[perspectiveName]["elementTree"][i]["type"]`                  | string (documents,objects,assets,customview) | What type of elements will be rendered in the tree.                                         |
 | `[perspectiveName]["elementTree"][i]["position"]`              | string (left,right)                          | a place, where the tree is initially generated                                              |

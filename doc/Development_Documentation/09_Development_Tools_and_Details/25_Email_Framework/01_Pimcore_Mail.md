@@ -12,8 +12,8 @@ Additionally the debug information (to whom the email would have been sent) is a
 and the Subject contains the prefix "Debug email:".
 This is done via an extension of the swift mailer `RedirectingPlugin`.   
 
-The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding css, compiling less 
-files, normalizing URLs, replacement of Dynamic Placeholders...). Note that all css files are embedded 
+The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, compiling Less 
+files, normalizing URLs, replacement of Dynamic Placeholders...). Note that all CSS files are embedded 
 to the html with a `<style>` tag because the image paths are also normalised.
  
 Optionally, you can use `html2text` from [Martin Bayer](http://www.mbayer.de/html2text/index.shtml) 

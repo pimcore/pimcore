@@ -68,9 +68,9 @@ $navigation = $mainNavigation->getContainer();
 ```
 
 The renderMenu() method renders the menu to the deepest available level. 
-Levels trees which are not within the active tree, and levels below the latest active page must be hidden using css. 
+Levels trees which are not within the active tree, and levels below the latest active page must be hidden using CSS. 
 
-The example css below shows how to do that (includes 3 Levels):
+The example CSS below shows how to do that (includes 3 Levels):
 
 ```css
 #navigation ul li ul {

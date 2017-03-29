@@ -27,7 +27,7 @@ In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObjec
  default class](./01_Inheritance.md) and return your own implementation of Element_AdminStyle.
  
 #### Possible Properties to define:
-* Element css class
+* Element CSS class
 * Element icon
 * Element icon class
 

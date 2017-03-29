@@ -88,7 +88,7 @@ array(5) {
 As you can see, you're able to get information about every metadata added to specified page. 
 In that case, on the first page of the pdf document you can find the textarea note and the unchecked checkbox.
 
-### Pimcore PDF - Possible Javascript Methods
+### Pimcore PDF - Possible JavaScript Methods
 
 The PDF editable also, allows you to use javascript actions.
 There is always created a javascript object named: `pimcore_pdf`, which contains an object for every pdf editable on this page. 

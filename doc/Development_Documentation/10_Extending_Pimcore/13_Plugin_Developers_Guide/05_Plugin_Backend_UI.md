@@ -2,10 +2,10 @@
 
 ## General
 
-The Pimcore Backend UI is based upon the Ext JS Framework. A plugin can add Ext components to the user interface or 
-execute any other Javascript required in the plugin context.
+The Pimcore Backend UI is based upon the [Ext JS](https://www.sencha.com/products/extjs/#overview) Framework. A plugin can add Ext components to the user interface or 
+execute any other JavaScript required in the plugin context.
 
-All Javascript and CSS which should be included, needs to be defined in your bundle class, as described in 
+All JavaScript and CSS which should be included, needs to be defined in your bundle class, as described in 
 [Pimcore Bundles](./01_Pimcore_Bundles.md). 
 
 These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in the bundle class.
@@ -37,7 +37,7 @@ var samplePlugin = new pimcore.plugin.sample();
 ```
 
 
-## Javascript UI Events
+## JavaScript UI Events
 The broker then will notify each plugin upon the events described below. For registering to these events just add a 
 corresponding method to the javascript plugin class. 
 
@@ -124,7 +124,7 @@ var menusamplePlugin = new pimcore.plugin.menusample();
 
 Plugin UI components might need to be activated/loaded after the plugin is installed in the Pimcore backend UI.
 
-As plugin Javascript and CSS files are only available in the browser after installation and reloading of the UI, the 
+As plugin JavaScript and CSS files are only available in the browser after installation and reloading of the UI, the 
 backend plugin can return a flag that UI reload is required.
 If this flag is set to true, the UI asks the user to reload after install. After that, all plugin components should be 
 available.

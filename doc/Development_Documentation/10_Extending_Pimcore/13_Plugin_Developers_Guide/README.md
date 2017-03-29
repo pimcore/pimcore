@@ -48,7 +48,7 @@ The following sections explain how to design and structure plugins and how to
 register for and utilize the events provided in the PHP backend and the Ext JS frontend.
 
 * [Plugin_Class](./03_Plugin_Class.md) is the starting point for each plugin.
-* [Plugin_Backend_UI](./05_Plugin_Backend_UI.md) for extending the Pimcore Backend UI with Javascript. 
+* [Plugin_Backend_UI](./05_Plugin_Backend_UI.md) for extending the Pimcore Backend UI with JavaScript. 
 
 In addition to these topics also have a look at the [Example](./07_Example.md) provided in 
 the documentation. 
