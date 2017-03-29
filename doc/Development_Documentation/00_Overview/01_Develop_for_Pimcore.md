@@ -25,6 +25,7 @@ At the moment Pimcore implements the following PSRs:
 * PSR-2 (Coding Style Guide)
 * PSR-3 (Logger Interface)
 * PSR-4 (Autoloading Standard) 
+* PSR-6 (Caching)
 
 Please also keep that in mind when contributing to Pimcore. 
 
