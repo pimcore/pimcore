@@ -25,7 +25,7 @@ possibilities. These bundles provide a similar API as plugins did in previous ve
   database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
 
-See the [Pimcore Bundles](./06_Pimcore_Bundles.md) documentation to getting started with Pimcore bundles.
+See the [Pimcore Bundles](./05_Pimcore_Bundles.md) documentation to getting started with Pimcore bundles.
 
 
 ## Service configuration
@@ -75,7 +75,7 @@ If you need persistent storage, create a unique directory in `PIMCORE_PRIVATE_VA
 ## Extending the Admin UI
 
 The following section explains how to design and structure bundles and how to register for and utilize the events provided
-in the PHP backend and the Ext JS frontend: [Plugin_Backend_UI](./05_Plugin_Backend_UI.md)
+in the PHP backend and the Ext JS frontend: [Plugin_Backend_UI](./06_Plugin_Backend_UI.md)
 
 In addition to these topics also have a look at the [Example](./07_Example.md) provided in the documentation. 
 
