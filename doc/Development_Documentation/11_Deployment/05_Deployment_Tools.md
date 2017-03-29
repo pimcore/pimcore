@@ -9,9 +9,9 @@ All Pimcore configurations are saved as YAML or PHP files on the file system. As
 [multi environment feature](./03_Multi_Environment.md) different configuration files for different deployment stages 
 an be defined. 
 
-* <https://github.com/pimcore/pimcore-5/tree/symfony/app/config> 
-* <https://github.com/pimcore/pimcore-5/tree/symfony/app/config/pimcore>
-* <https://github.com/pimcore/pimcore-5/tree/symfony/var/config>
+* <https://github.com/pimcore/pimcore/tree/symfony/app/config> 
+* <https://github.com/pimcore/pimcore/tree/symfony/app/config/pimcore>
+* <https://github.com/pimcore/pimcore/tree/symfony/var/config>
 
 
 ## Pimcore Class Definitions
