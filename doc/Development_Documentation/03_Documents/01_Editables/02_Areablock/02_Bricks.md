@@ -43,7 +43,7 @@ want to specify the brick ID manually), you can add the service definition yours
 tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto-registration, even if they're
 defined in the special namespace. Let's define our brick as above, but assume it needs access to a logger instance:
 
-```yml
+```yaml
 # a service.yml file defining services
 services:
     app.area.brick.iframe:

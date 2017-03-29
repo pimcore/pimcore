@@ -94,7 +94,7 @@ RENAME TABLE plugin_onlineshop_optimized_productindex TO ecommerceframework_opti
 RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommerceframework_optimized_productindex_relations;
 ```
 - activate session in `/app/config/config.yml` with following entry (or additional configuration if needed): 
-```yml 
+```yaml 
   framework:
       session: ~
 ```
