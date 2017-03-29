@@ -80,7 +80,7 @@
     "sensio/distribution-bundle": "^5.0",
     "sensio/framework-extra-bundle": "^3.0.2",
 
-    "ocramius/proxy-manager": "^2.1",
+    "ocramius/proxy-manager": "2.0.*",
     "cache/tag-interop": "^1",
 
     "debril/rss-atom-bundle": "^3.0",
