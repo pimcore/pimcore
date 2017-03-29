@@ -33,13 +33,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
     /**
-     * Autoloaded namespaces
-     *
-     * @var array
-     */
-    protected $autoloadNamespaces = [];
-
-    /**
      * Constructor.
      *
      * @param KernelInterface $kernel
@@ -54,9 +47,6 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 
         $this->setName('Pimcore');
         $this->setVersion(Version::getVersion());
-
-        // init default autoload namespaces
-        $this->initDefaultAutoloadNamespaces();
 
         // allow to register commands here (e.g. through plugins)
         $dispatcher = \Pimcore::getEventDispatcher();
@@ -97,83 +87,5 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $inputDefinition->addOption(new InputOption('environment', null, InputOption::VALUE_OPTIONAL, 'Explicitly set the environment, eg. production, dev, stage, ...'));
 
         return $inputDefinition;
-    }
-
-    /**
-     * Init default autoload namespaces. More namespaces can be added via addAutoloadNamespace()
-     */
-    protected function initDefaultAutoloadNamespaces()
-    {
-        $defaultAutoloadNamespaces = [
-            'Pimcore\\Console\\Command' => PIMCORE_PROJECT_ROOT . '/pimcore/lib/Pimcore/Console/Command',
-            'AppBundle\\Console\\Command' => PIMCORE_PROJECT_ROOT . '/src/AppBundle/Console/Command',
-        ];
-
-        foreach ($defaultAutoloadNamespaces as $namespace => $directory) {
-            $this->addAutoloadNamespace($namespace, $directory);
-        }
-    }
-
-    /**
-     * Add a namespace to autoload commands from
-     *
-     * @param $namespace
-     * @param $directory
-     * @return $this
-     */
-    public function addAutoloadNamespace($namespace, $directory)
-    {
-        if (isset($this->autoloadNamespaces[$namespace])) {
-            throw new \RuntimeException(sprintf('Autoload namespace %s is already defined. Can\'t add it again.', $namespace));
-        }
-
-        $this->autoloadNamespaces[$namespace] = $directory;
-        foreach ($this->findNamespaceCommands($namespace, $directory) as $className) {
-            $this->add(new $className());
-        }
-
-        return $this;
-    }
-
-    /**
-     * Find all commands in a namespace. Commands must extend Symfony\Component\Console\Command\Command and
-     * have its name ending in Command (e.g. AwesomeCommand).
-     *
-     * @param $namespace
-     * @param $directory
-     * @return array
-     */
-    public function findNamespaceCommands($namespace, $directory)
-    {
-        $commands = [];
-
-        if (!(file_exists($directory) && is_dir($directory))) {
-            return $commands;
-        }
-
-        $finder = new Finder();
-        $finder
-            ->files()
-            ->in($directory)
-            ->name('*Command.php');
-
-        /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $subNamespace = trim(str_replace($directory, '', $file->getPath()), DIRECTORY_SEPARATOR);
-            if (!empty($subNamespace)) {
-                $subNamespace = str_replace('/', '\\', $subNamespace);
-                $subNamespace = '\\' . $subNamespace;
-            }
-
-            $class = $namespace . $subNamespace . '\\' . $file->getBasename('.php');
-            if (class_exists($class)) {
-                $reflector = new \ReflectionClass($class);
-                if ($reflector->isInstantiable() && $reflector->isSubclassOf('Symfony\\Component\\Console\\Command\\Command')) {
-                    $commands[] = $class;
-                }
-            }
-        }
-
-        return $commands;
     }
 }

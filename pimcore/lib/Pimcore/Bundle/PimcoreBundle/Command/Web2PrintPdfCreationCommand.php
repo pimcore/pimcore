@@ -12,21 +12,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Console\Command;
+namespace Pimcore\Bundle\PimcoreBundle\Command;
 
+use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Web2Print\Processor;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Model\Asset;
 
-class InternalVideoConverterCommand extends AbstractCommand
+class Web2PrintPdfCreationCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this
-            ->setName('internal:video-converter')
-            ->setDescription('For internal use only')
-            ->addArgument("processId");
+            ->setName('web2print:pdf-creation')
+            ->setDescription('Start pdf creation')
+            ->addOption(
+                'processId', 'p',
+                InputOption::VALUE_REQUIRED,
+                "process-id with pdf creation definitions"
+            )
+        ;
     }
 
     /**
@@ -34,6 +41,7 @@ class InternalVideoConverterCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Asset\Video\Thumbnail\Processor::execute($input->getArgument("processId"));
+        ini_set('memory_limit', '2048M');
+        Processor::getInstance()->startPdfGeneration($input->getOption("processId"));
     }
 }

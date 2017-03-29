@@ -12,14 +12,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Console\Command\Definition\Import;
+namespace Pimcore\Bundle\PimcoreBundle\Command\Definition\Import;
 
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\ClassDefinition\Service;
-use Pimcore\Model\Object\Fieldcollection\Definition;
+use Pimcore\Model\Object\Objectbrick\Definition;
 
-class FieldCollectionCommand extends AbstractStructureImportCommand
+class ObjectBrickCommand extends AbstractStructureImportCommand
 {
     /**
      * Get type
@@ -28,7 +28,7 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
      */
     protected function getType()
     {
-        return 'FieldCollection';
+        return 'ObjectBrick';
     }
 
     /**
@@ -40,7 +40,7 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     protected function getDefinitionName($filename)
     {
         $parts = [];
-        if (1 === preg_match('/^fieldcollection_(.*)_export\.json$/', $filename, $parts)) {
+        if (1 === preg_match('/^objectbrick_(.*)_export\.json$/', $filename, $parts)) {
             return $parts[1];
         }
     }
@@ -83,6 +83,6 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
      */
     protected function import(AbstractModel $definition, $json)
     {
-        return Service::importFieldCollectionFromJson($definition, $json);
+        return Service::importObjectBrickFromJson($definition, $json);
     }
 }

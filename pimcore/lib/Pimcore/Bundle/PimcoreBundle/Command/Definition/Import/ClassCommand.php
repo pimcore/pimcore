@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Console\Command\Definition\Import;
+namespace Pimcore\Bundle\PimcoreBundle\Command\Definition\Import;
 
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Object\ClassDefinition;
