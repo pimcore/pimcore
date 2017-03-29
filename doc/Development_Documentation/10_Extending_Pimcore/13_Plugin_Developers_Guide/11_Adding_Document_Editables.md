@@ -1,7 +1,7 @@
 # Adding Document Editables 
 With plugins, it is also possible to add an individual Document Editable. 
 
-In order to create an individual document editable, all that needs to be done ist creating 
+In order to create an individual document editable, all that needs to be done is creating 
 a PHP class `\Pimcore\Model\Document\Tag\Mytag` which extends `\Pimcore\Model\Document\Tag`. 
 It must be within that namespace!
 

@@ -1,10 +1,10 @@
 # Bundle Developers Guide
 
-In previous versions of Pimcore, a plugin system allowed to hook into the system to add custom functionality. Starting with
-Pimcore 5, the plugin system was replaced by native Symfony bundles.  Therefore you do not need to any special
+In previous versions of Pimcore, a plugin system allowes you to hook into the system to add custom functionality. Starting with
+Pimcore 5, the plugin system was replaced by native Symfony bundles.  Therefore, you do not need to any special
 plugin structure but can refer to the [Symfony Bundle Documentation](http://symfony.com/doc/current/bundles.html) on how
 to get started with your custom bundles. From within your bundle, you have all possibilities to extend the system, from
-creating an defining services to routes, library code and anything else.
+defining new services or routes, library code and anything else.
 
 ## Bundle layout
 
@@ -37,11 +37,11 @@ See the [Pimcore Bundles](./01_Pimcore_Bundles.md) documentation to getting star
 
 
 Plugins are the most advanced way but also the most complex way of extending Pimcore. Starting with Pimcore version 5,
-plg
+allplg
 
-With plugins several things can be archived - they can be just a library of reuseable code 
+With plugins several things can be achieved - they can be just a library of reuseable code 
 components, they can utilize [Pimcores event API](../11_Event_API_and_Event_Manager.md) to
-extend backend functionality and they can modify and  extend the Pimcore Backend UI by utilizing
+extend backend functionality and they can modify and extend the Pimcore Backend UI by utilizing
 Javascript user interface hooks. 
 
 The following sections explain how to design and structure plugins and how to 
