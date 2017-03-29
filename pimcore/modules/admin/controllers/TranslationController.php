@@ -23,6 +23,8 @@ use Pimcore\Logger;
 
 class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 {
+    const SELFCLOSING_TAGS = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+
     public function importAction()
     {
         $this->checkPermission("translations");
@@ -944,7 +946,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         if (preg_match("/<\/?(bpt|ept)/", $content)) {
             $xml = str_get_html($content);
             if ($xml) {
-                $els = $xml->find("bpt,ept");
+                $els = $xml->find("bpt,ept,ph");
                 foreach ($els as $el) {
                     $content = html_entity_decode($el->innertext, null, "UTF-8");
                     $el->outertext = $content;
@@ -987,8 +989,12 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace("/", "", $tag[1]);
                         if (strpos($tag[1], "/") === false) {
-                            $openTags[$count] = ["tag" => $tagName, "id" => $count];
-                            $part = '<bpt id="' . $count . '"><![CDATA[' . $part . ']]></bpt>';
+                            if (in_array($tagName, self::SELFCLOSING_TAGS)) {
+                                $part = '<ph id="' . $count . '"><![CDATA[' . $part . ']]></ph>';
+                            } else {
+                                $openTags[$count] = ["tag" => $tagName, "id" => $count];
+                                $part = '<bpt id="' . $count . '"><![CDATA[' . $part . ']]></bpt>';
+                            }
 
                             $count++;
                         } else {
