@@ -263,8 +263,8 @@ The editmode is of course quite similar to other document types:
 ![Editing the email document](../img/newsletter_confirmation_document_editmode.png)
 
 
-To define the confirmation url in editmode. You have to add controller / action and token information.
-In the picture, you can see how you would add a token placeholder to the url. 
+To define the confirmation URL in editmode. You have to add controller / action and token information.
+In the picture, you can see how you would add a token placeholder to the URL. 
 
 ![The email document - a variable placeholder](../img/newsletter_token_url.png)
 

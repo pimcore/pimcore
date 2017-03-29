@@ -21,7 +21,7 @@ Now, you can use the table in your object, like below:
 
 ![Edit object with structured table](../../../img/Objects_Structured_Table_use.png)
 
-## Using structured table with PHP api
+## Using structured table with PHP API
 
 In the code, the data of this field can be accessed as shown in the code snippets, below:
 

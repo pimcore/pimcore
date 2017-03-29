@@ -2,7 +2,7 @@
 
 ![Video Field](../../../img/classes-datatypes-video.png)
 
-## Working with PHP api
+## Working with PHP API
 
 ```php
 <?php

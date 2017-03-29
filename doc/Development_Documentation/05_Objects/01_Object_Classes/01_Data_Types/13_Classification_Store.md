@@ -94,7 +94,7 @@ Since the only value can be found on level 1 for the default language the tree i
 
 ![Language value levels in Classification store](../../../img/Objects_ClassificationStore_levels.png)
 
-## Using Classification Store via PHP api
+## Using Classification Store via PHP API
 
 ```php
 // setter, group id = 1, key id id = 2, language = de

@@ -33,7 +33,7 @@ In order to fully understand the data structure of objects and field collections
 and have a look at the tables created by Pimcore.
 
 
-## Working with PHP api
+## Working with PHP API
 
 Of course, field collection data can be set programmatically as well. 
 The following code snippet illustrates how this can be achieved. 

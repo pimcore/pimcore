@@ -309,8 +309,8 @@ public function testAction()
  
 <!-- pagination start -->
 <?= $this->paginationControl($this->paginator, 'Sliding', 'includes/paging.php', [
-   'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the url)
-   'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the url)
+   'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
+   'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
 ]); ?>
 <!-- pagination end -->
 ```

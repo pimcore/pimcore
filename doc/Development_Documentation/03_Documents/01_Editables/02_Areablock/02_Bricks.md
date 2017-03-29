@@ -142,7 +142,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 ## How to Create a Brick
  
 Let's suppose, that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
-from a specified url in the editmode. First of all, let's update the class to add metadata for the extension manager, to
+from a specified URL in the editmode. First of all, let's update the class to add metadata for the extension manager, to
 make use of template auto-discovery and to load the view template from `app/Resources/views` instead of the bundle
 directory:
 
