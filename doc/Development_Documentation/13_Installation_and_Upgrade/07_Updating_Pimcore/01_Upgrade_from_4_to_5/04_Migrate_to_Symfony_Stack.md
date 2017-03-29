@@ -5,6 +5,15 @@ the new Symfony stack. This checklist can only be a starting point and never be 
 list for every Pimcore application. Depending on your application additional steps will 
 be necessary. 
 
+### Prerequisites 
+- If not already done, following database changes are needed: 
+```sql 
+ALTER TABLE `documents_page` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `personas`;
+ALTER TABLE `documents_snippet` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `contentMasterDocumentId`;
+ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin';
+ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
+```
+
 ### Controller
 - Move Controllers to `/src/AppBundle/Controllers/`.
 - Add namespace to controllers and extend them from `Pimcore\Controller\FrontendController` 
