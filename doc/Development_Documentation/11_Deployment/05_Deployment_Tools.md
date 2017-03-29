@@ -65,9 +65,9 @@ To get a list of all available commands use `./bin/console list`.
 | definition:import:class                              | Import Class definition from a JSON export                                                      |
 | definition:import:fieldcollection                    | Import FieldCollection definition from a JSON export                                            |
 | definition:import:objectbrick                        | Import ObjectBrick definition from a JSON export                                                |
-| deployment:classes-rebuild                           | rebuilds classes and db structure based on updated `website/var/classes/definition_*.php` files |
+| deployment:classes-rebuild                           | rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
 | thumbnails:image                                     | Generate image thumbnails, useful to pre-generate thumbnails in the background                  |
-| thumbnails:optimize-images                           | Optimize filesize of all images in `/vagrant/www/pimcore/website/var/tmp`                       |
+| thumbnails:optimize-images                           | Optimize filesize of all images in `web/var/tmp`                       |
 | thumbnails:video                                     | Generate video thumbnails, useful to pre-generate thumbnails in the background                  |
 
 Find more about the Pimcore Console on the [dedicated page](../09_Development_Tools_and_Details/11_Console_CLI.md).

@@ -117,7 +117,7 @@ You can also change the thumbnail configuration:
 ]) ?>
 ```
 
-And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/website/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
+And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
 
@@ -133,7 +133,7 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 ]); ?>
 
 
-// will output<img src="/website/var/thumb_9999__auto_xxxxxxxx@2x.png" width="200" height="200" /> <!-- but the real image size is 400x400 pixel -->
+// will output<img src="/var/thumb_9999__auto_xxxxxxxx@2x.png" width="200" height="200" /> <!-- but the real image size is 400x400 pixel -->
 
 // custom image tag (thumbnail objects)
 <?php if($this->editmode): ?>

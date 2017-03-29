@@ -40,7 +40,7 @@ Output returned by `getPosterAsset`:
 [status] => finished
 [formats] => Array
     (
-        [mp4] => /website/var/tmp/video_3414__example.mp4
+        [mp4] => /var/tmp/video_3414__example.mp4
     )
 ```
 

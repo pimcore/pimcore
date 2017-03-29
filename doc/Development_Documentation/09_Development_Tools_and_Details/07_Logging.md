@@ -1,6 +1,6 @@
 # Logging
 
-There are several different kinds of logs in Pimcore. All of them are located under `/website/var/log/`.
+There are several different kinds of logs in Pimcore. All of them are located under `/var/logs/`.
  
 ## debug.log
 This is definitely one of the most important logs and also the default logging location. 
@@ -56,7 +56,7 @@ function like this:
 \Pimcore\Log\Simple::log($name, $message);
 ```
 
-The `$name` variable defines the filename of the log file, "mylog" will write a file to `website/var/log/mylog.log` 
+The `$name` variable defines the filename of the log file, "mylog" will write a file to `/var/logs/mylog.log` 
 (extension is added automatically). If the file does not yet exist it will be created on the fly. 
 
 The message is the line that will be written to the log. A date and time will also be prepended 

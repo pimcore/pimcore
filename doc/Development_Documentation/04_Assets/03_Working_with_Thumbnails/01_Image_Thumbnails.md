@@ -26,7 +26,7 @@ and then the image will get resized, so the rounded corners are also resized whi
 To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
 an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file 
 beginning from the document root, for example: 
-`/website/var/tmp/image-thumbnails/0/53/thumb__exampleCover/img_0322.jpeg`
+`/var/tmp/image-thumbnails/0/53/thumb__exampleCover/img_0322.jpeg`
 
 This path can then be directly used to display the image in a `<img />` or `<picture`> tag. For example:
 ```php
@@ -156,7 +156,7 @@ echo $thumbnail->getHTML(["class" => "custom-class"]);
 $path = $thumbnail->getPath();
  
 // Asset\Image\Thumbnail implements __toString(), so you can still print the path by
-echo $thumbnail; // prints something like /website/var/tmp/....png
+echo $thumbnail; // prints something like /var/tmp/....png
 ```
 
 ## More Examples
@@ -198,7 +198,7 @@ path to your favorite color profile.
 ## Dynamic Generation on Request
 Pimcore auto-generates a thumbnail if requested but doesn't exist and is directly called via it's file path (not using any of 
 the `getThumbnail()` methods). 
-For example: Call `http://example.com/website/var/tmp/image-thumbnails/0/6644/thumb__contentimages/placeholder.jpeg` 
+For example: Call `http://example.com/var/tmp/image-thumbnails/0/6644/thumb__contentimages/placeholder.jpeg` 
  ("6644" is the asset ID and "contentimages" is the name of the thumbnail) directly in your browser. Now pimcore checks 
  if the asset with the ID 6644 and the thumbnail with the key "contentimages" exists, if yes the thumbnail is 
  generated on-the-fly and delivered to the client. When requesting the images again the image is directly served by 
@@ -249,7 +249,7 @@ using the following code
 ```
 this will create the following output: 
 ```php
-<img src="/website/var/tmp/thumb_6644__contentimages@2x.png" width="250" height="190" />
+<img src="/var/tmp/thumb_6644__contentimages@2x.png" width="250" height="190" />
 ```
 It's also possible to add the high-res dynamically: 
 ```php
@@ -270,17 +270,17 @@ So again, this feature is only useful in some edge-cases.
 ```
 this generates the followinig ouput: 
 ```php
-/website/var/tmp/thumb_6644__testimage.png
+/var/tmp/thumb_6644__testimage.png
 ```
 
 To get an high-res version of the thumbnail, you can just add `@2x` before the file extension: 
 ```
-/website/var/tmp/thumb_7865__teaserportal@2x.png
-/website/var/tmp/thumb_6644__testimage@5x.png
+/var/tmp/thumb_7865__teaserportal@2x.png
+/var/tmp/thumb_6644__testimage@5x.png
 ``` 
 Using float is possible too:
 ```
-/website/var/tmp/thumb_123456__teaserportal@3.2x.png
+/var/tmp/thumb_123456__teaserportal@3.2x.png
 ```
 
 Pimcore will then dynamically generate the thumbnails accordingly. 
