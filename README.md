@@ -10,7 +10,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-* [Documentation](https://www.pimcore.org/docs/latest)
+* [Documentation](https://www.pimcore.org/docs/5.0.0)
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
