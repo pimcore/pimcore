@@ -68,7 +68,7 @@ version or read/write permissions on the filesystem.
 
 ## Registration to ExtensionManager
 
-To make use of the installer, a bundle needs to be manager through the extension manager and not manually registered on
+To make use of the installer, a bundle needs to be managed through the extension manager and not manually registered on
 the `AppKernel` as normal bundles. As the extension manager needs to find the bundles it can manage, a pimcore bundle needs
 to fulfill the following requirements:
 
