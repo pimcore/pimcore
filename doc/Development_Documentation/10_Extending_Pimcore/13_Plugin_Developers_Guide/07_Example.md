@@ -23,13 +23,13 @@ Don't forget to activate the extension ![Enable extension](../../img/Extensions_
 
 </div>
 
-## Modifying The Admin Interface
+## Modifying the Admin Interface
 Next we're going to modify the admin interface. 
-All of the UI changes are driven by javascript, so open the `plugins/ExtensionExample/static/js/startup.js` file.
+All of the UI changes are driven by JavaScript, so open the `plugins/ExtensionExample/static/js/startup.js` file.
 
 Let's create a new menu item:
 
-Change `pimcoreReady` function like below:
+Change `pimcoreReady` function as depicted below:
 
 ```javascript
 pimcoreReady: function(params,broker){
@@ -47,7 +47,7 @@ pimcoreReady: function(params,broker){
 }
 ```
 
-Now if you reload the Pimcore panel, you will see new menu item in Tools menu:
+After reloading the Pimcore panel, you will see the new menu item in Tools menu:
 
 ![Extension Example menu item](../../img/Extensions_new_menu_item.png)
 
