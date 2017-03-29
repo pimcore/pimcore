@@ -1,7 +1,7 @@
 # CLI and Pimcore Console
 
 Pimcore can be executed headless and has a very powerful PHP API. As a consequence of these two aspects, 
-it is possible to do automate pretty every thing within Pimcore. 
+it is possible to do automate pretty everything within Pimcore. 
 
 There are two ways to getting up and running - simple CLI scripts and Pimcore Console. 
 
@@ -71,7 +71,7 @@ To have your command autoloaded, it must match a couple of prerequisites:
 
 * It must be placed in one of the namespaces listed above 
 (e.g. `AppBundle\Console\Command\AwesomeCommand` in `/src/AppBundle/Console/Command/AwesomeCommand.php`)
-* The class name must end in Command, e.g. `AwesomeCommand`
+* The class name must end with `Command`, e.g. `AwesomeCommand`
 * The class must inherit `Symfony\Component\Console\Command\Command`, ideally you achieve this by 
 extending `Pimcore\Console\AbstractCommand`
 
