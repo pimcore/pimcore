@@ -10,7 +10,7 @@ Users and roles are configured in Pimcore backend UI at *Settings* > *Users & Ro
 
 
 ## Permissions
-In Pimcore there are two levels of user permissions. Firstly the permissions on system components and secondly 
+In Pimcore there are two levels of user permissions. Firstly, the permissions on system components and secondly 
 permissions on data elements (assets, objects and documents). Permissions can be granted to roles or individual users. 
 The following paragraphs describe how and where permissions can be set and how they will or will not affect each other.
 
@@ -44,18 +44,18 @@ The following list outlines what the different system permissions (available for
 * **Objects**: objects tree is visible 
 * **Plugins**: specifies if a user is allowed to download install and manage extension
 * **Predefined Properties**: User can create and modify predefined properties
-* **QR-Codes**: User can create and modify qr codes
+* **QR-Codes**: User can create and modify QR codes
 * **Recycle Bin**: User has access to recycle bin
 * **Redirects**: User can create and modify redirects
 * **Reports**: User has access to reports module
 * **Seemode**: Seemode available/not available for user
-* **SEO Document Editor**: User has access to seo document editor
+* **SEO Document Editor**: User has access to SEO document editor
 * **System Settings**: User has access to system settings
 * **Tag & Snippet Management**: User can create and modify entries in tag & snippet management
 * **Targeting**: User has access to targeting module
 * **Thumbnails** User can create and modify thumbnail configurations
 * **Website Translations**: defines whether a user may view and edit website translations
-* **Users**: defines whether a user may manage other users settings and system permissions
+* **Users**: defines whether a user may manage other users' settings and system permissions
 * **Website Settings**: User can create and modify website settings
 
 A user will be granted any system permission that is granted to him directly or to any role he incorporates. 
