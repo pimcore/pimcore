@@ -52,7 +52,7 @@ specified in the class definition as shown in the screen below:
 > This is a very advanced feature and should only be used by very experienced developers who know what they are doing and 
 > what consequences it might have when the parent class is changed from `Pimcore\Model\Object\Concrete` to something else. 
 
-In order to maintain all pimcore functionalities, it has to be ensured that the special class used in the example 
+In order to maintain all Pimcore functionalities, it has to be ensured that the special class used in the example 
 above extends `Pimcore\Model\Object\Concrete` and that it's methods don't override and clash in unexpected ways 
 with existing methods of `Pimcore\Model\Object\Concrete` or any magic functions of `Pimcore\Model\Object\Concrete`
 or it's parent classes.
@@ -83,7 +83,7 @@ class Special extends Model\Object\Concrete {
 ```
 
 
-## Overwrite pimcore models using dependency injection
+## Overwrite Pimcore models using dependency injection
 In addition to parent classes, it is also possible to extend Pimcore object classes with custom classes and tell Pimcore 
 to use the custom classes instead of the generated object classes. This can be done by using dependency injection 
 functionality of Pimcore. 

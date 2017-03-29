@@ -46,7 +46,7 @@ All helpers are described below in detail, the following tables give just a shor
 | `headScript()`   | Managing your <scripts> elements                                                |
 | `headStyle()`    | Managing inline styles (pendant to `headLink()` for inline styles)              |
 | `headTitle()`    | Create and store the HTML document's `<title>` for later retrieval and output   |
-| `inc()`          | Use this function to directly include a pimcore document.                       |
+| `inc()`          | Use this function to directly include a Pimcore document.                       |
 | `inlineScript()` | Managing inline scripts (pendant to `headScript()` for inline scripts)          |
 | `navigation()`   | Embed and build navigations based on the document structure                     |
 | `pimcoreUrl()`   | An alternative to `url()` and `path()` with the building behavior of Pimcore 4  |

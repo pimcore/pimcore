@@ -3,7 +3,7 @@
 ## General
 
 The application logger is a tool, which developers can use to log 
-certain events and errors within a pimcore powered application. 
+certain events and errors within a Pimcore powered application. 
 
 <div class="inline-imgs">
 

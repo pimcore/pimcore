@@ -10,7 +10,7 @@ listed with the other select widgets.
 ![GeoPoint Config](../../../img/classes-datatypes-geo1.jpg)
 ![GeoPoint Field](../../../img/classes-datatypes-geo2.jpg)
 
-The geopoint consists of two coordinates: latitude and longitude. In the pimcore GUI there is the same geopoint selector 
+The geopoint consists of two coordinates: latitude and longitude. In the Pimcore GUI there is the same geopoint selector 
 widget as shown above. It allows to find coordinates for a geographic point easily. In the database the values are 
 stored in two columns which are called latitude and longitude. Programmatically the data for this field is 
 represented by `Pimcore\Model\Object\Data\Geopoint`. To set a geopoint programmatically, a new 
