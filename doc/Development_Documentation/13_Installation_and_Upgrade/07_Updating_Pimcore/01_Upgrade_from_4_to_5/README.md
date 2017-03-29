@@ -20,8 +20,15 @@ this is not recommended and has some major consequences like
 
 See the [migration guide](./02_Migrate_for_Compatibility_Bridge.md) for details. 
 
+
 ## 2) Migrate your application to Pimcore 5 Symfony stack
 
+To take full advantage of all features of Pimcore 5 the application has to be migrated to the Symfony stack. During 
+development of Pimcore 5 one major goal was to keep the migration effort as low as possible. 
+The actual effort to migrate your application depends on your applications architecture and 
+and how much you are using ZF1 functionality directly. 
 
- 
+See the [migation guide](./04_Migrate_to_Symfony_Stack.md) for a checklist for migrating 
+a typical Pimcore 4 Application and the [upgrade notes](../../09_Upgrade_Notes/02_V4_to_V5.md)
+for additional information for changes in Pimcore 5. 
  

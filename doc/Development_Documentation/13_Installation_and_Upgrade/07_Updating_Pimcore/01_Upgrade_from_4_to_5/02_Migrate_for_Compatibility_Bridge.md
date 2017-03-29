@@ -1,4 +1,4 @@
-# Get your application up and running with the `Compatibility Bridge` of Pimcore 5. 
+# Get your application up and running with the `Compatibility Bridge` of Pimcore 5
 Pimcore 5 ships with a `Compatibility Bridge` that should enable Pimcore 5 to run Pimcore 4 applications with some file 
 moves and minor code updates.
 This guide describes the steps needed in detail. 
