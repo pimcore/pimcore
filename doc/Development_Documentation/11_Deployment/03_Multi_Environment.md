@@ -6,30 +6,31 @@ configurations including a fallback mechanism.
 
 ## The `PIMCORE_ENVIRONMENT` Variable
 To switch to a different environment you have to set the environment variable `PIMCORE_ENVIRONMENT` with a value of 
-your choice (eg. development or test).
+your choice (eg. development or test). `PIMCORE_ENVIRONMENT` is an equivalent of Symfony's standard `SYMFONY_ENV` so 
+you can use whatever you prefer. 
  
 Having the variable set, there is a special loading order for all configuration files. 
 
-Loading example for `PIMCORE_ENVIRONMENT = development`: 
+Loading example for `PIMCORE_ENVIRONMENT = dev`: 
 
 ```
-website/config/system.development.php
-website/var/config/system.development.php
-website/config/system.php
-website/var/config/system.php
+app/config/pimcore/system_dev.php
+var/config/system_dev.php
+app/config/pimcore/system.php
+var/config/system.php
 ```
 
-The value of `PIMCORE_ENVIRONMENT` is used as a part of the file name.
+The value of `PIMCORE_ENVIRONMENT` is used as a part of the file name separated by `_`. 
 
 
 If you haven't set the environment variable, the loading order of configuration files looks like, below.
 
 ```
-website/config/system.php
-website/var/config/system.php
+app/config/pimcore/system.php
+var/config/system.php
 ```
 
-> **Note:** If you put your configurations into `website/config` they are also not writable by the Pimcore backend UI. 
+> **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 
 > This can be especially useful when having automated building environments and don't want the user to allow changing settings.  
 
 
@@ -43,7 +44,7 @@ There are several ways to set the value of `PIMCORE_ENVIRONMENT` - depending on 
 Add the following line to the virtual host configuration file.
 
 ```
-SetEnv PIMCORE_ENVIRONMENT development
+SetEnv PIMCORE_ENVIRONMENT dev
 ```
 
 
@@ -52,7 +53,7 @@ SetEnv PIMCORE_ENVIRONMENT development
 Add the following line to your `pool.d` configuration file.
 
 ```
-env[PIMCORE_ENVIRONMENT] = "development"
+env[PIMCORE_ENVIRONMENT] = "dev"
 ```
 
 ### CLI
@@ -60,15 +61,15 @@ env[PIMCORE_ENVIRONMENT] = "development"
 If you used a Unix system you would set the variable by CLI, like below.
 
 ```
-PIMCORE_ENVIRONMENT="development"; export PIMCORE_ENVIRONMENT
+PIMCORE_ENVIRONMENT="dev"; export PIMCORE_ENVIRONMENT
 ```
 
-### `console.php` Commands
+### Console Commands
 
-When running `pimcore/cli/console.php` application, set the environment by `--environment=development`.
+When running `./bin/console` application, set the environment by `--environment=dev`.
  
 ```
-php /path/to/pimcore/cli/console.php --environment=development ...
+./bin/console --environment=dev ...
 ```
 
 ### Switching Environments Dynamically
@@ -77,17 +78,17 @@ Add this to your .htaccess to switch dynamically between your environments:
 
 ```
 RewriteCond %{HTTP_HOST} ^localhost
-RewriteRule .? - [E=PIMCORE_ENVIRONMENT:Development]
+RewriteRule .? - [E=PIMCORE_ENVIRONMENT:dev]
 RewriteCond %{HTTP_HOST} ^staging\.site\.com$
-RewriteRule .? - [E=PIMCORE_ENVIRONMENT:Staging]
+RewriteRule .? - [E=PIMCORE_ENVIRONMENT:stage]
 RewriteCond %{HTTP_HOST} ^www\.site\.com
-RewriteRule .? - [E=PIMCORE_ENVIRONMENT:Production]
+RewriteRule .? - [E=PIMCORE_ENVIRONMENT:prod]
 ```
 
 
 ## Supported Configurations
 
 For examples, please see: 
-[https://github.com/pimcore/pimcore/tree/master/website_demo/var/config](https://github.com/pimcore/pimcore/tree/master/website_demo/var/config)
- 
- 
+* <https://github.com/pimcore/pimcore-5/tree/symfony/app/config> 
+* <https://github.com/pimcore/pimcore-5/tree/symfony/app/config/pimcore>
+* <https://github.com/pimcore/pimcore-5/tree/symfony/var/config>
