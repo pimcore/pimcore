@@ -7,7 +7,7 @@ This guide describes the steps needed in detail.
 - Execute the [`migration.sh`](./migration.sh) script with following sytax `./migration.sh <PATH TO PIMCORE ROOT>`. 
 This script does following things for you: 
   - move old `pimcore` folder to `pimcore4`
-  - download latest Pimcore 5 build and extracts it
+  - download latest Pimcore 5 build and extract it
   - create several necessary directories
   - move config files to new locations
   - move class files to new location
@@ -32,7 +32,7 @@ This script does following things for you:
     - `newsletter` > `smtp` > `auth` > `password` => add if not there with value `''`
 
 
-- Possibly you need to fix some of your Plugins - e.g. remove calls to `$db->describeTable('tablename');`
+- Probably you need to fix some of your Plugins - e.g. remove calls to `$db->describeTable('tablename');`
 - Add symlinks to static files, e.g.: 
   - Add Symlink in `/web/website` to `../../legacy/website/static`
   - Add Symlinks in `/web/` to your static plugin directories
@@ -50,7 +50,7 @@ ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NU
 ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
 ```
 
-- Change your Pimcore Documents to legacy mode with following DB statements and clear Pimcore cache afterwards: 
+- Change your Pimcore Documents to legacy mode with following DB statements and clear the Pimcore cache afterwards: 
 ```sql
 UPDATE documents_page SET legacy = 1; 
 UPDATE documents_snippet SET legacy = 1;
@@ -68,7 +68,7 @@ of Pimcore 5.
 
 
 
-### Additional steps if you are using old EcommerceFramework Plugin 
+### Additional steps if you are using the old EcommerceFramework Plugin 
 The EcommerceFramework Plugin is now integrated into Pimcore 5 core. To migrate ecommerce applications that use the old 
 EcommerceFramework Plugin (latest release), following additional steps are needed: 
 - Remove `EcommerceFramework` Plugin from `/legacy/plugins` folder.
