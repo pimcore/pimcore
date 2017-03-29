@@ -2,7 +2,7 @@
 
 Pimcore allows to define custom icons for objects. Either, icons can be the same for all objects of a class 
 (via configuration in class) or objects depending on their data values can have different icons (via admin style in code). 
-In addition to that, the tooltip of object in object tree can be customized via admin style.   
+In addition to that, the tooltip of an object in object tree can be customized via admin style.   
 
 ## Custom Icons for Classes
 
@@ -26,7 +26,7 @@ It is possible to define custom icons and styles for objects in the object tree.
 In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObject` by [extending the Pimcore 
  default class](./01_Inheritance.md) and return your own implementation of Element_AdminStyle.
  
-#### Possible Properties to Define:
+#### Possible Properties to define:
 * Element css class
 * Element icon
 * Element icon class

@@ -43,7 +43,7 @@ the attributes directly, you will not get the inherited values.
 ## Parent Class - Class Inheritance
 
 Pimcore data objects support inheritance, just as any PHP object does. In Pimcore the class from which a specific data 
-class inherits can be changed. By default a data class inherits from `Pimcore\Model\Object\Concrete`, but if required 
+class inherits can be changed. By default, a data class inherits from `Pimcore\Model\Object\Concrete`, but if required 
 otherwise, a data class can extend a different parent class. If the parent class should be changed, this needs to be 
 specified in the class definition as shown in the screen below:
 ![Parent Class](../../../img/classes-class-inheritance.png)
@@ -53,9 +53,9 @@ specified in the class definition as shown in the screen below:
 > what consequences it might have when the parent class is changed from `Pimcore\Model\Object\Concrete` to something else. 
 
 In order to maintain all Pimcore functionalities, it has to be ensured that the special class used in the example 
-above extends `Pimcore\Model\Object\Concrete` and that it's methods don't override and clash in unexpected ways 
+above extends `Pimcore\Model\Object\Concrete` and that its methods don't override and clash in unexpected ways 
 with existing methods of `Pimcore\Model\Object\Concrete` or any magic functions of `Pimcore\Model\Object\Concrete`
-or it's parent classes.
+or its parent classes.
 </div>
 
 ### Hooks available when using class inheritance
