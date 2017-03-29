@@ -57,7 +57,7 @@ $ ./bin/console foo:bar
 
 
 ### Implementing own Commands
-^^Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/current/console.html) 
+Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/current/console.html) 
 for details how commands are implemented. However, it makes sense to let your command classes extend 
 `Pimcore\Console\AbstractCommand` to get some defaults like the `--ignore-maintenance-mode` option 
 and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/current/components/var_dumper/index.html) 
