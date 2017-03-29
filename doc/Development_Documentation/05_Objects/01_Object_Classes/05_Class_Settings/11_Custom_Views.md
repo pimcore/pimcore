@@ -10,7 +10,7 @@ Note that the ID is mandatory and must be unique!
 
 ![Custom Views](../../../img/classes-custom-views1.png)
 
-For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/pimcore/blob/master/website_demo/config/customviews.example.php) 
+For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/pimcore/blob/master/app/config/pimcore/customviews.example.php) 
 that ships with Pimcore and its comments. 
 
 ## Advanced Features / Configurations
@@ -24,7 +24,7 @@ The main idea for this configuration is to
 
 ```php
 <?php
-// website/config/customviews.php
+// app/config/pimcore/customviews.example.php
  
 return [
     "views" => [

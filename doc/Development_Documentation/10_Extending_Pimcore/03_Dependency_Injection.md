@@ -7,12 +7,12 @@ Internally Pimcore uses [PHP-DI](http://php-di.org/). You can create you own [PH
 which extends or overwrites the core configuration.
  
 ## Creating your Custom Dependency Injection Configuration
-Pimcore automatically looks for a configuration in `/website/config/di.php` (there's an example file provided which you 
+Pimcore automatically looks for a configuration in `/app/config/pimcore/di.php` (there's an example file provided which you 
 can rename/reuse). 
 
 This configuration is a normal [PHP-DI configuration](http://php-di.org/doc/php-definitions.html), you can use every 
 feature from PHP-DI you like. Additionally, you have also access to the container directly in 
-`/website/config/startup.php` ([example](https://github.com/pimcore/pimcore/blob/master/website_demo/config/startup.example.php#L45-L45)).
+`/app/config/pimcore/startup.php` ([example](https://github.com/pimcore/pimcore/blob/master/website_demo/config/startup.example.php#L45-L45)).
  
 ## Example Configuration
 
@@ -72,7 +72,7 @@ class Listing extends \Pimcore\Model\Object\News\Listing {
 
 ![Class File Location](../img/di-sample.png)
 
-Now we create a custom configuration for the dependency injection container by modifying `/website/config/di.php` as follows.
+Now we create a custom configuration for the dependency injection container by modifying `/app/config/pimcore/di.php` as follows.
  
 ```php
 <?php

@@ -103,7 +103,7 @@ class News extends Object\News{
 }
 ``` 
 
-Create or extend the dependency injection configuration at `/website/config/di.php` to use the custom class instead
+Create or extend the dependency injection configuration at `/app/config/pimcore/di.php` to use the custom class instead
 of the default Pimcore class: 
 ```php
 <?php
