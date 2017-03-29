@@ -1,16 +1,5 @@
 services:
     #
-    # SESSION
-    #
-
-    pimcore_admin.event_listener.admin_session:
-        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminSessionListener
-        arguments: ['@service_container']
-        tags:
-            - { name: kernel.event_subscriber }
-
-
-    #
     # SECURITY
     #
 
