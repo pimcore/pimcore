@@ -236,34 +236,49 @@ An alternative to `url()` and `path()` with the building behavior of Pimcore 4.
 
 ### `$this->template()`
 This method is designed to include a different template directly, without calling an action. 
-Basically it's just using PHP's `include()` in the background, but you don't have to care about path issues. 
 
-`$this->template(string $path, [array $params = []], [bool $resetPassedParams = false], [bool $capture = false])`
+`$this->template($name, array $parameters = [])`
 
 | Name                | Description  |
 |---------------------|--------------|
-| `$path`              | Path of template to include. Relative to `/website/views/scripts` |
-| `$params`            | Additional params to include. |
-| `$resetPassedParams` | Resets and removes additional params from view after inclusion of given template is finished. If you use this extensively on the same view object, the parameter $resetPassedParams will come very handy.  |
-| `$capture`           | Returns rendered template instead of adding it to output buffer. |
+| `$path`              | Path of template to include in Symfony template notation |
+| `$params`            | Params to include. |
+
+
 
 ##### Example
 ```php
-<?php $this->template("includes/footer.php") ?>
+<?php echo $this->template("Includes/footer.html.php") ?>
  
 <!-- with parameters -->
-<?php $this->template("includes/somthingelse.php", [
+<?php echo $this->template("Includes/somthingelse.html.php", [
     "param1" => "value1"
 ]) ?>
 ```
 
-Parameters in the included template are then accessible through `$this->paramName` i.e. from the example above. 
+Parameters in the included template are then accessible through `$this->paramName` or directly as `$paramName`, 
+i.e. from the example above. 
 
 ##### Example
 ```php
 <?= $this->param1 ?>
+<?= $param1 ?>
 ```
 
+Following parameter names cannot be used with `$this->parameterName` notation:  
+  - current
+  - container
+  - loader
+  - helpers
+  - parents
+  - stach
+  - charset
+  - cache
+  - escapers
+  - globals
+  - parser
+  - evalTemplate
+  - evalParameter
 
 
 ### `$this->translate()`

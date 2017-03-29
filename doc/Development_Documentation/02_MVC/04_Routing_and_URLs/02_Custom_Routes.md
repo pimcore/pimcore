@@ -26,7 +26,7 @@ Following options are relevant:
 * *Reverse* - reverse pattern that is used to build URLs for this route, see also [Building URLs](#building-urls-based-on-custom-routes).
 * *Bundle* - When this column is filled, Pimcore routes the request to a different bundle than the standard bundle (AppBundle). 
 * *Controller*, *Action* - configuration for which controller/action the request is delegated to. 
-* *Variables* - comma-seperated list of names for the placeholders in the pattern regex. 
+* *Variables* - comma-seperated list of names for the placeholders in the pattern regex. At least all variables used in the reverse pattern must be listed here.  
 * *Defaults* - defaults for variables separated by | - e.g. key=value|key2=value2 
 * *Site* - Site for which this route should be applied to. 
 * *Priority* - priority in resolving the URL pattern. 

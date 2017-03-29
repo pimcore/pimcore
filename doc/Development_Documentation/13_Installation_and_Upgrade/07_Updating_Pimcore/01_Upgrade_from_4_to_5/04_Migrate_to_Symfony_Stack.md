@@ -122,3 +122,5 @@ This will result in data loss!
  folder and should be included automatically by the autoloader. E.g. you have a 
  directory `/src/Website` for all your models and libraries in `Website` namespace. 
 - Replace and refactor all ZF1 functionality. 
+
+> Also have a look at the [Upgrade Notes](../../09_Upgrade_Notes/02_V4_to_V5.md).
