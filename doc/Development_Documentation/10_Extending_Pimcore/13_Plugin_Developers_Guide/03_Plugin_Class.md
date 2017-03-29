@@ -6,7 +6,7 @@ implement `Pimcore\API\Plugin\PluginInterface`. This means a plugin must impleme
 `isInstalled` static methods specified in the interface.
 
 The `install` method can be used to create database tables and do other initial tasks.
-The `uninstall` method should make sure to undo all these things. Moreover it can override the `readyForInstall` method.
+The `uninstall` method should make sure to undo all these things. Moreover, it can override the `readyForInstall` method.
 This is also the right place to check for requirements such as minimum Pimcore version or read/write permissions on the filesystem. 
 If this method returns `false`, the plugin cannot be installed via the Pimcore admin.
 
