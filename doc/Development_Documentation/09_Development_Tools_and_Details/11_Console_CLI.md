@@ -90,15 +90,15 @@ Better `var_dump` through [`VarDumper`](http://symfony.com/doc/current/component
 Usage:
 ```php
 <?php
- 
-namespace AppBundle\Console\Command;
- 
+
+namespace AppBundle\Command;
+
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Dumper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
- 
-class TestCommand extends AbstractCommand
+
+class AwesomeCommand extends AbstractCommand
 {
     protected function configure()
     {
@@ -106,17 +106,17 @@ class TestCommand extends AbstractCommand
             ->setName('awesome:command')
             ->setDescription('Awesome command');
     }
- 
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // dump
-        $this->dump($this);
- 
+        $this->dump("Isn't that awesome?");
+
         // add newlines through flags
-        $this->dump($this, Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
- 
+        $this->dump("Dump #2", Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
+
         // only dump in verbose mode
-        $this->dumpVerbose($this, Dumper::NEWLINE_BEFORE);
+        $this->dumpVerbose("Dump verbose", Dumper::NEWLINE_BEFORE);
     }
 }
 ```
