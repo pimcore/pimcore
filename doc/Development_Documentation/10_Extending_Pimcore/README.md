@@ -22,9 +22,6 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
 * [**Parent Class for Objects**](./07_Parent_Class_for_Objects.md) to inject additional functionality
  to Pimcore object classes. 
  
-* [**Hook into the Startup Process**](./09_Hook_into_the_Startup_Process.md) to attach event listeners, 
- register additional custom routes, etc. 
- 
 * [**Event API and Event Manger**](../10_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for hooking into standard
  Pimcore functions like creating, updating, deleting elements etc. 
  
