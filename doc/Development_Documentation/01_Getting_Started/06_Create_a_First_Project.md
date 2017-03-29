@@ -80,7 +80,7 @@ $this->extend('layout.html.php');
 ```
 We tell the engine that we want to use the layout `layout.html.php`. 
   
-Now create a new php template in the folder `/app/Resources/views` and name it `layout.html.php`.
+Now create a new PHP template in the folder `/app/Resources/views` and name it `layout.html.php`.
 Then we can also put some HTML and template code into it:
 
 ```php

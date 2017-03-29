@@ -37,7 +37,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 }
 ```
 
-Around this plugin class, a plugin can contain additional serverside php code in form of libs, models etc. and 
+Around this plugin class, a plugin can contain additional serverside PHP code in form of libs, models etc. and 
 can interact with Pimcore events to modify Pimcore default behavior. 
 
 
@@ -101,7 +101,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
 ## i18n / Translations
 
-If a plugin requires its own i18n texts in Pimcore backend UI, the php plugin class should override the `getTranslationFile` 
+If a plugin requires its own i18n texts in Pimcore backend UI, the PHP plugin class should override the `getTranslationFile` 
 method contained in `Pimcore\API\Plugin\AbstractPlugin`. 
 
 This method receives the current language as parameter and must return the path to the according texts file relative to 

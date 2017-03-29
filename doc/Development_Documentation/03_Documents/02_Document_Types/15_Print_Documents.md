@@ -92,5 +92,5 @@ To test and debug the PDF renderimg. open a Print document, go to the tab "Gener
 If PDF rendering doesn't work properly, following log files should give you a hit for the reason.
 
 * `website/var/log/debug.log` - contains general logging information for rendering process at INFO level
-* `website/var/log/web2print-output.log` - contains output of rendering php process (if any). It is recreated on every rendering process.
+* `website/var/log/web2print-output.log` - contains output of rendering PHP process (if any). It is recreated on every rendering process.
 

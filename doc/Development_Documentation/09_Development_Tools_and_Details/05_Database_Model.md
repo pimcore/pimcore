@@ -21,7 +21,7 @@ These tables are created during Pimcore install and are always the same.
 | assets_metadata | Additional user metadata (Metadata tab in the asset panel) |
 | cache | serialized data, used by the default Pimcore cache |
 | cache_tags | Tag store for cache entries. Used by some cache backends |
-| classes | List of all object classes with ID and name. Everything else is stored in php configuration files. |
+| classes | List of all object classes with ID and name. Everything else is stored in PHP configuration files. |
 | classificationstore_collectionrelations | Relation Collection - Group for Classification Store | 
 | classificationstore_collections | Collections of Classification Store |
 | classificationstore_groups | Groups of Classification Store |

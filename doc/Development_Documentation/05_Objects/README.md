@@ -6,8 +6,8 @@ products, categories, persons, customers, news, orders, blog entries, … For th
 and really complex ones) are available.
 
 Pimcore objects are literally objects in the sense of object oriented programming. The class definition can be defined 
-through a user friendly graphical user interface (GUI), but nevertheless in the background a plain php class is created, 
-which can profit from inheritance and can be utilized and accessed within your custom php code. 
+through a user friendly graphical user interface (GUI), but nevertheless in the background a plain PHP class is created, 
+which can profit from inheritance and can be utilized and accessed within your custom PHP code. 
 So managing data becomes really easy. Data objects can be instantiated and filled within Pimcore backend or within your
 custom code by using the PHP API and common programming paradigms (create new instances, using getter and setter, ...).
  For saving objects just call the `save`` method and Pimcore takes care of the rest. 
