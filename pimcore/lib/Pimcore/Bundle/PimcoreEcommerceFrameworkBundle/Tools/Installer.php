@@ -159,7 +159,7 @@ class Installer extends AbstractInstaller
      */
     public function install()
     {
-        $this->canBeInstalled();
+        $this->checkCanBeInstalled();
 
         $this->copyConfigFile();
 
@@ -176,11 +176,27 @@ class Installer extends AbstractInstaller
         return true;
     }
 
+    /**
+     * @return bool
+     */
+    public function canBeInstalled()
+    {
+        try {
+            $this->checkCanBeInstalled();
+            return true;
+        } catch (\Exception $e) {
+            Logger::warn("Ecommerce Framework cannot be installed because: " . $e);
+        }
+        return false;
+    }
+
 
     /**
      * checks, if install is possible. otherwise throws exception
+     *
+     * @throws \Exception
      */
-    public function canBeInstalled()
+    protected function checkCanBeInstalled()
     {
 
         //check tables
