@@ -10,7 +10,7 @@ which are not stored as an asset inside Pimcore.
 > **IMPORTANT**  
 > Use Imagick PECL extension for best results, GDlib is just a fallback with limited functionality 
 > (only PNG, JPG, GIF) and less quality!
-> Using ImageMagick pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
+> Using ImageMagick Pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
 
 To use the thumbnailing service of Pimcore, you have to create a transformation pipeline first. To do so, open 
 *Settings* > *Thumbnails* and click on *Add Thumbnail* to create a new configuration.

@@ -1,7 +1,7 @@
 # CLI and Pimcore Console
 
 Pimcore can be executed headless and has a very powerful PHP API. As a consequence of these two aspects, 
-it is possible to do automate pretty every thing within Pimcore. 
+it is possible to do automate pretty everything within Pimcore. 
 
 There are two ways to getting up and running - simple CLI scripts and Pimcore Console. 
 
@@ -57,78 +57,24 @@ $ ./bin/console foo:bar
 
 
 ### Implementing own Commands
-Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/current/components/console/introduction.html) 
+Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/current/console.html) 
 for details how commands are implemented. However, it makes sense to let your command classes extend 
 `Pimcore\Console\AbstractCommand` to get some defaults like the `--ignore-maintenance-mode` option 
 and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/current/components/var_dumper/index.html) 
 set up automatically (see below).
 
 ### Registering Commands
-There are currently 2 methods to add commands. Either you put your commands into a predefined location 
-where commands are autoloaded from or you hook into the initialization process and add your commands 
-manually.
-
-#### Autoloaded Commands
-The console application tries to autoload commands from a list of given namespaces. Currently the 
-following namespaces are taken into consideration (more are likely to follow):
-
-| Namespace | Directory |
-| --------- | --------- |
-| `Pimcore\Console\Command` | `/pimcore/lib/Pimcore/Console/Command` |
-| `AppBundle\Console\Command` | `/src/AppBundle/Console/Command` |
+Commands are defined in classes which must be created in the Command namespace of your bundle (e.g. AppBundle\Command) 
+and their names must end with the Command suffix.
 
 To have your command autoloaded, it must match a couple of prerequisites:
 
 * It must be placed in one of the namespaces listed above 
 (e.g. `AppBundle\Console\Command\AwesomeCommand` in `/src/AppBundle/Console/Command/AwesomeCommand.php`)
-* The class name must end in Command, e.g. `AwesomeCommand`
+* The class name must end with `Command`, e.g. `AwesomeCommand`
 * The class must inherit `Symfony\Component\Console\Command\Command`, ideally you achieve this by 
 extending `Pimcore\Console\AbstractCommand`
 
-
-#### Manually registered commands
-Upon initialization the console application emits the `\Pimcore\Event\SystemEvents::CONSOLE_INIT` event, which you can use 
-to hook into the initialization process and to add your commands. Again, there are 2 ways to do this:
-
-##### Using the `ConsoleCommandPluginTrait` to add a list of commands
-* Create a plugin and let your plugin class extend `Pimcore\Console\AbstractConsoleCommandPlugin` 
- (or use the `Pimcore\Console\ConsoleCommandPluginTrait` and call the `initConsoleCommands()` method 
- yourself in `init()`).
-* Implement the `getConsoleCommands()` method returning an array of commands to register.
-
-##### Handle the system.console.init event manually to have more control
-See the trait mentioned above for an example on how to handle the event. You'll get the 
-`Pimcore\Console\Application` object passed as event target and can use its API to add commands. 
-
-An example, in your `app/config/services.yml`
-```yml
-    app.event_listener.cli_initializer:
-        class: AppBundle\EventListener\CliInitializer
-        tags:
-            - { name: kernel.event_listener, event: pimcore.system.console.init, method: init }
-```
-
-and the corresponding class in `src/AppBundle/EventListener/CliInitializer.php` 
-```php
-<?php
-
-namespace AppBundle\EventListener; 
-
-use \Pimcore\Event\System\ConsoleEvent;
-
-class CliInitializer {
-    public function init(ConsoleEvent $e) {
-        $application = $e->getApplication();
-        
-        // add a namespace, eg. in a bundle
-        $application->addAutoloadNamespace('ConsoleDemoPlugin\\Console', PIMCORE_COMPOSER_PATH . '/foo/bar/src/ConsoleDemoPlugin/Console');
-     
-        // add a single command
-        $application->add(new My\Custom\Namespace\AwesomeCommand())
-    }
-}
-
-```
 
 ### Helpers provided by `Pimcore\Console\AbstractConsoleCommand`
 The `AbstractConsoleCommand` base class provides helpers which make your life easier.
@@ -144,15 +90,15 @@ Better `var_dump` through [`VarDumper`](http://symfony.com/doc/current/component
 Usage:
 ```php
 <?php
- 
-namespace AppBundle\Console\Command;
- 
+
+namespace AppBundle\Command;
+
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Dumper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
- 
-class TestCommand extends AbstractCommand
+
+class AwesomeCommand extends AbstractCommand
 {
     protected function configure()
     {
@@ -160,17 +106,17 @@ class TestCommand extends AbstractCommand
             ->setName('awesome:command')
             ->setDescription('Awesome command');
     }
- 
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // dump
-        $this->dump($this);
- 
+        $this->dump("Isn't that awesome?");
+
         // add newlines through flags
-        $this->dump($this, Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
- 
+        $this->dump("Dump #2", Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
+
         // only dump in verbose mode
-        $this->dumpVerbose($this, Dumper::NEWLINE_BEFORE);
+        $this->dumpVerbose("Dump verbose", Dumper::NEWLINE_BEFORE);
     }
 }
 ```

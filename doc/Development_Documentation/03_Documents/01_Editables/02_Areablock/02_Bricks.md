@@ -41,7 +41,7 @@ class Iframe implements AreabrickInterface
 If you need more control over the brick instance (e.g. because your brick has dependencies on other services or you
 want to specify the brick ID manually), you can add the service definition yourself and tag the service with the DI
 tag `pimcore.area.brick`. Bricks defined manually will be excluded from the auto-registration, even if they're
-defined in the special namespace. Let's define our brick as above, but assume it needs acess to a logger instance:
+defined in the special namespace. Let's define our brick as above, but assume it needs access to a logger instance:
 
 ```yml
 # a service.yml file defining services
@@ -142,7 +142,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 ## How to Create a Brick
  
 Let's suppose, that our iframe brick defined above is responsible for generating an `<iframe>` containing contents 
-from a specified url in the editmode. First of all, let's update the class to add metadata for the extension manager, to
+from a specified URL in the editmode. First of all, let's update the class to add metadata for the extension manager, to
 make use of template auto-discovery and to load the view template from `app/Resources/views` instead of the bundle
 directory:
 

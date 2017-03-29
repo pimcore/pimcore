@@ -32,7 +32,7 @@ of objects it is even possible to create a new object and select it for the obje
 ![Relation Fields](../../../img/classes-datatypes-relation2.png)
 
 
-#### Filtering for relations via PHP api
+#### Filtering for relations via PHP API
 These pure relation types are stored in a separate database table called `object_relations_ID`. In the according 
 `object_~ID~` database view, which is used for querying data, the relations fields are summarized as a comma 
 separated list of IDs of related elements. Therefore, if one needs to create an object list with a filter condition on a 
@@ -51,7 +51,7 @@ $list->setCondition("myMultihref like '%,".$relationId.",%'");
 $objects=$list->load();
 ```
 
-#### Assigning relations via PHP api
+#### Assigning relations via PHP API
 In order to set a href data field, a single Pimcore element needs to be passed to the setter. With multihref and objects 
 an array of elements is passed to the setter:
 
@@ -75,7 +75,7 @@ $object->setObjects($myObjectsElements);
 $object->save();
 ```
 
-#### Deleting relations via PHP api
+#### Deleting relations via PHP API
 In order to remove all elements from this object's multihref field, the setter can be called with null or an array:
 
 ```php
@@ -126,7 +126,7 @@ list.
 All the other functionality is the same as with the normal objects data type.
 
 
-#### Access objects with metadata via PHP api
+#### Access objects with metadata via PHP API
 ```php
 use Pimcore\Model\Object;
   

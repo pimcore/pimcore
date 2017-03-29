@@ -21,7 +21,7 @@ here) and `Dynamic Placeholders` (more information here).
 
 To send a email you just create a `Email Document` in the Pimcore Backend UI, define the subject, 
 recipients, add Dynamic Placeholders... and pass this document to the `Pimcore\Mail` object. All 
-nasty stuff (creating valid urls, embedding css, compile less files, rendering the document..) is 
+nasty stuff (creating valid URLs, embedding css, compile less files, rendering the document..) is 
 automatically handled by the `Pimcore\Mail` object.
 
 ## Usage Example

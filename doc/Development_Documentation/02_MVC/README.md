@@ -2,7 +2,7 @@
 
 In terms of sending output to the frontend, Pimcore follows the MVC pattern. 
 Therefore it is crucial to know the fundamentals about the pattern in general and 
-  the specifics in combination with pimcore. 
+  the specifics in combination with Pimcore. 
  
  MVC is a software design pattern for web applications and separates the code into the following components:  
  * Model - defines basic functionality like data access routines, business, etc. 

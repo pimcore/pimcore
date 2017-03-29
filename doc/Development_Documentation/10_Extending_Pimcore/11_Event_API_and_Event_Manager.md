@@ -73,7 +73,7 @@ class Handler {
         // user is now an instance of User
          
         // do something with the user
-        Logger::info("User with ID " . $user->getId() . " left the pimcore admin interface");
+        Logger::info("User with ID " . $user->getId() . " left the Pimcore admin interface");
     }
 }
 \Pimcore::getEventManager()->attach("admin.login.logout", ["\Website\Auth\Handler", "logout"]);

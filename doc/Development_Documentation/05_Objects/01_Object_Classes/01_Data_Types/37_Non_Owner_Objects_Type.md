@@ -26,7 +26,7 @@ object is already open in the UI, it will have to be reloaded, before the new re
 becomes visible.
 
 
-## Working with PHP api
+## Working with PHP API
 Non Owner objects are a pure Pimcore admin feature, they don't play any role in scripting or services.
 
 Since non owner objects are owned by the remote object, they can only be set through the remote owner. Also the getter 

@@ -5,7 +5,7 @@
 * Since Build 3985
 
 ### Summary
-* Allows you to show a user friendly "object information' instead of technical path in pimcore datatypes such as multihref, objects etc.
+* Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as multihref, objects etc.
 * Uses Ajax to request nice path info on demand (i.e. after rendering) 
 
 ### Example

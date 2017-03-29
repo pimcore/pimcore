@@ -64,7 +64,7 @@ whereas the values top, left, width, height are stored as percentages of the ima
 To access the hotspots programmatically, following code snipped can be used.
 
 ```php
-$hotspotImage = $object->getHotspot1(); // name of the field in pimcore is "hotspot1" in this case (class definition)
+$hotspotImage = $object->getHotspot1(); // name of the field in Pimcore is "hotspot1" in this case (class definition)
  
 //get the assigned Asset\Image
 $image = $hotspotImage->getImage();
@@ -106,7 +106,7 @@ This information can be used in the frontend to visualize the hotspots.
 For markers this is completely the same procedure:
  
 ```php
-$hotspotImage = $object->getHotspot1(); // name of the field in pimcore is "hotspot1" in this case (class definition)
+$hotspotImage = $object->getHotspot1(); // name of the field in Pimcore is "hotspot1" in this case (class definition)
 //get an array of all defined marker
 $marker = $hotspotImage->getMarker();
 ```
@@ -137,7 +137,7 @@ Array
 To get the cropped image you have to use the `getThumbnail()` method:
 
 ```php
-$hotspotImage = $object->getHotspot1(); // name of the field in pimcore is "hotspot1" in this case (class definition)
+$hotspotImage = $object->getHotspot1(); // name of the field in Pimcore is "hotspot1" in this case (class definition)
  
 echo $hotspotImage->getThumbnail(); // this example returns the image cropped with the original dimensions
  

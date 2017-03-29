@@ -28,7 +28,7 @@ $propertiesList = $this->document->getProperties();
 ```
 
 ## Predefined properties
-With predefined properties you can help/show the editors working within your pimcore installation which properties are available for their use.
+With predefined properties you can help/show the editors working within your Pimcore installation which properties are available for their use.
 You can also define default values for each defined property to improve the productivity of your editors.
 
 **Predefined** does not mean that the value of the predefined property is available for every document. 

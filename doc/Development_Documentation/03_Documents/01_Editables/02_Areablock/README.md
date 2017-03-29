@@ -2,7 +2,7 @@
 
 ## General 
 
-The areablock is the content construction kit for documents offered by pimcore.
+The areablock is the content construction kit for documents offered by Pimcore.
 
 ![Admin panel preview 1](../../../img/areablock_editmode1.png)
 
