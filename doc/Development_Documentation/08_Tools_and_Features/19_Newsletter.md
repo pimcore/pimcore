@@ -54,77 +54,80 @@ This simple framework allows you to create a hassle free subscribe/confirm/unsub
  
 ### Controller
 
-For example, `\NewsletterController`: `website/controllers/NewsletterController.php`
+For example, `\NewsletterController`: `src/AppBundle/Controllers/NewsletterController.php`
 
 ```php
 <?php
- 
-use Website\Controller\Action;
-use Pimcore\Tool\Newsletter;
-use Pimcore\Model\Document;
-use Pimcore\Model\Object; 
 
-class NewsletterController extends Action
+namespace AppBundle\Controller; 
+
+use Pimcore\Model;
+use Pimcore\Tool\Newsletter;
+use Symfony\Component\HttpFoundation\Request;
+
+class NewsletterController extends AbstractController
 {
- 
-    public function subscribeAction () {
- 
-        $newsletter = new Newsletter("customer"); // replace "customer" with the class name you have used for your class above (mailing list)
-        $params = $this->getAllParams();
- 
+    public function subscribeAction(Request $request)
+    {
+        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $params = $request->request->all();
+
         $this->view->success = false;
- 
-        if($newsletter->checkParams($params)) {
+
+        if ($newsletter->checkParams($params)) {
             try {
-                $params["parentId"] = 75257; // folder where we want to save our subscribers
-                //$params["parent"] = Object::getByPath("/newsletter/subscribers"); // different way
+                $params["parentId"] = 1; // default folder (home) where we want to save our subscribers
+                $newsletterFolder = Model\Object\AbstractObject::getByPath("/crm/newsletter");
+                if ($newsletterFolder) {
+                    $params["parentId"] = $newsletterFolder->getId();
+                }
+
                 $user = $newsletter->subscribe($params);
- 
+
                 // user and email document
                 // parameters available in the email: gender, firstname, lastname, email, token, object
                 // ==> see mailing framework
-                $newsletter->sendConfirmationMail($user, Document::getById(3076), ["additional" => "parameters", "key" => "value"]); // replace "3076" with the ID of the email document you want to use as confirmation email
- 
+                $newsletter->sendConfirmationMail($user, Model\Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), ["additional" => "parameters"]);
+
                 // do some other stuff with the new user
-                //$user->setSomeCustomField(true);
-                //$user->save();
- 
+                $user->setDateRegister(new \DateTime());
+                $user->save();
+
                 $this->view->success = true;
             } catch (\Exception $e) {
-                //some action
+                echo $e->getMessage();
             }
         }
     }
- 
-    public function confirmAction() {
- 
+
+    public function confirmAction(Request $request)
+    {
         $this->view->success = false;
- 
-        $newsletter = new Newsletter("customer"); // replace "customer" with the class name you have used for your class above (mailing list)
- 
-        if($newsletter->confirm($this->getParam("token"))) {
+
+        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+
+        if ($newsletter->confirm($request->get("token"))) {
             $this->view->success = true;
         }
     }
- 
-    public function unsubscribeAction() {
- 
-        $newsletter = new Newsletter("customer"); // replace "customer" with the class name you have used for your class above (mailing list)
- 
- 
+
+    public function unsubscribeAction(Request $request)
+    {
+        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+
         $unsubscribeMethod = null;
         $success = false;
- 
-        if($this->getParam("email")) {
+
+        if ($request->get("email")) {
             $unsubscribeMethod = "email";
-            $success = $newsletter->unsubscribeByEmail($this->getParam("email"));
+            $success = $newsletter->unsubscribeByEmail($request->get("email"));
         }
- 
-        if($this->getParam("token")) {
+
+        if ($request->get("token")) {
             $unsubscribeMethod = "token";
-            $success = $newsletter->unsubscribeByToken($this->getParam("token"));
+            $success = $newsletter->unsubscribeByToken($request->get("token"));
         }
- 
+
         $this->view->success = $success;
         $this->view->unsubscribeMethod = $unsubscribeMethod;
     }
@@ -133,53 +136,86 @@ class NewsletterController extends Action
 
 ### Views
 
-The subscribe action view: `website/views/scripts/newsletter/subscribe.php`
+The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.php`
 
 ```php
+<?php
+/**
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('layout.html.php');
+
+?>
+
+<?= $this->template('Includes/content-default.html.php') ?>
+
 <?php if(!$this->success) { ?>
- 
+
     <?php if($this->getParam("submit")) { ?>
-        Sorry, something went wrong, please check the data in the form and try again!
+        <div class="alert alert-danger">
+            <?= $this->translate("Sorry, something went wrong, please check the data in the form and try again!"); ?>
+        </div>
         <br />
         <br />
     <?php } ?>
- 
-    <form action="" method="post">
- 
-        <label for="gender">Gender</label>
-        <select id="gender" name="gender">
-            <option value=""></option>
-            <option value="male" <?php if($this->getParam("gender") == "male") { ?> selected="selected"<?php } ?>><?= $this->translate("male"); ?></option>
-            <option value="female" <?php if($this->getParam("gender") == "female") { ?> selected="selected"<?php } ?>><?= $this->translate("female"); ?></option>
-        </select>
- 
+
+    <form class="form-horizontal" role="form" action="" method="post">
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->translate("Gender"); ?></label>
+            <div class="col-lg-10">
+                <select name="gender" class="form-control">
+                    <option value="male"<?php if($this->getParam("gender") == "male") { ?> selected="selected"<?php } ?>>Male</option>
+                    <option value="female"<?php if($this->getParam("gender") == "female") { ?> selected="selected"<?php } ?>>Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->translate("Firstname"); ?></label>
+            <div class="col-lg-10">
+                <input name="firstname" type="text" class="form-control" placeholder="" value="<?= $this->escape($this->getParam("firstname")); ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->translate("Lastname"); ?></label>
+            <div class="col-lg-10">
+                <input name="lastname" type="text" class="form-control" placeholder="" value="<?= $this->escape($this->getParam("lastname")); ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
+            <div class="col-lg-10">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
+            </div>
+        </div>
+
         <br />
- 
-        <label for="firstname">Firstname</label>
-        <input id="firstname" name="firstname" type="text" value="<?= $this->getParam("firstname"); ?>" />
- 
-        <br />
- 
-        <label for="lastname">Lastname</label>
-        <input id="lastname" name="lastname" type="text" value="<?= $this->getParam("lastname"); ?>" />
- 
-        <br />
- 
-        <label for="email">E-Mail</label>
-        <input id="email" name="email" type="text" value="<?= $this->getParam("email"); ?>" />
- 
-        <br />
- 
-        <input type="submit" name="submit" value="Submit" />
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->translate("Submit"); ?>">
+            </div>
+        </div>
     </form>
 <?php } else { ?>
-    <h2>Success, Please check your mailbox!</h2>
+    <div class="alert alert-success"><?= $this->translate("Success, Please check your mailbox!"); ?></div>
 <?php } ?>
 ```
 
-The confirm action view: `website/views/scripts/newsletter/confirm.php`
+The confirm action view: `app/Resources/views/Newsletter/confirm.html.php`
 
 ```php
+<?php
+/**
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ */
+?>
+
+
 <?php if(!$this->success) { ?>
     <div class="alert alert-danger">
         <h2><?= $this->translate("Sorry, something went wrong, please sign up again!"); ?></h2>
@@ -190,12 +226,24 @@ The confirm action view: `website/views/scripts/newsletter/confirm.php`
     </div>
 <?php } ?>
 
+
 ```
 
-The unsubscribe action view: `website/views/scripts/newsletter/unsubscribe.php`
+The unsubscribe action view: `app/Resources/views/Newsletter/unsubscribe.html.php`
 
 ```php
-<?php $this->template("/content/default.php"); ?>
+<?php
+/**
+ * @var \Pimcore\Templating\PhpEngine $this
+ * @var \Pimcore\Templating\PhpEngine $view
+ * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ */
+
+$this->extend('layout.html.php');
+
+?>
+
+<?= $this->template('Includes/content-default.html.php') ?>
 
 <?php if(!$this->success) { ?>
 
@@ -232,6 +280,7 @@ The unsubscribe action view: `website/views/scripts/newsletter/unsubscribe.php`
         <h2>Unsubscribed</h2>
     </div>
 <?php } ?>
+
 ```
 
 ### Confirmation E-Mail
@@ -330,5 +379,5 @@ and at the end, just push the **Send Newsletter Now** button.
 You can use the command-line interface to send newsletters (cron-jobs, scheduling...)
 
 ```bash
-php pimcore/cli/console.php internal:newsletter-send NAME-OF-NEWSLETTER
+php bin/console internal:newsletter-send NAME-OF-NEWSLETTER
 ```
