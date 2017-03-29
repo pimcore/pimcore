@@ -2,7 +2,7 @@
 
 ## When to use Custom Models
 
-The Pimcore objects are very flexible but shouldn't be use to store all types of data. For example it doesn't make sense 
+The Pimcore objects are very flexible but shouldn't be used to store all types of data. For example, it doesn't make sense 
 to implement a rating-, comments- or a complex blog system on top of the Pimcore objects. Sometimes people also 
 implementing really interesting things just to get a unique object key or try to build n to n relationships. This produces 
 really ugly code, a lot of overhead, could be very slow, is hard to refactor and you will have a lot of pain if you have to merge multiple 
@@ -35,7 +35,7 @@ CREATE TABLE `votes` (
 Please keep in mind that this is just a generic example, you also could create other and more complex models.
 
 ## Model
-Now you have to implement the model. To make it easy the model is stored into the `src/` library. You also could locate 
+The next step is to implement the model. To make it easy the model is stored into the `src/` library. You also could place 
 it into a bundle library.
 
 ```php
