@@ -1,9 +1,9 @@
 # Additional Tools Installation
 
-Pimcore uses some 3rd party applications for certain functionalities, such as video transcoding (FFMPEG), image optimization (advpng, cjpeg, ...), and many others. For a full list of additional tools required / recommended for Pimcore, please visit [Pimcore System Requirements](../01_System_Requirements.md). 
+Pimcore uses some 3rd party applications for certain functionalities, such as video transcoding (FFMPEG), image optimization (advpng, cjpeg, ...), and many others. For a full list of additional tools required or recommended for Pimcore, please visit [Pimcore System Requirements](../01_System_Requirements.md). 
 
 The installation of some of the tools is covered in this guide and should work at least on every Debian based Linux (Debian, Ubuntu, Mint, ...). 
-For other Linux distribution you might have to adopt some commands to platform specifics, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
+For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 ## Composer 
 Please visit the official install guide for Composer: [https://getcomposer.org/](https://getcomposer.org/)

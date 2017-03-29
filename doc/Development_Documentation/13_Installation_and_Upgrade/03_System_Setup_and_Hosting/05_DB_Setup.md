@@ -4,7 +4,7 @@ Pimcore requires a standard MySQL database, the only thing you should assure is 
 If you create a new database just set the character set to `utf8mb4`.
 
 > Note: You have to create the database manually before you can continue with the web-based installer, 
-> which automatically creates the underlying database schema for pimcore. 
+> which automatically creates the underlying database schema for Pimcore. 
 
 ### Command to Create a new Database 
 

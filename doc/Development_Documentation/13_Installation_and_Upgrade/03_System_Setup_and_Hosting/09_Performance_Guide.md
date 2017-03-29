@@ -1,6 +1,6 @@
 # Performance Recommendations
 
-For high traffic websites we recommend the following software and configurations: 
+For high traffic websites, we recommend the following software and configurations: 
 
 - Use a [high performance cache backend](../../09_Development_Tools_and_Details/09_Cache/README.md) for Pimcore (Redis is recommended).
 - Enable the [output-cache](../../09_Development_Tools_and_Details/09_Cache/03_Full_Page_Cache.md) in *Settings* > *System*.

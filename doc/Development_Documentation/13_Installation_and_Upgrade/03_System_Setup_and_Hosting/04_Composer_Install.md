@@ -1,10 +1,10 @@
 # Install via [Composer](https://getcomposer.org/):
 
-Pimcore also supports a Composer based install, if this is more suiteable for your development environment. 
+Pimcore also supports a Composer based install, if this is more suitable for your development environment. 
 
-If your're not required to use Composer to install Pimcore, we recommend using the install package instead. 
+If you're not intending to use Composer to install Pimcore, we recommend using the install package instead. 
 
-The result ist the same and of course your're still able to install 
+The result is the same and of course you will still able to install 
 [custom packages using Composer](../../10_Extending_Pimcore/01_Add_Your_Own_Dependencies_and_Packages.md) if choosing 
 the package install.  
 

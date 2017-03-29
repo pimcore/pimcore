@@ -1,6 +1,6 @@
 # Cluster Setup
 
-A typical custer setup has the following architecture: 
+A typical cluster setup has the following architecture: 
 
 ![Pimcore_Cluster_Setup](../../img/cluster-setup.png) 
 
