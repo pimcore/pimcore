@@ -208,12 +208,14 @@ class AdminSessionHandler implements LoggerAwareInterface
      */
     public function loadSession()
     {
+        $sessionName = $this->getSessionName();
+
+        $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
+
         $initSession = session_status() !== PHP_SESSION_ACTIVE;
         if ($this->backupForeignSession()) {
             $initSession = true;
         }
-
-        $sessionName = $this->getSessionName();
 
         if ($initSession) {
             $this->storageFactory->initializeStorage($this->storage);
@@ -230,6 +232,11 @@ class AdminSessionHandler implements LoggerAwareInterface
         }
 
         $this->openedSessions++;
+
+        $this->logger->debug('Admin session {name} was successfully opened. Open admin sessions: {count}', [
+            'name'  => $sessionName,
+            'count' => $this->openedSessions
+        ]);
 
         return $this->session;
     }
@@ -274,7 +281,17 @@ class AdminSessionHandler implements LoggerAwareInterface
 
         if ($this->openedSessions === 0) {
             $this->session->save();
+
+            $this->logger->debug('Admin session {name} was written and closed', [
+                'name' => $this->getSessionName()
+            ]);
+
             $this->restoreForeignSession();
+        } else {
+            $this->logger->debug('Not writing/closing session admin session {name} as there are still {count} open sessions', [
+                'name'  => $this->getSessionName(),
+                'count' => $this->openedSessions
+            ]);
         }
     }
 
@@ -423,6 +440,8 @@ class AdminSessionHandler implements LoggerAwareInterface
 
         if ($sessionId) {
             session_id($sessionId);
+
+            // TODO handle $sessionCookieCleanupNeeded?
             @session_start();
         }
 
