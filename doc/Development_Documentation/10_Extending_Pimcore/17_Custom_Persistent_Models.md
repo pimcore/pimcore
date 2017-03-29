@@ -129,10 +129,10 @@ class Vote extends AbstractModel {
 For every field in the database we need a corresponding property and a Setter/Getter. This is not really necessary, it 
 just depends on your DAO, just read on and have a look at the save method in the DAO. 
 
-The `save` and `getById` methods just call the corresponding dao methods.
+The `save` and `getById` methods just call the corresponding DAO methods.
 
-The `getDao` method looks for the nearest dao. It just appends Dao to the classname, if the class exists you are ready 
-to use the dao. If the class doesn't exists, it just continue searching using the next namespace.
+The `getDao` method looks for the nearest DAO. It just appends Dao to the class name, if the class exists you are ready 
+to use the DAO. If the class doesn't exists, it just continue searching using the next namespace.
 
 Small example: `AppBundle\Model\Vote` looks for `AppBundle\Model\Vote\Dao`, `AppBundle\Model\Dao`, `AppBundle\Dao`.
  
@@ -220,7 +220,7 @@ class Dao extends AbstractDao {
 }
 ```
 
-Please keep in mind that this is just a very easy example dao. You also could do more complex stuff like implementing joins, 
+Please keep in mind that this is just a very easy example DAO. Of course, you can do much more complex stuff like implementing joins, 
 save dependencies or whatever you want.
 
 
