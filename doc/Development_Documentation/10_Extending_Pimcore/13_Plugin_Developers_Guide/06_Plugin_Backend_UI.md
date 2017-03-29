@@ -2,11 +2,11 @@
 
 ## General
 
-The Pimcore Backend UI is based upon the [Ext JS](https://www.sencha.com/products/extjs/#overview) Framework. A plugin can add Ext components to the user interface or 
-execute any other JavaScript required in the plugin context.
+The Pimcore Backend UI is based upon the [Ext JS](https://www.sencha.com/products/extjs/#overview) Framework. A plugin can
+add Ext components to the user interface or execute any other JavaScript required in the plugin context.
 
 All JavaScript and CSS which should be included, needs to be defined in your bundle class, as described in 
-[Pimcore Bundles](./01_Pimcore_Bundles.md). 
+[Pimcore Bundles](./05_Pimcore_Bundles.md). 
 
 These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in the bundle class.
 
@@ -36,8 +36,8 @@ pimcore.plugin.sample = Class.create(pimcore.plugin.admin, {
 var samplePlugin = new pimcore.plugin.sample();
 ```
 
-
 ## JavaScript UI Events
+
 The broker then will notify each plugin upon the events described below. For registering to these events just add a 
 corresponding method to the javascript plugin class. 
 
@@ -66,7 +66,7 @@ and return its own class name.
 
 ## I18n texts for plugins
 
-Pimcore supports i18n for plugin UI extensions. Fist see [Plugin Class](./03_Plugin_Class.md) how to prepare the data 
+Pimcore supports i18n for plugin UI extensions. Fist see the [i18n section for bundles](./README.md) how to prepare the data 
 server-side. 
 
 Once this is done, translations can be accessed anywhere in the plugin's javascript by calling
@@ -76,6 +76,7 @@ t('translation_key')
 ```
 
 ## Adding Custom Main Navigation Items
+
 It is possible to add leftside main navigation via plugins. See the following example to know how: 
 
 ```javascript
@@ -118,7 +119,6 @@ pimcore.plugin.menusample = Class.create(pimcore.plugin.admin, {
  
 var menusamplePlugin = new pimcore.plugin.menusample();
 ```
-
 
 ## Installing and Uninstalling Plugin UI Components
 

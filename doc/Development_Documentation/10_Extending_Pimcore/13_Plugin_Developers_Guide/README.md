@@ -1,31 +1,23 @@
 # Bundle Developers Guide
 
-In previous versions of Pimcore, a plugin system allowes you to hook into the system to add custom functionality. Starting with
-Pimcore 5, the plugin system was replaced by native Symfony bundles.  Therefore, you do not need to any special
+In previous versions of Pimcore, a plugin system allowed you to hook into the system to add custom functionality. Starting with
+Pimcore 5, the plugin system was replaced by native Symfony bundles. Therefore, you do not need to any special
 plugin structure but can refer to the [Symfony Bundle Documentation](http://symfony.com/doc/current/bundles.html) on how
-to get started with your custom bundles. From within your bundle, you have all possibilities to extend the system, from
-defining new services or routes, library code and anything else.
+to get started with your custom bundles. A bundle can do anything - in fact, core Pimcore functionalities like the admin
+interface are implemented as bundle. From within your bundle, you have all possibilities to extend the system, from
+defining new services or routes to hook into the event system or provide controllers and views.
+
 
 ## Bundle layout
 
 See [Bundle Directory Structure](http://symfony.com/doc/current/bundles.html#bundle-directory-structure) for a standard
 bundle directory layout.
 
-## Auto loading config and routing definitions
-
-By default, Symfony does not load configuration and/or routing definitions from bundles but expects you to define everything
-in `app/config` (optionally importing config files from bundles or other locations). Pimcore extends the config loading
-by trying to load the following configuration files of every active bundle:
-
-* `Resources/config/pimcore/config_<environment>.yml` with fallback to `Resources/config/pimcore/config.yml` if the environment
-  specific lookup didn't find anything
-* `Resources/config/pimcore/routing_<environment>.yml` with fallback to `Resources/config/pimcore/routing.yml` if the environment
-  specific lookup didn't find anything
 
 ## Pimcore bundles
 
-There is, however, a special kind of bundle implementing `Pimcore\Extension\Bundle\PimcoreBundleInterface` which gives you
-additional possibilities:
+There is a special kind of bundle implementing `Pimcore\Extension\Bundle\PimcoreBundleInterface` which gives you additional
+possibilities. These bundles provide a similar API as plugins did in previous versions:
 
 * The bundle shows up in the extension manager and can be enabled/disabled from there. Normal bundles need to be registered
   via code in your `AppKernel.php`.
@@ -33,25 +25,60 @@ additional possibilities:
   database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
 
-See the [Pimcore Bundles](./01_Pimcore_Bundles.md) documentation to getting started with Pimcore bundles.
+See the [Pimcore Bundles](./06_Pimcore_Bundles.md) documentation to getting started with Pimcore bundles.
 
 
-Plugins are the most advanced way but also the most complex way of extending Pimcore. Starting with Pimcore version 5,
-allplg
+## Service configuration
 
-With plugins several things can be achieved - they can be just a library of reuseable code 
-components, they can utilize [Pimcores event API](../11_Event_API_and_Event_Manager.md) to
-extend backend functionality and they can modify and extend the Pimcore Backend UI by utilizing
-Javascript user interface hooks. 
+If you want to provide custom services from within your bundle, you need to create an `Extension` which is able to load
+your service definitions. This is covered in detail in the [Extensions Documentation](http://symfony.com/doc/current/bundles/extension.html).
 
-The following sections explain how to design and structure plugins and how to 
-register for and utilize the events provided in the PHP backend and the Ext JS frontend.
+An example how to create an extension for your bundles can be found in
+[Loading Service Definitions](./01_Loading_Service_Definitions.md).
 
-* [Plugin_Class](./03_Plugin_Class.md) is the starting point for each plugin.
-* [Plugin_Backend_UI](./05_Plugin_Backend_UI.md) for extending the Pimcore Backend UI with JavaScript. 
 
-In addition to these topics also have a look at the [Example](./07_Example.md) provided in 
-the documentation. 
+## Auto loading config and routing definitions
 
-Additional aspects in plugin development are 
+Bundles can provide config and routing definitions in `Resources/config/pimcore` which will be automatically loaded with
+the bundle. See [Auto loading config and routing definitions](./03_Auto_Loading_Config_And_Routing_Definitions.md) for
+more information.
+
+
+## i18n / Translations
+
+See the [Symfony Translation Component Documentation](http://symfony.com/doc/current/translation.html#translation-resource-file-names-and-locations)
+for locations which will be automatically searched for translation files.
+
+For bundles, translations should be stored in the `Resources/translations/` directory of the bundle in the format `locale.loader`
+(or `domain.locale.loader` if you want to handle a specific translation domain). For the most cases this will be something
+like `Resources/translations/en.yml`, which resolves to the default `messages` translation domain.
+
+
+## Events
+
+To hook into core functions you can attach to any event provided by the [Pimcore event manager](../11_Event_API_and_Event_Manager.md).
+Custom listeners can be registered from your bundle by defining an event listener service. Further reading:
+ 
+* [Symfony Event Dispatcher](http://symfony.com/doc/current/event_dispatcher.html) for documentation how to create event
+   listeners and how to register them as a service
+* [Pimcore Event Manager](../11_Event_API_and_Event_Manager.md) for a list of available events
+
+
+## Local Storage for your Bundle
+
+Sometimes a bundle needs to save files (e.g. generated files or cached data, ...). If the data is temporary and should be
+removed when the symfony cache is cleared, please use a directory inside the cache directory (e.g. `Pimcore::getKernel()->getCacheDir()`).
+
+If you need persistent storage, create a unique directory in `PIMCORE_PRIVATE_VAR`, e.g. `var/bundles/YourBundleName`.
+
+
+## Extending the Admin UI
+
+The following section explains how to design and structure bundles and how to register for and utilize the events provided
+in the PHP backend and the Ext JS frontend: [Plugin_Backend_UI](./05_Plugin_Backend_UI.md)
+
+In addition to these topics also have a look at the [Example](./07_Example.md) provided in the documentation. 
+
+Additional aspects in bundle development are:
+
 * [Adding Document Editables](./11_Adding_Document_Editables.md)
