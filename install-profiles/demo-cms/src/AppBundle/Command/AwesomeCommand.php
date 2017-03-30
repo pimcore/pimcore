@@ -12,7 +12,7 @@ class AwesomeCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('awesome:command')
+            ->setName('app:awesome')
             ->setDescription('Awesome command');
     }
 
