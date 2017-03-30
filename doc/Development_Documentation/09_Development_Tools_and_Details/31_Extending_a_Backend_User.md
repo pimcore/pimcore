@@ -14,7 +14,7 @@ has to be defined in *Settings* > *Object* > *Classes*:
 
 ![Member Class Config](../img/object-user1.png)
 
-In this example the class `member` has the three properties `location`, `name` and `user`. 
+In this example, the class `member` has the three properties `location`, `name` and `user`. 
 The class can have an arbitrary number of properties. What is important in this context is, 
 that it has a property of the type `User`. Speaking in code this would be a 
 `\Pimcore\Model\Object\ClassDefinition\Data\User`.
