@@ -2,13 +2,11 @@
 
 There are several different kinds of logs in Pimcore. All of them are located under `/var/logs/`.
  
-## debug.log
+## <env>.log
 This is definitely one of the most important logs and also the default logging location. 
 
-You can configure the log levels in Pimcore Backend Interface in *Settings* > *System* > *Debug*. 
-For development purposes it's recommenced to turn on all log-levels. 
-
-If you turn on the DEV-MODE also the SQL-profiler logs to this location. 
+Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
+For details see [Symfonys monolog docs](http://symfony.com/doc/current/logging.html).
 
 The log file will be rotated and compressed if it gets larger than 200 MB. The archived logs 
 will be kept for 30 days.
@@ -42,10 +40,6 @@ In this log you can see every request where a redirect takes action.
 ```
 2013-08-12T19:49:43+02:00 : 10.242.2.255         Source: /asdsad/redirectsource/asd -> /basic-examples
 ```
-
-## dbprofile-*.log
-Contains DB profiles for a single request. See [Magic Parameters](./15_Magic_Parameters.md) for more details. 
-
 
 ## Writing your own log files
 You can add your own logging functionality using Pimcore's log writer. You can call a static 
