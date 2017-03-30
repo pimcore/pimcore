@@ -25,7 +25,8 @@ class SearchBackendReindexCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('search-backend-reindex')
+            ->setName('pimcore:search-backend-reindex')
+            ->setAliases(['search-backend-reindex'])
             ->setDescription("Re-indexes the backend search of pimcore");
     }
 

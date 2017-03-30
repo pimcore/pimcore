@@ -71,7 +71,7 @@ Custom listeners can be registered from your bundle by defining an event listene
 ### Local Storage for your Bundle
 
 Sometimes a bundle needs to save files (e.g. generated files or cached data, ...). If the data is temporary and should be
-removed when the symfony cache is cleared, please use a directory inside the cache directory. The core cache directory can
+removed when the Symfony cache is cleared, please use a directory inside the cache directory. The core cache directory can
 be fetched from the `Kernel` and is registered as parameter on the container:
 
 * `$kernel->getCacheDir()`

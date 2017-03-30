@@ -24,6 +24,7 @@ class InternalVideoConverterCommand extends AbstractCommand
     protected function configure()
     {
         $this
+            ->setHidden(true)
             ->setName('internal:video-converter')
             ->setDescription('For internal use only')
             ->addArgument("processId");

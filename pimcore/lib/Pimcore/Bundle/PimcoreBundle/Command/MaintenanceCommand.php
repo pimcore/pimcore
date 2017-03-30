@@ -28,7 +28,8 @@ class MaintenanceCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('maintenance')
+            ->setName('pimcore:maintenance')
+            ->setAliases(['maintenance'])
             ->setDescription('Asynchronous maintenance jobs of pimcore (needs to be set up as cron job)')
             ->addOption(
                 'job', 'j',

@@ -5,7 +5,7 @@ Pimcore provides the object orientated PHP API to work with Documents.
 ## CRUD Operations
 
 ### Create a New Document
-To create a new document you need to specify two mandatory attributes:
+To create a new document, you need to specify two mandatory attributes:
 * An unique key
 * A parent ID - ID of the parent document (document, folder and every other type)
  

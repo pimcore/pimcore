@@ -25,7 +25,8 @@ class MysqlToolsCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('mysql-tools')
+            ->setName('pimcore:mysql-tools')
+            ->setAliases(['mysql-tools'])
             ->setDescription('Optimize and warmup mysql database')
             ->addOption(
                 'mode', 'm',

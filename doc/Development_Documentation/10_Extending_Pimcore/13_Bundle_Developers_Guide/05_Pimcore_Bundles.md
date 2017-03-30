@@ -75,7 +75,7 @@ version or read/write permissions on the filesystem.
 ## Registration to ExtensionManager
 
 To make use of the installer, a bundle needs to be managed through the extension manager and not manually registered on
-the `AppKernel` as normal bundles. As the extension manager needs to find the bundles it can manage, a pimcore bundle needs
+the `AppKernel` as normal bundles. As the extension manager needs to find the bundles it can manage, a Pimcore bundle needs
 to fulfill the following requirements:
 
   * Implement the `PimcoreBundleInterface`
@@ -92,9 +92,9 @@ of scanned paths, please set the package type of your package to `pimcore-bundle
 bundle name through the `pimcore.bundles` composer extra config no filesystem scanning will be done which will have a
 positive effect on the bundle lookup performance.
 
-> Whenever you can, you should explicitely set the bundle class name through the extra config.
+> Whenever you can, you should explicitly set the bundle class name through the extra config.
 
-An example of a `composer.json` defining a pimcore bundle:
+An example of a `composer.json` defining a Pimcore bundle:
 
 ```json
 {
