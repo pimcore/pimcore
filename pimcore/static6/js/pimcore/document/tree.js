@@ -785,11 +785,16 @@ pimcore.document.tree = Class.create({
 
     populatePredefinedDocumentTypes: function(documentMenu, tree, record) {
         var document_types = pimcore.globalmanager.get("document_types_store");
+        var perspectiveCfg = this.perspectiveCfg;
 
         document_types.sort([{property: 'priority', direction: 'DESC'},
             {property: 'name', direction: 'ASC'}]);
 
         document_types.each(function (documentMenu, typeRecord) {
+            if (perspectiveCfg["allowed_predefined_" + typeRecord.get("type")] && !in_array(typeRecord.get("name"), perspectiveCfg["allowed_predefined_" + typeRecord.get("type")])) {
+                return;
+            }
+
             if (typeRecord.get("type") == "page") {
                 documentMenu.page.push({
                     text: ts(typeRecord.get("name")),
