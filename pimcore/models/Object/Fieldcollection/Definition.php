@@ -337,6 +337,28 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * Checks whether generation date (info block) of definition file and php class file is identical
+     *
+     * @return bool true if generation date is identical
+     */
+    public function checkDefinitionFileAndPhpClassFileGenerationDate()
+    {
+        $definitionFile = $this->getDefinitionFile();
+        $phpClassFile = $this->getPhpClassFile();
+
+        if (!is_readable($definitionFile) || !is_readable($phpClassFile)) {
+            return false;
+        }
+
+        $patternGenerationDate = '/^\\* Generated at: /';
+
+        $generationDateDefinition = current(preg_grep($patternGenerationDate, file($definitionFile)));
+        $generationDatePhpClass = current(preg_grep($patternGenerationDate, file($phpClassFile)));
+
+        return ($generationDateDefinition === $generationDatePhpClass);
+    }
+
+    /**
      * @return string
      */
     protected function getDefinitionFile()
