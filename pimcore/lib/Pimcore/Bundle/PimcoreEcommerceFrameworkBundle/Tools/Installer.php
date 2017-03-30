@@ -103,15 +103,15 @@ class Installer extends AbstractInstaller
      * @var array - contains all classes that need to be created
      */
     private static $classes = [
-        "FilterDefinition" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_FilterDefinition_export.json',
-        "OnlineShopOrderItem" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrderItem_export.json',
-        "OnlineShopVoucherSeries" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherSeries_export.json',
-        "OnlineShopVoucherToken" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherToken_export.json',
-        "OnlineShopOrder" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrder_export.json',
-        "OfferToolCustomProduct" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolCustomProduct_export.json',
-        "OfferToolOfferItem" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOfferItem_export.json',
-        "OfferToolOffer" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOffer_export.json',
-        "OnlineShopTaxClass" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopTaxClass_export.json'
+        "FilterDefinition" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_FilterDefinition_export.json',
+        "OnlineShopOrderItem" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OnlineShopOrderItem_export.json',
+        "OnlineShopVoucherSeries" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OnlineShopVoucherSeries_export.json',
+        "OnlineShopVoucherToken" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OnlineShopVoucherToken_export.json',
+        "OnlineShopOrder" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OnlineShopOrder_export.json',
+        "OfferToolCustomProduct" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OfferToolCustomProduct_export.json',
+        "OfferToolOfferItem" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OfferToolOfferItem_export.json',
+        "OfferToolOffer" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OfferToolOffer_export.json',
+        "OnlineShopTaxClass" => PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/class_source/class_OnlineShopTaxClass_export.json'
     ];
 
     /**
@@ -121,7 +121,7 @@ class Installer extends AbstractInstaller
     {
         $fieldCollections = [];
 
-        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources');
+        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/fieldcollection_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
                 preg_match('/_(.*)_/', $filename, $matches);
@@ -140,7 +140,7 @@ class Installer extends AbstractInstaller
     {
         $objectBricks = [];
 
-        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources');
+        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/install/objectbrick_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
                 preg_match('/_(.*)_/', $filename, $matches);
