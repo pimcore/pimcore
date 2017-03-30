@@ -25,7 +25,8 @@ class ResetPasswordCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('reset-password')
+            ->setName('pimcore:user:reset-password')
+            ->setAliases(['reset-password'])
             ->setDescription("Reset a user's password")
             ->addOption(
                 'user', 'u',

@@ -31,7 +31,8 @@ class UpdateCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('update')
+            ->setName('pimcore:update')
+            ->setAliases(['update'])
             ->setDescription('Update pimcore to the desired version/build')
             ->addOption(
                 'list', 'l',
