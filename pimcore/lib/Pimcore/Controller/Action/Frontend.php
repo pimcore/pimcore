@@ -344,10 +344,17 @@ abstract class Frontend extends Action
                 }
             }
 
+            // windows system doesn't support utf8, we add same list without utf8
+            $localeList = array_merge($localeList, str_replace(".utf8", "", $localeList));
+            
             // currently we have to exclude LC_MONETARY from being set, because of issues in combination with
             // Zend_Currency -> see also https://github.com/zendframework/zf1/issues/706
             // once this is resolved we can safely set the locale for LC_MONETARY as well.
             setlocale(LC_ALL & ~LC_MONETARY, $localeList);
+
+            // reconfigure Carbon date
+            \Carbon\Carbon::setLocale($locale->getLanguage());
+            \Carbon\CarbonInterval::setLocale($locale->getLanguage());
 
             // reconfigure translation management
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
