@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Redirect;
 use Pimcore\Logger;
