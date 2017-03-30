@@ -31,8 +31,8 @@
 
     // no installer if Pimcore is already installed
     if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-        //header("Location: /admin?_dc=" . microtime(true));
-        //exit;
+        header("Location: /admin?_dc=" . microtime(true));
+        exit;
     }
 
     // ensure that there's a parametes.yml, if not we'll create a temporary one, so that the requirement check works
