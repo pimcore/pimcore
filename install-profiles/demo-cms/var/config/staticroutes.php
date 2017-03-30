@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 return [
     1 => [
@@ -45,5 +45,40 @@ return [
         "creationDate" => "1419933908",
         "modificationDate" => "1419933931",
         "id" => "3"
-    ]
+    ],
+    4 => [
+        "id" => 4,
+        "name" => "demo_login",
+        "pattern" => "@^/(de|en)/secure/login\$@",
+        "reverse" => "/%locale/secure/login",
+        "module" => "AppBundle",
+        "controller" => "Secure",
+        "action" => "login",
+        "variables" => "locale",
+        "defaults" => "locale=en",
+        "siteId" => [
+        ],
+        "priority" => 0,
+        "legacy" => FALSE,
+        "creationDate" => 1490874634,
+        "modificationDate" => 1490874753
+    ],
+    5 => [
+        "id" => 5,
+        "name" => "demo_logout",
+        "pattern" => "@^/(de|en)/secure/logout\$@",
+        "reverse" => "/%locale/secure/logout",
+        "module" => "AppBundle",
+        "controller" => "Secure",
+        "action" => "logout",
+        "variables" => "locale",
+        "defaults" => "locale=en",
+        "siteId" => [
+
+        ],
+        "priority" => 0,
+        "legacy" => FALSE,
+        "creationDate" => 1490874774,
+        "modificationDate" => 1490874774
+    ],
 ];

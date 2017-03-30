@@ -1,0 +1,31 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/security.html
+#
+# Note: the names demo_cms_provider and demo_cms_fw were only used to clarify what is used. You can safely name them
+# both demo_cms or anything else. Just make sure the firewall is configured to use your desired user provider.
+security:
+    providers:
+        # simple in-memory user providers for demo purpose
+        demo_cms_provider:
+            memory:
+                users:
+                    john:
+                        password: doe
+                        roles: 'ROLE_USER'
+
+    encoders:
+        # in-memory provider has plaintext passwords
+        Symfony\Component\Security\Core\User\User: plaintext
+
+    firewalls:
+        # demo_cms firewall is valid for the whole site
+        demo_cms_fw:
+            anonymous: ~
+            provider: demo_cms_provider
+            form_login:
+                login_path: demo_login
+                check_path: demo_login
+                default_target_path: /
+            logout:
+                path:   demo_logout
+                target: demo_login
