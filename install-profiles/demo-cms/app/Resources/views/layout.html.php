@@ -26,8 +26,14 @@ use Pimcore\Model\Document\Page;
     // output the collected meta-data
     if (!$document) {
         // use "home" document as default if no document is present
-        $this->document = Document::getById(1);
-        $document = $this->document;
+        $document = Document::getById(1);
+        $this->document = $document;
+    }
+
+    // resolve links to their target
+    if ($document instanceof Document\Link) {
+        $document = $document->getObject();
+        $this->document = $document;
     }
 
     if ($document->getTitle()) {
