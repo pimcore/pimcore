@@ -5,39 +5,33 @@ There you can choose from language which is configured in the system settings.
 
 The selected language is registered as a property on the document, which is inherited to all of it's children. 
 
-If you have selected a language this will be automatically registered globally the ZF way 
-(`\Zend_Registry::set("Zend_Locale", new \Zend_Locale($this->document->getProperty("language")))`). 
-
-Because of this, every Pimcore and ZF module automatically recognized the locale, for example `\Zend_Date`, 
-`\Pimcore\Translate` ( based on `\Zend_Translate`) as described later in this text.
+If you have selected a language this will be automatically set on your request object (`$request->getLocale()`) and is 
+therefore automatically used for shared translations, localized object lists and all other localized kind of contents. 
  
 ![Localization Settings](../img/localization-documents.png)
- 
-
-It's no longer required to set the locale manually for example in your `\Website\Controller\Action::init();`. 
 
 Since the language is a simple property you can access it like every other property like:
  
  ```php
  // in your controller / action
+ $locale = $request->getLocale(); 
+ //or 
  $language = $this->document->getProperty("language");
-  
   
  // in your view
+ $this->getLocale():
+ // or 
  $language = $this->document->getProperty("language");
-  
   
  // any document
  $doc = \Pimcore\Model\Document::getById(234);
  $language = $doc->getProperty("language");
   
-  
- // accessing anywhere in your code using the registry (the common ZF way)
- $language = \Zend_Registry::get("Zend_Locale");
  ```
  
 Once you have defined the language of your documents you can also use the [translate helper](./04_Shared_Translations) 
-in your views, as described [here](./04_Shared_Translations). 
+in your views, as described [here](./04_Shared_Translations). Pimcore uses the standard Symfony translator, 
+so you can even access all the translations provided by your bundles. 
 
 
 ## Best practise for multi language websites

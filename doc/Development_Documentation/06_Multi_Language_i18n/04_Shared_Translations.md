@@ -1,67 +1,57 @@
 # Shared Translations 
 
-Pimcore provides a simple translation-tool based on `\Zend_Translate` - Shared Translations or formerly Website Translations.
+Pimcore provides an easy way for editors to edit commonly used translation terms across the application, which can be found 
+here:  `Extras` > `Translation` > `Shared Translations`.
+In the background the standard Symfony Translator component is used to add the shared translation functionality to the application. 
+The main benefit is that you have only one single translator for all your translations. 
 
-It automatically uses the locale specified on a document. If no locale is present, you can still register a locale manually 
-in your code using `\Zend_Registry::set("Zend_Locale", new \Zend_Locale("en"));`
+It automatically uses the locale specified on a document or from a fallback mechanism. 
 
-For using the shared translations in frontend, just use the translate helper of `\Zend_View` in your templates with
-`<?= $this->translate("translation_key") ?>` or also by using a shorthand `<?= $this->t("translation_key"); ?>`. 
-
-
-Once a translation-key is requested Pimcore registers the key in the translation administration, and you can edit all 
-the translations in a grid in Pimcore backend at `Extras` > `Translation` > `Shared Translations`.
+For more information, please also check out [Symfony's Translations Component](http://symfony.com/doc/current/translation.html). 
 
 ![Shared Translations](../img/localization-translations.png)
 
 Available languages are defined within the system languages, see [here](./README.md).
  
 
-## Working with shared translations in Code
+## Working with Shared Translations / the Translator in Code
  
-#### Example in Website\Controller\Action
-
-```php
-<?php
-namespace Website\Controller;
-use Pimcore\Controller\Action\Frontend;
-
-class Action extends Frontend {
-  
-    public function init () {
-      
-        parent::init();
-     
-        $locale = new \Zend_Locale('en_US');
-        \Zend_Registry::set('Zend_Locale', $locale);
-      
-    }
-    ...
-}
-  
-```
-
+ 
 #### Example in Templates / Views
 
 ```php
 <div>
+    <?php // there is an helper provided by Pimcore which is compatible with Pimcore 4, but interfaces the Symfony Translator component ?>
     <address>&copy; <?= $this->translate("copyright") ?></address>
     <a href="/imprint"><?= $this->translate("imprint") ?></a>
     <a href="/legal"><?= $this->translate("legal_notice") ?></a>
+    
+    <?php // you can also use the the Symfony helper, which is a bit longer ?>
+    <address>&copy; <?= $this->translator()->trans("copyright") ?></address>
+    <a href="/imprint"><?= $this->translator()->trans("imprint") ?></a>
+    <a href="/legal"><?= $this->translator()->trans("legal_notice") ?></a>
 </div>
-
-//shorthands
-<div>
-    <address>&copy; <?= $this->t("copyright") ?></address>
-    <a href="/imprint"><?= $this->t("imprint") ?></a>
-    <a href="/legal"><?= $this->t("legal_notice") ?></a>
-</div>
-
 ```
+
+#### Example in a Controller
+ 
+```php
+<?php
+
+namespace AppBundle\Controller;
+
+class ContentController extends AbstractController
+{
+    public function defaultAction()
+    {
+        $translation = $this->get("translator")->trans("legal_notice");
+    }
+```
+
 
 ## Pimcore backend functionalities
 
-### Sorting & Filtering on language level (ExtJS 6 only)
+### Sorting & Filtering on language level
 
 ![Sorting Shared Translations](../img/localization-translations-sorting.jpg)
 
