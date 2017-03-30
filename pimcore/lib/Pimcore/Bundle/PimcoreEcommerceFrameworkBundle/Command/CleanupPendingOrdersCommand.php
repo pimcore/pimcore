@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command;
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Exception\InvalidConfigException;

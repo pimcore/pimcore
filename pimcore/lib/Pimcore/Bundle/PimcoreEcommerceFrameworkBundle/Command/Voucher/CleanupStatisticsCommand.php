@@ -12,16 +12,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command\Voucher;
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CleanupReservationsCommand extends AbstractVoucherCommand
+class CleanupStatisticsCommand extends AbstractVoucherCommand
 {
     protected function configure()
     {
-        $this->setName('ecommerce:voucher:cleanup-reservations');
+        $this->setName('ecommerce:voucher:cleanup-statistics');
     }
 
     /**
@@ -31,6 +31,6 @@ class CleanupReservationsCommand extends AbstractVoucherCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->cleanupReservations();
+        $this->cleanupStatistics();
     }
 }

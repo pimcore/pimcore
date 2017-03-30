@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command\Voucher;
+namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher;
 
 use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
 use Pimcore\Console\AbstractCommand;

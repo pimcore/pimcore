@@ -26,19 +26,7 @@ class SystemEventsListener implements EventSubscriberInterface
     {
         return [
             SystemEvents::MAINTENANCE => 'onMaintenance',
-            SystemEvents::CONSOLE_INIT => 'onConsoleInit'
         ];
-    }
-
-
-    public function onConsoleInit(ConsoleEvent $event)
-    {
-        $application = $event->getApplication();
-
-        // add a namespace to autoload commands from
-        $application->addAutoloadNamespace(
-            'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Console\Command', __DIR__ . '/../Console/Command'
-        );
     }
 
 

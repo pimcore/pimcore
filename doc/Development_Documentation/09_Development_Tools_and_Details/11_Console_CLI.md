@@ -20,7 +20,7 @@ Source Code for `import.php`:
 ```php
 <?php
  
-include("../../pimcore/config/startup_cli.php");
+include("../pimcore/config/startup_cli.php");
  
 use \Pimcore\Model\Object;
 
@@ -69,15 +69,15 @@ and their names must end with the Command suffix.
 
 To have your command autoloaded, it must match a couple of prerequisites:
 
-* It must be placed in one of the namespaces listed above 
-(e.g. `AppBundle\Console\Command\AwesomeCommand` in `/src/AppBundle/Console/Command/AwesomeCommand.php`)
+* It must be placed in the namespace `Command`. 
+(e.g. `AppBundle\Command\AwesomeCommand` in `/src/AppBundle/Command/AwesomeCommand.php`)
 * The class name must end with `Command`, e.g. `AwesomeCommand`
 * The class must inherit `Symfony\Component\Console\Command\Command`, ideally you achieve this by 
 extending `Pimcore\Console\AbstractCommand`
 
 
-### Helpers provided by `Pimcore\Console\AbstractConsoleCommand`
-The `AbstractConsoleCommand` base class provides helpers which make your life easier.
+### Helpers provided by `Pimcore\Console\AbstractCommand`
+The `AbstractCommand` base class provides helpers which make your life easier.
 
 ##### `--ignore-maintenance-mode`
 The console application implicitly adds the `--ignore-maintenance-mode` option found in other scripts.
