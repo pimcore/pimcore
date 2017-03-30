@@ -3,7 +3,7 @@
 Pimcore allows you to localize every document. You can find the setting in your document in the tab `Properties`. 
 There you can choose from language which is configured in the system settings.
 
-The selected language is registered as a property on the document, which is inherited to all of it's children. 
+The selected language is registered as a property on the document, which is inherited to all of its children. 
 
 If you have selected a language this will be automatically set on your request object (`$request->getLocale()`) and is 
 therefore automatically used for shared translations, localized object lists and all other localized kind of contents. 
@@ -34,9 +34,9 @@ in your views, as described [here](./04_Shared_Translations). Pimcore uses the s
 so you can even access all the translations provided by your bundles. 
 
 
-## Best practise for multi language websites
-Every document has one single language/locale assigned. As a consequence of that, Pimcores best practise in terms of 
-building multi language websites is to build a document subtree per language. 
+## Best practice for multi-language websites
+Every document has one single language/locale assigned. As a consequence of that, Pimcores best practice in terms of 
+building multi-language websites is to build a document subtree per language. 
 
 ![Localization Language Trees](../img/localization-documents1.png)
 
@@ -58,7 +58,7 @@ The localization tool for Pimcore documents is a comfort tool which supports cre
 Following features are supported: 
 * **Creating new documents** for another language - either an empty document or and document using content inheritance (see below)
 * **Link existing documents** in order to have the language link between documents
-* **Open Translation** to quickly navigate to the corresponing document in another language. 
+* **Open Translation** to quickly navigate to the corresponding document in another language. 
 
 
 ### Content Inheritance
