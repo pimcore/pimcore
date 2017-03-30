@@ -2,13 +2,13 @@
 Documents are the CMS part of Pimcore and are the way to go for managing unstructured contents using pages, content snippets and navigations. 
 
 ## Document Types
-Pimcore offers different types of documents and each of them offers functionalities specific for the intended use-case. 
+Pimcore offers different types of documents and each of them offers functionality specific for the intended use-case. 
 
 | Type           | Description                                                                                                                                                 | 
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Page           | Represents a typical web-page, the path in the tree is equal to the address in the browser.                                                                 |
 | Snippet        | Makes it easier to extract often used contents into reusable containers. Can be embedded in pages or nested into other snippets.                            |
-| Link           | A simple web-link to be used in navigations.                                                                                                                |
+| Link           | A simple web-link to be used in navigation.                                                                                                                |
 | Email          | A document like the page, but with special functionality for transactional emails.                                                                        |
 | [Newsletter](./02_Document_Types/05_Newsletter_Documents.md)     | Like email, but offering additional newsletter functionality.                                                                                             |
 | Hardlink       | Create links to other document structures and reuse them within a different structure / context. (see [Hard link](https://en.wikipedia.org/wiki/Hard_link)) |
@@ -28,29 +28,17 @@ Not all of them are necessary, the table below shows which configurations are po
 
 | Type | Controller | Action | Template | Description                                                                                                                                        |
 |------|------------|--------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1    | X          | X      |          | The specified controller/action is executed, based on the names of them the right template is rendered (eg. `views/scripts/controller/action.php`) |
-| 2    | X          | X      | X        | Same as above but the template specified is rendered and not the auto-discovered template                                                           |
-| 3    |            |        | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff                                       |
+| 1    | X          | X      |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering. If no response is returned, the controller implements TemplateControllerInterface and `$this->setViewAutoRender($event->getRequest(), true, 'php');` is called, the template is auto-discovered based on controller and action name like `<BUNDLENAME>:<CONTROLLERNAME>:<ACTIONNAME>.html.php` .|
+| 2    | X          | X      | X        | Same as above but the template specified is rendered and not the auto-discovered template (only if action does not return a response). |
+| 3    |            |        | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff. |
 
-Optionally you can specify a module to each of the above combinations, this is useful if you want to use controllers/actions or templates out of plugins which are simply another ZF module. 
-The default module (when empty) is website.
+Optionally you can specify a module to each of the above combinations, this is useful if you want to use controllers/actions or templates out of plugins which are simply another Symfony bundle. 
+The default module (when empty) is AppBundle.
 
 
 Pimcore is shipped with a default controller containing a default action, which is called when only a template is given to the document, 
 you can edit the defaults in *Settings* > *System Settings*.
 
-
-## Putting Configuration & Files Structure Together
-
-The previous two sections outline how documents can be configured to use different controller/action and views.  
-The table below represents the three configurations.
-
-[comment]: #TODOimagesformatindaux
-
-| Controller and Action                                                                                                                                       | Controller, Action and Template                                                          | Only Template                                                                                                       |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| ![Specified controller and action](../img/documents_controller_action.png)                                                                                  | ![Specified controller and action](../img/documents_controller_action_template.png)      | ![Specified controller and action](../img/documents_only_template.png)                                              |
-| If you have a controller named `content` with an action named `defaultAction` the template file required will be `/website/views/scripts/content/default.php` | The specified controller/action is executed, but then the specified template is rendered | The default controller/action defined in the system settings are executed, then the specified template is rendered. |
 
 ## Properties
 
@@ -69,10 +57,9 @@ As you can see there are really useful cases for properties, feel free to use th
 
 ## A Few Facts
 
-* Documents follow the MVC pattern; therefore, Pimcore requires that there is at least one controller with an action and a view file.
-* Pimcore comes with a DefaultController containing a defaultAction and a view file.
+* Documents follow the MVC pattern; therefore, Pimcore requires that there is at least one controller with an action and a template file.
+* Pimcore comes with a DefaultController containing a defaultAction and a template file.
 * Because of the MVC architecture, there is a clear separation between your data, the functionality and the templates.
-* Pimcore has no need for a template engine since it uses `\Zend_View`, which offer many advantages. If you don't know how Zend_View works, please read more [here](https://framework.zend.com/manual/1.12/en/zend.view.html).
 * The normal way to create templates for Pimcore is to use pure PHP. There's no new template syntax to learn - just code what you want - feel free!
 * Although the templates are written in PHP, there is a clear separation as mentioned before.
 
