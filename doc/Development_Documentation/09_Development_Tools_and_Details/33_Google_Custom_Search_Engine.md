@@ -25,7 +25,7 @@ Complete the setup as described and note the server API key.
 
 
 ## Pimcore Setup
-So now we got the search engine ID and a server API key which we need to finished the 
+So now we got the search engine ID and a server API key which we need to finish the 
 configuration in Pimcore. 
 
 ### Server API Key
