@@ -46,7 +46,11 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
-            readerFields.push({name: this.relationsFields[i], allowBlank: true});
+            var columnConfig = {name: this.relationsFields[i], allowBlank: true};
+            if (this.relationsFields[i] == "sorter") {
+                columnConfig["type"] = "int";
+            }
+            readerFields.push(columnConfig);
         }
 
         var url = "/admin/classificationstore/collection-relations?";

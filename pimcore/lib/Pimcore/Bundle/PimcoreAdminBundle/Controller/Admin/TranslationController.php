@@ -35,6 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TranslationController extends AdminController
 {
+    const SELFCLOSING_TAGS = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 
     /**
      * @Route("/import")
@@ -981,7 +982,7 @@ class TranslationController extends AdminController
         if (preg_match("/<\/?(bpt|ept)/", $content)) {
             $xml = str_get_html($content);
             if ($xml) {
-                $els = $xml->find("bpt,ept");
+                $els = $xml->find("bpt,ept,ph");
                 foreach ($els as $el) {
                     $content = html_entity_decode($el->innertext, null, "UTF-8");
                     $el->outertext = $content;
@@ -1015,6 +1016,10 @@ class TranslationController extends AdminController
             return '<![CDATA[' . $content . ']]>';
         }
 
+        // Handle text before the first HTML tag
+        $firstTagPosition = strpos($content, '<');
+        $preText = ($firstTagPosition > 0) ? '<![CDATA[' . substr($content, 0, $firstTagPosition) . ']]>' : '';
+
         foreach ($matches[0] as $match) {
             $parts = explode(">", $match);
             $parts[0] .= ">";
@@ -1023,7 +1028,11 @@ class TranslationController extends AdminController
                 if (!empty($part)) {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace("/", "", $tag[1]);
-                        if (strpos($tag[1], "/") === false) {
+                        if (in_array($tagName, self::SELFCLOSING_TAGS)) {
+                            $part = '<ph id="' . $count . '"><![CDATA[' . $part . ']]></ph>';
+
+                            $count++;
+                        } else if (strpos($tag[1], "/") === false) {
                             $openTags[$count] = ["tag" => $tagName, "id" => $count];
                             $part = '<bpt id="' . $count . '"><![CDATA[' . $part . ']]></bpt>';
 
@@ -1044,7 +1053,7 @@ class TranslationController extends AdminController
             }
         }
 
-        $content = implode("", $final);
+        $content = $preText . implode("", $final);
 
         return $content;
     }

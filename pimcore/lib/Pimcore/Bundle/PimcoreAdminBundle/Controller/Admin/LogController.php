@@ -15,16 +15,35 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LogController extends AdminController
+class LogController extends AdminController implements EventedControllerInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        if (!$this->getUser()->isAllowed("application_logging")) {
+            throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+    }
 
     /**
      * @Route("/log/show")

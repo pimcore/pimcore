@@ -592,13 +592,10 @@ class Version extends AbstractModel
                     $alreadyCompressedCounter = 0;
 
                     Logger::debug("version compressed:" . $version->getFilePath());
+                    Logger::debug("Waiting 1 sec to not kill the server...");
+                    sleep(1);
                 } else {
                     $alreadyCompressedCounter++;
-                }
-
-                if ($overallCounter % 10 == 0) {
-                    Logger::debug("Waiting 5 secs to not kill the server...");
-                    sleep(5);
                 }
             }
 
