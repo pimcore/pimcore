@@ -77,8 +77,7 @@ class AdminSessionHandler implements LoggerAwareInterface
         SessionInterface $session,
         NativeSessionStorage $storage,
         AdminSessionStorageFactory $storageFactory
-    )
-    {
+    ) {
         $this->session        = $session;
         $this->storage        = $storage;
         $this->storageFactory = $storageFactory;

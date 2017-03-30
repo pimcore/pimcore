@@ -2,15 +2,14 @@
 
 ## Basics
 
-Pimcore comes with a standard navigation implementation in the form of a view helper, which utilizes Zend_Navigation. 
-The `Pimcore\View\Helper\PimcoreNavigation` gets registered by default with the other Pimcore view helpers. 
-It builds a [Zend_Navigation](https://framework.zend.com/manual/1.10/en/zend.navigation.introduction.html) container based on the existing document structure and needs to be set up as follows in your view script or layout script:
+Pimcore comes with a standard navigation implementation in the form of a templating helper (`$this->navigation()`). 
+It builds a navigation container based on the existing document structure.
 
 **Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.
 
 ```php
 // get root node if there is no document defined (for pages which are routed directly through static route)
-if(! $this->document instanceof \Pimcore\Model\Document\Page) {
+if(!$this->document instanceof \Pimcore\Model\Document\Page) {
     $this->document = \Pimcore\Model\Document\Page::getById(1);
 }
 
@@ -19,21 +18,21 @@ $navStartNode = $this->document->getProperty("navigationRoot");
 if(!$navStartNode instanceof \Pimcore\Model\Document\Page) {
     $navStartNode = \Pimcore\Model\Document\Page::getById(1);
 }
-/** @var \Pimcore\View\Helper\PimcoreNavigation $mainNavigation */
-$mainNavigation = $this->pimcoreNavigation($this->document, $navStartNode);
+
+// this returns us the navigation helper containing the generated container
+$mainNavigation = $this->navigation($document, $mainNavStartNode);
 ```
 
-Having set up the navigation view helper as shown above, you can easily use the Zend Navigation Helpers to render a navigation tree, or breadcrumbs.
+Having set up the navigation container as shown above, you can easily use it to render a navigation tree, menus, or breadcrumbs.
 
 ### Meta Navigation - Only the 1st Level
 
 ```php
-<?php
-$navigation = $mainNavigation->getContainer();
-?>
-
 <div class="my-menu">
-    <?= $mainNavigation->menu()->renderMenu($navigation, ["maxDepth" => 0]); ?>
+    <?= $mainNavigation->menu()->renderMenu(null, [
+        'maxDepth' => 1,
+        'ulClass'  => 'nav navbar-nav'
+    ]); ?>
 </div>
 ```
 
@@ -41,7 +40,7 @@ $navigation = $mainNavigation->getContainer();
 
 ```php
 <div class="my-breadcrumbs">
-    <a href="/">Home</a>
+    <a href="/"><?= $this->translate("Home") ?></a>
     <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
 </div>
 ```
@@ -50,7 +49,7 @@ $navigation = $mainNavigation->getContainer();
 
 ```php
 <div class="my-sidebar-menu">
-    <?= $mainNavigation->menu()->renderMenu($navigation); ?>
+    <?= $mainNavigation->menu()->renderMenu(); ?>
 </div>
 ```
 
@@ -59,7 +58,7 @@ $navigation = $mainNavigation->getContainer();
 ```php
 <div class="my-sidebar-menu">
     <?php
-        echo $this->pimcoreNavigation($this->document, $navStartNode, 'my-nav-')->menu()->renderMenu(null, [
+        echo $this->navigation($this->document, $navStartNode, 'my-nav-')->menu()->renderMenu(null, [
             'ulClass' => 'nav my-sidenav',
             'expandSiblingNodesOfActiveBranch' => true
         ]);
@@ -125,17 +124,16 @@ These navigation settings include the following properties:
 
 ## Individual (Partial) Navigation View Script
 If the standard HTML output of the render() method is not suitable for a project, there is the possibility to provide a custom script for the menu HTML. 
-This can be achieved using the renderPartial() method of the **Zend Menu Helper** (`\Zend_View_Helper_Navigation_Menu::renderPartial`).
 
 For example, inside your view:
 
 ```php
 <?php
-    $this->pimcoreNavigation($this->document, $mainNavStartNode)->menu()->setPartial('includes/navigation.php')->render();
+    $this->navigation($this->document, $mainNavStartNode)->menu()->setPartial('includes/navigation.html.php')->render();
 ?>
 ```
 
-`website/views/scripts/includes/navigation.php`
+`app/Resources/views/includes/navigation.html.php`
 
 ```php
 <?php foreach($this->container as $page): ?>
@@ -148,15 +146,6 @@ For example, inside your view:
 
 <?php endforeach; ?>
 ```
-
-## `Document\Link` Navigation Properties
-
-A Document_Link has three properties which are not covered by `Zend_Navigation` by default. 
-These are tabindex, accesskey and relation. Since the `Zend_Navigation` container 
-contains instances of `Pimcore\Navigation\Page\Uri`, which extend `Zend_Navigation_Page_Uri`, 
-these additional properties are available and accessible through their according getters. 
-
-Consequently, they can be regarded in an individual (partial) view script for the navigation, but will be ignored by the default render() methods.
 
 ## Using the Navigation Helper with Sites.
 
@@ -172,7 +161,7 @@ if(!$navStartNode instanceof Document\Page) {
     }
 }
  
-<?= $this->pimcoreNavigation($this->document, $navStartNode)->menu()->renderMenu(null, [
+<?= $this->navigation($this->document, $navStartNode)->menu()->renderMenu(null, [
         "maxDepth" => 1,
         "ulClass" => "nav navbar-nav"
     ]);
@@ -206,9 +195,9 @@ if(!$navStartNode instanceof Document\Page) {
     </div>
     <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
         <ul class="nav navbar-nav">
-        <?php $mainNavigation = $this->pimcoreNavigation()->getNavigation($this->document, $navStartNode); ?>
+        <?php $mainNavigation = $this->navigation()->getNavigation($this->document, $navStartNode); ?>
         <?php foreach ($mainNavigation as $page) { ?>
-            <?php /* @var $page Zend\Navigation\Page\Mvc */ ?>
+            <?php /* @var $page \Pimcore\Navigation\Page\Document */ ?>
             <?php // here need to manually check for ACL conditions ?>
             <?php if (!$page->isVisible() || !$this->navigation()->accept($page)) { continue; } ?>
             <?php $hasChildren = $page->hasPages(); ?>
@@ -246,10 +235,9 @@ In the following example we're adding news items (objects) to the navigation usi
 
 ```php
 <?php
-/** @var \Pimcore\View\Helper\PimcoreNavigation $navigation */
-$navigation = $this->pimcoreNavigation($this->document, $navStartNode, null, function($page, $document){
+$navigation = $this->navigation($this->document, $navStartNode, null, function($page, $document){
     /** @var $document \Pimcore\Model\Document */
-    /** @var \Pimcore\Navigation\Page\Uri $page */
+    /** @var \Pimcore\Navigation\Page\Document $page */
     if($document->getProperty("templateType") == "news") {
         $list = new \Pimcore\Model\Object\News\Listing;
         $list->load();
@@ -282,26 +270,29 @@ $navigation = $this->pimcoreNavigation($this->document, $navStartNode, null, fun
 
 ## Caching / High-Performance Navigation
 
-The navigation tree / container (`Zend_Navigation_Container`) is automatically cached by pimcore and improves significantly the performance of navigations. 
-To benefit from the cache it's absolutely necessary to don't use `Pimcore\Model\Document` objects directly in the navigation templates / partial scripts, because this would result in loading all the documents again in the navigation.
+The navigation tree / container (`\Pimcore\Navigation\Container`) is automatically cached by pimcore and improves 
+significantly the performance of the navigation.
+To benefit from the cache it's absolutely necessary to don't use `Pimcore\Model\Document` objects directly in the 
+navigation templates / partial scripts, because this would result in loading all the documents again in the navigation and
+bypasses the caching mechanism of the navigation container. 
 
 But sometimes it's necessary to get some properties or other data out of the documents in the navigation to build the navigation as it should be. 
-For that we've introduced a new parameter for the pimcoreNavigation view helper, which acts as a callback and allows to map custom data onto the navigation page item.
+For that we've introduced a new parameter for the navigation view helper, which acts as a callback and allows to map custom data onto the navigation page item.
 
 ```php
 <?php
-$mainNavigation = $this->pimcoreNavigation($this->document, $mainNavStartNode, null, function ($page, $document) {
+$mainNavigation = $this->navigation($this->document, $mainNavStartNode, null, function ($page, $document) {
     $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
     $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
     $page->setCustomSetting("title", $document->getTitle());
     $page->setCustomSetting("headline", $document->getElement("headline")->getData());
 });
-$mainNavigation->menu()->setPartial("/navigation/partials/navigation.php");
+$mainNavigation->menu()->setPartial("/navigation/partials/navigation.html.php");
 echo $mainNavigation->render();
 ?>
 ```
 
-Later in the template of the navigation (`/navigation/partials/navigation.php`) you can use the mapped data directly on the page item object.
+Later in the template of the navigation (`/navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
 
 ```php
 <?php foreach( $this->container as $page ){ ?>
@@ -323,7 +314,7 @@ Using this method will dramatically improve the performance of your navigation.
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
 ```php
-$this->pimcoreNavigation($this->document, $mainNavStartNode, null, null, "yourindividualkey");
+$this->navigation($this->document, $mainNavStartNode, null, null, "yourindividualkey");
 ```
 
 ### Disabling the Navigation Cache
@@ -331,11 +322,7 @@ $this->pimcoreNavigation($this->document, $mainNavStartNode, null, null, "yourin
 You can disable the navigation cache by setting the 5th argument to `false`.
 
 ```php
-$this->pimcoreNavigation($this->document, $mainNavStartNode, null, null, false);
-  
-// or
-  
-$this->pimcoreNavigation()->getNavigation($this->document, $navStartNode, null, null, false);
+$this->navigation($this->document, $mainNavStartNode, null, null, false);  
 ```
 
 ## FAQ

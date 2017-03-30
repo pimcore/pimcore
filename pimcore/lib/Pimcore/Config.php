@@ -725,10 +725,6 @@ class Config
         if (null === static::$environment) {
             $environment = false;
 
-            if (\Pimcore::inDebugMode()) {
-                $environment = "dev";
-            }
-
             // check env vars - fall back to default (prod)
             if (!$environment) {
                 $environment = getenv("PIMCORE_ENVIRONMENT")
@@ -750,6 +746,10 @@ class Config
                         break;
                     }
                 }
+            }
+
+            if (\Pimcore::inDebugMode()) {
+                $environment = "dev";
             }
 
             if (!$environment) {

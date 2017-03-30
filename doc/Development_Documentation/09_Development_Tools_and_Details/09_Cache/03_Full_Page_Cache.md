@@ -39,16 +39,12 @@ You can find the settings for the full page cache in the system-settings (`Setti
 Sometimes it is more useful to deactivate the full page cache directly in the code, for example when 
 it's not possible to define an exclude-regex, or for similar reasons.
 
-In this case you can use the following snippet to deactivate the full page cache for the current 
-process/request: 
+In this case you can use obtain the pull page cache service from the container and disable it, eg. in an action: 
 ```php
-$front = \Zend_Controller_Front::getInstance();
-$front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
+$this->get("pimcore.event_listener.frontend.full_page_cache")->disable("Your disable reason");
 ```
 
-You can put this snippet anywhere in your code!
-
-### Disable the Full Page Cache for a Single Request
+### Disable the Full Page Cache for a Single Request (only in DEBUG MODE)
 Just add the parameter `?pimcore_outputfilters_disabled=true` to the URL.
 
 ### Disable the Full Page Cache with a Cookie and a Bookmarklet
