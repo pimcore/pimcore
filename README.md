@@ -3,7 +3,7 @@
 **Looking for the current stable (version 4)?  
 See https://github.com/pimcore/pimcore/tree/pimcore4**
 
-## This is the home of the nex-gen Pimcore 
+## This is the home of the next-gen Pimcore 
 
 THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
