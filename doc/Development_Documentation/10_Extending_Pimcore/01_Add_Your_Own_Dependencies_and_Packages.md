@@ -9,10 +9,6 @@ Use composer in your project root directory, eg.
 composer require mtdowling/cron-expression
 ```
 
-## Pimcore Bundles
-
-Pimcore bundles 
-
 
 ## Version Checking
 To avoid compatibility problems with plugins or custom components, that are compatible with a special Pimcore version only, Pimcore
