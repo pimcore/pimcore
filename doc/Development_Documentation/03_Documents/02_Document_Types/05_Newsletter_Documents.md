@@ -25,7 +25,7 @@ The Newsletter Sending Panel provides the functionality for sending the newslett
 
 ### Address Source Adapter
 The Address Source Adapter is responsible for extracting the email addresses the newsletter should be sent to. It has to 
-be selected before an other action can take place. Currently following adapters ship with Pimcore. It is easily possible 
+be selected before another action can take place. Currently following adapters ship with Pimcore. It is easily possible 
 to integrate custom adapters - see section below.
 - Default Object List: Extracts email addresses based on Pimcore objects.  
 - CSV List: Uses a CSV as source for email addresses. 

@@ -4,7 +4,7 @@ Print documents are the way to create print-ready PDFs directly within Pimcore.
 They are based on the normal Pimcore documents and therefore support everything as pages do - starting from MVC pattern 
 and template creation to document composing within Pimcore backend with areas, drag&drop etc. 
 
-By default web-to-print documents are disabled. To enable them, you need to activate them in the web-to-print settings:
+By default, web-to-print documents are disabled. To enable them, you need to activate them in the web-to-print settings:
 
 ![Web2Print settings](../../img/printdocuments_settings.png)
 
@@ -41,7 +41,7 @@ that then contain the actual print pages.
 ![PrintContainer - tree](../../img/printdocuments_printcontainers_tree.png)
 
 Even they don't have content for their own, PrintContainers are based on normal Pimcore documents. 
-Therefore they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
+Therefore, they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
 Pimcore ships with default implementations (Web2PrintController, container-Action) on new installations. 
 If you updated an existing Pimcore installation, please get the default implementations here: 
 
@@ -51,7 +51,7 @@ If you updated an existing Pimcore installation, please get the default implemen
 ## PDF Rendering
 
 Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs. 
-When rendering, the print are first rendererd to HTML and then rendered to an PDF. PDF rendering itself is done by an
+When rendering, the print is first rendererd to HTML and then rendered to an PDF. PDF rendering itself is done by an
 third party renderer. Currently we support [wkhtmltopdf](http://wkhtmltopdf.org/) and [pdfreactor](http://www.pdfreactor.com/). 
 Please see their documentation for details concerning template possibilities.
 
