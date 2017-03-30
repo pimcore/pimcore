@@ -30,8 +30,7 @@ See the [Pimcore Bundles](./05_Pimcore_Bundles.md) documentation to getting star
 
 ## Common tasks
 
-Below is a list of common tasks and how to achieve them inside your bundles. In addition to these topics also have a look
-at the [Example](11_Example.md) provided in the documentation. 
+Below is a list of common tasks and how to achieve them inside your bundles. 
 
 ### Service configuration
 
