@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Security\User;
 
 use Pimcore\Model\User as PimcoreUser;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -45,6 +46,11 @@ class UserProvider implements UserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
+        if (!$user instanceof User) {
+            // user is not supported - we only support pimcore users
+            throw new UnsupportedUserException();
+        }
+
         /** @var PimcoreUser $refreshedPimcoreUser */
         $refreshedPimcoreUser = PimcoreUser::getById($user->getId());
 
