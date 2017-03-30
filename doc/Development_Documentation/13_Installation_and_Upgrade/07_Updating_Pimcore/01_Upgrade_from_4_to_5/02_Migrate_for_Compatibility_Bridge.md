@@ -46,6 +46,9 @@ remaining problems.
 ```sql 
 ALTER TABLE `documents_page` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `personas`;
 ALTER TABLE `documents_snippet` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `contentMasterDocumentId`;
+ALTER TABLE `documents_newsletter` ADD COLUMN `legacy` TINYINT(1) NULL;
+ALTER TABLE `documents_printpage` ADD COLUMN `legacy` TINYINT(1) NULL;
+ALTER TABLE `documents_email` ADD COLUMN `legacy` TINYINT(1) NULL;
 ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin';
 ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
 ```

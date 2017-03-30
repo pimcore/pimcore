@@ -1766,11 +1766,11 @@ INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2co
 
 
 
-INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form');
-INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','');
+INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form', 0);
+INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','', 0);
 
 
-INSERT INTO `documents_newsletter` VALUES ('67','','newsletter','standard-mail','','','Example Newsletter','newsletter','email','example-mailing','1','single');
+INSERT INTO `documents_newsletter` VALUES ('67','','newsletter','standard-mail','','','Example Newsletter','newsletter','email','example-mailing','1','single', 0);
 
 
 

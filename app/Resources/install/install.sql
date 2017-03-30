@@ -153,6 +153,7 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
+  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -170,6 +171,7 @@ CREATE TABLE `documents_newsletter` (
   `trackingParameterName` varchar(255) DEFAULT NULL,
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
+  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -243,6 +245,7 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
