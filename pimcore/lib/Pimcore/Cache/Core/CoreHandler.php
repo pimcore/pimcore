@@ -14,7 +14,6 @@
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\Core\Exception\InvalidArgumentException;
 use Pimcore\Cache\Pool\CacheItem;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
@@ -268,7 +267,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function getItem($key)
     {
         if (!$this->enabled) {
-            $this->logger->debug(sprintf('Key %s doesn\'t exist in cache (deactivated)', $key), ['key' => $key]);
+            $this->logger->debug('Key {key} doesn\'t exist in cache (deactivated)', ['key' => $key]);
 
             // create empty cache item
             return $this->itemPool->createCacheItem($key);
@@ -276,9 +275,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $item = $this->itemPool->getItem($key);
         if ($item->isHit()) {
-            $this->logger->debug(sprintf('Successfully got data for key %s from cache', $key), ['key' => $key]);
+            $this->logger->debug('Successfully got data for key {key} from cache', ['key' => $key]);
         } else {
-            $this->logger->debug(sprintf('Key %s doesn\'t exist in cache', $key), ['key' => $key]);
+            $this->logger->debug('Key {key} doesn\'t exist in cache', ['key' => $key]);
         }
 
         return $item;
@@ -300,7 +299,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         CacheItem::validateKey($key);
 
         if (!$this->enabled) {
-            $this->logger->debug(sprintf('Not saving object %s to cache (deactivated)', $key), ['key' => $key]);
+            $this->logger->debug('Not saving object {key} to cache (deactivated)', ['key' => $key]);
 
             return false;
         }
@@ -308,7 +307,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($this->isCli()) {
             if (!$this->handleCli && !$force) {
                 $this->logger->debug(
-                    sprintf('Not saving %s to cache as process is running in CLI mode (pass force to override or set handleCli to true)', $key),
+                    'Not saving {key} to cache as process is running in CLI mode (pass force to override or set handleCli to true)',
                     ['key' => $key]
                 );
 
@@ -319,7 +318,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($force || $this->forceImmediateWrite) {
             if ($this->writeLock->hasLock()) {
                 $this->logger->warning(
-                    sprintf('Not saving %s to cache as there\'s an active write lock', $key),
+                    'Not saving {key} to cache as there\'s an active write lock',
                     ['key' => $key]
                 );
 
@@ -391,8 +390,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             }
         } else {
             $this->logger->warning(
-                sprintf('Not saving %s to cache as it did not fit into the save queue (max items on queue: %d)', $item->getKey(), $this->maxWriteToCacheItems),
-                ['key' => $item->getKey()]
+                'Not saving {key} to cache as it did not fit into the save queue (max items on queue: {maxItems})',
+                [
+                    'key'      => $item->getKey(),
+                    'maxItems' => $this->maxWriteToCacheItems
+                ]
             );
         }
 
@@ -413,7 +415,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // do not cache hardlink-wrappers
         if ($data instanceof WrapperInterface) {
             $this->logger->warning(
-                sprintf('Not saving %s to cache as it is a hardlink wrapper', $key),
+                'Not saving {key} to cache as it is a hardlink wrapper',
                 ['key' => $key]
             );
 
@@ -465,15 +467,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $tags = $data->getCacheTags($tags);
 
             $this->logger->debug(
-                sprintf(
-                    'Prepared %s %d for data cache with tags: %s',
-                    get_class($data),
-                    $data->getId(),
-                    implode(',', $tags)
-                ),
+                'Prepared {class} {id} for data cache with tags: {tags}',
                 [
-                    'id'   => $data->getId(),
-                    'tags' => $tags
+                    'class' => get_class($data),
+                    'id'    => $data->getId(),
+                    'tags'  => $tags
                 ]
             );
         }
@@ -490,19 +488,21 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // check if any of our tags is in cleared tags or tags ignored on save lists
         foreach ($tags as $tag) {
             if (in_array($tag, $this->clearedTags)) {
-                $this->logger->debug(
-                    sprintf('Aborted caching for key %s because tag %s is in the cleared tags list', $cacheItem->getKey(), $tag),
-                    ['key' => $data->getId(), 'tags' => $tags]
-                );
+                $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
+                    'key'  => $cacheItem->getKey(),
+                    'tag'  => $tag,
+                    'tags' => $tags
+                ]);
 
                 return null;
             }
 
             if (in_array($tag, $this->tagsIgnoredOnSave)) {
-                $this->logger->debug(
-                    sprintf('Aborted caching for key %s because tag %s is in the ignored tags on save list', $cacheItem->getKey(), $tag),
-                    ['key' => $data->getId(), 'tags' => $tags]
-                );
+                $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the ignored tags on save list', [
+                    'key'  => $cacheItem->getKey(),
+                    'tag'  => $tag,
+                    'tags' => $tags
+                ]);
 
                 return null;
             }
@@ -535,10 +535,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         if ($data instanceof ElementInterface) {
             if (!$data->__isBasedOnLatestData()) {
-                $this->logger->warning(
-                    sprintf('Not saving %s to cache as element is not based on latest data', $item->getKey()),
-                    ['key' => $item->getKey()]
-                );
+                $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
+                    'key' => $item->getKey()
+                ]);
 
                 // TODO: this check needs to be done recursive, especially for Objects (like cache tags)
                 // all other entities shouldn't have references at all in the cache so it shouldn't matter
@@ -549,14 +548,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $result = $this->itemPool->save($item);
 
         if ($result) {
-            $this->logger->debug(sprintf('Added entry %s to cache', $item->getKey()), ['key' => $item->getKey()]);
+            $this->logger->debug('Added entry {key} to cache', ['key' => $item->getKey()]);
         } else {
             $this->logger->error(
-                sprintf(
-                    'Failed to add entry %s to cache. Item size was %s',
-                    $item->getKey(),
-                    formatBytes(strlen($item->get()))
-                )
+                'Failed to add entry {key} to cache. Item size was {itemSize}',
+                [
+                    'key'      => $item->getKey(),
+                    'itemSize' => formatBytes(strlen($item->get()))
+                ]
             );
         }
 
@@ -587,7 +586,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         $this->writeLock->lock();
 
-        $this->logger->info(sprintf('Clearing the whole cache'));
+        $this->logger->info('Clearing the whole cache');
 
         $result = $this->itemPool->clear();
 
@@ -620,7 +619,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $originalTags = $tags;
 
         $this->logger->debug(
-            sprintf('Clearing cache tags: %s', implode(',', $tags)),
+            'Clearing cache tags: {tags}',
             ['tags' => $tags]
         );
 
@@ -636,8 +635,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $this->logger->warning(
-            sprintf('Could not clear tags as tag list is empty after normalization. List was: %s', implode(',', $tags)),
-            ['tags' => $originalTags]
+            'Could not clear tags as tag list is empty after normalization. List was: {tags}',
+            [
+                'tags'         => $tags,
+                'originalTags' => $originalTags
+            ]
         );
 
         return false;
@@ -654,10 +656,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             return true;
         }
 
-        $this->logger->debug(
-            sprintf('Clearing shutdown cache tags: %s', implode(',', $this->tagsClearedOnShutdown)),
-            ['tags' => $this->tagsClearedOnShutdown]
-        );
+        $this->logger->debug('Clearing shutdown cache tags: {tags}', ['tags' => $this->tagsClearedOnShutdown]);
 
         $result = $this->itemPool->invalidateTags($this->tagsClearedOnShutdown);
 
@@ -801,10 +800,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($this->writeLock->hasLock()) {
             if (count($this->saveQueue) > 0) {
                 $this->logger->debug(
-                    sprintf(
-                        'Not writing save queue as there\'s an active write lock. Save queue contains %d items.',
-                        count($this->saveQueue)
-                    )
+                    'Not writing save queue as there\'s an active write lock. Save queue contains {saveQueueCount} items.',
+                    ['saveQueueCount' => count($this->saveQueue)]
                 );
             }
 
@@ -817,10 +814,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             // check if key was already processed and don't save it again
             if (in_array($key, $processedKeys)) {
-                $this->logger->warning(
-                    sprintf('Not writing item as key %s was already processed', $key),
-                    ['key' => $key]
-                );
+                $this->logger->warning('Not writing item as key {key} was already processed', ['key' => $key]);
 
                 continue;
             }
@@ -831,11 +825,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $result = true;
             if (null === $cacheItem) {
                 $result = false;
-                $this->logger->error(sprintf('Not writing item %s to cache as prepareCacheTags failed', $key));
+                $this->logger->error('Not writing item {key} to cache as prepareCacheTags failed', ['key' => $key]);
             } else {
                 $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getData(), $queueItem->isForce());
                 if (!$result) {
-                    $this->logger->error(sprintf('Unable to write item %s to cache', $key));
+                    $this->logger->error('Unable to write item {key} to cache', ['key' => $key]);
                 }
             }
 
@@ -872,10 +866,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 $queueCount = count($this->saveQueue);
                 if ($queueCount > 0) {
                     $this->logger->debug(
-                        sprintf(
-                            'Not writing save queue to cache as process is running in CLI mode. Save queue contains %d items.',
-                            count($this->saveQueue)
-                        )
+                        'Not writing save queue to cache as process is running in CLI mode. Save queue contains {saveQueueCount} items.',
+                        ['saveQueueCount' => count($this->saveQueue)]
                     );
                 }
             }

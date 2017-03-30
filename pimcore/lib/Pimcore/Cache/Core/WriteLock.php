@@ -117,7 +117,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
             $this->timestamp = time();
 
             $this->logger->debug(
-                sprintf('Setting write lock with timestamp %d', $this->timestamp),
+                'Setting write lock with timestamp {timestamp}',
                 ['timestamp' => $this->timestamp]
             );
 
@@ -191,7 +191,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                 // only remove the lock if it was created by this process
                 if ($lock <= $this->timestamp) {
                     $this->logger->debug(
-                        sprintf('Removing write lock with timestamp %d', $lock),
+                        'Removing write lock with timestamp {timestamp}',
                         ['timestamp' => $lock]
                     );
 
@@ -202,7 +202,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                     return true;
                 } else {
                     $this->logger->debug(
-                        sprintf('Not removing write lock as timestamp does not belong to this process (timestamp: %d, lock: %d)', $this->timestamp, $lock),
+                        'Not removing write lock as timestamp does not belong to this process (timestamp: {timestamp}, lock: {lock})',
                         ['timestamp' => $this->timestamp, 'lock' => $lock]
                     );
 
