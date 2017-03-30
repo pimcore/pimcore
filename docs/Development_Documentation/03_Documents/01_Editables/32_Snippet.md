@@ -9,14 +9,15 @@ You have to create them the same way as other documents (pages).
 
 ## Configuration
 
-| Name            | Type    | Description                                                                        |
-|-----------------|---------|------------------------------------------------------------------------------------|
-| `defaultHeight` | integer | A default height if the element is empty                                           |
-| `height`        | integer | Height of the snippet in pixel                                                     |
-| `reload`        | bool    | Reload document on change                                                          |
-| `title`         | string  | You can give the element a title                                                   |
-| `width`         | integer | Width of the snippet in pixel                                                      |
-| `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| Name            | Type    | Description                                                                                                    |
+|-----------------|---------|----------------------------------------------------------------------------------------------------------------|
+| `defaultHeight` | integer | A default height if the element is empty                                                                       |
+| `height`        | integer | Height of the snippet in pixel                                                                                 |
+| `reload`        | bool    | Reload document on change                                                                                      |
+| `title`         | string  | You can give the element a title                                                                               |
+| `width`         | integer | Width of the snippet in pixel                                                                                  |
+| `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode                             |
+| `tag`           | string  | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
 
 ## Methods
 

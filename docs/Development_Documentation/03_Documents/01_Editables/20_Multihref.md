@@ -16,6 +16,7 @@ Multihref editable provides one to many relation to other Pimcore elements (docu
 | `subtypes`     | array     | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below)                      |
 | `classes`      | array     | Allowed object class names, if empty all classes are allowed                                                                                                    |
 | `class`        | string    | A CSS class that is added to the surrounding container of this element in editmode                                                                              |
+| `tag`          | string    | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode                                                  |
 
 ## Methods
 

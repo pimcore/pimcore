@@ -9,19 +9,20 @@ A typical use-case would be to render product objects within a document.
 
 ## Configuration
 
-| Name           | Type      | Description                                                                        | Mandatory   |
-|----------------|-----------|------------------------------------------------------------------------------------|-------------|
-| `action`       | string    | Specify action                                                                     | X           |
-| `className`    | string    | Specify class name (if type **object** chosen)                                     |             |
-| `controller`   | string    | Specify controller                                                                 | X           |
-| `height`       | integer   | Height of the renderlet in pixel                                                   |             |
-| `module`       | string    | Specify module (default: website)                                                  |             |
-| `reload`       | bool      | Reload document on change                                                          |             |
-| `template`     | string    | Specify template                                                                   |             |
-| `title`        | string    | Add a title to the box in editmode                                                 |             |
-| `type`         | string    | The type of the element assigned to the renderlet (document,asset,object)          |             |
-| `width`        | integer   | Width of the renderlet in pixel                                                    |             |
-| `class`        | string    | A CSS class that is added to the surrounding container of this element in editmode |             |
+| Name           | Type      | Description                                                                                                    | Mandatory   |
+|----------------|-----------|----------------------------------------------------------------------------------------------------------------|-------------|
+| `action`       | string    | Specify action                                                                                                 | X           |
+| `className`    | string    | Specify class name (if type **object** chosen)                                                                 |             |
+| `controller`   | string    | Specify controller                                                                                             | X           |
+| `height`       | integer   | Height of the renderlet in pixel                                                                               |             |
+| `module`       | string    | Specify module (default: website)                                                                              |             |
+| `reload`       | bool      | Reload document on change                                                                                      |             |
+| `template`     | string    | Specify template                                                                                               |             |
+| `title`        | string    | Add a title to the box in editmode                                                                             |             |
+| `type`         | string    | The type of the element assigned to the renderlet (document,asset,object)                                      |             |
+| `width`        | integer   | Width of the renderlet in pixel                                                                                |             |
+| `class`        | string    | A CSS class that is added to the surrounding container of this element in editmode                             |             |
+| `tag`          | string    | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |             |
 
 Optionally you can pass every parameter (with a scalar data type) you like to the renderlet which can be accessed in 
 the configured controller with `$this->getParam("yourKey")`.

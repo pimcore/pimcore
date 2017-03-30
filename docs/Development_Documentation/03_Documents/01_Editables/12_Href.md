@@ -16,6 +16,7 @@ In frontend-mode the href returns the path of the linked element.
 | `width`      | int     | Width of the field in pixel.                                                                                                               |
 | `uploadPath` | string  | Target path for (inline) uploaded assets                                                                                                   |
 | `class`      | string  | A CSS class that is added to the surrounding container of this element in editmode                                                         |
+| `tag`        | string  | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode                             |
 
 ## Methods
 
