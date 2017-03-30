@@ -1,6 +1,6 @@
 # Parent Class for Objects
 
-In addition to [dependency injection](./.md) (which can overwrite Pimcore object model classes) 
+In addition to [dependency injection](./03_Overriding_Models.md) (which can overwrite Pimcore object model classes) 
  it is also possible to make the object model classes extend a certain parent class. 
  
 So this is technically not a dependency injection, but is another way to add your own methods to an object class.

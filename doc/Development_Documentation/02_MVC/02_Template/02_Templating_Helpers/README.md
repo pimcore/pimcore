@@ -7,22 +7,19 @@ This is a concept of the [Symfony Templating Component](http://symfony.com/doc/c
 and you can of course use all of the built-in functionalities of this component.  
 
 Following an overview of some helpers provided by the Symfony Templating Component:   
-
-| Method         | 
-|----------------|
-| `escape()`     | 
-| `extend()`     | 
-| `actions()`    | 
-| `assets()`     | 
-| `code()`       | 
-| `form()`       | 
-| `request()`    | 
-| `router()`     | 
-| `session()`    | 
-| `stopwatch()`  | 
-| `translator()` | 
-| `url()`        | 
-| `path()`       | 
+- `escape()` 
+- `extend()` 
+- `actions()` 
+- `assets()` 
+- `code()` 
+- `form()` 
+- `request()` 
+- `router()` 
+- `session()` 
+- `stopwatch()` 
+- `translator()` 
+- `url()` 
+- `path()` 
 
 For more information please have a look into the docs of the [Symfony PHP Templating Compontent](http://symfony.com/doc/current/templating/PHP.html). 
   
