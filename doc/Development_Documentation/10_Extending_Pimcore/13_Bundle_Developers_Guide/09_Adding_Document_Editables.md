@@ -12,7 +12,7 @@ To register a new editable, you need to follow 3 steps:
 
 ## 1) Create the editable class
 
-The editable **must** extens `Pimcore\Model\Document\Tag`. Lets create a `Markdown` editable (the namespace does not matter
+The editable **must** extend `Pimcore\Model\Document\Tag`. Lets create a `Markdown` editable (the namespace does not matter
 but it's best practice to put your editables into a `Model\Document\Tag` sub-namespace):
 
 ```php
