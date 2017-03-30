@@ -37,5 +37,4 @@ class CleanupStatisticsCommand extends AbstractCommand
         $this->output->writeln('<comment>*</comment> Cleaning up <info>statistics</info>');
         Factory::getInstance()->getVoucherService()->cleanUpStatistics();
     }
-
 }

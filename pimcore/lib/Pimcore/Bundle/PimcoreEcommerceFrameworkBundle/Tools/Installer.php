@@ -183,10 +183,12 @@ class Installer extends AbstractInstaller
     {
         try {
             $this->checkCanBeInstalled();
+
             return true;
         } catch (\Exception $e) {
             Logger::warn("Ecommerce Framework cannot be installed because: " . $e);
         }
+
         return false;
     }
 
