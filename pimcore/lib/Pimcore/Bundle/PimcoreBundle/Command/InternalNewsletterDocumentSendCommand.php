@@ -27,6 +27,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
     protected function configure()
     {
         $this
+            ->setHidden(true)
             ->setName('internal:newsletter-document-send')
             ->setDescription('For internal use only')
             ->addArgument("sendingId")->addArgument("hostUrl");

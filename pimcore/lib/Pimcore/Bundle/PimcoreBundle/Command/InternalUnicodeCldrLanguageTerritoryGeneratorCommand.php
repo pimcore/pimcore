@@ -25,6 +25,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
     protected function configure()
     {
         $this
+            ->setHidden(true)
             ->setName('internal:unicode-cldr-language-territory-generator')
             ->setDescription('For internal use only');
     }

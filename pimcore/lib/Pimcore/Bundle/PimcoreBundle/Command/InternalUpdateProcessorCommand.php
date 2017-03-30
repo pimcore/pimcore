@@ -26,6 +26,7 @@ class InternalUpdateProcessorCommand extends AbstractCommand
     protected function configure()
     {
         $this
+            ->setHidden(true)
             ->setName('internal:update-processor')
             ->setDescription('For internal use only')
             ->addArgument("config");
