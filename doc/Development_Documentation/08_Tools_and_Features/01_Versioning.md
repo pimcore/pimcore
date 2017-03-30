@@ -4,7 +4,7 @@
 All contents in Pimcore (documents, assets and objects) are versions. You can have as much versions as you want.
 On each change a new version of the element is created.
 
-For example if you would like to find the version history in objects you have to choose **Versions** tab.
+For example, if you would like to find the version history in objects you have to choose **Versions** tab.
 
 There you can see the changes list, also you can find out what is the difference between revisions and you can choose 
 which version should be published.
