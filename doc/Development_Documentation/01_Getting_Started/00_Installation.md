@@ -16,6 +16,7 @@ cd /your/project
 
 Pimcore is offering [2 installation packages](https://www.pimcore.org/download) for different use-cases: 
   
+| Version | Description |  
 |--------------------|---------------------------------------------------------------------------------|
 | **Latest Release** | The latest release version of Pimcore. Good choice for all purposes ;-)         |
 | **Nightly Build**  | Daily released version. Shouldn't be used in production but ok for development. |
