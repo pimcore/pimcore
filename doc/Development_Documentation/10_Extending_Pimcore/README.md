@@ -14,7 +14,7 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
 * [**Add your own Dependencies and Packages**](./01_Add_Your_Own_Dependencies_and_Packages.md) for loading external libraries and functionalities 
  to be available in custom code. 
  
-* Use [**Dependency Injection**](./03_Dependency_Injection.md) to overwrite Pimcore default models. 
+* Use [**Overriding Models**](./03_Overriding_Models.md) to overwrite Pimcore default models. 
 
 * [**Constants File**](./05_Constants_File.md) for overwriting Pimcore constants like assets
  directory, temporary directory etc. 
