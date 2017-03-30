@@ -34,6 +34,14 @@ class EncoderFactory implements EncoderFactoryInterface
     protected $userEncoders = [];
 
     /**
+     * @param EncoderFactoryInterface $decoratedFactory
+     */
+    public function __construct(EncoderFactoryInterface $decoratedFactory)
+    {
+        $this->decoratedFactory = $decoratedFactory;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getEncoder($user)
