@@ -31,6 +31,17 @@
                             }
                         }
                     }
+                    $jsPaths = $plugin->getJsPaths();
+                    if (!empty($jsPaths)) {
+                        foreach ($jsPaths as $jsPath) {
+                            $jsPath = trim($jsPath);
+                            if (!empty($jsPath) && stripos($jsPath, "/login.") !== false) {
+                                ?>
+                                <script type="text/javascript" src="<?= $jsPath ?>?_dc=<?= time() ?>"></script>
+                                <?php
+                            }
+                        }
+                    }
                 }
             }
         }
