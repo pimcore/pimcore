@@ -71,6 +71,8 @@ class Dao extends Model\Dao\AbstractDao
             "data" => $data
         ];
 
+        \Pimcore::getEventManager()->trigger("property.preUpdate", $this->model);
         $this->db->insertOrUpdate("properties", $saveData);
+        \Pimcore::getEventManager()->trigger("property.postUpdate", $this->model);
     }
 }
