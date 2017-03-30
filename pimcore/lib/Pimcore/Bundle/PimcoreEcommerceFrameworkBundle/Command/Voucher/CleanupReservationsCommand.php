@@ -14,14 +14,17 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CleanupReservationsCommand extends AbstractVoucherCommand
+class CleanupReservationsCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this->setName('ecommerce:voucher:cleanup-reservations');
+        $this->setDescription("Cleans the token reservations due to sysConfig duration settings");
     }
 
     /**
@@ -31,6 +34,7 @@ class CleanupReservationsCommand extends AbstractVoucherCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->cleanupReservations();
+        $this->output->writeln('<comment>*</comment> Cleaning up <info>reservations</info>');
+        Factory::getInstance()->getVoucherService()->cleanUpReservations();
     }
 }

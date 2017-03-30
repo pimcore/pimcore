@@ -26,6 +26,7 @@ class CleanupPendingOrdersCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('ecommerce:cleanup-pending-orders');
+        $this->setDescription("Cleans up orders with state pending payment after 1h -> delegates this to commit order processor");
     }
 
     /**

@@ -484,8 +484,6 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Tools\Config\HelperContainer' => 'OnlineShop\Framework\Tools\Config\HelperContainer',
 
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\CleanupPendingOrdersCommand' => 'OnlineShop\Framework\Console\Command\CleanupPendingOrdersCommand',
-        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher\AbstractVoucherCommand' => 'OnlineShop\Framework\Console\Command\Voucher\AbstractVoucherCommand',
-        'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher\CleanupCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupCommand',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher\CleanupReservationsCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupReservationsCommand',
         'Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher\CleanupStatisticsCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupStatisticsCommand',
 

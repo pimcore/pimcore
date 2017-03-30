@@ -14,14 +14,17 @@
 
 namespace Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Command\Voucher;
 
+use Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Factory;
+use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CleanupStatisticsCommand extends AbstractVoucherCommand
+class CleanupStatisticsCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this->setName('ecommerce:voucher:cleanup-statistics');
+        $this->setDescription("House keeping for Voucher Usage Statistics - cleans up all old data.");
     }
 
     /**
@@ -31,6 +34,8 @@ class CleanupStatisticsCommand extends AbstractVoucherCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->cleanupStatistics();
+        $this->output->writeln('<comment>*</comment> Cleaning up <info>statistics</info>');
+        Factory::getInstance()->getVoucherService()->cleanUpStatistics();
     }
+
 }
