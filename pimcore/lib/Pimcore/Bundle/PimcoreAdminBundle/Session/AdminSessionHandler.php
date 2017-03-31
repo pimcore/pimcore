@@ -254,14 +254,7 @@ class AdminSessionHandler implements LoggerAwareInterface
             $session = $this->loadSession();
         }
 
-        try {
-            $attributeBag = $session->getBag($name);
-        } catch (\Exception $e) {
-            // requested bag doesn't exist, we create a default attribute bag
-            $attributeBag = new LockableAttributeBag($name);
-            $session->registerBag($attributeBag);
-        }
-
+        $attributeBag = $session->getBag($name);
         if ($attributeBag instanceof LockableAttributeBagInterface) {
             $attributeBag->unlock();
         }
