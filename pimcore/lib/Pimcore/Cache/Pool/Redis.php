@@ -162,6 +162,14 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         $pipeline = $this->redis->pipeline()->multi();
 
+        $fields = [
+            static::FIELD_DATA,
+            static::FIELD_TAGS,
+            static::FIELD_MTIME
+        ];
+
+        $fieldIndexes = array_flip($fields);
+
         foreach ($ids as $id) {
             $pipeline->hMGet(static::PREFIX_KEY . $id, [
                 static::FIELD_DATA,
@@ -174,19 +182,19 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         foreach ($result as $idx => $entry) {
             // we rely on mtime always being set
-            if (empty($entry) || !isset($entry[static::FIELD_MTIME]) || !$entry[static::FIELD_MTIME]) {
+            if (empty($entry) || !isset($entry[$fieldIndexes[static::FIELD_MTIME]]) || !$entry[$fieldIndexes[static::FIELD_MTIME]]) {
                 continue;
             }
 
-            if (null === $entry[static::FIELD_DATA]) {
+            if (null === $entry[$fieldIndexes[static::FIELD_DATA]]) {
                 continue;
             }
 
-            $value = $this->decodeData($entry[static::FIELD_DATA]);
+            $value = $this->decodeData($entry[$fieldIndexes[static::FIELD_DATA]]);
             $value = $this->unserializeData($value);
 
             $tags    = [];
-            $tagData = $this->decodeData($entry[static::FIELD_TAGS]);
+            $tagData = $this->decodeData($entry[$fieldIndexes[static::FIELD_TAGS]]);
 
             if (!empty($tagData)) {
                 $tags = explode(',', $tagData);
@@ -216,7 +224,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     /**
      * Deletes all items in the pool.
      *
-     * @param string The prefix used for all identifiers managed by this pool
+     * @param string $namespace The prefix used for all identifiers managed by this pool
      *
      * @return bool True if the pool was successfully cleared, false otherwise
      */
