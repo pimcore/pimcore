@@ -467,7 +467,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $tags = $data->getCacheTags($tags);
 
             $this->logger->debug(
-                'Prepared {class} {id} for data cache with tags: {tags}',
+                'Prepared {class} {id} for data cache',
                 [
                     'class' => get_class($data),
                     'id'    => $data->getId(),
@@ -489,9 +489,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         foreach ($tags as $tag) {
             if (in_array($tag, $this->clearedTags)) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
-                    'key'  => $cacheItem->getKey(),
-                    'tag'  => $tag,
-                    'tags' => $tags
+                    'key'         => $cacheItem->getKey(),
+                    'tag'         => $tag,
+                    'tags'        => $tags,
+                    'clearedTags' => $this->clearedTags
                 ]);
 
                 return null;
@@ -499,9 +500,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (in_array($tag, $this->tagsIgnoredOnSave)) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the ignored tags on save list', [
-                    'key'  => $cacheItem->getKey(),
-                    'tag'  => $tag,
-                    'tags' => $tags
+                    'key'               => $cacheItem->getKey(),
+                    'tag'               => $tag,
+                    'tags'              => $tags,
+                    'tagsIgnoredOnSave' => $this->tagsIgnoredOnSave
                 ]);
 
                 return null;
@@ -619,7 +621,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $originalTags = $tags;
 
         $this->logger->debug(
-            'Clearing cache tags: {tags}',
+            'Clearing cache tags',
             ['tags' => $tags]
         );
 
@@ -635,7 +637,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $this->logger->warning(
-            'Could not clear tags as tag list is empty after normalization. List was: {tags}',
+            'Could not clear tags as tag list is empty after normalization',
             [
                 'tags'         => $tags,
                 'originalTags' => $originalTags
@@ -656,7 +658,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             return true;
         }
 
-        $this->logger->debug('Clearing shutdown cache tags: {tags}', ['tags' => $this->tagsClearedOnShutdown]);
+        $this->logger->debug('Clearing shutdown cache tags', ['tags' => $this->tagsClearedOnShutdown]);
 
         $result = $this->itemPool->invalidateTags($this->tagsClearedOnShutdown);
 
