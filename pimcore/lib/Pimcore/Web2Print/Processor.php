@@ -83,7 +83,7 @@ abstract class Processor
 
     /**
      * @param $documentId
-     * @throws \Exception
+     * @return mixed|null
      */
     public function startPdfGeneration($documentId)
     {
@@ -93,6 +93,8 @@ abstract class Processor
 
         // check if there is already a generating process running, wait if so ...
         Model\Tool\Lock::acquire($document->getLockKey(), 0);
+
+        $pdf = null;
 
         try {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
@@ -118,6 +120,8 @@ abstract class Processor
         Model\Tool\TmpStore::delete($document->getLockKey());
 
         @unlink($this->getJobConfigFile($documentId));
+
+        return $pdf;
     }
 
     /**
