@@ -69,7 +69,7 @@ class Cache
      */
     public static function load($key)
     {
-        return static::$handler->load($key);
+        return static::getHandler()->load($key);
     }
 
     /**
@@ -85,7 +85,7 @@ class Cache
      */
     public static function save($data, $key, $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
-        return static::$handler->save($key, $data, $tags, $lifetime, $priority, $force);
+        return static::getHandler()->save($key, $data, $tags, $lifetime, $priority, $force);
     }
 
     /**
@@ -96,7 +96,7 @@ class Cache
      */
     public static function remove($key)
     {
-        return static::$handler->remove($key);
+        return static::getHandler()->remove($key);
     }
 
     /**
@@ -106,7 +106,7 @@ class Cache
      */
     public static function clearAll()
     {
-        return static::$handler->clearAll();
+        return static::getHandler()->clearAll();
     }
 
     /**
@@ -117,7 +117,7 @@ class Cache
      */
     public static function clearTag($tag)
     {
-        return static::$handler->clearTag($tag);
+        return static::getHandler()->clearTag($tag);
     }
 
     /**
@@ -132,7 +132,7 @@ class Cache
             $tags = [$tags];
         }
 
-        return static::$handler->clearTags($tags);
+        return static::getHandler()->clearTags($tags);
     }
 
     /**
@@ -142,7 +142,7 @@ class Cache
      */
     public static function addClearTagOnShutdown($tag)
     {
-        static::$handler->addTagClearedOnShutdown($tag);
+        static::getHandler()->addTagClearedOnShutdown($tag);
     }
 
     /**
@@ -152,7 +152,7 @@ class Cache
      */
     public static function addIgnoredTagOnSave($tag)
     {
-        static::$handler->addTagIgnoredOnSave($tag);
+        static::getHandler()->addTagIgnoredOnSave($tag);
     }
 
     /**
@@ -162,7 +162,7 @@ class Cache
      */
     public static function removeIgnoredTagOnSave($tag)
     {
-        static::$handler->removeTagIgnoredOnSave($tag);
+        static::getHandler()->removeTagIgnoredOnSave($tag);
     }
 
     /**
@@ -172,7 +172,7 @@ class Cache
      */
     public static function addIgnoredTagOnClear($tag)
     {
-        static::$handler->addTagIgnoredOnClear($tag);
+        static::getHandler()->addTagIgnoredOnClear($tag);
     }
 
     /**
@@ -182,7 +182,7 @@ class Cache
      */
     public static function removeIgnoredTagOnClear($tag)
     {
-        static::$handler->removeTagIgnoredOnClear($tag);
+        static::getHandler()->removeTagIgnoredOnClear($tag);
     }
 
     /**
@@ -191,7 +191,7 @@ class Cache
      */
     public static function addClearedTag($tag)
     {
-        static::$handler->getLogger()->warning('addClearedTag is deprecated, please use addIngoredTagOnSave instead', [
+        static::getHandler()->getLogger()->warning('addClearedTag is deprecated, please use addIngoredTagOnSave instead', [
             'tag' => $tag
         ]);
 
@@ -207,7 +207,7 @@ class Cache
      */
     public static function shutdown($forceWrite = false)
     {
-        static::$handler->shutdown($forceWrite);
+        static::getHandler()->shutdown($forceWrite);
     }
 
     /**
@@ -215,7 +215,7 @@ class Cache
      */
     public static function disable()
     {
-        static::$handler->disable();
+        static::getHandler()->disable();
     }
 
     /**
@@ -223,7 +223,7 @@ class Cache
      */
     public static function enable()
     {
-        static::$handler->enable();
+        static::getHandler()->enable();
     }
 
     /**
@@ -231,7 +231,7 @@ class Cache
      */
     public static function isEnabled()
     {
-        return static::$handler->isEnabled();
+        return static::getHandler()->isEnabled();
     }
 
     /**
@@ -239,7 +239,7 @@ class Cache
      */
     public static function setForceImmediateWrite($forceImmediateWrite)
     {
-        static::$handler->setForceImmediateWrite($forceImmediateWrite);
+        static::getHandler()->setForceImmediateWrite($forceImmediateWrite);
     }
 
     /**
@@ -247,7 +247,7 @@ class Cache
      */
     public static function getForceImmediateWrite()
     {
-        return static::$handler->getForceImmediateWrite();
+        return static::getHandler()->getForceImmediateWrite();
     }
 
     /**
@@ -255,6 +255,6 @@ class Cache
      */
     public static function maintenance()
     {
-        return static::$handler->purge();
+        return static::getHandler()->purge();
     }
 }

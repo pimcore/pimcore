@@ -38,12 +38,4 @@ class PimcoreBundle extends Bundle
         $container->addCompilerPass(new SessionConfiguratorPass());
         $container->addCompilerPass(new WebDebugToolbarListenerPass());
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function boot()
-    {
-        Cache::setHandler($this->container->get('pimcore.cache.core.handler'));
-    }
 }
