@@ -242,7 +242,7 @@ class ExtensionManager
         foreach (static::getPluginConfigs() as $pluginConfig) {
             $pluginName = $pluginConfig['plugin']['pluginName'];
             if (!static::isEnabled('plugin', $pluginName)) {
-                // continue;
+                continue;
             }
 
             $paths['plugin'][$pluginName] = [
