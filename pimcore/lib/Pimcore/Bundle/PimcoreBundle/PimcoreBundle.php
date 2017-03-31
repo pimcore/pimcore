@@ -45,6 +45,5 @@ class PimcoreBundle extends Bundle
     public function boot()
     {
         Cache::setHandler($this->container->get('pimcore.cache.core.handler'));
-        Cache::init();
     }
 }

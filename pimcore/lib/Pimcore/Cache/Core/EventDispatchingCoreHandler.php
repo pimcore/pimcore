@@ -40,16 +40,6 @@ class EventDispatchingCoreHandler extends CoreHandler
     /**
      * @inheritDoc
      */
-    public function init()
-    {
-        parent::init();
-
-        $this->dispatcher->dispatch(CoreCacheEvents::INIT, new Event());
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function enable()
     {
         parent::enable();

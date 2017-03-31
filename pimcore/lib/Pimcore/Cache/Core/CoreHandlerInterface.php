@@ -32,11 +32,6 @@ interface CoreHandlerInterface
     /**
      * @return $this
      */
-    public function init();
-
-    /**
-     * @return $this
-     */
     public function enable();
 
     /**

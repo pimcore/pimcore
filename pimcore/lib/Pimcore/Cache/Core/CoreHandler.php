@@ -228,13 +228,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
-     * @inheritDoc
-     */
-    public function init()
-    {
-    }
-
-    /**
      * Load data from cache (retrieves data from cache item)
      *
      * @param $key

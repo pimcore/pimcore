@@ -150,6 +150,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $this->getContainer()->set('pimcore.extension.config', $this->extensionConfig);
 
         \Pimcore::initLogger();
+        \Pimcore\Cache::init();
 
         // on pimcore shutdown
         register_shutdown_function(function () {

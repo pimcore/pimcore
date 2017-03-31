@@ -15,6 +15,8 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Event\CoreCacheEvents;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
@@ -36,29 +38,27 @@ class Cache
     }
 
     /**
-     * @param CoreHandlerInterface $handler
-     */
-    public static function setHandler(CoreHandlerInterface $handler)
-    {
-        self::$handler = $handler;
-    }
-
-    /**
      * Get the cache handler implementation
      *
      * @return CoreHandlerInterface
      */
     public static function getHandler()
     {
+        if (null === static::$handler) {
+            static::$handler = \Pimcore::getContainer()->get('pimcore.cache.core.handler');
+        }
+
         return static::$handler;
     }
 
     /**
-     * Initialize the handler
+     * Initialize the cache. This acts mainly as integration point with legacy caches.
      */
     public static function init()
     {
-        self::$handler->init();
+        \Pimcore::getContainer()
+            ->get('event_dispatcher')
+            ->dispatch(CoreCacheEvents::INIT, new Event());
     }
 
     /**
