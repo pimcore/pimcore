@@ -38,7 +38,10 @@ class VoucherToken implements \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\Pr
 
         if (is_array($voucherTokenCodes)) {
             foreach ($voucherTokenCodes as $code) {
-                return $this->checkVoucherCode($code);
+                if($this->checkVoucherCode($code))
+                {
+                    return true;
+                }
             }
         }
 
