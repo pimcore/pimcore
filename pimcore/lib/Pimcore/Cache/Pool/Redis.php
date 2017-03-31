@@ -174,7 +174,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         foreach ($result as $idx => $entry) {
             // we rely on mtime always being set
-            if (empty($entry) || !$entry[static::FIELD_MTIME]) {
+            if (empty($entry) || !isset($entry[static::FIELD_MTIME]) || !$entry[static::FIELD_MTIME]) {
                 continue;
             }
 
