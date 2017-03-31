@@ -547,7 +547,8 @@ class DefaultFindologic implements IProductList
         // add sorting
         if ($this->getOrderKey()) {
             if (is_array($this->getOrderKey())) {
-                $order = reset($this->getOrderKey());
+                $orderKey = $this->getOrderKey();
+                $order = reset($orderKey);
                 if (true === in_array($order[0], $this->supportedOrderKeys)) {
                     $params['order'] = $order[0] . ($order[1] ? ' ' . $order[1] : '');
                 }
