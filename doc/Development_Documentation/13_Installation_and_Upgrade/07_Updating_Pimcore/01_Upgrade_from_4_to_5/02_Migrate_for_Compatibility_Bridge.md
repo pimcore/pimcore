@@ -4,7 +4,7 @@ moves and minor code updates.
 This guide describes the steps needed in detail. 
   
 - **Backup your system!** 
-- Execute the [`migration.sh`](./migration.sh) script with following sytax `./migration.sh <PATH TO PIMCORE ROOT>`. 
+- Execute the [migration.sh](./migration.sh) script with following sytax `./migration.sh <PATH TO PIMCORE ROOT>`. 
 This script does following things for you: 
   - move old `pimcore` folder to `pimcore4`
   - download latest Pimcore 5 build and extract it
