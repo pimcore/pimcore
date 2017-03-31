@@ -146,7 +146,7 @@ class Listing extends AbstractOrderList implements IOrderList
         $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
 
         if (!array_key_exists('pricingRule', $joins)) {
-            $this->getQuery()->join(
+            $this->getQuery()->joinLeft(
                 ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()], 'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"', ''
             );
         }
