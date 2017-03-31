@@ -157,6 +157,8 @@ class PimcoreExtension extends Extension implements PrependExtensionInterface
 
         $loader->load('cache.yml');
 
+        $configuredCachePool = null;
+
         // register doctrine cache if it is enabled
         if ($config['cache']['pools']['doctrine']['enabled']) {
             $loader->load('cache_doctrine.yml');
@@ -167,9 +169,7 @@ class PimcoreExtension extends Extension implements PrependExtensionInterface
             $doctrinePool = $container->findDefinition('pimcore.cache.core.pool.doctrine');
             $doctrinePool->replaceArgument(0, new Reference($connectionId));
 
-            if (null === $coreCachePool) {
-                $coreCachePool = 'pimcore.cache.core.pool.doctrine';
-            }
+            $configuredCachePool = 'pimcore.cache.core.pool.doctrine';
         }
 
         // register redis cache if it is enabled
@@ -186,17 +186,21 @@ class PimcoreExtension extends Extension implements PrependExtensionInterface
 
             $loader->load('cache_redis.yml');
 
-            if (null === $coreCachePool) {
-                $coreCachePool = 'pimcore.cache.core.pool.redis';
+            $configuredCachePool = 'pimcore.cache.core.pool.redis';
+        }
+
+        if (null === $coreCachePool) {
+            if (null !== $configuredCachePool) {
+                // use one of the pools configured above
+                $coreCachePool = $configuredCachePool;
+            } else {
+                // default to filesystem cache
+                $coreCachePool = 'pimcore.cache.core.pool.filesystem';
             }
         }
 
-        // default to filesystem cache
-        if (null === $coreCachePool) {
-            $coreCachePool = 'pimcore.cache.core.pool.filesystem';
-        }
-
         // set core cache pool alias
+
         $container->setAlias('pimcore.cache.core.pool', $coreCachePool);
     }
 

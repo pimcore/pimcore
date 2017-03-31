@@ -72,18 +72,7 @@ class ConnectionFactory
     public static function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('server');
-        $resolver->setDefaults([
-            'port'             => 6379,
-            'timeout'          => static::DEFAULT_CONNECT_TIMEOUT,
-            'persistent'       => '',
-            'force_standalone' => false,
-            'connect_retries'  => static::DEFAULT_CONNECT_RETRIES,
-            'read_timeout'     => 0,
-            'password'         => null,
-
-            // always select database on startup in case persistent connection is re-used by other code
-            'database'         => 0
-        ]);
+        $resolver->setDefaults(static::getDefaultOptions());
 
         $resolver->setNormalizer('read_timeout', function (Options $options, $value) {
             return (float)$value;
@@ -93,6 +82,23 @@ class ConnectionFactory
         $resolver->setNormalizer('database', function (Options $options, $value) {
             return (int)$value;
         });
+    }
+
+    /**
+     * @return array
+     */
+    public static function getDefaultOptions()
+    {
+        return [
+            'port'             => 6379,
+            'database'         => 0, // always select database on startup in case persistent connection is re-used by other code
+            'persistent'       => '',
+            'force_standalone' => false,
+            'connect_retries'  => static::DEFAULT_CONNECT_RETRIES,
+            'timeout'          => static::DEFAULT_CONNECT_TIMEOUT,
+            'read_timeout'     => 0,
+            'password'         => null,
+        ];
     }
 
     final private function __construct()

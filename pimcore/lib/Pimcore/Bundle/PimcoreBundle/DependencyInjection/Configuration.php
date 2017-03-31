@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection;
 
+use Pimcore\Cache\Pool\Redis;
+use Pimcore\Cache\Pool\Redis\ConnectionFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -201,9 +203,11 @@ class Configuration implements ConfigurationInterface
      */
     protected function addCacheNode(ArrayNodeDefinition $rootNode)
     {
+        $defaultOptions = ConnectionFactory::getDefaultOptions();
+
         $rootNode->children()
             ->arrayNode('cache')
-            ->canBeEnabled()
+            ->canBeDisabled()
             ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('pool_service_id')
@@ -226,14 +230,47 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('redis')
                                 ->canBeEnabled()
                                 ->children()
-                                    // TODO define available config values and defaults
-                                    ->variableNode('connection')
-                                        ->defaultValue([])
+                                    ->arrayNode('connection')
+                                        ->info('Redis connection options. See ' . ConnectionFactory::class)
+                                        ->children()
+                                            ->scalarNode('server')->end()
+                                            ->integerNode('port')
+                                                ->defaultValue($defaultOptions['port'])
+                                            ->end()
+                                            ->integerNode('database')
+                                                ->defaultValue($defaultOptions['database'])
+                                            ->end()
+                                            ->scalarNode('password')
+                                                ->defaultValue($defaultOptions['password'])
+                                            ->end()
+                                            ->scalarNode('persistent')
+                                                ->defaultValue($defaultOptions['persistent'])
+                                            ->end()
+                                            ->booleanNode('force_standalone')
+                                                ->defaultValue($defaultOptions['force_standalone'])
+                                            ->end()
+                                            ->integerNode('connect_retries')
+                                                ->defaultValue($defaultOptions['connect_retries'])
+                                            ->end()
+                                            ->floatNode('timeout')
+                                                ->defaultValue($defaultOptions['timeout'])
+                                            ->end()
+                                            ->floatNode('read_timeout')
+                                                ->defaultValue($defaultOptions['read_timeout'])
+                                            ->end()
+                                        ->end()
                                     ->end()
-
-                                    // TODO define available config values and defaults
-                                    ->variableNode('options')
-                                        ->defaultValue([])
+                                    ->arrayNode('options')
+                                        ->info('Redis cache pool options. See ' . Redis::class)
+                                        ->children()
+                                            ->booleanNode('notMatchingTags')->end()
+                                            ->integerNode('compress_tags')->end()
+                                            ->integerNode('compress_data')->end()
+                                            ->integerNode('compress_threshold')->end()
+                                            ->scalarNode('compression_lib')->end()
+                                            ->booleanNode('use_lua')->end()
+                                            ->integerNode('lua_max_c_stack')->end()
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()
