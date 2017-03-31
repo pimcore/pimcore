@@ -53,13 +53,16 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $timestamp = 0;
 
     /**
+     * @var bool
+     */
+    protected $lockInitialized = false;
+
+    /**
      * @param PimcoreCacheItemPoolInterface $itemPool
      */
     public function __construct(PimcoreCacheItemPoolInterface $itemPool)
     {
         $this->itemPool = $itemPool;
-
-        $this->initializeLock();
     }
 
     /**
@@ -91,6 +94,10 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
      */
     protected function initializeLock()
     {
+        if ($this->lockInitialized) {
+            return;
+        }
+
         $item = $this->itemPool->getItem($this->cacheKey);
         if ($item->isHit()) {
             $lock = $item->get();
@@ -99,6 +106,8 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                 $this->timestamp = $lock;
             }
         }
+
+        $this->lockInitialized = true;
     }
 
     /**
@@ -112,6 +121,8 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
         if (!$this->enabled) {
             return true;
         }
+
+        $this->initializeLock();
 
         if (!$this->timestamp || $force) {
             $this->timestamp = time();
@@ -141,6 +152,8 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
         if (!$this->enabled) {
             return false;
         }
+
+        $this->initializeLock();
 
         if ($this->timestamp && $this->timestamp > 0) {
             return true;
@@ -182,6 +195,8 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
         if (!$this->enabled) {
             return true;
         }
+
+        $this->initializeLock();
 
         if ($this->timestamp) {
             $item = $this->itemPool->getItem($this->cacheKey);
