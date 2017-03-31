@@ -177,9 +177,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                     $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
                     if (is_array($jsonTranslations)) {
-                        foreach ($jsonTranslations as $jsonTranslation) {
-                            $data[$jsonTranslation["term"]] = $jsonTranslation["definition"];
-                        }
+                        $data = array_merge($data, $jsonTranslations);
                     }
                 }
 
