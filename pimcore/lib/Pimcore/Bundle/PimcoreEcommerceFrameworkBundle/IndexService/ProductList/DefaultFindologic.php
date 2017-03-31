@@ -655,7 +655,7 @@ class DefaultFindologic implements IProductList
 
                 $categories = explode('_', $catTree);
 
-                foreach ($categories as $cat) {
+                foreach (array_slice($categories,0,-1) as $cat) {
                     $field = $field->items->item;
                 }
             } elseif ($fieldname === \Pimcore\Bundle\PimcoreEcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
@@ -681,7 +681,7 @@ class DefaultFindologic implements IProductList
                 $rec($field->items->item);
             }
 
-            $hits = $field->items->item instanceof stdClass
+            $hits = $field->items->item instanceof \stdClass
                 ? [$field->items->item]
                 : $field->items->item
             ;
