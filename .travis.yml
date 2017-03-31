@@ -7,7 +7,7 @@ language: php
 
 php:
   - 7
-  # - 7.1
+  - 7.1
 
 services:
   - redis
@@ -30,10 +30,6 @@ cache:
 env:
   - PIMCORE_ENVIRONMENT=test PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test" PIMCORE_TEST_CACHE_REDIS_DATABASE=1
 
-#before_install:
-#  # analyze ZF usage before running anything else
-#  - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
-
 before_install:
   - mysql --version
   - mysql -e "CREATE DATABASE pimcore_test;"
@@ -54,9 +50,3 @@ before_script:
 
 script:
   - .travis/run-tests.sh
-
-after_script:
-  # - cat $TRAVIS_BUILD_DIR/var/logs/test.log
-  # - cat $TRAVIS_BUILD_DIR/apache-error.log
-  # - cat $TRAVIS_BUILD_DIR/apache-access.log
-  #- cat /tmp/hhvm.log
