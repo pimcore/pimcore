@@ -18,6 +18,7 @@ services:
     # this frontend will be injected into ZF classes if defined
     pimcore_legacy.cache.zend.frontend:
         class: Zend_Cache_Core
+        lazy: true
         arguments: ['%pimcore_legacy.cache.zend.frontend.options%']
         calls:
             - [setBackend, ['@pimcore_legacy.cache.zend.backend']]
