@@ -96,11 +96,29 @@ class Pimcore extends Module\Symfony
             ini_set($xdebugMaxLevelKey, $maxNestingLevel);
         }
 
+        require_once __DIR__ . '/../../../config/constants.php';
+        $this->setupPimcoreDirectories();
+
         $this->kernel = require_once __DIR__ . '/../../../config/startup.php';
         $this->kernel->boot();
 
         if ($this->config['cache_router'] === true) {
             $this->persistService('router', true);
+        }
+    }
+
+    protected function setupPimcoreDirectories()
+    {
+        $directories = [
+            PIMCORE_CLASS_DIRECTORY,
+            PIMCORE_ASSET_DIRECTORY
+        ];
+
+        $filesystem = new Filesystem();
+        foreach ($directories as $directory) {
+            if (!$filesystem->exists($directory)) {
+                $filesystem->mkdir($directory, 0755);
+            }
         }
     }
 
