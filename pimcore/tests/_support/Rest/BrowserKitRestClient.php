@@ -35,6 +35,16 @@ class BrowserKitRestClient extends AbstractRestClient
         $parameters = $this->prepareParameters($parameters);
         $server     = $this->prepareHeaders($server);
 
+        if (count($parameters) > 0) {
+            $query = http_build_query($parameters);
+
+            if (false === strpos($uri, '?')) {
+                $uri .= '?' . $query;
+            } else {
+                $uri .= '&' . $query;
+            }
+        }
+
         $this->client->request($method, $uri, $parameters, $files, $server, $content);
 
         /** @var BrowserKitRequest $browserKitRequest */
