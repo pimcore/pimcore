@@ -11,6 +11,11 @@ CMD="$CMD vendor/bin/codecept run -c pimcore"
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then
     CMD="$CMD $PIMCORE_TEST_SUITE"
 else
+    # run only REST suite in sudo mode by default (REST requests through apache)
+    if [[ "$TRAVIS_SUDO" == "true" ]]; then
+        CMD="$CMD rest"
+    fi
+
     # skip file tests unless configured otherwise
     if [[ -z "$PIMCORE_TEST_CACHE_FILE" ]] || [[ "$PIMCORE_TEST_CACHE_FILE" -ne 1 ]]; then
         CMD="$CMD --skip-group cache.core.file"

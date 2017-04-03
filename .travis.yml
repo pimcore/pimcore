@@ -3,9 +3,10 @@ notifications:
     - travis-ci@pimcore.org
 
 language: php
+sudo: false
 
 php:
-#  - 7
+  - 7
   - 7.1
 
 services:
@@ -17,17 +18,23 @@ addons:
 matrix:
   include:
     - os: linux
-      sudo: false
+      sudo: required
+      php: 7
     - os: linux
-      sudo: true
-      env: PIMCORE_TEST_SUITE=rest
+      sudo: required
+      php: 7.1
 
 cache:
   directories:
     - vendor
 
 env:
-  - PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_URL=http://pimcore-test.dev PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test" PIMCORE_TEST_CACHE_REDIS_DATABASE=1
+  global:
+    - PIMCORE_ENVIRONMENT=test
+    - PIMCORE_TEST=1
+    - PIMCORE_TEST_URL=http://pimcore-test.dev
+    - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
+    - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
 
 before_install:
   - mysql --version
