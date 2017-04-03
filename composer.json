@@ -46,6 +46,8 @@
     "ext-mysqli": "*",
     "ext-pdo_mysql": "*",
 
+    "pimcore/core-version": "5.0.0-alpha.1",
+
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "hybridauth/hybridauth": "~2",
     "google/apiclient": "~1",
