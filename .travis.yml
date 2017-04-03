@@ -20,9 +20,17 @@ matrix:
     - os: linux
       sudo: required
       php: 7
+      env:
+        global:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
     - os: linux
       sudo: required
       php: 7.1
+      env:
+        global:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
 
 cache:
   directories:
