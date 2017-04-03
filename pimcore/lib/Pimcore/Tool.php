@@ -622,7 +622,7 @@ class Tool
             $container = \Pimcore::getContainer();
         }
 
-        if($envSpecific) {
+        if ($envSpecific) {
             $realCacheDir = $container->getParameter('kernel.cache_dir');
         } else {
             $realCacheDir = PIMCORE_PRIVATE_VAR . '/cache';
@@ -636,7 +636,7 @@ class Tool
             $filesystem->remove($oldCacheDir);
         }
 
-        if($envSpecific) {
+        if ($envSpecific) {
             $container->get('cache_clearer')->clear($realCacheDir);
         }
 
