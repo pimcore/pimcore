@@ -22,6 +22,8 @@ class DataTypeOutTest extends AbstractDataTypeRestTestCase
         $object = TestHelper::createEmptyObject('local', true, true);
         $this->fillObject($object, $fields);
 
+        $object->save();
+
         /** @var Unittest $restObject */
         $restObject = $this->restClient->getObjectById($object->getId());
 
