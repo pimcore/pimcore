@@ -110,7 +110,7 @@
                 ],
             ]);
 
-            $kernel = new AppKernel("dev", true);
+            $kernel = new AppKernel(\Pimcore\Config::getEnvironment(), true);
             $kernel->boot();
             \Pimcore::setKernel($kernel);
 

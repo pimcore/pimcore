@@ -614,14 +614,20 @@ class Tool
 
     /**
      * @param Container|null $container
+     * @param bool $envSpecific
      */
-    public static function clearSymfonyCache(Container $container = null)
+    public static function clearSymfonyCache(Container $container = null, $envSpecific = false)
     {
         if (!$container) {
             $container = \Pimcore::getContainer();
         }
 
-        $realCacheDir = $container->getParameter('kernel.cache_dir');
+        if($envSpecific) {
+            $realCacheDir = $container->getParameter('kernel.cache_dir');
+        } else {
+            $realCacheDir = PIMCORE_PRIVATE_VAR . '/cache';
+        }
+
         // the old cache dir name must not be longer than the real one to avoid exceeding
         // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
         $oldCacheDir = substr($realCacheDir, 0, -1).('~' === substr($realCacheDir, -1) ? '+' : '~');
@@ -630,7 +636,10 @@ class Tool
             $filesystem->remove($oldCacheDir);
         }
 
-        $container->get('cache_clearer')->clear($realCacheDir);
+        if($envSpecific) {
+            $container->get('cache_clearer')->clear($realCacheDir);
+        }
+
         $filesystem->rename($realCacheDir, $oldCacheDir);
         $filesystem->remove($oldCacheDir);
     }
