@@ -40,28 +40,20 @@ if (!defined('PIMCORE_PATH')) {
     define('PIMCORE_PATH', PIMCORE_PROJECT_ROOT . '/pimcore');
 }
 
-// var directory
-if (is_array($_SERVER)
-    && array_key_exists('HTTP_X_PIMCORE_UNIT_TEST_REQUEST', $_SERVER)
-    && in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', $_SERVER['SERVER_ADDR']])
-) {
-    // change the var directory for unit tests
-    if (!defined('PIMCORE_PRIVATE_VAR')) {
-        define('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var/tests/tmp/var');
-    }
+if (!defined('PIMCORE_PRIVATE_VAR')) {
+    define('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
+}
 
-    // change the var directory for unit tests
-    if (!defined('PIMCORE_PUBLIC_VAR')) {
-        define('PIMCORE_PUBLIC_VAR', PIMCORE_PROJECT_ROOT . '/var/tests/tmp/var');
-    }
-} else {
-    if (!defined('PIMCORE_PRIVATE_VAR')) {
-        define('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-    }
+if (!defined('PIMCORE_PUBLIC_VAR')) {
+    define('PIMCORE_PUBLIC_VAR', PIMCORE_WEB_ROOT . '/var');
+}
 
-    if (!defined('PIMCORE_PUBLIC_VAR')) {
-        define('PIMCORE_PUBLIC_VAR', PIMCORE_WEB_ROOT . '/var');
-    }
+// special directories for tests
+// test mode can bei either controlled by a constant or an env variable
+if ((defined('PIMCORE_TEST') && PIMCORE_TEST) || getenv('PIMCORE_TEST') === '1') {
+    // override and initialize directories
+    define('PIMCORE_CLASS_DIRECTORY', PIMCORE_PATH . '/tests/_output/var/classes');
+    define('PIMCORE_ASSET_DIRECTORY', PIMCORE_WEB_ROOT . '/var/tests/assets');
 }
 
 // pimcore config files
