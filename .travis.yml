@@ -2,8 +2,8 @@ notifications:
   email:
     - travis-ci@pimcore.org
 
-language: php
 sudo: false
+language: php
 
 php:
   - 7
@@ -14,6 +14,8 @@ services:
 
 addons:
   mariadb: '10.1'
+  hosts:
+    - pimcore-test.dev
 
 matrix:
   include:
@@ -21,16 +23,12 @@ matrix:
       sudo: required
       php: 7
       env:
-        global:
-          - PIMCORE_TEST_SUITE=rest
-          - PIMCORE_TEST_ENV=http
+          - PIMCORE_TEST_SUITE=rest PIMCORE_TEST_ENV=http
     - os: linux
       sudo: required
       php: 7.1
       env:
-        global:
-          - PIMCORE_TEST_SUITE=rest
-          - PIMCORE_TEST_ENV=http
+          - PIMCORE_TEST_SUITE=rest PIMCORE_TEST_ENV=http
 
 cache:
   directories:
