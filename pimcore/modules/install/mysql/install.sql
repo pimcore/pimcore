@@ -57,7 +57,7 @@ CREATE TABLE `assets_metadata` (
 
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (
-  `id` varchar(165) NOT NULL DEFAULT '',
+  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `data` longblob,
   `mtime` bigint(20) DEFAULT NULL,
   `expire` bigint(20) DEFAULT NULL,
@@ -66,8 +66,8 @@ CREATE TABLE `cache` (
 
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
-  `id` varchar(165) NOT NULL DEFAULT '',
-  `tag` varchar(165) NOT NULL DEFAULT '',
+  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
+  `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
