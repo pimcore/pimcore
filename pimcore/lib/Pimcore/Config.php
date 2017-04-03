@@ -748,12 +748,12 @@ class Config
                 }
             }
 
-            if (\Pimcore::inDebugMode()) {
-                $environment = "dev";
-            }
-
             if (!$environment) {
-                $environment = static::DEFAULT_ENVIRONMENT;
+                if (\Pimcore::inDebugMode()) {
+                    $environment = "dev";
+                } else {
+                    $environment = static::DEFAULT_ENVIRONMENT;
+                }
             }
 
             static::$environment = $environment;
