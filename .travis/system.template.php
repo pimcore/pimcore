@@ -4,7 +4,7 @@ return [
     "general"        => [
         "timezone"                 => "Europe/Berlin",
         "path_variable"            => "",
-        "domain"                   => "",
+        "domain"                   => "pimcore-test.dev",
         "redirect_to_maindomain"   => false,
         "language"                 => "en",
         "validLanguages"           => "en,de",

@@ -5,7 +5,7 @@ set -e
 # install apache
 sudo apt-get update
 sudo apt-get install apache2 libapache2-mod-fastcgi
-sudo a2enmod rewrite actions fastcgi alias
+sudo a2enmod rewrite actions fastcgi alias env
 
  # customize php settings
 if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then .travis/setup-fpm.sh; fi

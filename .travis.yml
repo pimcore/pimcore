@@ -2,11 +2,10 @@ notifications:
   email:
     - travis-ci@pimcore.org
 
-sudo: false
 language: php
 
 php:
-  - 7
+#  - 7
   - 7.1
 
 services:
@@ -15,27 +14,27 @@ services:
 addons:
   mariadb: '10.1'
 
-#matrix:
-#  include:
-#    - os: linux
-#      sudo: false
-#    - os: linux
-#      sudo: true
-#      env: PIMCORE_TEST_SUITE=rest
+matrix:
+  include:
+    - os: linux
+      sudo: false
+    - os: linux
+      sudo: true
+      env: PIMCORE_TEST_SUITE=rest
 
 cache:
   directories:
     - vendor
 
 env:
-  - PIMCORE_ENVIRONMENT=test PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test" PIMCORE_TEST_CACHE_REDIS_DATABASE=1
+  - PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_URL=http://pimcore-test.dev PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test" PIMCORE_TEST_CACHE_REDIS_DATABASE=1
 
 before_install:
   - mysql --version
   - mysql -e "CREATE DATABASE pimcore_test;"
 
 install:
-  # add config template
+  # add config templates
   - mkdir -p var/config
   - cp .travis/system.template.php var/config/system.php
   - cp app/config/parameters.example.yml app/config/parameters.yml
