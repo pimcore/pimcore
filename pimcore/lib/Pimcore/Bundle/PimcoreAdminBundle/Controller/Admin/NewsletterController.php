@@ -306,7 +306,7 @@ class NewsletterController extends DocumentControllerBase
             'progress' => 0
         ], 'newsletter');
 
-        \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-document-send " . escapeshellarg($document->getTmpStoreId()) . " " . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "newsletter-sending-output.log");
+        \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "console"), "internal:newsletter-document-send " . escapeshellarg($document->getTmpStoreId()) . " " . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "newsletter-sending-output.log");
 
         return $this->json(["success" => true]);
     }

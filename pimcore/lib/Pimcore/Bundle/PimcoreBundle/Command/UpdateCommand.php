@@ -164,7 +164,7 @@ class UpdateCommand extends AbstractCommand
                     $job["dry-run"] = true;
                 }
 
-                $script = realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php");
+                $script = realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "console");
                 $return = Console::runPhpScript($script, "internal:update-processor " . escapeshellarg(json_encode($job)));
 
                 $return = trim($return);

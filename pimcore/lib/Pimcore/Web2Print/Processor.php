@@ -70,7 +70,7 @@ abstract class Processor
             $args[] = "--environment=" . $env;
         }
 
-        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation " . implode(" ", $args);
+        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "console"). " web2print:pdf-creation " . implode(" ", $args);
 
         Logger::info($cmd);
 
