@@ -56,9 +56,11 @@ class Cache
      */
     public static function init()
     {
-        \Pimcore::getContainer()
-            ->get('event_dispatcher')
-            ->dispatch(CoreCacheEvents::INIT, new Event());
+        if(\Pimcore::hasKernel()) {
+            \Pimcore::getContainer()
+                ->get('event_dispatcher')
+                ->dispatch(CoreCacheEvents::INIT, new Event());
+        }
     }
 
     /**
