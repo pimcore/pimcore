@@ -303,7 +303,7 @@ class WirecardSeamless implements IPayment
         ];
 
 
-        if ($response['errors']) {
+        if ($response['errors'] || in_array($response['paymentState'], ['PENDING','CANCEL'])) {
             $status = new Status(
                 $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
                 ? IStatus::STATUS_CANCELLED
