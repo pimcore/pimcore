@@ -18,8 +18,8 @@ use Closure;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 
 class Connection extends \Doctrine\DBAL\Connection
 {
@@ -54,16 +54,16 @@ class Connection extends \Doctrine\DBAL\Connection
     {
         $args = func_get_args();
 
-        if (count($args) > 0) {
-            $args[0] = $this->normalizeQuery($args[0]);
-        }
-
         // compatibility layer for additional parameters in the 2nd argument
         // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
         if (func_num_args() === 2) {
             if (is_array($args[1])) {
                 return $this->executeQuery($args[0], $args[1]);
             }
+        }
+
+        if (count($args) > 0) {
+            $args[0] = $this->normalizeQuery($args[0], [], true);
         }
 
         return call_user_func_array([$this, "parent::query"], $args);
@@ -74,7 +74,9 @@ class Connection extends \Doctrine\DBAL\Connection
      */
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null)
     {
-        return parent::executeQuery($this->normalizeQuery($query), $params, $types, $qcp);
+        list($query, $params) = $this->normalizeQuery($query, $params);
+
+        return parent::executeQuery($query, $params, $types, $qcp);
     }
 
     /**
@@ -82,47 +84,36 @@ class Connection extends \Doctrine\DBAL\Connection
      */
     public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp)
     {
-        return parent::executeCacheQuery($this->normalizeQuery($query), $params, $types, $qcp);
-    }
+        list($query, $params) = $this->normalizeQuery($query, $params);
 
-    /**
-     * @inheritDoc
-     */
-    public function executeUpdate($query, array $params = [], array $types = [])
-    {
-        return parent::executeUpdate($this->normalizeQuery($query), $params, $types);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function exec($statement)
-    {
-        return parent::exec($this->normalizeQuery($statement));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function project($query, array $params, Closure $function)
-    {
-        return parent::project($this->normalizeQuery($query), $params, $function);
+        return parent::executeCacheQuery($query, $params, $types, $qcp);
     }
 
     /**
      * @param string|QueryBuilder $query
+     * @param array $params
+     * @param bool $onlyQuery
      *
-     * @return string
+     * @return array|string
      */
-    protected function normalizeQuery($query)
+    private function normalizeQuery($query, array $params = [], $onlyQuery = false)
     {
         // stringify query builder
         if ($query instanceof QueryBuilder) {
-            Db::getLogger()->warning('QueryBuilder instance was passed to connection and normalized to string. Please update your code to pass a string as query.');
-            $query = (string)$query;
+            $qb     = $query;
+            $query  = $qb->getSQL();
+            $params = array_merge($qb->getParameters(), $params);
+
+            Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
+                'query' => $query
+            ]);
         }
 
-        return $query;
+        if ($onlyQuery) {
+            return $query;
+        }
+
+        return [$query, $params];
     }
 
     /**
