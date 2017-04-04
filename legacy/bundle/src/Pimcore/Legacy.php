@@ -25,6 +25,11 @@ class Legacy {
     private static $eventManager;
 
     /**
+     * @var \DI\Container
+     */
+    private static $diContainer;
+
+    /**
      * @var bool
      */
     private static $mvcPrepared = false;
@@ -497,5 +502,47 @@ class Legacy {
         }
 
         return self::$eventManager;
+    }
+
+    /**
+     * @return \DI\Container
+     */
+    public static function getDiContainer()
+    {
+        if (!self::$diContainer) {
+            $builder = new \DI\ContainerBuilder();
+            $builder->useAutowiring(false);
+            $builder->useAnnotations(false);
+            $builder->ignorePhpDocErrors(true);
+
+            static::addDiDefinitions($builder);
+
+            self::$diContainer = $builder->build();
+        }
+
+        return self::$diContainer;
+    }
+
+    /**
+     * @param \DI\Container $container
+     */
+    public static function setDiContainer(\DI\Container $container)
+    {
+        self::$diContainer = $container;
+    }
+
+    /**
+     * @param \DI\ContainerBuilder $builder
+     * @return \DI\Container
+     */
+    public static function addDiDefinitions(\DI\ContainerBuilder $builder)
+    {
+        $customFile = \Pimcore\Config::locateConfigFile("di.php");
+        if (file_exists($customFile)) {
+            $builder->addDefinitions($customFile);
+        }
+
+        $event = new \Pimcore\Event\System\PhpDiBuilderEvent($builder);
+        \Pimcore::getEventDispatcher()->dispatch('pimcore.system.php_di.init', $event);
     }
 }

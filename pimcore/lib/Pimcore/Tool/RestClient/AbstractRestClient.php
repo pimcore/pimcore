@@ -652,7 +652,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
         } elseif ($wsDocument->type == "object" || $wsDocument->type == "variant") {
             $classname = "Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
 
-            $object = \Pimcore::getDiContainer()->make($classname);
+            $object = \Pimcore::getContainer()->get("pimcore.model.factory")->build($classname);
 
             if ($object instanceof Object\Concrete) {
                 $curTime = microtime(true);

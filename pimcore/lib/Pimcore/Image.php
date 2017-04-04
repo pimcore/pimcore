@@ -24,8 +24,8 @@ class Image
      */
     public static function getInstance()
     {
-        $adapter = \Pimcore::getDiContainer()->make(Image\Adapter::class);
-
+        //@TODO should be configured on the container
+        $adapter = self::create();
         return $adapter;
     }
 

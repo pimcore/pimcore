@@ -560,23 +560,6 @@ class Tool
     }
 
     /**
-     * @static
-     * @param  $sourceClassName
-     * @return string
-     *
-     * @deprecated
-     */
-    public static function getModelClassMapping($sourceClassName)
-    {
-        try {
-            return get_class(\Pimcore::getDiContainer()->get($sourceClassName));
-        } catch (\Exception $ex) {
-        }
-
-        return $sourceClassName;
-    }
-
-    /**
      * @deprecated Use Request::getClientIp() instead
      *
      * @static

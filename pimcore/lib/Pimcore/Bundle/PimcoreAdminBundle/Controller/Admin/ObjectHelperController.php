@@ -663,15 +663,15 @@ class ObjectHelperController extends AdminController
                 $object = Object::getByPath($intendedPath);
                 if (!$object instanceof Object\Concrete) {
                     //create new object
-                    $object = \Pimcore::getDiContainer()->make($className);
+                    $object = $this->get("pimcore.model.factory")->build($className);
                 } elseif ($object instanceof Object\Concrete and !($object instanceof $className)) {
                     //delete the old object it is of a different class
                     $object->delete();
-                    $object = \Pimcore::getDiContainer()->make($className);
+                    $object = $this->get("pimcore.model.factory")->build($className);
                 } elseif ($object instanceof Object\Folder) {
                     //delete the folder
                     $object->delete();
-                    $object = \Pimcore::getDiContainer()->make($className);
+                    $object = $this->get("pimcore.model.factory")->build($className);
                 } else {
                     //use the existing object
                 }

@@ -763,7 +763,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $intendedPath = $parent->getRealFullPath() . "/" . $request->get("key");
 
             if (!Object\Service::pathExists($intendedPath)) {
-                $object = \Pimcore::getDiContainer()->make($className);
+                $object = $this->get("pimcore.model.factory")->build($className);
                 if ($object instanceof Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
                 }

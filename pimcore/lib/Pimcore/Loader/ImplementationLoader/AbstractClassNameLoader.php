@@ -37,6 +37,8 @@ abstract class AbstractClassNameLoader implements LoaderInterface
             throw new UnsupportedException(sprintf('"%s" is not supported', $name));
         }
 
+        $params = array_values($params);
+
         $className = $this->getClassName($name);
         $instance  = new $className(...$params);
 

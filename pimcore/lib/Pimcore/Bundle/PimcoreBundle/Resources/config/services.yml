@@ -209,7 +209,6 @@ services:
         class: Pimcore\Extension\Document\Areabrick\AreabrickManager
         arguments: ['@pimcore.extension.config', '@service_container']
 
-
     #
     # DOCUMENT TAG HANDLING (EDITABLES)
     #
@@ -234,7 +233,7 @@ services:
             - { name: monolog.logger, channel: pimcore }
 
     #
-    # IMPLEMENTATION LOADERS
+    # IMPLEMENTATION FACTORIES
     #
     # Class maps and prefixes will be set from the extension as they are loaded from config
     #
@@ -250,6 +249,17 @@ services:
     # object layout loader
     pimcore.implementation_loader.object.layout:
         class: Pimcore\Model\Object\ClassDefinition\Loader\LayoutLoader
+
+    # model factory
+    pimcore.model.factory:
+        class: Pimcore\Model\Factory
+        calls:
+            - [addLoader, ['@pimcore.model.factory.fallback_builder']]
+
+    # fallback model builder for pimcore.model.factory
+    pimcore.model.factory.fallback_builder:
+        class: Pimcore\Model\Factory\FallbackBuilder
+        public: false
 
     #
     # PIMCORE SERVICES

@@ -67,6 +67,7 @@ class PimcoreExtension extends Extension implements PrependExtensionInterface
         $loader->load('profiler.yml');
 
         $this->configureImplementationLoaders($container, $config);
+        $this->configureModelFactory($container, $config);
         $this->configureCache($container, $loader, $config);
 
         // load engine specific configuration only if engine is active
@@ -83,6 +84,19 @@ class PimcoreExtension extends Extension implements PrependExtensionInterface
         }
 
         $this->addContextRoutes($container, $config['context']);
+    }
+
+    protected function configureModelFactory(ContainerBuilder $container, $config) {
+        $service = $container->getDefinition("pimcore.model.factory");
+
+        $classMapLoader = new Definition(ClassMapLoader::class, [$config['models']['class_overrides']]);
+        $classMapLoader->setPublic(false);
+
+        $classMapLoaderId = "pimcore.model.factory.classmap_builder";
+        $container->setDefinition($classMapLoaderId, $classMapLoader);
+
+        $service->addMethodCall("addLoader", [new Reference($classMapLoaderId)]);
+
     }
 
     /**

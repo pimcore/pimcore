@@ -275,7 +275,7 @@ class AbstractObject extends Model\Element\AbstractElement
                         $className = "Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
                     }
 
-                    $object = \Pimcore::getDiContainer()->make($className);
+                    $object = \Pimcore::getContainer()->get("pimcore.model.factory")->build($className);
                     \Pimcore\Cache\Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
                     $object->__setDataVersionTimestamp($object->getModificationDate());
@@ -353,7 +353,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = $className . "\\Listing";
-                $list = \Pimcore::getDiContainer()->make($listClass);
+                $list = \Pimcore::getContainer()->get("pimcore.model.factory")->build($listClass);
                 $list->setValues($config);
                 $list->load();
 
@@ -385,7 +385,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = ucfirst($className) . "\\Listing";
-                $list = \Pimcore::getDiContainer()->make($listClass);
+                $list = \Pimcore::getContainer()->get("pimcore.model.factory")->build($listClass);
             }
 
             $list->setValues($config);

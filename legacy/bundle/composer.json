@@ -1,0 +1,14 @@
+{
+  "name": "pimcore/compatibility-bridge",
+  "license": "GPL-3.0+",
+  "require": {
+    "pimcore/core-version": ">=5.0.0-alpha.1",
+    "php-di/php-di": "~5",
+    "zendframework/zendframework1": "~1.12"
+  },
+  "autoload": {
+    "psr-4": {
+      "": ["src/"]
+    }
+  }
+}

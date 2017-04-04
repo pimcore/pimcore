@@ -38,7 +38,7 @@ class EventManager extends \Zend_EventManager_EventManager {
         $newEventName = "pimcore." . $eventName;
 
         $listenerMappings = [
-            "system.di.init" => SystemEvents::PHP_DI_INIT,
+            "system.di.init" => "pimcore.system.php_di.init",
             "system.maintenance.activate" => SystemEvents::MAINTENANCE_MODE_ACTIVATE,
             "system.maintenance.deactivate" => SystemEvents::MAINTENANCE_MODE_DEACTIVATE,
             "system.cache.clearOutputCache" => SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE

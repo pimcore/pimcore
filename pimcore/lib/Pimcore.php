@@ -44,11 +44,6 @@ class Pimcore
     private static $kernel;
 
     /**
-     * @var \DI\Container
-     */
-    private static $diContainer;
-
-    /**
      * @var array items to be excluded from garbage collection
      */
     private static $globallyProtectedItems;
@@ -170,25 +165,6 @@ class Pimcore
     }
 
     /**
-     * @return \DI\Container
-     */
-    public static function getDiContainer()
-    {
-        if (!self::$diContainer) {
-            $builder = new \DI\ContainerBuilder();
-            $builder->useAutowiring(false);
-            $builder->useAnnotations(false);
-            $builder->ignorePhpDocErrors(true);
-
-            static::addDiDefinitions($builder);
-
-            self::$diContainer = $builder->build();
-        }
-
-        return self::$diContainer;
-    }
-
-    /**
      * @return KernelInterface
      */
     public static function getKernel()
@@ -240,31 +216,6 @@ class Pimcore
         }
 
         return false;
-    }
-
-    /**
-     * @param \DI\Container $container
-     */
-    public static function setDiContainer(\DI\Container $container)
-    {
-        self::$diContainer = $container;
-    }
-
-    /**
-     * @param \DI\ContainerBuilder $builder
-     * @return \DI\Container
-     */
-    public static function addDiDefinitions(\DI\ContainerBuilder $builder)
-    {
-        $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
-
-        $customFile = \Pimcore\Config::locateConfigFile("di.php");
-        if (file_exists($customFile)) {
-            $builder->addDefinitions($customFile);
-        }
-
-        $event = new \Pimcore\Event\System\PhpDiBuilderEvent($builder);
-        self::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::PHP_DI_INIT, $event);
     }
 
     /** Add $keepItems to the list of items which are protected from garbage collection.

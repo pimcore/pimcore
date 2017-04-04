@@ -58,7 +58,7 @@ class ImplementationLoader implements LoaderInterface
     /**
      * @param LoaderInterface $loader
      */
-    private function addLoader(LoaderInterface $loader)
+    public function addLoader(LoaderInterface $loader)
     {
         $this->loaders[] = $loader;
     }
@@ -75,7 +75,7 @@ class ImplementationLoader implements LoaderInterface
             return $this->loaders[$this->loaderCache[$name]];
         }
 
-        foreach ($this->loaders as $idx => $loader) {
+        foreach (array_reverse($this->loaders, true) as $idx => $loader) {
             if ($loader->supports($name)) {
                 $this->loaderCache[$name] = $idx;
 

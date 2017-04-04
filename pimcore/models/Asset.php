@@ -270,7 +270,7 @@ class Asset extends Element\AbstractElement
 
                 $className = "Pimcore\\Model\\Asset\\" . ucfirst($asset->getType());
 
-                $asset = \Pimcore::getDiContainer()->make($className);
+                $asset = \Pimcore::getContainer()->get("pimcore.model.factory")->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
@@ -343,7 +343,8 @@ class Asset extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = "Pimcore\\Model\\Asset\\Listing";
-            $list = \Pimcore::getDiContainer()->make($listClass);
+
+            $list = \Pimcore::getContainer()->get("pimcore.model.factory")->build($listClass);
             $list->setValues($config);
             $list->load();
 
@@ -359,7 +360,7 @@ class Asset extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = "Pimcore\\Model\\Asset\\Listing";
-            $list = \Pimcore::getDiContainer()->make($listClass);
+            $list = \Pimcore::getContainer()->get("pimcore.model.factory")->build($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 

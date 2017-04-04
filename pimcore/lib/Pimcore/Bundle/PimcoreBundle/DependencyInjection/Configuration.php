@@ -52,12 +52,27 @@ class Configuration implements ConfigurationInterface
 
         $this->addObjectsNode($rootNode);
         $this->addDocumentsNode($rootNode);
+        $this->addModelsNode($rootNode);
 
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $extensionsNode
+     */
+    protected function addModelsNode(ArrayNodeDefinition $extensionsNode) {
+        $extensionsNode
+            ->children()
+            ->arrayNode('models')
+            ->addDefaultsIfNotSet()
+                ->children()
+                ->arrayNode('class_overrides')
+                ->prototype('scalar')
+                ->end();
     }
 
     /**

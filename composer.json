@@ -62,7 +62,6 @@
     "mpratt/embera": "~1",
     "defuse/php-encryption": "~2",
     "nesbot/carbon": "~1",
-    "php-di/php-di": "~5",
     "linfo/linfo": "~3",
     "amnuts/opcache-gui": "~2",
     "vrana/adminer": "~4.2",

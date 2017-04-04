@@ -645,7 +645,7 @@ class Service
         try {
             if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
                 $className = "Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
-                $object = \Pimcore::getDiContainer()->make($className);
+                $object = \Pimcore::getContainer()->get("pimcore.model.factory")->build($className);
                 if ($object instanceof Object\Concrete) {
                     return $this->create($wsDocument, $object);
                 } else {

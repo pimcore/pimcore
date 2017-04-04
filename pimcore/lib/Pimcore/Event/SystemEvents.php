@@ -41,14 +41,6 @@ final class SystemEvents
     const CONSOLE_INIT = "pimcore.system.console.init";
 
     /**
-     * Fires when the PHP-DI Container is built, used for building Assets, Documents and Objects
-     *
-     * @Event("Pimcore\Event\System\PhpDiBuilderEvent")
-     * @var string
-     */
-    const PHP_DI_INIT = "pimcore.system.php_di.init";
-
-    /**
      * This event is fired on maintenance mode activation
      *
      * @Event()
