@@ -103,7 +103,7 @@ class Update
                 }
             }
         } else {
-            throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to update.pimcore.org:443");
+            throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to " . self::$updateHost . ":443");
         }
 
         return [
