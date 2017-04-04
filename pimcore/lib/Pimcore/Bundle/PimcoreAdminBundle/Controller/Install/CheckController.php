@@ -253,8 +253,8 @@ class CheckController extends Controller implements EventedControllerInterface
             // check database charset =>  utf-8 encoding
             $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
             $checksMySQL[] = [
-                "name" => "Database Charset UTF8",
-                "state" => (in_array($result['Value'], ["utf8", "utf8mb4"])) ? "ok" : "error"
+                "name" => "Database Charset utf8mb4",
+                "state" => ($result['Value'] == "utf8mb4") ? "ok" : "error"
             ];
 
             // create table
