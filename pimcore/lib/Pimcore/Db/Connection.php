@@ -14,13 +14,15 @@
 
 namespace Pimcore\Db;
 
+use Closure;
+use Doctrine\DBAL\Cache\QueryCacheProfile;
+use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 
 class Connection extends \Doctrine\DBAL\Connection
 {
-
     /**
      * Specifies whether the connection automatically quotes identifiers.
      * If true, the methods insert(), update() apply identifier quoting automatically.
@@ -52,6 +54,10 @@ class Connection extends \Doctrine\DBAL\Connection
     {
         $args = func_get_args();
 
+        if (count($args) > 0) {
+            $args[0] = $this->normalizeQuery($args[0]);
+        }
+
         // compatibility layer for additional parameters in the 2nd argument
         // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
         if (func_num_args() === 2) {
@@ -61,6 +67,62 @@ class Connection extends \Doctrine\DBAL\Connection
         }
 
         return call_user_func_array([$this, "parent::query"], $args);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null)
+    {
+        return parent::executeQuery($this->normalizeQuery($query), $params, $types, $qcp);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp)
+    {
+        return parent::executeCacheQuery($this->normalizeQuery($query), $params, $types, $qcp);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeUpdate($query, array $params = [], array $types = [])
+    {
+        return parent::executeUpdate($this->normalizeQuery($query), $params, $types);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function exec($statement)
+    {
+        return parent::exec($this->normalizeQuery($statement));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function project($query, array $params, Closure $function)
+    {
+        return parent::project($this->normalizeQuery($query), $params, $function);
+    }
+
+    /**
+     * @param string|QueryBuilder $query
+     *
+     * @return string
+     */
+    protected function normalizeQuery($query)
+    {
+        // stringify query builder
+        if ($query instanceof QueryBuilder) {
+            Db::getLogger()->warning('QueryBuilder instance was passed to connection and normalized to string. Please update your code to pass a string as query.');
+            $query = (string)$query;
+        }
+
+        return $query;
     }
 
     /**
