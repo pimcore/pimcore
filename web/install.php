@@ -111,8 +111,9 @@
             ]);
 
             $kernel = new AppKernel(\Pimcore\Config::getEnvironment(), true);
-            $kernel->boot();
             \Pimcore::setKernel($kernel);
+
+            $kernel->boot();
 
             $contentConfig = [
                 "username" => $adminUser,
