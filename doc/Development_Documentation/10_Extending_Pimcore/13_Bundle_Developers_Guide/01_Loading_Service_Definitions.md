@@ -51,4 +51,4 @@ services:
         class: AppBundle\Custom\Class
 ```
 
-The `service.yml` should now automatically be loaded and register the `my_custom_class` service on the container.
+The `services.yml` should now automatically be loaded and register the `my_custom_class` service on the container.
