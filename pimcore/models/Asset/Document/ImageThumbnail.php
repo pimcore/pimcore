@@ -122,7 +122,7 @@ class ImageThumbnail
      */
     public function generate()
     {
-        $errorImage = PIMCORE_PATH . '/static6/img/filetype-not-supported.png';
+        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
         $generated = false;
 
         if (!$this->asset) {

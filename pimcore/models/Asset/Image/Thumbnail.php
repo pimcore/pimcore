@@ -129,7 +129,7 @@ class Thumbnail
      */
     public function generate($deferredAllowed = true)
     {
-        $errorImage = PIMCORE_PATH . '/static6/img/filetype-not-supported.png';
+        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
         $deferred = false;
         $generated = false;
 
