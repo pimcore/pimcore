@@ -14,7 +14,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Db\Wrapper;
+use Psr\Log\LoggerInterface;
 
 class Db
 {
@@ -49,6 +49,15 @@ class Db
         $db = \Pimcore::getContainer()->get("database_connection");
 
         return $db;
+    }
+
+    /**
+     * @static
+     * @return LoggerInterface
+     */
+    public static function getLogger()
+    {
+        return \Pimcore::getContainer()->get("monolog.logger.doctrine");
     }
 
     /**

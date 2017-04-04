@@ -16,9 +16,9 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-use Pimcore\Logger;
 
 /**
  * @property \Pimcore\Model\Document $model
@@ -63,7 +63,10 @@ class Dao extends Model\Element\Dao
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
 
-        $data = $this->db->fetchRow("SELECT id FROM documents WHERE path = " . $this->db->quote($_path) . " and `key` = " . $this->db->quote($_key));
+        $data = $this->db->fetchRow("SELECT id FROM documents WHERE path = :path AND `key` = :key", [
+            'path' => $_path,
+            'key'  => $_key
+        ]);
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);

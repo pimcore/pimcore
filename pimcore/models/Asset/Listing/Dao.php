@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $assets = [];
 
-        $select = (string) $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', "type"]);
         $assetsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($assetsData as $assetData) {
@@ -85,7 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = (string) $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', "type"]);
         $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
         return $assetIds;
@@ -96,7 +96,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $select = (string) $this->getQuery([new Expression('COUNT(*)')]);
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;
@@ -110,7 +110,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->getQuery([new Expression('COUNT(*)')]);
         $select->reset(QueryBuilder::LIMIT_COUNT);
         $select->reset(QueryBuilder::LIMIT_OFFSET);
-        $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;

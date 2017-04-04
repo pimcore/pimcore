@@ -38,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $documents = [];
-        $select = (string) $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', "type"]);
 
         $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
@@ -85,7 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = (string) $this->getQuery(['id']);
+        $select = $this->getQuery(['id']);
         $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
         return $documentIds;
@@ -96,7 +96,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $select = (string) $this->getQuery(['id', "CONCAT(path,`key`)"]);
+        $select = $this->getQuery(['id', "CONCAT(path,`key`)"]);
         $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         return $documentIds;
@@ -120,7 +120,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->getQuery([new Expression('COUNT(*)')]);
         $select->reset(QueryBuilder::LIMIT_COUNT);
-        $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;

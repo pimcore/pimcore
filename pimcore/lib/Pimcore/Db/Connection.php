@@ -14,13 +14,14 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Cache\QueryCacheProfile;
+use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
 
 class Connection extends \Doctrine\DBAL\Connection
 {
-
     /**
      * Specifies whether the connection automatically quotes identifiers.
      * If true, the methods insert(), update() apply identifier quoting automatically.
@@ -60,7 +61,59 @@ class Connection extends \Doctrine\DBAL\Connection
             }
         }
 
+        if (count($args) > 0) {
+            $args[0] = $this->normalizeQuery($args[0], [], true);
+        }
+
         return call_user_func_array([$this, "parent::query"], $args);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null)
+    {
+        list($query, $params) = $this->normalizeQuery($query, $params);
+
+        return parent::executeQuery($query, $params, $types, $qcp);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp)
+    {
+        list($query, $params) = $this->normalizeQuery($query, $params);
+
+        return parent::executeCacheQuery($query, $params, $types, $qcp);
+    }
+
+    /**
+     * @param string|QueryBuilder $query
+     * @param array $params
+     * @param bool $onlyQuery
+     *
+     * @return array|string
+     */
+    private function normalizeQuery($query, array $params = [], $onlyQuery = false)
+    {
+        // stringify query builder
+        if ($query instanceof QueryBuilder) {
+            $qb     = $query;
+            $query  = $qb->getSQL();
+            $params = array_merge($qb->getParameters(), $params);
+
+            Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
+                'query'  => $query,
+                'params' => $params
+            ]);
+        }
+
+        if ($onlyQuery) {
+            return $query;
+        }
+
+        return [$query, $params];
     }
 
     /**

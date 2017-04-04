@@ -20,7 +20,6 @@ use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Prophecy\Comparator\ClosureComparator;
 
 /**
  * @property \Pimcore\Model\Object\Listing $model
