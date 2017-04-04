@@ -38,6 +38,7 @@
 namespace Pimcore\Db\ZendCompatibility;
 
 use Exception;
+use Pimcore\Db\Connection;
 
 class QueryBuilder
 {
@@ -100,16 +101,9 @@ class QueryBuilder
     @msx';
 
     /**
-     * Bind variables for query
-     *
-     * @var array
-     */
-    protected $_bind = [];
-
-    /**
      * \Doctrine\DBAL\Connection object.
      *
-     * @var \Doctrine\DBAL\Connection
+     * @var Connection
      */
     protected $_adapter;
 
@@ -174,6 +168,20 @@ class QueryBuilder
     protected $_tableCols = [];
 
     /**
+     * The query parameters.
+     *
+     * @var array
+     */
+    protected $params = [];
+
+    /**
+     * The parameter type map of this query.
+     *
+     * @var array
+     */
+    protected $paramTypes = [];
+
+    /**
      * Class constructor
      *
      * @param \Doctrine\DBAL\Connection $adapter
@@ -185,24 +193,132 @@ class QueryBuilder
     }
 
     /**
+     * Sets a query parameter for the query being constructed.
+     *
+     * <code>
+     *     $qb = $conn->select()
+     *         ->from(['u' => 'users'])
+     *         ->columns('*')
+     *         ->where('u.id = :user_id')
+     *         ->setParameter(':user_id', 1);
+     *
+     *     $qb->execute()->fetchAll();
+     * </code>
+     *
+     * @param string|integer $key   The parameter position or name.
+     * @param mixed          $value The parameter value.
+     * @param string|null    $type  One of the PDO::PARAM_* constants.
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function setParameter($key, $value, $type = null)
+    {
+        if ($type !== null) {
+            $this->paramTypes[$key] = $type;
+        }
+
+        $this->params[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Sets a collection of query parameters for the query being constructed.
+     *
+     * <code>
+     *     $qb = $conn->select()
+     *         ->from(['u' => 'users'])
+     *         ->columns('*')
+     *         ->where('u.id = :user_id1 OR u.id = :user_id2')
+     *         ->setParameters(array(
+     *             ':user_id1' => 1,
+     *             ':user_id2' => 2
+     *         ));
+     *
+     *     $qb->execute()->fetchAll();
+     * </code>
+     *
+     * @param array $params The query parameters to set.
+     * @param array $types  The query parameters types to set.
+     *
+     * @return $this This QueryBuilder instance.
+     */
+    public function setParameters(array $params, array $types = [])
+    {
+        $this->paramTypes = $types;
+        $this->params = $params;
+
+        return $this;
+    }
+
+    /**
+     * Gets all defined query parameters for the query being constructed indexed by parameter index or name.
+     *
+     * @return array The currently defined query parameters indexed by parameter index or name.
+     */
+    public function getParameters()
+    {
+        return $this->params;
+    }
+
+    /**
+     * Gets a (previously set) query parameter of the query being constructed.
+     *
+     * @param mixed $key The key (index or name) of the bound parameter.
+     *
+     * @return mixed The value of the bound parameter.
+     */
+    public function getParameter($key)
+    {
+        return isset($this->params[$key]) ? $this->params[$key] : null;
+    }
+
+    /**
+     * Gets all defined query parameter types for the query being constructed indexed by parameter index or name.
+     *
+     * @return array The currently defined query parameter types indexed by parameter index or name.
+     */
+    public function getParameterTypes()
+    {
+        return $this->paramTypes;
+    }
+
+    /**
+     * Gets a (previously set) query parameter type of the query being constructed.
+     *
+     * @param mixed $key The key (index or name) of the bound parameter type.
+     *
+     * @return mixed The value of the bound parameter type.
+     */
+    public function getParameterType($key)
+    {
+        return isset($this->paramTypes[$key]) ? $this->paramTypes[$key] : null;
+    }
+
+    /**
      * Get bind variables
      *
      * @return array
      */
     public function getBind()
     {
-        return $this->_bind;
+        return $this->getParameters();
     }
 
     /**
      * Set bind variables
      *
+     * @deprecated Use setParameters() instead
      * @param mixed $bind
      * @return self
      */
     public function bind($bind)
     {
-        $this->_bind = $bind;
+        if (!is_array($bind)) {
+            $bind = [$bind];
+        }
+
+        $this->setParameters($bind);
 
         return $this;
     }
@@ -703,13 +819,26 @@ class QueryBuilder
             $this->bind($bind);
         }
 
-        $stmt = $this->_adapter->query($this);
+        $stmt = $this->execute();
         if ($fetchMode == null) {
             $fetchMode = \PDO::FETCH_ASSOC;
         }
+
         $stmt->setFetchMode($fetchMode);
 
         return $stmt;
+    }
+
+    /**
+     * Executes this query using the bound parameters and their types.
+     *
+     * Uses {@see Connection::executeQuery}
+     *
+     * @return \Doctrine\DBAL\Driver\Statement|int
+     */
+    public function execute()
+    {
+        return $this->_adapter->executeQuery($this->getSQL(), $this->params, $this->paramTypes);
     }
 
     /**
@@ -1351,6 +1480,27 @@ class QueryBuilder
     }
 
     /**
+     * Gets the complete SQL string formed by the current specifications of this QueryBuilder.
+     *
+     * <code>
+     *     $qb = $conn->select()
+     *         ->from(['u' => 'users'])
+     *         ->columns('*')
+     *         ->where('u.id = :user_id');
+     *
+     *     echo $qb->getSQL(); // SELECT u.* FROM users u WHERE u.id = :user_id
+     * </code>
+     *
+     * @return string The SQL query string.
+     */
+    public function getSQL()
+    {
+        $sql = $this->assemble();
+
+        return (string)$sql;
+    }
+
+    /**
      * Implements magic method.
      *
      * @return string This object as a SELECT string.
@@ -1358,7 +1508,7 @@ class QueryBuilder
     public function __toString()
     {
         try {
-            $sql = $this->assemble();
+            $sql = $this->getSQL();
         } catch (Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
             $sql = '';
