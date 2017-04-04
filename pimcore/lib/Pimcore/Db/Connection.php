@@ -14,7 +14,6 @@
 
 namespace Pimcore\Db;
 
-use Closure;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
@@ -105,7 +104,8 @@ class Connection extends \Doctrine\DBAL\Connection
             $params = array_merge($qb->getParameters(), $params);
 
             Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
-                'query' => $query
+                'query'  => $query,
+                'params' => $params
             ]);
         }
 
