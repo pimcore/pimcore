@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Config;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
+use Pimcore\Routing\RedirectHandler;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,9 +25,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class SiteListener extends AbstractFrontendListener implements EventSubscriberInterface
+/**
+ * Runs before dynamic routing kicks in and resolves site + handles redirects
+ */
+class FrontendRoutingListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
      * @var RequestHelper
@@ -34,11 +40,18 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
     protected $requestHelper;
 
     /**
-     * @param RequestHelper $requestHelper
+     * @var RedirectHandler
      */
-    public function __construct(RequestHelper $requestHelper)
+    protected $redirectHandler;
+
+    /**
+     * @param RequestHelper $requestHelper
+     * @param RedirectHandler $redirectHandler
+     */
+    public function __construct(RequestHelper $requestHelper, RedirectHandler $redirectHandler)
     {
-        $this->requestHelper = $requestHelper;
+        $this->requestHelper   = $requestHelper;
+        $this->redirectHandler = $redirectHandler;
     }
 
     /**
@@ -48,7 +61,10 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
     {
         return [
             // run with high priority as we need to set the site early
-            KernelEvents::REQUEST => ['onKernelRequest', 512]
+            KernelEvents::REQUEST   => ['onKernelRequest', 512],
+
+            // run with high priority before handling real errors
+            KernelEvents::EXCEPTION => ['onKernelException', 64]
         ];
     }
 
@@ -59,20 +75,43 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
             return;
         }
 
-        $path    = $originalPath = urldecode($request->getPathInfo());
-        $config  = Config::getSystemConfig();
+        $path = urldecode($request->getPathInfo());
 
-        // TODO routing defaults omitted
         // TODO http_auth omitted -> handle in security component
 
-        $this->handleSite($request, $path);
+        // resolve current site from request
+        $this->resolveSite($request, $path);
 
-        // TODO omitted redirects - move to another listener
-        // TODO omitted index.php SEO check
+        // check for override redirects
+        $response = $this->redirectHandler->checkForRedirect($request, true);
+        if ($response) {
+            $event->setResponse($response);
 
-        $this->handleDomainRedirect($event);
+            return;
+        }
+
+        // check for app.php in URL and remove it for SEO puroposes
+        $this->handleFrontControllerRedirect($event, $path);
         if ($event->hasResponse()) {
             return;
+        }
+
+        // redirect to the main domain if specified
+        $this->handleMainDomainRedirect($event);
+        if ($event->hasResponse()) {
+            return;
+        }
+    }
+
+    public function onKernelException(GetResponseForExceptionEvent $event)
+    {
+        // in case routing didn't find a matching route, check for redirects without override
+        $exception = $event->getException();
+        if ($exception instanceof NotFoundHttpException) {
+            $response = $this->redirectHandler->checkForRedirect($event->getRequest(), false);
+            if ($response) {
+                $event->setResponse($response);
+            }
         }
     }
 
@@ -81,9 +120,10 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
      *
      * @param Request $request
      * @param $path
+     *
      * @return string
      */
-    protected function handleSite(Request $request, $path)
+    protected function resolveSite(Request $request, $path)
     {
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
@@ -96,6 +136,7 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
                 $path = $site->getRootPath() . $path;
 
                 Site::setCurrentSite($site);
+
                 $request->attributes->set('_site', $site);
                 $request->attributes->set('_site_path', $path);
             } catch (\Exception $e) {
@@ -107,11 +148,30 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
     }
 
     /**
+     * @param GetResponseEvent $event
+     * @param string $path
+     */
+    protected function handleFrontControllerRedirect(GetResponseEvent $event, $path)
+    {
+        $request = $event->getRequest();
+
+        // do not allow requests including /app.php/ => SEO
+        // this is after the first redirect check, to allow redirects in app.php?xxx
+        if (preg_match("@^/app.php(.*)@", $path, $matches) && $request->getMethod() === 'GET') {
+            $redirectUrl = $matches[1];
+            $redirectUrl = ltrim($redirectUrl, "/");
+            $redirectUrl = "/" . $redirectUrl;
+
+            $event->setResponse(new RedirectResponse($redirectUrl, Response::HTTP_MOVED_PERMANENTLY));
+        }
+    }
+
+    /**
      * Redirect to the main domain if specified
      *
      * @param GetResponseEvent $event
      */
-    protected function handleDomainRedirect(GetResponseEvent $event)
+    protected function handleMainDomainRedirect(GetResponseEvent $event)
     {
         $request = $event->getRequest();
         $config  = Config::getSystemConfig();
@@ -144,8 +204,7 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
             // log all redirects to the redirect log
             \Pimcore\Log\Simple::log('redirect', Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $request->getRequestUri() . " -> " . $url);
 
-            $redirect = new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY);
-            $event->setResponse($redirect);
+            $event->setResponse(new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY));
         }
     }
 }
