@@ -426,10 +426,10 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
                 return null;
             }
         } else {
-            if (is_array($value)) {
+            if ($value instanceof Model\Object\Data\QuantityValue) {
                 return [
-                    "value" => $value[$this->getName() . "__value"],
-                    "value2" => $value[$this->getName() . "__unit"]
+                    "value" => $value->getValue(),
+                    "value2" => $value->getUnitId()
                 ];
             } else {
                 return [
@@ -452,11 +452,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
             return $value;
         }
         if (is_array($value)) {
-            return [
-                $this->getName() . "__value" => $value["value"],
-                $this->getName() . "__unit" => $value["value2"],
-
-            ];
+            return new Model\Object\Data\QuantityValue($value["value"], $value["value2"]);
         } else {
             return null;
         }

@@ -267,10 +267,10 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value) {
+        if ($value instanceof Object\Data\Geopoint) {
             return [
-                "value" => $value[$this->getName() . "__latitude"],
-                "value2" => $value[$this->getName() . "__longitude"]
+                "value" => $value->getLatitude(),
+                "value2" => $value->getLongitude()
             ];
         }
     }
@@ -284,11 +284,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $data = [
-                $this->getName() . "__longitude" => $value["value2"],
-                $this->getName() . "__latitude" => $value["value"]
-            ];
-
+            $data = new Object\Data\Geopoint($value["value2"], $value["value"]);
             return $data;
         }
     }
