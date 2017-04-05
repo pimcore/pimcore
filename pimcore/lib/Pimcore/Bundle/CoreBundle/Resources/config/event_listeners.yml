@@ -5,7 +5,7 @@ services:
 
     pimcore.event_listener.frontend.site:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\SiteListener
-        arguments: ['@pimcore.http.request_helper']
+        arguments: ['@pimcore.http.request_helper', '@pimcore.routing.redirect_handler']
         tags:
             - { name: kernel.event_subscriber }
 

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Config;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
+use Pimcore\Routing\RedirectHandler;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -34,11 +35,18 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
     protected $requestHelper;
 
     /**
-     * @param RequestHelper $requestHelper
+     * @var RedirectHandler
      */
-    public function __construct(RequestHelper $requestHelper)
+    protected $redirectHandler;
+
+    /**
+     * @param RequestHelper $requestHelper
+     * @param RedirectHandler $redirectHandler
+     */
+    public function __construct(RequestHelper $requestHelper, RedirectHandler $redirectHandler)
     {
-        $this->requestHelper = $requestHelper;
+        $this->requestHelper   = $requestHelper;
+        $this->redirectHandler = $redirectHandler;
     }
 
     /**
@@ -59,18 +67,28 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
             return;
         }
 
-        $path    = $originalPath = urldecode($request->getPathInfo());
-        $config  = Config::getSystemConfig();
+        $path = urldecode($request->getPathInfo());
 
-        // TODO routing defaults omitted
         // TODO http_auth omitted -> handle in security component
 
-        $this->handleSite($request, $path);
+        // resolve current site from request
+        $this->resolveSite($request, $path);
 
-        // TODO omitted redirects - move to another listener
-        // TODO omitted index.php SEO check
+        // check for override redirect
+        $response = $this->redirectHandler->checkForRedirect($request, true);
+        if ($response) {
+            $event->setResponse($response);
+            return;
+        }
 
-        $this->handleDomainRedirect($event);
+        // check for app.php in URL and remove it for SEO puroposes
+        $this->handleFrontControllerRedirect($event, $path);
+        if ($event->hasResponse()) {
+            return;
+        }
+
+        // redirect to the main domain if specified
+        $this->handleMainDomainRedirect($event);
         if ($event->hasResponse()) {
             return;
         }
@@ -83,7 +101,7 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
      * @param $path
      * @return string
      */
-    protected function handleSite(Request $request, $path)
+    protected function resolveSite(Request $request, $path)
     {
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
@@ -96,6 +114,7 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
                 $path = $site->getRootPath() . $path;
 
                 Site::setCurrentSite($site);
+
                 $request->attributes->set('_site', $site);
                 $request->attributes->set('_site_path', $path);
             } catch (\Exception $e) {
@@ -107,11 +126,30 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
     }
 
     /**
+     * @param GetResponseEvent $event
+     * @param string $path
+     */
+    protected function handleFrontControllerRedirect(GetResponseEvent $event, $path)
+    {
+        $request = $event->getRequest();
+
+        // do not allow requests including /app.php/ => SEO
+        // this is after the first redirect check, to allow redirects in app.php?xxx
+        if (preg_match("@^/app.php(.*)@", $path, $matches) && $request->getMethod() === 'GET') {
+            $redirectUrl = $matches[1];
+            $redirectUrl = ltrim($redirectUrl, "/");
+            $redirectUrl = "/" . $redirectUrl;
+
+            $event->setResponse(new RedirectResponse($redirectUrl, Response::HTTP_MOVED_PERMANENTLY));
+        }
+    }
+
+    /**
      * Redirect to the main domain if specified
      *
      * @param GetResponseEvent $event
      */
-    protected function handleDomainRedirect(GetResponseEvent $event)
+    protected function handleMainDomainRedirect(GetResponseEvent $event)
     {
         $request = $event->getRequest();
         $config  = Config::getSystemConfig();
@@ -144,8 +182,7 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
             // log all redirects to the redirect log
             \Pimcore\Log\Simple::log('redirect', Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $request->getRequestUri() . " -> " . $url);
 
-            $redirect = new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY);
-            $event->setResponse($redirect);
+            $event->setResponse(new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY));
         }
     }
 }

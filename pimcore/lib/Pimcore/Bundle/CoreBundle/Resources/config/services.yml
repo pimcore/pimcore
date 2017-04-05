@@ -20,6 +20,13 @@ services:
         tags:
             - { name: routing.loader }
 
+    pimcore.routing.redirect_handler:
+        class: Pimcore\Routing\RedirectHandler
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: routing }
+
     pimcore.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
         arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
@@ -27,10 +34,14 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: router, priority: 100 }
+            - { name: monolog.logger, channel: routing }
 
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Routing\DocumentRouteProvider
-        arguments: ['@pimcore.document.nearest_path_resolver', '@pimcore.mvc_config_normalizer']
+        arguments:
+            - '@pimcore.document.nearest_path_resolver'
+            - '@pimcore.routing.redirect_handler'
+            - '@pimcore.mvc_config_normalizer'
 
     #
     # SESSION

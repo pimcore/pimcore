@@ -14,6 +14,7 @@
 
 namespace Pimcore\Routing;
 
+use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
 use Pimcore\Service\Document\NearestPathResolver;
 use Pimcore\Service\MvcConfigNormalizer;
@@ -30,17 +31,28 @@ class DocumentRouteProvider implements RouteProviderInterface
     protected $nearestPathResolver;
 
     /**
+     * @var RedirectHandler
+     */
+    protected $redirectHandler;
+
+    /**
      * @var MvcConfigNormalizer
      */
     protected $configNormalizer;
 
     /**
      * @param NearestPathResolver $nearestPathResolver
+     * @param RedirectHandler $redirectHandler
      * @param MvcConfigNormalizer $configNormalizer
      */
-    public function __construct(NearestPathResolver $nearestPathResolver, MvcConfigNormalizer $configNormalizer)
+    public function __construct(
+        NearestPathResolver $nearestPathResolver,
+        RedirectHandler $redirectHandler,
+        MvcConfigNormalizer $configNormalizer
+    )
     {
         $this->nearestPathResolver = $nearestPathResolver;
+        $this->redirectHandler     = $redirectHandler;
         $this->configNormalizer    = $configNormalizer;
     }
 
@@ -65,6 +77,13 @@ class DocumentRouteProvider implements RouteProviderInterface
                 if ($route = $this->buildRouteForDocument($document)) {
                     $collection->add($route->getRouteKey(), $route);
                 }
+            }
+        }
+
+        // TODO throwing an exception here feels kinda hacky - try to find a better way
+        if ($collection->count() === 0) {
+            if (null !== $response = $this->redirectHandler->checkForRedirect($request, false)) {
+                throw new ResponseException($response);
             }
         }
 
