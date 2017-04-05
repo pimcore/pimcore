@@ -40,7 +40,6 @@ services:
         class: Pimcore\Routing\DynamicRouteProvider
         arguments:
             - '@pimcore.document.nearest_path_resolver'
-            - '@pimcore.routing.redirect_handler'
             - '@pimcore.mvc_config_normalizer'
 
     #

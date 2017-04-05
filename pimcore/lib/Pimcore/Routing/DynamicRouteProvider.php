@@ -30,28 +30,17 @@ class DynamicRouteProvider implements RouteProviderInterface
     protected $nearestPathResolver;
 
     /**
-     * @var RedirectHandler
-     */
-    protected $redirectHandler;
-
-    /**
      * @var MvcConfigNormalizer
      */
     protected $configNormalizer;
 
     /**
      * @param NearestPathResolver $nearestPathResolver
-     * @param RedirectHandler $redirectHandler
      * @param MvcConfigNormalizer $configNormalizer
      */
-    public function __construct(
-        NearestPathResolver $nearestPathResolver,
-        RedirectHandler $redirectHandler,
-        MvcConfigNormalizer $configNormalizer
-    )
+    public function __construct(NearestPathResolver $nearestPathResolver, MvcConfigNormalizer $configNormalizer)
     {
         $this->nearestPathResolver = $nearestPathResolver;
-        $this->redirectHandler     = $redirectHandler;
         $this->configNormalizer    = $configNormalizer;
     }
 
