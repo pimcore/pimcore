@@ -190,7 +190,7 @@ class DynamicRouteProvider implements RouteProviderInterface
 
         $locale = $document->getProperty('language');
 
-        $route = new DocumentRoute($document->getRealFullPath());
+        $route = new DocumentRoute($document->getFullPath());
         $route->setDefault('_locale', $locale);
         $route->setDocument($document);
 
