@@ -10,7 +10,7 @@ you can use to get started quickly with a whole range of cache implementations. 
 adapter which is used as fallback is defined:
 
 ```yaml
-# pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/config/cache.yml
+# pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/cache.yml
 services:
     # symfony filesystem cache adapter
     pimcore.cache.core.symfony_adapter.filesystem:

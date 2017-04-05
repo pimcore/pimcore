@@ -14,7 +14,7 @@
 
 namespace Pimcore\Controller\Action;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
+use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Controller\Action;
 use Pimcore\Config;
 use Pimcore\Tool\Authentication;

@@ -334,7 +334,7 @@ abstract class Frontend extends Action
             } else {
                 // try to get a list of territories for this language
                 // usually OS have no "language only" locale, only the combination language-territory (eg. Debian)
-                $languageRegionMapping = include PIMCORE_PATH . "/lib/Pimcore/Bundle/PimcoreBundle/Resources/misc/cldr-language-territory-mapping.php";
+                $languageRegionMapping = include PIMCORE_PATH . "/lib/Pimcore/Bundle/CoreBundle/Resources/misc/cldr-language-territory-mapping.php";
                 if (isset($languageRegionMapping[$locale->getLanguage()])) {
                     foreach ($languageRegionMapping[$locale->getLanguage()] as $territory) {
                         $localeList[] = $locale->getLanguage() . "_" . $territory . ".utf8";

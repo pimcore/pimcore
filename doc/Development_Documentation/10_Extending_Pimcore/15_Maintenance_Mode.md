@@ -3,7 +3,7 @@
 Pimcore offers a maintenance mode, which restricts access to the admin user interface to the user that enabled the maintenance mode. It is session based 
 and no other user will be able to access the website or the admin interface. 
 
-All other users get a [default "Temporary not available" page](https://rawgit.com/pimcore/pimcore/master/pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/misc/maintenance.html) 
+All other users get a [default "Temporary not available" page](https://rawgit.com/pimcore/pimcore/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/misc/maintenance.html) 
 displayed. 
 
 Moreover, maintenance scripts and headless executions of Pimcore will be prevented.  

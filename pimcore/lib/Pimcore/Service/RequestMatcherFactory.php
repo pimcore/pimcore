@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 class RequestMatcherFactory
 {
     /**
-     * Builds a set of request matchers from a config definition as configured in pimcore.admin.routes (see PimcoreBundle
+     * Builds a set of request matchers from a config definition as configured in pimcore.admin.routes (see PimcoreCoreBundle
      * configuration).
      *
      * @param array $entries

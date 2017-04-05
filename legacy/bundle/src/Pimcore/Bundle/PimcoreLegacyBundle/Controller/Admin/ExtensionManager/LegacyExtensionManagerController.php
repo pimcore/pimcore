@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\PimcoreLegacyBundle\Controller\Admin\ExtensionManager;
 
 use Pimcore\API\Plugin\PluginInterface;
-use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\ExtensionManager;
 use Pimcore\File;
 use Pimcore\Logger;
