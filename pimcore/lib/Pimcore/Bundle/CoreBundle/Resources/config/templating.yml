@@ -17,4 +17,4 @@ services:
 
     pimcore.templating.document_renderer:
               class: Pimcore\Templating\Renderer\DocumentRenderer
-              arguments: ['@pimcore.templating.action_renderer', '@fragment.renderer.inline', '@request_stack']
+              arguments: ['@pimcore.templating.action_renderer', '@fragment.renderer.inline']
