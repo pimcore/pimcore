@@ -4,30 +4,30 @@ return [
     "onlineshop" => [
        /* general settings for onlineshop environment */
         "environment" => [
-            "class" => "\\OnlineShop\\Framework\\Environment",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Environment",
             "config" => [
                 "defaultCurrency" => "EUR"
             ]
         ],
         /* general settings for cart manager */
         "cartmanager" => [
-            "class" => "\\OnlineShop\\Framework\\CartManager\\MultiCartManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\MultiCartManager",
             "config" => [
                 /* default cart implementation that is used */
                 "cart" => [
-                    "class" => "\\OnlineShop\\Framework\\CartManager\\Cart",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\Cart",
                     "guest" => [
-                        "class" => "\\OnlineShop\\Framework\\CartManager\\SessionCart"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart"
                     ]
                 ],
                 /* default price calculator for cart */
                 "pricecalculator" => [
-                    "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator",
                     "config" => [
                         /* price modificators for cart, e.g. for shipping-cost, special discounts, ... */
                         "modificators" => [
                             "shipping" => [
-                                "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceModificator\\Shipping",
+                                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceModificator\\Shipping",
                                 "config" => [
                                     "charge" => "5.90"
                                 ]
@@ -41,7 +41,7 @@ return [
                 "tenants" => [
                     "noShipping" => [
                         "pricecalculator" => [
-                            "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+                            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator",
                             "config" => [
                                 "modificators" => []
                             ]
@@ -58,14 +58,14 @@ return [
             "pricesystem" => [
                 [
                     "name" => "default",
-                    "class" => "\\OnlineShop\\Framework\\PriceSystem\\AttributePriceSystem",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PriceSystem\\AttributePriceSystem",
                     "config" => [
                         "attributename" => "price"
                     ]
                 ],
                 [
                     "name" => "defaultOfferToolPriceSystem",
-                    "class" => "\\OnlineShop\\Framework\\PriceSystem\\AttributePriceSystem",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PriceSystem\\AttributePriceSystem",
                     "config" => [
                         "attributename" => "price"
                     ]
@@ -76,17 +76,17 @@ return [
             /* Define one or more availability systems. The products getAvailabilitySystemName method need to return a name here defined */
             "availablitysystem" => [
                 "name" => "default",
-                "class" => "\\OnlineShop\\Framework\\AvailabilitySystem\\AttributeAvailabilitySystem"
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\AvailabilitySystem\\AttributeAvailabilitySystem"
             ]
         ],
         /* general settings for checkout manager */
         "checkoutmanager" => [
-            "class" => "\\OnlineShop\\Framework\\CheckoutManager\\CheckoutManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CheckoutManager\\CheckoutManager",
             "config" => [
                 /* define different checkout steps which need to be committed before commit of order is possible */
                 "steps" => [
                     "deliveryaddress" => [
-                        "class" => "\\OnlineShop\\Framework\\CheckoutManager\\DeliveryAddress"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CheckoutManager\\DeliveryAddress"
                     ],
                     /* example step from the Ecommerce demo, which extends AbstractStep */
                     /*"confirm" => [
@@ -125,13 +125,13 @@ return [
             ]
         ],
         "paymentmanager" => [
-            "class" => "\\OnlineShop\\Framework\\PaymentManager\\PaymentManager",
-            "statusClass" => "\\OnlineShop\\Framework\\PaymentManager\\Status",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\PaymentManager",
+            "statusClass" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Status",
             "config" => [
                 "provider" => [
                     [
                         "name" => "datatrans",
-                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\Datatrans",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\Datatrans",
                         "mode" => "sandbox",
                         "config" => [
                             "sandbox" => [
@@ -150,7 +150,7 @@ return [
                         /* https://integration.wirecard.at/doku.php/wcp:integration */
                         /* https://integration.wirecard.at/doku.php/demo:demo_data */
                         "name" => "qpay",
-                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\QPay",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\QPay",
                         "mode" => "sandbox",
                         "config" => [
                             "sandbox" => [
@@ -183,7 +183,7 @@ return [
                     ],
                     [
                         "name" => "paypal",
-                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\PayPal",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\PayPal",
                         "mode" => "sandbox",
                         "config" => [
                             "sandbox" => [
@@ -195,6 +195,69 @@ return [
                                 "api_username" => "",
                                 "api_password" => "",
                                 "api_signature" => ""
+                            ]
+                        ]
+                    ],
+                    [
+                        "name" => "seamless",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\WirecardSeamless",
+                        "mode" => "sandbox",
+                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method-selection.html.php",
+                        "js" => "/website/static/js/payment/wirecard-seamless/frontend.js",
+                        "config" => [
+                            "sandbox" => [
+                                "customerId" => "D200001",
+                                "shopId" => "qmore",
+                                "secret" => "B8AKTPWBRMNBV455FG6M2DANE99WU2",
+                                "password" => "jcv45z",
+                                "iframeCssUrl" => "/website/static/css/payment-iframe.css?elementsclientauth=disabled",
+                                "paymentMethods" => [
+                                    "PREPAYMENT" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/prepayment.png",
+                                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method/prepayment.html.php"
+                                    ],
+                                    "CCARD" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/ccard.png",
+                                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method/ccard.html.php"
+                                    ],
+                                    "PAYPAL" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/paypal.png"
+                                    ],
+                                    "SOFORTUEBERWEISUNG" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/sue.png"
+                                    ],
+                                    "INVOICE" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/payolution.png",
+                                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method/invoice.html.php"
+                                    ]
+                                ]
+                            ],
+                            "live" => [
+                                "customerId" => "",
+                                "shopId" => "",
+                                "secret" => "",
+                                "password" => "",
+                                "iframeCssUrl" => "/website/static/css/payment-iframe.css?elementsclientauth=disabled",
+                                "paymentMethods" => [
+                                    "PREPAYMENT" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/prepayment.png",
+                                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method/prepayment.html.php"
+                                    ],
+                                    "CCARD" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/ccard.png",
+                                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method/ccard.html.php"
+                                    ],
+                                    "PAYPAL" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/paypal.png"
+                                    ],
+                                    "SOFORTUEBERWEISUNG" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/sue.png"
+                                    ],
+                                    "INVOICE" => [
+                                        "icon" => "/website/static/img/wirecard-seamless/payolution.png",
+                                        "partial" => "PaymentSeamless/wirecard-seamless/payment-method/invoice.html.php"
+                                    ]
+                                ]
                             ]
                         ]
                     ]
@@ -252,18 +315,18 @@ return [
                 ],
                 [
                     "name" => "features",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects",
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DefaultObjects",
                     "filtergroup" => "relation"
                 ],
                 [
                     "name" => "technologies",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects",
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DefaultObjects",
                     "filtergroup" => "relation"
                 ],
                 [
                     "name" => "tentTentPegs",
                     "type" => "varchar(50)",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -274,7 +337,7 @@ return [
                 [
                     "name" => "tentWaterproofRain",
                     "type" => "varchar(50)",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -285,7 +348,7 @@ return [
                 [
                     "name" => "tentWaterproofGround",
                     "type" => "varchar(50)",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -296,8 +359,8 @@ return [
                 [
                     "name" => "rucksacksVolume",
                     "type" => "double",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\Numeric",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -308,8 +371,8 @@ return [
                 [
                     "name" => "rucksacksWeight",
                     "type" => "double",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\Numeric",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -320,8 +383,8 @@ return [
                 [
                     "name" => "rucksacksLoad",
                     "type" => "double",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\Numeric",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -332,7 +395,7 @@ return [
                 [
                     "name" => "matsWidth",
                     "type" => "double",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -343,7 +406,7 @@ return [
                 [
                     "name" => "matsLength",
                     "type" => "double",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -354,7 +417,7 @@ return [
                 [
                     "name" => "matsHeight",
                     "type" => "double",
-                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
                     "filtergroup" => "string",
                     "config" => [
                         "brickfield" => "specificAttributes",
@@ -367,53 +430,53 @@ return [
                     "fieldname" => "color",
                     "hideInFieldlistDatatype" => "true",
                     "type" => "INTEGER",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Soundex"
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\Soundex"
                 ],
                 [
                     "name" => "simularity_gender",
                     "fieldname" => "gender",
                     "hideInFieldlistDatatype" => "true",
                     "type" => "INTEGER",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Soundex"
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\Soundex"
                 ],
                 [
                     "name" => "simularity_category",
                     "fieldname" => "categories",
                     "hideInFieldlistDatatype" => "true",
                     "type" => "INTEGER",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\ObjectIdSum"
                 ],
                 [
                     "name" => "simularity_feature",
                     "fieldname" => "features",
                     "hideInFieldlistDatatype" => "true",
                     "type" => "INTEGER",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\ObjectIdSum"
                 ],
                 [
                     "name" => "simularity_technolgy",
                     "fieldname" => "technologies",
                     "hideInFieldlistDatatype" => "true",
                     "type" => "INTEGER",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\ObjectIdSum"
                 ],
                 [
                     "name" => "simularity_attributes",
                     "fieldname" => "attributes",
                     "hideInFieldlistDatatype" => "true",
                     "type" => "INTEGER",
-                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                    "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\ObjectIdSum"
                 ] */
             ],
             /* configuration of different tenants */
             "tenants" => ""
 
             /*  "elasticsearch" => [
-                    "class" => "\\OnlineShop\\Framework\\IndexService\\Config\\ElasticSearch",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Config\\ElasticSearch",
                     "file" => "/website/var/plugins/EcommerceFramework/assortment-tenant-elasticsearch.php"
                 ],
                 "sampletenant" => [
-                    "class" => "\\OnlineShop\\Framework\\IndexService\\Config\\DefaultMysqlSubTenantConfig",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Config\\DefaultMysqlSubTenantConfig",
                     "generalSearchColumns" => [
                         "column" => [
                             [
@@ -441,13 +504,13 @@ return [
                             [
                                 "name" => "mainImage",
                                 "type" => "int",
-                                "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\AssetId"
+                                "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\AssetId"
                             ],
                             [
                                 "name" => "hardDiskDriveCapacity",
                                 "type" => "DOUBLE",
-                                "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                                "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DimensionUnitField",
+                                "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
+                                "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DimensionUnitField",
                                 "config" => [
                                     "brickfield" => "specialFeatures",
                                     "bricktype" => "Memory",
@@ -463,107 +526,107 @@ return [
                      (used by object data type IndexFieldSelection, e.g. in filter definitions)
          */
         "filtertypes" => [
-            "helper" => "\\OnlineShop\\Framework\\FilterService\\FilterGroupHelper",
+            "helper" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterGroupHelper",
             "FilterNumberRange" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRange",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\NumberRange",
                 "script" => ":Shop/filters:range.html.php"
             ],
             "FilterNumberRangeSelection" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRangeSelection",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\NumberRangeSelection",
                 "script" => ":Shop/filters:numberrange.html.php"
             ],
             "FilterSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\Select",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\Select",
                 "script" => ":Shop/filters:select.html.php"
             ],
             "FilterSelectFromMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectFromMultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\SelectFromMultiSelect",
                 "script" => ":Shop/filters:select.html.php"
             ],
             "FilterMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\MultiSelect",
                 "script" => ":Shop/filters:multiselect.html.php"
             ],
             "FilterMultiSelectFromMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectFromMultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\MultiSelectFromMultiSelect",
                 "script" => ":Shop/filters:multiselect.html.php"
             ],
             "FilterMultiRelation" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectRelation",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\MultiSelectRelation",
                 "script" => ":Shop/filters:multiselect-relation.html.php"
             ],
             "FilterCategory" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectCategory",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\SelectCategory",
                 "script" => ":Shop/filters:select_category.html.php"
             ],
             "FilterRelation" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectRelation",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\SelectRelation",
                 "script" => ":Shop/filters:object_relation.html.php"
             ]
         ],
 
         /* pricing manager */
         "pricingmanager" => [
-            "class" => "\\OnlineShop\\Framework\\PricingManager\\PricingManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\PricingManager",
             "config" => [
                 /* "disabled" => true, */
 
                 /* rule and priceinfo */
                 "rule" => [
-                    "class" => "\\OnlineShop\\Framework\\PricingManager\\Rule"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Rule"
                 ],
                 "priceInfo" => [
-                    "class" => "\\OnlineShop\\Framework\\PricingManager\\PriceInfo"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\PriceInfo"
                 ],
                 /* rule conditions */
                 "condition" => [
                     "Bracket" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\Bracket"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\Bracket"
                     ],
                     "DateRange" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\DateRange"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\DateRange"
                     ],
                     "CartAmount" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\CartAmount"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\CartAmount"
                     ],
                     "CatalogProduct" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\CatalogProduct"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\CatalogProduct"
                     ],
                     "CatalogCategory" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\CatalogCategory"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\CatalogCategory"
                     ],
                     "Token" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\Token"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\Token"
                     ],
                     "VoucherToken" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\VoucherToken"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\VoucherToken"
                     ],
                     "Sold" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\Sold"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\Sold"
                     ],
                     "Tenant" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\Tenant"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\Tenant"
                     ],
                     "Sales" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\Sales"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\Sales"
                     ],
                     "ClientIp" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Condition\\ClientIp"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Condition\\ClientIp"
                     ]
                 ],
                 /* rule actions */
                 "action" => [
                     "ProductDiscount" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Action\\ProductDiscount"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Action\\ProductDiscount"
                     ],
                     "CartDiscount" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Action\\CartDiscount"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Action\\CartDiscount"
                     ],
                     "Gift" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Action\\Gift"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Action\\Gift"
                     ],
                     "FreeShipping" => [
-                        "class" => "\\OnlineShop\\Framework\\PricingManager\\Action\\FreeShipping"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PricingManager\\Action\\FreeShipping"
                     ]
                 ],
                 //Checkout Tenants for Pricing Rules - e.g. to disable pricing rules for one tenant completely
@@ -576,7 +639,7 @@ return [
         ],
         /* Offertool */
         "offertool" => [
-            "class" => "\\OnlineShop\\Framework\\OfferTool\\DefaultService",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OfferTool\\DefaultService",
             "orderstorage" => [
                 "offerClass" => "\\Pimcore\\Model\\Object\\OfferToolOffer",
                 "offerItemClass" => "\\Pimcore\\Model\\Object\\OfferToolOfferItem",
@@ -585,14 +648,14 @@ return [
         ],
         /* order manager */
         "ordermanager" => [
-            "class" => "OnlineShop\\Framework\\OrderManager\\OrderManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\OrderManager",
             "config" => [
                 "orderList" => [
-                    "class" => "OnlineShop\\Framework\\OrderManager\\Order\\Listing",
-                    "classItem" => "OnlineShop\\Framework\\OrderManager\\Order\\Listing\\Item"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\Order\\Listing",
+                    "classItem" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\Order\\Listing\\Item"
                 ],
                 "orderAgent" => [
-                    "class" => "OnlineShop\\Framework\\OrderManager\\Order\\Agent"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\Order\\Agent"
                 ],
                 /* settings for order storage - pimcore class names for oder and order items */
                 "orderstorage" => [
@@ -611,14 +674,14 @@ return [
         ],
         /* voucher service - define voucher service implementation class and map token managers */
         "voucherservice" => [
-            "class" => "\\OnlineShop\\Framework\\VoucherService\\DefaultService",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\VoucherService\\DefaultService",
             /* assign backend implementations to voucher token type field collections */
             "tokenmanagers" => [
                 "VoucherTokenTypePattern" => [
-                    "class" => "\\OnlineShop\\Framework\\VoucherService\\TokenManager\\Pattern"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\VoucherService\\TokenManager\\Pattern"
                 ],
                 "VoucherTokenTypeSingle" => [
-                    "class" => "\\OnlineShop\\Framework\\VoucherService\\TokenManager\\Single"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\VoucherService\\TokenManager\\Single"
                 ]
             ],
             "config" => [
@@ -636,14 +699,14 @@ return [
         /*  tracking manager - define which trackers (e.g. Google Analytics Universal Ecommerce) are active and should
      be called when you track something via TrackingManager */
         "trackingmanager" => [
-            "class" => "OnlineShop\\Framework\\Tracking\\TrackingManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingManager",
             "config" => [
                 "trackers" => [
                     "tracker" => [
                         [
                         "name" => "GoogleAnalyticsEnhancedEcommerce",
-                        "class" => "OnlineShop\\Framework\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
-                        "trackingItemBuilder" => "\\OnlineShop\\Framework\\Tracking\\TrackingItemBuilder"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
+                        "trackingItemBuilder" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingItemBuilder"
                         ]
                     ]
                 ]

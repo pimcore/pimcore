@@ -89,15 +89,7 @@ class WirecardSeamless implements IPayment
      */
     public function initPayment(IPrice $price, array $config)
     {
-        /**
-         * @var \Pimcore\View $view ;
-         */
-        $view = $config['view'];
         $orderIdent = $config['orderIdent'];
-
-        if (!($view instanceof \Pimcore\View)) {
-            throw new \Exception('pass view to initPayment method of WirecardSeampless payment provider');
-        }
 
         if (!$orderIdent) {
             throw new \Exception('pass orderIdent to initPayment method of WirecardSeampless payment provider');
@@ -133,16 +125,15 @@ class WirecardSeamless implements IPayment
 
         $params = [];
         $params['javascriptUrl'] = $javascriptURL;
-        $params['view'] = $config['view'];
         $params['orderIdent'] = $orderIdent;
         $params['paymentMethods'] = $this->settings->paymentMethods;
         $params['config'] = $config;
 
         $params['wirecardFrontendScript'] = $this->js;
 
-        $view->addScriptPath(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/views/scripts');
-
-        return $view->partial($this->partial, $params);
+        //TODO inject this via container
+        $renderer =  \Pimcore::getContainer()->get('templating');
+        return $renderer->render($this->partial, $params);
     }
 
     public function getInitPaymentRedirectUrl($config)
