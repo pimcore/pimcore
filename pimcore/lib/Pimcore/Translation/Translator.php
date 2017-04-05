@@ -82,7 +82,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
         if (isset($parameters[0])) {
-            $term = vsprintf($id, $parameters);
+            $term = vsprintf($term, $parameters);
         }
 
         return $term;
