@@ -229,7 +229,7 @@ class DynamicRouteProvider implements RouteProviderInterface
         }
 
         if (!$isAdminRequest && null !== $request) {
-            $redirectTargetUrl = null;
+            $redirectTargetUrl = $originalPath;
 
             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
             if ($document instanceof Document\Page && !$document instanceof Document\Hardlink\Wrapper\WrapperInterface) {
