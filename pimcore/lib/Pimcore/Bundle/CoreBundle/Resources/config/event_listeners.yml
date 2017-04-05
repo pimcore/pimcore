@@ -164,7 +164,7 @@ services:
       class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener
       arguments: ['@kernel']
       calls:
-          - [loadTemplateFromResource, ['@@PimcoreBundle/Resources/misc/cookie-policy-default-template.html']]
+          - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
           - [setTranslator, ['@translator']]
       tags:
           - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }
@@ -195,7 +195,7 @@ services:
         class: Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener
         arguments: ['@kernel']
         calls:
-            - [loadTemplateFromResource, ['@@PimcoreBundle/Resources/misc/maintenance.html']]
+            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/maintenance.html']]
         tags:
           - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 

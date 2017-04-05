@@ -58,7 +58,7 @@ $config = $this->config;
         </div>
         <div id="content">
             <div id="loginform">
-                <form method="post" action="<?= $view->router()->path('pimcore_admin_login_check') ?>" autocomplete="off">
+                <form method="post" action="<?= $view->router()->path('pimcore_admin_admin_login_check') ?>" autocomplete="off">
 
                     <?php if ($this->error) { ?>
                         <div class="body error">
@@ -77,7 +77,7 @@ $config = $this->config;
                 </form>
 
                 <div class="body lostpassword">
-                    <a href="<?= $view->router()->path('pimcore_admin_login_lostpassword') ?>" class="lostpassword"><?= $this->translate("Forgot your password"); ?>?</a>
+                    <a href="<?= $view->router()->path('pimcore_admin_admin_login_lostpassword') ?>" class="lostpassword"><?= $this->translate("Forgot your password"); ?>?</a>
                 </div>
             </div>
 

@@ -79,7 +79,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
         }
 
         $contents = to_php_data_file_format($finalData);
-        $dataFile = PIMCORE_PATH . "/lib/Pimcore/Bundle/PimcoreBundle/Resources/misc/cldr-language-territory-mapping.php";
+        $dataFile = PIMCORE_PATH . "/lib/Pimcore/Bundle/CoreBundle/Resources/misc/cldr-language-territory-mapping.php";
         File::putPhpFile($dataFile, $contents);
 
         $this->output->writeln("Updated mappings in " . $dataFile);

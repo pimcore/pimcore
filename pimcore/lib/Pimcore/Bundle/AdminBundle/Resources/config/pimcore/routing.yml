@@ -34,5 +34,5 @@ _pimcore_api_rest:
     prefix:   /webservice/rest
 
 # route for logout handler
-pimcore_admin_logout:
+pimcore_admin_admin_logout:
     path: /admin/logout

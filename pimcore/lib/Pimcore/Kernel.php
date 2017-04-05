@@ -15,8 +15,8 @@
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Pimcore\Bundle\AdminBundle\AdminBundle;
-use Pimcore\Bundle\CoreBundle\CoreBundle;
+use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension;
@@ -64,7 +64,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             new CmfRoutingBundle(),
 
             // pimcore bundles
-            new PimcoreBundle(),
+            new PimcoreCoreBundle(),
             new PimcoreAdminBundle(),
         ];
 

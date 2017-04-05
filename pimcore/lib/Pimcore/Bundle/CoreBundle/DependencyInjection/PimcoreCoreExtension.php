@@ -29,8 +29,13 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PimcoreExtension extends Extension implements PrependExtensionInterface
+class PimcoreCoreExtension extends Extension implements PrependExtensionInterface
 {
+    public function getAlias()
+    {
+        return "pimcore";
+    }
+
     /**
      * {@inheritdoc}
      */

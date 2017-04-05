@@ -23,7 +23,7 @@ $this->get("translate")->setDomain("admin");
 
                 <div id="loginform">
 
-                    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_lostpassword') ?>">
+                    <form method="post" action="<?= $view->router()->path('pimcore_admin_admin_login_lostpassword') ?>">
                         <div class="form-fields">
                             <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>"/>
                         </div>
@@ -36,7 +36,7 @@ $this->get("translate")->setDomain("admin");
             <?php } ?>
 
             <div class="body lostpassword" style="padding-top: 30px;">
-                <a href="<?= $view->router()->path('pimcore_admin_login') ?>"><?= $this->translate("Back to Login"); ?></a>
+                <a href="<?= $view->router()->path('pimcore_admin_admin_login') ?>"><?= $this->translate("Back to Login"); ?></a>
             </div>
         </div>
     </div>

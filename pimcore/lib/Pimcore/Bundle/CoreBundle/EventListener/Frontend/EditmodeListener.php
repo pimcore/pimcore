@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Config;
-use Pimcore\Extension\Bundle\CoreBundleManager;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Service\Request\DocumentResolver;

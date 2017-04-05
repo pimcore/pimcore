@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class IndexController extends AdminController
 {
     /**
-     * @Route("/", name="pimcore_admin_index")
+     * @Route("/")
      * @TemplatePhp()
      * @return ViewModel
      */

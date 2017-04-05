@@ -10,6 +10,6 @@ services:
         tags:
             -
                 name:     data_collector
-                template: 'PimcoreBundle:Profiler:data_collector.html.twig'
+                template: 'PimcoreCoreBundle:Profiler:data_collector.html.twig'
                 id:       'pimcore.data_collector'
                 priority: 500
