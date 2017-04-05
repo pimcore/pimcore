@@ -25,6 +25,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -59,7 +61,10 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
     {
         return [
             // run with high priority as we need to set the site early
-            KernelEvents::REQUEST => ['onKernelRequest', 512]
+            KernelEvents::REQUEST   => ['onKernelRequest', 512],
+
+            // run with high priority before handling real errors
+            KernelEvents::EXCEPTION => ['onKernelException', 64]
         ];
     }
 
@@ -77,11 +82,11 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
         // resolve current site from request
         $this->resolveSite($request, $path);
 
-        // check for override redirects - non-override redirects are handled in the DynamicRouteProvider
-        // after matching documents
+        // check for override redirects
         $response = $this->redirectHandler->checkForRedirect($request, true);
         if ($response) {
             $event->setResponse($response);
+
             return;
         }
 
@@ -98,11 +103,24 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
         }
     }
 
+    public function onKernelException(GetResponseForExceptionEvent $event)
+    {
+        // in case routing didn't find a matching route, check for redirects without override
+        $exception = $event->getException();
+        if ($exception instanceof NotFoundHttpException) {
+            $response = $this->redirectHandler->checkForRedirect($event->getRequest(), false);
+            if ($response) {
+                $event->setResponse($response);
+            }
+        }
+    }
+
     /**
      * Initialize Site
      *
      * @param Request $request
      * @param $path
+     *
      * @return string
      */
     protected function resolveSite(Request $request, $path)

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Routing;
 
-use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
 use Pimcore\Service\Document\NearestPathResolver;
 use Pimcore\Service\MvcConfigNormalizer;
@@ -77,13 +76,6 @@ class DynamicRouteProvider implements RouteProviderInterface
                 if ($route = $this->buildRouteForDocument($document)) {
                     $collection->add($route->getRouteKey(), $route);
                 }
-            }
-        }
-
-        // TODO throwing an exception here feels kinda hacky - try to find a better way
-        if ($collection->count() === 0) {
-            if (null !== $response = $this->redirectHandler->checkForRedirect($request, false)) {
-                throw new ResponseException($response);
             }
         }
 
