@@ -27,7 +27,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class SiteListener extends AbstractFrontendListener implements EventSubscriberInterface
+/**
+ * Runs before dynamic routing kicks in and resolves site + handles redirects
+ */
+class FrontendRoutingListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
      * @var RequestHelper
@@ -74,7 +77,8 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
         // resolve current site from request
         $this->resolveSite($request, $path);
 
-        // check for override redirect
+        // check for override redirects - non-override redirects are handled in the DynamicRouteProvider
+        // after matching documents
         $response = $this->redirectHandler->checkForRedirect($request, true);
         if ($response) {
             $event->setResponse($response);

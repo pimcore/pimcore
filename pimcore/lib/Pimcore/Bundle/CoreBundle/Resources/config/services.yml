@@ -37,7 +37,7 @@ services:
             - { name: monolog.logger, channel: routing }
 
     pimcore.router.dynamic_route_provider:
-        class: Pimcore\Routing\DocumentRouteProvider
+        class: Pimcore\Routing\DynamicRouteProvider
         arguments:
             - '@pimcore.document.nearest_path_resolver'
             - '@pimcore.routing.redirect_handler'

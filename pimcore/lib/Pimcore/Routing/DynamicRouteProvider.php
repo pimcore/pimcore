@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-class DocumentRouteProvider implements RouteProviderInterface
+class DynamicRouteProvider implements RouteProviderInterface
 {
     /**
      * @var NearestPathResolver
