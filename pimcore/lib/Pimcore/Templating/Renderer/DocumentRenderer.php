@@ -16,6 +16,7 @@ namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer
@@ -31,15 +32,23 @@ class DocumentRenderer
      */
     protected $fragmentRenderer;
 
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
+
     /**
      * DocumentRenderer constructor.
      * @param ActionRenderer $actionRenderer
      * @param FragmentRendererInterface $fragmentRenderer
      */
-    public function __construct(ActionRenderer $actionRenderer, FragmentRendererInterface $fragmentRenderer)
+    public function __construct(ActionRenderer $actionRenderer, FragmentRendererInterface $fragmentRenderer, RequestStack $requestStack)
     {
         $this->actionRenderer = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -61,7 +70,14 @@ class DocumentRenderer
 
         $uri = $this->actionRenderer->createDocumentReference($document, $params);
 
-        $content = $this->fragmentRenderer->render($uri, new Request($params));
+        // set locale of current request to sub request
+        $request = new Request($params);
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        if($currentRequest) {
+            $request->setLocale($currentRequest->getLocale());
+        }
+
+        $content = $this->fragmentRenderer->render($uri, $request);
 
         return $content->getContent();
     }
