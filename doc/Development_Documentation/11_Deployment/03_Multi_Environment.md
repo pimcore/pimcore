@@ -89,6 +89,6 @@ RewriteRule .? - [E=PIMCORE_ENVIRONMENT:prod]
 ## Supported Configurations
 
 For examples, please see: 
-* <https://github.com/pimcore/pimcore/tree/symfony/app/config> 
-* <https://github.com/pimcore/pimcore/tree/symfony/app/config/pimcore>
-* <https://github.com/pimcore/pimcore/tree/symfony/var/config>
+* <https://github.com/pimcore/pimcore/tree/master/app/config> 
+* <https://github.com/pimcore/pimcore/tree/master/app/config/pimcore>
+* <https://github.com/pimcore/pimcore/tree/master/var/config>
