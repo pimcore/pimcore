@@ -85,6 +85,10 @@ RewriteCond %{HTTP_HOST} ^www\.site\.com
 RewriteRule .? - [E=PIMCORE_ENVIRONMENT:prod]
 ```
 
+### Debug Mode & Environments
+
+In order to include some specific debugging tools (profiler, toolbar, ...), Pimcore implicitly sets the 
+environment to `dev` when enabling the debug mode in system settings and if **no** environment is defined manually as described above. 
 
 ## Supported Configurations
 

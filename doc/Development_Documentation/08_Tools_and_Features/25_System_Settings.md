@@ -18,13 +18,17 @@ Fallback languages are currently used in object's localized fields and shared tr
 Several debugging settings for Pimcore, like Debug Mode, Password Protection, Core Logger, and Application Logger settings. 
 
 ### Debug Mode
-The Debug Mode is useful if you're developing a website / application with Pimcore.
+The Debug Mode is useful if you're developing an application with Pimcore.
 
 With debug-mode on, errors and warnings are displayed directly in the browser, otherwise they are deactivated and the 
 error-controller is active (Error Page).
 
 You can restrict the debug mode to an (or multiple) IP address(es), so that it is only active for requests from a 
 specific remote address.
+
+In order to include some specific debugging tools (profiler, toolbar, ...), Pimcore implicitly sets the 
+environment to `dev` when enabling the debug mode and if **no** environment is 
+[defined manually by using an environment variable](../11_Deployment/03_Multi_Environment.md). 
 
 ![System Settings](../img/system-settings1.png)
 
