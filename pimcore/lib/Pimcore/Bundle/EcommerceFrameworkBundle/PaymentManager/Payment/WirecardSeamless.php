@@ -133,6 +133,7 @@ class WirecardSeamless implements IPayment
 
         //TODO inject this via container
         $renderer =  \Pimcore::getContainer()->get('templating');
+
         return $renderer->render($this->partial, $params);
     }
 
@@ -294,7 +295,7 @@ class WirecardSeamless implements IPayment
         ];
 
 
-        if ($response['errors'] || in_array($response['paymentState'], ['PENDING','CANCEL'])) {
+        if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
             $status = new Status(
                 $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
                 ? IStatus::STATUS_CANCELLED

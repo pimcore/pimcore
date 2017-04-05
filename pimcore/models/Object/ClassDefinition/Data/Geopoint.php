@@ -285,6 +285,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     {
         if (is_array($value)) {
             $data = new Object\Data\Geopoint($value["value2"], $value["value"]);
+
             return $data;
         }
     }

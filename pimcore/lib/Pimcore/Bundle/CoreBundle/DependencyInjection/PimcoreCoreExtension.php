@@ -93,7 +93,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->addContextRoutes($container, $config['context']);
     }
 
-    protected function configureModelFactory(ContainerBuilder $container, $config) {
+    protected function configureModelFactory(ContainerBuilder $container, $config)
+    {
         $service = $container->getDefinition("pimcore.model.factory");
 
         $classMapLoader = new Definition(ClassMapLoader::class, [$config['models']['class_overrides']]);
@@ -103,7 +104,6 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $container->setDefinition($classMapLoaderId, $classMapLoader);
 
         $service->addMethodCall("addLoader", [new Reference($classMapLoaderId)]);
-
     }
 
     /**

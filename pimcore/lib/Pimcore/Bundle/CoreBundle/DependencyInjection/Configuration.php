@@ -73,7 +73,8 @@ class Configuration implements ConfigurationInterface
     /**
      * @param ArrayNodeDefinition $extensionsNode
      */
-    protected function addModelsNode(ArrayNodeDefinition $extensionsNode) {
+    protected function addModelsNode(ArrayNodeDefinition $extensionsNode)
+    {
         $extensionsNode
             ->children()
             ->arrayNode('models')

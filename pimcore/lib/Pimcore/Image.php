@@ -26,6 +26,7 @@ class Image
     {
         //@TODO should be configured on the container
         $adapter = self::create();
+
         return $adapter;
     }
 
