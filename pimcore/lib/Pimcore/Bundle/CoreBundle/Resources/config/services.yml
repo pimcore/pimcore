@@ -39,7 +39,10 @@ services:
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Routing\DynamicRouteProvider
         arguments:
+            - '@pimcore.document_service'
+            - '@pimcore.service.request.site_resolver'
             - '@pimcore.document.nearest_path_resolver'
+            - '@pimcore.http.request_helper'
             - '@pimcore.mvc_config_normalizer'
 
     #
