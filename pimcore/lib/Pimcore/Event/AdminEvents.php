@@ -69,7 +69,7 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Searchadmin\SearchController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
      * Arguments:
      *  - requestParams | contains the request parameters
      *
@@ -81,7 +81,7 @@ final class AdminEvents
     /**
      * Allows you to modify the search backend list before it is loaded.
      *
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Searchadmin\SearchController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
      * Arguments:
      *  - list | the search backend list
      *
@@ -93,7 +93,7 @@ final class AdminEvents
     /**
      * Allows you to modify the the result after the list was loaded.
      *
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Searchadmin\SearchController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
      * Arguments:
      *  - list | raw result as an array
      *
@@ -106,7 +106,7 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\AssetController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
      * Arguments:
      *  - data | array | the response data, this can be modified
      *  - asset | Asset | the current asset
@@ -119,7 +119,7 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ElementControllerBase
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase
      * Arguments:
      *  - data | array | the response data, this can be modified
      *  - document | Document | the current document
@@ -132,7 +132,7 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ObjectController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ObjectController
      * Arguments:
      *  - data | array | the response data, this can be modified
      *  - object | AbstractObject | the current object
@@ -143,7 +143,7 @@ final class AdminEvents
     const OBJECT_GET_PRE_SEND_DATA = "pimcore.admin.object.get.preSendData";
 
     /**
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ObjectController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ObjectController
      * Arguments:
      *  - objects | array | the list of object tree nodes
      *
@@ -153,7 +153,7 @@ final class AdminEvents
     const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = "pimcore.admin.object.treeGetChildsById.preSendData";
 
     /**
-     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ClassController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
      * Arguments:
      *  - list | array | the list of object bricks
      *  - objectId | int | id of the origin object

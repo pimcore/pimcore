@@ -13,7 +13,7 @@ or application.
  
 namespace TestBundle\Session\Configurator;
  
-use Pimcore\Bundle\PimcoreBundle\Session\SessionConfiguratorInterface;
+use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
  

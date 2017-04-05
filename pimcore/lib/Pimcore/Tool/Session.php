@@ -14,7 +14,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionHandler;
+use Pimcore\Bundle\AdminBundle\Session\AdminSessionHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 

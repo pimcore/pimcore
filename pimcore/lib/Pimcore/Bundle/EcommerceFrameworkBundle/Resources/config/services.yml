@@ -1,0 +1,19 @@
+services:
+    pimcore.ecommerceframework.session_configurator:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator
+        tags:
+            - { name: pimcore.session.configurator }
+
+
+    pimcore.ecommerceframework.index_update_listener:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\IndexUpdateListener
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: pimcore_ecommerce_indexupdater }
+
+    pimcore.ecommerceframework.system_listener:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SystemEventsListener
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: pimcore_ecommerce }
+

@@ -26,7 +26,7 @@ You can overwrite the default service definition with your own, e.g. to overwrit
 services:
     # Formatting service for dates, times and numbers
     pimcore.locale.intl_formatter:
-      class: Pimcore\Bundle\PimcoreBundle\Service\IntlFormatterService
+      class: Pimcore\Bundle\CoreBundle\Service\IntlFormatterService
       arguments: ['@pimcore.locale']
       calls:
         - [setCurrencyFormat, ['en', '¤ #,##0.0']]

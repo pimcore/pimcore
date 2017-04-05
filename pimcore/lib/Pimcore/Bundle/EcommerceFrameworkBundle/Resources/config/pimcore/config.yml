@@ -1,0 +1,12 @@
+# Monolog Configuration
+monolog:
+    channels: ['pimcore_ecommerce_sql', 'pimcore_ecommerce_factfinder', 'pimcore_ecommerce_es', 'pimcore_ecommerce_findologic']
+
+pimcore:
+    objects:
+        class_definitions:
+            data:
+                map:
+                    indexFieldSelection: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection
+                    indexFieldSelectionCombo: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo
+                    indexFieldSelectionField: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField

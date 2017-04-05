@@ -14,7 +14,7 @@
 
 namespace Pimcore\Service\Request;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserLoader;
+use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Http\RequestHelper;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

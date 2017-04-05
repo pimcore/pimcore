@@ -15,8 +15,8 @@
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
-use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
+use Pimcore\Bundle\AdminBundle\AdminBundle;
+use Pimcore\Bundle\CoreBundle\CoreBundle;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension;

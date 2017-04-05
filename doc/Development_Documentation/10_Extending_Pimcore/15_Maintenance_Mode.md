@@ -16,7 +16,7 @@ Overwrite the service `pimcore.event_listener.maintenance_page` in your `app/con
 
 ```yaml
 pimcore.event_listener.maintenance_page:
-    class: Pimcore\Bundle\PimcoreBundle\EventListener\MaintenancePageListener
+    class: Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener
     arguments: ['@kernel']
     calls:
         - [loadTemplateFromResource, ['@@AppBundle/Resources/misc/maintenance.html']]

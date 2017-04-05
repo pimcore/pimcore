@@ -1,0 +1,293 @@
+services:
+    pimcore.mvc_config_normalizer:
+        class: Pimcore\Service\MvcConfigNormalizer
+        arguments: ['@kernel']
+
+    pimcore.bundle_locator:
+        class: Pimcore\HttpKernel\BundleLocator\BundleLocator
+        arguments: ['@kernel']
+
+    pimcore.web_path_resolver:
+        class: Pimcore\Service\WebPathResolver
+
+    #
+    # ROUTING
+    #
+
+    pimcore.routing_loader.bundle_routes:
+        class: Pimcore\Routing\Loader\BundleRoutingLoader
+        arguments: ['@pimcore.bundle_config_locator']
+        tags:
+            - { name: routing.loader }
+
+    pimcore.router.staticroute:
+        class: Pimcore\Routing\Staticroute\Router
+        arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: router, priority: 100 }
+
+    pimcore.router.dynamic_route_provider:
+        class: Pimcore\Routing\DocumentRouteProvider
+        arguments: ['@pimcore.document.nearest_path_resolver', '@pimcore.mvc_config_normalizer']
+
+    #
+    # SESSION
+    #
+
+    # Sessions need to be configured (e.g. adding custom attribute bags) before they are started. The configurator handles
+    # a collection of configurator instances which can be added via addConfigurator or by using the pimcore.session.configurator
+    # DI tag. See the SessionConfiguratorPass for details.
+    pimcore.session.configurator:
+        class: Pimcore\Session\SessionConfigurator
+
+    #
+    # TRANSLATOR
+    #
+
+    pimcore.translator:
+      class: Pimcore\Translation\Translator
+      decorates: translator
+      arguments: ['@pimcore.translator.inner']
+      calls:
+        - [setKernel, ['@kernel']]
+        - [setAdminPath, ['%pimcore.admin.translations.path%']]
+
+    #
+    # LOCALE
+    #
+
+    pimcore.locale:
+      class: Pimcore\Service\Locale
+      arguments: ['@request_stack']
+
+    # Formatting service for dates, times and numbers
+    pimcore.locale.intl_formatter:
+      class: Pimcore\Service\IntlFormatterService
+      arguments: ['@pimcore.locale']
+
+
+    #
+    # APPLICATION LOGGER
+    #
+
+    pimcore.app_logger:
+      alias: pimcore.app_logger.default
+
+    pimcore.app_logger.default:
+      class: Pimcore\Log\ApplicationLogger
+      calls:
+        - [addWriter, ['@pimcore.app_logger.db_writer']]
+
+    pimcore.app_logger.db_writer:
+      class: Pimcore\Log\Handler\ApplicationLoggerDb
+
+    #
+    # RUNTIME CACHE
+    #
+
+    pimcore.cache.runtime:
+      class: Pimcore\Cache\Runtime
+
+    #
+    # REQUEST SPECIFICS
+    #
+
+    pimcore.service.request_matcher_factory:
+        class: Pimcore\Service\RequestMatcherFactory
+
+    #
+    # REQUEST RESOLVERS
+    #
+    # Read/write/normalize defined request attributes (e.g. document)
+    #
+
+    pimcore.service.request.pimcore_context_resolver:
+        class: Pimcore\Service\Request\PimcoreContextResolver
+        arguments: ['@request_stack', '@pimcore.service.request_matcher_factory']
+
+    pimcore.service.request.editmode_resolver:
+        class: Pimcore\Service\Request\EditmodeResolver
+        arguments: ['@request_stack', '@pimcore_admin.security.user_loader', '@pimcore.http.request_helper']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: init }
+
+    pimcore.service.request.document_resolver:
+        class: Pimcore\Service\Request\DocumentResolver
+        arguments: ['@request_stack']
+
+    pimcore.service.request.template_resolver:
+        class: Pimcore\Service\Request\TemplateResolver
+        arguments: ['@request_stack', '@pimcore.mvc_config_normalizer']
+
+    pimcore.service.request.template_vars_resolver:
+        class: Pimcore\Service\Request\TemplateVarsResolver
+        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
+
+    pimcore.service.request.view_model_resolver:
+        class: Pimcore\Service\Request\ViewModelResolver
+        arguments: ['@request_stack', '@pimcore.service.request.template_vars_resolver']
+
+
+    #
+    # ARGUMENT RESOLVERS
+    #
+
+    pimcore.argument_resolver.document:
+        class: Pimcore\Controller\ArgumentValueResolver\DocumentValueResolver
+        arguments: ['@pimcore.service.request.document_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    pimcore.argument_resolver.view_model:
+        class: Pimcore\Controller\ArgumentValueResolver\ViewModelValueResolver
+        arguments: ['@pimcore.service.request.view_model_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    pimcore.argument_resolver.template_vars:
+        class: Pimcore\Controller\ArgumentValueResolver\TemplateVarsValueResolver
+        arguments: ['@pimcore.service.request.template_vars_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    #
+    # OBJECT SERVICES
+    #
+    # simple services exposing get() API for documents, objects and assets
+    # this is only necessary if loading objects directly with only access to the container, e.g. templates
+
+    pimcore.service.document:
+        class: Pimcore\Service\Document\DocumentService
+
+    pimcore.service.asset:
+        class: Pimcore\Service\Asset\AssetService
+
+    pimcore.service.object:
+        class: Pimcore\Service\Object\ObjectService
+
+
+    #
+    # EXTENSIONS
+    #
+
+    # extension manager config will be built on kernel boot and injected
+    # into the container at runtime
+    pimcore.extension.config:
+        class: Pimcore\Extension\Config
+        synthetic: true
+
+
+    #
+    # PIMCORE BUNDLES
+    #
+
+    pimcore.extension.bundle_locator:
+        class: Pimcore\Extension\Bundle\CoreBundleLocator
+        arguments:
+            - '%pimcore.extensions.bundles.search_paths%'
+            - '%pimcore.extensions.bundles.handle_composer%'
+
+    pimcore.extension.bundle_manager:
+        class: Pimcore\Extension\Bundle\CoreBundleManager
+        arguments:
+            - '@pimcore.extension.config'
+            - '@pimcore.extension.bundle_locator'
+            - '@kernel'
+            - '@event_dispatcher'
+            - '@router'
+
+
+    #
+    # AREABRICKS
+    #
+
+    pimcore.area.brick_manager:
+        class: Pimcore\Extension\Document\Areabrick\AreabrickManager
+        arguments: ['@pimcore.extension.config', '@service_container']
+
+    #
+    # DOCUMENT TAG HANDLING (EDITABLES)
+    #
+
+    pimcore.document.tag.handler:
+        class: Pimcore\Document\Tag\DelegatingTagHandler
+        calls:
+            - [addHandler, ['@pimcore.document.tag.handler.default']]
+
+    pimcore.document.tag.handler.default:
+        class: Pimcore\Document\Tag\TagHandler
+        arguments:
+            - '@pimcore.area.brick_manager'
+            - '@templating'
+            - '@pimcore.bundle_locator'
+            - '@pimcore.web_path_resolver'
+            - '@pimcore.templating.action_renderer'
+            - '@pimcore.http.request_helper'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore }
+
+    #
+    # IMPLEMENTATION FACTORIES
+    #
+    # Class maps and prefixes will be set from the extension as they are loaded from config
+    #
+
+    # document tag loader
+    pimcore.implementation_loader.document.tag:
+        class: Pimcore\Model\Document\Tag\Loader\TagLoader
+
+    # object data loader
+    pimcore.implementation_loader.object.data:
+        class: Pimcore\Model\Object\ClassDefinition\Loader\DataLoader
+
+    # object layout loader
+    pimcore.implementation_loader.object.layout:
+        class: Pimcore\Model\Object\ClassDefinition\Loader\LayoutLoader
+
+    # model factory
+    pimcore.model.factory:
+        class: Pimcore\Model\Factory
+        calls:
+            - [addLoader, ['@pimcore.model.factory.fallback_builder']]
+
+    # fallback model builder for pimcore.model.factory
+    pimcore.model.factory.fallback_builder:
+        class: Pimcore\Model\Factory\FallbackBuilder
+        public: false
+
+    #
+    # PIMCORE SERVICES
+    #
+
+    pimcore.bundle_config_locator:
+        class: Pimcore\Config\BundleConfigLocator
+        arguments: ['@kernel']
+
+    pimcore.http.request_helper:
+        class: Pimcore\Http\RequestHelper
+        arguments: ['@request_stack']
+
+    pimcore.http.response_helper:
+        class: Pimcore\Http\ResponseHelper
+
+    pimcore.document.nearest_path_resolver:
+        class: Pimcore\Service\Document\NearestPathResolver
+        arguments: ['@pimcore.document_service']
+
+    # TODO inject user?
+    pimcore.document_service:
+        class: Pimcore\Model\Document\Service
+
+    pimcore.http_client:
+        class: \GuzzleHttp\Client
+        factory: ['Pimcore\Http\ClientFactory', createHttpClient]
+
+    pimcore.rest_client:
+        class: Pimcore\Tool\RestClient
+        arguments: ['@pimcore.http_client']
