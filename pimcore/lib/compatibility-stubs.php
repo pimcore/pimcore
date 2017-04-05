@@ -13,8 +13,8 @@
  */
 
 /**
- * This classes and interfaces need to be defined if Pimcore is in v5-only mode, so without the Pimcore\Bundle\PimcoreLegacyBundle
- * They are used in parts of the code where it isn't possible to outsource them into the Pimcore\Bundle\PimcoreLegacyBundle
+ * This classes and interfaces need to be defined if Pimcore is in v5-only mode, so without the Pimcore\Bundle\LegacyBundle
+ * They are used in parts of the code where it isn't possible to outsource them into the Pimcore\Bundle\LegacyBundle
  *
  * See also:
  * pimcore/models/Object/ClassDefinition/Data/Datetime.php

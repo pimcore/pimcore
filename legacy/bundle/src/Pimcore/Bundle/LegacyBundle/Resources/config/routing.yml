@@ -1,0 +1,5 @@
+pimcore_legacy_fallback:
+    path: /{path}
+    defaults: { _controller: PimcoreLegacyBundle:Fallback:fallback }
+    requirements:
+        path: .*
