@@ -131,7 +131,7 @@ services:
 
     pimcore.event_listener.response_exception:
         class: Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener
-        arguments: ['@pimcore.service.request.pimcore_context_resolver', '@pimcore.templating.action_renderer']
+        arguments: ['@pimcore.templating.action_renderer', '%pimcore.response_exception_listener.render_error_document%']
         tags:
             - { name: kernel.event_subscriber }
 

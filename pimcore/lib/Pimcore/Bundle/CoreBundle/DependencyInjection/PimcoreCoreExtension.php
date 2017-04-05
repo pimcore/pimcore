@@ -54,6 +54,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']["path"]);
 
+        $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?

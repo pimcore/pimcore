@@ -68,6 +68,9 @@ cmf_routing:
 
 # Pimcore
 pimcore:
+    error_handling:
+        render_error_document: true
+
     bundles:
         search_paths:
             - src
