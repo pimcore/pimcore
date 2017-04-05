@@ -996,7 +996,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                             $part = '<ph id="' . $count . '"><![CDATA[' . $part . ']]></ph>';
 
                             $count++;
-                        } else if (strpos($tag[1], "/") === false) {
+                        } elseif (strpos($tag[1], "/") === false) {
                             $openTags[$count] = ["tag" => $tagName, "id" => $count];
                             $part = '<bpt id="' . $count . '"><![CDATA[' . $part . ']]></bpt>';
 
