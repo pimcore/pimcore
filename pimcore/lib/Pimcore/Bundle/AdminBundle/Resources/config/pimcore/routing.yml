@@ -32,7 +32,3 @@ _pimcore_api_rest:
     resource: "@PimcoreAdminBundle/Controller/Rest/"
     type:     annotation
     prefix:   /webservice/rest
-
-# route for logout handler
-pimcore_admin_admin_logout:
-    path: /admin/logout

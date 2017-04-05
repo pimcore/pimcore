@@ -102,7 +102,7 @@ $user      = $userProxy->getUser();
     <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?>"/>
 </div>
 
-<a id="pimcore_logout" href="<?= $view->router()->path('pimcore_admin_admin_logout') ?>" style="display: none"></a>
+<a id="pimcore_logout" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none"></a>
 
 <?php
 $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
@@ -581,7 +581,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 </script>
 
 <script type="text/javascript" src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script type="text/javascript" src="<?= $view->router()->path('pimcore_admin_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 
 
