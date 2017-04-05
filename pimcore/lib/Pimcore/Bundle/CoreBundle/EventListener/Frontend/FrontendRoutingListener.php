@@ -19,6 +19,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
 use Pimcore\Routing\RedirectHandler;
 use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Service\Request\SiteResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,13 +46,24 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
     protected $redirectHandler;
 
     /**
+     * @var SiteResolver
+     */
+    protected $siteResolver;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param RedirectHandler $redirectHandler
+     * @param SiteResolver $siteResolver
      */
-    public function __construct(RequestHelper $requestHelper, RedirectHandler $redirectHandler)
+    public function __construct(
+        RequestHelper $requestHelper,
+        RedirectHandler $redirectHandler,
+        SiteResolver $siteResolver
+    )
     {
         $this->requestHelper   = $requestHelper;
         $this->redirectHandler = $redirectHandler;
+        $this->siteResolver    = $siteResolver;
     }
 
     /**
@@ -137,8 +149,8 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
 
                 Site::setCurrentSite($site);
 
-                $request->attributes->set('_site', $site);
-                $request->attributes->set('_site_path', $path);
+                $this->siteResolver->setSite($request, $site);
+                $this->siteResolver->setSitePath($request, $path);
             } catch (\Exception $e) {
                 // noop - execption is logged in getByDomain
             }

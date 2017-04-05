@@ -117,6 +117,10 @@ services:
         class: Pimcore\Service\Request\PimcoreContextResolver
         arguments: ['@request_stack', '@pimcore.service.request_matcher_factory']
 
+    pimcore.service.request.site_resolver:
+        class: Pimcore\Service\Request\SiteResolver
+        arguments: ['@request_stack']
+
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Service\Request\EditmodeResolver
         arguments: ['@request_stack', '@pimcore_admin.security.user_loader', '@pimcore.http.request_helper']

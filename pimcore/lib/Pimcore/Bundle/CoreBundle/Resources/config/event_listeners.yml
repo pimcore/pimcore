@@ -5,7 +5,10 @@ services:
 
     pimcore.event_listener.frontend.routing:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener
-        arguments: ['@pimcore.http.request_helper', '@pimcore.routing.redirect_handler']
+        arguments:
+            - '@pimcore.http.request_helper'
+            - '@pimcore.routing.redirect_handler'
+            - '@pimcore.service.request.site_resolver'
         tags:
             - { name: kernel.event_subscriber }
 
