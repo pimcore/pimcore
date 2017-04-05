@@ -176,7 +176,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $config = $this->extensionConfig->loadConfig();
         if (isset($config->bundle)) {
             foreach ($config->bundle->toArray() as $bundleName => $state) {
-                if ((bool) $state) {
+                if ((bool) $state && class_exists($bundleName)) {
                     $bundles[] = new $bundleName();
                 }
             }
