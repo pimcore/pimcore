@@ -130,7 +130,7 @@ class Locale
     /**
      * @param string $locale
      */
-    public function setLocale(string $locale)
+    public function setLocale($locale)
     {
         $this->locale = $locale;
 
