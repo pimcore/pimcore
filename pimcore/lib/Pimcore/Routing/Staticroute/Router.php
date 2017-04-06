@@ -189,6 +189,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected function doMatch($pathinfo)
     {
+        $pathinfo = urldecode($pathinfo);
+
         $params = $this->context->getParameters();
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 

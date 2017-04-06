@@ -14,9 +14,9 @@
 
 namespace Pimcore\Routing;
 
-use Pimcore\Model\Document;
-use Pimcore\Service\Document\NearestPathResolver;
-use Pimcore\Service\MvcConfigNormalizer;
+use Pimcore\Routing\Dynamic\DynamicRequestContext;
+use Pimcore\Routing\Dynamic\DynamicRouteHandlerInterface;
+use Pimcore\Service\Request\SiteResolver;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -25,23 +25,36 @@ use Symfony\Component\Routing\RouteCollection;
 class DynamicRouteProvider implements RouteProviderInterface
 {
     /**
-     * @var NearestPathResolver
+     * @var SiteResolver
      */
-    protected $nearestPathResolver;
+    protected $siteResolver;
 
     /**
-     * @var MvcConfigNormalizer
+     * @var DynamicRouteHandlerInterface[]
      */
-    protected $configNormalizer;
+    protected $handlers = [];
 
     /**
-     * @param NearestPathResolver $nearestPathResolver
-     * @param MvcConfigNormalizer $configNormalizer
+     * @param SiteResolver $siteResolver
+     * @param DynamicRouteHandlerInterface[] $handlers
      */
-    public function __construct(NearestPathResolver $nearestPathResolver, MvcConfigNormalizer $configNormalizer)
+    public function __construct(SiteResolver $siteResolver, array $handlers = [])
     {
-        $this->nearestPathResolver = $nearestPathResolver;
-        $this->configNormalizer    = $configNormalizer;
+        $this->siteResolver = $siteResolver;
+
+        foreach ($handlers as $handler) {
+            $this->addHandler($handler);
+        }
+    }
+
+    /**
+     * @param DynamicRouteHandlerInterface $handler
+     */
+    public function addHandler(DynamicRouteHandlerInterface $handler)
+    {
+        if (!in_array($handler, $this->handlers, true)) {
+            $this->handlers[] = $handler;
+        }
     }
 
     /**
@@ -50,90 +63,18 @@ class DynamicRouteProvider implements RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request)
     {
         $collection = new RouteCollection();
-        $path       = urldecode($request->getPathInfo());
+        $path       = $originalPath = urldecode($request->getPathInfo());
 
-        // handled by SiteListener which runs before routing is started
-        if ($request->attributes->has('_site_path')) {
-            $path = $request->attributes->get('_site_path');
+        // site path handled by FrontendRoutingListener which runs before routing is started
+        if (null !== $sitePath = $this->siteResolver->getSitePath($request)) {
+            $path = $sitePath;
         }
 
-        $document = Document::getByPath($path);
-        if ($document) {
-            $document = $this->handleHardlink($document, $path);
-
-            if ($document && $document instanceof Document) {
-                if ($route = $this->buildRouteForDocument($document)) {
-                    $collection->add($route->getRouteKey(), $route);
-                }
-            }
+        foreach ($this->handlers as $handler) {
+            $handler->matchRequest($collection, new DynamicRequestContext($request, $path, $originalPath));
         }
 
         return $collection;
-    }
-
-    /**
-     * @param Document|mixed $document
-     * @param string $path
-     * @return Document
-     */
-    protected function handleHardlink($document, $path)
-    {
-        // check for a parent hardlink with childs
-        if (!$document instanceof Document) {
-            $hardlinkedParentDocument = $this->nearestPathResolver->getNearestDocumentByPath($path, true);
-            if ($hardlinkedParentDocument instanceof Document\Hardlink) {
-                if ($hardLinkedDocument = Document\Hardlink\Service::getChildByPath($hardlinkedParentDocument, $path)) {
-                    $document = $hardLinkedDocument;
-                }
-            }
-        }
-
-        return $document;
-    }
-
-    /**
-     * @param Document|Document\Page $document
-     * @return DocumentRoute
-     */
-    protected function buildRouteForDocument(Document $document)
-    {
-        if (!$this->handleDocument($document)) {
-            return null;
-        }
-
-        $locale = $document->getProperty('language');
-
-        // check for direct hardlink
-        if ($document instanceof Document\Hardlink) {
-            $hardlinkParentDocument = $document;
-            $document = Document\Hardlink\Service::wrap($hardlinkParentDocument);
-        }
-
-        $route = new DocumentRoute($document->getRealFullPath());
-        $route->setDefault('_locale', $locale);
-        $route->setDocument($document);
-
-        if ($document instanceof Document\Link) {
-            // TODO use RedirectRoute?
-            $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
-            $route->setDefault('path', $document->getHref());
-            $route->setDefault('permanent', true);
-        } else {
-            $controller = $this->configNormalizer->formatController(
-                $document->getModule(),
-                $document->getController(),
-                $document->getAction()
-            );
-
-            $route->setDefault('_controller', $controller);
-
-            if ($document->getTemplate()) {
-                $template = $this->configNormalizer->normalizeTemplate($document->getTemplate());
-                $route->setDefault('_template', $template);
-            }
-        }
-
-        return $route;
     }
 
     /**
@@ -141,11 +82,11 @@ class DynamicRouteProvider implements RouteProviderInterface
      */
     public function getRouteByName($name)
     {
-        if (preg_match('/^document_(\d+)$/', $name, $match)) {
-            $document = Document::getById($match[1]);
-
-            if ($document && $this->handleDocument($document)) {
-                return $this->buildRouteForDocument($document);
+        foreach ($this->handlers as $handler) {
+            try {
+                return $handler->getRouteByName($name);
+            } catch (RouteNotFoundException $e) {
+                // noop
             }
         }
 
@@ -175,17 +116,5 @@ class DynamicRouteProvider implements RouteProviderInterface
         }
 
         return $routes;
-    }
-
-    // TODO remove - this is just for testing. Overrides all documents with symfony mode
-    // (allows to test symfony rendering without having to touch all documents)
-    // controller = foo, action = bar becomes AppBundle:Foo:bar
-    protected function handleDocument(Document $document)
-    {
-        if ($document->doRenderWithLegacyStack()) {
-            return false;
-        }
-
-        return true;
     }
 }
