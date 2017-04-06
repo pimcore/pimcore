@@ -14,3 +14,12 @@ ln -sr install-profiles/demo-cms/var/* var/
 ln -sr install-profiles/demo-cms/web/static/ web/static
 ```
 
+## Setup 
+```
+# copy & modify DB config
+cp var/config/system.template.php var/config/system.php
+ 
+# load structure and data
+mysql -u root -p example < app/Resources/install/install.sql
+mysql -u root -p example < install-profiles/demo-cms/dump/data.sql
+```

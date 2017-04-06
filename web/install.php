@@ -134,7 +134,7 @@
                     $newPath = PIMCORE_PROJECT_ROOT . "/" . $relativeFilePath;
                     if(is_file($file)) {
                         if(file_exists($newPath)) {
-                            unlink($newPath);
+                            //unlink($newPath);
                         }
                         if(!is_dir(dirname($newPath))) {
                             mkdir(dirname($newPath), \Pimcore\File::getDefaultMode(), true);
