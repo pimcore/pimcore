@@ -1,11 +1,11 @@
 # Pimcore 5 for Pimcore Developers
 
-If you are already a experienced Pimcore developer, this page should give you a head start for diving into Pimcore 5 and 
+If you are already an experienced Pimcore developer this page should give you a head start for diving into Pimcore 5 and 
 answer a few typical developer questions. 
 
 ### What changed, what stayed as it was in a nutshell? 
-Except every thing changed, Pimcore still stayed Pimcore :). We tried to keep Pimcore reconizeably as much as possible 
-and so lots of things stayed as they where: 
+Despite a lot has changed, Pimcore still stayed Pimcore :). We tried to keep Pimcore recognizable as much as possible 
+and so lots of things stayed as they were: 
 - Pimcore Assets and API
 - Pimcore Documents Usage and API
 - Pimcore Objects and API
@@ -20,8 +20,8 @@ But there are also lots of things that changed or give us new possibilities:
   - Controller
   - Views
   
-- Everything else that was directly dependend on ZF1 like 
-  - Bootstraping and Application Structure
+- Everything else that was directly dependent on ZF1 like 
+  - Bootstrapping and Application Structure
   - Logging
   - Sending Mails
   - Plugins
