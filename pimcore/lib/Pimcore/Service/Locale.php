@@ -115,9 +115,9 @@ class Locale
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLocale(): string
+    public function getLocale()
     {
         if(null === $this->locale) {
             $this->locale = $this->getLocaleFromRequest();
