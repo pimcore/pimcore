@@ -3,18 +3,6 @@
 /app/config/parameters.yml
 /build/
 /phpunit.xml
-/var/*
-!/var/cache
-/var/cache/*
-!var/cache/.gitkeep
-
-!/var/logs
-/var/logs/*
-!var/logs/.gitkeep
-!/var/sessions
-/var/sessions/*
-!var/sessions/.gitkeep
-!var/SymfonyRequirements.php
 /web/bundles/
 
 # pimcore files
@@ -31,38 +19,22 @@
 !legacy/.gitkeep
 !legacy/bundle
 
-# pimcore private var directories
+/var/
+
+!/var/classes/
+/var/classes/Object
+
 !/var/config
-/var/config/*
-!var/config/GeoLite2-City.mmdb
-!var/config/web2print.php
+/var/config/system.php
+/var/config/debug-mode.php
+/var/config/maintenance.php
 
-!/var/classes
+# project specific recommendations
+/var/config/tag-manager.php
+/var/config/reports.php
 
-!/var/recyclebin
-/var/recyclebin/*
-!var/recyclebin/.gitkeep
 
-!/var/tmp
-/var/tmp/*
-!var/tmp/.gitkeep
-
-!/var/versions
-/var/versions/*
-!var/versions/.gitkeep
-
-# pimcore public var directories
-!/web/var/
-/web/var/*
-!/web/var/.gitkeep
-
-!/web/var/assets
-/web/var/assets/*
-!/web/var/assets/.gitkeep
-
-!/web/var/tmp
-/web/var/tmp/*
-!/web/var/tmp/.gitkeep
+/web/var/
 
 # composer
 /composer.lock
