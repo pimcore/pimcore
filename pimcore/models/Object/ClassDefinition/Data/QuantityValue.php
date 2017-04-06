@@ -419,17 +419,22 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($params["simple"]) {
+        if ($params["blockmode"] && $value instanceof Model\Object\Data\QuantityValue) {
+            return [
+                "value" => $value->getValue(),
+                "value2" => $value->getUnitId()
+            ];
+        } else if ($params["simple"]) {
             if (is_array($value)) {
                 return [$value[$this->getName() . "__value"], $value[$this->getName() . "__unit"]];
             } else {
                 return null;
             }
         } else {
-            if ($value instanceof Model\Object\Data\QuantityValue) {
+            if (is_array($value)) {
                 return [
-                    "value" => $value->getValue(),
-                    "value2" => $value->getUnitId()
+                    "value" => $value[$this->getName() . "__value"],
+                    "value2" => $value[$this->getName() . "__unit"]
                 ];
             } else {
                 return [
@@ -448,11 +453,16 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($params["simple"]) {
-            return $value;
-        }
-        if (is_array($value)) {
+        if ($params["blockmode"] && is_array($value)) {
             return new Model\Object\Data\QuantityValue($value["value"], $value["value2"]);
+        }  else if ($params["simple"]) {
+            return $value;
+        } else  if (is_array($value)) {
+            return [
+                $this->getName() . "__value" => $value["value"],
+                $this->getName() . "__unit" => $value["value2"],
+
+            ];
         } else {
             return null;
         }
