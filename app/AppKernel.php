@@ -27,7 +27,9 @@ class AppKernel extends Kernel
         // pimcore bundles
         $bundles = parent::registerBundles();
 
-        $bundles[] = new \AppBundle\AppBundle;
+        if(class_exists("\\AppBundle\\AppBundle")) {
+            $bundles[] = new \AppBundle\AppBundle;
+        }
 
         if (class_exists('\Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle')) {
             $bundles[] = new \Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle;
