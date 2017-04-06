@@ -58,6 +58,15 @@ For bundles, translations should be stored in the `Resources/translations/` dire
 like `Resources/translations/en.yml`, which resolves to the default `messages` translation domain.
 
 
+### Security / Authentication
+
+You can make full use of the [Symfony Security Component](http://symfony.com/doc/current/security.html) by auto loading
+the security configuration as documented above. Best practice is to define the security configuration in a dedicated
+`security.yml` which can be imported from your bundle's `config.yml`.
+
+For further details on security please see [Security](../../09_Development_Tools_and_Details/09_Security.md).
+
+
 ### Events
 
 To hook into core functions you can attach to any event provided by the [Pimcore event manager](../11_Event_API_and_Event_Manager.md).
