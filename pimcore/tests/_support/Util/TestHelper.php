@@ -310,23 +310,19 @@ class TestHelper
                 return [];
             }
 
-            $localeBak = null;
-            if (Runtime::isRegistered('model.locale')) {
-                $localeBak = Runtime::get('model.locale');
-            }
+            $localeService = \Pimcore::getContainer()->get("pimcore.locale");
+            $localeBackup = $localeService->getLocale();
 
             foreach ($data->getItems() as $language => $values) {
                 /** @var ObjectModel\ClassDefinition\Data $nestedFd */
                 foreach ($fd->getFieldDefinitions() as $nestedFd) {
-                    Runtime::set('model.locale', $language);
+                    $localeService->setLocale($language);
                     $lData[$language][$nestedFd->getName()] = self::getComparisonDataForField($nestedFd->getName(), $nestedFd, $object);
                     ;
                 }
             }
 
-            if ($localeBak) {
-                Runtime::set('model.locale', $localeBak);
-            }
+            $localeService->setLocale($localeBackup);
 
             return serialize($lData);
         } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\Data\Link) {

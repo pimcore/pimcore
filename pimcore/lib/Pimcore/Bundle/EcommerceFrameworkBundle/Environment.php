@@ -374,15 +374,7 @@ class Environment implements IEnvironment
     {
         // try to get the language from the service container
         try {
-            $locale = null;
-
-            if (Runtime::isRegistered('model.locale')) {
-                $locale = Runtime::get('model.locale');
-            }
-
-            if (null === $locale) {
-                $locale = $this->localeService->findLocale();
-            }
+            $locale = $this->localeService->findLocale();
 
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;

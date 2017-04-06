@@ -20,7 +20,7 @@ Source Code for `import.php`:
 ```php
 <?php
  
-include("../pimcore/config/startup_cli.php");
+include(__DIR__ . "/../pimcore/config/startup_cli.php");
  
 use \Pimcore\Model\Object;
 

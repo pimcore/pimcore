@@ -18,6 +18,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class Locale
 {
+    /**
+     * @var string
+     */
+    protected $locale;
 
     /**
      * @var null|RequestStack
@@ -97,5 +101,30 @@ class Locale
         }
 
         return $regions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale(): string
+    {
+        if(null === $this->locale) {
+            $this->locale = $this->findLocale();
+        }
+
+        return $this->locale;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale(string $locale)
+    {
+        $this->locale = $locale;
+
+        if ($this->requestStack) {
+            $masterRequest = $this->requestStack->getMasterRequest();
+            $masterRequest->setLocale($locale);
+        }
     }
 }

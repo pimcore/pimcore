@@ -347,7 +347,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         }
 
         $validLanguages = Tool::getValidLanguages();
-        $runtimeCache   = Runtime::getInstance();
+        $localeService = \Pimcore::getContainer()->get("pimcore.locale");
+        $localeBackup = $localeService->getLocale();
 
         if ($validLanguages) {
             foreach ($validLanguages as $language) {
@@ -356,9 +357,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                         continue;
                     }
 
-                    // set locale to runtime cache - will be used in Localizedfield data object
-                    // when trying to find a default locale
-                    $runtimeCache->offsetSet('model.locale', $language);
+                    $localeService->setLocale($language);
 
                     $params["locale"] = $language;
 
@@ -372,9 +371,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     $el->language = $language;
                     $wsData[] = $el;
 
-                    $runtimeCache->offsetUnset('model.locale');
                 }
             }
+
+            $localeService->setLocale($localeBackup);
         }
 
         return $wsData;

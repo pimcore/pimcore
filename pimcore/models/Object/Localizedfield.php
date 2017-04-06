@@ -194,15 +194,7 @@ class Localizedfield extends Model\AbstractModel
 
         // try to get the language from the service container
         try {
-            $locale = null;
-
-            if (Runtime::isRegistered('model.locale')) {
-                $locale = Runtime::get('model.locale');
-            }
-
-            if (null === $locale) {
-                $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
-            }
+            $locale = \Pimcore::getContainer()->get("pimcore.locale")->getLocale();
 
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
