@@ -128,7 +128,7 @@ class Locale
     }
 
     /**
-     * @param string $locale
+     * @param string|null $locale
      */
     public function setLocale($locale)
     {
