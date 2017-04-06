@@ -14,13 +14,8 @@
 
 namespace Pimcore\Routing;
 
-use Pimcore\Config;
-use Pimcore\Http\RequestHelper;
-use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DynamicRequestContext;
-use Pimcore\Routing\Dynamic\DynamicRouteHandler;
-use Pimcore\Service\Document\NearestPathResolver;
-use Pimcore\Service\MvcConfigNormalizer;
+use Pimcore\Routing\Dynamic\DynamicRouteHandlerInterface;
 use Pimcore\Service\Request\SiteResolver;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,18 +30,31 @@ class DynamicRouteProvider implements RouteProviderInterface
     protected $siteResolver;
 
     /**
-     * @var DynamicRouteHandler[]
+     * @var DynamicRouteHandlerInterface[]
      */
     protected $handlers = [];
 
     /**
      * @param SiteResolver $siteResolver
-     * @param DynamicRouteHandler[] $handlers
+     * @param DynamicRouteHandlerInterface[] $handlers
      */
     public function __construct(SiteResolver $siteResolver, array $handlers)
     {
         $this->siteResolver = $siteResolver;
-        $this->handlers     = $handlers;
+
+        foreach ($handlers as $handler) {
+            $this->addHandler($handler);
+        }
+    }
+
+    /**
+     * @param DynamicRouteHandlerInterface $handler
+     */
+    protected function addHandler(DynamicRouteHandlerInterface $handler)
+    {
+        if (!in_array($handler, $this->handlers, true)) {
+            $this->handlers[] = $handler;
+        }
     }
 
     /**

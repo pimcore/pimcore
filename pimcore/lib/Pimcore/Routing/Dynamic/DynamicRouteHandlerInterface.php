@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-interface DynamicRouteHandler
+interface DynamicRouteHandlerInterface
 {
     /**
      * Find the route using the provided route name.
