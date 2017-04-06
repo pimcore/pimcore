@@ -19,7 +19,7 @@
 !legacy/.gitkeep
 !legacy/bundle
 
-/var/
+/var/*
 !/var/.gitkeep
 !/var/classes/
 /var/classes/Object
