@@ -121,7 +121,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                 var tab = new pimcore.plugin.onlineshop.VoucherSeriesTab(object, type);
 
                 object.tab.items.items[1].insert(1, tab.getLayout());
-                object.tab.items.items[1].doLayout();
+                object.tab.items.items[1].updateLayout();
                 pimcore.layout.refresh();
             }
 
