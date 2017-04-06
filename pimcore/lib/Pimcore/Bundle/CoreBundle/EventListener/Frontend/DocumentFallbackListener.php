@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Service\Document\NearestPathResolver;
+use Pimcore\Model\Document;
 use Pimcore\Service\Request\DocumentResolver;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,9 +32,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class DocumentFallbackListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
-     * @var NearestPathResolver
+     * @var Document\Service
      */
-    protected $nearestPathResolver;
+    protected $documentService;
 
     /**
      * @var DocumentResolver
@@ -47,15 +47,15 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
     protected $requestStack;
 
     /**
-     * @param NearestPathResolver $nearestPathResolver
+     * @param Document\Service $documentService
      * @param DocumentResolver $documentResolver
      * @param RequestStack $requestStack
      */
-    public function __construct(NearestPathResolver $nearestPathResolver, DocumentResolver $documentResolver, RequestStack $requestStack)
+    public function __construct(Document\Service $documentService, DocumentResolver $documentResolver, RequestStack $requestStack)
     {
-        $this->nearestPathResolver = $nearestPathResolver;
-        $this->documentResolver    = $documentResolver;
-        $this->requestStack        = $requestStack;
+        $this->documentService  = $documentService;
+        $this->documentResolver = $documentResolver;
+        $this->requestStack     = $requestStack;
     }
 
     /**
@@ -104,7 +104,7 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
         if ($event->isMasterRequest()) {
-            $document = $this->nearestPathResolver->getNearestDocumentByPath($request);
+            $document = $this->documentService->getNearestDocumentByPath($request);
             if ($document) {
                 $this->documentResolver->setDocument($request, $document);
             }

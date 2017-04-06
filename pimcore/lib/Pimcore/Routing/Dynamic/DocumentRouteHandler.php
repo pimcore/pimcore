@@ -21,7 +21,6 @@ use Pimcore\Config;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\DocumentRoute;
-use Pimcore\Service\Document\NearestPathResolver;
 use Pimcore\Service\MvcConfigNormalizer;
 use Pimcore\Service\Request\SiteResolver;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -38,11 +37,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * @var SiteResolver
      */
     private $siteResolver;
-
-    /**
-     * @var NearestPathResolver
-     */
-    private $nearestPathResolver;
 
     /**
      * @var RequestHelper
@@ -62,23 +56,20 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
-     * @param NearestPathResolver $nearestPathResolver
      * @param RequestHelper $requestHelper
      * @param MvcConfigNormalizer $configNormalizer
      */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
-        NearestPathResolver $nearestPathResolver,
         RequestHelper $requestHelper,
         MvcConfigNormalizer $configNormalizer
     )
     {
-        $this->documentService     = $documentService;
-        $this->siteResolver        = $siteResolver;
-        $this->nearestPathResolver = $nearestPathResolver;
-        $this->requestHelper       = $requestHelper;
-        $this->configNormalizer    = $configNormalizer;
+        $this->documentService  = $documentService;
+        $this->siteResolver     = $siteResolver;
+        $this->requestHelper    = $requestHelper;
+        $this->configNormalizer = $configNormalizer;
     }
 
     /**
@@ -142,7 +133,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
         // check for a parent hardlink with childs
         if (!$document instanceof Document) {
-            $hardlinkedParentDocument = $this->nearestPathResolver->getNearestDocumentByPath($context->getPath(), true);
+            $hardlinkedParentDocument = $this->documentService->getNearestDocumentByPath($context->getPath(), true);
             if ($hardlinkedParentDocument instanceof Document\Hardlink) {
                 if ($hardLinkedDocument = Document\Hardlink\Service::getChildByPath($hardlinkedParentDocument, $context->getPath())) {
                     $document = $hardLinkedDocument;

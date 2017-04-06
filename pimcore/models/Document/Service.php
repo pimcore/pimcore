@@ -22,13 +22,13 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
  */
 class Service extends Model\Element\Service
 {
-
     /**
      * @var Model\User
      */
@@ -37,6 +37,11 @@ class Service extends Model\Element\Service
      * @var array
      */
     protected $_copyRecursiveIds;
+
+    /**
+     * @var Document[]
+     */
+    protected $nearestPathCache;
 
     /**
      * @param null $user
@@ -462,5 +467,81 @@ class Service extends Model\Element\Service
         }
 
         return $key;
+    }
+
+    /**
+     * Get the nearest document by path. Used to match nearest document for a static route.
+     *
+     * @param string|Request $path
+     * @param bool $ignoreHardlinks
+     * @param array $types
+     *
+     * @return Document|Document\PageSnippet|null
+     */
+    public function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = [])
+    {
+        if ($path instanceof Request) {
+            $path = urldecode($path->getPathInfo());
+        }
+
+        $cacheKey = $ignoreHardlinks . implode("-", $types);
+        $document = null;
+
+        if (isset($this->nearestPathCache[$cacheKey])) {
+            $document = $this->nearestPathCache[$cacheKey];
+        } else {
+            $paths    = ['/'];
+            $tmpPaths = [];
+
+            $pathParts = explode("/", $path);
+            foreach ($pathParts as $pathPart) {
+                $tmpPaths[] = $pathPart;
+
+                $t = implode("/", $tmpPaths);
+                if (!empty($t)) {
+                    $paths[] = $t;
+                }
+            }
+
+            $paths = array_reverse($paths);
+            foreach ($paths as $p) {
+                if ($document = Document::getByPath($p)) {
+                    if (empty($types) || in_array($document->getType(), $types)) {
+                        $document = $this->nearestPathCache[$cacheKey] = $document;
+                        break;
+                    }
+                } elseif (Model\Site::isSiteRequest()) {
+                    // also check for a pretty url in a site
+                    $site = Model\Site::getCurrentSite();
+
+                    // undo the changed made by the site detection in self::match()
+                    $originalPath = preg_replace("@^" . $site->getRootPath() . "@", "", $p);
+
+                    $sitePrettyDocId = $this->getDao()->getDocumentIdByPrettyUrlInSite($site, $originalPath);
+                    if ($sitePrettyDocId) {
+                        if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                            $document = $this->nearestPathCache[$cacheKey] = $sitePrettyDoc;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($document) {
+            if (!$ignoreHardlinks) {
+                if ($document instanceof Document\Hardlink) {
+                    if ($hardLinkedDocument = Document\Hardlink\Service::getNearestChildByPath($document, $path)) {
+                        $document = $hardLinkedDocument;
+                    } else {
+                        $document = Document\Hardlink\Service::wrap($document);
+                    }
+                }
+            }
+
+            return $document;
+        }
+
+        return null;
     }
 }

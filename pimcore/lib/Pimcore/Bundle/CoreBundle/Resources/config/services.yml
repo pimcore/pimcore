@@ -27,7 +27,6 @@ services:
         arguments:
             - '@pimcore.document_service'
             - '@pimcore.service.request.site_resolver'
-            - '@pimcore.document.nearest_path_resolver'
             - '@pimcore.http.request_helper'
             - '@pimcore.mvc_config_normalizer'
 
@@ -303,10 +302,6 @@ services:
 
     pimcore.http.response_helper:
         class: Pimcore\Http\ResponseHelper
-
-    pimcore.document.nearest_path_resolver:
-        class: Pimcore\Service\Document\NearestPathResolver
-        arguments: ['@pimcore.document_service']
 
     # TODO inject user?
     pimcore.document_service:
