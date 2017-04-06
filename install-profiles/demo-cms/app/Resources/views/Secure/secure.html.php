@@ -11,12 +11,24 @@ $this->extend('layout.html.php');
 $user = $this->app->getUser();
 ?>
 
-<?php if ($user): ?>
-    <div class="alert alert-success">
-        Logged in as User <strong><?= $user->getUsername() ?></strong>. <a href="<?= $this->path('demo_logout') ?>">Log out.</a>
-    </div>
-<?php else: ?>
-    <div class="alert alert-danger">
-        Not logged in. <a href="<?= $this->path('demo_login') ?>">Log in.</a>
-    </div>
-<?php endif; ?>
+<h3><?= $this->admin ? 'Admin' : 'User' ?></h3>
+<p>
+    <?php if ($this->admin): ?>
+        <?= $this->translate("This page can only be seen as logged in admin.") ?>
+    <?php else: ?>
+        <?= $this->translate("This page can only be seen as logged in user.") ?>
+    <?php endif; ?>
+
+    <?= $this->translate("Currently logged in as") ?>
+    <strong>
+        <span class="glyphicon glyphicon-user"></span>
+        <?= $user->getUsername() ?>
+    </strong>
+
+    <?= $this->translate('with roles') ?>
+    <?= implode(', ', $user->getRoles()); ?>
+</p>
+
+<p>
+    <a href="<?= $this->path('demo_logout') ?>" class="btn btn-primary">Logout</a>
+</p>

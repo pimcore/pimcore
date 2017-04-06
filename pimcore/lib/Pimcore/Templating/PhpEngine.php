@@ -41,6 +41,7 @@ use Symfony\Bundle\FrameworkBundle\Templating\Helper\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\StopwatchHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\TranslatorHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
+use Symfony\Bundle\SecurityBundle\Templating\Helper\SecurityHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\Helper\SlotsHelper;
 use Symfony\Component\Templating\Storage\Storage;
@@ -66,6 +67,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method FormHelper form()
  * @method RequestHelper request()
  * @method RouterHelper router()
+ * @method SecurityHelper security()
  * @method SessionHelper session()
  * @method StopwatchHelper stopwatch()
  * @method TranslatorHelper translator()

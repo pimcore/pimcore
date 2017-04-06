@@ -25,6 +25,29 @@ $user = $this->app->getUser();
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu navbar-login" aria-labelledby="loginSelector">
+
+        <?php if ($user): ?>
+
+            <?php
+            /*
+             * Show secure/user and secure/admin links depending on user role. ROLE_ADMIN inherits from ROLE_USER (see
+             * role_hierarchy in security.yml, so the secure_user link is shown for all logged in users.
+             */
+            if ($this->security()->isGranted('ROLE_USER')): ?>
+                <li>
+                    <a href="<?= $this->path('demo_secure_user') ?>"><?= $this->translate('Secure User Page') ?></a>
+                </li>
+            <?php endif; ?>
+
+            <?php if ($this->security()->isGranted('ROLE_ADMIN')): ?>
+                <li>
+                    <a href="<?= $this->path('demo_secure_admin') ?>"><?= $this->translate('Secure Admin Page') ?></a>
+                </li>
+            <?php endif; ?>
+
+            <li role="separator" class="divider"></li>
+        <?php endif; ?>
+
         <li>
             <?php if ($user): ?>
 
