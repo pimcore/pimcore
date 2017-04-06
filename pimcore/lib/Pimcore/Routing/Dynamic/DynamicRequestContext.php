@@ -60,6 +60,14 @@ class DynamicRequestContext
     }
 
     /**
+     * @param Request $request
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    /**
      * @return string
      */
     public function getPath(): string
@@ -68,10 +76,26 @@ class DynamicRequestContext
     }
 
     /**
+     * @param string $path
+     */
+    public function setPath(string $path)
+    {
+        $this->path = $path;
+    }
+
+    /**
      * @return string
      */
     public function getOriginalPath(): string
     {
         return $this->originalPath;
+    }
+
+    /**
+     * @param string $originalPath
+     */
+    public function setOriginalPath(string $originalPath)
+    {
+        $this->originalPath = $originalPath;
     }
 }

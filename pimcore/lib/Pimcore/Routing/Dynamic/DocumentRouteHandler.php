@@ -134,7 +134,7 @@ class DocumentRouteHandler implements DynamicRouteHandler
                     // undo the modification of the path by the site detection (prefixing with site root path)
                     // this is not necessary when using pretty-urls and will cause problems when validating the
                     // prettyUrl later (redirecting to the prettyUrl in the case the page was called by the real path)
-                    $path = $context->getOriginalPath();
+                    $context->setPath($context->getOriginalPath());
                 }
             }
         }

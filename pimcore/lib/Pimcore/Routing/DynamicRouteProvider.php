@@ -62,10 +62,8 @@ class DynamicRouteProvider implements RouteProviderInterface
             $path = $sitePath;
         }
 
-        $context = new DynamicRequestContext($request, $path, $originalPath);
-
         foreach ($this->handlers as $handler) {
-            $handler->matchRequest($collection, $context);
+            $handler->matchRequest($collection, new DynamicRequestContext($request, $path, $originalPath));
         }
 
         return $collection;
