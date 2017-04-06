@@ -1,18 +1,16 @@
 # Security
 
-You can make full use of the [Symfony Security Component](http://symfony.com/doc/current/security.html) to build complex
-security scenarios (authentication/authorization). However, as the Pimcore administration interface and the REST API already
-use the security component for its puropses, a couple of prerequisites need to be considered. As starting point, please
-have a look at the [security.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/security.yml)
+You can make full use of the [Symfony Security Component](http://symfony.com/doc/current/security.html) to handle complex
+authentication/authorization scenarios. However, as the Pimcore administration interface and the REST API already
+use the security component for its puropses, a couple of prerequisites and differences to a standard Symfony application need to be considered. As starting point, please have a look at the [security.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/security.yml)
 defined in the `CoreBundle` to get an idea what Pimcore already defines.
 
 ## Merged security configurations
 
-In contrast to a standard Symfony application, Pimcore allows to merge security configuration together from multiple locations.
-This allows bundles (e.g. a bundle defining its own routes), to define custom security configs which are merged into the 
-global security config. This setup was mainly choosen to make sure the Pimcore admin security config is always loaded, no
-matter what is configured on the application config. Security configs will always be loaded in the following order (this
-also applies to firewalls and `access_control` to make sure the admin interface is always matched first).
+A standard Symfony application requires the security configuration to be defined in one single file. In contrast to that, Pimcore allows to merge security configurations together from multiple locations. This allows bundles (e.g. a bundle defining its own routes), to define custom security configurations for its routes which are then merged into the 
+global security configuration.
+This setup was mainly choosen to make sure the Pimcore admin security configuration is always loaded and can be extended by the application specific configuration which is defined by bundles and your application logic. Security configurations will always be loaded in the following order (this
+also applies to firewalls and `access_control` to make sure the admin interface is always matched first):
 
 * admin
 * any security configuration which was auto-loaded from bundle configs (see [auto loading config files](../10_Extending_Pimcore/13_Bundle_Developers_Guide/03_Auto_Loading_Config_And_Routing_Definitions.md))
@@ -47,7 +45,7 @@ security:
         ...
 ```
 
-As result of the predefined admin security config, please consider the following caveats:
+As result of this merging logic, please consider the following caveats:
 
 * always specify the `provider` entry for your firewall as otherwise the `pimcore_admin` provider will be used which is
   probably not what you want
