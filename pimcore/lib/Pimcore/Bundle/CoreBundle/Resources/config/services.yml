@@ -107,6 +107,16 @@ services:
       class: Pimcore\Log\Handler\ApplicationLoggerDb
 
     #
+    # INFRASTRUCTURE
+    #
+
+    # creates needed pimcore directories
+    pimcore.cache_warmer.mkdir:
+        class: Pimcore\CacheWarmer\MkdirCacheWarmer
+        tags:
+            - { name: kernel.cache_warmer }
+
+    #
     # RUNTIME CACHE
     #
 
