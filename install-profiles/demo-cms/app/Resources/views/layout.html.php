@@ -127,8 +127,10 @@ use Pimcore\Model\Document\Page;
 
     <div id="content" class="container">
         <?php
+        $hideLeftNav = $document->getProperty('leftNavHide') || $this->getViewParameter('hideLeftNav', false);
+
         $mainColClass = 'col-md-9 col-md-push-3';
-        if ($document->getProperty('leftNavHide')) {
+        if ($hideLeftNav) {
             $mainColClass = 'col-md-12';
         }
         ?>
@@ -142,7 +144,7 @@ use Pimcore\Model\Document\Page;
             </div>
         </div>
 
-        <?php if (!$document->getProperty('leftNavHide')): ?>
+        <?php if (!$hideLeftNav): ?>
             <div class="col-md-3 col-md-pull-9 sidebar">
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
                     <?php

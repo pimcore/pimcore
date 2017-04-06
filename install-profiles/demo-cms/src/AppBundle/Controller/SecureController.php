@@ -18,6 +18,7 @@ class SecureController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return [
+            'hideLeftNav'  => true,
             'lastUsername' => $lastUsername,
             'error'        => $error,
         ];
