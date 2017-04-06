@@ -85,7 +85,13 @@ class MaintenancePageListener
         if (is_file($file)) {
             $conf = include($file);
             if (isset($conf["sessionId"])) {
-                if ($conf["sessionId"] != Session::getSessionIdFromRequest($event->getRequest())) {
+                try {
+                    $requestSessionId = Session::getSessionIdFromRequest($event->getRequest());
+                } catch(\Exception $e) {
+                    $requestSessionId = null;
+                }
+
+                if ($conf["sessionId"] != $requestSessionId) {
                     $maintenance = true;
                 }
             } else {
