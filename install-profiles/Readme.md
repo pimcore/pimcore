@@ -3,25 +3,14 @@
 
 This example uses the profile `demo-cms`, so for other profiles you may change the commands below accordingly. 
 
-## Modify your `constants.php`
-```php
-define("PIMCORE_APP_ROOT", realpath(__DIR__ . "/../install-profiles/demo-cms/app"));
-define("PIMCORE_ASSET_DIRECTORY", realpath(__DIR__ . "/../install-profiles/demo-cms/web/var/assets"));
-define('PIMCORE_APP_BUNDLE_CLASS_FILE', __DIR__ . "/../install-profiles/demo-cms/src/AppBundle/AppBundle.php");
-```
 
 ## Create the following symlinks
 ```
-ln -sr app/config/* install-profiles/demo-cms/app/config/
-ln -sr install-profiles/demo-cms/app/config/parameters.example.yml install-profiles/demo-cms/app/config/parameters.yml
-ln -sr app/*.php install-profiles/demo-cms/app/
+ln -sr app/config/parameters.example.yml app/config/parameters.yml
+ln -sr install-profiles/demo-cms/app/Resources/views app/Resources/views
+ln -sr install-profiles/demo-cms/src/AppBundle src/AppBundle
+ln -sr install-profiles/demo-cms/web/var web/var 
+ln -sr install-profiles/demo-cms/var/* var/
 ln -sr install-profiles/demo-cms/web/static/ web/static
 ```
-
-
-
-ln -s ../../install-profiles/demo-cms/app/Resources/views
-ln -s ../install-profiles/demo-cms/src/AppBundle
-ln -s ../install-profiles/demo-cms/web/var
-ln -s ../install-profiles/demo-cms/var/* ./
 
