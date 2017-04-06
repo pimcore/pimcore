@@ -167,7 +167,7 @@ class RedirectHandler implements LoggerAwareInterface
      */
     private function getRedirects()
     {
-        if (null !== $this->redirects) {
+        if (null !== $this->redirects && is_array($this->redirects)) {
             return $this->redirects;
         }
 
@@ -181,6 +181,14 @@ class RedirectHandler implements LoggerAwareInterface
             $this->redirects = $list->load();
 
             Cache::save($this->redirects, $cacheKey, ["system", "redirect", "route"], null, 998);
+        }
+
+        if (!is_array($this->redirects)) {
+            $this->logger->warning('Failed to load redirects', [
+                'redirects' => $this->redirects
+            ]);
+
+            $this->redirects = [];
         }
 
         return $this->redirects;
