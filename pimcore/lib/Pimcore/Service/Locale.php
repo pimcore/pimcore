@@ -54,12 +54,8 @@ class Locale
      */
     public function findLocale()
     {
-        if ($this->requestStack) {
-            $masterRequest = $this->requestStack->getMasterRequest();
-
-            if ($masterRequest) {
-                return $masterRequest->getLocale();
-            }
+        if($requestLocale = $this->getLocaleFromRequest()) {
+            return $requestLocale;
         }
 
         $defaultLocale = \Pimcore\Tool::getDefaultLanguage();
@@ -68,6 +64,21 @@ class Locale
         }
 
         return "";
+    }
+
+    /**
+     * @return null|string
+     */
+    protected function getLocaleFromRequest() {
+        if ($this->requestStack) {
+            $masterRequest = $this->requestStack->getMasterRequest();
+
+            if ($masterRequest) {
+                return $masterRequest->getLocale();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -109,7 +120,7 @@ class Locale
     public function getLocale(): string
     {
         if(null === $this->locale) {
-            $this->locale = $this->findLocale();
+            $this->locale = $this->getLocaleFromRequest();
         }
 
         return $this->locale;
@@ -126,5 +137,12 @@ class Locale
             $masterRequest = $this->requestStack->getMasterRequest();
             $masterRequest->setLocale($locale);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLocale() {
+        return $this->getLocale() !== null;
     }
 }
