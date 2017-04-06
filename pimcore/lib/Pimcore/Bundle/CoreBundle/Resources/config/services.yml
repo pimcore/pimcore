@@ -14,20 +14,25 @@ services:
     # ROUTING
     #
 
-    pimcore.routing_loader.bundle_routes:
-        class: Pimcore\Routing\Loader\BundleRoutingLoader
-        arguments: ['@pimcore.bundle_config_locator']
-        tags:
-            - { name: routing.loader }
-
-    pimcore.routing.redirect_handler:
-        class: Pimcore\Routing\RedirectHandler
+    # route provider for the CMF dynamic router
+    pimcore.routing.dynamic.route_provider:
+        class: Pimcore\Routing\DynamicRouteProvider
+        arguments: ['@pimcore.service.request.site_resolver']
         calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: routing }
+            - [addHandler, ['@pimcore.routing.dynamic.document_route_handler']]
 
-    pimcore.router.staticroute:
+    # specific document related dynamic routing handling
+    pimcore.routing.dynamic.document_route_handler:
+        class: Pimcore\Routing\Dynamic\DocumentRouteHandler
+        arguments:
+            - '@pimcore.document_service'
+            - '@pimcore.service.request.site_resolver'
+            - '@pimcore.document.nearest_path_resolver'
+            - '@pimcore.http.request_helper'
+            - '@pimcore.mvc_config_normalizer'
+
+    # dedicated router for static routes
+    pimcore.routing.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
         arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
         calls:
@@ -36,14 +41,20 @@ services:
             - { name: router, priority: 100 }
             - { name: monolog.logger, channel: routing }
 
-    pimcore.router.dynamic_route_provider:
-        class: Pimcore\Routing\DynamicRouteProvider
-        arguments:
-            - '@pimcore.document_service'
-            - '@pimcore.service.request.site_resolver'
-            - '@pimcore.document.nearest_path_resolver'
-            - '@pimcore.http.request_helper'
-            - '@pimcore.mvc_config_normalizer'
+    # routing loader for bundle routing auto loading
+    pimcore.routing.loader.bundle_routes:
+        class: Pimcore\Routing\Loader\BundleRoutingLoader
+        arguments: ['@pimcore.bundle_config_locator']
+        tags:
+            - { name: routing.loader }
+
+    # redirect handler used to handle redirects before/after routing
+    pimcore.routing.redirect_handler:
+        class: Pimcore\Routing\RedirectHandler
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: routing }
 
     #
     # SESSION

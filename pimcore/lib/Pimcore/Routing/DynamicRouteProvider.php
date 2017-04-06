@@ -38,7 +38,7 @@ class DynamicRouteProvider implements RouteProviderInterface
      * @param SiteResolver $siteResolver
      * @param DynamicRouteHandlerInterface[] $handlers
      */
-    public function __construct(SiteResolver $siteResolver, array $handlers)
+    public function __construct(SiteResolver $siteResolver, array $handlers = [])
     {
         $this->siteResolver = $siteResolver;
 
@@ -50,7 +50,7 @@ class DynamicRouteProvider implements RouteProviderInterface
     /**
      * @param DynamicRouteHandlerInterface $handler
      */
-    protected function addHandler(DynamicRouteHandlerInterface $handler)
+    public function addHandler(DynamicRouteHandlerInterface $handler)
     {
         if (!in_array($handler, $this->handlers, true)) {
             $this->handlers[] = $handler;
