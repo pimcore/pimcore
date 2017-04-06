@@ -110,10 +110,14 @@ use Pimcore\Model\Document\Page;
                         'ulClass'  => 'nav navbar-nav'
                     ]);
                     ?>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <?= $this->template('Includes/login.html.php'); ?>
+                        <?= $this->template('Includes/language.html.php'); ?>
+                    </ul>
+
                 </div>
             </div>
-
-            <?= $this->template('Includes/language.html.php'); ?>
         </div>
     </div>
 </div>

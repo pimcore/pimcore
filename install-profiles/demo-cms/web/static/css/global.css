@@ -32,6 +32,11 @@ body {
     list-style: none !important; /* IE FIX */
 }
 
+@media (min-width: 768px) {
+    .navbar-right {
+        margin-right: 15px;
+    }
+}
 
 /* Featurettes
 ------------------------- */
