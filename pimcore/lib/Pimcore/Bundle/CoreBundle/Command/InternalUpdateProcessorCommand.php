@@ -48,7 +48,7 @@ class InternalUpdateProcessorCommand extends AbstractCommand
                     // do not do anything here
                     Logger::info("skipped update job because it is in dry-run mode", $job);
                 } elseif ($job["type"] == "files") {
-                    Update::installData($job["revision"]);
+                    Update::installData($job["revision"], $job["updateScript"]);
                 } elseif ($job["type"] == "clearcache") {
                     \Pimcore\Cache::clearAll();
                 } elseif ($job["type"] == "preupdate") {

@@ -115,7 +115,7 @@ class IndexController extends AdminController implements EventedControllerInterf
         $status = ["success" => true];
 
         if ($request->get("type") == "files") {
-            Update::installData($request->get("revision"));
+            Update::installData($request->get("revision"), $request->get("updateScript"));
         } elseif ($request->get("type") == "clearcache") {
             \Pimcore\Cache::clearAll();
             \Pimcore\Tool::clearSymfonyCache($this->container);

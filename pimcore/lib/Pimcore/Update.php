@@ -174,7 +174,8 @@ class Update
 
             $jobs["procedural"][] = [
                 "type" => "files",
-                "revision" => $revision
+                "revision" => $revision,
+                "updateScript" => json_encode(isset($updateScripts[$revision]["update"]))
             ];
 
             if (in_array($revision, $composerUpdateRevisions)) {
@@ -270,7 +271,7 @@ class Update
     /**
      * @param $revision
      */
-    public static function installData($revision)
+    public static function installData($revision, $updateScript)
     {
         $db = Db::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", [$revision]);
@@ -317,6 +318,12 @@ class Update
                 }
             }
         }
+
+        // run update script
+        if($updateScript == "true") {
+            self::executeScript($revision, "update");
+        }
+
 
         self::clearOPCaches();
     }
