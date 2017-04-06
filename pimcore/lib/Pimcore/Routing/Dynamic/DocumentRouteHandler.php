@@ -24,8 +24,7 @@ use Pimcore\Routing\DocumentRoute;
 use Pimcore\Service\Document\NearestPathResolver;
 use Pimcore\Service\MvcConfigNormalizer;
 use Pimcore\Service\Request\SiteResolver;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
 class DocumentRouteHandler implements DynamicRouteHandlerInterface
@@ -112,6 +111,8 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
                 return $this->buildRouteForDocument($document);
             }
         }
+
+        throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
     /**
