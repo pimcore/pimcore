@@ -108,7 +108,7 @@ class DocumentRouteHandler implements DynamicRouteHandler
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);
 
-            if ($this->isDirectRouteDocument($document) && $this->handleDocument($document)) {
+            if ($this->isDirectRouteDocument($document) && $this->isDocumentSupported($document)) {
                 return $this->buildRouteForDocument($document);
             }
         }
@@ -176,7 +176,7 @@ class DocumentRouteHandler implements DynamicRouteHandler
         }
 
         // check if document should be handled (not legacy)
-        if (!$this->handleDocument($document)) {
+        if (!$this->isDocumentSupported($document)) {
             return null;
         }
 
@@ -194,23 +194,42 @@ class DocumentRouteHandler implements DynamicRouteHandler
 
         if ($this->isDirectRouteDocument($document)) {
             /** @var Document\PageSnippet $document */
-            $route = $this->buildRouteForDirectRouteDocument($document, $route, $context);
+            $route = $this->handleDirectRouteDocument($document, $route, $context);
         } else if ($document->getType() === 'link') {
             /** @var Document\Link $document */
-            $route = $this->buildRouteForLinkDocument($document, $route);
+            $route = $this->handleLinkDocument($document, $route);
         }
 
         return $route;
     }
 
     /**
+     * Handle route params for link document
+     *
+     * @param Document\Link $document
+     * @param DocumentRoute $route
+     *
+     * @return DocumentRoute
+     */
+    private function handleLinkDocument(Document\Link $document, DocumentRoute $route)
+    {
+        $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
+        $route->setDefault('path', $document->getHref());
+        $route->setDefault('permanent', true);
+
+        return $route;
+    }
+
+    /**
+     * Handle direct route documents (not link)
+     *
      * @param Document\PageSnippet $document
      * @param DocumentRoute $route
      * @param DynamicRequestContext|null $context
      *
      * @return DocumentRoute|null
      */
-    private function buildRouteForDirectRouteDocument(
+    private function handleDirectRouteDocument(
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
@@ -225,6 +244,7 @@ class DocumentRouteHandler implements DynamicRouteHandler
         }
 
         if (!$isAdminRequest && null !== $context) {
+            // check for redirects (pretty URL, SEO) when not in admin mode and while matching (not generating route)
             if ($redirectRoute = $this->handleDirectRouteRedirect($document, $route, $context)) {
                 return $redirectRoute;
             }
@@ -234,6 +254,8 @@ class DocumentRouteHandler implements DynamicRouteHandler
     }
 
     /**
+     * Handle document redirects (pretty url, SEO without trailing slash)
+     *
      * @param Document\PageSnippet $document
      * @param DocumentRoute $route
      * @param DynamicRequestContext|null $context
@@ -296,6 +318,14 @@ class DocumentRouteHandler implements DynamicRouteHandler
         }
     }
 
+    /**
+     * Handle page snippet route (controller, action, view)
+     *
+     * @param Document\PageSnippet $document
+     * @param DocumentRoute $route
+     *
+     * @return DocumentRoute
+     */
     private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route)
     {
         $controller = $this->configNormalizer->formatController(
@@ -310,15 +340,6 @@ class DocumentRouteHandler implements DynamicRouteHandler
             $template = $this->configNormalizer->normalizeTemplate($document->getTemplate());
             $route->setDefault('_template', $template);
         }
-
-        return $route;
-    }
-
-    private function buildRouteForLinkDocument(Document\Link $document, DocumentRoute $route)
-    {
-        $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
-        $route->setDefault('path', $document->getHref());
-        $route->setDefault('permanent', true);
 
         return $route;
     }
@@ -341,15 +362,13 @@ class DocumentRouteHandler implements DynamicRouteHandler
         return false;
     }
 
-    // TODO remove - this is just for testing. Overrides all documents with symfony mode
-    // (allows to test symfony rendering without having to touch all documents)
-    // controller = foo, action = bar becomes AppBundle:Foo:bar
-    private function handleDocument(Document $document)
+    /**
+     * @param Document $document
+     *
+     * @return bool
+     */
+    private function isDocumentSupported(Document $document)
     {
-        if ($document->doRenderWithLegacyStack()) {
-            return false;
-        }
-
-        return true;
+        return !$document->doRenderWithLegacyStack();
     }
 }
