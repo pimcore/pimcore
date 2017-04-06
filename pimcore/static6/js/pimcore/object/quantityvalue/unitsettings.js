@@ -139,6 +139,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                 pageSize: itemsPerPage
             },
             remoteSort: true,
+            remoteFilter: true,
             autoSync: true,
             listeners: {
                 update: function() {
@@ -162,7 +163,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: ['gridfilters', this.cellEditing],
+            plugins: ['pimcore.gridfilters', this.cellEditing],
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,
