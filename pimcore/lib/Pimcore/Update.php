@@ -320,7 +320,7 @@ class Update
         }
 
         // run update script
-        if($updateScript == "true") {
+        if ($updateScript == "true") {
             self::executeScript($revision, "update");
         }
 

@@ -64,8 +64,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
         MvcConfigNormalizer $configNormalizer
-    )
-    {
+    ) {
         $this->documentService  = $documentService;
         $this->siteResolver     = $siteResolver;
         $this->requestHelper    = $requestHelper;
@@ -187,7 +186,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         if ($this->isDirectRouteDocument($document)) {
             /** @var Document\PageSnippet $document */
             $route = $this->handleDirectRouteDocument($document, $route, $context);
-        } else if ($document->getType() === 'link') {
+        } elseif ($document->getType() === 'link') {
             /** @var Document\Link $document */
             $route = $this->handleLinkDocument($document, $route);
         }
@@ -225,8 +224,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
-    )
-    {
+    ) {
         // if we have a request we're currently in match mode (not generating URLs) -> only match when frontend request by admin
         $isAdminRequest = null !== $context && $this->requestHelper->isFrontendRequestByAdmin($context->getRequest());
 
@@ -258,8 +256,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
-    )
-    {
+    ) {
         $redirectTargetUrl = $context->getOriginalPath();
 
         // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url

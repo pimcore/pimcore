@@ -370,7 +370,6 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     }
                     $el->language = $language;
                     $wsData[] = $el;
-
                 }
             }
 

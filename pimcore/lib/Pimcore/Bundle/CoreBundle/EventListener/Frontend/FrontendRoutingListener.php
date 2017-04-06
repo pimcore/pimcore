@@ -59,8 +59,7 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
         RequestHelper $requestHelper,
         RedirectHandler $redirectHandler,
         SiteResolver $siteResolver
-    )
-    {
+    ) {
         $this->requestHelper   = $requestHelper;
         $this->redirectHandler = $redirectHandler;
         $this->siteResolver    = $siteResolver;

@@ -87,7 +87,7 @@ class MaintenancePageListener
             if (isset($conf["sessionId"])) {
                 try {
                     $requestSessionId = Session::getSessionIdFromRequest($event->getRequest());
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     $requestSessionId = null;
                 }
 

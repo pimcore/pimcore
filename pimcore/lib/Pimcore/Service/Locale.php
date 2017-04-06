@@ -54,7 +54,7 @@ class Locale
      */
     public function findLocale()
     {
-        if($requestLocale = $this->getLocaleFromRequest()) {
+        if ($requestLocale = $this->getLocaleFromRequest()) {
             return $requestLocale;
         }
 
@@ -69,7 +69,8 @@ class Locale
     /**
      * @return null|string
      */
-    protected function getLocaleFromRequest() {
+    protected function getLocaleFromRequest()
+    {
         if ($this->requestStack) {
             $masterRequest = $this->requestStack->getMasterRequest();
 
@@ -119,7 +120,7 @@ class Locale
      */
     public function getLocale()
     {
-        if(null === $this->locale) {
+        if (null === $this->locale) {
             $this->locale = $this->getLocaleFromRequest();
         }
 
@@ -142,7 +143,8 @@ class Locale
     /**
      * @return bool
      */
-    public function hasLocale() {
+    public function hasLocale()
+    {
         return $this->getLocale() !== null;
     }
 }
