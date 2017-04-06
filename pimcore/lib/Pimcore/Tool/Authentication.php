@@ -30,6 +30,7 @@ class Authentication
      */
     public static function authenticatePlaintext($username, $password)
     {
+        /** @var User $user */
         $user = User::getByName($username);
 
         // user needs to be active, needs a password and an ID (do not allow system user to login, ...)
