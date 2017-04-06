@@ -136,9 +136,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                     update  : this.dataUrl + "xaction=update",
                     destroy : this.dataUrl + "xaction=destroy"
                 },
-                extraParams: {
-                    limit: itemsPerPage
-                }
+                pageSize: itemsPerPage
             },
             remoteSort: true,
             autoSync: true,
