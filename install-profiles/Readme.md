@@ -17,3 +17,11 @@ ln -sr install-profiles/demo-cms/app/config/parameters.example.yml install-profi
 ln -sr app/*.php install-profiles/demo-cms/app/
 ln -sr install-profiles/demo-cms/web/static/ web/static
 ```
+
+
+
+ln -s ../../install-profiles/demo-cms/app/Resources/views
+ln -s ../install-profiles/demo-cms/src/AppBundle
+ln -s ../install-profiles/demo-cms/web/var
+ln -s ../install-profiles/demo-cms/var/* ./
+
