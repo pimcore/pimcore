@@ -75,6 +75,12 @@ of Pimcore 5.
 The EcommerceFramework Plugin is now integrated into Pimcore 5 core. To migrate ecommerce applications that use the old 
 EcommerceFramework Plugin (latest release), following additional steps are needed: 
 - Remove `EcommerceFramework` Plugin from `/legacy/plugins` folder.
+- Add following lines to the `extensions.php`
+```php 
+    "bundle" => [
+        "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => TRUE,
+    ]
+```
 - Move `OnlineShopConfig.php` (and all sub files) to `/app/config/pimcore`. 
 - Modify `OnlineShopConfig.php`: 
    - change `defaultlocale` to `defaultCurrency` and enter ISO code of currency.
@@ -119,3 +125,5 @@ RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommercefram
 
 <?php } else if ($form instanceof \Zend_Form) { ?>
 ```
+- run additional `composer update` in order to update symlinks in `web/bundles` folder
+- migrate content of `app/config/pimcore/di.php` to `app/config/config.yml`, see [Overriding Models](../../../10_Extending_Pimcore/03_Overriding_Models.md) for details. 
