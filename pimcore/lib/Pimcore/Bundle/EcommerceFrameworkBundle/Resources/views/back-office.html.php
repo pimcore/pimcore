@@ -30,7 +30,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Online-Shop Back Office</title>
+    <title>Ecommerce Framework Back Office</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
     <div class="container">
 
         <div class="navbar-header">
-            <a href="#" class="navbar-brand dropdown-toggle"><span class="glyphicon glyphicon-shopping-cart"></span> Online-Shop Back Office</span></a>
+            <a href="#" class="navbar-brand dropdown-toggle"><span class="glyphicon glyphicon-shopping-cart"></span> Ecommerce Framework Back Office</span></a>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -73,7 +73,7 @@
 
                         <?php $route = "pimcore_ecommerce_backend_admin-" . $controller . "_" . $action ?>
                     <li class="<?= $currentRouteName == $route ? 'active' : '' ?>">
-                        <a href="<?= $this->path($route); ?>"><?= $this->translateAdmin('online-shop.back-office.' . $controller.'-'.$action) ?></a>
+                        <a href="<?= $this->path($route); ?>"><?= $this->translateAdmin('bundle_ecommerce.back-office.' . $controller.'-'.$action) ?></a>
                     </li>
                     <?php } ?>
                 <?php } ?>

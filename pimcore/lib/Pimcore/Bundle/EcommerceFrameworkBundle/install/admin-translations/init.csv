@@ -1,69 +1,104 @@
-"key";"creationDate";"modificationDate";"de";"de_AT";"en";"en_GB";"fr_FR"
-"bundle_ecommerce_voucherservice_apply-filter-button";1432278859;1432279698;"Filter anwenden";"";"Apply filter";"";""
-"bundle_ecommerce_voucherservice_assign-config";1432279837;1432280179;"Konfiguration anwenden";"";"Assign Configurations";"";""
-"bundle_ecommerce_voucherservice_cleanup-button";1432278733;1432279686;"Tokens aufräumen";"";"Cleanup";"";""
-"bundle_ecommerce_voucherservice_cleanup-reservations-button";1432278872;1432279655;"Reservierungen aufheben";"";"Cleanup Reservations";"";""
-"bundle_ecommerce_voucherservice_export-button";1432278742;1432279638;"CSV Export";"";"Export CSV";"";""
-"bundle_ecommerce_voucherservice_filter-from-date";1432278822;1432279629;"Erstellung von ";"";"Creation from";"";""
-"bundle_ecommerce_voucherservice_filter-headline";1432278808;1432279622;"Filtern nach";"";"Filter by";"";""
-"bundle_ecommerce_voucherservice_filter-length";1432278845;1432279616;"Länge";"";"Length";"";""
-"bundle_ecommerce_voucherservice_filter-to-date";1432278832;1432279613;"zu";"";"to";"";""
-"bundle_ecommerce_voucherservice_filter-token";1432278814;1432279603;"Token";"";"Token";"";""
-"bundle_ecommerce_voucherservice_filter-usages";1432278838;1432279599;"Verwendungen";"";"usages";"";""
-"bundle_ecommerce_voucherservice_generate-button";1432278727;1432279587;"Generieren";"";"Generate";"";""
-"bundle_ecommerce_voucherservice_modal_assign-headline";1432395845;1432395923;"Konfiguration auf Tokens übernehmen";"";"Apply configuration to Tokens";"";""
-"bundle_ecommerce_voucherservice_modal_assign-infotext";1432282107;1432282131;"Konfiguration wird übernommen, bitte warten.";"";"Updating token settings, please wait. This can take some seconds.";"";""
-"bundle_ecommerce_voucherservice_modal_assign-submit";1432395879;1432395929;"Übernehmen";"";"Apply";"";""
-"bundle_ecommerce_voucherservice_modal_cancel";1432281018;1432281026;"Abbrechen";"";"Cancel";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-both-checkbox";1432305348;1432305355;"Alle";"";"Both";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-headline";1432280978;1432303670;"Tokens nach Kriterien entfernen";"";"Remove tokens by condition";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-infotext";1432281005;1432303519;"VORSICHT: Der Aufräum Vorgang wird Token in dieser Serie entfernen, um die Leistung für die Generierung neuer Token zu verbessern.";"";"USE WITH CARE: The Cleanup will remove tokens in your series, to improve performance for creating new tokens.";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-loadingtext";1432306569;1432306594;"Bitte warten, Tokens werden aufgeräumt.";"";"Please wait, tokens are getting cleaned up.";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-older-than";1432280999;1432303169;"Älter als";"";"Older than";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-reservations-headline";1432282285;1432282666;"Reservierungen entfernen";"";"Remove Reservations";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-reservations-infotext";1432282811;1432282904;"Der Cleanup wird Token Reservierungen , die älter als als die angegebene Dauer sind entfernen.";"";"The Cleanup will remove token reservations that are older than than the specified duration. ";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-reservations-olderthan-x-minutes";1432282802;1432282924;"Älter als x Minuten";"";"Older than x minutes";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-reservations-submit";1432282817;1432282838;"Aufräumen";"";"Cleanup";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-submit-button";1432281011;1432303609;"Tokens entfernen";"";"Remove Tokens";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-unused-checkbox";1432280993;1432303552;"nicht eingelöst";"";"Unsed";"";""
-"bundle_ecommerce_voucherservice_modal_cleanup-used-checkbox";1432280987;1432303555;"bereits eingelöst";"";"Used";"";""
-"bundle_ecommerce_voucherservice_modal_generate-headline";1432281656;1432282691;"Neue Tokens generieren";"";"Generate new tokens";"";""
-"bundle_ecommerce_voucherservice_modal_generate-infotext";1432281892;1432281949;"Codes werden generiert, bitte warten. Dies kann einige Minuten dauern.";"";"Generating Codes, please wait. This can take some minutes.";"";""
-"bundle_ecommerce_voucherservice_modal_generate-submit-button";1432285782;1432285798;"Token generieren";"";"Generate";"";""
-"bundle_ecommerce_voucherservice_msg-error-cleanup-checkbox-missing";1432287265;1432287360;"Bitte wählen Sie aus welche Token sie endgültig entfernen möchten.";"";"You have to select which tokens you want to remove.";"";""
-"bundle_ecommerce_voucherservice_msg-error-cleanup-reservations";1432283682;1432283718;"Error, Reservierungen konnten nicht aufgeräumt werden.";"";"Error, reservations could not be cleaned up.";"";""
-"bundle_ecommerce_voucherservice_msg-error-cleanup-reservations-duration-missing";1432283736;1432283778;"Sie müssen eine Dauer spezifizieren um die Tokenreservierungen aufräumen zu können.";"";"Please specify a duration for cleaning up the reservations.";"";""
-"bundle_ecommerce_voucherservice_msg-error-config-missing";1432633788;1432633884;"Um das Gutscheinsystem verwenden zu können, muss zuerst die Konfiguration zugewiesen und gespeichert werden.";"";"You have to specify and save the configurations before using the voucher token manager.";"";""
-"bundle_ecommerce_voucherservice_msg-error-generation";1432284023;1432284098;"Token konnten nicht generiert werden, bitte passen sie die Konfigurationsparameter entsprechend an.";"";"Token generation not possible, please adjust your parameters in the edit tab, or clean up your tokens.";"";""
-"bundle_ecommerce_voucherservice_msg-error-overwrite-single";1432285604;1432285673;"Mit dieser Operation überschreiben sie ihren aktuellen Single-Token, bitte überprüfen Sie ihre Einstellungen.";"";"With this operation you will overwrite your current single token, please check your settings!";"";""
-"bundle_ecommerce_voucherservice_msg-error-required-missing";1432305750;1432305863;"Benötigtes Formularfeld wurde nicht ausgefüllt.";"";"Required field is missing.";"";""
-"bundle_ecommerce_voucherservice_msg-error-token-noresult";1432283904;1432283940;"Es konnten keine Token gefunden werden.";"";"No tokens could be found.";"";""
-"bundle_ecommerce_voucherservice_msg-error-unknown";1432283592;1432283634;"Error, ein unbekannter Fehler ist aufgetreten.";"";"Error, something went wrong.";"";""
-"bundle_ecommerce_voucherservice_msg-success-cleanup";1432306015;1432306043;"Tokens wurden erfolgreich aufgeräumt.";"";"Successfully cleaned up your tokens.";"";""
-"bundle_ecommerce_voucherservice_msg-success-cleanup-reservations";1432283645;1432283675;"Token Reservierungen erfolgreich aufgeräumt.";"";"Successfully cleaned up your token reservations.";"";""
-"bundle_ecommerce_voucherservice_msg-success-generation";1432283510;1432283586;"Neue Token wurden erfolgreich generiert.";"";"Successfully generated new Tokens.";"";""
-"bundle_ecommerce_voucherservice_paging-next";1432280722;1432280732;"Vor";"";"Next";"";""
-"bundle_ecommerce_voucherservice_paging-previous";1432280737;1432280747;"Zurück";"";"Previous";"";""
-"bundle_ecommerce_voucherservice_result-text";1432278755;1432279579;" Ergebnisse gefunden.";"";" results found.";"";""
-"bundle_ecommerce_voucherservice_settings-count";1432285420;1432285458;"Anzahl";"";"Count";"";""
-"bundle_ecommerce_voucherservice_settings-exampletoken";1432285446;1432285471;"Beispiel Token";"";"Example token";"";""
-"bundle_ecommerce_voucherservice_settings-length";1432285440;1432285464;"Länge";"";"Length";"";""
-"bundle_ecommerce_voucherservice_settings-max-usages";1432285544;1432285557;"Maximale Verwendungen";"";"Max Usages";"";""
-"bundle_ecommerce_voucherservice_settings-prefix";1432285435;1432285454;"Prefix";"";"Prefix";"";""
-"bundle_ecommerce_voucherservice_settings-token";1432285539;1432285549;"Token";"";"Token";"";""
-"bundle_ecommerce_voucherservice_tab-manager";1432220990;1432279432;"Token-Verwaltung";"";"Manager";"";""
-"bundle_ecommerce_voucherservice_tab-manager-headline";1432278709;1432279821;"Voucherservice Token Verwaltung";"";"Voucherservice Token Manager";"";""
-"bundle_ecommerce_voucherservice_tab-statistics";1432221026;1432277654;"Statistik Daten";"";"Statistics";"";""
-"bundle_ecommerce_voucherservice_tab-statistics-headline";1432278865;1432280005;"Statistiken";"";"Data and Statistics";"";""
-"bundle_ecommerce_voucherservice_table-date";1432278791;1432279479;"Erstellungsdatum";"";"Creation Date";"";""
-"bundle_ecommerce_voucherservice_table-length";1432278784;1432279484;"Länge";"";"Length";"";""
-"bundle_ecommerce_voucherservice_table-token";1432278770;1432279488;"Token";"";"Token";"";""
-"bundle_ecommerce_voucherservice_table-usages";1432278778;1432279494;"Verwendungen";"";"Usages";"";""
-"bundle_ecommerce_voucherservice_token-free";1432279348;1432279714;"Frei";"";"Free";"";""
-"bundle_ecommerce_voucherservice_token-overall";1432278883;1432279502;"Gesamt";"";"Overall";"";""
-"bundle_ecommerce_voucherservice_token-overview-headline";1432278749;1432279509;"Übersicht";"";"Token Overview";"";""
-"bundle_ecommerce_voucherservice_token-reserved";1432279339;1432279711;"Reserviert";"";"Reserved";"";""
-"bundle_ecommerce_voucherservice_token-statistic-headline";1432278878;1432279978;"Token Statistiken";"";"Token Statistics";"";""
-"bundle_ecommerce_voucherservice_token-used";1432279326;1432279707;"Eingelöst";"";"Used";"";""
-"bundle_ecommerce_voucherservice_tokens-per-page";1432278761;1432279568;"Ergebnisse pro Seite";"";"Tokens per page: ";"";""
-"bundle_ecommerce_voucherservice_usage-headline";1432279356;1432279740;"Verwendungs-Statistik";"";"Usage Statistics";"";""
+"key";"de";"en"
+"bundle_ecommerce.back-office.order";"";"Order";
+"bundle_ecommerce.back-office.order-list";"";"Orderlist";
+"bundle_ecommerce.back-office.order-list.filter-date.from";"";"Date from";
+"bundle_ecommerce.back-office.order-list.filter-order";"";"Order";
+"bundle_ecommerce.back-office.order-list.filter-pricing-rules";"";"Pricing rule";
+"bundle_ecommerce.back-office.order-list.filter-product-type";"";"Product type";
+"bundle_ecommerce.back-office.order-list.result-count";"";"Results";
+"bundle_ecommerce.back-office.order-list.search.button";"";"Search";
+"bundle_ecommerce.back-office.order-list.search.placeholder";"";"Search";
+"bundle_ecommerce.back-office.order.address.delivery";"";"Delivery address";
+"bundle_ecommerce.back-office.order.address.invoice";"";"Invoice address";
+"bundle_ecommerce.back-office.order.cancel.item";"";"cancel item";
+"bundle_ecommerce.back-office.order.commit";"";"Order created";
+"bundle_ecommerce.back-office.order.complaint.item";"";"complain item";
+"bundle_ecommerce.back-office.order.customer-account.created";"";"Created";
+"bundle_ecommerce.back-office.order.customer-account.email";"";"E-Mail";
+"bundle_ecommerce.back-office.order.customer.account";"";"Account";
+"bundle_ecommerce.back-office.order.date";"";"Date";
+"bundle_ecommerce.back-office.order.history.itemcancel";"";"canceled";
+"bundle_ecommerce.back-office.order.history.itemchangeamount";"";"amount changed";
+"bundle_ecommerce.back-office.order.history.itemcomplaint";"";"complaint";
+"bundle_ecommerce.back-office.order.item-cancel";"";"Cancel";
+"bundle_ecommerce.back-office.order.item-cancel.message";"";"Message";
+"bundle_ecommerce.back-office.order.item-complaint";"";"Complain";
+"bundle_ecommerce.back-office.order.item-complaint.message";"";"Message";
+"bundle_ecommerce.back-office.order.item-edit";"";"Edit";
+"bundle_ecommerce.back-office.order.item-edit.message";"";"Message";
+"bundle_ecommerce.back-office.order.order-items";"";"Items";
+"bundle_ecommerce.back-office.order.payment.history";"";"Payment history";
+"bundle_ecommerce.back-office.order.price.total";"";"Total price";
+"bundle_ecommerce.back-office.order.price.unit";"";"Unit price";
+"bundle_ecommerce.back-office.order.product";"";"Product";
+"bundle_ecommerce.back-office.order.quantity";"";"Quantity";
+"bundle_ecommerce.back-office.order.set-status.item";"";"set item status";
+"bundle_ecommerce.back-office.save";"";"Save";
+"bundle_ecommerce_voucherservice_apply-filter-button";"Filter anwenden";"Apply filter";
+"bundle_ecommerce_voucherservice_assign-config";"Konfiguration anwenden";"Assign Configurations";
+"bundle_ecommerce_voucherservice_cleanup-button";"Tokens aufräumen";"Cleanup";
+"bundle_ecommerce_voucherservice_cleanup-reservations-button";"Reservierungen aufheben";"Cleanup Reservations";
+"bundle_ecommerce_voucherservice_export-button";"CSV Export";"Export CSV";
+"bundle_ecommerce_voucherservice_filter-from-date";"Erstellung von ";"Creation from";
+"bundle_ecommerce_voucherservice_filter-headline";"Filtern nach";"Filter by";
+"bundle_ecommerce_voucherservice_filter-length";"Länge";"Length";
+"bundle_ecommerce_voucherservice_filter-to-date";"zu";"to";
+"bundle_ecommerce_voucherservice_filter-token";"Token";"Token";
+"bundle_ecommerce_voucherservice_filter-usages";"Verwendungen";"usages";
+"bundle_ecommerce_voucherservice_generate-button";"Generieren";"Generate";
+"bundle_ecommerce_voucherservice_modal_assign-headline";"Konfiguration auf Tokens übernehmen";"Apply configuration to Tokens";
+"bundle_ecommerce_voucherservice_modal_assign-infotext";"Konfiguration wird übernommen, bitte warten.";"Updating token settings, please wait. This can take some seconds.";
+"bundle_ecommerce_voucherservice_modal_assign-submit";"Übernehmen";"Apply";
+"bundle_ecommerce_voucherservice_modal_cancel";"Abbrechen";"Cancel";
+"bundle_ecommerce_voucherservice_modal_cleanup-both-checkbox";"Alle";"Both";
+"bundle_ecommerce_voucherservice_modal_cleanup-headline";"Tokens nach Kriterien entfernen";"Remove tokens by condition";
+"bundle_ecommerce_voucherservice_modal_cleanup-infotext";"VORSICHT: Der Aufräum Vorgang wird Token in dieser Serie entfernen, um die Leistung für die Generierung neuer Token zu verbessern.";"USE WITH CARE: The Cleanup will remove tokens in your series, to improve performance for creating new tokens.";
+"bundle_ecommerce_voucherservice_modal_cleanup-loadingtext";"Bitte warten, Tokens werden aufgeräumt.";"Please wait, tokens are getting cleaned up.";
+"bundle_ecommerce_voucherservice_modal_cleanup-older-than";"Älter als";"Older than";
+"bundle_ecommerce_voucherservice_modal_cleanup-reservations-headline";"Reservierungen entfernen";"Remove Reservations";
+"bundle_ecommerce_voucherservice_modal_cleanup-reservations-infotext";"Der Cleanup wird Token Reservierungen , die älter als als die angegebene Dauer sind entfernen.";"The Cleanup will remove token reservations that are older than than the specified duration. ";
+"bundle_ecommerce_voucherservice_modal_cleanup-reservations-olderthan-x-minutes";"Älter als x Minuten";"Older than x minutes";
+"bundle_ecommerce_voucherservice_modal_cleanup-reservations-submit";"Aufräumen";"Cleanup";
+"bundle_ecommerce_voucherservice_modal_cleanup-submit-button";"Tokens entfernen";"Remove Tokens";
+"bundle_ecommerce_voucherservice_modal_cleanup-unused-checkbox";"nicht eingelöst";"Unsed";
+"bundle_ecommerce_voucherservice_modal_cleanup-used-checkbox";"bereits eingelöst";"Used";
+"bundle_ecommerce_voucherservice_modal_generate-headline";"Neue Tokens generieren";"Generate new tokens";
+"bundle_ecommerce_voucherservice_modal_generate-infotext";"Codes werden generiert, bitte warten. Dies kann einige Minuten dauern.";"Generating Codes, please wait. This can take some minutes.";
+"bundle_ecommerce_voucherservice_modal_generate-submit-button";"Token generieren";"Generate";
+"bundle_ecommerce_voucherservice_msg-error-cleanup-checkbox-missing";"Bitte wählen Sie aus welche Token sie endgültig entfernen möchten.";"You have to select which tokens you want to remove.";
+"bundle_ecommerce_voucherservice_msg-error-cleanup-reservations";"Error, Reservierungen konnten nicht aufgeräumt werden.";"Error, reservations could not be cleaned up.";
+"bundle_ecommerce_voucherservice_msg-error-cleanup-reservations-duration-missing";"Sie müssen eine Dauer spezifizieren um die Tokenreservierungen aufräumen zu können.";"Please specify a duration for cleaning up the reservations.";
+"bundle_ecommerce_voucherservice_msg-error-config-missing";"Um das Gutscheinsystem verwenden zu können, muss zuerst die Konfiguration zugewiesen und gespeichert werden.";"You have to specify and save the configurations before using the voucher token manager.";
+"bundle_ecommerce_voucherservice_msg-error-generation";"Token konnten nicht generiert werden, bitte passen sie die Konfigurationsparameter entsprechend an.";"Token generation not possible, please adjust your parameters in the edit tab, or clean up your tokens.";
+"bundle_ecommerce_voucherservice_msg-error-overwrite-single";"Mit dieser Operation überschreiben sie ihren aktuellen Single-Token, bitte überprüfen Sie ihre Einstellungen.";"With this operation you will overwrite your current single token, please check your settings!";
+"bundle_ecommerce_voucherservice_msg-error-required-missing";"Benötigtes Formularfeld wurde nicht ausgefüllt.";"Required field is missing.";
+"bundle_ecommerce_voucherservice_msg-error-token-noresult";"Es konnten keine Token gefunden werden.";"No tokens could be found.";
+"bundle_ecommerce_voucherservice_msg-error-unknown";"Error, ein unbekannter Fehler ist aufgetreten.";"Error, something went wrong.";
+"bundle_ecommerce_voucherservice_msg-success-cleanup";"Tokens wurden erfolgreich aufgeräumt.";"Successfully cleaned up your tokens.";
+"bundle_ecommerce_voucherservice_msg-success-cleanup-reservations";"Token Reservierungen erfolgreich aufgeräumt.";"Successfully cleaned up your token reservations.";
+"bundle_ecommerce_voucherservice_msg-success-generation";"Neue Token wurden erfolgreich generiert.";"Successfully generated new Tokens.";
+"bundle_ecommerce_voucherservice_paging-next";"Vor";"Next";
+"bundle_ecommerce_voucherservice_paging-previous";"Zurück";"Previous";
+"bundle_ecommerce_voucherservice_result-text";" Ergebnisse gefunden.";" results found.";
+"bundle_ecommerce_voucherservice_settings-count";"Anzahl";"Count";
+"bundle_ecommerce_voucherservice_settings-exampletoken";"Beispiel Token";"Example token";
+"bundle_ecommerce_voucherservice_settings-length";"Länge";"Length";
+"bundle_ecommerce_voucherservice_settings-max-usages";"Maximale Verwendungen";"Max Usages";
+"bundle_ecommerce_voucherservice_settings-prefix";"Prefix";"Prefix";
+"bundle_ecommerce_voucherservice_settings-token";"Token";"Token";
+"bundle_ecommerce_voucherservice_tab-manager";"Token-Verwaltung";"Manager";
+"bundle_ecommerce_voucherservice_tab-manager-headline";"Voucherservice Token Verwaltung";"Voucherservice Token Manager";
+"bundle_ecommerce_voucherservice_tab-statistics";"Statistik Daten";"Statistics";
+"bundle_ecommerce_voucherservice_tab-statistics-headline";"Statistiken";"Data and Statistics";
+"bundle_ecommerce_voucherservice_table-date";"Erstellungsdatum";"Creation Date";
+"bundle_ecommerce_voucherservice_table-length";"Länge";"Length";
+"bundle_ecommerce_voucherservice_table-token";"Token";"Token";
+"bundle_ecommerce_voucherservice_table-usages";"Verwendungen";"Usages";
+"bundle_ecommerce_voucherservice_token-free";"Frei";"Free";
+"bundle_ecommerce_voucherservice_token-overall";"Gesamt";"Overall";
+"bundle_ecommerce_voucherservice_token-overview-headline";"Übersicht";"Token Overview";
+"bundle_ecommerce_voucherservice_token-reserved";"Reserviert";"Reserved";
+"bundle_ecommerce_voucherservice_token-statistic-headline";"Token Statistiken";"Token Statistics";
+"bundle_ecommerce_voucherservice_token-used";"Eingelöst";"Used";
+"bundle_ecommerce_voucherservice_tokens-per-page";"Ergebnisse pro Seite";"Tokens per page: ";
+"bundle_ecommerce_voucherservice_usage-headline";"Verwendungs-Statistik";"Usage Statistics";

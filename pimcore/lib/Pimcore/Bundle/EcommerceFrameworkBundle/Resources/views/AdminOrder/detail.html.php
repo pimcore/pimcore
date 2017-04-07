@@ -38,7 +38,7 @@ $regionArray = $locale->getDisplayRegions();
                     $urlList = $this->path("pimcore_ecommerce_backend_admin-order_list");
                     ?>
                     <div class="col-sm-6">
-                        <a href="<?= $urlList ?>"><?= $this->translateAdmin('online-shop.back-office.order-list') ?></a>
+                        <a href="<?= $urlList ?>"><?= $this->translateAdmin('bundle_ecommerce.back-office.order-list') ?></a>
                         <span class="glyphicon glyphicon-chevron-right"></span>
                         <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
                     </div>
@@ -51,7 +51,7 @@ $regionArray = $locale->getDisplayRegions();
                     <div class="col-sm-6">
                         <a href="#" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>
 
-                        <?= $this->translateAdmin('online-shop.back-office.order') ?> <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
+                        <?= $this->translateAdmin('bundle_ecommerce.back-office.order') ?> <a href="#" data-action="open" data-id="<?= $order->getId() ?>"><?= $order->getOrdernumber() ?></a>
                     </div>
                     <div class="col-sm-6 text-right">
                         <?= $order->getOrderDate() ?>
@@ -80,10 +80,10 @@ $regionArray = $locale->getDisplayRegions();
         <!-- order items -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <span class="glyphicon glyphicon-list-alt"></span> <?= $this->translateAdmin('online-shop.back-office.order.order-items') ?>
+                <span class="glyphicon glyphicon-list-alt"></span> <?= $this->translateAdmin('bundle_ecommerce.back-office.order.order-items') ?>
 
                 <?php if($order->getComment()): ?>
-                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translateAdmin('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($order->getComment()) ?>">
+                    <button type="button" class="btn btn-xs btn-default pull-right" data-container="body" data-toggle="popover" data-placement="right" title="<?= $this->translateAdmin('bundle_ecommerce.back-office.order.comment.user') ?>" data-content="<?= nl2br($order->getComment()) ?>">
                         <span class="glyphicon glyphicon-comment"></span>
                     </button>
                 <?php endif; ?>
@@ -92,10 +92,10 @@ $regionArray = $locale->getDisplayRegions();
                 <thead>
                 <tr>
                     <th width="70">ID</th>
-                    <th><?= $this->translateAdmin('online-shop.back-office.order.product') ?></th>
-                    <th class="text-right"><?= $this->translateAdmin('online-shop.back-office.order.price.unit') ?></th>
-                    <th width="60" class="text-center"><?= $this->translateAdmin('online-shop.back-office.order.quantity') ?></th>
-                    <th class="text-right" width="110"><?= $this->translateAdmin('online-shop.back-office.order.price.total') ?></th>
+                    <th><?= $this->translateAdmin('bundle_ecommerce.back-office.order.product') ?></th>
+                    <th class="text-right"><?= $this->translateAdmin('bundle_ecommerce.back-office.order.price.unit') ?></th>
+                    <th width="60" class="text-center"><?= $this->translateAdmin('bundle_ecommerce.back-office.order.quantity') ?></th>
+                    <th class="text-right" width="110"><?= $this->translateAdmin('bundle_ecommerce.back-office.order.price.total') ?></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -158,7 +158,7 @@ $regionArray = $locale->getDisplayRegions();
                         <td class="text-right"><?= $currency->toCurrency($item->getTotalPrice()) ?></td>
                         <td>
                             <?php if($item->getComment()): ?>
-                                <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="<?= $this->translateAdmin('online-shop.back-office.order.comment.user') ?>" data-content="<?= nl2br($item->getComment()) ?>">
+                                <button type="button" class="btn btn-xs btn-default" data-container="body" data-toggle="popover" title="<?= $this->translateAdmin('bundle_ecommerce.back-office.order.comment.user') ?>" data-content="<?= nl2br($item->getComment()) ?>">
                                     <span class="glyphicon glyphicon-comment"></span>
                                 </button>
                             <?php endif; ?>
@@ -180,7 +180,7 @@ $regionArray = $locale->getDisplayRegions();
                                                 ?>
                                                 <a href="<?= $urlCancel ?>" data-toggle="modal" data-target="#popup" class="text-danger">
                                                     <span class="glyphicon glyphicon-remove text-danger"></span>
-                                                    <?= $this->translateAdmin('online-shop.back-office.order.cancel.item') ?>
+                                                    <?= $this->translateAdmin('bundle_ecommerce.back-office.order.cancel.item') ?>
                                                 </a>
                                             <?php endif; ?>
                                             <?php if($item->isComplaintAble()):
@@ -188,7 +188,7 @@ $regionArray = $locale->getDisplayRegions();
                                                 ?>
                                                 <a href="<?= $urlComplaint ?>" data-toggle="modal" data-target="#popup" class="text-danger">
                                                     <span class="glyphicon glyphicon-share-alt"></span>
-                                                    <?= $this->translateAdmin('online-shop.back-office.order.complaint.item') ?>
+                                                    <?= $this->translateAdmin('bundle_ecommerce.back-office.order.complaint.item') ?>
                                                 </a>
                                             <?php endif; ?>
                                         </li>
@@ -205,7 +205,7 @@ $regionArray = $locale->getDisplayRegions();
         <?php if($orderAgent->hasPayment()): ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <span class="glyphicon glyphicon-credit-card"></span> <?= $this->translateAdmin('online-shop.back-office.order.payment.history') ?>
+                    <span class="glyphicon glyphicon-credit-card"></span> <?= $this->translateAdmin('bundle_ecommerce.back-office.order.payment.history') ?>
                 </div>
                 <table class="table table-condensed">
                     <tbody>
@@ -278,11 +278,11 @@ $regionArray = $locale->getDisplayRegions();
         <div role="tabpanel" class="tabpanel-customer-info">
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active">
-                    <a href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> <?= $this->translateAdmin('online-shop.back-office.order.address.invoice') ?></a>
+                    <a href="#addressInvoice" aria-controls="addressInvoice" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> <?= $this->translateAdmin('bundle_ecommerce.back-office.order.address.invoice') ?></a>
                 </li>
                 <?php if($order->hasDeliveryAddress()) :?>
                     <li role="presentation">
-                        <a href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> <?= $this->translateAdmin('online-shop.back-office.order.address.delivery') ?></a>
+                        <a href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> <?= $this->translateAdmin('bundle_ecommerce.back-office.order.address.delivery') ?></a>
                     </li>
                 <?php endif; ?>
 
@@ -375,7 +375,7 @@ $regionArray = $locale->getDisplayRegions();
                 <?php if($order->getCustomer()): ?>
                 <div role="tabpanel" class="tab-pane" id="customerDetail">
 
-                    <h4><?= $this->translateAdmin('online-shop.back-office.order.customer.account') ?></h4>
+                    <h4><?= $this->translateAdmin('bundle_ecommerce.back-office.order.customer.account') ?></h4>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="well text-center" style="margin-bottom: 0;">
@@ -396,7 +396,7 @@ $regionArray = $locale->getDisplayRegions();
                                 foreach($this->arrCustomerAccount as $field => $value)
                                 {
                                     echo sprintf('<tr><th>%1$s</th><td><span class="%3$s"></span> %2$s</td></tr>'
-                                        , $this->translateAdmin('online-shop.back-office.order.customer-account.' . $field)
+                                        , $this->translateAdmin('bundle_ecommerce.back-office.order.customer-account.' . $field)
                                         , $value
                                         , '' #$arrIcon[ $field ]
                                     );
@@ -428,7 +428,7 @@ $regionArray = $locale->getDisplayRegions();
 
                         <!-- Icon -->
                         <div class="panel-heading icon">
-                            <span class="<?= $item['icon'] ?>" title="<?= $this->translateAdmin('online-shop.back-office.order.history.' . $item['type']) ?>"></span>
+                            <span class="<?= $item['icon'] ?>" title="<?= $this->translateAdmin('bundle_ecommerce.back-office.order.history.' . $item['type']) ?>"></span>
                         </div>
                         <!-- /Icon -->
 
@@ -439,7 +439,7 @@ $regionArray = $locale->getDisplayRegions();
                                 <div class="media-body">
                                     <h4 class="media-heading">
                                         <?= $item['title'] ?>
-                                        <small><?= $this->translateAdmin('online-shop.back-office.order.history.' . $item['type']) ?></small>
+                                        <small><?= $this->translateAdmin('bundle_ecommerce.back-office.order.history.' . $item['type']) ?></small>
                                     </h4>
                                     <p><?= nl2br($item['message']) ?></p>
                                 </div>
@@ -464,7 +464,7 @@ $regionArray = $locale->getDisplayRegions();
                     <i class="glyphicon glyphicon-shopping-cart"></i>
                 </div>
                 <div class="panel-body">
-                    <?= $this->translateAdmin('online-shop.back-office.order.commit') ?>
+                    <?= $this->translateAdmin('bundle_ecommerce.back-office.order.commit') ?>
                 </div>
             </article>
         </div>

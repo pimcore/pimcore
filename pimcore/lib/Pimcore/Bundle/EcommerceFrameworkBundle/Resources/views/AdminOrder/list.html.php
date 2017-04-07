@@ -34,7 +34,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
 
 ?>
 <div class="page-header">
-    <h1><?= $this->translateAdmin('online-shop.back-office.order-list') ?></h1>
+    <h1><?= $this->translateAdmin('bundle_ecommerce.back-office.order-list') ?></h1>
 </div>
 
 <div class="panel panel-default">
@@ -47,8 +47,8 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                         <div class="input-group-btn" id="search-filter">
                             <?php
                             $arrFields = [
-                                'order' => $this->translateAdmin('online-shop.back-office.order-list.filter-order')
-                                , 'productType' => $this->translateAdmin('online-shop.back-office.order-list.filter-product-type')
+                                'order' => $this->translateAdmin('bundle_ecommerce.back-office.order-list.filter-order')
+                                , 'productType' => $this->translateAdmin('bundle_ecommerce.back-office.order-list.filter-product-type')
                             ];
                             $selected = $this->getParam('search', 'order');
                             ?>
@@ -62,19 +62,19 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                             </ul>
                         </div>
                         <input type="hidden" id="search-query" name="search" value="<?= $selected ?>" />
-                        <input type="text" class="form-control" name="q" placeholder="<?= $this->translateAdmin('online-shop.back-office.order-list.search.placeholder') ?>" value="<?= $this->escape($this->getParam('q')) ?>">
+                        <input type="text" class="form-control" name="q" placeholder="<?= $this->translateAdmin('bundle_ecommerce.back-office.order-list.search.placeholder') ?>" value="<?= $this->escape($this->getParam('q')) ?>">
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group">
                         <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        <input type="text" class="form-control date" name="from" placeholder="<?= $this->translateAdmin('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('from')) ?>">
+                        <input type="text" class="form-control date" name="from" placeholder="<?= $this->translateAdmin('bundle_ecommerce.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('from')) ?>">
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group">
                         <div class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></div>
-                        <input type="text" class="form-control date" name="till" placeholder="<?= $this->translateAdmin('online-shop.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('till')) ?>">
+                        <input type="text" class="form-control date" name="till" placeholder="<?= $this->translateAdmin('bundle_ecommerce.back-office.order-list.filter-date.from') ?>" value="<?= $this->escape($this->getParam('till')) ?>">
                     </div>
                 </div>
                 <?php
@@ -85,7 +85,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                         <div class="input-group">
                             <div class="input-group-addon"><span class="glyphicon glyphicon-tag"></span></div>
                             <select class="form-control" name="pricingRule">
-                                <option value=""><?= $this->translateAdmin('online-shop.back-office.order-list.filter-pricing-rules') ?></option>
+                                <option value=""><?= $this->translateAdmin('bundle_ecommerce.back-office.order-list.filter-pricing-rules') ?></option>
                                 <?php foreach($list as $item): ?>
                                     <option value="<?= $item->getId() ?>" <?= $item->getId() == $this->getParam('pricingRule') ? 'selected':'' ?>><?= $item->getLabel() ?></option>
                                 <?php endforeach; ?>
@@ -96,20 +96,20 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
             </fieldset>
         </div>
         <div class="panel-footer text-center">
-            <button type="submit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-filter"></span> <?= $this->translateAdmin('online-shop.back-office.order-list.search.button') ?></button>
+            <button type="submit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-filter"></span> <?= $this->translateAdmin('bundle_ecommerce.back-office.order-list.search.button') ?></button>
         </div>
     </form>
 </div>
 
 
 <table class="table table-striped table-hover">
-    <caption><?= $this->translateAdmin('online-shop.back-office.order-list.result-count') ?>: <?= $paginator->getTotalItemCount(); ?></caption>
+    <caption><?= $this->translateAdmin('bundle_ecommerce.back-office.order-list.result-count') ?>: <?= $paginator->getTotalItemCount(); ?></caption>
     <thead>
     <tr>
-        <th width="180"><?= $this->translateAdmin('online-shop.back-office.order') ?></th>
-        <th width="180"><?= $this->translateAdmin('online-shop.back-office.order.date') ?></th>
-        <th width="80"><?= $this->translateAdmin('online-shop.back-office.order.order-items') ?></th>
-        <th width="100"><?= $this->translateAdmin('online-shop.back-office.order.price.total') ?></th>
+        <th width="180"><?= $this->translateAdmin('bundle_ecommerce.back-office.order') ?></th>
+        <th width="180"><?= $this->translateAdmin('bundle_ecommerce.back-office.order.date') ?></th>
+        <th width="80"><?= $this->translateAdmin('bundle_ecommerce.back-office.order.order-items') ?></th>
+        <th width="100"><?= $this->translateAdmin('bundle_ecommerce.back-office.order.price.total') ?></th>
     </tr>
     </thead>
     <tbody>
