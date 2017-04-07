@@ -98,6 +98,7 @@ RENAME TABLE plugins_onlineshop_vouchertoolkit_tokens TO ecommerceframework_vouc
 
 UPDATE translations_admin SET `key` = REPLACE(`key`, 'plugin_onlineshop_', 'bundle_ecommerce_') WHERE `key` LIKE 'plugin_onlineshop%';
 UPDATE users_permission_definitions SET `key` = REPLACE(`key`, 'plugin_onlineshop_', 'bundle_ecommerce_');
+UPDATE users SET permissions = REPLACE(`permissions`, 'plugin_onlineshop_', 'bundle_ecommerce_');
 
 -- possibly you need to update some of these tables (or additional product index tables) too - depends on you configuration 
 RENAME TABLE plugin_onlineshop_productindex TO ecommerceframework_productindex; 
