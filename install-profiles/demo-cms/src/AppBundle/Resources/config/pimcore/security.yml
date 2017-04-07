@@ -5,27 +5,21 @@
 # both demo_cms or anything else. Just make sure the firewall is configured to use your desired user provider.
 security:
     providers:
-        # simple in-memory user providers for demo purpose
+        # we use a custom user provider which loads users from the User class
+        # the user provider is defined as service in services.yml
         demo_cms_provider:
-            memory:
-                users:
-                    john:
-                        password: doe
-                        roles: 'ROLE_USER'
-                    jane:
-                        password: doe
-                        roles: 'ROLE_ADMIN'
-
-    encoders:
-        # in-memory provider has plaintext passwords
-        Symfony\Component\Security\Core\User\User: plaintext
+            id: website_demo.security.user_provider
 
     firewalls:
         # demo_cms firewall is valid for the whole site
         demo_cms_fw:
             anonymous: ~
+            # the provider defined above
             provider: demo_cms_provider
-            form_login:
+            simple_form:
+                # the authenticator handles verification of credentials
+                # see http://symfony.com/doc/current/security/custom_password_authenticator.html
+                authenticator: website_demo.security.simple_form_authenticator
                 login_path: demo_login
                 check_path: demo_login
                 default_target_path: /
@@ -33,5 +27,6 @@ security:
                 path:   demo_logout
                 target: demo_login
 
+    # ROLE_ADMIN inherits ROLE_USER (is allowed everything a user is allowed)
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]

@@ -19,3 +19,23 @@ services:
     website_demo.language_switcher:
         class: AppBundle\Templating\LanguageSwitcher
         arguments: ['@pimcore.document_service']
+
+    #
+    # SECURITY/LOGIN SERVICES
+    #
+    # The services defined below are referenced from pimcore/security.yml.
+    #
+    # The user provider loads users by Username.
+    # Pimcore provides a simple ObjectUserProvider which is able to load users from a specified
+    # class by a configured field. The website_demo.security.user_provider will load users from
+    # the AppBundle\Model\Object\User by looking at their username field.
+    website_demo.security.user_provider:
+        class: Pimcore\Security\User\ObjectUserProvider
+        arguments: ['AppBundle\Model\Object\User', 'username']
+
+    # The authenticator is responsible for checking user credentials (= verifying the password). Pimcore
+    # provides a PasswordFieldAuthenticator which is able to handle a password stored in a Password
+    # field definition.
+    website_demo.security.simple_form_authenticator:
+        class: Pimcore\Security\Authentication\PasswordFieldAuthenticator
+        arguments: ['password']
