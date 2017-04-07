@@ -1,2 +1,9 @@
 imports:
     - { resource: security.yml }
+
+# we override the generated user model with a custom class which
+# implements the UserInterface
+pimcore:
+    models:
+        class_overrides:
+            'Pimcore\Model\Object\User': 'AppBundle\Model\Object\User'
