@@ -1,4 +1,4 @@
-# Contributing to pimcore
+# Contributing to Pimcore 
 
 ## Bug Reports & Feature Requests
 The pimcore team heavily uses (and loves!) GitHub for all of our software management. 
