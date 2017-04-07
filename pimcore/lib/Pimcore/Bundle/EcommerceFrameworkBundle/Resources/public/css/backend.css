@@ -29,11 +29,11 @@
     background: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") center center no-repeat !important;
 }
 
-.plugin_onlineshop_clear_config_cache {
+.bundle_ecommerce_clear_config_cache {
     background: url("/pimcore/static6/img/flat-color-icons/flash_on.svg") center center no-repeat !important;
 }
 
-.plugin_onlineshop_back-office_order {
+.bundle_ecommerce_back-office_order {
     background: url("/pimcore/static6/img/flat-color-icons/tachometer.svg") center center no-repeat !important;
 }
 
@@ -41,6 +41,6 @@
     background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") center center no-repeat !important;
 }
 
-#pimcore_menu_onlineshop {
+#pimcore_menu_ecommerce {
     background-image: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") !important;
 }

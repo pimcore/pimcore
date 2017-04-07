@@ -13,16 +13,16 @@
 
 
 /** Main Menu **/
-.plugin_onlineshop_pricing_rules {
+.bundle_ecommerce_pricing_rules {
     background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
 
 /** Tree **/
-.plugin_onlineshop_pricing_icon_rule_additiv {
+.bundle_ecommerce_pricing_icon_rule_additiv {
     position: relative;
     background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_rule_additiv:before {
+.bundle_ecommerce_pricing_icon_rule_additiv:before {
     position: absolute;
     width: 9px;
     height: 9px;
@@ -33,11 +33,11 @@
 }
 
 
-.plugin_onlineshop_pricing_icon_rule_stopExecute {
+.bundle_ecommerce_pricing_icon_rule_stopExecute {
     position: relative;
     background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_rule_stopExecute:before {
+.bundle_ecommerce_pricing_icon_rule_stopExecute:before {
     position: absolute;
     width: 9px;
     height: 9px;
@@ -47,7 +47,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
 }
 
-.plugin_onlineshop_pricing_icon_rule_disabled {
+.bundle_ecommerce_pricing_icon_rule_disabled {
     background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
     -webkit-filter: grayscale(100%) brightness(200%);
     filter: grayscale(100%) brightness(200%);
@@ -55,22 +55,22 @@
 }
 
 /** Condition **/
-.plugin_onlineshop_pricing_icon_condition_bracket {
+.bundle_ecommerce_pricing_icon_condition_bracket {
     margin: 0 20px !important;
 }
-.plugin_onlineshop_pricing_icon_conditionCartAmount {
+.bundle_ecommerce_pricing_icon_conditionCartAmount {
     background: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_conditionDateRange {
+.bundle_ecommerce_pricing_icon_conditionDateRange {
     background: url("/pimcore/static6/img/flat-color-icons/calendar.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_conditionCatalogProduct {
+.bundle_ecommerce_pricing_icon_conditionCatalogProduct {
     background: url("/pimcore/static6/img/flat-color-icons/camera.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_conditionCatalogCategory {
+.bundle_ecommerce_pricing_icon_conditionCatalogCategory {
     background: url("/pimcore/static6/img/flat-color-icons/folder.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_conditionCatalogCategory:before {
+.bundle_ecommerce_pricing_icon_conditionCatalogCategory:before {
     position: absolute;
     width: 15px;
     height: 15px;
@@ -79,29 +79,29 @@
     content: "";
     background: url(/pimcore/static6/img/flat-color-icons/camera.svg) center center no-repeat !important;
 }
-.plugin_onlineshop_pricing_icon_conditionToken {
+.bundle_ecommerce_pricing_icon_conditionToken {
     background: url("/pimcore/static6/img/flat-color-icons/sms.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_conditionSold,
-.plugin_onlineshop_pricing_icon_conditionSales {
+.bundle_ecommerce_pricing_icon_conditionSold,
+.bundle_ecommerce_pricing_icon_conditionSales {
     background: url("/pimcore/static6/img/flat-color-icons/sales_performance.svg") no-repeat center center !important;;
 }
-.plugin_onlineshop_pricing_icon_conditionClientIp {
+.bundle_ecommerce_pricing_icon_conditionClientIp {
     background: url("/pimcore/static6/img/flat-color-icons/laptop.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_conditionVoucherToken {
+.bundle_ecommerce_pricing_icon_conditionVoucherToken {
     background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") no-repeat center center !important;
 }
 
 
 /** Actions **/
-.plugin_onlineshop_pricing_icon_actionGift {
+.bundle_ecommerce_pricing_icon_actionGift {
     background: url("/pimcore/static6/img/flat-color-icons/gift.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_actionCartDiscount,
-.plugin_onlineshop_pricing_icon_actionProductDiscount {
+.bundle_ecommerce_pricing_icon_actionCartDiscount,
+.bundle_ecommerce_pricing_icon_actionProductDiscount {
     background: url("/pimcore/static6/img/flat-color-icons/donate.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_actionFreeShipping {
+.bundle_ecommerce_pricing_icon_actionFreeShipping {
     background: url("/pimcore/static6/img/flat-color-icons/in_transit.svg") no-repeat center center !important;
 }

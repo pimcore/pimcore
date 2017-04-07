@@ -14,17 +14,17 @@
 * PayPal (paypal)
 
 
-The configuration takes place in the OnlineShopConfig.php
+The configuration takes place in the EcommerceFrameworkConfig.php
 ```php
 <!-- general settings for cart manager -->
 "paymentmanager" => [
-            "class" => "\\OnlineShop\\Framework\\PaymentManager\\PaymentManager",
-            "statusClass" => "\\OnlineShop\\Framework\\PaymentManager\\Status",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\PaymentManager",
+            "statusClass" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Status",
             "config" => [
                 "provider" => [
                     [
                         "name" => "datatrans",
-                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\Datatrans",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\Datatrans",
                         "mode" => "sandbox",
                         "config" => [
                             "sandbox" => [
@@ -43,7 +43,7 @@ The configuration takes place in the OnlineShopConfig.php
                         /* https://integration.wirecard.at/doku.php/wcp:integration */
                         /* https://integration.wirecard.at/doku.php/demo:demo_data */
                         "name" => "qpay",
-                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\QPay",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\QPay",
                         "mode" => "sandbox",
                         "config" => [
                             "sandbox" => [
@@ -76,7 +76,7 @@ The configuration takes place in the OnlineShopConfig.php
                     ],
                     [
                         "name" => "paypal",
-                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\PayPal",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\PayPal",
                         "mode" => "sandbox",
                         "config" => [
                             "sandbox" => [
@@ -95,8 +95,6 @@ The configuration takes place in the OnlineShopConfig.php
             ]
         ],
 ```
-
- > For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 ## 2 - Provider configuration
 

@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 
 /**
  * Class VoucherServiceException
- * @package OnlineShop\Framework\Exception
  */
 class VoucherServiceException extends \Exception
 {

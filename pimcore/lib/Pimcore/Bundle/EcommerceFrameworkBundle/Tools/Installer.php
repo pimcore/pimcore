@@ -359,8 +359,8 @@ class Installer extends AbstractInstaller
     private function copyConfigFile()
     {
         //copy config file
-        if (!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php")) {
-            copy(__DIR__ . "/../install/OnlineShopConfig_sample.php", PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php");
+        if (!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/EcommerceFrameworkConfig.php")) {
+            copy(__DIR__ . "/../install/EcommerceFrameworkConfig_sample.php", PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/EcommerceFrameworkConfig.php");
         }
     }
 
@@ -379,8 +379,8 @@ class Installer extends AbstractInstaller
     private function addPermissions()
     {
         $keys = [
-            'plugin_onlineshop_pricing_rules',
-            'plugin_onlineshop_back-office_order',
+            'bundle_ecommerce_pricing_rules',
+            'bundle_ecommerce_back-office_order',
         ];
 
         foreach ($keys as $key) {
@@ -415,10 +415,10 @@ class Installer extends AbstractInstaller
         $db->query("DROP TABLE IF EXISTS `ecommerceframework_pricing_rule`");
 
         //remove permissions
-        $key = 'plugin_onlineshop_pricing_rules';
+        $key = 'bundle_ecommerce_pricing_rules';
         $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key));
 
-        $key = 'plugin_onlineshop_back-office_order';
+        $key = 'bundle_ecommerce_back-office_order';
         $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key));
 
         return true;

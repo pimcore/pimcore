@@ -9,7 +9,7 @@ Advantages of product index:
 
 
 ## 2 - Configuration of the Product Index
-The configuration of the product index defines the content of the product index and takes place in the OnlineShopConfig.php within the index ```"productindex"```:
+The configuration of the product index defines the content of the product index and takes place in the EcommerceFrameworkConfig.php within the index ```"productindex"```:
 
 ```php
 "productindex" => [
@@ -51,9 +51,6 @@ The configuration of the product index defines the content of the product index 
             ]
         ]
 ```
-
-> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
-
 
 
 ### ```<generalSearchColumns>```
@@ -113,8 +110,8 @@ The tenant config class is the central configuration of the tenant, defines whic
   - ```\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder```: provides a default fact finder implementation of the product index.
 
 
-- **Configuring tenants within OnlineShopConfig.php:** 
-Each tenant has to be configured within OnlineShopConfig.php by defining the tenant config class and index attributes. Depending on the product index implementation, additional configuration may be necessary. The configuration also can be outsourced in to an additional configuration file. For more information and samples see the [Sample OnlineShopConfig.php](/config/OnlineShopConfig_sample.php). 
+- **Configuring tenants within EcommerceFrameworkConfig.php:**
+Each tenant has to be configured within EcommerceFrameworkConfig.php by defining the tenant config class and index attributes. Depending on the product index implementation, additional configuration may be necessary. The configuration also can be outsourced in to an additional configuration file. For more information and samples see the [Sample EcommerceFrameworkConfig.php](/config/EcommerceFrameworkConfig_sample.php).
 
 
 ### Setting current tenant for frontend
@@ -253,8 +250,8 @@ As soon the reindex is finished, the current index is switched to the newly crea
 #### Special aspects with findologic exporter
 Basically findologic worker works as described in the optimized architecture. 
 But there is an additional speciality with the export: 
-Executing `processUpdateIndexQueue()` does not write the data directly to findologic, but into a extra table `OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic::EXPORT_TABLE_NAME` (default is `ecommerceframework_productindex_export_findologic`).
-Findologic then can use the endpoint `/plugin/OnlineShop/findologic/export`, which delivers all data directly based on the table `OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic::EXPORT_TABLE_NAME`. Valid parameters for this endpoint are:
+Executing `processUpdateIndexQueue()` does not write the data directly to findologic, but into a extra table `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic::EXPORT_TABLE_NAME` (default is `ecommerceframework_productindex_export_findologic`).
+Findologic then can use the endpoint `/ecommerceframework/findologic-export`, which delivers all data directly based on the table `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic::EXPORT_TABLE_NAME`. Valid parameters for this endpoint are:
 - start: Pagination start
 - count: Count of delivered entries
 - shopKey: Shopkey to identify the shop. 

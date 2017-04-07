@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.OnlineShop.pricing.config.objects");
-pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.tags.objects, {
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.config.objects");
+pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.object.tags.objects, {
 
     type: "objects",
     dataChanged: false,

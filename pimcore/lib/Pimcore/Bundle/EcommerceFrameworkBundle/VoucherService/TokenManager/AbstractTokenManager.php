@@ -130,10 +130,10 @@ abstract class AbstractTokenManager implements ITokenManager
 
         $stream = fopen('php://temp', 'w+');
         fputcsv($stream, [
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
+            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-token'),
+            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-usages'),
+            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-length'),
+            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-date'),
         ]);
 
         $data = null;

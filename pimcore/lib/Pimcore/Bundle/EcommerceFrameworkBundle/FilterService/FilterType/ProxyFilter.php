@@ -23,7 +23,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @deprecated
  *
  * Class ProxyFilter
- * @package OnlineShop\Framework\FilterService\FilterType
  */
 class ProxyFilter extends AbstractFilterType
 {

@@ -32,7 +32,7 @@ class SessionCartTest extends \Codeception\Test\Unit
          * @var $cart SessionCart
          * @var $product AbstractProduct
          */
-        $cart = Stub::construct("OnlineShop\\Framework\\CartManager\\SessionCart", [], [
+        $cart = Stub::construct("\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart", [], [
             "getSession" => function () {
                 return [];
             },

@@ -37,8 +37,8 @@ class ConfigController extends AdminController
 
         $params = [];
 
-        if ($config->onlineshop->pimcore instanceof Config) {
-            foreach ($config->onlineshop->pimcore as $confName => $conf) {
+        if ($config->ecommerceframework->pimcore instanceof Config) {
+            foreach ($config->ecommerceframework->pimcore as $confName => $conf) {
                 $entries = [];
                 foreach ($conf as $entryName => $entry) {
                     $entries[$entryName] = $entry->toArray();
@@ -47,9 +47,9 @@ class ConfigController extends AdminController
             }
         }
 
-        $javascript="pimcore.registerNS(\"pimcore.plugin.OnlineShop.plugin.config\");";
+        $javascript="pimcore.registerNS(\"pimcore.bundle.EcommerceFramework.bundle.config\");";
 
-        $javascript.= "pimcore.plugin.OnlineShop.plugin.config = ";
+        $javascript.= "pimcore.bundle.EcommerceFramework.bundle.config = ";
         $javascript.= json_encode($params).";";
 
         $response = new Response($javascript);

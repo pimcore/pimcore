@@ -533,7 +533,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = sizeof($tokens);
         } else {
-            $viewParamsBag['msg']['result'] = 'plugin_onlineshop_voucherservice_msg-error-token-noresult';
+            $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }
 
         $viewParamsBag['msg']['error'] = $params['error'];
@@ -541,10 +541,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [
-            'plugin_onlineshop_voucherservice_settings-count' => $this->getConfiguration()->getCount(),
-            'plugin_onlineshop_voucherservice_settings-prefix' => $this->getConfiguration()->getPrefix(),
-            'plugin_onlineshop_voucherservice_settings-length' => $this->getConfiguration()->getLength(),
-            'plugin_onlineshop_voucherservice_settings-exampletoken' => $this->getExampleToken(),
+            'bundle_ecommerce_voucherservice_settings-count' => $this->getConfiguration()->getCount(),
+            'bundle_ecommerce_voucherservice_settings-prefix' => $this->getConfiguration()->getPrefix(),
+            'bundle_ecommerce_voucherservice_settings-length' => $this->getConfiguration()->getLength(),
+            'bundle_ecommerce_voucherservice_settings-exampletoken' => $this->getExampleToken(),
         ];
 
         $statisticUsagePeriod = 30;

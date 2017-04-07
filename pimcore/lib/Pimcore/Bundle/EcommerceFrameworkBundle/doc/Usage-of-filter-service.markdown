@@ -16,7 +16,7 @@ Each product listing has different filters like dropdowns, multi selects, input 
 The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which extend the abstract class ```\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType``` and are responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented.
 
 
-The configuration of the FilterTypes takes place in the OnlineShopConfig.php
+The configuration of the FilterTypes takes place in the EcommerceFrameworkConfig.php
 ```php
  /*  assign backend implementations and views to filter type field collections
 
@@ -24,47 +24,45 @@ The configuration of the FilterTypes takes place in the OnlineShopConfig.php
                      (used by object data type IndexFieldSelection, e.g. in filter definitions)
          */
         "filtertypes" => [
-            "helper" => "\\OnlineShop\\Framework\\FilterService\\FilterGroupHelper",
+            "helper" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterGroupHelper",
             "FilterNumberRange" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRange",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\NumberRange",
                 "script" => "/shop/filters/range.php"
             ],
             "FilterNumberRangeSelection" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRangeSelection",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\NumberRangeSelection",
                 "script" => "/shop/filters/numberrange.php"
             ],
             "FilterSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\Select",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\Select",
                 "script" => "/shop/filters/select.php"
             ],
             "FilterSelectFromMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectFromMultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\SelectFromMultiSelect",
                 "script" => "/shop/filters/select.php"
             ],
             "FilterMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\MultiSelect",
                 "script" => "/shop/filters/multiselect.php"
             ],
             "FilterMultiSelectFromMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectFromMultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\MultiSelectFromMultiSelect",
                 "script" => "/shop/filters/multiselect.php"
             ],
             "FilterMultiRelation" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectRelation",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\MultiSelectRelation",
                 "script" => "/shop/filters/multiselect-relation.php"
             ],
             "FilterCategory" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectCategory",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\SelectCategory",
                 "script" => "/shop/filters/select_category.php"
             ],
             "FilterRelation" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectRelation",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleFilterService\\FilterType\\SelectRelation",
                 "script" => "/shop/filters/object_relation.php"
             ]
         ],
 ```
-
-> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 You can find some script filter examples in the ecommerce framework demo (/website/views/scripts directory).
 
@@ -86,7 +84,7 @@ The configuration of available filters and the set up of product listings in the
 ![filterdefinition](images/filterdefinitions.png)
 
 
-The configuration of preconditions and filters is done by field collection entries, whereby the field collection types are mapped to FilterTypes and their backend implementations in the OnlineShopConfig.php (see previous chapter). The FilterDefinition class can be extended and modified to the needs of the system. 
+The configuration of preconditions and filters is done by field collection entries, whereby the field collection types are mapped to FilterTypes and their backend implementations in the EcommerceFrameworkConfig.php (see previous chapter). The FilterDefinition class can be extended and modified to the needs of the system.
 
 FilterDefinition objects can be assigned to category objects to build up automatic category pages or to area bricks in pimcore documents to set up manual landing pages etc. 
 

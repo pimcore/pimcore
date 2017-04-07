@@ -24,7 +24,6 @@ use Pimcore\Logger;
  *
  * provides worker functionality for mockup cache and central store table
  *
- * @package OnlineShop\Framework\IndexService\Worker
  */
 abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
 {

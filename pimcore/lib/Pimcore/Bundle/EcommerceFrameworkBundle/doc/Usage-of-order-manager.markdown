@@ -2,17 +2,17 @@
 
 ### Configuration
 
-The configuration takes place in the OnlineShopConfig.php
+The configuration takes place in the EcommerceFrameworkConfig.php
 ```php
 "ordermanager" => [
-            "class" => "OnlineShop\\Framework\\OrderManager\\OrderManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleOrderManager\\OrderManager",
             "config" => [
                 "orderList" => [
-                    "class" => "OnlineShop\\Framework\\OrderManager\\Order\\Listing",
-                    "classItem" => "OnlineShop\\Framework\\OrderManager\\Order\\Listing\\Item"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleOrderManager\\Order\\Listing",
+                    "classItem" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleOrderManager\\Order\\Listing\\Item"
                 ],
                 "orderAgent" => [
-                    "class" => "OnlineShop\\Framework\\OrderManager\\Order\\Agent"
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundleOrderManager\\Order\\Agent"
                 ],
                 /* settings for order storage - pimcore class names for oder and order items */
                 "orderstorage" => [
@@ -30,8 +30,6 @@ The configuration takes place in the OnlineShopConfig.php
             ]
         ],
 ```
-
-> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 ## 2 - Usage OrderList
 

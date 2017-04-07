@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 
 /**
  * Class InvalidConfigException
- * @package OnlineShop\Framework\Exception
  */
 class InvalidConfigException extends \Exception
 {

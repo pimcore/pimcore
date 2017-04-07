@@ -42,7 +42,7 @@ class Factory
     /**
      * framework configuration file
      */
-    const CONFIG_PATH = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/OnlineShopConfig.php";
+    const CONFIG_PATH = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/EcommerceFrameworkConfig.php";
 
     /**
      * @var Factory
@@ -169,19 +169,19 @@ class Factory
         $config = $this->getConfig();
 
         //Environment
-        if (empty($config->onlineshop->environment->class)) {
+        if (empty($config->ecommerceframework->environment->class)) {
             throw new InvalidConfigException("No Environment class defined.");
         } else {
-            if (class_exists($config->onlineshop->environment->class)) {
+            if (class_exists($config->ecommerceframework->environment->class)) {
                 $session = \Pimcore::getContainer()->get('session');
                 $localeService = \Pimcore::getContainer()->get('pimcore.locale');
 
-                $this->environment = new $config->onlineshop->environment->class($config->onlineshop->environment->config, $session, $localeService);
+                $this->environment = new $config->ecommerceframework->environment->class($config->ecommerceframework->environment->config, $session, $localeService);
                 if (!($this->environment instanceof IEnvironment)) {
-                    throw new InvalidConfigException("Environment class " . $config->onlineshop->environment->class . ' does not implement IEnvironment.');
+                    throw new InvalidConfigException("Environment class " . $config->ecommerceframework->environment->class . ' does not implement IEnvironment.');
                 }
             } else {
-                throw new InvalidConfigException("Environment class " . $config->onlineshop->environment->class . " not found.");
+                throw new InvalidConfigException("Environment class " . $config->ecommerceframework->environment->class . " not found.");
             }
         }
     }
@@ -209,16 +209,16 @@ class Factory
 
     private function configureCartManager($config)
     {
-        if (empty($config->onlineshop->cartmanager->class)) {
+        if (empty($config->ecommerceframework->cartmanager->class)) {
             throw new InvalidConfigException("No Cartmanager class defined.");
         } else {
-            if (class_exists($config->onlineshop->cartmanager->class)) {
-                $this->cartManager = new $config->onlineshop->cartmanager->class($config->onlineshop->cartmanager->config);
+            if (class_exists($config->ecommerceframework->cartmanager->class)) {
+                $this->cartManager = new $config->ecommerceframework->cartmanager->class($config->ecommerceframework->cartmanager->config);
                 if (!($this->cartManager instanceof ICartManager)) {
-                    throw new InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " does not implement ICartManager.");
+                    throw new InvalidConfigException("Cartmanager class " . $config->ecommerceframework->cartmanager->class . " does not implement ICartManager.");
                 }
             } else {
-                throw new InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " not found.");
+                throw new InvalidConfigException("Cartmanager class " . $config->ecommerceframework->cartmanager->class . " not found.");
             }
         }
     }
@@ -231,14 +231,14 @@ class Factory
      */
     private function configureTrackingManager(Config $config)
     {
-        if (!empty($config->onlineshop->trackingmanager->class)) {
-            $trackingManagerClass = $config->onlineshop->trackingmanager->class;
+        if (!empty($config->ecommerceframework->trackingmanager->class)) {
+            $trackingManagerClass = $config->ecommerceframework->trackingmanager->class;
             if (class_exists($trackingManagerClass)) {
-                $instance = new $trackingManagerClass($config->onlineshop->trackingmanager->config, \Pimcore::getContainer()->get('templating'));
+                $instance = new $trackingManagerClass($config->ecommerceframework->trackingmanager->config, \Pimcore::getContainer()->get('templating'));
                 if ($instance instanceof ITrackingManager) {
                     $this->trackingManager = $instance;
                 } else {
-                    throw new InvalidConfigException(sprintf('TrackingManager class %s does not implement OnlineShop\\Framework\\Tracking\\ITrackingManager', $trackingManagerClass));
+                    throw new InvalidConfigException(sprintf('TrackingManager class %s does not implement Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\ITrackingManager', $trackingManagerClass));
                 }
             } else {
                 throw new InvalidConfigException(sprintf('TrackingManager class %s not found.', $trackingManagerClass));
@@ -263,11 +263,11 @@ class Factory
 
     private function configurePriceSystem($config)
     {
-        if (empty($config->onlineshop->pricesystems)) {
+        if (empty($config->ecommerceframework->pricesystems)) {
             throw new InvalidConfigException("No Pricesystems defined.");
         }
         //$this->priceSystems=array();
-        $priceSystemConfigs = $config->onlineshop->pricesystems->pricesystem;
+        $priceSystemConfigs = $config->ecommerceframework->pricesystems->pricesystem;
         if ($priceSystemConfigs->class) {
             $priceSystemConfigs = [$priceSystemConfigs];
         }
@@ -299,11 +299,11 @@ class Factory
     }
     private function configureAvailabilitySystem($config)
     {
-        if (empty($config->onlineshop->availablitysystems)) {
+        if (empty($config->ecommerceframework->availablitysystems)) {
             throw new InvalidConfigException("No AvailabilitySystem defined.");
         }
         //$this->priceSystems=array();
-        $availabilitySystemConfigs = $config->onlineshop->availablitysystems->availablitysystem;
+        $availabilitySystemConfigs = $config->ecommerceframework->availablitysystems->availablitysystem;
         if ($availabilitySystemConfigs->class) {
             $availabilitySystemConfigs = [$availabilitySystemConfigs];
         }
@@ -338,11 +338,11 @@ class Factory
 
     private function configureCheckoutManager($config)
     {
-        if (empty($config->onlineshop->checkoutmanager->class)) {
+        if (empty($config->ecommerceframework->checkoutmanager->class)) {
             throw new InvalidConfigException("No Checkoutmanager class defined.");
         } else {
-            if (!class_exists($config->onlineshop->checkoutmanager->class)) {
-                throw new InvalidConfigException("Checkoutmanager class " . $config->onlineshop->checkoutmanager->class . " not found.");
+            if (!class_exists($config->ecommerceframework->checkoutmanager->class)) {
+                throw new InvalidConfigException("Checkoutmanager class " . $config->ecommerceframework->checkoutmanager->class . " not found.");
             }
         }
     }
@@ -354,16 +354,16 @@ class Factory
      */
     private function configurePricingManager(Config $config)
     {
-        if (empty($config->onlineshop->pricingmanager->class)) {
+        if (empty($config->ecommerceframework->pricingmanager->class)) {
             throw new InvalidConfigException("No PricingManager class defined.");
         } else {
-            if (class_exists($config->onlineshop->pricingmanager->class)) {
-                $this->pricingManager = new $config->onlineshop->pricingmanager->class($config->onlineshop->pricingmanager->config, \Pimcore::getContainer()->get('session'));
+            if (class_exists($config->ecommerceframework->pricingmanager->class)) {
+                $this->pricingManager = new $config->ecommerceframework->pricingmanager->class($config->ecommerceframework->pricingmanager->config, \Pimcore::getContainer()->get('session'));
                 if (!($this->pricingManager instanceof IPricingManager)) {
-                    throw new InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager.');
+                    throw new InvalidConfigException("PricingManager class " . $config->ecommerceframework->pricingmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager.');
                 }
             } else {
-                throw new InvalidConfigException("PricingManager class " . $config->onlineshop->pricingmanager->class . " not found.");
+                throw new InvalidConfigException("PricingManager class " . $config->ecommerceframework->pricingmanager->class . " not found.");
             }
         }
     }
@@ -371,15 +371,15 @@ class Factory
 
     private function configureOfferToolService($config)
     {
-        if (!empty($config->onlineshop->offertool->class)) {
-            if (!class_exists($config->onlineshop->offertool->class)) {
-                throw new InvalidConfigException("OfferTool class " . $config->onlineshop->offertool->class . " not found.");
+        if (!empty($config->ecommerceframework->offertool->class)) {
+            if (!class_exists($config->ecommerceframework->offertool->class)) {
+                throw new InvalidConfigException("OfferTool class " . $config->ecommerceframework->offertool->class . " not found.");
             }
-            if (!class_exists($config->onlineshop->offertool->orderstorage->offerClass)) {
-                throw new InvalidConfigException("OfferToolOffer class " . $config->onlineshop->offertool->orderstorage->offerClass . " not found.");
+            if (!class_exists($config->ecommerceframework->offertool->orderstorage->offerClass)) {
+                throw new InvalidConfigException("OfferToolOffer class " . $config->ecommerceframework->offertool->orderstorage->offerClass . " not found.");
             }
-            if (!class_exists($config->onlineshop->offertool->orderstorage->offerItemClass)) {
-                throw new InvalidConfigException("OfferToolOfferItem class " . $config->onlineshop->offertool->orderstorage->offerItemClass . " not found.");
+            if (!class_exists($config->ecommerceframework->offertool->orderstorage->offerItemClass)) {
+                throw new InvalidConfigException("OfferToolOfferItem class " . $config->ecommerceframework->offertool->orderstorage->offerItemClass . " not found.");
             }
         }
     }
@@ -392,14 +392,14 @@ class Factory
      */
     private function configurePaymentManager(Config $config)
     {
-        if (!empty($config->onlineshop->paymentmanager->class)) {
-            if (class_exists($config->onlineshop->paymentmanager->class)) {
-                $this->paymentManager = new $config->onlineshop->paymentmanager->class($config->onlineshop->paymentmanager->config);
+        if (!empty($config->ecommerceframework->paymentmanager->class)) {
+            if (class_exists($config->ecommerceframework->paymentmanager->class)) {
+                $this->paymentManager = new $config->ecommerceframework->paymentmanager->class($config->ecommerceframework->paymentmanager->config);
                 if (!($this->paymentManager instanceof IPaymentManager)) {
-                    throw new InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager.');
+                    throw new InvalidConfigException("PaymentManager class " . $config->ecommerceframework->paymentmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager.');
                 }
             } else {
-                throw new InvalidConfigException("PaymentManager class " . $config->onlineshop->paymentmanager->class . " not found.");
+                throw new InvalidConfigException("PaymentManager class " . $config->ecommerceframework->paymentmanager->class . " not found.");
             }
         }
     }
@@ -412,14 +412,14 @@ class Factory
      */
     private function configureOrderManager(Config $config)
     {
-        if (!empty($config->onlineshop->ordermanager->class)) {
-            if (class_exists($config->onlineshop->ordermanager->class)) {
-                $this->orderManager = new $config->onlineshop->ordermanager->class($config->onlineshop->ordermanager->config);
+        if (!empty($config->ecommerceframework->ordermanager->class)) {
+            if (class_exists($config->ecommerceframework->ordermanager->class)) {
+                $this->orderManager = new $config->ecommerceframework->ordermanager->class($config->ecommerceframework->ordermanager->config);
                 if (!($this->orderManager instanceof IOrderManager)) {
-                    throw new InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " does not implement OnlineShop\\Framework\\OrderManager\\IOrderManager.");
+                    throw new InvalidConfigException("OrderManager class " . $config->ecommerceframework->ordermanager->class . " does not implement Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\IOrderManager.");
                 }
             } else {
-                throw new InvalidConfigException("OrderManager class " . $config->onlineshop->ordermanager->class . " not found.");
+                throw new InvalidConfigException("OrderManager class " . $config->ecommerceframework->ordermanager->class . " not found.");
             }
         }
     }
@@ -441,14 +441,14 @@ class Factory
         if (empty($this->checkoutManagers[$cart->getId()])) {
             if ($name) {
                 $managerConfigName = "checkoutmanager_" . $name;
-                $manager = new $this->config->onlineshop->$managerConfigName->class($cart, $this->config->onlineshop->$managerConfigName->config);
+                $manager = new $this->config->ecommerceframework->$managerConfigName->class($cart, $this->config->ecommerceframework->$managerConfigName->config);
                 if (!($manager instanceof ICheckoutManager)) {
-                    throw new InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->$managerConfigName->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
+                    throw new InvalidConfigException("Checkoutmanager class " . $this->config->ecommerceframework->$managerConfigName->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
                 }
             } else {
-                $manager = new $this->config->onlineshop->checkoutmanager->class($cart, $this->config->onlineshop->checkoutmanager->config);
+                $manager = new $this->config->ecommerceframework->checkoutmanager->class($cart, $this->config->ecommerceframework->checkoutmanager->config);
                 if (!($manager instanceof ICheckoutManager)) {
-                    throw new InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
+                    throw new InvalidConfigException("Checkoutmanager class " . $this->config->ecommerceframework->checkoutmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
                 }
             }
 
@@ -464,10 +464,10 @@ class Factory
      */
     public function getCommitOrderProcessor($checkoutManagerName = null)
     {
-        $originalConfig = $this->config->onlineshop->checkoutmanager->config;
+        $originalConfig = $this->config->ecommerceframework->checkoutmanager->config;
         if ($checkoutManagerName) {
             $managerConfigName = "checkoutmanager_" . $checkoutManagerName;
-            $originalConfig = $this->config->onlineshop->$managerConfigName->config;
+            $originalConfig = $this->config->ecommerceframework->$managerConfigName->config;
         }
 
         $config = new HelperContainer($originalConfig, "checkoutmanager");
@@ -538,7 +538,7 @@ class Factory
     public function getIndexService()
     {
         if (empty($this->indexService)) {
-            $this->indexService = new IndexService($this->config->onlineshop->productindex);
+            $this->indexService = new IndexService($this->config->ecommerceframework->productindex);
         }
 
         return $this->indexService;
@@ -550,8 +550,8 @@ class Factory
      */
     public function getAllTenants()
     {
-        if (empty($this->allTenants) && $this->config->onlineshop->productindex->tenants && $this->config->onlineshop->productindex->tenants instanceof Config) {
-            foreach ($this->config->onlineshop->productindex->tenants as $name => $tenant) {
+        if (empty($this->allTenants) && $this->config->ecommerceframework->productindex->tenants && $this->config->ecommerceframework->productindex->tenants instanceof Config) {
+            foreach ($this->config->ecommerceframework->productindex->tenants as $name => $tenant) {
                 $this->allTenants[$name] = $name;
             }
         }
@@ -567,7 +567,7 @@ class Factory
     {
         $filterTypes = $this->getIndexService()->getCurrentTenantConfig()->getFilterTypeConfig();
         if (!$filterTypes) {
-            $filterTypes = $this->config->onlineshop->filtertypes;
+            $filterTypes = $this->config->ecommerceframework->filtertypes;
         }
 
         $translator = \Pimcore::getContainer()->get('translator');
@@ -599,11 +599,11 @@ class Factory
     public function getOfferToolService()
     {
         if (empty($this->offerToolService)) {
-            $className = (string)$this->config->onlineshop->offertool->class;
+            $className = (string)$this->config->ecommerceframework->offertool->class;
             $this->offerToolService = new $className(
-                (string) $this->config->onlineshop->offertool->orderstorage->offerClass,
-                (string) $this->config->onlineshop->offertool->orderstorage->offerItemClass,
-                (string) $this->config->onlineshop->offertool->orderstorage->parentFolderPath
+                (string) $this->config->ecommerceframework->offertool->orderstorage->offerClass,
+                (string) $this->config->ecommerceframework->offertool->orderstorage->offerItemClass,
+                (string) $this->config->ecommerceframework->offertool->orderstorage->parentFolderPath
             );
         }
 
@@ -636,9 +636,9 @@ class Factory
     public function getVoucherService()
     {
         if (empty($this->voucherService)) {
-            $this->voucherService = new $this->config->onlineshop->voucherservice->class($this->config->onlineshop->voucherservice->config);
+            $this->voucherService = new $this->config->ecommerceframework->voucherservice->class($this->config->ecommerceframework->voucherservice->config);
             if (!($this->voucherService instanceof IVoucherService)) {
-                throw new InvalidConfigException("Voucher Service class " . $this->config->onlineshop->voucherservice->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService.');
+                throw new InvalidConfigException("Voucher Service class " . $this->config->ecommerceframework->voucherservice->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService.');
             }
         }
 
@@ -657,7 +657,7 @@ class Factory
         $type = $configuration->getType();
 
         if (empty($this->tokenManagers[$id])) {
-            $tokenManagerClass = $this->config->onlineshop->voucherservice->tokenmanagers->$type;
+            $tokenManagerClass = $this->config->ecommerceframework->voucherservice->tokenmanagers->$type;
 
             if ($tokenManagerClass) {
                 $tokenManager = new $tokenManagerClass->class($configuration);

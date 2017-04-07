@@ -4,19 +4,19 @@ The checkout manager is not an out-of-the-box checkout process!
 
 It is a tool for the developer to create a use case specific checkout process and consists of checkout steps and a commit order processor, which is responsible for completing the order and doing use case specific work. 
 
-The configuration takes place in the OnlineShopConfig.php
+The configuration takes place in the EcommerceFrameworkConfig.php
 ```php
 /* general settings for checkout manager */
         "checkoutmanager" => [
-            "class" => "\\OnlineShop\\Framework\\CheckoutManager\\CheckoutManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CheckoutManager\\CheckoutManager",
             "config" => [
                 /* define different checkout steps which need to be committed before commit of order is possible */
                 "steps" => [
                     "deliveryaddress" => [
-                        "class" => "\\OnlineShop\\Framework\\CheckoutManager\\DeliveryAddress"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CheckoutManager\\DeliveryAddress"
                     ],
                     "confirm" => [
-                        "class" => "Website_OnlineShop_Checkout_Confirm"
+                        "class" => "\\AppBundle\\Ecommerce\\Checkout\\Confirm"
                     ]
                 ],
                 /* optional
@@ -27,7 +27,7 @@ The configuration takes place in the OnlineShopConfig.php
                 ],
                 /* define used commit order processor */
                 "commitorderprocessor" => [
-                    "class" => "Website_OnlineShop_Order_Processor"
+                    "class" => "\\AppBundle\\Ecommerce\\Order\\Processor"
                 ],
                 /* settings for confirmation mail sent to customer after order is finished.
                      also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
@@ -52,9 +52,7 @@ The configuration takes place in the OnlineShopConfig.php
         ],
 ```
 
-> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
-
-Following elements are configured: 
+Following elements are configured:
 * **Implementation of the checkout manager**: The Checkout Manager is a central player of the checkout process. It checks the state of single checkout steps, is responsible for the payment integration and also calls the commit order processor in the end. 
 * **Checkout steps and their implementation**: Each checkout step (e.g. Delivery address, delivery date, ...) needs a concrete checkout step implementation. The implementation is responsible for storing and validating the necessary data, is project dependent and has to be implemented for each project. 
 * **Implementation of the commit order processor**: When finalization of the order is done by the commit order processor. This is the places, where custom ERP integrations and other project dependent order finishing stuff should be placed. 
@@ -74,7 +72,7 @@ Following methods have to be implemented:
 ```php
 <?php
 
-namespace OnlineShop\Framework\CheckoutManager;
+namespace \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 /**
  * Class \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\DeliveryAddress
@@ -155,11 +153,13 @@ In simple use cases a website specific implementation needs
 If additional information needs to be stored into the order, the OrderManager has to be 
  extended. For more Information 
  
-A simple implementation of `Website_OnlineShop_Order_OrderManager` could look like:
+A simple implementation of `\AppBundle\Ecommerce\Order\OrderManager` could look like:
 
 ```php
 <?php
-class Website_OnlineShop_Order_OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager {
+namespace \AppBundle\Ecommerce\Order;
+
+class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager {
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
@@ -167,7 +167,7 @@ class Website_OnlineShop_Order_OrderManager extends \Pimcore\Bundle\EcommerceFra
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public function applyCustomCheckoutDataToOrder(OnlineShop\Framework\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
+    public function applyCustomCheckoutDataToOrder(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 
@@ -175,7 +175,7 @@ class Website_OnlineShop_Order_OrderManager extends \Pimcore\Bundle\EcommerceFra
 
         $checkout = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()->getCheckoutManager( $cart );
         $deliveryAddress = $checkout->getCheckoutStep('deliveryaddress')->getData();
-        /* @var Website_OnlineShop_Order_DeliveryAddress $deliveryAddress */
+        /* @var AppBundle\Ecommerce\Order\DeliveryAddress $deliveryAddress */
 
         // insert delivery address
         $order->setCustomerName( $deliveryAddress->firstname . ' ' . $deliveryAddress->lastname );
@@ -191,11 +191,13 @@ class Website_OnlineShop_Order_OrderManager extends \Pimcore\Bundle\EcommerceFra
 ```
 
 
-A simple implementation of `Website_OnlineShop_Order_Processor` could look like: 
+A simple implementation of `\AppBundle\Ecommerce\Order\Processor` could look like:
 
 ```php
 <?php
-class OnlineShop_CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor {
+namespace \AppBundle\Ecommerce\Order;
+
+class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor {
  
    protected function processOrder(Object_OnlineShopOrder $order) {
       //send order to ERP-System

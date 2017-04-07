@@ -23,7 +23,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class FilterService
- * @package OnlineShop\Framework\FilterService
  */
 class FilterService
 {
@@ -40,7 +39,7 @@ class FilterService
     protected $renderer;
 
     /**
-     * @param $config Config OnlineShop Configuration
+     * @param $config Config EcommerceFramework Configuration
      */
     public function __construct($config, TranslatorInterface $translator, EngineInterface $renderer)
     {
@@ -51,7 +50,7 @@ class FilterService
 
     /**
      * Returns instance of FilterType or
-     * just the name if the name is not defined in the OnlineShop configuration
+     * just the name if the name is not defined in the EcommerceFramework configuration
      *
      * @param $name
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType | string

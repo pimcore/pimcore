@@ -12,11 +12,11 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.OnlineShop.pricing.config.item");
-pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.config.item");
+pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
 
     /**
-     * pimcore.plugin.OnlineShop.pricing.config.panel
+     * pimcore.bundle.EcommerceFramework.pricing.config.panel
      */
     parent: {},
 
@@ -169,11 +169,11 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
                 }]
                 }, {
                 name: "behavior",
-                fieldLabel: t("plugin_onlineshop_pricing_config_behavior"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_behavior"),
                 xtype: "combo",
                 store: [
-                    ["additiv", t("plugin_onlineshop_pricing_config_additiv")],
-                    ["stopExecute", t("plugin_onlineshop_pricing_config_stopExecute")]
+                    ["additiv", t("bundle_ecommerce_pricing_config_additiv")],
+                    ["stopExecute", t("bundle_ecommerce_pricing_config_stopExecute")]
                 ],
                 mode: "local",
                 width: 300,
@@ -199,15 +199,15 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         // init
         var _this = this;
         var addMenu = [];
-        var itemTypes = Object.keys(pimcore.plugin.OnlineShop.pricing.conditions);
+        var itemTypes = Object.keys(pimcore.bundle.EcommerceFramework.pricing.conditions);
         // show only defined conditions
         Ext.each(this.parent.condition, function (condition) {
             var method = "condition" + condition;
             if(itemTypes.indexOf(method) != -1)
             {
                 addMenu.push({
-                    iconCls: "plugin_onlineshop_pricing_icon_" + method,
-                    text: pimcore.plugin.OnlineShop.pricing.conditions[method](null, null,true),
+                    iconCls: "bundle_ecommerce_pricing_icon_" + method,
+                    text: pimcore.bundle.EcommerceFramework.pricing.conditions[method](null, null,true),
                     handler: _this.addCondition.bind(_this, method)
                 });
             }
@@ -237,7 +237,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         // init
         var _this = this;
         var addMenu = [];
-        var itemTypes = Object.keys(pimcore.plugin.OnlineShop.pricing.actions);
+        var itemTypes = Object.keys(pimcore.bundle.EcommerceFramework.pricing.actions);
 
         // show only defined actions
         Ext.each(this.parent.action, function (action) {
@@ -245,8 +245,8 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
             if(itemTypes.indexOf(method) != -1)
             {
                 addMenu.push({
-                    iconCls: "plugin_onlineshop_pricing_icon_" + method,
-                    text: pimcore.plugin.OnlineShop.pricing.actions[method](null, null,true),
+                    iconCls: "bundle_ecommerce_pricing_icon_" + method,
+                    text: pimcore.bundle.EcommerceFramework.pricing.actions[method](null, null,true),
                     handler: _this.addAction.bind(_this, method)
                 });
             }
@@ -258,7 +258,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
             autoScroll: true,
             forceLayout: true,
             tbar: [{
-                iconCls: "pimcore_icon_add", // plugin_onlineshop_pricing_action
+                iconCls: "pimcore_icon_add",
                 menu: addMenu
             }],
             border: false
@@ -276,7 +276,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
     addCondition: function (type, data) {
 
         // create condition
-        var item = pimcore.plugin.OnlineShop.pricing.conditions[type](this, data);
+        var item = pimcore.bundle.EcommerceFramework.pricing.conditions[type](this, data);
 
         // add logic for brackets
         var tab = this;
@@ -330,7 +330,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
      */
     addAction: function (type, data) {
 
-        var item = pimcore.plugin.OnlineShop.pricing.actions[type](this, data);
+        var item = pimcore.bundle.EcommerceFramework.pricing.actions[type](this, data);
 
         this.actionsContainer.add(item);
         item.updateLayout();
@@ -422,7 +422,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
      */
     saveOnComplete: function () {
         this.parent.refresh(this.parent.getTree().getRootNode());
-        pimcore.helpers.showNotification(t("success"), t("plugin_onlineshop_pricing_config_saved_successfully"), "success");
+        pimcore.helpers.showNotification(t("success"), t("bundle_ecommerce_pricing_config_saved_successfully"), "success");
     },
 
     recalculateButtonStatus: function () {
@@ -525,8 +525,8 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 /**
  * CONDITION TYPES
  */
-pimcore.registerNS("pimcore.plugin.OnlineShop.pricing.conditions");
-pimcore.plugin.OnlineShop.pricing.conditions = {
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.conditions");
+pimcore.bundle.EcommerceFramework.pricing.conditions = {
 
     detectBlockIndex: function (blockElement, container) {
         // detect index
@@ -569,7 +569,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
 
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.plugin.OnlineShop.pricing.conditions.detectBlockIndex(blockElement, container);
+                var index = pimcore.bundle.EcommerceFramework.pricing.conditions.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
                 var newIndex = index-1;
@@ -601,7 +601,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
 
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.plugin.OnlineShop.pricing.conditions.detectBlockIndex(blockElement, container);
+                var index = pimcore.bundle.EcommerceFramework.pricing.conditions.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
                 // move this node temorary to an other so ext recognizes a change
@@ -659,7 +659,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
     conditionDateRange: function (panel, data, getName) {
 
         //
-        var niceName = t("plugin_onlineshop_pricing_config_condition_daterange");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_daterange");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -677,10 +677,10 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:30px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionDateRange"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionDateRange"),
             items: [{
                 xtype:'datefield',
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_daterange_from"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_daterange_from"),
                 name: "starting",
                 format: 'd.m.Y',
                 altFormats: 'U',
@@ -688,7 +688,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
                 width: 400
             },{
                 xtype:'datefield',
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_daterange_until"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_daterange_until"),
                 name: "ending",
                 format: 'd.m.Y',
                 altFormats: 'U',
@@ -711,7 +711,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
      */
     conditionCatalogProduct: function (panel, data, getName) {
 
-        var niceName = t("plugin_onlineshop_pricing_config_condition_catalog_product");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_catalog_product");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -727,9 +727,9 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCatalogProduct"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionCatalogProduct"),
             items: [
-                new pimcore.plugin.OnlineShop.pricing.config.objects(data.products, {
+                new pimcore.bundle.EcommerceFramework.pricing.config.objects(data.products, {
                     name: "products",
                     title: "",
                     visibleFields: "path",
@@ -774,7 +774,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
      */
     conditionCatalogCategory: function (panel, data, getName) {
 
-        var niceName = t("plugin_onlineshop_pricing_config_condition_catalog_category");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_catalog_category");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -790,9 +790,9 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 0px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCatalogCategory"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionCatalogCategory"),
             items: [
-                new pimcore.plugin.OnlineShop.pricing.config.objects(data.categories, {
+                new pimcore.bundle.EcommerceFramework.pricing.config.objects(data.categories, {
                     name: "categories",
                     title: "",
                     visibleFields: "path",
@@ -837,7 +837,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
      */
     conditionCartAmount: function (panel, data, getName) {
 
-        var niceName = t("plugin_onlineshop_pricing_config_condition_cart_amount");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_cart_amount");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -853,10 +853,10 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCartAmount"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionCartAmount"),
             items: [{
                 xtype: "numberfield",
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_cart_amount"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_cart_amount"),
                 name: "limit",
                 width: 300,
                 value: data.limit
@@ -876,7 +876,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
     conditionToken: function (panel, data, getName) {
 
         //
-        var niceName = t("plugin_onlineshop_pricing_config_condition_token");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_token");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -894,10 +894,10 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionToken"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionToken"),
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_token_value"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_token_value"),
                 name: "token",
                 width: 200,
                 value: data.token
@@ -917,7 +917,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
     conditionSold: function (panel, data, getName) {
 
         //
-        var niceName = t("plugin_onlineshop_pricing_config_condition_sold");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_sold");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -935,10 +935,10 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionSold"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionSold"),
             items: [{
                 xtype: "numberfield",
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_sold_count"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_sold_count"),
                 name: "count",
                 width: 300,
                 value: data.count
@@ -958,7 +958,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
     conditionSales: function (panel, data, getName) {
 
         //
-        var niceName = t("plugin_onlineshop_pricing_config_condition_sales");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_sales");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -976,10 +976,10 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionSales"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionSales"),
             items: [{
                 xtype: "numberfield",
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_sales_amount"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_sales_amount"),
                 name: "amount",
                 width: 300,
                 value: data.amount
@@ -999,7 +999,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
     conditionClientIp: function (panel, data, getName) {
 
         //
-        var niceName = t("plugin_onlineshop_pricing_config_condition_client-ip");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_client-ip");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1013,10 +1013,10 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionClientIp"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionClientIp"),
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("plugin_onlineshop_pricing_config_condition_client_ip"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_client_ip"),
                 name: "ip",
                 width: 300,
                 value: data.ip
@@ -1049,7 +1049,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
      * @returns Ext.form.FormPanel
      */
     conditionVoucherToken: function (panel, data, getName) {
-        var niceName = t("plugin_onlineshop_pricing_config_condition_voucherToken");
+        var niceName = t("bundle_ecommerce_pricing_config_condition_voucherToken");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1067,9 +1067,9 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionVoucherToken"),
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionVoucherToken"),
             items: [
-                new pimcore.plugin.OnlineShop.pricing.config.objects(data.whiteList, {
+                new pimcore.bundle.EcommerceFramework.pricing.config.objects(data.whiteList, {
                     classes: [
                         "OnlineShopVoucherSeries"
                     ],
@@ -1115,8 +1115,8 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
 /**
  * ACTION TYPES
  */
-pimcore.registerNS("pimcore.plugin.OnlineShop.pricing.actions");
-pimcore.plugin.OnlineShop.pricing.actions = {
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.actions");
+pimcore.bundle.EcommerceFramework.pricing.actions = {
 
     /**
      * @param name
@@ -1154,7 +1154,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
     actionGift: function (panel, data, getName) {
 
         // getName macro
-        var niceName = t("plugin_onlineshop_pricing_config_action_gift");
+        var niceName = t("bundle_ecommerce_pricing_config_action_gift");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1165,7 +1165,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
         }
 
         // config
-        var iconCls = 'plugin_onlineshop_pricing_icon_actionGift';
+        var iconCls = 'bundle_ecommerce_pricing_icon_actionGift';
 
         // create item
         var myId = Ext.id();
@@ -1179,7 +1179,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
             items: [
                 {
                     xtype: "textfield",
-                    fieldLabel: t("plugin_onlineshop_pricing_config_action_gift_product"),
+                    fieldLabel: t("bundle_ecommerce_pricing_config_action_gift_product"),
                     name: "product",
                     width: 500,
                     cls: "input_drop_target",
@@ -1226,7 +1226,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
     actionCartDiscount: function (panel, data, getName) {
 
         // getName macro
-        var niceName = t("plugin_onlineshop_pricing_config_action_cart_discount");
+        var niceName = t("bundle_ecommerce_pricing_config_action_cart_discount");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1237,7 +1237,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
         }
 
         // config
-        var iconCls = 'plugin_onlineshop_pricing_icon_actionCartDiscount';
+        var iconCls = 'bundle_ecommerce_pricing_icon_actionCartDiscount';
 
         // create item
         var myId = Ext.id();
@@ -1251,13 +1251,13 @@ pimcore.plugin.OnlineShop.pricing.actions = {
             items: [
                 {
                     xtype: "numberfield",
-                    fieldLabel: t("plugin_onlineshop_pricing_config_action_cart_discount_amount"),
+                    fieldLabel: t("bundle_ecommerce_pricing_config_action_cart_discount_amount"),
                     name: "amount",
                     width: 200,
                     value: data.amount
                 }, {
                     xtype: "numberfield",
-                    fieldLabel: t("plugin_onlineshop_pricing_config_action_cart_discount_percent"),
+                    fieldLabel: t("bundle_ecommerce_pricing_config_action_cart_discount_percent"),
                     name: "percent",
                     width: 200,
                     value: data.percent
@@ -1277,7 +1277,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
     actionProductDiscount: function (panel, data, getName) {
 
         // getName macro
-        var niceName = t("plugin_onlineshop_pricing_config_action_product_discount");
+        var niceName = t("bundle_ecommerce_pricing_config_action_product_discount");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1288,7 +1288,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
         }
 
         // config
-        var iconCls = 'plugin_onlineshop_pricing_icon_actionProductDiscount';
+        var iconCls = 'bundle_ecommerce_pricing_icon_actionProductDiscount';
 
         // create item
         var myId = Ext.id();
@@ -1302,13 +1302,13 @@ pimcore.plugin.OnlineShop.pricing.actions = {
             items: [
                 {
                     xtype: "numberfield",
-                    fieldLabel: t("plugin_onlineshop_pricing_config_action_product_discount_amount"),
+                    fieldLabel: t("bundle_ecommerce_pricing_config_action_product_discount_amount"),
                     name: "amount",
                     width: 200,
                     value: data.amount
                 }, {
                     xtype: "numberfield",
-                    fieldLabel: t("plugin_onlineshop_pricing_config_action_product_discount_percent"),
+                    fieldLabel: t("bundle_ecommerce_pricing_config_action_product_discount_percent"),
                     name: "percent",
                     width: 200,
                     value: data.percent
@@ -1328,7 +1328,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
     actionFreeShipping: function (panel, data, getName) {
 
         // getName macro
-        var niceName = t("plugin_onlineshop_pricing_config_action_free_shipping");
+        var niceName = t("bundle_ecommerce_pricing_config_action_free_shipping");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1339,7 +1339,7 @@ pimcore.plugin.OnlineShop.pricing.actions = {
         }
 
         // config
-        var iconCls = 'plugin_onlineshop_pricing_icon_actionFreeShipping';
+        var iconCls = 'bundle_ecommerce_pricing_icon_actionFreeShipping';
 
         // create item
         var myId = Ext.id();

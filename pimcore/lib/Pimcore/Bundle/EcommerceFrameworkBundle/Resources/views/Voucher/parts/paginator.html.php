@@ -25,11 +25,11 @@ if ($this->pageCount > 1): ?>
         <!-- Link zur vorherigen Seite -->
         <?php if (isset($this->previous)): ?>
             <li class="first"><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $this->previous])?>" rel="<?=$this->previous?>"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span>
-                        <?=$this->translateAdmin('plugin_onlineshop_voucherservice_paging-previous')?></span>
+                        <?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-previous')?></span>
                 </a>
             </li>
         <?php else: ?>
-            <li class="first"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span><?=$this->translateAdmin('plugin_onlineshop_voucherservice_paging-previous')?></span></li>
+            <li class="first"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span><?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-previous')?></span></li>
         <?php endif; ?>
 
         <!-- Numbered page links -->
@@ -43,10 +43,10 @@ if ($this->pageCount > 1): ?>
 
         <!-- Link zur nächsten Seite -->
         <?php if (isset($this->next)): ?>
-            <li class="last"><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $this->next])?>" rel="<?=$this->next?>"><span class="pag-text-label"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></a></li>
+            <li class="last"><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $this->next])?>" rel="<?=$this->next?>"><span class="pag-text-label"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></a></li>
 
         <?php else: ?>
-            <li class="last"><span class="pag-text-label"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></li>
+            <li class="last"><span class="pag-text-label"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></li>
         <?php endif; ?>
     </ul>
 <?php endif; ?>

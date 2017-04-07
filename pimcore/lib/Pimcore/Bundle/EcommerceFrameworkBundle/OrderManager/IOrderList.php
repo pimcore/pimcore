@@ -24,7 +24,6 @@ use ArrayAccess;
 /**
  * Interface IOrderList
  *
- * @package OnlineShop\Framework\OrderManager
  * @method IOrderListItem current()
  */
 interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, ArrayAccess, AdapterInterface, AdapterAggregateInterface

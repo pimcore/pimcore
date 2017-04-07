@@ -4,9 +4,9 @@ The Tracking Manager enables ecommerce transaction tracking for ecommerce websit
 different tracker implementations, it supports different tracking services.
 
 Current implementations of trackers are
-* **Google Analytics Classic**: `OnlineShop\Framework\Tracking\Tracker\Analytics\Ecommerce`
-* **Google Analytics Universal**: `OnlineShop\Framework\Tracking\Tracker\Analytics\UniversalEcommerce`
-* **Google Analytics Enhanced Ecommerce**: `OnlineShop\Framework\Tracking\Tracker\Analytics\EnhancedEcommerce`
+* **Google Analytics Classic**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce`
+* **Google Analytics Universal**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce`
+* **Google Analytics Enhanced Ecommerce**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce`
 
 ### Tracking Actions
 
@@ -36,30 +36,27 @@ Depending on the used tracking service some of these actions might not be availa
 If so, the tracking action is ignored for this tracker.
 
 
-### Configuration in `OnlineShopConfig.php`
+### Configuration in `EcommerceFrameworkConfig.php`
 
-The configuration takes place in the `OnlineShopConfig.php`. If no `TrackingItemBuilder` is configured, the
+The configuration takes place in the `EcommerceFrameworkConfig.php`. If no `TrackingItemBuilder` is configured, the
 `TrackingItemBuilder` will
-fall back to the default implementation `OnlineShop\Framework\Tracking\TrackingItemBuilder`.
+fall back to the default implementation `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder`.
 ```php
 "trackingmanager" => [
-            "class" => "OnlineShop\\Framework\\Tracking\\TrackingManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingManager",
             "config" => [
                 "trackers" => [
                     "tracker" => [
                         [
                         "name" => "GoogleAnalyticsEnhancedEcommerce",
-                        "class" => "OnlineShop\\Framework\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
-                        "trackingItemBuilder" => "Website\\OnlineShop\\Tracking\\TrackingItemBuilder"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
+                        "trackingItemBuilder" => "AppBundle\\Ecommerce\\Tracking\\TrackingItemBuilder"
                         ]
                     ]
                 ]
             ]
         ],
 ```
-
-> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
-
 
 ## 2 - Usage Tracking Manager
 
@@ -105,7 +102,7 @@ class CheckoutController extends \Pimcore\Controller\Action\Frontend {
 ## 3 - Project Specific Data
 
 Adding project specific data to tracking items by extending the `TrackingItemBuilder` class. The extending class has to
-be configured in the `OnlineShopConfig.php`.
+be configured in the `EcommerceFrameworkConfig.php`.
 
 ### Example for Additional Data in Poduct Impressions
 

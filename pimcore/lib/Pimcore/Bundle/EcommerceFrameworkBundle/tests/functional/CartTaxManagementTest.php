@@ -85,7 +85,7 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
      */
     private function setUpCart()
     {
-        return Stub::construct("OnlineShop\\Framework\\CartManager\\SessionCart", [], [
+        return Stub::construct("\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart", [], [
             "getSession" => function () {
                 return [];
             },

@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"\\OnlineShop\\Framework\\Model\\AbstractVoucherSeries",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractVoucherSeries",
 	"useTraits":null,
 	"allowInherit":false,
 	"allowVariants":false,

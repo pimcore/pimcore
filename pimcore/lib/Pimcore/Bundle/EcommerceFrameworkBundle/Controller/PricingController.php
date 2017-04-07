@@ -37,10 +37,10 @@ class PricingController extends AdminController implements EventedControllerInte
     public function onKernelController(FilterControllerEvent $event)
     {
         // permission check
-        $key = 'plugin_onlineshop_pricing_rules';
+        $key = 'bundle_ecommerce_pricing_rules';
         $access = $this->getUser()->getPermission($key);
         if (!$access) {
-            throw new \Exception('this function requires "plugin_onlineshop_pricing_rules" permission!');
+            throw new \Exception('this function requires "bundle_ecommerce_pricing_rules" permission!');
         }
     }
 
@@ -60,10 +60,10 @@ class PricingController extends AdminController implements EventedControllerInte
             /* @var  IRule $rule */
 
             if ($rule->getActive()) {
-                $icon = 'plugin_onlineshop_pricing_icon_rule_' . $rule->getBehavior();
+                $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();
                 $title = 'Verhalten: ' . $rule->getBehavior();
             } else {
-                $icon = 'plugin_onlineshop_pricing_icon_rule_disabled';
+                $icon = 'bundle_ecommerce_pricing_icon_rule_disabled';
                 $title = 'Deaktiviert';
             }
 
@@ -313,7 +313,7 @@ class PricingController extends AdminController implements EventedControllerInte
         ];
 
         // get config
-        $pricingConfig = Factory::getInstance()->getConfig()->get('onlineshop')->get('pricingmanager');
+        $pricingConfig = Factory::getInstance()->getConfig()->get('ecommerceframework')->get('pricingmanager');
         if ($pricingConfig) {
             $list = $pricingConfig->get('config')->get('condition');
             foreach ($list as $name => $config) {

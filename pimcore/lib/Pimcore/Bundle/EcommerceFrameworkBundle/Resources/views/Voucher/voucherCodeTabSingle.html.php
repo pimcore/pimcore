@@ -43,21 +43,21 @@ $urlParams = $this->getRequest()->query->all();
 <div class="container-fluid">
     <div id="content">
         <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
-            <li class="active"><a href="#manager" data-toggle="tab"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-manager')?></a></li>
-            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-statistics')?></a></li>
+            <li class="active"><a href="#manager" data-toggle="tab"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_tab-manager')?></a></li>
+            <li><a href="#statistics" id="statistic-tab" data-toggle="tab"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_tab-statistics')?></a></li>
         </ul>
 
         <div id="my-tab-content" class="tab-content">
             <div class="tab-pane active" id="manager">
                 <div class="row">
                     <div class="col col-sm-12">
-                        <h2><?=$this->translateAdmin('plugin_onlineshop_voucherservice_usage-headline')?></h2>
+                        <h2><?=$this->translateAdmin('bundle_ecommerce_voucherservice_usage-headline')?></h2>
                     </div>
                 </div>
 
                 <div class="row header">
                     <div class="col col-sm-4">
-                        <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_assign-config')?></button>
+                        <button type="button" class="btn btn-primary js-modal" data-modal="generate"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_assign-config')?></button>
                     </div>
 
                     <!--Info and Error Messages Container-->
@@ -81,7 +81,7 @@ $urlParams = $this->getRequest()->query->all();
 
                                 <a class="btn btn-default" href="<?= $exportUrl ?>" target="_blank">
                                     <span class="glyphicon glyphicon-export"></span>
-                                    <?= $this->translateAdmin('plugin_onlineshop_voucherservice_export-button') ?>
+                                    <?= $this->translateAdmin('bundle_ecommerce_voucherservice_export-button') ?>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -93,7 +93,7 @@ $urlParams = $this->getRequest()->query->all();
                     <div class="col col-sm-8 token-overview">
                         <div class=" row">
                             <div class="col col-sm-5">
-                                <h3 style="float: left;"><i class="glyphicon glyphicon-list"></i> &nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_token-overview-headline')?></h3>
+                                <h3 style="float: left;"><i class="glyphicon glyphicon-list"></i> &nbsp;<?=$this->translateAdmin('bundle_ecommerce_voucherservice_token-overview-headline')?></h3>
                             </div>
                             <div class="col col-sm-7 text-right">
                             </div>
@@ -107,10 +107,10 @@ $urlParams = $this->getRequest()->query->all();
                             <table class="table">
                                 <thead>
                                 <tr class="active">
-                                    <th><span class="sort glyphicon glyphicon-chevron-down" data-criteria="token"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-token')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="usages"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-usages')?></th>
-                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="length"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-length')?></th>
-                                    <th class="text-center"><span class="sort active glyphicon glyphicon-chevron-down" data-criteria="timestamp"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_table-date')?></th>
+                                    <th><span class="sort glyphicon glyphicon-chevron-down" data-criteria="token"></span>&nbsp;<?=$this->translateAdmin('bundle_ecommerce_voucherservice_table-token')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="usages"></span>&nbsp;<?=$this->translateAdmin('bundle_ecommerce_voucherservice_table-usages')?></th>
+                                    <th class="text-center"><span class="sort glyphicon glyphicon-chevron-down" data-criteria="length"></span>&nbsp;<?=$this->translateAdmin('bundle_ecommerce_voucherservice_table-length')?></th>
+                                    <th class="text-center"><span class="sort active glyphicon glyphicon-chevron-down" data-criteria="timestamp"></span>&nbsp;<?=$this->translateAdmin('bundle_ecommerce_voucherservice_table-date')?></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -133,7 +133,7 @@ $urlParams = $this->getRequest()->query->all();
             <div class="tab-pane" id="statistics">
                 <div class="row">
                     <div class="col col-sm-12">
-                        <h2><?=$this->translateAdmin('plugin_onlineshop_voucherservice_tab-statistics-headline')?></h2>
+                        <h2><?=$this->translateAdmin('bundle_ecommerce_voucherservice_tab-statistics-headline')?></h2>
                     </div>
                 </div>
 
@@ -145,7 +145,7 @@ $urlParams = $this->getRequest()->query->all();
                         <?php } ?>
                     </div>
                     <div class="col col-sm-8 text-right">
-                            <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<?=$this->translateAdmin('plugin_onlineshop_voucherservice_cleanup-reservations-button')?></button>
+                            <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="glyphicon glyphicon-refresh"></span>&nbsp;<?=$this->translateAdmin('bundle_ecommerce_voucherservice_cleanup-reservations-button')?></button>
                     </div>
                 </div>
 

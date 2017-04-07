@@ -76,7 +76,7 @@ class VoucherController extends FrontendController
 
             return $this->render($renderScript, $paramsBag);
         } else {
-            $paramsBag['errors'] = ['plugin_onlineshop_voucherservice_msg-error-config-missing'];
+            $paramsBag['errors'] = ['bundle_ecommerce_voucherservice_msg-error-config-missing'];
 
             return $this->render('PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php', $paramsBag);
         }
@@ -163,9 +163,9 @@ class VoucherController extends FrontendController
                 $params = ['id' => $request->get('id')]; //$request->query->all();
 
                 if ($result == true) {
-                    $params['success'] = $translator->trans('plugin_onlineshop_voucherservice_msg-success-generation', [], 'admin');
+                    $params['success'] = $translator->trans('bundle_ecommerce_voucherservice_msg-success-generation', [], 'admin');
                 } else {
-                    $params['error'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-generation', [], 'admin');
+                    $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-generation', [], 'admin');
                 }
 
                 return $this->redirectToRoute(
@@ -195,11 +195,11 @@ class VoucherController extends FrontendController
                 $request->get('olderThan') ? $params['olderThan'] = $request->get('olderThan') : '';
 
                 if (empty($params['usage'])) {
-                    $params['error'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-required-missing', [], 'admin');
+                    $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-required-missing', [], 'admin');
                 } elseif ($tokenManager->cleanUpCodes($params)) {
-                    $params['success'] = $translator->trans('plugin_onlineshop_voucherservice_msg-success-cleanup', [], 'admin');
+                    $params['success'] = $translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup', [], 'admin');
                 } else {
-                    $params['error'] = $translator->trans('plugin_onlineshop_voucherservice_msg-error-cleanup', [], 'admin');
+                    $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup', [], 'admin');
                 }
 
                 return $this->redirectToRoute(
@@ -227,7 +227,7 @@ class VoucherController extends FrontendController
         if (!isset($duration)) {
             return $this->redirectToRoute(
                 "pimcore_ecommerce_backend_voucher_voucher-code-tab",
-                ['error' => $translator->trans('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations-duration-missing', [], 'admin'), 'id' => $id]
+                ['error' => $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations-duration-missing', [], 'admin'), 'id' => $id]
             );
         }
 
@@ -237,7 +237,7 @@ class VoucherController extends FrontendController
                 if ($tokenManager->cleanUpReservations($duration, $id)) {
                     return $this->redirectToRoute(
                         "pimcore_ecommerce_backend_voucher_voucher-code-tab",
-                        ['success' => $translator->trans('plugin_onlineshop_voucherservice_msg-success-cleanup-reservations', [], 'admin'), 'id' => $id]
+                        ['success' => $translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup-reservations', [], 'admin'), 'id' => $id]
                     );
                 }
             }
@@ -245,7 +245,7 @@ class VoucherController extends FrontendController
 
         return $this->redirectToRoute(
             "pimcore_ecommerce_backend_voucher_voucher-code-tab",
-            ['error' => $translator->trans('plugin_onlineshop_voucherservice_msg-error-cleanup-reservations', [], 'admin'), 'id' => $id]
+            ['error' => $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations', [], 'admin'), 'id' => $id]
         );
     }
 }

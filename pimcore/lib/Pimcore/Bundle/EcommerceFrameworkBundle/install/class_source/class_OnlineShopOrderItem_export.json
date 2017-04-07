@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"\\OnlineShop\\Framework\\Model\\AbstractOrderItem",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractOrderItem",
 	"useTraits":null,
 	"allowInherit":false,
 	"allowVariants":false,

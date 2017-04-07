@@ -12,15 +12,15 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.OnlineShop.plugin");
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.bundle");
 
-pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
+pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin,{
 
     menuItems: null,
 
-    getClassName: function (){
-        return "pimcore.plugin.OnlineShop";
-    },
+    // getClassName: function (){
+    //     return "pimcore.bundle.EcommerceFramework.bundle";
+    // },
 
     initialize: function(){
         pimcore.plugin.broker.registerPlugin(this);
@@ -51,22 +51,22 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                 insertPoint = Ext.get(dom[0]);
             }
 
-            var config = pimcore.plugin.OnlineShop.plugin.config;
+            var config = pimcore.bundle.EcommerceFramework.bundle.config;
 
             // pricing rules
-            if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("plugin_onlineshop_pricing_rules") && (!config.menu || config.menu.pricingRules.disabled == 0)) {
+            if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricingRules.disabled == 0)) {
                 // add pricing rules to menu
                 // create item
-                var pricingPanelId = "plugin_onlineshop_pricing_config";
+                var pricingPanelId = "bundle_ecommerce_pricing_config";
                 var item = {
-                    text: t("plugin_onlineshop_pricing_rules"),
-                    iconCls: "plugin_onlineshop_pricing_rules",
+                    text: t("bundle_ecommerce_pricing_rules"),
+                    iconCls: "bundle_ecommerce_pricing_rules",
                     handler: function () {
                         try {
                             pimcore.globalmanager.get(pricingPanelId).activate();
                         }
                         catch (e) {
-                            pimcore.globalmanager.add(pricingPanelId, new pimcore.plugin.OnlineShop.pricing.config.panel(pricingPanelId));
+                            pimcore.globalmanager.add(pricingPanelId, new pimcore.bundle.EcommerceFramework.pricing.config.panel(pricingPanelId));
                         }
                     }
                 };
@@ -77,18 +77,18 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
 
             // order backend
-            if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("plugin_onlineshop_back-office_order") && (!config.menu || config.menu.orderlist.disabled == 0)) {
+            if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("bundle_ecommerce_back-office_order") && (!config.menu || config.menu.orderlist.disabled == 0)) {
                 // create item
-                var orderPanelId = "plugin_onlineshop_back-office_order";
+                var orderPanelId = "bundle_ecommerce_back-office_order";
                 var item = {
-                    text: t("plugin_onlineshop_back-office_order"),
-                    iconCls: "plugin_onlineshop_back-office_order",
+                    text: t("bundle_ecommerce_back-office_order"),
+                    iconCls: "bundle_ecommerce_back-office_order",
                     handler: function () {
                         try {
                             pimcore.globalmanager.get(orderPanelId).activate();
                         }
                         catch (e) {
-                            pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.orderlist.route, "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
+                            pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.orderlist.route, "bundle_ecommerce_back-office_order", t('bundle_ecommerce_back-office_order')));
                         }
                     }
                 };
@@ -97,12 +97,12 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                 menuItems.add(item);
             }
 
-            // add onlineshop main menu
+            // add ecommerce framewokr main menu
             if (menuItems.items.length > 0) {
                 this.navEl = Ext.get(
                     insertPoint.insertHtml(
                         "afterEnd",
-                        '<li id="pimcore_menu_onlineshop" class="pimcore_menu_item icon-basket" data-menu-tooltip="' + t('plugin_onlineshop_mainmenu') + '"></li>'
+                        '<li id="pimcore_menu_ecommerce" class="pimcore_menu_item icon-basket" data-menu-tooltip="' + t('bundle_ecommerce_mainmenu') + '"></li>'
                     )
                 );
 
@@ -115,10 +115,10 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
 
     postOpenObject: function (object, type) {
-        if (pimcore.globalmanager.get("user").isAllowed("plugin_onlineshop_pricing_rules")) {
+        if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_pricing_rules")) {
 
             if (type == "object" && object.data.general.o_className == "OnlineShopVoucherSeries") {
-                var tab = new pimcore.plugin.onlineshop.VoucherSeriesTab(object, type);
+                var tab = new pimcore.bundle.EcommerceFramework.VoucherSeriesTab(object, type);
 
                 object.tab.items.items[1].insert(1, tab.getLayout());
                 object.tab.items.items[1].updateLayout();
@@ -130,4 +130,4 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
 });
 
-new pimcore.plugin.OnlineShop.plugin();
+new pimcore.bundle.EcommerceFramework.bundle();

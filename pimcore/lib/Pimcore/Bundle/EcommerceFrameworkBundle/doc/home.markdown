@@ -1,4 +1,4 @@
-The OnlineShop plugin is a general framework that adds E-Commerce functionality to Pimcore.
+The EcommerceFramework bundle is a general framework that adds E-Commerce functionality to Pimcore.
 It's most important features are:
 - Product Index, Product Listings and Filter Services
 - Functionality for implementing carts

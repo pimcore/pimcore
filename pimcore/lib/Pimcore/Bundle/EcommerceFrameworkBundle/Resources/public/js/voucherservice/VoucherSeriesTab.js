@@ -12,11 +12,11 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.onlineshop.VoucherSeriesTab");
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.VoucherSeriesTab");
 
-pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
+pimcore.bundle.EcommerceFramework.VoucherSeriesTab = Class.create({
 
-    title: t('plugin_onlineshop_vouchertoolkit_tab'),
+    title: t('bundle_ecommerce_vouchertoolkit_tab'),
     iconCls: 'plugin_voucherservice_icon',
     src: '/admin/ecommerceframework/voucher/voucher-code-tab',
     id: null,
@@ -39,14 +39,14 @@ pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
 
 
             this.panel = new Ext.Panel({
-                id: "plugin_onlineshop_vouchertoolkit_tab_" + this.id,
+                id: "bundle_ecommerce_vouchertoolkit_tab_" + this.id,
                 title: this.title,
                 iconCls: this.iconCls,
                 border: false,
                 layout: "fit",
                 closable: false,
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="about:blank" frameborder="0" width="100%" id="plugin_onlineshop_vouchertoolkit_tab_frame_' + this.id + '"></iframe>',
+                html: '<iframe src="about:blank" frameborder="0" width="100%" id="bundle_ecommerce_vouchertoolkit_tab_frame_' + this.id + '"></iframe>',
                 tbar: [this.reloadButton]
             });
 
@@ -68,7 +68,7 @@ pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
     },
 
     setLayoutFrameDimensions: function (width, height) {
-        Ext.get("plugin_onlineshop_vouchertoolkit_tab_frame_" + this.id).setStyle({
+        Ext.get("bundle_ecommerce_vouchertoolkit_tab_frame_" + this.id).setStyle({
             height: (height - 50) + "px"
         });
     },
@@ -76,7 +76,7 @@ pimcore.plugin.onlineshop.VoucherSeriesTab = Class.create({
     reload: function () {
         try {
             var d = new Date();
-            Ext.get("plugin_onlineshop_vouchertoolkit_tab_frame_" + this.id).dom.src = this.src;
+            Ext.get("bundle_ecommerce_vouchertoolkit_tab_frame_" + this.id).dom.src = this.src;
         }
         catch (e) {
             console.log(e);

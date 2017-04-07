@@ -26,11 +26,11 @@ When a product category class is used, this class needs to extend the abstract c
 > For product categories only one pimcore class should be used. For products, several pimcore classes can be used. Possibly the index update scripts need to be adapted.
 
 
-## 3 - Configuring OnlineShopConfig.php
+## 3 - Configuring EcommerceFrameworkConfig.php
 
-[Sample OnlineShopConfig.php](/config/OnlineShopConfig_sample.php)
+[Sample EcommerceFrameworkConfig.php](/config/EcommerceFrameworkConfig_sample.php)
 
-Open /website/var/plugins/EcommerceFramework/OnlineShopConfig.php and adjust the settings. This configuration file is the central configuration for the e-commerce framework and defines the concrete implementations and configurations for all modules.
+Open /website/var/plugins/EcommerceFramework/EcommerceFrameworkConfig.php and adjust the settings. This configuration file is the central configuration for the e-commerce framework and defines the concrete implementations and configurations for all modules.
 
 So this configuration file specifies things like
 - cart manager

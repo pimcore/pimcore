@@ -62,7 +62,7 @@
                 $currentRouteName = $this->getRequest()->get('_route');
                 $arrActions = [];
 
-                if($user->isAllowed('plugin_onlineshop_back-office_order'))
+                if($user->isAllowed('bundle_ecommerce_back-office_order'))
                 {
                     $arrActions['order'][] = 'list';
                 }

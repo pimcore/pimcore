@@ -3,11 +3,11 @@
 return [
     "tenant" => [
         "pricecalculator" => [
-            "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator",
             "config" => [
                 "modificators" => [
                     "shipping" => [
-                        "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceModificator\\Shipping",
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceModificator\\Shipping",
                         "config" => [
                             "charge" => "500.90"
                         ]

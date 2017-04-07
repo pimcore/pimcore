@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 /**
- * Interface OnlineShop_Framework_ProductInterfaces_IProduct
+ * Interface IProduct
  */
 interface IProduct
 {

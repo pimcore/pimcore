@@ -2,27 +2,27 @@
 
 > Basically, every user specific product collection is a cart. No matter how it is called (cart, wish list, compare list, ...), all these product collections need the same base functionality. Therefore all different product collections are carts with a specific name. 
 
-The configuration takes place in the OnlineShopConfig.php
+The configuration takes place in the EcommerceFrameworkConfig.php
 ```php
  /* general settings for cart manager */
         "cartmanager" => [
-            "class" => "\\OnlineShop\\Framework\\CartManager\\MultiCartManager",
+            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\MultiCartManager",
             "config" => [
                 /* default cart implementation that is used */
                 "cart" => [
-                    "class" => "\\OnlineShop\\Framework\\CartManager\\Cart",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\Cart",
                     "guest" => [
-                        "class" => "\\OnlineShop\\Framework\\CartManager\\SessionCart"
+                        "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart"
                     ]
                 ],
                 /* default price calculator for cart */
                 "pricecalculator" => [
-                    "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator",
                     "config" => [
                         /* price modificators for cart, e.g. for shipping-cost, special discounts, ... */
                         "modificators" => [
                             "shipping" => [
-                                "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceModificator\\Shipping",
+                                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceModificator\\Shipping",
                                 "config" => [
                                     "charge" => "5.90"
                                 ]
@@ -36,20 +36,19 @@ The configuration takes place in the OnlineShopConfig.php
                 "tenants" => [
                     "noShipping" => [
                         "pricecalculator" => [
-                            "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+                            "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator",
                             "config" => [
                                 "modificators" => "\n                                "
                             ]
                         ]
                     ]
                     /* you also can use external files for additional configuration */
-                    /* "expensiveShipping" =>[ "file" => "\\website\\var\\plugins\\OnlineShopConfig\\cartmanager-expensiveShipping.php ] */ 
+                    /* "expensiveShipping" =>[ "file" => "ecommerce\\cartmanager-expensiveShipping.php ] */
                 ],
                 
             ]
         ],
 ```
-> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 Following elements are configured: 
 * **Implementation of the cart manager**: The cart manager is the basic entry point for working with carts. It is responsible for all interactions with different carts and provides functionality as creating carts, adding/removing products and also creates the corresponding price calculator. 
@@ -120,7 +119,7 @@ $subTotal = $cart->getPriceCalculator()->getSubTotal();
 // iterates through all price modifications
 foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
     // $name is a label for modification
-    // $modification is a OnlineShop_Framework_IModificatedPrice
+    // $modification is a \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice
 }
  
 // delivers sum including all price modifications

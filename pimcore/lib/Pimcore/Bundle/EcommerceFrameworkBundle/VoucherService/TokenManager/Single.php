@@ -70,7 +70,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     public function prepareConfigurationView(&$viewParamsBag, $params)
     {
         if ($this->getConfiguration()->getToken() != $this->getCodes()[0]['token']) {
-            $viewParamsBag['generateWarning'] = 'plugin_onlineshop_voucherservice_msg-error-overwrite-single';
+            $viewParamsBag['generateWarning'] = 'bundle_ecommerce_voucherservice_msg-error-overwrite-single';
             $viewParamsBag['settings']['Original Token'] = $this->getCodes()[0];
         }
 
@@ -83,8 +83,8 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         $viewParamsBag['msg']['success'] = $params['success'];
 
         $viewParamsBag['settings'] = [
-            'plugin_onlineshop_voucherservice_settings-token' => $this->getConfiguration()->getToken(),
-            'plugin_onlineshop_voucherservice_settings-max-usages' => $this->getConfiguration()->getUsages(),
+            'bundle_ecommerce_voucherservice_settings-token' => $this->getConfiguration()->getToken(),
+            'bundle_ecommerce_voucherservice_settings-max-usages' => $this->getConfiguration()->getUsages(),
         ];
 
         $statisticUsagePeriod = 30;

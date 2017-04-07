@@ -12,9 +12,9 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.OnlineShop.pricing.config.panel");
+pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.config.panel");
 
-pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
+pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
 
     /**
      * @var string
@@ -81,8 +81,8 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
             // create new panel
             this.layout = new Ext.Panel({
                 id: this.layoutId,
-                title: t("plugin_onlineshop_pricing_rules"),
-                iconCls: "plugin_onlineshop_pricing_rules",
+                title: t("bundle_ecommerce_pricing_rules"),
+                iconCls: "bundle_ecommerce_pricing_rules",
                 border: false,
                 layout: "border",
                 closable: true,
@@ -122,7 +122,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
             this.saveButton = new Ext.Button({
                 // save button
                 hidden: true,
-                text: t("plugin_onlineshop_pricing_config_save_order"),
+                text: t("bundle_ecommerce_pricing_config_save_order"),
                 iconCls: "pimcore_icon_save",
                 handler: function() {
                     // this
@@ -205,7 +205,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
                     items: [
                         {
                             // add button
-                            text: t("plugin_onlineshop_pricing_config_add_rule"),
+                            text: t("bundle_ecommerce_pricing_config_add_rule"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addRule.bind(this)
                         }, {
@@ -229,7 +229,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
      * add item popup
      */
     addRule: function () {
-        Ext.MessageBox.prompt(t('plugin_onlineshop_pricing_config_add_rule'), t('plugin_onlineshop_pricing_config_enter_the_name_of_the_new_rule'),
+        Ext.MessageBox.prompt(t('bundle_ecommerce_pricing_config_add_rule'), t('bundle_ecommerce_pricing_config_enter_the_name_of_the_new_rule'),
             this.addRuleComplete.bind(this), null, null, "");
     },
 
@@ -317,7 +317,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
                     },
                     success: function (response) {
                         var res = Ext.decode(response.responseText);
-                        var item = new pimcore.plugin.OnlineShop.pricing.config.item(this, res);
+                        var item = new pimcore.bundle.EcommerceFramework.pricing.config.item(this, res);
                         this.panels[pricingRuleKey] = item;
                     }.bind(this)
                 });

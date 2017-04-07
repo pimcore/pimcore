@@ -1,8 +1,8 @@
 <?php 
 
 return [
-    "onlineshop" => [
-       /* general settings for onlineshop environment */
+    "ecommerceframework" => [
+       /* general settings for ecommerce framework environment */
         "environment" => [
             "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Environment",
             "config" => [
@@ -48,7 +48,7 @@ return [
                         ]
                     ]
                     /* you also can use external files for additional configuration */
-                    /* "expensiveShipping" =>[ "file" => "\\website\\var\\plugins\\OnlineShopConfig\\cartmanager-expensiveShipping.php ] */
+                    /* "expensiveShipping" =>[ "file" => "\\eommerce\\cartmanager-expensiveShipping.php ] */
                 ],
                 
             ]
@@ -90,7 +90,7 @@ return [
                     ],
                     /* example step from the Ecommerce demo, which extends AbstractStep */
                     /*"confirm" => [
-                        "class" => "\\Website\\OnlineShop\\Checkout\\Confirm"
+                        "class" => "\\AppBundle\\Ecommerce\\Checkout\\Confirm"
                     ]*/
                 ],
                 /* optional
@@ -101,7 +101,7 @@ return [
                 ],
                 /* define used commit order processor */
                 "commitorderprocessor" => [
-                    "class" => "Website_OnlineShop_Order_Processor"
+                    "class" => "\\AppBundle\\Ecommerce\\Order\\Processor"
                 ],
                 /* settings for confirmation mail sent to customer after order is finished.
                      also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
@@ -713,7 +713,7 @@ return [
             ]
         ],
         
-        /* pimcore OnlineShop Menu */
+        /* pimcore Ecommerce Framework Menu */
         "pimcore" => [
             "menu" => [
                 "pricingRules" => [

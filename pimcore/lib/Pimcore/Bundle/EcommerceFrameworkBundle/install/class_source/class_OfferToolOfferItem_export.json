@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"\\OnlineShop\\Framework\\OfferTool\\AbstractOfferItem",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OfferTool\\AbstractOfferItem",
 	"useTraits":null,
 	"allowInherit":false,
 	"allowVariants":false,

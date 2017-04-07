@@ -1,5 +1,5 @@
 {
-	"parentClass":"OnlineShop_Framework_CategoryFilterDefinitionType",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\CategoryFilterDefinitionType",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

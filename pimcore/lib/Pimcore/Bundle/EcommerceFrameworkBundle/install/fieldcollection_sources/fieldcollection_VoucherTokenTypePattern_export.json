@@ -1,5 +1,5 @@
 {
-	"parentClass":"\\OnlineShop\\Framework\\Model\\AbstractVoucherTokenType",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractVoucherTokenType",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

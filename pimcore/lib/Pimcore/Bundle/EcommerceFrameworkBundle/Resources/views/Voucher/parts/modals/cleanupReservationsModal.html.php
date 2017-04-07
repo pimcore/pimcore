@@ -28,10 +28,10 @@
             <div class="modal-body-content">
                 <form class="form-horizontal js-cleanup-reservations-modal-form"
                       action="<?=$this->path('pimcore_ecommerce_backend_voucher_cleanup-reservations', $this->urlParams)?>">
-                    <h3><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_cleanup-reservations-headline')?></h3>
+                    <h3><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-reservations-headline')?></h3>
                     <div class="form-group" style="margin-top: 20px">
                         <div class="col col-sm-12">
-                            <label for="duration"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_cleanup-reservations-olderthan-x-minutes')?></label>
+                            <label for="duration"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-reservations-olderthan-x-minutes')?></label>
                             <input type="number" name="duration" id="duration" class="form-control form-control-25 text-center" min="0" value ="5"/>
                         </div>
                         <input type="hidden" name="id" value="<?= $this->getParam('id') ?>">
@@ -41,12 +41,12 @@
 
             <div class="modal-footer">
                 <div class="col col-sm-6 text-left">
-                    <p><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_cleanup-reservations-infotext')?></p>
+                    <p><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-reservations-infotext')?></p>
                 </div>
                 <button onclick="$('.js-cleanup-reservations-modal-form').submit()" class="btn btn-primary js-loading"
-                        data-msg="Cleaning up Tokens, please wait."><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_cleanup-reservations-submit')?>
+                        data-msg="Cleaning up Tokens, please wait."><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-reservations-submit')?>
                 </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_cancel')?></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cancel')?></button>
             </div>
         </div>
     </div>

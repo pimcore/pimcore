@@ -105,7 +105,10 @@
     "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",
-    "ext-memcache": "*"
+    "ext-memcache": "*",
+    "klarna/checkout": "1.2.0",
+    "elasticsearch/elasticsearch": "2.0.0",
+    "codeception/codeception": "^2.2"
   },
   "autoload": {
     "psr-4": {

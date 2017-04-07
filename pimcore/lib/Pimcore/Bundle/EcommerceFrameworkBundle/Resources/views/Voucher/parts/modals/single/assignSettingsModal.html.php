@@ -26,7 +26,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body-content">
-                <h3><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_assign-headline')?></h3>
+                <h3><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_assign-headline')?></h3>
                 <div class="row">
                     <div class="col col-sm-8">
                         <table class="table current-data table-only-body">
@@ -53,8 +53,8 @@
             </div>
             <!-- dialog buttons -->
             <div class="modal-footer">
-                <a href="<?=$this->path("pimcore_ecommerce_backend_voucher_generate", $this->urlParams)?>" class="btn btn-primary js-loading" data-msg="<?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_assign-infotext')?>"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_assign-submit')?></a>
-                <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->translateAdmin('plugin_onlineshop_voucherservice_modal_cancel')?></button>
+                <a href="<?=$this->path("pimcore_ecommerce_backend_voucher_generate", $this->urlParams)?>" class="btn btn-primary js-loading" data-msg="<?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_assign-infotext')?>"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_assign-submit')?></a>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cancel')?></button>
             </div>
         </div>
     </div>

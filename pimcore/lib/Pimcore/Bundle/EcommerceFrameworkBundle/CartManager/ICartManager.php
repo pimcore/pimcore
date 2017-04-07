@@ -24,7 +24,7 @@ interface ICartManager extends IComponent
 {
 
     /**
-     * returns cart class name configured in the onlineshop config
+     * returns cart class name configured in the ecommerce framework config
      *
      * Is also responsible for checking if guest cart class should be used or not,
      * by calling \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment::getUseGuestCart();

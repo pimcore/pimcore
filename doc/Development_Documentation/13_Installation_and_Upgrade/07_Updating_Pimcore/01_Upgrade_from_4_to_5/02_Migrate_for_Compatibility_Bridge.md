@@ -81,8 +81,9 @@ EcommerceFramework Plugin (latest release), following additional steps are neede
         "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => TRUE,
     ]
 ```
-- Move `OnlineShopConfig.php` (and all sub files) to `/app/config/pimcore`. 
-- Modify `OnlineShopConfig.php`: 
+- Move `OnlineShopConfig.php` (and all sub files) to `/app/config/pimcore` and rename it to EcommerceFrameworkConfig.php
+- Modify `EcommerceFrameworkConfig.php`: 
+   - change root node `onlineshop` to `ecommerceframework`
    - change `defaultlocale` to `defaultCurrency` and enter ISO code of currency.
    - adapt all `file` sections to new paths of sub files (relative to `/app/config/pimcore`).
 - Run following database updates: 

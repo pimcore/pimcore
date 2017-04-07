@@ -42,11 +42,11 @@ return [
             ],
             [
                 "name" => "herst",
-                "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects"
+                "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DefaultObjects"
             ],
             [
                 "name" => "marke",
-                "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects"
+                "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DefaultObjects"
             ],
             [
                 "name" => "properties",
@@ -65,25 +65,25 @@ return [
             ]
         ],
         "filtertypes" => [
-            "helper" => "\\OnlineShop\\Framework\\FilterService\\FilterGroupHelper",
+            "helper" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterGroupHelper",
             "FilterNumberRange" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\NumberRange",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\NumberRange",
                 "script" => "/shop/filter/dump.php"
             ],
             "FilterSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\Select",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\Select",
                 "script" => "/shop/filter/dump.php"
             ],
             "FilterMultiSelect" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\MultiSelect",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\MultiSelect",
                 "script" => "/shop/filter/elasticsearch/multi-select.php"
             ],
             "FilterMultiRelation" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\MultiSelectRelation",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\MultiSelectRelation",
                 "script" => "/shop/filter/elasticsearch/multi-select-relation.php"
             ],
             "FilterCategory" => [
-                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\SelectCategory",
+                "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\AbstractFilterType\\ElasticSearch\\SelectCategory",
                 "script" => "/shop/filter/elasticsearch/select-category.php"
             ]
         ]

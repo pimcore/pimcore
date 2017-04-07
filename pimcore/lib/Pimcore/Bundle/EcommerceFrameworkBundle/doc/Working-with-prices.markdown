@@ -8,7 +8,7 @@ In terms of procuct availabilities and stocks, the very similar concept of avail
 ## 2 - Configuration of price systems
 There are two places where the configuration of price system takes place: 
 - **Product class**: each product has the method ```getPriceSystemName()``` which returns the name of its price system. 
-- **OnlineShopConfig.php**: in the pricesystems section the mapping between price system names and their implementation classes takes place. Price system implementations at least need to implement the interface ```\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem```, but there exist already some useful concrete implementations.
+- **EcommerceFrameworkConfig.php**: in the pricesystems section the mapping between price system names and their implementation classes takes place. Price system implementations at least need to implement the interface ```\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem```, but there exist already some useful concrete implementations.
 
 ```php
 "pricesystems" => [
@@ -16,14 +16,14 @@ There are two places where the configuration of price system takes place:
             "pricesystem" => [
                 [
                     "name" => "default",
-                    "class" => "\\OnlineShop\\Framework\\PriceSystem\\AttributePriceSystem",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PriceSystem\\AttributePriceSystem",
                     "config" => [
                         "attributename" => "price"
                     ]
                 ],
                 [
                     "name" => "defaultOfferToolPriceSystem",
-                    "class" => "\\OnlineShop\\Framework\\PriceSystem\\AttributePriceSystem",
+                    "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PriceSystem\\AttributePriceSystem",
                     "config" => [
                         "attributename" => "price"
                     ]

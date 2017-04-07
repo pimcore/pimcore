@@ -1,6 +1,6 @@
 {
 	"description":null,
-	"parentClass":"\\OnlineShop\\Framework\\Model\\AbstractFilterDefinition",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractFilterDefinition",
 	"useTraits":null,
 	"allowInherit":true,
 	"allowVariants":false,

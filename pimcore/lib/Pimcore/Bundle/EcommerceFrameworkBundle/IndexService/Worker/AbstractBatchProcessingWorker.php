@@ -24,7 +24,6 @@ use Pimcore\Logger;
  *
  * provides worker functionality for patch preparing data and updating index
  *
- * @package OnlineShop\Framework\IndexService\Worker
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker
 {

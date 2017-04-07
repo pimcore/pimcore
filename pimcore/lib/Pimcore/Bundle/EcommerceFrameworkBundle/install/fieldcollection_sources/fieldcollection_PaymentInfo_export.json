@@ -1,5 +1,5 @@
 {
-	"parentClass":"\\OnlineShop\\Framework\\Model\\AbstractPaymentInformation",
+	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractPaymentInformation",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,

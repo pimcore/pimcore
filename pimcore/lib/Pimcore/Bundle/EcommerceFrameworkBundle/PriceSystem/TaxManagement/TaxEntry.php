@@ -18,8 +18,6 @@ use Pimcore\Model\Object\OnlineShopTaxClass;
 
 /**
  * Class TaxEntry
- *
- * @package OnlineShop\Framework\PriceSystem\TaxManagement
  */
 class TaxEntry
 {
