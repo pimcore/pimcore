@@ -44,7 +44,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/tags/indexFieldSelectionCombo.js',
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/data/indexFieldSelection.js',
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/tags/indexFieldSelection.js',
-            '/bundles/pimcoreecommerceframework/js/plugin.js',
+            '/bundles/pimcoreecommerceframework/js/bundle.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/panel.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/item.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/objects.js',

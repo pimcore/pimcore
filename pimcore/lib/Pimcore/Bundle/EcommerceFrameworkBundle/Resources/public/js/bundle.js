@@ -18,9 +18,9 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin,{
 
     menuItems: null,
 
-    // getClassName: function (){
-    //     return "pimcore.bundle.EcommerceFramework.bundle";
-    // },
+    getClassName: function (){
+        return "pimcore.bundle.EcommerceFramework.bundle";
+    },
 
     initialize: function(){
         pimcore.plugin.broker.registerPlugin(this);
