@@ -812,9 +812,10 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
                 $this->setCheckoutData($index, $code);
                 $this->save();
 
+                $this->modified();
+
                 return true;
             }
-//            \Pimcore\Log\Simple::log('VoucherService', 'Token Reservation failed for code ' . $code);
         }
 
         return false;
@@ -862,6 +863,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
             if ($service->releaseToken($code, $this)) {
                 unset($this->checkoutData["voucher_" . $code]);
                 $this->save();
+
+                $this->modified();
 
                 return true;
             }
