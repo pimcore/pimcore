@@ -653,21 +653,6 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     }
 
     /**
-     * resets the store table to initiate a re-indexing
-     */
-    public function resetIndexingQueue()
-    {
-        Logger::info('Index-Actions - Resetting index queue');
-        $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
-                        worker_id = null,
-                        preparation_worker_timestamp = 0,
-                        preparation_worker_id = null,
-                        crc_index = 0 WHERE tenant = ?';
-        $this->db->query($query, [$this->name]);
-    }
-
-
-    /**
      * checks if there are some entries in the store table left for indexing
      * if not -> re-index is finished
      *
