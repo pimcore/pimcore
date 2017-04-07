@@ -259,6 +259,24 @@ Findologic then can use the endpoint `/plugin/OnlineShop/findologic/export`, whi
 - count: Count of delivered entries
 - shopKey: Shopkey to identify the shop. 
 
+#### Console commands
+
+There are following IndexService console commands. See `--help` details.
+
+##### Command `ecommerce:indexservice:bootstrap`
+
+Use this command for bootstrapping and for rebuilding the index hard.
+
+##### Command `ecommerce:indexservice:process-queue`
+
+Process the preparation queue and/or the index-update queue.
+
+##### Command `ecommerce:indexservice:reset-queue`
+
+Invalidate either the preparation queue or the index-update queue. This is usually **only needed during development** when the store table is out of sync.
+
+Reset the preparation queue for instance when your model (instance of `AbstractProduct`) returns updated data for a field.
+
 
 ## 5 - Usage of product list
 The API for getting (and filtering, ...) products out of the product index are so called ProductLists. They all implement the interface ```\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation.

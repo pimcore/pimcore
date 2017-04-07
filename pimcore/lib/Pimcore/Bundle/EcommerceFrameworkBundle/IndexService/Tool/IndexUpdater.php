@@ -72,10 +72,11 @@ class IndexUpdater
      * @param array $tenants
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
+     * @param int $preparationItemsPerRound - number of items to prepare per round
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater")
+    public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater", $preparationItemsPerRound = 200)
     {
         if ($tenants == null) {
             $tenants = Factory::getInstance()->getAllTenants();
@@ -103,7 +104,7 @@ class IndexUpdater
                     $round++;
                     self::log($loggername, "Starting round: " . $round);
 
-                    $result = $worker->processPreparationQueue();
+                    $result = $worker->processPreparationQueue($preparationItemsPerRound);
                     self::log($loggername, "processed preparation queue elements: " . $result);
 
                     \Pimcore::collectGarbage();
