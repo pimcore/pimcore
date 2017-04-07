@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Symfony\Component\Console\Input\InputArgument;
@@ -68,5 +67,4 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
             $worker->resetIndexingQueue();
         }
     }
-
 }

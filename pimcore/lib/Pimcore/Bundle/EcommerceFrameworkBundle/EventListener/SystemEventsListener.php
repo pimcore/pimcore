@@ -26,7 +26,7 @@ class SystemEventsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         $installer = new Installer();
-        if($installer->isInstalled()) {
+        if ($installer->isInstalled()) {
             return [
                 SystemEvents::MAINTENANCE => 'onMaintenance',
             ];

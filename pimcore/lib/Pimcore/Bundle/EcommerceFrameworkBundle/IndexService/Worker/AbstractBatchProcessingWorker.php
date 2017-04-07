@@ -394,26 +394,28 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     /**
      * resets the store table by marking all items as "in preparation", so items in store will be regenerated
      */
-    public function resetPreparationQueue() {
+    public function resetPreparationQueue()
+    {
         Logger::info('Index-Actions - Resetting preparation queue');
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,
                         preparation_worker_id = null,
                         in_preparation_queue = 1 WHERE tenant = ?';
-        $this->db->query($query, array($this->name));
+        $this->db->query($query, [$this->name]);
     }
 
     /**
      * resets the store table to initiate a re-indexing
      */
-    public function resetIndexingQueue() {
+    public function resetIndexingQueue()
+    {
         Logger::info('Index-Actions - Resetting index queue');
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,
                         preparation_worker_id = null,
                         crc_index = 0 WHERE tenant = ?';
-        $this->db->query($query, array($this->name));
+        $this->db->query($query, [$this->name]);
     }
 }

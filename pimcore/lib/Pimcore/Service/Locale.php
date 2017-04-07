@@ -136,7 +136,7 @@ class Locale
 
         if ($this->requestStack) {
             $masterRequest = $this->requestStack->getMasterRequest();
-            if($masterRequest) {
+            if ($masterRequest) {
                 $masterRequest->setLocale($locale);
             }
         }

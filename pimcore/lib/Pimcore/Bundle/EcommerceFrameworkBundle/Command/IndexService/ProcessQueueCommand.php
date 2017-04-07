@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,5 +61,4 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
             IndexUpdater::processUpdateIndexQueue($tenants, $input->getOption('max-rounds'), self::LOGGER_NAME, $input->getOption('items-per-round'));
         }
     }
-
 }

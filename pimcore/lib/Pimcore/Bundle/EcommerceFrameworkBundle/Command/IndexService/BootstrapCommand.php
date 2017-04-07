@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,5 +61,4 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             throw new \Exception("At least one option (--create-or-update-index-structure or --update-index) needs to be given");
         }
     }
-
 }

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-
 use Pimcore\Console\AbstractCommand;
 
 abstract class AbstractIndexServiceCommand extends AbstractCommand
