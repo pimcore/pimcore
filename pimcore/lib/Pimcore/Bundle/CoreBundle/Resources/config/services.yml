@@ -65,6 +65,24 @@ services:
     pimcore.session.configurator:
         class: Pimcore\Session\SessionConfigurator
 
+
+    #
+    # SECURITY
+    #
+
+    # Decorate the symfony encoder factory with our own. Encoders operating on pimcore admin users and pimcore objects using
+    # the password field definition need access to the user instance while encoding the password. Our factory allows delegating
+    # encoder building to sub-factories which are able to build and cache an encoder per user object.
+    #
+    # See UserAwareEncoderFactory which is used from the admin bundle and from CMS demo profile.
+    #
+    # The second argument (factory mapping) is read from config (pimcore.security.encoder_factories) and set by the extension.
+    pimcore.security.encoder_factory:
+        class: Pimcore\Security\Encoder\EncoderFactory
+        decorates: security.encoder_factory
+        arguments: ['@pimcore.security.encoder_factory.inner', '@?']
+        public: false
+
     #
     # TRANSLATOR
     #
