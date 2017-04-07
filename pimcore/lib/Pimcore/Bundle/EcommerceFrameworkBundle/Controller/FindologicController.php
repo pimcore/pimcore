@@ -83,7 +83,7 @@ XML;
             $doc->loadXML($xml);
 
             $response = new Response();
-            var_dump($doc->schemaValidate('plugins/EcommerceFramework/static/vendor/findologic/export.xsd'));
+            var_dump($doc->schemaValidate('bundles/pimcoreecommerceframework/vendor/findologic/export.xsd'));
         } else {
             $response = new Response($xml);
             $response->headers->set('Content-Type', 'text/xml');
