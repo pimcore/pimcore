@@ -196,6 +196,19 @@ CREATE TABLE `object_query_6` (
 
 
 
+DROP TABLE IF EXISTS `object_query_7`;
+CREATE TABLE `object_query_7` (
+  `oo_id` int(11) NOT NULL DEFAULT '0',
+  `oo_classId` int(11) DEFAULT '7',
+  `oo_className` varchar(255) DEFAULT 'user',
+  `username` varchar(190) DEFAULT NULL,
+  `password` varchar(190) DEFAULT NULL,
+  `roles` text,
+  PRIMARY KEY (`oo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
 DROP TABLE IF EXISTS `object_relations_2`;
 CREATE TABLE `object_relations_2` (
   `src_id` int(11) NOT NULL DEFAULT '0',
@@ -311,6 +324,29 @@ CREATE TABLE `object_relations_6` (
 
 
 
+DROP TABLE IF EXISTS `object_relations_7`;
+CREATE TABLE `object_relations_7` (
+  `src_id` int(11) NOT NULL DEFAULT '0',
+  `dest_id` int(11) NOT NULL DEFAULT '0',
+  `type` varchar(50) NOT NULL DEFAULT '',
+  `fieldname` varchar(70) NOT NULL DEFAULT '0',
+  `index` int(11) unsigned NOT NULL DEFAULT '0',
+  `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+  `ownername` varchar(70) NOT NULL DEFAULT '',
+  `position` varchar(70) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
+  KEY `index` (`index`),
+  KEY `src_id` (`src_id`),
+  KEY `dest_id` (`dest_id`),
+  KEY `fieldname` (`fieldname`),
+  KEY `position` (`position`),
+  KEY `ownertype` (`ownertype`),
+  KEY `type` (`type`),
+  KEY `ownername` (`ownername`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
 DROP TABLE IF EXISTS `object_store_2`;
 CREATE TABLE `object_store_2` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
@@ -363,6 +399,17 @@ CREATE TABLE `object_store_5` (
 DROP TABLE IF EXISTS `object_store_6`;
 CREATE TABLE `object_store_6` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`oo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+DROP TABLE IF EXISTS `object_store_7`;
+CREATE TABLE `object_store_7` (
+  `oo_id` int(11) NOT NULL DEFAULT '0',
+  `username` varchar(190) DEFAULT NULL,
+  `password` varchar(190) DEFAULT NULL,
+  `roles` text,
   PRIMARY KEY (`oo_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -427,6 +474,7 @@ INSERT INTO `classes` VALUES ('6','blogCategory');
 INSERT INTO `classes` VALUES ('3','inquiry');
 INSERT INTO `classes` VALUES ('2','news');
 INSERT INTO `classes` VALUES ('4','person');
+INSERT INTO `classes` VALUES ('7','user');
 INSERT INTO `dependencies` VALUES ('document','1','asset','4');
 INSERT INTO `dependencies` VALUES ('document','1','document','5');
 INSERT INTO `dependencies` VALUES ('document','1','asset','5');
@@ -2248,6 +2296,26 @@ INSERT INTO `translations_admin` VALUES ('text accordion','de','',NULL,NULL);
 INSERT INTO `translations_admin` VALUES ('text accordion','en','',NULL,NULL);
 INSERT INTO `translations_admin` VALUES ('title','en','','1368613497','1368613497');
 INSERT INTO `translations_admin` VALUES ('unittest','en','','1368561373','1368561373');
+INSERT INTO `translations_admin` VALUES ('user','ca','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','cs','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','de','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','en','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','es','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','fa','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','fr','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','it','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','ja','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','nl','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','pl','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','pt','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','pt_BR','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','ru','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','sk','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','sv','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','tr','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','uk','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','zh_Hans','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','zh_Hant','','1491821111','1491821111');
 INSERT INTO `translations_admin` VALUES ('video','de','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('video','en','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('wysiwyg','de','','1368608412','1368608412');
@@ -2465,6 +2533,9 @@ CREATE ALGORITHM=UNDEFINED  VIEW `object_5` AS select `object_query_5`.`oo_id` A
 
 DROP VIEW IF EXISTS `object_6`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_6` AS select `object_query_6`.`oo_id` AS `oo_id`,`object_query_6`.`oo_classId` AS `oo_classId`,`object_query_6`.`oo_className` AS `oo_className`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_6` join `objects` on((`objects`.`o_id` = `object_query_6`.`oo_id`)));
+
+DROP VIEW IF EXISTS `object_7`;
+CREATE ALGORITHM=UNDEFINED  VIEW `object_7` AS select `object_query_7`.`oo_id` AS `oo_id`,`object_query_7`.`oo_classId` AS `oo_classId`,`object_query_7`.`oo_className` AS `oo_className`,`object_query_7`.`username` AS `username`,`object_query_7`.`password` AS `password`,`object_query_7`.`roles` AS `roles`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_7` join `objects` on((`objects`.`o_id` = `object_query_7`.`oo_id`)));
 
 DROP VIEW IF EXISTS `object_localized_2_de`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_2_de` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_2_de`.`ooo_id` AS `ooo_id`,`object_localized_query_2_de`.`language` AS `language`,`object_localized_query_2_de`.`title` AS `title`,`object_localized_query_2_de`.`shortText` AS `shortText`,`object_localized_query_2_de`.`text` AS `text` from ((`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`))) left join `object_localized_query_2_de` on((`object_query_2`.`oo_id` = `object_localized_query_2_de`.`ooo_id`)));
