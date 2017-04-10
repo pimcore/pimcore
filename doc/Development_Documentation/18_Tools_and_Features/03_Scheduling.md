@@ -9,7 +9,7 @@ tasks like:
 * Delete
 * Publish version (You can read more about Versions in [the Versioning section](./01_Versioning.md))
 
-**Note:** To use scheduler you have to configure "cronjobs". You can find more in the [System setup section](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/README.md).
+**Note:** To use scheduler you have to configure "cronjobs". You can find more in the [System setup section](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/README.md).
 
 
 ## Usage

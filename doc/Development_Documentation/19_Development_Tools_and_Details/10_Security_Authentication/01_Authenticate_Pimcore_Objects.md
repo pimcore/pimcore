@@ -71,7 +71,7 @@ which loads users from a defined class type and searches the username for a conf
 load users from the `AppBundle\Model\Object\User` and query the `username` field. To be able to use our user class in the
 security configuration, we define a user provider service which is configured to load our user implementation (make sure
 your bundle is able to load service definitions, see
-[Loading Service Definitions](../../10_Extending_Pimcore/13_Bundle_Developers_Guide/01_Loading_Service_Definitions.md)):
+[Loading Service Definitions](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/01_Loading_Service_Definitions.md)):
 
 ```yaml
 # src/AppBundle/Resources/config/services.yml

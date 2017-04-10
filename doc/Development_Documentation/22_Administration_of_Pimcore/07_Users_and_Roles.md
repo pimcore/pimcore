@@ -24,7 +24,7 @@ to that user or role. An individual user has a few more general settings than th
 * Show welcome screen on startup
 * Show close warning
 * Roles - Select all roles incorporated by the user
-* Perspectives - Which [perspectives](../08_Tools_and_Features/13_Perspectives.md) are available for this user
+* Perspectives - Which [perspectives](../18_Tools_and_Features/13_Perspectives.md) are available for this user
 
 The following list outlines what the different system permissions (available for users and roles) mean:
 

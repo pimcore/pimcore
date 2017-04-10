@@ -16,7 +16,7 @@ These tables are created during Pimcore install and are always the same.
 
 | Table | Description |
 |-------|-------------|
-| application_logs | Contains all application logs. For more information see [Application Logger](../08_Tools_and_Features/17_Application_Logger.md). Additionally there might be application_logs_archive* tables for old logging entries. | 
+| application_logs | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally there might be application_logs_archive* tables for old logging entries. | 
 | assets | Assets (Images, etc.), with system metadata |
 | assets_metadata | Additional user metadata (Metadata tab in the asset panel) |
 | cache | serialized data, used by the default Pimcore cache |
@@ -44,10 +44,10 @@ These tables are created during Pimcore install and are always the same.
 | element_workflow_state | Keeps track of workflow state for all elements |
 | email_blacklist | Blacklist for eMail-addresses
 | email_log | Log for sent emails |
-| glossary | Words to auto-link in texts. See [Glossary](../08_Tools_and_Features/21_Glossary.md) |
+| glossary | Words to auto-link in texts. See [Glossary](../18_Tools_and_Features/21_Glossary.md) |
 | http_error_log | HTTP error log |
 | locks | Store for [Locking functionality](./17_Static_Helpers.md#locking) |
-| notes | [Notes](../08_Tools_and_Features/05_Notes_and_Events.md) for elements | 
+| notes | [Notes](../18_Tools_and_Features/05_Notes_and_Events.md) for elements | 
 | notes_data | Additional data for notes | 
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
 | properties | Data from the `properties` tab | 
@@ -58,7 +58,7 @@ These tables are created during Pimcore install and are always the same.
 | schedule_tasks | Stores scheduled tasks |
 | search_backend_data | Stores the index for the backend search - is a InnoDb Table with fulltext capabilities |
 | sites | Stores [sites](../02_MVC/04_Routing_and_URLs/08_Working_with_Sites.md) |
-| tags | Stores available [tags](../08_Tools_and_Features/09_Tags.md)
+| tags | Stores available [tags](../18_Tools_and_Features/09_Tags.md)
 | tags_assignment | Stores assignment of tags to elements |
 | tmp_store | Pimcore internal tmp store | 
 | tracking_events | |

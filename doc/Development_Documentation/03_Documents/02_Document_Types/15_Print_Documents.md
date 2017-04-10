@@ -16,7 +16,7 @@ Web to print flow implemented in Pimcore:
 Once activated, print documents are integrated into the default documents tree. 
 But of course you can setup your custom views to have separate trees for web documents and print documents. 
 Just use our completely redesigned [custom views](../../05_Objects/01_Object_Classes/05_Class_Settings/11_Custom_Views.md) 
-and all [new perspectives features](../../08_Tools_and_Features/13_Perspectives.md).
+and all [new perspectives features](../../18_Tools_and_Features/13_Perspectives.md).
 
 For more detail-information on the settings see later.
 

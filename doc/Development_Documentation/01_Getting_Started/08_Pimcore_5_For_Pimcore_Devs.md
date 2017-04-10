@@ -42,17 +42,17 @@ Have a look at our [directories structure docs](./02_Directories_Structure.md).
 
 
 ### What are the breaking changes I need to know about besides MVC?
-Have a look at our [Upgrade Notes](../13_Installation_and_Upgrade/09_Upgrade_Notes/02_V4_to_V5.md). 
+Have a look at our [Upgrade Notes](../23_Installation_and_Upgrade/09_Upgrade_Notes/02_V4_to_V5.md). 
 
 
 ### How Do I get my Application Up and Running with Pimcore 5?
-Have a look at our [migration guides](../13_Installation_and_Upgrade/07_Updating_Pimcore/01_Upgrade_from_4_to_5/README.md) 
-for migration [for running with compatibility bridge](../13_Installation_and_Upgrade/07_Updating_Pimcore/01_Upgrade_from_4_to_5/02_Migrate_for_Compatibility_Bridge.md) 
-and [complete migration to Symfony stack](../13_Installation_and_Upgrade/07_Updating_Pimcore/01_Upgrade_from_4_to_5/04_Migrate_to_Symfony_Stack.md). 
+Have a look at our [migration guides](../23_Installation_and_Upgrade/07_Updating_Pimcore/01_Upgrade_from_4_to_5/README.md) 
+for migration [for running with compatibility bridge](../23_Installation_and_Upgrade/07_Updating_Pimcore/01_Upgrade_from_4_to_5/02_Migrate_for_Compatibility_Bridge.md) 
+and [complete migration to Symfony stack](../23_Installation_and_Upgrade/07_Updating_Pimcore/01_Upgrade_from_4_to_5/04_Migrate_to_Symfony_Stack.md). 
 
 
 ### How to develop Plugins
-Plugins are now Bundles and see our [Bundle Docs](../10_Extending_Pimcore/13_Bundle_Developers_Guide/README.md) for details. 
+Plugins are now Bundles and see our [Bundle Docs](../20_Extending_Pimcore/13_Bundle_Developers_Guide/README.md) for details. 
 
 
 

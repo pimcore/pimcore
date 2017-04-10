@@ -12,7 +12,7 @@ add the `apikey` to the request if you have a valid user session from the admin 
   
 > **Important!**  
 > The webservice API is not always the preferred way for importing/syncing data out of or into Pimcore. Often it's much more efficient to use the PHP API in custom scripts (CLI) or in a custom service endpoint. 
-> Please have a look at the following topics before your're seriously considering using the REST API: [External System Interaction](../05_Objects/05_External_System_Interaction.md), [Console CLI](../09_Development_Tools_and_Details/11_Console_CLI.md), [Working with the PHP API](../05_Objects/03_Working_with_PHP_API.md).
+> Please have a look at the following topics before your're seriously considering using the REST API: [External System Interaction](../05_Objects/05_External_System_Interaction.md), [Console CLI](../19_Development_Tools_and_Details/11_Console_CLI.md), [Working with the PHP API](../05_Objects/03_Working_with_PHP_API.md).
   
   
 [TOC]

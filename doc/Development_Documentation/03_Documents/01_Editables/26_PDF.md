@@ -1,7 +1,7 @@
 # PDF Editable
 
 > This editable requires Ghostscript installed on your server. 
-> See [System Requirements](../../13_Installation_and_Upgrade/01_System_Requirements.md)
+> See [System Requirements](../../23_Installation_and_Upgrade/01_System_Requirements.md)
 
 ## General
 

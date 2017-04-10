@@ -4,7 +4,7 @@ custom preview image out of the video.
 
 > **IMPORTANT** 
 > To use all the following functionalities it is required to install FFMPEG on the server.  
-> For details, please have a look at [Additional Tools Installation](../../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
+> For details, please have a look at [Additional Tools Installation](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
 
 ### Using Video Thumbnails in your Code
 

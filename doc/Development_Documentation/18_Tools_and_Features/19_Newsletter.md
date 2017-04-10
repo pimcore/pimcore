@@ -287,7 +287,7 @@ $this->extend('layout.html.php');
 
 The confirmation e-mail (See: `\Pimcore\Tool\Newsletter::sendConfirmationMail`) is a simple e-mail document.
 
-In this document the following [placeholders](../09_Development_Tools_and_Details/23_Placeholders/02_Text_Placeholder.md) are available:
+In this document the following [placeholders](../19_Development_Tools_and_Details/23_Placeholders/02_Text_Placeholder.md) are available:
 
 * %Text(firstname);
 * %Text(lastname);
@@ -301,7 +301,7 @@ and:
 %Object(object,{"method" : "someMethod"});
 ```
 
-(See the [Object placeholder section](../09_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md))
+(See the [Object placeholder section](../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md))
 
 In the document editmode you can create the confirmation email by choosing **Add email -> Standard-Mail**:
 
@@ -333,7 +333,7 @@ In this document the following placeholders are available:
 * %Text(gender);
 * %Object(object,{"method" : "someMethod"});
 
-(See the [Object placeholder section](../09_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md))
+(See the [Object placeholder section](../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md))
 
 ![Create newsletter document](../img/newsletter_create_newsletter_document.png)
 

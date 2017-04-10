@@ -126,7 +126,7 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
     Here is some desktop specific content
 <?php } ?>
 ```
-For details also see [Adaptive Design](../../../09_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
+For details also see [Adaptive Design](../../../19_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
 
 ### `$this->getAllParams()`
@@ -152,7 +152,7 @@ Returns a parameter from the request object (get, post, .... ), it's an equivale
 
 ### `$this->glossary()`
 
-For details please see [Glossary Documentation](../../../08_Tools_and_Features/21_Glossary.md).
+For details please see [Glossary Documentation](../../../18_Tools_and_Features/21_Glossary.md).
 
 ##### Example
 ```php

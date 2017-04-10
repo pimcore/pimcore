@@ -28,7 +28,7 @@ specific remote address.
 
 In order to include some specific debugging tools (profiler, toolbar, ...), Pimcore implicitly sets the 
 environment to `dev` when enabling the debug mode and if **no** environment is 
-[defined manually by using an environment variable](../11_Deployment/03_Multi_Environment.md). 
+[defined manually by using an environment variable](../21_Deployment/03_Multi_Environment.md). 
 
 ![System Settings](../img/system-settings1.png)
 
@@ -101,7 +101,7 @@ Google API Key (Simple API Access for Maps, CSE, ...) is e.g. required for corre
  
  
 ## Ouput-Cache
-Settings for Pimcore [output cache](../09_Development_Tools_and_Details/09_Cache/README.md).
+Settings for Pimcore [output cache](../19_Development_Tools_and_Details/09_Cache/README.md).
 
 
 ## Outputfilters

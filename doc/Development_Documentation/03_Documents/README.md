@@ -42,7 +42,7 @@ you can edit the defaults in *Settings* > *System Settings*.
 
 ## Properties
 
-[Properties](../08_Tools_and_Features/07_Properties.md) are very powerful in combination with documents.
+[Properties](../18_Tools_and_Features/07_Properties.md) are very powerful in combination with documents.
 Below, you can find some examples where properties can be very useful for the use with documents. 
 
 1. **Navigation** - If you build the navigation based on the document-tree, sometimes you need special settings for the frontend, like separators or highlightings.

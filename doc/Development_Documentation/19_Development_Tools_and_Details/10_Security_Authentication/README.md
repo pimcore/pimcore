@@ -13,7 +13,7 @@ This setup was mainly choosen to make sure the Pimcore admin security configurat
 also applies to firewalls and `access_control` to make sure the admin interface is always matched first):
 
 * admin
-* any security configuration which was auto-loaded from bundle configs (see [auto loading config files](../10_Extending_Pimcore/13_Bundle_Developers_Guide/03_Auto_Loading_Config_And_Routing_Definitions.md))
+* any security configuration which was auto-loaded from bundle configs (see [auto loading config files](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/03_Auto_Loading_Config_And_Routing_Definitions.md))
 * `app/config/security.yml` if imported from your main `app/config/config.yml`
 
 Those configurations will be merged together, i.e. if a bundle defines a firewall or an `access_control` entry, this entry

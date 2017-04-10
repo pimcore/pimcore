@@ -22,7 +22,7 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
 * [**Parent Class for Objects**](./07_Parent_Class_for_Objects.md) to inject additional functionality
  to Pimcore object classes. 
  
-* [**Event API and Event Manger**](../10_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for hooking into standard
+* [**Event API and Event Manger**](../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for hooking into standard
  Pimcore functions like creating, updating, deleting elements etc. 
  
 * Use [**Maintenance Mode**](./15_Maintenance_Mode.md) to show users a maintenance page when 

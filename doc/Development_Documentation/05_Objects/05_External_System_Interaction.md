@@ -5,10 +5,10 @@ Pimcore data objects can be created, filled and listed programmatically in order
 with only very few lines of code.
 
 Therefore the recommended way of interacting with external systems is using the PHP API of Pimcore and create a 
-interaction layer with your custom PHP code. This interaction layer can be within a [Pimcore plugin](../10_Extending_Pimcore/13_Bundle_Developers_Guide/README.md), a library component,
- a custom web service, a [CLI Command](../09_Development_Tools_and_Details/11_Console_CLI.md) or just a simple CLI script - you have the full flexibility.
+interaction layer with your custom PHP code. This interaction layer can be within a [Pimcore plugin](../20_Extending_Pimcore/13_Bundle_Developers_Guide/README.md), a library component,
+ a custom web service, a [CLI Command](../19_Development_Tools_and_Details/11_Console_CLI.md) or just a simple CLI script - you have the full flexibility.
 
-To keep things simple, we're using simple CLI scripts in the following example, although we're recommending the use of [CLI Commands](../09_Development_Tools_and_Details/11_Console_CLI.md).
+To keep things simple, we're using simple CLI scripts in the following example, although we're recommending the use of [CLI Commands](../19_Development_Tools_and_Details/11_Console_CLI.md).
 
 ## Import
 The following example indicates the creation of a new object of the class `myclass`. 
@@ -44,7 +44,7 @@ for ($i = 0; $i < 60; $i++) {
 
 ```
 Thus, with very few lines of codes importer scripts can be implemented to populate data objects. Please have a look at 
-Pimcore\Console how to integrate your custom CLI scripts to the [Pimcore console](../09_Development_Tools_and_Details/11_Console_CLI.md).
+Pimcore\Console how to integrate your custom CLI scripts to the [Pimcore console](../19_Development_Tools_and_Details/11_Console_CLI.md).
 
 ## Export
 Export of data objects can be achieved programmatically similar to imports by using object listings and writing just a

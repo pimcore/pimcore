@@ -44,7 +44,7 @@ As an alternative also class export to json-files and the class import commands 
 
 ## Pimcore Console
 
-The [Pimcore Console](../09_Development_Tools_and_Details/11_Console_CLI.md) provides several useful tasks for deployment. 
+The [Pimcore Console](../19_Development_Tools_and_Details/11_Console_CLI.md) provides several useful tasks for deployment. 
  These tasks can be integrated into custom deployment workflows and tools. One example for them would be the Pimcore
  class definitions as described above. 
 
@@ -70,7 +70,7 @@ To get a list of all available commands use `./bin/console list`.
 | thumbnails:optimize-images                           | Optimize filesize of all images in `web/var/tmp`                       |
 | thumbnails:video                                     | Generate video thumbnails, useful to pre-generate thumbnails in the background                  |
 
-Find more about the Pimcore Console on the [dedicated page](../09_Development_Tools_and_Details/11_Console_CLI.md).
+Find more about the Pimcore Console on the [dedicated page](../19_Development_Tools_and_Details/11_Console_CLI.md).
 
 
 ## Content migration
@@ -78,8 +78,8 @@ Find more about the Pimcore Console on the [dedicated page](../09_Development_To
 The content migration between environments is not provided by Pimcore and it's not recommended at all.
  
 The content should be created by editors in the production environment and visibility on the frontend can be managed 
-by built-in features like publishing / unpublishing / [versioning](../08_Tools_and_Features/01_Versioning.md) / 
-[scheduling](../08_Tools_and_Features/03_Scheduling.md) / preview the effect in editmode.
+by built-in features like publishing / unpublishing / [versioning](../18_Tools_and_Features/01_Versioning.md) / 
+[scheduling](../18_Tools_and_Features/03_Scheduling.md) / preview the effect in editmode.
 
 Therefore, editors shouldn't work on different stages. 
 

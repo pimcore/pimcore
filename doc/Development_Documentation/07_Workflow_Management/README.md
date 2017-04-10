@@ -42,7 +42,7 @@ For details of configuration options see comments in that file or [Configuration
 
 ## Events
 WorkflowManagement comes with a number of events to hook into with the Pimcore 
-[event manager](../10_Extending_Pimcore/11_Event_API_and_Event_Manager.md).
+[event manager](../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md).
 
 #### `workflowmanagement.preAction`
 Fired BEFORE any action happens in the workflow. use this to hook into actions globally and define your own logic. i.e. 
@@ -72,7 +72,7 @@ logic to check the state / status each time. These are defined as follows under 
 ],
 ```
 The workflow manager will automatically attach and unattach these events to the action using the Pimcore 
-[event manager](../10_Extending_Pimcore/11_Event_API_and_Event_Manager.md). 
+[event manager](../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md). 
 
 The actions are also available in the event manager during any action and are identified as follows:
 * `workflowmanagement.action.before`

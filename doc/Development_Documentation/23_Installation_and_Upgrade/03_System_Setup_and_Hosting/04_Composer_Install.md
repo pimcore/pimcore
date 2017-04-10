@@ -5,7 +5,7 @@ Pimcore also supports a Composer based install, if this is more suitable for you
 If you're not intending to use Composer to install Pimcore, we recommend using the install package instead. 
 
 The result is the same and of course you will still able to install 
-[custom packages using Composer](../../10_Extending_Pimcore/01_Add_Your_Own_Dependencies_and_Packages.md) if choosing 
+[custom packages using Composer](../../20_Extending_Pimcore/01_Add_Your_Own_Dependencies_and_Packages.md) if choosing 
 the package install.  
 
 ```bash
