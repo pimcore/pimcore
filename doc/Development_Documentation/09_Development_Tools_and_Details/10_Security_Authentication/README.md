@@ -1,4 +1,4 @@
-# Security
+# Security/Authentication
 
 You can make full use of the [Symfony Security Component](http://symfony.com/doc/current/security.html) to handle complex
 authentication/authorization scenarios. However, as the Pimcore administration interface and the REST API already
@@ -54,11 +54,14 @@ As result of this merging logic, please consider the following caveats:
   
 ## Login example
 
-The Demo CMS profile provides a simple login example using an in-memory user provider and a `form_login` authenticatior 
-which allows anonymous users on the site with additional secured areas:
+The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms) provides a simple login
+example using a `User` Pimcore object and a `form_login` authenticator which allows a site-wide login with public and
+secured areas:
  
 * [security.yml](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms/src/AppBundle/Resources/config/pimcore/security.yml)
 * [SecureController](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms/src/AppBundle/Controller/SecureController.php)
+
+A simplified guide to this setup is illustrated in [Authenticate against Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
 
 For more complex examples, custom user providers and a full configuration reference please read the
 [Symfony Security Component documentation](http://symfony.com/doc/current/security.html).

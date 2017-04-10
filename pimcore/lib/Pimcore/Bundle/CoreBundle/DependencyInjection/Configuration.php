@@ -67,6 +67,8 @@ class Configuration implements ConfigurationInterface
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
 
+        $this->addSecurityNode($rootNode);
+
         return $treeBuilder;
     }
 
@@ -196,6 +198,36 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode("path")->defaultNull()->end()
             ->end();
+    }
+
+    protected function addSecurityNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('security')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('encoder_factories')
+                            ->info('Encoder factories to use as className => factory service ID mapping')
+                            ->example([
+                                'AppBundle\Model\Object\User1' => [
+                                    'id' => 'website_demo.security.encoder_factory2'
+                                ],
+                                'AppBundle\Model\Object\User2' => 'website_demo.security.encoder_factory2'
+                            ])
+                            ->useAttributeAsKey('class')
+                            ->prototype('array')
+                            ->beforeNormalization()->ifString()->then(function ($v) {
+                                return ['id' => $v];
+                            })->end()
+                            ->children()
+                                ->scalarNode('id')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     /**

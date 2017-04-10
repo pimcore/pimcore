@@ -68,6 +68,10 @@ cmf_routing:
 
 # Pimcore
 pimcore:
+    security:
+        encoder_factories:
+            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_encoder_factory
+
     error_handling:
         render_error_document: true
 

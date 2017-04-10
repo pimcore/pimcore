@@ -64,7 +64,7 @@ You can make full use of the [Symfony Security Component](http://symfony.com/doc
 the security configuration as documented above. Best practice is to define the security configuration in a dedicated
 `security.yml` which can be imported from your bundle's `config.yml`.
 
-For further details on security please refer to [Security](../../09_Development_Tools_and_Details/09_Security.md).
+For further details on security please refer to [Security](../../09_Development_Tools_and_Details/10_Security_Authentication/README.md).
 
 
 ### Events

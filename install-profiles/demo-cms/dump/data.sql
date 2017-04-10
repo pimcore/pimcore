@@ -196,6 +196,19 @@ CREATE TABLE `object_query_6` (
 
 
 
+DROP TABLE IF EXISTS `object_query_7`;
+CREATE TABLE `object_query_7` (
+  `oo_id` int(11) NOT NULL DEFAULT '0',
+  `oo_classId` int(11) DEFAULT '7',
+  `oo_className` varchar(255) DEFAULT 'user',
+  `username` varchar(190) DEFAULT NULL,
+  `password` varchar(190) DEFAULT NULL,
+  `roles` text,
+  PRIMARY KEY (`oo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
 DROP TABLE IF EXISTS `object_relations_2`;
 CREATE TABLE `object_relations_2` (
   `src_id` int(11) NOT NULL DEFAULT '0',
@@ -311,6 +324,29 @@ CREATE TABLE `object_relations_6` (
 
 
 
+DROP TABLE IF EXISTS `object_relations_7`;
+CREATE TABLE `object_relations_7` (
+  `src_id` int(11) NOT NULL DEFAULT '0',
+  `dest_id` int(11) NOT NULL DEFAULT '0',
+  `type` varchar(50) NOT NULL DEFAULT '',
+  `fieldname` varchar(70) NOT NULL DEFAULT '0',
+  `index` int(11) unsigned NOT NULL DEFAULT '0',
+  `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+  `ownername` varchar(70) NOT NULL DEFAULT '',
+  `position` varchar(70) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
+  KEY `index` (`index`),
+  KEY `src_id` (`src_id`),
+  KEY `dest_id` (`dest_id`),
+  KEY `fieldname` (`fieldname`),
+  KEY `position` (`position`),
+  KEY `ownertype` (`ownertype`),
+  KEY `type` (`type`),
+  KEY `ownername` (`ownername`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
 DROP TABLE IF EXISTS `object_store_2`;
 CREATE TABLE `object_store_2` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
@@ -368,17 +404,14 @@ CREATE TABLE `object_store_6` (
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+DROP TABLE IF EXISTS `object_store_7`;
+CREATE TABLE `object_store_7` (
+  `oo_id` int(11) NOT NULL DEFAULT '0',
+  `username` varchar(190) DEFAULT NULL,
+  `password` varchar(190) DEFAULT NULL,
+  `roles` text,
+  PRIMARY KEY (`oo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -436,51 +469,12 @@ INSERT INTO `assets` VALUES ('67','29','document','example.docx','/documents/','
 INSERT INTO `assets` VALUES ('68','29','document','example.pptx','/documents/','application/vnd.openxmlformats-officedocument.presentationml.presentation','1378992592','1378992592','0','0','','0');
 INSERT INTO `assets` VALUES ('69','34','image','e-commerce1.png','/screenshots/','image/png','1388740480','1388740490','0','0','','0');
 INSERT INTO `assets` VALUES ('70','34','image','pim1.png','/screenshots/','image/png','1388740572','1388740580','0','0','','0');
-
-
-
-
-
-
-
-
-INSERT INTO `classes` VALUES ('2','news');
-INSERT INTO `classes` VALUES ('3','inquiry');
-INSERT INTO `classes` VALUES ('4','person');
 INSERT INTO `classes` VALUES ('5','blogArticle');
 INSERT INTO `classes` VALUES ('6','blogCategory');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+INSERT INTO `classes` VALUES ('3','inquiry');
+INSERT INTO `classes` VALUES ('2','news');
+INSERT INTO `classes` VALUES ('4','person');
+INSERT INTO `classes` VALUES ('7','user');
 INSERT INTO `dependencies` VALUES ('document','1','asset','4');
 INSERT INTO `dependencies` VALUES ('document','1','document','5');
 INSERT INTO `dependencies` VALUES ('document','1','asset','5');
@@ -789,10 +783,6 @@ INSERT INTO `dependencies` VALUES ('object','39','object','38');
 INSERT INTO `dependencies` VALUES ('object','40','asset','20');
 INSERT INTO `dependencies` VALUES ('object','40','asset','21');
 INSERT INTO `dependencies` VALUES ('object','40','object','36');
-
-
-
-
 INSERT INTO `documents` VALUES ('1','0','page','','/','999999','1','1368522989','1395151306','1',NULL);
 INSERT INTO `documents` VALUES ('3','40','page','basic-examples','/en/','1','1','1368523212','1388738504','0','0');
 INSERT INTO `documents` VALUES ('4','40','page','introduction','/en/','0','1','1368523285','1395042868','0',NULL);
@@ -861,10 +851,6 @@ INSERT INTO `documents` VALUES ('70','5','page','product-information-management'
 INSERT INTO `documents` VALUES ('71','5','page','e-commerce','/en/advanced-examples/','11','1','1388740265','1388740613','0','0');
 INSERT INTO `documents` VALUES ('72','5','page','sub-modules','/en/advanced-examples/','10','1','1419933647','1419933980','32','32');
 INSERT INTO `documents` VALUES ('73','3','page','social-contents','/en/basic-examples/','6','1','1459501213','1459501429','39','39');
-
-
-
-
 INSERT INTO `documents_elements` VALUES ('1','authorcontent3','input','Albert Einstein');
 INSERT INTO `documents_elements` VALUES ('1','blockcontent1','block','a:3:{i:0;s:1:\"1\";i:1;s:1:\"2\";i:2;s:1:\"3\";}');
 INSERT INTO `documents_elements` VALUES ('1','caption-text-0content3','textarea','Isla Colón, Bocas del Toro, Republic of Panama');
@@ -1762,30 +1748,12 @@ INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_1co
 INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_1content11_3','embed','a:1:{s:3:\"url\";s:113:\"https://www.facebook.com/1007688325917154/photos/a.1046725715346748.1073741827.1007688325917154/1182670351752283/\";}');
 INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2content11_1','embed','a:1:{s:3:\"url\";s:43:\"https://www.youtube.com/watch?v=nPntDiARQYw\";}');
 INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2content11_2','embed','a:1:{s:3:\"url\";s:40:\"https://www.instagram.com/p/BCne7kJIYLR/\";}');
-
-
-
-
-INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form', 0);
-INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','', 0);
-
-
-INSERT INTO `documents_newsletter` VALUES ('67','','newsletter','standard-mail','','','Example Newsletter','newsletter','email','example-mailing','1','single', 0);
-
-
-
-
+INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form','0');
+INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','','0');
 INSERT INTO `documents_hardlink` VALUES ('33','3','1','1');
-
-
-
-
 INSERT INTO `documents_link` VALUES ('32',NULL,'0','http://www.pimcore.org/','direct');
 INSERT INTO `documents_link` VALUES ('40','document','1','','internal');
-
-
-
-
+INSERT INTO `documents_newsletter` VALUES ('67','','newsletter','standard-mail','','','Example Newsletter','newsletter','email','example-mailing','1','single','0');
 INSERT INTO `documents_page` VALUES ('1','','Content','portal','','','','a:0:{}','','0','',NULL);
 INSERT INTO `documents_page` VALUES ('3','','Content','default','','','','a:0:{}','','0','',NULL);
 INSERT INTO `documents_page` VALUES ('4','','Content','default','','','','a:0:{}','','0','',NULL);
@@ -1827,10 +1795,6 @@ INSERT INTO `documents_page` VALUES ('70','','Content','default','','Product Inf
 INSERT INTO `documents_page` VALUES ('71','','Content','default','','E-Commerce','','a:0:{}','','0','',NULL);
 INSERT INTO `documents_page` VALUES ('72','','Category/Example','test','','','','a:0:{}',NULL,NULL,'',NULL);
 INSERT INTO `documents_page` VALUES ('73',NULL,'Content','default',NULL,'Social Contents','','a:0:{}',NULL,NULL,'',NULL);
-
-
-
-
 INSERT INTO `documents_snippet` VALUES ('12','','Default','default','/includes/footer.php','0',NULL);
 INSERT INTO `documents_snippet` VALUES ('15','','Default','default','/snippets/standard-teaser.php','0',NULL);
 INSERT INTO `documents_snippet` VALUES ('16','','Default','default','/snippets/standard-teaser.php','0',NULL);
@@ -1843,10 +1807,6 @@ INSERT INTO `documents_snippet` VALUES ('57','','Default','default','/includes/s
 INSERT INTO `documents_snippet` VALUES ('58','','Default','default','/includes/sidebar.php','0',NULL);
 INSERT INTO `documents_snippet` VALUES ('59','','Default','default','/includes/sidebar.php','0',NULL);
 INSERT INTO `documents_snippet` VALUES ('69','','Default','default','/includes/sidebar.php','0',NULL);
-
-
-
-
 INSERT INTO `documents_translations` VALUES ('23','22','de');
 INSERT INTO `documents_translations` VALUES ('41','40','de');
 INSERT INTO `documents_translations` VALUES ('46','12','de');
@@ -1858,14 +1818,6 @@ INSERT INTO `documents_translations` VALUES ('51','3','de');
 INSERT INTO `documents_translations` VALUES ('52','5','de');
 INSERT INTO `documents_translations` VALUES ('53','27','de');
 INSERT INTO `documents_translations` VALUES ('58','57','de');
-
-
-
-
-
-
-
-
 INSERT INTO `glossary` VALUES ('1','en','0','1','occidental','7','','','0','0','0');
 INSERT INTO `glossary` VALUES ('2','en','0','1','vocabular','20','','','0','0','0');
 INSERT INTO `glossary` VALUES ('3','en','0','1','resultant','5','','','0','0','0');
@@ -1873,34 +1825,10 @@ INSERT INTO `glossary` VALUES ('4','en','0','1','familie','18','','','0','0','0'
 INSERT INTO `glossary` VALUES ('5','en','0','1','omnicos','19','','','0','0','0');
 INSERT INTO `glossary` VALUES ('6','en','0','1','coalesce','','coalesce','','0','0','0');
 INSERT INTO `glossary` VALUES ('7','en','0','1','grammatica','','','grammatica','0','0','0');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 INSERT INTO `notes` VALUES ('18','newsletter','47','object','1388412533','0','subscribe','');
 INSERT INTO `notes` VALUES ('19','newsletter','47','object','1388412545','0','confirm','');
-
-
-
-
 INSERT INTO `notes_data` VALUES ('18','ip','text','192.168.9.12');
 INSERT INTO `notes_data` VALUES ('19','ip','text','192.168.9.12');
-
-
-
-
 INSERT INTO `object_localized_data_2` VALUES ('3','de','Er hörte leise Schritte hinter sich','Das bedeutete nichts Gutes. Wer würde ihm schon folgen, spät in der Nacht und dazu noch in dieser engen Gasse mitten im übel beleumundeten Hafenviertel?','<p>Oder geh&ouml;rten die Schritte hinter ihm zu einem der unz&auml;hligen Gesetzesh&uuml;ter dieser Stadt, und die st&auml;hlerne Acht um seine Handgelenke w&uuml;rde gleich zuschnappen? Er konnte die Aufforderung stehen zu bleiben schon h&ouml;ren. Gehetzt sah er sich um. Pl&ouml;tzlich erblickte er den schmalen Durchgang. Blitzartig drehte er sich nach rechts und verschwand zwischen den beiden Geb&auml;uden. Beinahe w&auml;re er dabei &uuml;ber den umgest&uuml;rzten M&uuml;lleimer gefallen, der mitten im Weg lag.</p>\n\n<p>Er versuchte, sich in der Dunkelheit seinen Weg zu ertasten und erstarrte: Anscheinend gab es keinen anderen Ausweg aus diesem kleinen Hof als den Durchgang, durch den er gekommen war. Die Schritte wurden lauter und lauter, er sah eine dunkle Gestalt um die Ecke biegen. Fieberhaft irrten seine Augen durch die n&auml;chtliche Dunkelheit und suchten einen Ausweg. War jetzt wirklich alles vorbei.</p>\n');
 INSERT INTO `object_localized_data_2` VALUES ('3','en','Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','<p>Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam&nbsp;<a href=\"/en/basic-examples/content-page\" pimcore_id=\"24\" pimcore_type=\"document\">ultricies&nbsp;</a>nisi vel augue.</p>\n\n<p>Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget&nbsp;<a href=\"/en/basic-examples/galleries\" pimcore_id=\"19\" pimcore_type=\"document\">condimentum&nbsp;rhoncus</a>, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus.</p>\n');
 INSERT INTO `object_localized_data_2` VALUES ('4','de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
@@ -1915,30 +1843,18 @@ INSERT INTO `object_localized_data_2` VALUES ('8','de','Li Europan lingues es me
 INSERT INTO `object_localized_data_2` VALUES ('8','en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
 INSERT INTO `object_localized_data_2` VALUES ('9','de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','<p>Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.</p>\n\n<p>Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.</p>\n');
 INSERT INTO `object_localized_data_2` VALUES ('9','en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
-
-
-
-
 INSERT INTO `object_localized_data_5` VALUES ('35','de','Maecenas nec odio et ante tincidunt tempus','<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue.</p>\n\n<p>Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus.</p>\n\n<p>Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc.</p>\n','Aenean Vestibulum Etiam Curabitur');
 INSERT INTO `object_localized_data_5` VALUES ('35','en','Maecenas nec odio et ante tincidunt tempus','<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue.</p>\n\n<p>Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus.</p>\n\n<p>Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc.</p>\n','Aenean Vestibulum Etiam Curabitur');
 INSERT INTO `object_localized_data_5` VALUES ('39','de','Lorem ipsum dolor sit amet','<p>Quisque id mi. Ut tincidunt tincidunt erat. Etiam feugiat lorem non metus. Vestibulum dapibus nunc ac augue. Curabitur vestibulum aliquam leo. Praesent egestas neque eu enim. In hac habitasse platea dictumst.</p>\n\n<p>Fusce a quam. Etiam ut purus mattis mauris sodales aliquam. Curabitur nisi. Quisque malesuada placerat nisl. Nam ipsum risus, rutrum vitae, vestibulum eu, molestie vel, lacus. Sed augue ipsum, egestas nec, vestibulum et, malesuada adipiscing, dui. Vestibulum facilisis, purus nec pulvinar iaculis, ligula mi congue nunc, vitae euismod ligula urna in dolor. Mauris sollicitudin fermentum libero. Praesent nonummy mi in odio. Nunc interdum lacus sit amet orci. Vestibulum rutrum, mi nec elementum vehicula, eros quam gravida nisl, id fringilla neque ante vel mi. Morbi mollis tellus ac sapien. Phasellus volutpat, metus eget egestas mollis, lacus lacus blandit dui, id egestas quam mauris ut lacus. Fusce vel dui. Sed in libero ut nibh placerat accumsan. Proin faucibus arcu quis ante.</p>\n\n<p>In consectetuer turpis ut velit. Nulla sit amet est. Praesent metus tellus, elementum eu, semper a, adipiscing nec, purus. Cras risus ipsum, faucibus ut, ullamcorper id, varius ac, leo. Suspendisse feugiat. Suspendisse enim turpis, dictum sed, iaculis a, condimentum nec, nisi. Praesent nec nisl a purus blandit viverra. Praesent ac massa at ligula laoreet iaculis. Nulla neque dolor, sagittis eget, iaculis quis, molestie non, velit. Mauris turpis nunc, blandit et, volutpat molestie, porta ut, ligula. Fusce pharetra convallis urna. Quisque ut nisi. Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Suspendisse non nisl sit amet velit hendrerit rutrum. Ut leo. Ut a nisl id ante tempus hendrerit. Proin pretium, leo ac pellentesque mollis, felis nunc ultrices eros, sed gravida augue augue mollis justo. Suspendisse eu ligula. Nulla facilisi. Donec id justo. Praesent porttitor, nulla vitae posuere iaculis, arcu nisl dignissim dolor, a pretium mi sem ut ipsum. Curabitur suscipit suscipit tellus. Praesent vestibulum dapibus nibh. Etiam iaculis nunc ac metus. Ut id nisl quis enim dignissim sagittis. Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis venenatis ante odio sit amet eros. Proin magna. Duis vel nibh at velit scelerisque suscipit. Curabitur turpis. Vestibulum suscipit nulla quis orci. Fusce ac felis sit amet ligula pharetra condimentum. Maecenas egestas arcu quis ligula mattis placerat. Duis lobortis massa imperdiet quam. Suspendisse potenti. Pellentesque commodo eros a enim. Vestibulum turpis sem, aliquet eget, lobortis pellentesque, rutrum eu, nisl. Sed libero. Aliquam erat volutpat. Etiam vitae tortor. Morbi vestibulum volutpat enim. Aliquam eu nunc. Nunc sed turpis. Sed mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non adipiscing dolor urna a orci.</p>\n\n<p>Nulla porta dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Pellentesque dapibus hendrerit tortor. Praesent egestas tristique nibh. Sed a libero. Cras varius. Donec vitae orci sed dolor rutrum auctor. Fusce egestas elit eget lorem. Suspendisse nisl elit, rhoncus eget, elementum ac, condimentum eget, diam. Nam at tortor in tellus interdum sagittis. Aliquam lobortis. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla.</p>\n\n<p>Curabitur blandit mollis lacus. Nam adipiscing. Vestibulum eu odio.</p>\n','Etiam Curabitur Fusce Quisque');
 INSERT INTO `object_localized_data_5` VALUES ('39','en','Lorem ipsum dolor sit amet','<p>Quisque id mi. Ut tincidunt tincidunt erat. Etiam feugiat lorem non metus. Vestibulum dapibus nunc ac augue. Curabitur vestibulum aliquam leo. Praesent egestas neque eu enim. In hac habitasse platea dictumst.</p>\n\n<p>Fusce a quam. Etiam ut purus mattis mauris sodales aliquam. Curabitur nisi. Quisque malesuada placerat nisl. Nam ipsum risus, rutrum vitae, vestibulum eu, molestie vel, lacus. Sed augue ipsum, egestas nec, vestibulum et, malesuada adipiscing, dui. Vestibulum facilisis, purus nec pulvinar iaculis, ligula mi congue nunc, vitae euismod ligula urna in dolor. Mauris sollicitudin fermentum libero. Praesent nonummy mi in odio. Nunc interdum lacus sit amet orci. Vestibulum rutrum, mi nec elementum vehicula, eros quam gravida nisl, id fringilla neque ante vel mi. Morbi mollis tellus ac sapien. Phasellus volutpat, metus eget egestas mollis, lacus lacus blandit dui, id egestas quam mauris ut lacus. Fusce vel dui. Sed in libero ut nibh placerat accumsan. Proin faucibus arcu quis ante.</p>\n\n<p>In consectetuer turpis ut velit. Nulla sit amet est. Praesent metus tellus, elementum eu, semper a, adipiscing nec, purus. Cras risus ipsum, faucibus ut, ullamcorper id, varius ac, leo. Suspendisse feugiat. Suspendisse enim turpis, dictum sed, iaculis a, condimentum nec, nisi. Praesent nec nisl a purus blandit viverra. Praesent ac massa at ligula laoreet iaculis. Nulla neque dolor, sagittis eget, iaculis quis, molestie non, velit. Mauris turpis nunc, blandit et, volutpat molestie, porta ut, ligula. Fusce pharetra convallis urna. Quisque ut nisi. Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Suspendisse non nisl sit amet velit hendrerit rutrum. Ut leo. Ut a nisl id ante tempus hendrerit. Proin pretium, leo ac pellentesque mollis, felis nunc ultrices eros, sed gravida augue augue mollis justo. Suspendisse eu ligula. Nulla facilisi. Donec id justo. Praesent porttitor, nulla vitae posuere iaculis, arcu nisl dignissim dolor, a pretium mi sem ut ipsum. Curabitur suscipit suscipit tellus. Praesent vestibulum dapibus nibh. Etiam iaculis nunc ac metus. Ut id nisl quis enim dignissim sagittis. Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis venenatis ante odio sit amet eros. Proin magna. Duis vel nibh at velit scelerisque suscipit. Curabitur turpis. Vestibulum suscipit nulla quis orci. Fusce ac felis sit amet ligula pharetra condimentum. Maecenas egestas arcu quis ligula mattis placerat. Duis lobortis massa imperdiet quam. Suspendisse potenti. Pellentesque commodo eros a enim. Vestibulum turpis sem, aliquet eget, lobortis pellentesque, rutrum eu, nisl. Sed libero. Aliquam erat volutpat. Etiam vitae tortor. Morbi vestibulum volutpat enim. Aliquam eu nunc. Nunc sed turpis. Sed mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non adipiscing dolor urna a orci.</p>\n\n<p>Nulla porta dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Pellentesque dapibus hendrerit tortor. Praesent egestas tristique nibh. Sed a libero. Cras varius. Donec vitae orci sed dolor rutrum auctor. Fusce egestas elit eget lorem. Suspendisse nisl elit, rhoncus eget, elementum ac, condimentum eget, diam. Nam at tortor in tellus interdum sagittis. Aliquam lobortis. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla.</p>\n\n<p>Curabitur blandit mollis lacus. Nam adipiscing. Vestibulum eu odio.</p>\n','Etiam Curabitur Fusce Quisque');
 INSERT INTO `object_localized_data_5` VALUES ('40','de','Cum sociis natoque penatibus et magnis','<p>Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.</p>\n\n<p>Maecenas nec odio et ante tincidunt tempus. <strong>Donec vitae sapien</strong> ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui.</p>\n\n<p><img pimcore_id=\"21\" pimcore_type=\"asset\" src=\"/website/var/tmp/image-thumbnails/21/thumb__auto_850904660de984af948beee3aee98a4f/img_0037.jpeg\" style=\"width:600px;\" /></p>\n\n<p>Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus.</p>\n\n<hr />\n<p>Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus. Ut varius tincidunt libero. Phasellus dolor.</p>\n\n<p>Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In ac felis quis tortor malesuada pretium. Pellentesque auctor neque nec urna. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>\n','Fusce Quisque Maecenas Donec');
 INSERT INTO `object_localized_data_5` VALUES ('40','en','Cum sociis natoque penatibus et magnis','<p>Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.</p>\n\n<p>Maecenas nec odio et ante tincidunt tempus. <strong>Donec vitae sapien</strong> ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui.</p>\n\n<p><img pimcore_id=\"21\" pimcore_type=\"asset\" src=\"/website/var/tmp/image-thumbnails/21/thumb__auto_850904660de984af948beee3aee98a4f/img_0037.jpeg\" style=\"width:600px;\" /></p>\n\n<p>Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus.</p>\n\n<hr />\n<p>Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus. Ut varius tincidunt libero. Phasellus dolor.</p>\n\n<p>Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In ac felis quis tortor malesuada pretium. Pellentesque auctor neque nec urna. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>\n','Fusce Quisque Maecenas Donec');
-
-
-
-
 INSERT INTO `object_localized_data_6` VALUES ('36','de','Curabitur ullamcorper');
 INSERT INTO `object_localized_data_6` VALUES ('36','en','Curabitur ullamcorper');
 INSERT INTO `object_localized_data_6` VALUES ('37','de','Nam eget dui');
 INSERT INTO `object_localized_data_6` VALUES ('37','en','Nam eget dui');
 INSERT INTO `object_localized_data_6` VALUES ('38','de','Etiam rhoncus');
 INSERT INTO `object_localized_data_6` VALUES ('38','en','Etiam rhoncus');
-
-
-
-
 INSERT INTO `object_localized_query_2_de` VALUES ('3','de','Er hörte leise Schritte hinter sich','Das bedeutete nichts Gutes. Wer würde ihm schon folgen, spät in der Nacht und dazu noch in dieser engen Gasse mitten im übel beleumundeten Hafenviertel?','Oder geh&ouml;rten die Schritte hinter ihm zu einem der unz&auml;hligen Gesetzesh&uuml;ter dieser Stadt, und die st&auml;hlerne Acht um seine Handgelenke w&uuml;rde gleich zuschnappen? Er konnte die Aufforderung stehen zu bleiben schon h&ouml;ren. Gehetzt sah er sich um. Pl&ouml;tzlich erblickte er den schmalen Durchgang. Blitzartig drehte er sich nach rechts und verschwand zwischen den beiden Geb&auml;uden. Beinahe w&auml;re er dabei &uuml;ber den umgest&uuml;rzten M&uuml;lleimer gefallen, der mitten im Weg lag. Er versuchte, sich in der Dunkelheit seinen Weg zu ertasten und erstarrte: Anscheinend gab es keinen anderen Ausweg aus diesem kleinen Hof als den Durchgang, durch den er gekommen war. Die Schritte wurden lauter und lauter, er sah eine dunkle Gestalt um die Ecke biegen. Fieberhaft irrten seine Augen durch die n&auml;chtliche Dunkelheit und suchten einen Ausweg. War jetzt wirklich alles vorbei. ');
 INSERT INTO `object_localized_query_2_de` VALUES ('4','de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
 INSERT INTO `object_localized_query_2_de` VALUES ('5','de','Zwei flinke Boxer jagen die quirlige Eva','Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim.','Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung. Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux bei Pforzheim. Polyfon zwitschernd a&szlig;en M&auml;xchens V&ouml;gel R&uuml;ben, Joghurt und Quark. &quot;Fix, Schwyz!&quot; qu&auml;kt J&uuml;rgen bl&ouml;d vom Pa&szlig;. Victor jagt zw&ouml;lf Boxk&auml;mpfer quer &uuml;ber den gro&szlig;en Sylter Deich. Falsches &Uuml;ben von Xylophonmusik qu&auml;lt jeden gr&ouml;&szlig;eren Zwerg. Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung.Zwei flinke Boxer jagen die quirlige Eva und ihren Mops durch Sylt. Franz jagt im komplett verwahrlosten Taxi quer durch Bayern. Zw&ouml;lf Boxk&auml;mpfer jagen Viktor quer &uuml;ber den gro&szlig;en Sylter Deich. Vogel Quax zwickt Johnys Pferd Bim. Sylvia wagt quick den Jux ');
@@ -1946,10 +1862,6 @@ INSERT INTO `object_localized_query_2_de` VALUES ('6','de','Li Europan lingues e
 INSERT INTO `object_localized_query_2_de` VALUES ('7','de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
 INSERT INTO `object_localized_query_2_de` VALUES ('8','de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
 INSERT INTO `object_localized_query_2_de` VALUES ('9','de','Li Europan lingues es membres','Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular.','Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es.Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. ');
-
-
-
-
 INSERT INTO `object_localized_query_2_en` VALUES ('3','en','Lorem ipsum dolor sit amet','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.','Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam&nbsp;<a href=\"/en/basic-examples/content-page\" pimcore_id=\"24\" pimcore_type=\"document\">ultricies&nbsp;</a>nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget&nbsp;<a href=\"/en/basic-examples/galleries\" pimcore_id=\"19\" pimcore_type=\"document\">condimentum&nbsp;rhoncus</a>, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. ');
 INSERT INTO `object_localized_query_2_en` VALUES ('4','en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','Nam eget dui. Etiam rhoncus.&nbsp;<a href=\"/en/basic-examples\" pimcore_id=\"3\" pimcore_type=\"document\">Maecenas&nbsp;tempus</a>, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. <a href=\"/en/basic-examples/news\" pimcore_id=\"27\" pimcore_type=\"document\">Donec vitae sapien</a> ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed&nbsp;fringilla&nbsp;mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ');
 INSERT INTO `object_localized_query_2_en` VALUES ('5','en','Nam eget dui','Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, ');
@@ -1957,38 +1869,18 @@ INSERT INTO `object_localized_query_2_en` VALUES ('6','en','In enim justo','Null
 INSERT INTO `object_localized_query_2_en` VALUES ('7','en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
 INSERT INTO `object_localized_query_2_en` VALUES ('8','en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
 INSERT INTO `object_localized_query_2_en` VALUES ('9','en','In enim justo','Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.','');
-
-
-
-
 INSERT INTO `object_localized_query_5_de` VALUES ('35','de','Maecenas nec odio et ante tincidunt tempus','Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. ','Aenean Vestibulum Etiam Curabitur');
 INSERT INTO `object_localized_query_5_de` VALUES ('39','de','Lorem ipsum dolor sit amet','Quisque id mi. Ut tincidunt tincidunt erat. Etiam feugiat lorem non metus. Vestibulum dapibus nunc ac augue. Curabitur vestibulum aliquam leo. Praesent egestas neque eu enim. In hac habitasse platea dictumst. Fusce a quam. Etiam ut purus mattis mauris sodales aliquam. Curabitur nisi. Quisque malesuada placerat nisl. Nam ipsum risus, rutrum vitae, vestibulum eu, molestie vel, lacus. Sed augue ipsum, egestas nec, vestibulum et, malesuada adipiscing, dui. Vestibulum facilisis, purus nec pulvinar iaculis, ligula mi congue nunc, vitae euismod ligula urna in dolor. Mauris sollicitudin fermentum libero. Praesent nonummy mi in odio. Nunc interdum lacus sit amet orci. Vestibulum rutrum, mi nec elementum vehicula, eros quam gravida nisl, id fringilla neque ante vel mi. Morbi mollis tellus ac sapien. Phasellus volutpat, metus eget egestas mollis, lacus lacus blandit dui, id egestas quam mauris ut lacus. Fusce vel dui. Sed in libero ut nibh placerat accumsan. Proin faucibus arcu quis ante. In consectetuer turpis ut velit. Nulla sit amet est. Praesent metus tellus, elementum eu, semper a, adipiscing nec, purus. Cras risus ipsum, faucibus ut, ullamcorper id, varius ac, leo. Suspendisse feugiat. Suspendisse enim turpis, dictum sed, iaculis a, condimentum nec, nisi. Praesent nec nisl a purus blandit viverra. Praesent ac massa at ligula laoreet iaculis. Nulla neque dolor, sagittis eget, iaculis quis, molestie non, velit. Mauris turpis nunc, blandit et, volutpat molestie, porta ut, ligula. Fusce pharetra convallis urna. Quisque ut nisi. Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Suspendisse non nisl sit amet velit hendrerit rutrum. Ut leo. Ut a nisl id ante tempus hendrerit. Proin pretium, leo ac pellentesque mollis, felis nunc ultrices eros, sed gravida augue augue mollis justo. Suspendisse eu ligula. Nulla facilisi. Donec id justo. Praesent porttitor, nulla vitae posuere iaculis, arcu nisl dignissim dolor, a pretium mi sem ut ipsum. Curabitur suscipit suscipit tellus. Praesent vestibulum dapibus nibh. Etiam iaculis nunc ac metus. Ut id nisl quis enim dignissim sagittis. Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis venenatis ante odio sit amet eros. Proin magna. Duis vel nibh at velit scelerisque suscipit. Curabitur turpis. Vestibulum suscipit nulla quis orci. Fusce ac felis sit amet ligula pharetra condimentum. Maecenas egestas arcu quis ligula mattis placerat. Duis lobortis massa imperdiet quam. Suspendisse potenti. Pellentesque commodo eros a enim. Vestibulum turpis sem, aliquet eget, lobortis pellentesque, rutrum eu, nisl. Sed libero. Aliquam erat volutpat. Etiam vitae tortor. Morbi vestibulum volutpat enim. Aliquam eu nunc. Nunc sed turpis. Sed mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non adipiscing dolor urna a orci. Nulla porta dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Pellentesque dapibus hendrerit tortor. Praesent egestas tristique nibh. Sed a libero. Cras varius. Donec vitae orci sed dolor rutrum auctor. Fusce egestas elit eget lorem. Suspendisse nisl elit, rhoncus eget, elementum ac, condimentum eget, diam. Nam at tortor in tellus interdum sagittis. Aliquam lobortis. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla. Curabitur blandit mollis lacus. Nam adipiscing. Vestibulum eu odio. ','Etiam Curabitur Fusce Quisque');
 INSERT INTO `object_localized_query_5_de` VALUES ('40','de','Cum sociis natoque penatibus et magnis','Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. <img pimcore_id=\"21\" pimcore_type=\"asset\" src=\"/website/var/tmp/image-thumbnails/21/thumb__auto_850904660de984af948beee3aee98a4f/img_0037.jpeg\" style=\"width:600px;\" /> Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus. Ut varius tincidunt libero. Phasellus dolor. Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In ac felis quis tortor malesuada pretium. Pellentesque auctor neque nec urna. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ','Fusce Quisque Maecenas Donec');
-
-
-
-
 INSERT INTO `object_localized_query_5_en` VALUES ('35','en','Maecenas nec odio et ante tincidunt tempus','Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. ','Aenean Vestibulum Etiam Curabitur');
 INSERT INTO `object_localized_query_5_en` VALUES ('39','en','Lorem ipsum dolor sit amet','Quisque id mi. Ut tincidunt tincidunt erat. Etiam feugiat lorem non metus. Vestibulum dapibus nunc ac augue. Curabitur vestibulum aliquam leo. Praesent egestas neque eu enim. In hac habitasse platea dictumst. Fusce a quam. Etiam ut purus mattis mauris sodales aliquam. Curabitur nisi. Quisque malesuada placerat nisl. Nam ipsum risus, rutrum vitae, vestibulum eu, molestie vel, lacus. Sed augue ipsum, egestas nec, vestibulum et, malesuada adipiscing, dui. Vestibulum facilisis, purus nec pulvinar iaculis, ligula mi congue nunc, vitae euismod ligula urna in dolor. Mauris sollicitudin fermentum libero. Praesent nonummy mi in odio. Nunc interdum lacus sit amet orci. Vestibulum rutrum, mi nec elementum vehicula, eros quam gravida nisl, id fringilla neque ante vel mi. Morbi mollis tellus ac sapien. Phasellus volutpat, metus eget egestas mollis, lacus lacus blandit dui, id egestas quam mauris ut lacus. Fusce vel dui. Sed in libero ut nibh placerat accumsan. Proin faucibus arcu quis ante. In consectetuer turpis ut velit. Nulla sit amet est. Praesent metus tellus, elementum eu, semper a, adipiscing nec, purus. Cras risus ipsum, faucibus ut, ullamcorper id, varius ac, leo. Suspendisse feugiat. Suspendisse enim turpis, dictum sed, iaculis a, condimentum nec, nisi. Praesent nec nisl a purus blandit viverra. Praesent ac massa at ligula laoreet iaculis. Nulla neque dolor, sagittis eget, iaculis quis, molestie non, velit. Mauris turpis nunc, blandit et, volutpat molestie, porta ut, ligula. Fusce pharetra convallis urna. Quisque ut nisi. Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Suspendisse non nisl sit amet velit hendrerit rutrum. Ut leo. Ut a nisl id ante tempus hendrerit. Proin pretium, leo ac pellentesque mollis, felis nunc ultrices eros, sed gravida augue augue mollis justo. Suspendisse eu ligula. Nulla facilisi. Donec id justo. Praesent porttitor, nulla vitae posuere iaculis, arcu nisl dignissim dolor, a pretium mi sem ut ipsum. Curabitur suscipit suscipit tellus. Praesent vestibulum dapibus nibh. Etiam iaculis nunc ac metus. Ut id nisl quis enim dignissim sagittis. Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis venenatis ante odio sit amet eros. Proin magna. Duis vel nibh at velit scelerisque suscipit. Curabitur turpis. Vestibulum suscipit nulla quis orci. Fusce ac felis sit amet ligula pharetra condimentum. Maecenas egestas arcu quis ligula mattis placerat. Duis lobortis massa imperdiet quam. Suspendisse potenti. Pellentesque commodo eros a enim. Vestibulum turpis sem, aliquet eget, lobortis pellentesque, rutrum eu, nisl. Sed libero. Aliquam erat volutpat. Etiam vitae tortor. Morbi vestibulum volutpat enim. Aliquam eu nunc. Nunc sed turpis. Sed mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non adipiscing dolor urna a orci. Nulla porta dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Pellentesque dapibus hendrerit tortor. Praesent egestas tristique nibh. Sed a libero. Cras varius. Donec vitae orci sed dolor rutrum auctor. Fusce egestas elit eget lorem. Suspendisse nisl elit, rhoncus eget, elementum ac, condimentum eget, diam. Nam at tortor in tellus interdum sagittis. Aliquam lobortis. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla. Curabitur blandit mollis lacus. Nam adipiscing. Vestibulum eu odio. ','Etiam Curabitur Fusce Quisque');
 INSERT INTO `object_localized_query_5_en` VALUES ('40','en','Cum sociis natoque penatibus et magnis','Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. <img pimcore_id=\"21\" pimcore_type=\"asset\" src=\"/website/var/tmp/image-thumbnails/21/thumb__auto_850904660de984af948beee3aee98a4f/img_0037.jpeg\" style=\"width:600px;\" /> Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis. Aenean posuere, tortor sed cursus feugiat, nunc augue blandit nunc, eu sollicitudin urna dolor sagittis lacus. Donec elit libero, sodales nec, volutpat a, suscipit non, turpis. Nullam sagittis. Suspendisse pulvinar, augue ac venenatis condimentum, sem libero volutpat nibh, nec pellentesque velit pede quis nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce id purus. Ut varius tincidunt libero. Phasellus dolor. Maecenas vestibulum mollis diam. Pellentesque ut neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. In ac felis quis tortor malesuada pretium. Pellentesque auctor neque nec urna. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Aenean viverra rhoncus pede. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ','Fusce Quisque Maecenas Donec');
-
-
-
-
 INSERT INTO `object_localized_query_6_de` VALUES ('36','de','Curabitur ullamcorper');
 INSERT INTO `object_localized_query_6_de` VALUES ('37','de','Nam eget dui');
 INSERT INTO `object_localized_query_6_de` VALUES ('38','de','Etiam rhoncus');
-
-
-
-
 INSERT INTO `object_localized_query_6_en` VALUES ('36','en','Curabitur ullamcorper');
 INSERT INTO `object_localized_query_6_en` VALUES ('37','en','Nam eget dui');
 INSERT INTO `object_localized_query_6_en` VALUES ('38','en','Etiam rhoncus');
-
-
-
-
 INSERT INTO `object_query_2` VALUES ('3','2','news','1374147900','49','43','52');
 INSERT INTO `object_query_2` VALUES ('4','2','news','1369761300','51','0','0');
 INSERT INTO `object_query_2` VALUES ('5','2','news','1370037600','0','0','0');
@@ -1996,63 +1888,25 @@ INSERT INTO `object_query_2` VALUES ('6','2','news','1354558500','25','0','0');
 INSERT INTO `object_query_2` VALUES ('7','2','news','1360606500','18','0','0');
 INSERT INTO `object_query_2` VALUES ('8','2','news','1360001700','20','0','0');
 INSERT INTO `object_query_2` VALUES ('9','2','news','1352830500','21','0','0');
-
-
-
-
 INSERT INTO `object_query_3` VALUES ('29','3','inquiry','28','object','1368630902','Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.','1');
 INSERT INTO `object_query_3` VALUES ('31','3','inquiry','30','object','1368630916','Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.','1');
-
-
-
-
 INSERT INTO `object_query_4` VALUES ('28','4','persons','male','John','Doe','john@doe.com','0','0','1368630902');
 INSERT INTO `object_query_4` VALUES ('30','4','persons','female','Jane','Doe','jane@doe.com','0','0','1368630916');
 INSERT INTO `object_query_4` VALUES ('47','4','persons','male','Demo','User','pimcore@byom.de','1','1','1388412534');
-
-
-
-
 INSERT INTO `object_query_5` VALUES ('35','5','blogArticle','1388649120',',37,38,','0','');
 INSERT INTO `object_query_5` VALUES ('39','5','blogArticle','1389167640',',38,','23','a:3:{s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}s:4:\"crop\";a:5:{s:9:\"cropWidth\";d:99.599999999999994;s:10:\"cropHeight\";d:50.133333333333333;s:7:\"cropTop\";d:15.733333333333333;s:8:\"cropLeft\";d:1.8;s:11:\"cropPercent\";b:1;}}');
 INSERT INTO `object_query_5` VALUES ('40','5','blogArticle','1388390100',',36,','20','a:3:{s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}s:4:\"crop\";a:5:{s:9:\"cropWidth\";d:98.799999999999997;s:10:\"cropHeight\";d:54.133333333333333;s:7:\"cropTop\";d:27.466666666666665;s:8:\"cropLeft\";i:2;s:11:\"cropPercent\";b:1;}}');
-
-
-
-
 INSERT INTO `object_query_6` VALUES ('36','6','blogCategory');
 INSERT INTO `object_query_6` VALUES ('37','6','blogCategory');
 INSERT INTO `object_query_6` VALUES ('38','6','blogCategory');
-
-
-
-
-
-
-
-
+INSERT INTO `object_query_7` VALUES ('49','7','user','john','$2y$10$79ZMRzu5KyQY0i6Tgf3iZuY.bS0S.yld7XRqgX.8oEeMFqy/T.TiK',',ROLE_USER,');
+INSERT INTO `object_query_7` VALUES ('50','7','user','jane','$2y$10$BfgffXM.oUIIDdwtCDe.le0uMoku1LBX./4rIrVr.zpgNHWaSqr5q',',ROLE_ADMIN,');
 INSERT INTO `object_relations_3` VALUES ('29','28','object','person','0','object','','0');
 INSERT INTO `object_relations_3` VALUES ('31','30','object','person','0','object','','0');
-
-
-
-
-
-
-
-
 INSERT INTO `object_relations_5` VALUES ('35','37','object','categories','1','object','','0');
 INSERT INTO `object_relations_5` VALUES ('39','38','object','categories','1','object','','0');
 INSERT INTO `object_relations_5` VALUES ('40','36','object','categories','1','object','','0');
 INSERT INTO `object_relations_5` VALUES ('35','38','object','categories','2','object','','0');
-
-
-
-
-
-
-
-
 INSERT INTO `object_store_2` VALUES ('3','1374147900','49','43','52');
 INSERT INTO `object_store_2` VALUES ('4','1369761300','51','0','0');
 INSERT INTO `object_store_2` VALUES ('5','1370037600','0','0','0');
@@ -2060,37 +1914,19 @@ INSERT INTO `object_store_2` VALUES ('6','1354558500','25','0','0');
 INSERT INTO `object_store_2` VALUES ('7','1360606500','18','0','0');
 INSERT INTO `object_store_2` VALUES ('8','1360001700','20','0','0');
 INSERT INTO `object_store_2` VALUES ('9','1352830500','21','0','0');
-
-
-
-
 INSERT INTO `object_store_3` VALUES ('29','1368630902','Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.','1');
 INSERT INTO `object_store_3` VALUES ('31','1368630916','Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.','1');
-
-
-
-
 INSERT INTO `object_store_4` VALUES ('28','male','John','Doe','john@doe.com','0','0','1368630902');
 INSERT INTO `object_store_4` VALUES ('30','female','Jane','Doe','jane@doe.com','0','0','1368630916');
 INSERT INTO `object_store_4` VALUES ('47','male','Demo','User','pimcore@byom.de','1','1','1388412534');
-
-
-
-
 INSERT INTO `object_store_5` VALUES ('35','1388649120','0','');
 INSERT INTO `object_store_5` VALUES ('39','1389167640','23','a:3:{s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}s:4:\"crop\";a:5:{s:9:\"cropWidth\";d:99.599999999999994;s:10:\"cropHeight\";d:50.133333333333333;s:7:\"cropTop\";d:15.733333333333333;s:8:\"cropLeft\";d:1.8;s:11:\"cropPercent\";b:1;}}');
 INSERT INTO `object_store_5` VALUES ('40','1388390100','20','a:3:{s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}s:4:\"crop\";a:5:{s:9:\"cropWidth\";d:98.799999999999997;s:10:\"cropHeight\";d:54.133333333333333;s:7:\"cropTop\";d:27.466666666666665;s:8:\"cropLeft\";i:2;s:11:\"cropPercent\";b:1;}}');
-
-
-
-
 INSERT INTO `object_store_6` VALUES ('36');
 INSERT INTO `object_store_6` VALUES ('37');
 INSERT INTO `object_store_6` VALUES ('38');
-
-
-
-
+INSERT INTO `object_store_7` VALUES ('49','john','$2y$10$79ZMRzu5KyQY0i6Tgf3iZuY.bS0S.yld7XRqgX.8oEeMFqy/T.TiK','ROLE_USER');
+INSERT INTO `object_store_7` VALUES ('50','jane','$2y$10$BfgffXM.oUIIDdwtCDe.le0uMoku1LBX./4rIrVr.zpgNHWaSqr5q','ROLE_ADMIN');
 INSERT INTO `objects` VALUES ('1','0','folder','','/','999999','1','1368522989','1368522989','1','1','0','');
 INSERT INTO `objects` VALUES ('2','1','folder','news','/','0','1','1368613451','1368613451','0','0','0','');
 INSERT INTO `objects` VALUES ('3','2','object','lorem-ipsum','/news/','0','1','1368613483','1382958769','0','0','2','news');
@@ -2118,10 +1954,9 @@ INSERT INTO `objects` VALUES ('40','34','object','cum-sociis-natoque-penatibus-e
 INSERT INTO `objects` VALUES ('41','10','folder','newsletter','/crm/','0','1','1388408967','1388408967','0','0','0','');
 INSERT INTO `objects` VALUES ('42','10','folder','inquiries','/crm/','0','1','1388409135','1388409135','0','0','0','');
 INSERT INTO `objects` VALUES ('47','41','object','pimcore-byom.de~7a3','/crm/newsletter/','0','1','1388412533','1388412544','0','0','4','person');
-
-
-
-
+INSERT INTO `objects` VALUES ('48','1','folder','users','/',NULL,'1','1491821233','1491821233','3','3',NULL,NULL);
+INSERT INTO `objects` VALUES ('49','48','object','john','/users/','0','1','1491821239','1491821246','3','3','7','user');
+INSERT INTO `objects` VALUES ('50','48','object','jane','/users/','0','1','1491821254','1491821260','3','3','7','user');
 INSERT INTO `properties` VALUES ('1','document','/','blog','document','60','1');
 INSERT INTO `properties` VALUES ('1','document','/','language','text','en','1');
 INSERT INTO `properties` VALUES ('1','document','/','leftNavStartNode','document','40','1');
@@ -2198,30 +2033,6 @@ INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-cont
 INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_tabindex','text','','0');
 INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_target','text',NULL,'0');
 INSERT INTO `properties` VALUES ('73','document','/en/basic-examples/social-contents','navigation_title','text','','0');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 INSERT INTO `search_backend_data` VALUES ('1','/','asset','folder','folder','1','1368522989','1368522989','1','1','ID: 1  \nPath: /  \n','');
 INSERT INTO `search_backend_data` VALUES ('1','/','document','page','page','1','1368522989','1395151306','1','0','ID: 1  \nPath: /  \nAlbert Einstein Isla Colón, Bocas del Toro, Republic of Panama Bocas del Toro 3 Ready to be impressed? It\'ll blow your mind. Oh yeah, it\'s that good See it in Action See it in Action Checkmate In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. Check out our examples and dive into the next generation of digital data management. See for yourself. See for yourself pimcore is the only open-source multi-channel experience and engagement management platform available. With complete creative freedom, flexibility, and agility, pimcore is a dream come true for designers and developers. pimcore makes it easier to manage large international sites with key features like advanced content reuse, inheritance, and distribution. pimcore is based on UTF-8 standards and is compatible to any language including Right-to-Left (RTL). Good looking and completely custom galleries Lorem ipsum. Oh yeah, it\'s that good. And lastly, this one. About Us 100% Flexible 100% Editable International and Multi-site phone bullhorn screenshot left Are integrated within minutes Read More Read More Read More What is pimcore? and enjoy creative freedom 中國人嗎？沒問題。 About us Think different International and Multi-site left We can\'t solve problems by using the same kind of thinking we used when we created them. 1 3 3 Cum sociis. See for yourself. Checkmate. This demo is based on the Bootstrap framework which is the most popular, intuitive and powerful front-end framework available. HTML5, Javascript, CSS3, jQuery as well as concepts like responsive, mobile-apps or non-linear design-patterns. Content is created by simply dragging &amp; dropping blocks, that can be editited in-place and wysiwyg in a very intuitive and comfortable way. Fully Responsive 100% Buzzword Compatible Drag & Drop Interface video ','navigation_name:Home sidebar:/en/sidebar mainNavStartNode:/en leftNavStartNode:/en language:en blog:/en/advanced-examples/blog ');
 INSERT INTO `search_backend_data` VALUES ('1','/','object','folder','folder','1','1368522989','1368522989','1','1','ID: 1  \nPath: /  \n','');
@@ -2328,10 +2139,13 @@ INSERT INTO `search_backend_data` VALUES ('47','/de/shared/teasers/standard/basi
 INSERT INTO `search_backend_data` VALUES ('47','/crm/newsletter/pimcore-byom.de~7a3','object','object','person','1','1388412533','1388412544','0','0','ID: 47  \nPath: /crm/newsletter/pimcore-byom.de~7a3  \nmale Demo User pimcore@byom.de 1 1 Dec 30, 2013 3:08:54 PM ','token:YTozOntzOjQ6InNhbHQiO3M6MzI6IjNlMGRkYTk3MWU1YTY5MWViYmM0OGVkNGQ5NzA4MDFmIjtzOjU6ImVtYWlsIjtzOjE1OiJwaW1jb3JlQGJ5b20uZGUiO3M6MjoiaWQiO2k6NDc7fQ== ');
 INSERT INTO `search_backend_data` VALUES ('48','/examples/south-africa/img_0391.jpg','asset','image','image','1','1368596800','1368632468','0','0','ID: 48  \nPath: /examples/south-africa/img_0391.jpg  \nimg_0391.jpg','');
 INSERT INTO `search_backend_data` VALUES ('48','/de/shared/teasers/standard/advanced-examples','document','snippet','snippet','1','1382956886','1382957114','0','0','ID: 48  \nPath: /de/shared/teasers/standard/advanced-examples  \n Drag & Drop Inhaltserstellung Etiam rhoncu Inhalt wird einfach per drag &amp; drop mit Inhaltsblöcken erstellt, welche dann direkt in-line editiert werden können. ','blog:/en/advanced-examples/blog mainNavStartNode:/de sidebar:/de/sidebar leftNavStartNode:/de language:de ');
+INSERT INTO `search_backend_data` VALUES ('48','/users','object','folder','folder','1','1491821233','1491821233','3','3','ID: 48  \nPath: /users  \nusers','');
 INSERT INTO `search_backend_data` VALUES ('49','/examples/south-africa/img_2155.jpg','asset','image','image','1','1368596801','1368632468','0','0','ID: 49  \nPath: /examples/south-africa/img_2155.jpg  \nimg_2155.jpg','');
 INSERT INTO `search_backend_data` VALUES ('49','/de/shared/teasers/standard/experiments','document','snippet','snippet','1','1382956887','1382957197','0','0','ID: 49  \nPath: /de/shared/teasers/standard/experiments  \n HTML5 immer & überall Quisque rutrum &nbsp; Bilder direkt per drag &amp; drop vom Desktop&nbsp;in den Baum in pimcore hochladen, automatische HTML5 Video Konvertierung&nbsp;und viel mehr ... ','blog:/en/advanced-examples/blog mainNavStartNode:/de sidebar:/de/sidebar leftNavStartNode:/de language:de ');
+INSERT INTO `search_backend_data` VALUES ('49','/users/john','object','object','user','1','1491821239','1491821246','3','3','ID: 49  \nPath: /users/john  \njohn ROLE_USER ','');
 INSERT INTO `search_backend_data` VALUES ('50','/examples/south-africa/img_1544.jpg','asset','image','image','1','1368596804','1368632468','0','0','ID: 50  \nPath: /examples/south-africa/img_1544.jpg  \nimg_1544.jpg','');
 INSERT INTO `search_backend_data` VALUES ('50','/de/einfuehrung','document','page','page','1','1382957658','1382957760','0','0','ID: 50  \nPath: /de/einfuehrung  \n Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. &nbsp; Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. &nbsp; Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles. &nbsp; It va esser tam simplic quam Occidental in fact, it va esser Occidental. A un Angleso it va semblar un simplificat Angles, quam un skeptic Cambridge amico dit me que Occidental es. Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. &nbsp; Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Überblick über das Projekt und wie man mit einer einfachen Vorlage loslegen kann. Einführung Ullamcorper Scelerisque Erste Schritte Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Etiam rhoncu Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. snippet snippet ','blog:/en/advanced-examples/blog mainNavStartNode:/de sidebar:/de/sidebar leftNavStartNode:/de language:de navigation_name:Einführung ');
+INSERT INTO `search_backend_data` VALUES ('50','/users/jane','object','object','user','1','1491821254','1491821260','3','3','ID: 50  \nPath: /users/jane  \njane ROLE_ADMIN ','');
 INSERT INTO `search_backend_data` VALUES ('51','/examples/south-africa/img_1842.jpg','asset','image','image','1','1368596806','1368632468','0','0','ID: 51  \nPath: /examples/south-africa/img_1842.jpg  \nimg_1842.jpg','');
 INSERT INTO `search_backend_data` VALUES ('51','/de/einfache-beispiele','document','page','page','1','1382957793','1382957910','0','0','ID: 51  \nPath: /de/einfache-beispiele  \n Übersicht über einfache Beispiele Diese Seite dient nur zur Demonstration einer mehrsprachigen Seite.&nbsp; Um die Beispiele zu sehen verwende bitte die Englische Beispielseite.&nbsp; Einfache Beispiele ','blog:/en/advanced-examples/blog mainNavStartNode:/de sidebar:/de/sidebar leftNavStartNode:/de language:de navigation_name:Einfache Beispiele ');
 INSERT INTO `search_backend_data` VALUES ('52','/examples/south-africa/img_1920.jpg','asset','image','image','1','1368596808','1368632468','0','0','ID: 52  \nPath: /examples/south-africa/img_1920.jpg  \nimg_1920.jpg','');
@@ -2371,14 +2185,6 @@ INSERT INTO `search_backend_data` VALUES ('70','/en/advanced-examples/product-in
 INSERT INTO `search_backend_data` VALUES ('71','/en/advanced-examples/e-commerce','document','page','page','1','1388740265','1388740613','0','0','ID: 71  \nPath: /en/advanced-examples/e-commerce  \n Please visit our&nbsp;PIM, E-Commerce &amp; Asset Management demo to see it in action.&nbsp; E-Commerce E-Commerce ','sidebar:/en/advanced-examples/sidebar blog:/en/advanced-examples/blog mainNavStartNode:/en leftNavStartNode:/en/advanced-examples language:en navigation_name:E-Commerce ');
 INSERT INTO `search_backend_data` VALUES ('72','/en/advanced-examples/sub-modules','document','page','page','1','1419933647','1419933980','32','32','ID: 72  \nPath: /en/advanced-examples/sub-modules  \n ','sidebar:/en/advanced-examples/sidebar blog:/en/advanced-examples/blog mainNavStartNode:/en leftNavStartNode:/en/advanced-examples language:en navigation_title: navigation_target: navigation_name:Sub-Modules navigation_exclude: ');
 INSERT INTO `search_backend_data` VALUES ('73','/en/basic-examples/social-contents','document','page','page','1','1459501213','1459501429','39','39','ID: 73  \nPath: /en/basic-examples/social-contents  \n Embedding Social Contents Summer in Salzburg pic.twitter.com/XjulNLrnxZ&mdash; Discover Austria (@DiscoverAustria) March 9, 2016 (function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = \"//connect.facebook.net/de_DE/sdk.js#xfbml=1&version=v2.3\"; fjs.parentNode.insertBefore(js, fjs); }(document, \'script\', \'facebook-jssdk\'));Over the rainbow in SalzburgPosted by Discover Austria on&nbsp;Dienstag, 29. März 2016 SALZBURG | by @fatboy199 A photo posted by Discover Austria (@discoveraustria) on Mar 6, 2016 at 7:39am PST Social Contents ','blog:/en/advanced-examples/blog leftNavStartNode:/en/basic-examples mainNavStartNode:/en sidebar:/en/sidebar language:en navigation_parameters: navigation_target: navigation_tabindex: navigation_relation: navigation_anchor: navigation_name:Social Contents navigation_exclude: navigation_class: navigation_accesskey: navigation_title: ');
-
-
-
-
-
-
-
-
 INSERT INTO `tags` VALUES ('12','0','/','imagetype');
 INSERT INTO `tags` VALUES ('13','0','/','format');
 INSERT INTO `tags` VALUES ('14','0','/','country');
@@ -2392,25 +2198,109 @@ INSERT INTO `tags` VALUES ('21','14','/14/','singapore');
 INSERT INTO `tags` VALUES ('22','14','/14/','south-africa');
 INSERT INTO `tags` VALUES ('23','12','/12/','screenshot');
 INSERT INTO `tags` VALUES ('25','12','/12/','svg');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+INSERT INTO `translations_admin` VALUES ('Admin','ca','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','cs','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','de','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','en','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','es','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','fa','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','fr','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','it','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','ja','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','nl','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','pl','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','pt','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','pt_BR','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','ru','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','sk','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','sv','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','tr','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','uk','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','zh_Hans','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Admin','zh_Hant','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','ca','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','cs','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','de','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','en','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','es','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','fa','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','fr','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','it','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','ja','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','nl','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','pl','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','pt','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','pt_BR','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','ru','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','sk','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','sv','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','tr','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','uk','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','zh_Hans','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master','zh_Hant','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','ca','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','cs','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','de','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','en','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','es','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','fa','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','fr','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','it','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','ja','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','nl','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','pl','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','pt','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','pt_BR','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','ru','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','sk','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','sv','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','tr','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','uk','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','zh_Hans','','1491821250','1491821250');
+INSERT INTO `translations_admin` VALUES ('Master (Admin Mode)','zh_Hant','','1491821250','1491821250');
 INSERT INTO `translations_admin` VALUES ('blockquote','de','','1368611528','1368611528');
 INSERT INTO `translations_admin` VALUES ('blockquote','en','','1368611528','1368611528');
 INSERT INTO `translations_admin` VALUES ('blog','en','','1388389180','1388389180');
+INSERT INTO `translations_admin` VALUES ('blogArticle','ca','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','cs','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','de','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','en','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','es','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','fa','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','fr','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','it','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','ja','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','nl','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','pl','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','pt','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','pt_BR','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','ru','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','sk','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','sv','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','tr','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','uk','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','zh_Hans','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogArticle','zh_Hant','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','ca','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','cs','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','de','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','en','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','es','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','fa','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','fr','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','it','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','ja','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','nl','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','pl','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','pt','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','pt_BR','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','ru','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','sk','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','sv','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','tr','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','uk','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','zh_Hans','','1491819866','1491819866');
+INSERT INTO `translations_admin` VALUES ('blogCategory','zh_Hant','','1491819866','1491819866');
 INSERT INTO `translations_admin` VALUES ('blogarticle','en','Blog Article','1388389510','1388396937');
 INSERT INTO `translations_admin` VALUES ('blogcategories','en','','1388389420','1388389420');
 INSERT INTO `translations_admin` VALUES ('blogcategory','en','Blog Category','1388389840','1388396950');
@@ -2476,16 +2366,32 @@ INSERT INTO `translations_admin` VALUES ('text accordion','de','',NULL,NULL);
 INSERT INTO `translations_admin` VALUES ('text accordion','en','',NULL,NULL);
 INSERT INTO `translations_admin` VALUES ('title','en','','1368613497','1368613497');
 INSERT INTO `translations_admin` VALUES ('unittest','en','','1368561373','1368561373');
+INSERT INTO `translations_admin` VALUES ('user','ca','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','cs','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','de','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','en','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','es','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','fa','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','fr','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','it','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','ja','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','nl','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','pl','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','pt','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','pt_BR','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','ru','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','sk','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','sv','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','tr','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','uk','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','zh_Hans','','1491821111','1491821111');
+INSERT INTO `translations_admin` VALUES ('user','zh_Hant','','1491821111','1491821111');
 INSERT INTO `translations_admin` VALUES ('video','de','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('video','en','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('wysiwyg','de','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('wysiwyg','en','','1368608412','1368608412');
 INSERT INTO `translations_admin` VALUES ('wysiwyg w. images','de','',NULL,NULL);
 INSERT INTO `translations_admin` VALUES ('wysiwyg w. images','en','',NULL,NULL);
-
-
-
-
 INSERT INTO `translations_website` VALUES ('\'%value%\' is not a valid email address in the basic format local-part@hostname','de','','1368631595','1368631595');
 INSERT INTO `translations_website` VALUES ('\'%value%\' is not a valid email address in the basic format local-part@hostname','en','','1368631595','1368631595');
 INSERT INTO `translations_website` VALUES ('advanced examples','de','','0','0');
@@ -2644,19 +2550,10 @@ INSERT INTO `translations_website` VALUES ('website translations','de','','0','0
 INSERT INTO `translations_website` VALUES ('website translations','en','','0','0');
 INSERT INTO `translations_website` VALUES ('website übersetzungen','de','','0','0');
 INSERT INTO `translations_website` VALUES ('website übersetzungen','en','','0','0');
-
-
-
-
 INSERT INTO `tree_locks` VALUES ('12','document','self');
 INSERT INTO `tree_locks` VALUES ('46','document','self');
-
-
-
-
 INSERT INTO `users` VALUES ('0','0','user','system','',NULL,NULL,NULL,'','','1','1','','','0','0','0','0','','',NULL,NULL,NULL,NULL,NULL);
-INSERT INTO `users` VALUES ('2','0','user','admin','$2y$10$nzibZ5Ck0.ZZy.mYhjpjrO.HAMGgWTDsNgGY.KT8KIuY/y1OO.cJ2',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','1','','',NULL,NULL,NULL,NULL,NULL);
-
+INSERT INTO `users` VALUES ('3','0','user','admin','$2y$10$C/NMm0Tu.vyqWecorItgVOepQSRjT2VCzFqB3hX6m5KunYx2BgtIe',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','1','','',NULL,NULL,'','','');
 INSERT INTO `users_permission_definitions` VALUES ('application_logging');
 INSERT INTO `users_permission_definitions` VALUES ('assets');
 INSERT INTO `users_permission_definitions` VALUES ('backup');
@@ -2692,100 +2589,38 @@ INSERT INTO `users_permission_definitions` VALUES ('users');
 INSERT INTO `users_permission_definitions` VALUES ('website_settings');
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 DROP VIEW IF EXISTS `object_2`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_2` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`)));
-
-
-
-
 
 DROP VIEW IF EXISTS `object_3`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_3` AS select `object_query_3`.`oo_id` AS `oo_id`,`object_query_3`.`oo_classId` AS `oo_classId`,`object_query_3`.`oo_className` AS `oo_className`,`object_query_3`.`person__id` AS `person__id`,`object_query_3`.`person__type` AS `person__type`,`object_query_3`.`date` AS `date`,`object_query_3`.`message` AS `message`,`object_query_3`.`terms` AS `terms`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_3` join `objects` on((`objects`.`o_id` = `object_query_3`.`oo_id`)));
 
-
-
-
-
 DROP VIEW IF EXISTS `object_4`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_4` AS select `object_query_4`.`oo_id` AS `oo_id`,`object_query_4`.`oo_classId` AS `oo_classId`,`object_query_4`.`oo_className` AS `oo_className`,`object_query_4`.`gender` AS `gender`,`object_query_4`.`firstname` AS `firstname`,`object_query_4`.`lastname` AS `lastname`,`object_query_4`.`email` AS `email`,`object_query_4`.`newsletterActive` AS `newsletterActive`,`object_query_4`.`newsletterConfirmed` AS `newsletterConfirmed`,`object_query_4`.`dateRegister` AS `dateRegister`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_4` join `objects` on((`objects`.`o_id` = `object_query_4`.`oo_id`)));
-
-
-
-
 
 DROP VIEW IF EXISTS `object_5`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_5` AS select `object_query_5`.`oo_id` AS `oo_id`,`object_query_5`.`oo_classId` AS `oo_classId`,`object_query_5`.`oo_className` AS `oo_className`,`object_query_5`.`date` AS `date`,`object_query_5`.`categories` AS `categories`,`object_query_5`.`posterImage__image` AS `posterImage__image`,`object_query_5`.`posterImage__hotspots` AS `posterImage__hotspots`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_5` join `objects` on((`objects`.`o_id` = `object_query_5`.`oo_id`)));
 
-
-
-
-
 DROP VIEW IF EXISTS `object_6`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_6` AS select `object_query_6`.`oo_id` AS `oo_id`,`object_query_6`.`oo_classId` AS `oo_classId`,`object_query_6`.`oo_className` AS `oo_className`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_6` join `objects` on((`objects`.`o_id` = `object_query_6`.`oo_id`)));
 
-
-
-
+DROP VIEW IF EXISTS `object_7`;
+CREATE ALGORITHM=UNDEFINED  VIEW `object_7` AS select `object_query_7`.`oo_id` AS `oo_id`,`object_query_7`.`oo_classId` AS `oo_classId`,`object_query_7`.`oo_className` AS `oo_className`,`object_query_7`.`username` AS `username`,`object_query_7`.`password` AS `password`,`object_query_7`.`roles` AS `roles`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className` from (`object_query_7` join `objects` on((`objects`.`o_id` = `object_query_7`.`oo_id`)));
 
 DROP VIEW IF EXISTS `object_localized_2_de`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_2_de` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_2_de`.`ooo_id` AS `ooo_id`,`object_localized_query_2_de`.`language` AS `language`,`object_localized_query_2_de`.`title` AS `title`,`object_localized_query_2_de`.`shortText` AS `shortText`,`object_localized_query_2_de`.`text` AS `text` from ((`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`))) left join `object_localized_query_2_de` on((`object_query_2`.`oo_id` = `object_localized_query_2_de`.`ooo_id`)));
 
-
-
-
-
 DROP VIEW IF EXISTS `object_localized_2_en`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_2_en` AS select `object_query_2`.`oo_id` AS `oo_id`,`object_query_2`.`oo_classId` AS `oo_classId`,`object_query_2`.`oo_className` AS `oo_className`,`object_query_2`.`date` AS `date`,`object_query_2`.`image_1` AS `image_1`,`object_query_2`.`image_2` AS `image_2`,`object_query_2`.`image_3` AS `image_3`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_2_en`.`ooo_id` AS `ooo_id`,`object_localized_query_2_en`.`language` AS `language`,`object_localized_query_2_en`.`title` AS `title`,`object_localized_query_2_en`.`shortText` AS `shortText`,`object_localized_query_2_en`.`text` AS `text` from ((`object_query_2` join `objects` on((`objects`.`o_id` = `object_query_2`.`oo_id`))) left join `object_localized_query_2_en` on((`object_query_2`.`oo_id` = `object_localized_query_2_en`.`ooo_id`)));
-
-
-
-
 
 DROP VIEW IF EXISTS `object_localized_5_de`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_5_de` AS select `object_query_5`.`oo_id` AS `oo_id`,`object_query_5`.`oo_classId` AS `oo_classId`,`object_query_5`.`oo_className` AS `oo_className`,`object_query_5`.`date` AS `date`,`object_query_5`.`categories` AS `categories`,`object_query_5`.`posterImage__image` AS `posterImage__image`,`object_query_5`.`posterImage__hotspots` AS `posterImage__hotspots`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_5_de`.`ooo_id` AS `ooo_id`,`object_localized_query_5_de`.`language` AS `language`,`object_localized_query_5_de`.`title` AS `title`,`object_localized_query_5_de`.`text` AS `text`,`object_localized_query_5_de`.`tags` AS `tags` from ((`object_query_5` join `objects` on((`objects`.`o_id` = `object_query_5`.`oo_id`))) left join `object_localized_query_5_de` on((`object_query_5`.`oo_id` = `object_localized_query_5_de`.`ooo_id`)));
 
-
-
-
-
 DROP VIEW IF EXISTS `object_localized_5_en`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_5_en` AS select `object_query_5`.`oo_id` AS `oo_id`,`object_query_5`.`oo_classId` AS `oo_classId`,`object_query_5`.`oo_className` AS `oo_className`,`object_query_5`.`date` AS `date`,`object_query_5`.`categories` AS `categories`,`object_query_5`.`posterImage__image` AS `posterImage__image`,`object_query_5`.`posterImage__hotspots` AS `posterImage__hotspots`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_5_en`.`ooo_id` AS `ooo_id`,`object_localized_query_5_en`.`language` AS `language`,`object_localized_query_5_en`.`title` AS `title`,`object_localized_query_5_en`.`text` AS `text`,`object_localized_query_5_en`.`tags` AS `tags` from ((`object_query_5` join `objects` on((`objects`.`o_id` = `object_query_5`.`oo_id`))) left join `object_localized_query_5_en` on((`object_query_5`.`oo_id` = `object_localized_query_5_en`.`ooo_id`)));
-
-
-
-
 
 DROP VIEW IF EXISTS `object_localized_6_de`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_6_de` AS select `object_query_6`.`oo_id` AS `oo_id`,`object_query_6`.`oo_classId` AS `oo_classId`,`object_query_6`.`oo_className` AS `oo_className`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_6_de`.`ooo_id` AS `ooo_id`,`object_localized_query_6_de`.`language` AS `language`,`object_localized_query_6_de`.`name` AS `name` from ((`object_query_6` join `objects` on((`objects`.`o_id` = `object_query_6`.`oo_id`))) left join `object_localized_query_6_de` on((`object_query_6`.`oo_id` = `object_localized_query_6_de`.`ooo_id`)));
 
-
-
-
-
 DROP VIEW IF EXISTS `object_localized_6_en`;
 CREATE ALGORITHM=UNDEFINED  VIEW `object_localized_6_en` AS select `object_query_6`.`oo_id` AS `oo_id`,`object_query_6`.`oo_classId` AS `oo_classId`,`object_query_6`.`oo_className` AS `oo_className`,`objects`.`o_id` AS `o_id`,`objects`.`o_parentId` AS `o_parentId`,`objects`.`o_type` AS `o_type`,`objects`.`o_key` AS `o_key`,`objects`.`o_path` AS `o_path`,`objects`.`o_index` AS `o_index`,`objects`.`o_published` AS `o_published`,`objects`.`o_creationDate` AS `o_creationDate`,`objects`.`o_modificationDate` AS `o_modificationDate`,`objects`.`o_userOwner` AS `o_userOwner`,`objects`.`o_userModification` AS `o_userModification`,`objects`.`o_classId` AS `o_classId`,`objects`.`o_className` AS `o_className`,`object_localized_query_6_en`.`ooo_id` AS `ooo_id`,`object_localized_query_6_en`.`language` AS `language`,`object_localized_query_6_en`.`name` AS `name` from ((`object_query_6` join `objects` on((`objects`.`o_id` = `object_query_6`.`oo_id`))) left join `object_localized_query_6_en` on((`object_query_6`.`oo_id` = `object_localized_query_6_en`.`ooo_id`)));
-

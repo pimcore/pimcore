@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Model\Object\User;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -20,10 +21,35 @@ class SecureController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return [
-            'hideLeftNav'  => true,
-            'lastUsername' => $lastUsername,
-            'error'        => $error,
+            'hideLeftNav'     => true,
+            'showBreadcrumbs' => false,
+            'lastUsername'    => $lastUsername,
+            'error'           => $error,
+            'availableUsers'  => $this->loadAvailableUsers()
         ];
+    }
+
+    /**
+     * This is only for DEMO purposes - show a list of available users. Obviously you do NOT want
+     * this in your real application.
+     *
+     * @return array
+     */
+    private function loadAvailableUsers()
+    {
+        /** @var User[] $users */
+        $users = User::getList();
+
+        $result = [];
+        foreach ($users as $user) {
+            $result[] = [
+                'username' => $user->getUsername(),
+                'roles'    => $user->getRoles(),
+                'password' => 'doe'
+            ];
+        }
+
+        return $result;
     }
 
     /**
@@ -35,6 +61,9 @@ class SecureController extends AbstractController
      */
     public function secureUserAction()
     {
+        return [
+            'showBreadcrumbs' => false,
+        ];
     }
 
     /**

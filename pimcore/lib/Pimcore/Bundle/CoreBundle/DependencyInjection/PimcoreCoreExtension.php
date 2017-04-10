@@ -76,6 +76,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureCache($container, $loader, $config);
+        $this->configurePasswordEncoders($container, $config);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -221,8 +222,25 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         }
 
         // set core cache pool alias
-
         $container->setAlias('pimcore.cache.core.pool', $coreCachePool);
+    }
+
+    /**
+     * Handle pimcore.security.encoder_factories mapping
+     *
+     * @param ContainerBuilder $container
+     * @param $config
+     */
+    protected function configurePasswordEncoders(ContainerBuilder $container, $config)
+    {
+        $definition = $container->findDefinition('pimcore.security.encoder_factory');
+
+        $factoryMapping = [];
+        foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
+            $factoryMapping[$className] = new Reference($factoryConfig['id']);
+        }
+
+        $definition->replaceArgument(1, $factoryMapping);
     }
 
     /**

@@ -127,7 +127,8 @@ use Pimcore\Model\Document\Page;
 
     <div id="content" class="container">
         <?php
-        $hideLeftNav = $document->getProperty('leftNavHide') || $this->getViewParameter('hideLeftNav', false);
+        $hideLeftNav     = $document->getProperty('leftNavHide') || $this->getViewParameter('hideLeftNav', false);
+        $showBreadcrumbs = $this->getViewParameter('showBreadcrumbs', true);
 
         $mainColClass = 'col-md-9 col-md-push-3';
         if ($hideLeftNav) {
@@ -138,10 +139,12 @@ use Pimcore\Model\Document\Page;
         <div class="<?= $mainColClass ?>">
             <?php $this->slots()->output('_content') ?>
 
-            <div>
-                <a href="/"><?= $this->translate('Home'); ?></a> &gt;
-                <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
-            </div>
+            <?php if ($showBreadcrumbs): ?>
+                <div>
+                    <a href="/"><?= $this->translate('Home'); ?></a> &gt;
+                    <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <?php if (!$hideLeftNav): ?>
