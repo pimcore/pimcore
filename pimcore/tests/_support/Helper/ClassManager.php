@@ -65,6 +65,12 @@ class ClassManager extends Module
         $this->assertNotNull($class, sprintf('Test class %s does not exist and could not be created', $name));
         $this->assertInstanceOf(ClassDefinition::class, $class);
 
+        $classFile = PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($class->getName()) . ".php";
+        $this->assertFileExists($classFile, sprintf('Test class file %s does not exist', $classFile));
+
+        $fullClassName = "Pimcore\\Model\\Object\\" . ucfirst($class->getName());
+        $this->assertTrue(class_exists($fullClassName), sprintf("Class %s cannot be found/loaded", $fullClassName));
+
         return $class;
     }
 
