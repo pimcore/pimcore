@@ -2,6 +2,7 @@
 
 namespace AppBundle\Model\Object;
 
+use Pimcore\Model\Object\ClassDefinition\Data\Password;
 use Pimcore\Model\Object\User as BaseUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -21,10 +22,15 @@ class User extends BaseUser implements UserInterface
     }
 
     /**
+     * Trigger the hash calculation to remove the plain text password from the instance. This
+     * is necessary to make sure no plain text passwords are serialized.
+     *
      * @inheritDoc
      */
     public function eraseCredentials()
     {
-        // noop
+        /** @var Password $field */
+        $field = $this->getClass()->getFieldDefinition('password');
+        $field->getDataForResource($this->getPassword(), $this);
     }
 }
