@@ -60,6 +60,8 @@ $this->extend('layout.html.php');
                         <input type="password" id="login-password" class="form-control" name="_password" placeholder="<?= $this->translate('Password') ?>" />
                     </div>
 
+                    <input type="hidden" name="_target_path" value="/<?= $this->getLocale() ?>" />
+
                     <button type="submit" class="btn btn-primary pull-right">Login</button>
                 </form>
 

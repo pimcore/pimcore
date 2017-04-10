@@ -26,7 +26,6 @@ security:
             form_login:
                 login_path: demo_login
                 check_path: demo_login
-                default_target_path: /
             logout:
                 path:   demo_logout
                 target: demo_login
