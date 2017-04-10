@@ -66,6 +66,11 @@ class CacheController
      * @var bool
      */
     public $captureEnabled = false;
+    
+    /**
+     * @var array
+     */
+    public $tags = [];
 
     /**
      * @var bool
@@ -77,13 +82,16 @@ class CacheController
      * @param $lifetime
      * @param bool $editmode
      * @param bool $force
+     * @param array $tags
      */
-    public function __construct($name, $lifetime, $editmode = true, $force = false)
+    public function __construct($name, $lifetime, $editmode = true, $force = false, $tags = NULL)
     {
         $this->key = "pimcore_viewcache_" . $name;
         $this->editmode = $editmode;
         $this->force = $force;
-
+        if (is_array($tags)){
+            $this->tags = array_merge($this->tags, $tags);
+        }
         if (!$lifetime) {
             $lifetime = null;
         }
@@ -113,29 +121,31 @@ class CacheController
     }
 
     /**
-     *
+     * @param array $tags
      */
-    public function end()
+    public function end($tags = NULL)
     {
         if ($this->captureEnabled) {
             $this->captureEnabled = false;
-
-            $tags = ["in_template"];
+            if (is_array($tags)){
+                $this->tags = array_merge($this->tags, $tags);
+            }
+            $this->tags[] = "in_template";
             if (!$this->lifetime) {
-                $tags[] = "output";
+                $this->tags[] = "output";
             }
 
             $content = ob_get_clean();
-            CacheManager::save($content, $this->key, $tags, $this->lifetime, 996, true);
+            CacheManager::save($content, $this->key, $this->tags, $this->lifetime, 996, true);
             echo $content;
         }
     }
 
     /**
-     *
+     * @param array $tags
      */
-    public function stop()
+    public function stop($tags = NULL)
     {
-        $this->end();
+        $this->end($tags);
     }
 }
