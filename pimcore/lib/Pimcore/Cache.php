@@ -29,8 +29,7 @@ class Cache
     protected static $handler;
 
     /**
-     * @deprecated
-     * @return \Zend_Cache_Core|null
+     *
      */
     public static function getInstance()
     {

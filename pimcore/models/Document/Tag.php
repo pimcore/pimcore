@@ -448,7 +448,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param null $document
      * @return string
      * @throws \Exception
-     * @throws \Zend_Exception
      */
     public static function buildTagName($type, $name, $document = null)
     {

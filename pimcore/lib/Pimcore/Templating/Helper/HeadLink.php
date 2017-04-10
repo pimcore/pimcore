@@ -297,12 +297,7 @@ class HeadLink extends CacheBusterAware
             }
         }
 
-        //TODO check if that is possible
-//        if ($this->view instanceof Zend_View_Abstract) {
-//            $link .= ($this->view->doctype()->isXhtml()) ? '/>' : '>';
-//        } else {
-            $link .= '/>';
-//        }
+        $link .= '/>';
 
         if (($link == '<link />') || ($link == '<link >')) {
             return '';

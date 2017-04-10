@@ -182,7 +182,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param bool $returnIdIfEmpty
      * @return static
      * @throws \Exception
-     * @throws \Zend_Exception
+     * @throws \Exception
      */
     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
     {

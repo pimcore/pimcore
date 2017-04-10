@@ -19,7 +19,7 @@ use Pimcore\Logger;
 class HybridAuth
 {
     /**
-     * @throws \Zend_Loader_Exception
+     * @throws \Exception
      */
     public static function init()
     {

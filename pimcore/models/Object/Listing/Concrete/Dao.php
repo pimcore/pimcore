@@ -133,7 +133,7 @@ class Dao extends Model\Object\Listing\Dao
     /**
      * @return string
      * @throws \Exception
-     * @throws \Zend_Exception
+     * @throws \Exception
      */
     public function getTableName()
     {
