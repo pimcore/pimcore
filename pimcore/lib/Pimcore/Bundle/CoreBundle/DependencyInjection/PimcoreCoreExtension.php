@@ -52,6 +52,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
+        $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']["path"]);
 
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);

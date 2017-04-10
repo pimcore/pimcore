@@ -161,6 +161,14 @@ pimcore:
             routes:
                 - { path: ^/plugin }
     admin:
+        session:
+            attribute_bags:
+                - pimcore_admin
+                - pimcore_documents
+                - pimcore_objects
+                - pimcore_copy
+                - pimcore_backup
+
         # the following routes won't be double checked for authentication
         # this usually applies to login routes
         unauthenticated_routes:

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -21,28 +24,30 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class AdminSessionBagConfigurator implements SessionConfiguratorInterface
 {
     /**
+     * Attribute bag configuration
+     *
+     * @var array
+     */
+    private $config = [];
+
+    /**
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
      * @inheritDoc
      */
     public function configure(SessionInterface $session)
     {
-        $this->registerBag($session, 'pimcore_admin');
-        $this->registerBag($session, 'pimcore_documents');
-        $this->registerBag($session, 'pimcore_objects');
-        $this->registerBag($session, 'pimcore_copy');
-        $this->registerBag($session, 'pimcore_backup');
-    }
+        foreach ($this->config as $name => $config) {
+            $bag = new LockableAttributeBag($config['storage_key']);
+            $bag->setName($name);
 
-    /**
-     * Create and register an attribute bag
-     *
-     * @param SessionInterface $session
-     * @param string $name
-     */
-    protected function registerBag(SessionInterface $session, $name)
-    {
-        $bag = new LockableAttributeBag('_' . $name);
-        $bag->setName($name);
-
-        $session->registerBag($bag);
+            $session->registerBag($bag);
+        }
     }
 }

@@ -17,6 +17,7 @@ services:
 
     pimcore_admin.session.configurator.admin_session_bags:
         class: Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator
+        arguments: ['%pimcore.admin.session.attribute_bags%']
 
     pimcore_admin.session:
         class: Symfony\Component\HttpFoundation\Session\Session
