@@ -892,7 +892,7 @@ pimcore.helpers.forceOpenMemorizedTabsOnce = function() {
         return true;
     }
     return false;
-}
+};
 
 pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
@@ -1092,8 +1092,6 @@ pimcore.helpers.sanitizeAllowedTypes = function(data, name) {
         data[name] = newList;
     }
 };
-
-
 
 
 pimcore.helpers.generatePagePreview = function (id, path, callback) {
