@@ -41,29 +41,6 @@ class TestHelper
         }
     }
 
-    public static function getSoapClient()
-    {
-        ini_set("soap.wsdl_cache_enabled", "0");
-        $conf = \Pimcore\Cache\Runtime::get("pimcore_config_test");
-
-        $user = User::getById($conf->user);
-        if (!$user instanceof User) {
-            throw new \Exception("invalid user id");
-        }
-
-        $client = new \Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(),
-            [
-                "cache_wsdl"   => false,
-                "soap_version" => SOAP_1_2,
-                "classmap"     => WebserviceTool::createClassMappings()
-            ]);
-
-        $client->setLocation($conf->webservice->serviceEndpoint . "?username=" . $user->getUsername() . "&apikey=" . $user->getPassword());
-
-        return $client;
-    }
-
-
     /**
      * @param  array $properties
      * @return array
