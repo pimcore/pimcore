@@ -16,6 +16,7 @@ namespace Pimcore\Security\Encoder\Factory;
 
 use Pimcore\Security\Encoder\UserAwarePasswordEncoderInterface;
 use Pimcore\Security\Exception\ConfigurationException;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
@@ -60,9 +61,12 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             throw new ConfigurationException('An encoder built by the UserAwareEncoderFactory must implement UserAwareEncoderInterface');
         }
 
-        /** @var UserAwarePasswordEncoderInterface $encoder */
+        /** @var PasswordEncoderInterface $encoder */
         $encoder = $this->buildEncoder($reflector);
-        $encoder->setUser($user);
+
+        if ($encoder instanceof UserAwarePasswordEncoderInterface) {
+            $encoder->setUser($user);
+        }
 
         $this->encoders[$user->getUsername()] = $encoder;
 
