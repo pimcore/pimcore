@@ -1102,6 +1102,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
     if(pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
             url: '/admin/page/generate-screenshot',
+            ignoreErrors: true,
             params: {
                 id: id
             },

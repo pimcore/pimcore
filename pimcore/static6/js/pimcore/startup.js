@@ -181,7 +181,7 @@ Ext.onReady(function () {
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
-        if (!response.aborted) {
+        if (!response.aborted && options["ignoreErrors"] !== true) {
             if (response.status == 503) {
                 //show wait info
                 if (!pimcore.maintenanceWindow) {
