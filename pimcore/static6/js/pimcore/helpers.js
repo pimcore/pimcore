@@ -566,7 +566,9 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
     });
     errWin.show();
 
-}
+};
+
+
 pimcore.helpers.showNotification = function (title, text, type, errorText, hideDelay) {
     // icon types: info,error,success
     if(type == "error"){
@@ -752,7 +754,7 @@ pimcore.helpers.closeAllUnmodified = function () {
     };
 
     pimcore.helpers.closeAllElements(unmodifiedElements);
-}
+};
 
 pimcore.helpers.closeAllElements = function (except, tabPanel) {
 
@@ -891,7 +893,7 @@ pimcore.helpers.forceOpenMemorizedTabsOnce = function() {
         return true;
     }
     return false;
-}
+};
 
 pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
@@ -1090,7 +1092,7 @@ pimcore.helpers.sanitizeAllowedTypes = function(data, name) {
         }
         data[name] = newList;
     }
-}
+};
 
 
 
