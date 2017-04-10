@@ -85,7 +85,7 @@ If you want regular objects and variants, you should use:
 
 ```php
 $list = new Object\Product\Listing();
-$list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT,Object\AbstractObject::OBJECT_TYPE_OBJECT]]);
+$list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT,Object\AbstractObject::OBJECT_TYPE_OBJECT]);
 $list->load();
 
 ```
