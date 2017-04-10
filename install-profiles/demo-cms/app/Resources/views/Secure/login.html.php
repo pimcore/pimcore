@@ -20,6 +20,27 @@ $this->extend('layout.html.php');
 
             <div class="panel-body">
 
+                <p><?= $this->translate('Depending on the user role and its permissions, the user dropdown in the navbar will show different entries.') ?></p>
+                <p><?= $this->translate('Available Users') ?>:</p>
+
+                <ul>
+                    <?php foreach ($this->availableUsers as $availableUser): ?>
+
+                        <li>
+                            <span class="label label-success"><?= $availableUser['username'] ?></span>
+                            with password
+                            <span class="label label-default"><?= $availableUser['password'] ?></span>
+
+                            &mdash;
+
+                            <?php foreach ($availableUser['roles'] as $role): ?>
+                                <span class="label label-default"><?= $role ?></span>
+                            <?php endforeach; ?>
+                        </li>
+
+                    <?php endforeach; ?>
+                </ul>
+
                 <?php if ($this->error): ?>
                     <div class="alert alert-danger"><?php echo $this->error->getMessage() ?></div>
                 <?php endif ?>
