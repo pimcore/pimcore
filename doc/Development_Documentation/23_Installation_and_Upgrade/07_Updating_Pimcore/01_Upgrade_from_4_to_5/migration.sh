@@ -68,7 +68,7 @@ mkdir -p web/var
 mkdir -p web/var/tmp
 
 # create legacy directory
-#mkdir legacy
+mkdir legacy
 
 # move config files to new location
 mv website/var/config/* var/config
@@ -98,4 +98,5 @@ if [ -d "plugins" ]; then
 fi
 
 echo "Migration succeeded...running composer update now"
+composer require pimcore/pimcore4-compatibility-bridge
 composer update
