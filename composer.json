@@ -87,15 +87,8 @@
     "debril/rss-atom-bundle": "^3.0",
 
     "zendframework/zend-paginator": "^2.7",
-    "zendframework/zend-servicemanager": "^3.2",
-
-    "zendframework/zend-console": "^2.6",
-
-    "zendframework/zendframework1": "~1.12"
+    "zendframework/zend-servicemanager": "^3.2"
   },
-  "_comment": ["@TODO: zendframework/zendframework1 is a dependency of /legacy/bundle and isn't required by the core!",
-               "It will be removed as soon as the legacy bundle is moved into a dedicated composer package"],
-
   "require-dev": {
     "symfony/phpunit-bridge": "^3.0",
     "codeception/codeception": "^2.2",
@@ -112,7 +105,7 @@
   },
   "autoload": {
     "psr-4": {
-      "": ["src/", "legacy/bundle/src/"],
+      "": ["src/"],
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
@@ -124,7 +117,6 @@
     ],
     "exclude-from-classmap": [
       "install-profiles/",
-      "legacy/bundle/",
       "pimcore/lib/compatibility-stubs.php"
     ]
   },
