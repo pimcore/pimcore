@@ -5,7 +5,7 @@ set -e
 # switch interpreter
 if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then CMD="hhvm"; else CMD="php"; fi
 
-CMD="$CMD vendor/bin/codecept run -c pimcore"
+CMD="$CMD vendor/bin/codecept run --debug -vvv -c pimcore"
 
 # add suite if configured
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then
