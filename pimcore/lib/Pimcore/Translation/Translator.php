@@ -164,7 +164,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         if ($backend) {
             $catalogue = null;
 
-            if (true || !$catalogue = Cache::load($cacheKey)) {
+            if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ["__pimcore_dummy" => "only_a_dummy"];
 
                 if ($domain == "admin") {
