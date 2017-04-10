@@ -25,6 +25,12 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  * User provider loading users from pimcore objects. To load users, the provider needs
  * to know which kind of users to load (className) and which field to query for the
  * username (usernameField).
+ *
+ * Example DI configuration loading from the AppBundle\Model\Object\User class and searching by username:
+ *
+ *      website_demo.security.user_provider:
+ *          class: Pimcore\Security\User\ObjectUserProvider
+ *          arguments: ['AppBundle\Model\Object\User', 'username']
  */
 class ObjectUserProvider implements UserProviderInterface
 {

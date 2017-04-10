@@ -19,6 +19,19 @@ use Pimcore\Security\Exception\ConfigurationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
+/**
+ * Encoder factory keeping a dedicated encoder instance per user object. This is needed as Pimcore Users and user
+ * objects containing Password field definitions handle their encoding logic by themself. The user aware encoder
+ * delegates encoding and verification to the user object.
+ *
+ * Example DI configuration for a factory building PasswordFieldEncoder instances which get 'password' as argument:
+ *
+ *      website_demo.security.password_encoder_factory:
+ *          class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
+ *          arguments:
+ *              - Pimcore\Security\Encoder\PasswordFieldEncoder
+ *              - ['password']
+ */
 class UserAwareEncoderFactory extends AbstractEncoderFactory
 {
     /**
