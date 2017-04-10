@@ -68,7 +68,7 @@ foreach ($tables as $name) {
             $cells[] = $cell;
         }
 
-        $dumpData .= "INSERT INTO " . $name . " VALUES (" . implode(",", $cells) . ");";
+        $dumpData .= "INSERT INTO `" . $name . "` VALUES (" . implode(",", $cells) . ");";
         $dumpData .= "\n";
     }
 }
@@ -76,7 +76,7 @@ foreach ($tables as $name) {
 foreach($views as $name) {
     // dump view structure
     $dumpData .= "\n\n";
-    $dumpData .= "DROP VIEW IF EXISTS " . $name . ";";
+    $dumpData .= "DROP VIEW IF EXISTS `" . $name . "`;";
     $dumpData .= "\n";
 
     try {
@@ -89,6 +89,7 @@ foreach($views as $name) {
 
 // remove user specific data
 $dumpData = preg_replace("/DEFINER(.*)DEFINER/i", "", $dumpData);
+$dumpData .= "\n";
 
 $finalDest = __DIR__ . "/data.sql";
 file_put_contents($finalDest, $dumpData);
