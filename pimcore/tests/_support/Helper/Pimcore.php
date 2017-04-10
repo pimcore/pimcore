@@ -102,7 +102,7 @@ class Pimcore extends Module\Symfony
 
         // not covered by Composer's autoloader since we're using a different location for class files
         // which is defined in pimcore/config/constants.php depended on PIMCORE_TEST constant
-        Autoload::addNamespace('Pimcore\Model\Object', PIMCORE_CLASS_DIRECTORY);
+        Autoload::addNamespace('Pimcore\Model\Object', PIMCORE_CLASS_DIRECTORY . "/Object");
 
         $this->kernel = require_once __DIR__ . '/../../../config/startup.php';
         $this->kernel->boot();
