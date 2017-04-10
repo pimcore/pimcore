@@ -20,6 +20,10 @@ $this->extend('layout.html.php');
 
             <div class="panel-body">
 
+                <?php if ($this->error): ?>
+                    <div class="alert alert-danger"><?php echo $this->error->getMessage() ?></div>
+                <?php endif ?>
+
                 <p><?= $this->translate('Depending on the user role and its permissions, the user dropdown in the navbar will show different entries.') ?></p>
                 <p><?= $this->translate('Available Users') ?>:</p>
 
@@ -40,10 +44,6 @@ $this->extend('layout.html.php');
 
                     <?php endforeach; ?>
                 </ul>
-
-                <?php if ($this->error): ?>
-                    <div class="alert alert-danger"><?php echo $this->error->getMessage() ?></div>
-                <?php endif ?>
 
                 <form action="<?php echo $this->path('demo_login') ?>" method="post">
                     <div class="form-group">
