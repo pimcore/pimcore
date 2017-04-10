@@ -164,7 +164,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         if ($backend) {
             $catalogue = null;
 
-            if (!$catalogue = Cache::load($cacheKey)) {
+            if (true || !$catalogue = Cache::load($cacheKey)) {
                 $data = ["__pimcore_dummy" => "only_a_dummy"];
 
                 if ($domain == "admin") {
@@ -189,7 +189,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                 foreach ($translations as $translation) {
                     $translationTerm = Tool\Text::removeLineBreaks($translation["text"]);
-                    if (!isset($data[$translation["key"]]) || !empty($translationTerm)) {
+                    if (
+                        (!isset($data[$translation["key"]]) && !$this->getCatalogue($locale)->has($translation["key"], $domain)) ||
+                        !empty($translationTerm))
+                    {
                         $data[$translation["key"]] = $translationTerm;
                     }
                 }
