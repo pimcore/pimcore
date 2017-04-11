@@ -18,6 +18,7 @@ use Symfony\Component\Debug\Debug;
 $debug = Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
 if ($debug) {
     Debug::enable();
+    @ini_set("display_errors", "On");
 }
 
 $kernel = new AppKernel(Config::getEnvironment(), $debug);
