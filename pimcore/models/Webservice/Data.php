@@ -31,7 +31,7 @@ abstract class Data
     public function map($object, $options = null)
     {
         $keys = get_object_vars($this);
-        $blockedKeys = ["childs","fieldDefinitions"];
+        $blockedKeys = ["childs", "fieldDefinitions"];
         foreach ($keys as $key => $value) {
             $method = "get" . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {

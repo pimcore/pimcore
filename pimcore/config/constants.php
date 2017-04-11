@@ -55,7 +55,7 @@ if ((defined('PIMCORE_TEST') && PIMCORE_TEST) || getenv('PIMCORE_TEST') === '1')
     define('PIMCORE_CLASS_DIRECTORY', PIMCORE_PATH . '/tests/_output/var/classes');
     define('PIMCORE_ASSET_DIRECTORY', PIMCORE_WEB_ROOT . '/var/tests/assets');
 
-    if(!defined('PIMCORE_TEST')) {
+    if (!defined('PIMCORE_TEST')) {
         define('PIMCORE_TEST', true);
     }
 }

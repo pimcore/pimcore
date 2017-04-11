@@ -191,8 +191,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                     $translationTerm = Tool\Text::removeLineBreaks($translation["text"]);
                     if (
                         (!isset($data[$translation["key"]]) && !$this->getCatalogue($locale)->has($translation["key"], $domain)) ||
-                        !empty($translationTerm))
-                    {
+                        !empty($translationTerm)) {
                         $data[$translation["key"]] = $translationTerm;
                     }
                 }
