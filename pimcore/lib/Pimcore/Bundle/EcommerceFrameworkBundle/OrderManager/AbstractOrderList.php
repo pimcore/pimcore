@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Zend\Paginator\Adapter\AdapterInterface;
-use \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 use Pimcore\Resource;
 
@@ -141,7 +140,7 @@ abstract class AbstractOrderList implements IOrderList
     {
         if ($this->list === null) {
             // load
-            $conn = Resource::getConnection();
+            $conn = \Pimcore\Db::getConnection();
 
             $this->list = new \ArrayIterator($conn->fetchAll($this->getQuery()));
             $this->rowCount = (int)$conn->fetchCol('SELECT FOUND_ROWS() as "cnt"')[0];
