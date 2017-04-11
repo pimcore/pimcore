@@ -60,7 +60,7 @@ abstract class Mapper
                     }
                 }
             } else {
-                $apiclass = $orgclass;
+                $apiclass = get_class($object);
             }
             $retVal = $apiclass;
         } else {
