@@ -169,10 +169,13 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: init }
+            - { name: pimcore.templating.vars_provider }
 
     pimcore.service.request.document_resolver:
         class: Pimcore\Service\Request\DocumentResolver
         arguments: ['@request_stack']
+        tags:
+            - { name: pimcore.templating.vars_provider }
 
     pimcore.service.request.template_resolver:
         class: Pimcore\Service\Request\TemplateResolver
@@ -180,7 +183,7 @@ services:
 
     pimcore.service.request.template_vars_resolver:
         class: Pimcore\Service\Request\TemplateVarsResolver
-        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
+        arguments: ['@request_stack']
 
     pimcore.service.request.view_model_resolver:
         class: Pimcore\Service\Request\ViewModelResolver

@@ -19,6 +19,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolve
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplateVarsProviderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
 use Pimcore\Cache;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -57,6 +58,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());
+        $container->addCompilerPass(new TemplateVarsProviderPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
         $container->addCompilerPass(new WebDebugToolbarListenerPass());
     }

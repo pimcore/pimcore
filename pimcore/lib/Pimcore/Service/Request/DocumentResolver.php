@@ -15,10 +15,11 @@
 namespace Pimcore\Service\Request;
 
 use Pimcore\Model\Document;
+use Pimcore\Templating\Vars\TemplateVarsProviderInterface;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 
-class DocumentResolver extends AbstractRequestResolver
+class DocumentResolver extends AbstractRequestResolver implements TemplateVarsProviderInterface
 {
     /**
      * @param Request $request
@@ -43,5 +44,15 @@ class DocumentResolver extends AbstractRequestResolver
         if ($document->getProperty("language")) {
             $request->setLocale($document->getProperty("language"));
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function addTemplateVars(Request $request, array $templateVars)
+    {
+        $templateVars['document'] = $this->getDocument($request);
+
+        return $templateVars;
     }
 }
