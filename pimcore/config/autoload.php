@@ -20,7 +20,7 @@ $loader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
 
 // tell the autoloader where to find Pimcore's generated class stubs
 // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
-$loader->addPsr4('Pimcore\Model\Object', PIMCORE_CLASS_DIRECTORY . "/Object");
+$loader->addPsr4("Pimcore\\Model\\Object\\", PIMCORE_CLASS_DIRECTORY . "/Object");
 
 // the following code is out of `app/autoload.php`
 // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
