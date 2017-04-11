@@ -71,10 +71,7 @@ class PricingManager implements IPricingManager
         // add all valid rules to the price info
         foreach ($this->getValidRules() as $rule) {
             /* @var IRule $rule */
-
-            if ($rule->hasProductActions()) {
-                $priceInfoWithRules->addRule($rule);
-            }
+            $priceInfoWithRules->addRule($rule);
         }
 
         return $priceInfoWithRules;
