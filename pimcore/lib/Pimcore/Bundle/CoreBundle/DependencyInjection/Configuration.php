@@ -71,6 +71,7 @@ class Configuration implements ConfigurationInterface
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
+        $this->addWebProfilerNode($rootNode);
 
         $this->addSecurityNode($rootNode);
 
@@ -341,6 +342,31 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Configure exclude paths for web profiler toolbar
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function addWebProfilerNode(ArrayNodeDefinition $rootNode)
+    {
+        $webProfilerNode = $rootNode->children()
+            ->arrayNode('web_profiler')
+                ->example([
+                    'toolbar' => [
+                        'excluded_routes' => [
+                            ['path' => '^/test/path']
+                        ]
+                    ]
+                ])
+                ->addDefaultsIfNotSet();
+
+        $toolbarNode = $webProfilerNode->children()
+            ->arrayNode('toolbar')
+                ->addDefaultsIfNotSet();
+
+        $this->addRoutesChild($toolbarNode, 'excluded_routes');
+    }
+
+    /**
      * Add a route prototype child
      *
      * @param ArrayNodeDefinition $parent
@@ -353,6 +379,11 @@ class Configuration implements ConfigurationInterface
         /** @var ArrayNodeDefinition|NodeDefinition $prototype */
         $prototype = $node->prototype('array');
         $prototype
+            ->beforeNormalization()
+                ->ifNull()->then(function() {
+                    return [];
+                })
+            ->end()
             ->children()
                 ->scalarNode('path')->defaultFalse()->end()
                 ->scalarNode('route')->defaultFalse()->end()

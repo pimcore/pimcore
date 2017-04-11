@@ -58,6 +58,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']["path"]);
 
+        $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
+
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
 
         // register pimcore config on container

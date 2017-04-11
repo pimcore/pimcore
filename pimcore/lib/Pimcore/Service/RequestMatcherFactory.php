@@ -37,10 +37,12 @@ class RequestMatcherFactory
     }
 
     /**
+     * Builds a request matcher from a route configuration
+     *
      * @param array $entry
      * @return RequestMatcher
      */
-    protected function buildRequestMatcher(array $entry)
+    public function buildRequestMatcher(array $entry)
     {
         // TODO add support for IPs, attributes and schemes if necessary
         $matcher = new RequestMatcher();
