@@ -31,6 +31,9 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class PimcoreCoreExtension extends Extension implements PrependExtensionInterface
 {
+    /**
+     * @return string
+     */
     public function getAlias()
     {
         return "pimcore";
@@ -95,6 +98,10 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->addContextRoutes($container, $config['context']);
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param $config
+     */
     protected function configureModelFactory(ContainerBuilder $container, $config)
     {
         $service = $container->getDefinition("pimcore.model.factory");
