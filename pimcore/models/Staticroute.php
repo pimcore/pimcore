@@ -452,11 +452,14 @@ class Staticroute extends AbstractModel
         }
 
         foreach ($siteIds as $siteId) {
-            $site = null;
+            $siteId = (int)$siteId;
+            if($siteId < 1) {
+                continue;
+            }
             try {
                 $site = Site::getById($siteId);
                 if ($site) {
-                    $result[] = (int)$siteId;
+                    $result[] = $siteId;
                 }
             } catch (\Exception $e) {
                 // cleanup
