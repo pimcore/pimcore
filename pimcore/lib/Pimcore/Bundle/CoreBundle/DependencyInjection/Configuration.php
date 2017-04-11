@@ -380,7 +380,7 @@ class Configuration implements ConfigurationInterface
         $prototype = $node->prototype('array');
         $prototype
             ->beforeNormalization()
-                ->ifNull()->then(function() {
+                ->ifNull()->then(function () {
                     return [];
                 })
             ->end()

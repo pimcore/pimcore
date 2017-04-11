@@ -737,10 +737,11 @@ class Config
     /**
      * @return mixed
      */
-    public static function getFlag($key) {
+    public static function getFlag($key)
+    {
         $config = \Pimcore::getContainer()->getParameter("pimcore.config");
-        if(isset($config["flags"])) {
-            if(isset($config["flags"][$key])) {
+        if (isset($config["flags"])) {
+            if (isset($config["flags"][$key])) {
                 return $config["flags"][$key];
             }
         }
