@@ -6,7 +6,7 @@
 or on a clean install of the latest build (out of your project, to avoid problems with custom code, plugins, ...) 
 - [ ] You're not able to fix the problem yourself and send us a pull request instead of an issue. 
 - [ ] There's no existing ticket for the same issue
-- [ ] Remove unused sections and this bullet points from the template below. 
+- [ ] Remove unused sections from below and this bullet points
 
 ## Please answer the following questions 
   
