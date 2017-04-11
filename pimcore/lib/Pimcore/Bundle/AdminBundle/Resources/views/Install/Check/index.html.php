@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<?php
+
+use Pimcore\Tool\Requirements\Check;
+
+?><!DOCTYPE html>
 <html>
 <head>
 
@@ -63,9 +67,9 @@
                         <tr>
                             <td><a href="<?= $check["link"]; ?>" target="_blank"><?= $check["name"]; ?></a></td>
                             <td><img src="/pimcore/static6/img/flat-color-icons/<?php
-                                if($check["state"] == "ok") {
+                                if($check["state"] == Check::STATE_OK) {
                                     echo "ok";
-                                } else if ($check["state"] == "warning") {
+                                } else if ($check["state"] == Check::STATE_WARNING) {
                                     echo "warning";
                                 } else {
                                     echo "high_priority";
@@ -82,9 +86,9 @@
                         <tr>
                             <td><?= $check["name"]; ?></td>
                             <td><img src="/pimcore/static6/img/flat-color-icons/<?php
-                                if($check["state"] == "ok") {
+                                if($check["state"] == Check::STATE_OK) {
                                     echo "ok";
-                                } else if ($check["state"] == "warning") {
+                                } else if ($check["state"] == Check::STATE_WARNING) {
                                     echo "warning";
                                 } else {
                                     echo "high_priority";
@@ -101,9 +105,9 @@
                         <tr>
                             <td><?= $check["name"]; ?></td>
                             <td><img src="/pimcore/static6/img/flat-color-icons/<?php
-                                if($check["state"] == "ok") {
+                                if($check["state"] == Check::STATE_OK) {
                                     echo "ok";
-                                } else if ($check["state"] == "warning") {
+                                } else if ($check["state"] == Check::STATE_WARNING) {
                                     echo "warning";
                                 } else {
                                     echo "high_priority";
@@ -122,9 +126,9 @@
                         <tr>
                             <td><?= $check["name"]; ?></td>
                             <td><img src="/pimcore/static6/img/flat-color-icons/<?php
-                                if($check["state"] == "ok") {
+                                if($check["state"] == Check::STATE_OK) {
                                     echo "ok";
-                                } else if ($check["state"] == "warning") {
+                                } else if ($check["state"] == Check::STATE_WARNING) {
                                     echo "warning";
                                 } else {
                                     echo "high_priority";

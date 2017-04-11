@@ -47,10 +47,18 @@
         // check write permissions
         $files = array_merge(rscandir(PIMCORE_PRIVATE_VAR . "/"), rscandir(PIMCORE_PUBLIC_VAR . "/"));
 
-        foreach ($files as $file) {
-            if (is_dir($file) && !is_writable($file)) {
-                $errors[] = "Please ensure that both " . PIMCORE_PRIVATE_VAR . " and " . PIMCORE_PUBLIC_VAR . " directories are recursively writeable.";
-                break;
+        $checks = array_merge(
+            \Pimcore\Tool\Requirements::checkFilesystem(),
+            \Pimcore\Tool\Requirements::checkPhp()
+        );
+
+        foreach($checks as $check) {
+            if($check->getState() === \Pimcore\Tool\Requirements\Check::STATE_ERROR) {
+                if($check->getLink()) {
+                    $errors[] = '<a href="' . $check->getLink() . '" target="_blank">' . $check->getMessage() . "</a>";
+                } else {
+                    $errors[] = $check->getMessage();
+                }
             }
         }
     } else {
@@ -209,21 +217,28 @@
         .icon_check {
             background: url(/pimcore/static6/img/flat-color-icons/factory.svg) center center no-repeat !important;
         }
+
+        .icon_reload {
+            background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
+        }
+
+        #install_errors, #install_errors b {
+            color: red;
+        }
+
+        #install_errors a {
+            color: #404040;
+        }
+
     </style>
 
 </head>
 
 <body>
 
-<script type="text/javascript">
-    var pimcore_version = "<?= \Pimcore\Version::getVersion() ?>";
-</script>
-
 <?php
 
 $scripts = array(
-    // library
-    "lib/prototype-light.js",
     "lib/jquery.min.js",
     "lib/ext/ext-all.js",
     "lib/ext/classic/theme-triton/theme-triton.js",
@@ -238,11 +253,16 @@ $scripts = array(
 
 <script type="text/javascript">
 
-    var errorMessages = '<b>ERROR:</b><br /><?= implode("<br />", $errors) ?>';
-    var installdisabled = false;
+    var errorMessages = null;
 
     <?php if (!empty($errors)) { ?>
-        installdisabled = true;
+        <?php
+            $errorString = "";
+            foreach($errors as $error) {
+                $errorString .= "<li>" . $error . "</li>";
+            }
+        ?>
+        errorMessages = '<b>ERROR(S):</b><br /><ul><?= $errorString ?></ul>';
     <?php } ?>
 
     Ext.onReady(function() {
@@ -341,225 +361,256 @@ $scripts = array(
             }
         };
 
-        var win = new Ext.Window({
-            width: 450,
-            closable: false,
-            closeable: false,
-            y: 20,
-            items: [
-                {
-                    xtype: "panel",
-                    id: "logo",
-                    border: false,
-                    manageHeight: false,
-                    bodyStyle: "padding: 20px 10px 5px 10px",
-                    html: '<div align="center"><img width="200" src="/pimcore/static6/img/logo-gray.svg" align="center" /></div>'
-                },
-                {
-                    xtype: "panel",
-                    id: "install_errors",
-                    border: false,
-                    bodyStyle: "color: red; padding: 10px",
-                    html: errorMessages,
-                    hidden: !installdisabled
-                },
-                {
-                    xtype: "form",
-                    id: "install_form",
-                    defaultType: "textfield",
-                    bodyStyle: "padding: 20px 10px 10px 10px",
-                    items: [{
-                        xtype: "combo",
-                        name: "profile",
-                        id: "profile",
-                        fieldLabel: "<b>Install Profile</b>",
-                        labelWidth: 116,
-                        store: [
-                            ["empty", "Empty Installation"],
-                            ["demo-cms", "CMS Demo Package"]
-                        ],
-                        mode: "local",
-                        emptyText: "Please select a profile",
-                        width: 396,
-                        editable: false,
-                        triggerAction: "all",
-                        listeners: {
-                            "select": validateInput
-                        }
-                    },{
-                            title: "MySQL Settings",
-                            xtype: "fieldset",
-                            defaults: {
-                                width: 380
-                            },
-                            items: [{
-                                    xtype: "textfield",
-                                    name: "mysql_host_socket",
-                                    id: "mysql_host_socket",
-                                    fieldLabel: "Host / Socket",
-                                    value: "localhost",
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        "keyup": validateInput
-                                    }
+        var logoPanelConf = {
+            xtype: "panel",
+            id: "logo",
+            border: false,
+            manageHeight: false,
+            bodyStyle: "padding: 20px 10px 5px 10px",
+            html: '<div align="center"><img width="200" src="/pimcore/static6/img/logo-gray.svg" align="center" /></div>'
+        };
+
+        var win = null;
+
+        if(errorMessages) {
+            win = new Ext.Window({
+                width: 450,
+                closable: false,
+                closeable: false,
+                y: 20,
+                items: [
+                    logoPanelConf,
+                    {
+                        xtype: "panel",
+                        id: "install_errors",
+                        border: false,
+                        bodyStyle: "padding: 10px",
+                        html: errorMessages
+                    }
+                ],
+                bbar: ["->", {
+                    id: "check_button",
+                    text: "Reload",
+                    iconCls: "icon_reload",
+                    handler: function () {
+                        window.location.reload();
+                    }
+                }],
+                listeners: {
+                    afterrender: function () {
+                        // no idea why this is necessary to layout the window correctly
+                        window.setTimeout(function () {
+                            win.updateLayout();
+                        }, 1000);
+                    }
+                }
+            });
+        } else {
+            win = new Ext.Window({
+                width: 450,
+                closable: false,
+                closeable: false,
+                y: 20,
+                items: [
+                    logoPanelConf,
+                    {
+                        xtype: "form",
+                        id: "install_form",
+                        defaultType: "textfield",
+                        bodyStyle: "padding: 20px 10px 10px 10px",
+                        items: [{
+                            xtype: "combo",
+                            name: "profile",
+                            id: "profile",
+                            fieldLabel: "<b>Install Profile</b>",
+                            labelWidth: 116,
+                            store: [
+                                ["empty", "Empty Installation"],
+                                ["demo-cms", "CMS Demo Package"]
+                            ],
+                            mode: "local",
+                            emptyText: "Please select a profile",
+                            width: 396,
+                            editable: false,
+                            triggerAction: "all",
+                            listeners: {
+                                "select": validateInput
+                            }
+                        },{
+                                title: "MySQL Settings",
+                                xtype: "fieldset",
+                                defaults: {
+                                    width: 380
                                 },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_port",
-                                    fieldLabel: "Port",
-                                    value: "3306"
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_username",
-                                    id: "mysql_username",
-                                    fieldLabel: "Username",
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        "keyup": validateInput
-                                    }
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_password",
-                                    fieldLabel: "Password"
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_database",
-                                    id: "mysql_database",
-                                    fieldLabel: "Database",
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        "keyup": validateInput
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            title: "Admin User",
-                            xtype: "fieldset",
-                            defaults: {
-                                width: 380
-                            },
-                            items: [
-                                {
-                                    xtype: "textfield",
-                                    name: "admin_username",
-                                    id: "admin_username",
-                                    fieldLabel: "Username",
-                                    value: "admin",
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        "keyup": validateInput
-                                    }
-                                },
-                                {
-                                    xtype: "fieldcontainer",
-                                    layout: 'hbox',
-                                    items: [{
+                                items: [{
                                         xtype: "textfield",
-                                        width: 340,
-                                        name: "admin_password",
-                                        id: "admin_password",
-                                        fieldLabel: "Password",
+                                        name: "mysql_host_socket",
+                                        id: "mysql_host_socket",
+                                        fieldLabel: "Host / Socket",
+                                        value: "localhost",
                                         enableKeyEvents: true,
                                         listeners: {
                                             "keyup": validateInput
                                         }
-                                    }, {
-                                        xtype: "button",
-                                        width: 32,
-                                        style: "margin-left: 8px",
-                                        iconCls: "icon_generate",
-                                        handler: function () {
-
-                                            var pass;
-
-                                            while(true) {
-                                                pass = passwordGenerator(15);
-                                                if(isValidPassword(pass)) {
-                                                    break;
-                                                }
-                                            }
-
-                                            Ext.getCmp("admin_password").setValue(pass);
-                                            validateInput();
+                                    },
+                                    {
+                                        xtype: "textfield",
+                                        name: "mysql_port",
+                                        fieldLabel: "Port",
+                                        value: "3306"
+                                    },
+                                    {
+                                        xtype: "textfield",
+                                        name: "mysql_username",
+                                        id: "mysql_username",
+                                        fieldLabel: "Username",
+                                        enableKeyEvents: true,
+                                        listeners: {
+                                            "keyup": validateInput
                                         }
-                                    }]
-                                }, {
-                                    xtype: "container",
-                                    id: "credential_error",
-                                    hidden: true
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
-            bbar: [{
-                    id: "check_button",
-                    text: "Check Requirements",
-                    iconCls: "icon_check",
-                    disabled: true,
-                    handler: function () {
-                        window.open("/install/check?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
-                    }
-                },"->",
-                {
-                    id: "install_button",
-                    text: "<b>Install Now!</b>",
-                    iconCls: "icon_ok",
-                    disabled: true,
-                    handler: function (btn) {
-
-                        btn.disable();
-                        Ext.getCmp("install_form").hide();
-                        Ext.getCmp("check_button").hide();
-
-                        Ext.getCmp("install_errors").show();
-                        Ext.getCmp("install_errors").update("Installing ...");
-
-                        Ext.Ajax.request({
-                            url: "install.php",
-                            method: "post",
-                            params: Ext.getCmp("install_form").getForm().getFieldValues(),
-                            success: function (transport) {
-                                try {
-                                    var response = Ext.decode(transport.responseText);
-                                    if (response.success) {
-                                        var date = new Date();
-                                        location.href = "/admin?_dc=" + date.getTime();
+                                    },
+                                    {
+                                        xtype: "textfield",
+                                        name: "mysql_password",
+                                        fieldLabel: "Password"
+                                    },
+                                    {
+                                        xtype: "textfield",
+                                        name: "mysql_database",
+                                        id: "mysql_database",
+                                        fieldLabel: "Database",
+                                        enableKeyEvents: true,
+                                        listeners: {
+                                            "keyup": validateInput
+                                        }
                                     }
-                                }
-                                catch (e) {
-                                    Ext.getCmp("install_errors").update(transport.responseText);
+                                ]
+                            },
+                            {
+                                title: "Admin User",
+                                xtype: "fieldset",
+                                defaults: {
+                                    width: 380
+                                },
+                                items: [
+                                    {
+                                        xtype: "textfield",
+                                        name: "admin_username",
+                                        id: "admin_username",
+                                        fieldLabel: "Username",
+                                        value: "admin",
+                                        enableKeyEvents: true,
+                                        listeners: {
+                                            "keyup": validateInput
+                                        }
+                                    },
+                                    {
+                                        xtype: "fieldcontainer",
+                                        layout: 'hbox',
+                                        items: [{
+                                            xtype: "textfield",
+                                            width: 340,
+                                            name: "admin_password",
+                                            id: "admin_password",
+                                            fieldLabel: "Password",
+                                            enableKeyEvents: true,
+                                            listeners: {
+                                                "keyup": validateInput
+                                            }
+                                        }, {
+                                            xtype: "button",
+                                            width: 32,
+                                            style: "margin-left: 8px",
+                                            iconCls: "icon_generate",
+                                            handler: function () {
+
+                                                var pass;
+
+                                                while(true) {
+                                                    pass = passwordGenerator(15);
+                                                    if(isValidPassword(pass)) {
+                                                        break;
+                                                    }
+                                                }
+
+                                                Ext.getCmp("admin_password").setValue(pass);
+                                                validateInput();
+                                            }
+                                        }]
+                                    }, {
+                                        xtype: "container",
+                                        id: "credential_error",
+                                        hidden: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                bbar: [{
+                        id: "check_button",
+                        text: "Check Requirements",
+                        iconCls: "icon_check",
+                        disabled: true,
+                        handler: function () {
+                            window.open("/install/check?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
+                        }
+                    },"->",
+                    {
+                        id: "install_button",
+                        text: "<b>Install Now!</b>",
+                        iconCls: "icon_ok",
+                        disabled: true,
+                        handler: function (btn) {
+
+                            btn.disable();
+                            Ext.getCmp("install_form").hide();
+                            Ext.getCmp("check_button").hide();
+
+                            Ext.getCmp("install_errors").show();
+                            Ext.getCmp("install_errors").update("Installing ...");
+
+                            Ext.Ajax.request({
+                                url: "install.php",
+                                method: "post",
+                                params: Ext.getCmp("install_form").getForm().getFieldValues(),
+                                success: function (transport) {
+                                    try {
+                                        var response = Ext.decode(transport.responseText);
+                                        if (response.success) {
+                                            var date = new Date();
+                                            location.href = "/admin?_dc=" + date.getTime();
+                                        }
+                                    }
+                                    catch (e) {
+                                        Ext.getCmp("install_errors").update(transport.responseText);
+                                        Ext.getCmp("install_form").show();
+                                        Ext.getCmp("check_button").show();
+                                        btn.enable();
+                                    }
+                                },
+                                failure: function (transport) {
+                                    Ext.getCmp("install_errors").update("Failed: " + transport.responseText);
                                     Ext.getCmp("install_form").show();
                                     Ext.getCmp("check_button").show();
                                     btn.enable();
                                 }
-                            },
-                            failure: function (transport) {
-                                Ext.getCmp("install_errors").update("Failed: " + transport.responseText);
-                                Ext.getCmp("install_form").show();
-                                Ext.getCmp("check_button").show();
-                                btn.enable();
-                            }
-                        });
+                            });
+                        }
+                    }
+                ],
+                listeners: {
+                    afterrender: function () {
+                        // no idea why this is necessary to layout the window correctly
+                        window.setTimeout(function () {
+                            win.updateLayout();
+
+                            validateInput();
+                        }, 1000);
                     }
                 }
-            ],
-            listeners: {
-                afterrender: function () {
-                    // no idea why this is necessary to layout the window correctly
-                    window.setTimeout(function () {
-                        win.updateLayout();
-
-                        validateInput();
-                    }, 1000);
-                }
-            }
-        });
+            });
+        }
 
         win.show();
     });
