@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IProductDiscount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Config\Config;
@@ -447,7 +446,7 @@ class OrderManager implements IOrderManager
             if ($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules')) {
                 $priceRules = new \Pimcore\Model\Object\Fieldcollection();
                 foreach ($priceInfo->getRules() as $rule) {
-                    if($rule instanceof IProductDiscount) {
+                    if($rule->hasProductActions()) {
                         $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
                         $priceRule->setRuleId($rule->getId());
 
