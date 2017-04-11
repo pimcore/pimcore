@@ -339,18 +339,6 @@ class Tool
     }
 
     /**
-     * @return bool
-     */
-    public static function isTests()
-    {
-        if ((defined('PIMCORE_TEST') && PIMCORE_TEST) || getenv('PIMCORE_TEST') === '1') {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      */
     public static function isFrontentRequestByAdmin()

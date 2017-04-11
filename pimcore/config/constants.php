@@ -50,10 +50,14 @@ if (!defined('PIMCORE_PUBLIC_VAR')) {
 
 // special directories for tests
 // test mode can bei either controlled by a constant or an env variable
-if(\Pimcore\Tool::isTests()) {
+if ((defined('PIMCORE_TEST') && PIMCORE_TEST) || getenv('PIMCORE_TEST') === '1') {
     // override and initialize directories
     define('PIMCORE_CLASS_DIRECTORY', PIMCORE_PATH . '/tests/_output/var/classes');
     define('PIMCORE_ASSET_DIRECTORY', PIMCORE_WEB_ROOT . '/var/tests/assets');
+
+    if(!defined('PIMCORE_TEST')) {
+        define('PIMCORE_TEST', true);
+    }
 }
 
 // pimcore config files
