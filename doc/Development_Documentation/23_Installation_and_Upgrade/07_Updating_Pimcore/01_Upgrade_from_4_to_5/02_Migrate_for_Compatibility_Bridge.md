@@ -64,6 +64,8 @@ UPDATE documents_snippet SET legacy = 1;
 - Activate debug mode again (if it was activated) in system settings. 
 - Reconfigure e-mail sending settings in system settings
 
+- If you were still using `Zend_Date` in your application using the flag `useZendDate` in your `system.php`, 
+you have to enable the support in `app/config/config.yml` by setting `pimcore -> flags -> zend_date` to `true`. 
 
 Now your application should be up and running again with the `Compatibility Bridge` and the old ZF1 stack. 
 The next step would be to migrate the application step by step to new Symfony stack to take advantage of the full power 

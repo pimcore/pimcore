@@ -58,6 +58,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('flags')
+                    ->info('Generic map for feature flags, such as `zend_date`')
+                    ->prototype('scalar')
+                    ->end()
             ->end();
 
         $this->addObjectsNode($rootNode);

@@ -225,7 +225,6 @@ class Config
         \Pimcore\Cache\Runtime::set("pimcore_config_website", $config);
     }
 
-
     /**
      * @static
      * @return \Pimcore\Config\Config
@@ -303,41 +302,6 @@ class Config
     public static function setModelClassMappingConfig($config)
     {
         \Pimcore\Cache\Runtime::set("pimcore_config_model_classmapping", $config);
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public static function getFlag($name)
-    {
-        $settings = self::getSystemConfig()->toArray();
-
-        if (isset($settings["flags"])) {
-            if (isset($settings["flags"][$name])) {
-                return $settings["flags"][$name];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public static function setFlag($name, $value)
-    {
-        $settings = self::getSystemConfig()->toArray();
-
-        if (!isset($settings["flags"])) {
-            $settings["flags"] = [];
-        }
-
-        $settings["flags"][$name] = $value;
-
-        $configFile = \Pimcore\Config::locateConfigFile("system.php");
-        File::putPhpFile($configFile, to_php_data_file_format($settings));
     }
 
     /**
@@ -768,5 +732,19 @@ class Config
     public static function setEnvironment($environment)
     {
         static::$environment = $environment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public static function getFlag($key) {
+        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
+        if(isset($config["flags"])) {
+            if(isset($config["flags"][$key])) {
+                return $config["flags"][$key];
+            }
+        }
+
+        return null;
     }
 }

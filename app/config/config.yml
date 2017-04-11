@@ -6,6 +6,10 @@ imports:
 
 #pimcore:
 
+#### FEATURE FLAGS
+#    flags:
+#        zend_date: true
+
 #### CLASS OVERRIDES EXAMPLES
 #    models:
 #        class_overrides:

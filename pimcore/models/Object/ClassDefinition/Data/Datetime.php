@@ -125,7 +125,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      */
     protected function getDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag("useZendDate")) {
+        if (\Pimcore\Config::getFlag("zend_date")) {
             $date = new \Pimcore\Date($timestamp);
         } else {
             $date = new \Carbon\Carbon();
