@@ -774,3 +774,7 @@ Ext.define('EXTJS_23846.Gesture', {
     }
 });
 
+// Touch issues in Tree Panel, also FF 52, no native scrollbar on hybrid devices
+if(Ext.isGecko && Ext.supports.TouchEvents && Ext.os.is.Desktop) {
+    Ext.supports.touchScroll = 1;
+}
