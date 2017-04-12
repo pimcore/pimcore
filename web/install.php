@@ -414,6 +414,13 @@ $scripts = array(
                 items: [
                     logoPanelConf,
                     {
+                        xtype: "panel",
+                        id: "install_errors",
+                        border: false,
+                        bodyStyle: "padding: 10px",
+                        hidden: true
+                    },
+                    {
                         xtype: "form",
                         id: "install_form",
                         defaultType: "textfield",
