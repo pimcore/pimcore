@@ -176,8 +176,8 @@ use Pimcore\Model\Document\Page;
 echo $this->inc('/' . $this->getLocale() . '/shared/includes/footer');
 
 // global scripts, we use the view helper here to have the cache buster functionality
-$this->headScript()->appendFile('/static/js/jquery-1.11.0.min.js');
-$this->headScript()->appendFile('/static/bootstrap/js/bootstrap.js');
+$this->headScript()->prependFile('/static/bootstrap/js/bootstrap.js');
+$this->headScript()->prependFile('/static/js/jquery-1.11.0.min.js');
 $this->headScript()->appendFile('/static/lib/magnific/magnific.js');
 $this->headScript()->appendFile('/static/lib/video-js/video.js');
 $this->headScript()->appendFile('/static/js/srcset-polyfill.min.js');
