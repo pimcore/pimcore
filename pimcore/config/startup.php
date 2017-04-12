@@ -109,6 +109,9 @@ if (!defined("PIMCORE_SYSTEM_TEMP_DIRECTORY")) {
 if (!defined("PIMCORE_LOG_MAIL_PERMANENT")) {
     define("PIMCORE_LOG_MAIL_PERMANENT", PIMCORE_WEBSITE_VAR . "/email");
 }
+if (!defined("PIMCORE_USERIMAGE_DIRECTORY")) {
+    define("PIMCORE_USERIMAGE_DIRECTORY", PIMCORE_WEBSITE_VAR . "/user-image");
+}
 
 
 // setup include paths
