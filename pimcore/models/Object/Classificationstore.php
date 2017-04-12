@@ -79,10 +79,46 @@ class Classificationstore extends Model\AbstractModel
     }
 
     /**
+     * @param \Pimcore\Model\Object\Concrete $object
+     * @param array $items
+     *
+     * @return array
+     */
+    public function recursiveGetItems($object, $items) {
+
+        if($parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object)) {
+            /**
+             * @var \Pimcore\Model\Object\Classificationstore $parentClassificationStore
+             */
+            $parentClassificationStore = $parent->{'get'.ucfirst($this->fieldname)}();
+            $parentItems = $parentClassificationStore->items;
+
+            foreach($parentItems?:[] as $parentGroupId => $parentGroup) {
+                foreach($parentGroup?:[] as $parentKeyId => $parentKey) {
+                    foreach($parentKey as $language => $parentValue) {
+                        if(!isset($items[$parentGroupId][$parentKeyId][$language])) {
+                            $items[$parentGroupId][$parentKeyId][$language] = $parentValue;
+                        }
+                    }
+                }
+            }
+            return $this->recursiveGetItems($parent, $items);
+        }
+
+        return $items;
+    }
+
+
+    /**
      * @return array
      */
     public function getItems()
     {
+        if ($this->class->getAllowInherit()) {
+            $items = $this->items;
+            return $this->recursiveGetItems($this->object, $items);
+        }
+
         return $this->items;
     }
 

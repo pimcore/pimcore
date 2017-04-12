@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->delete($dataTable, ["o_id" => $objectId, "fieldname" => $fieldname]);
 
-        $items = $this->model->getItems();
+        $items = $this->model->items;
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
