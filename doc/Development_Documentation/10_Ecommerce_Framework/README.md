@@ -58,7 +58,7 @@ have a look at our [case studies](https://www.pimcore.org/en/resources/casestudi
 Following aspects are short cuts into the documentation for starting working with the E-Commerce Framework: 
 
 - [Architecture Overview](./01_Architecture_Overview.md)
-- Installation and Configuration
+- [Installation and Configuration](./03_Installation.md)
 - Indexing and Listing Products
 - Filtering Products
 - Working with Prices
