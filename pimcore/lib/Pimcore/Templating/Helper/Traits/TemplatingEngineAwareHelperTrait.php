@@ -12,14 +12,22 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating\Helper;
+namespace Pimcore\Templating\Helper\Traits;
 
 use Pimcore\Templating\PhpEngine;
 
-interface TemplatingAwareHelperInterface
+trait TemplatingEngineAwareHelperTrait
 {
+    /**
+     * @var PhpEngine
+     */
+    protected $templatingEngine;
+
     /**
      * @param PhpEngine $engine
      */
-    public function setEngine(PhpEngine $engine);
+    public function setTemplatingEngine(PhpEngine $engine)
+    {
+        $this->templatingEngine = $engine;
+    }
 }

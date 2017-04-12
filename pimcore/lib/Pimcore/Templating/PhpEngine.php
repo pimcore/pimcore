@@ -27,7 +27,7 @@ use Pimcore\Templating\Helper\HeadTitle;
 use Pimcore\Templating\Helper\InlineScript;
 use Pimcore\Templating\Helper\Navigation;
 use Pimcore\Templating\Helper\Placeholder\Container;
-use Pimcore\Templating\Helper\TemplatingAwareHelperInterface;
+use Pimcore\Templating\Helper\TemplatingEngineAwareHelperInterface;
 use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;
@@ -147,8 +147,8 @@ class PhpEngine extends BasePhpEngine
     public function get($name)
     {
         $helper = parent::get($name);
-        if ($helper instanceof TemplatingAwareHelperInterface) {
-            $helper->setEngine($this);
+        if ($helper instanceof TemplatingEngineAwareHelperInterface) {
+            $helper->setTemplatingEngine($this);
         }
 
         return $helper;
