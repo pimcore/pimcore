@@ -115,21 +115,16 @@ class Session
         }
 
         try {
-            try {
-                if ($initSession) {
-                    // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
-                    if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
-                        // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                        \Zend_Session::setId($_REQUEST[$sName]);
-                    }
+            if ($initSession) {
+                // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
+                if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
+                    // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
+                    \Zend_Session::setId($_REQUEST[$sName]);
                 }
-            } catch (\Exception $e) {
-                Logger::error("Problem while starting session");
-                Logger::error($e);
             }
         } catch (\Exception $e) {
-            Logger::emergency("there is a problem with admin session");
-            die();
+            Logger::error("Problem while starting session");
+            Logger::error($e);
         }
 
         if ($initSession) {
