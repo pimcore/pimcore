@@ -702,12 +702,10 @@ return [
             "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingManager",
             "config" => [
                 "trackers" => [
-                    "tracker" => [
-                        [
+                    [
                         "name" => "GoogleAnalyticsEnhancedEcommerce",
                         "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
                         "trackingItemBuilder" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingItemBuilder"
-                        ]
                     ]
                 ]
             ]
