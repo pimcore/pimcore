@@ -192,8 +192,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         // assign parameters to view
         $view->getParameters()->add();
         $view->getParameters()->add([
-            'info'  => $info,
-            'brick' => $brick,
+            'brick' => $info,
         ]);
 
         // call action
