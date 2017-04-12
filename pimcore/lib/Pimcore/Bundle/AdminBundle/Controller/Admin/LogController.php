@@ -104,6 +104,10 @@ class LogController extends AdminController implements EventedControllerInterfac
             $queryString .= " AND message like '%" . $request->get("message") ."%'";
         }
 
+        if ($request->get("pid")) {
+            $queryString .= " AND pid like '%" . $request->get("pid") ."%'";
+        }
+
 
         $db = Db::get();
         $count = $db->fetchCol("SELECT count(*) FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString);
