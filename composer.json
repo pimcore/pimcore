@@ -11,7 +11,7 @@
     "Product Information Management"
   ],
   "homepage": "http://www.pimcore.org/",
-  "license": "GPL-3.0+",
+  "license": "GPL-3.0",
   "authors": [
     {
       "name": "pimcore Team",
