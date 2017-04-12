@@ -40,6 +40,7 @@ namespace Pimcore\Templating\Helper;
 use Pimcore\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Templating\Helper\Placeholder\Container;
 use Pimcore\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Templating\Helper\Traits\TextUtilsTrait;
 
 /**
  * @method $this appendHttpEquiv($keyValue, $content, $conditionalHttpEquiv=[])
@@ -57,6 +58,8 @@ use Pimcore\Templating\Helper\Placeholder\ContainerService;
  */
 class HeadMeta extends AbstractHelper
 {
+    use TextUtilsTrait;
+
     /**
      * Types of attributes
      * @var array
@@ -424,21 +427,7 @@ class HeadMeta extends AbstractHelper
      */
     public function setDescription($string, $length = null, $suffix = "")
     {
-        $string = strip_tags($string);
-
-        $string = str_replace("\r\n", " ", $string);
-        $string = str_replace("\n", " ", $string);
-        $string = str_replace("\r", " ", $string);
-        $string = str_replace("\t", "", $string);
-        $string = preg_replace('#[ ]+#', ' ', $string);
-
-        if ($length && $length < strlen($string)) {
-            $text = substr($string, 0, $length);
-            if (false !== ($length = strrpos($text, ' '))) {
-                $text = substr($text, 0, $length);
-            }
-            $string = $text . $suffix;
-        }
+        $string = $this->normalizeString($string, $length, $suffix);
 
         return $this->setName("description", $string);
     }
