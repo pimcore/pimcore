@@ -110,7 +110,10 @@ class Site extends AbstractModel
 
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = "site_domain_". md5($domain);
-        if (!$site = \Pimcore\Cache::load($cacheKey)) {
+
+        if(\Zend_Registry::isRegistered($cacheKey)) {
+            $site = \Zend_Registry::get($cacheKey);
+        } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             $site = new self();
 
             try {
@@ -122,6 +125,8 @@ class Site extends AbstractModel
 
             \Pimcore\Cache::save($site, $cacheKey, ["system", "site"], null, 999);
         }
+
+        \Zend_Registry::set($cacheKey, $site);
 
         if ($site == "failed" || !$site) {
             $msg = "there is no site for the requested domain [" . $domain . "], content was [" . $site . "]";
