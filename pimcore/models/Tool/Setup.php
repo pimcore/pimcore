@@ -60,7 +60,6 @@ class Setup extends Model\AbstractModel
                     "timezone" => "Europe/Berlin",
                     "language" => "en",
                     "validLanguages" => "en",
-                    "debug" => true,
                 ],
                 "database" => [
                     "params" => [
@@ -152,11 +151,13 @@ class Setup extends Model\AbstractModel
 
         $settings = array_replace_recursive($settings, $config);
 
-        $settings["general"]["debug"] = true;
-
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
 
+        File::putPhpFile(PIMCORE_CONFIGURATION_DIRECTORY . "/debug-mode.php", to_php_data_file_format([
+            "active" => true,
+            "ip" => "",
+        ]));
 
         // generate parameters.yml
         $parameters = file_get_contents(PIMCORE_APP_ROOT . "/config/parameters.example.yml");
