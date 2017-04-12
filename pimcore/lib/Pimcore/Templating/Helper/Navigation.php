@@ -19,16 +19,18 @@ use Pimcore\Navigation\Container;
 use Pimcore\Templating\Helper\Navigation\Renderer\Breadcrumbs;
 use Pimcore\Templating\Helper\Navigation\Renderer\Menu;
 use Pimcore\Templating\Helper\Navigation\Renderer\Menu as MenuRenderer;
-use Pimcore\Templating\TimedPhpEngine;
-use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine;
+use Pimcore\Templating\Helper\Traits\TemplatingEngineAwareHelperTrait;
+use Pimcore\Templating\PhpEngine;
 use Symfony\Component\Templating\Helper\Helper;
 
 /**
  * @method MenuRenderer menu()
  * @method Breadcrumbs breadcrumbs()
  */
-class Navigation extends Helper
+class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
 {
+    use TemplatingEngineAwareHelperTrait;
+
     /**
      * @var Builder
      */
@@ -48,20 +50,6 @@ class Navigation extends Helper
      * @var array
      */
     protected $renderer = [];
-
-    /**
-     * @var PhpEngine
-     */
-    protected $templatingEngine;
-
-    /**
-     * Navigation constructor.
-     * @param PhpEngine $templatingEngine
-     */
-    public function __construct(PhpEngine $templatingEngine)
-    {
-        $this->templatingEngine = $templatingEngine;
-    }
 
     /**
      * @inheritDoc
@@ -152,14 +140,6 @@ class Navigation extends Helper
     public function getTemplatingEngine()
     {
         return $this->templatingEngine;
-    }
-
-    /**
-     * @param TimedPhpEngine $templatingEngine
-     */
-    public function setTemplatingEngine($templatingEngine)
-    {
-        $this->templatingEngine = $templatingEngine;
     }
 
     /**

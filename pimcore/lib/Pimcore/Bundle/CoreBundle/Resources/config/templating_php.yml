@@ -149,7 +149,6 @@ services:
 
     pimcore.templating.view_helper.navigation:
       class: Pimcore\Templating\Helper\Navigation
-      arguments: ["@templating.engine.php"]
       tags:
           - { name: templating.helper, alias: navigation }
 

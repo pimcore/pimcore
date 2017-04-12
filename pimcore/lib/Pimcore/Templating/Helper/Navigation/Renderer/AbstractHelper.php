@@ -522,7 +522,7 @@ abstract class AbstractHelper implements HelperInterface
     }
 
     /**
-     * @return \Symfony\Bundle\FrameworkBundle\Templating\PhpEngine
+     * @return \Pimcore\Templating\PhpEngine
      */
     protected function getTemplatingEngine()
     {
