@@ -12,7 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating;
+namespace Pimcore\Templating\Helper;
+
+use Pimcore\Templating\PhpEngine;
 
 interface TemplatingAwareHelperInterface
 {

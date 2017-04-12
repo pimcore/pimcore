@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating\Traits;
+namespace Pimcore\Templating\Helper\Traits;
 
 use Pimcore\Templating\PhpEngine;
 
