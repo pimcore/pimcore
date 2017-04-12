@@ -44,9 +44,9 @@ class Check implements \ArrayAccess
      * Check constructor.
      * @param array $data
      */
-    function __construct(array $data = [])
+    public function __construct(array $data = [])
     {
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $this->$key = $value;
         }
     }
@@ -104,7 +104,7 @@ class Check implements \ArrayAccess
      */
     public function getMessage()
     {
-        if(empty($this->message)) {
+        if (empty($this->message)) {
             return $this->getName() . " is required.";
         }
 

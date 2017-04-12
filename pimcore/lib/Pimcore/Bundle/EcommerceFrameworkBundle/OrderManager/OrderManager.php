@@ -446,7 +446,7 @@ class OrderManager implements IOrderManager
             if ($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules')) {
                 $priceRules = new \Pimcore\Model\Object\Fieldcollection();
                 foreach ($priceInfo->getRules() as $rule) {
-                    if($rule->hasProductActions()) {
+                    if ($rule->hasProductActions()) {
                         $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
                         $priceRule->setRuleId($rule->getId());
 

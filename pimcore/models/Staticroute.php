@@ -453,7 +453,7 @@ class Staticroute extends AbstractModel
 
         foreach ($siteIds as $siteId) {
             $siteId = (int)$siteId;
-            if($siteId < 1) {
+            if ($siteId < 1) {
                 continue;
             }
             try {

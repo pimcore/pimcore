@@ -117,7 +117,7 @@ class Site extends AbstractModel
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = "site_domain_". md5($domain);
 
-        if(Runtime::isRegistered($cacheKey)) {
+        if (Runtime::isRegistered($cacheKey)) {
             $site = Runtime::get($cacheKey);
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             $site = new self();

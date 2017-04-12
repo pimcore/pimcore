@@ -23,7 +23,8 @@ class Requirements
     /**
      * @return Check[]
      */
-    public static function checkFilesystem() {
+    public static function checkFilesystem()
+    {
         $checks = [];
 
         // filesystem checks
@@ -65,9 +66,9 @@ class Requirements
      * @param Connection $db
      * @return Check[]
      */
-    public static function checkMysql(Connection $db = null) {
-
-        if(!$db) {
+    public static function checkMysql(Connection $db = null)
+    {
+        if (!$db) {
             $db = \Pimcore::getContainer()->get("database_connection");
         }
 
@@ -305,8 +306,8 @@ class Requirements
     /**
      * @return Check[]
      */
-    public static function checkExternalApplications() {
-
+    public static function checkExternalApplications()
+    {
         $checks = [];
 
         // PHP CLI BIN
@@ -432,8 +433,8 @@ class Requirements
     /**
      * @return Check[]
      */
-    public static function checkPhp() {
-
+    public static function checkPhp()
+    {
         $checks = [];
 
         // check for memory limit
