@@ -83,31 +83,6 @@ class Special extends Model\Object\Concrete {
 ```
 
 
-## Overwrite Pimcore models using dependency injection
-In addition to parent classes, it is also possible to extend Pimcore object classes with custom classes and tell Pimcore 
-to use the custom classes instead of the generated object classes. This can be done by using dependency injection 
-functionality of Pimcore. 
-
-#### Example
-Create a custom class that extends from a default Pimcore object class: 
-```php
-// define a custom class,  for example:
-namespace Website\Model; 
-use Pimcore\Model\Object;
-  
-class News extends Object\News{
- 
-    public function myCustomGetter () {
-        return true;
-    }
-}
-``` 
-
-Create or extend the dependency injection configuration at `/app/config/pimcore/di.php` to use the custom class instead
-of the default Pimcore class: 
-```php
-<?php
-return [
-    'Pimcore\Model\Object\News' => DI\object('Website\Model\News'),
-];
-```
+## Overriding Pimcore Models
+In addition to parent classes, it is also possible to override Pimcore object classes with custom classes and tell Pimcore 
+to use the custom classes instead of the generated object classes. This can be done by using [model overrides](../../../20_Extending_Pimcore/03_Overriding_Models.md).
