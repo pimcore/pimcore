@@ -14,6 +14,7 @@
 
 namespace Pimcore\Http;
 
+use Composer\CaBundle\CaBundle;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Config;
@@ -25,7 +26,8 @@ class ClientFactory
         $systemConfig = Config::getSystemConfig();
 
         $guzzleConfig = [
-            RequestOptions::TIMEOUT => 3600
+            RequestOptions::TIMEOUT => 3600,
+            RequestOptions::VERIFY => CaBundle::getSystemCaRootBundlePath()
         ];
 
         if ($systemConfig['httpclient']['adapter'] == 'Proxy') {
@@ -38,6 +40,7 @@ class ClientFactory
             $guzzleConfig[RequestOptions::PROXY] = $proxyUri;
         }
 
-        return new Client($guzzleConfig);
+        $client = new Client($guzzleConfig);
+        return $client;
     }
 }
