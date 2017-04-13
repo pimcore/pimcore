@@ -60,6 +60,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method SlotsHelper slots()
  * @method string path($name, $parameters = array(), $relative = false)
  * @method string url($name, $parameters = array(), $schemeRelative = false)
+ * @method string t($key, $parameters = [], $domain = null, $locale = null)
  *
  * Symfony core helpers
  * @method ActionsHelper actions()
@@ -90,7 +91,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
  * @method Navigation navigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
  * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
- * @method string translate($key, $parameters = [])
+ * @method string translate($key, $parameters = [], $domain = null, $locale = null)
  *
  * Pimcore editables
  * @method Tag\Area area($name, $options = [])

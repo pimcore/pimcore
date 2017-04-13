@@ -15,6 +15,7 @@
 namespace Pimcore\Templating\HelperBroker;
 
 use Pimcore\Http\RequestHelper;
+use Pimcore\Templating\Helper\Translate;
 use Pimcore\Templating\PhpEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +38,8 @@ class HelperShortcuts implements HelperBrokerInterface
         'getLocale',
         'getRequest',
         'path',
-        'url'
+        'url',
+        't'
     ];
 
     /**
@@ -104,5 +106,17 @@ class HelperShortcuts implements HelperBrokerInterface
         $helper = $engine->get('router');
 
         return call_user_func_array([$helper, 'path'], $arguments);
+    }
+
+    /**
+     * @param PhpEngine $engine
+     * @param array $arguments
+     * @return string
+     */
+    protected function t(PhpEngine $engine, array $arguments) {
+        /** @var Translate $helper */
+        $helper = $engine->get('translate');
+
+        return $helper(...$arguments);
     }
 }
