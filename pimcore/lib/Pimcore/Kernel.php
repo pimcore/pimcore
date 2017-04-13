@@ -223,6 +223,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         @set_time_limit($maxExecutionTime);
         ini_set('default_charset', "UTF-8");
 
+        // set internal character encoding to UTF-8
+        mb_internal_encoding('UTF-8');
+
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
 
