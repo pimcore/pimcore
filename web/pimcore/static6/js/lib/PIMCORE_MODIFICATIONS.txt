@@ -27,6 +27,7 @@ Remove plugins:
 - Save
 - SpellCheckAsYouType (SCAYT)
 
+Delete: samples/
 
 # EXT JS
 needed components:
