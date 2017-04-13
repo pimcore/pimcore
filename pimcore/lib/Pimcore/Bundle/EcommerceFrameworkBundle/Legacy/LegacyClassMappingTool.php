@@ -617,8 +617,19 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager' => 'OnlineShop\Framework\VoucherService\TokenManager\ITokenManager',
     ];
 
+    /**
+     * needed to prevent double loading of mapping
+     * can take place when cache:clear command is executed
+     *
+     * @var bool
+     */
+    protected static $mappingLoaded = false;
     public static function loadMapping()
     {
+        if(self::$mappingLoaded) {
+            return;
+        }
+
         foreach (self::$symfonyMappingInterfaces as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
             if (self::$mappingInterfaces[$oldClass]) {
@@ -639,6 +650,8 @@ class LegacyClassMappingTool
                 class_alias($newClass, self::$mappingClasses[$oldClass]);
             }
         }
+
+        self::$mappingLoaded = true;
     }
 
     public static function createNamespaceCompatibilityFile()

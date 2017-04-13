@@ -2262,7 +2262,7 @@ namespace OnlineShop\Framework\Console\Command {
  * @deprecated
  * class CleanupPendingOrdersCommand
  */
-class CleanupPendingOrdersCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\CleanupPendingOrdersCommand
+class CleanupPendingOrdersCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Command\CleanupPendingOrdersCommand
 {
 }
 
@@ -2272,27 +2272,12 @@ class CleanupPendingOrdersCommand extends \Pimcore\Bundle\EcommerceFrameworkBund
 
 namespace OnlineShop\Framework\Console\Command\Voucher {
 
-/**
- * @deprecated
- * class AbstractVoucherCommand
- */
-class AbstractVoucherCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\AbstractVoucherCommand
-{
-}
-
-/**
- * @deprecated
- * class CleanupCommand
- */
-class CleanupCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\CleanupCommand
-{
-}
 
 /**
  * @deprecated
  * class CleanupReservationsCommand
  */
-class CleanupReservationsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\CleanupReservationsCommand
+class CleanupReservationsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Command\Voucher\CleanupReservationsCommand
 {
 }
 
@@ -2300,7 +2285,7 @@ class CleanupReservationsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundl
  * @deprecated
  * class CleanupStatisticsCommand
  */
-class CleanupStatisticsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\CleanupStatisticsCommand
+class CleanupStatisticsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Command\Voucher\CleanupStatisticsCommand
 {
 }
 
