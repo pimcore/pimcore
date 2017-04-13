@@ -18,6 +18,7 @@ use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Model\ViewModel;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -133,5 +134,19 @@ abstract class FrontendController extends Controller implements EventedControlle
         $tagRenderer = $this->container->get('pimcore.templating.tag_renderer');
 
         return $tagRenderer->getTag($document, $type, $inputName, $options);
+    }
+
+    /**
+     * @param $view
+     * @param array $parameters
+     * @param Response|null $response
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function renderTemplate($view, array $parameters = array(), Response $response = null) {
+
+        $viewModel = $this->get("pimcore.service.request.view_model_resolver")->getViewModel();
+        $parameters = array_merge($viewModel->getAllParameters(), $parameters);
+
+        return $this->render($view, $parameters, $response);
     }
 }
