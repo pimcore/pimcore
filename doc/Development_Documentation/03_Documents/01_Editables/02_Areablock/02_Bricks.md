@@ -174,7 +174,7 @@ class Iframe extends AbstractTemplateAreabrick
 ```
 
 Let's create a view as next step. Views behave exactly as native controller views and you have access to the current 
-document, to editmode and to editables and templating helpers as everywhere else. In addition there's a `brick` 
+document, to editmode and to editables and templating helpers as everywhere else. In addition there's a `instance` 
 variable on the view which gives you access to the brick instance. A `info` variable (see below) gives you access to 
 brick metadata. Our view is rendered through the PHP engine and has a suffix of `.html.php` however you're free to 
 use Twig or other templating engines as you wish.
