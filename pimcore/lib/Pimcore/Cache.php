@@ -826,7 +826,7 @@ class Cache
         \Zend_Locale::setCache($zendCache);
         \Zend_Locale_Data::setCache($zendCache);
         \Zend_Db_Table_Abstract::setDefaultMetadataCache($zendCache);
-        \Zend_Paginator::setCache($zendCache);
+        \Zend_Paginator::setCache(null);
     }
 
     /**
