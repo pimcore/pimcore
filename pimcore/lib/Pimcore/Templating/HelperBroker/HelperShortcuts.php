@@ -113,7 +113,8 @@ class HelperShortcuts implements HelperBrokerInterface
      * @param array $arguments
      * @return string
      */
-    protected function t(PhpEngine $engine, array $arguments) {
+    protected function t(PhpEngine $engine, array $arguments)
+    {
         /** @var Translate $helper */
         $helper = $engine->get('translate');
 
