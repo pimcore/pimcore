@@ -43,6 +43,7 @@ class GetParam extends Helper
     /**
      * @param string $name
      * @param mixed|null $default
+     *
      * @return mixed
      */
     public function __invoke($name, $default = null)

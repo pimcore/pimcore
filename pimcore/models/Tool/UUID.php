@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -50,6 +51,7 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $instanceIdentifier
+     *
      * @return $this
      */
     public function setInstanceIdentifier($instanceIdentifier)
@@ -69,13 +71,14 @@ class UUID extends Model\AbstractModel
 
     /**
      * @return $this
+     *
      * @throws \Exception
      */
     public function setSystemInstanceIdentifier()
     {
         $instanceIdentifier = \Pimcore\Config::getSystemConfig()->general->instanceIdentifier;
         if (!$instanceIdentifier) {
-            throw new \Exception("No instance identifier set in system config!");
+            throw new \Exception('No instance identifier set in system config!');
         }
         $this->setInstanceIdentifier($instanceIdentifier);
 
@@ -84,6 +87,7 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setItemId($id)
@@ -103,6 +107,7 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -122,19 +127,21 @@ class UUID extends Model\AbstractModel
 
     /**
      * @return mixed
+     *
      * @throws \Exception
      */
     public function createUuid()
     {
         if (!$this->getInstanceIdentifier()) {
-            throw new \Exception("No instance identifier specified.");
+            throw new \Exception('No instance identifier specified.');
         }
 
-        $this->uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . "~" . $this->getType() . "~" . $this->getItemId());
+        $this->uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
         $this->save();
 
         return $this->uuid;
     }
+
     /**
      * @return mixed
      */
@@ -153,6 +160,7 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $item
+     *
      * @return $this
      */
     public function setItem($item)
@@ -162,7 +170,7 @@ class UUID extends Model\AbstractModel
         if ($item instanceof Model\Element\ElementInterface) {
             $this->setType(Model\Element\Service::getElementType($item));
         } elseif ($item instanceof Model\Object\ClassDefinition) {
-            $this->setType("class");
+            $this->setType('class');
         }
 
         $this->item = $item;
@@ -172,7 +180,9 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $item
+     *
      * @return UUID
+     *
      * @throws \Exception
      */
     public static function getByItem($item)
@@ -186,6 +196,7 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $uuid
+     *
      * @return mixed
      */
     public static function getByUuid($uuid)
@@ -197,7 +208,9 @@ class UUID extends Model\AbstractModel
 
     /**
      * @param $item
+     *
      * @return static
+     *
      * @throws \Exception
      */
     public static function create($item)

@@ -69,6 +69,7 @@ class ActionRenderer
      * @param $action
      * @param array $params
      * @param array $query
+     *
      * @return ControllerReference
      */
     public function createControllerReference($bundle, $controller, $action, array $params = [], array $query = [])
@@ -88,6 +89,7 @@ class ActionRenderer
      * @param Document\PageSnippet $document
      * @param array $params
      * @param array $query
+     *
      * @return ControllerReference
      */
     public function createDocumentReference(Document\PageSnippet $document, array $params = [], array $query = [])
@@ -108,6 +110,7 @@ class ActionRenderer
      *
      * @param Document\PageSnippet $document
      * @param array $params
+     *
      * @return array
      */
     public function addDocumentParams(Document\PageSnippet $document, array $params = [])

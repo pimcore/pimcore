@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,9 +24,8 @@ use Pimcore\Model;
  */
 class Unknown extends Model\Asset
 {
-
     /**
      * @var string
      */
-    public $type = "unknown";
+    public $type = 'unknown';
 }

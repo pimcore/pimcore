@@ -15,8 +15,8 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Config;
-use Symfony\Component\Process\Process;
 use Pimcore\Logger;
+use Symfony\Component\Process\Process;
 
 class Console
 {
@@ -37,12 +37,13 @@ class Console
 
     /**
      * @static
+     *
      * @return string "windows" or "unix"
      */
     public static function getSystemEnvironment()
     {
         if (self::$systemEnvironment == null) {
-            if (stripos(php_uname("s"), "windows") !== false) {
+            if (stripos(php_uname('s'), 'windows') !== false) {
                 self::$systemEnvironment = 'windows';
             } else {
                 self::$systemEnvironment = 'unix';
@@ -55,7 +56,9 @@ class Console
     /**
      * @param $name
      * @param bool $throwException
+     *
      * @return bool|mixed|string
+     *
      * @throws \Exception
      */
     public static function getExecutable($name, $throwException = false)
@@ -65,8 +68,8 @@ class Console
         }
 
         // use DI to provide the ability to customize / overwrite paths
-        if (\Pimcore::getContainer()->hasParameter("pimcore_executable_" . $name)) {
-            $value = \Pimcore::getContainer()->getParameter("pimcore_executable_" . $name);
+        if (\Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
+            $value = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
             if (!$value && $throwException) {
                 throw new \Exception("'$name' executable was disabled manually in parameters.yml");
             }
@@ -81,38 +84,38 @@ class Console
             $paths = explode(PATH_SEPARATOR, $pathVariable);
         }
 
-        array_push($paths, "");
+        array_push($paths, '');
 
         // allow custom setup routines for certain programs
-        $customSetupMethod = "setup" . ucfirst($name);
+        $customSetupMethod = 'setup' . ucfirst($name);
         if (method_exists(__CLASS__, $customSetupMethod)) {
             self::$customSetupMethod();
         }
 
         // allow custom check routines for certain programs
-        $customCheckMethod = "check" . ucfirst($name);
+        $customCheckMethod = 'check' . ucfirst($name);
         if (!method_exists(__CLASS__, $customCheckMethod)) {
-            $customCheckMethod = "checkDummy";
+            $customCheckMethod = 'checkDummy';
         }
 
         foreach ($paths as $path) {
-            foreach (["--help", "-h", "-help"] as $option) {
+            foreach (['--help', '-h', '-help'] as $option) {
                 try {
-                    $path = rtrim($path, "/\\ ");
+                    $path = rtrim($path, '/\\ ');
                     if ($path) {
                         $executablePath = $path . DIRECTORY_SEPARATOR . $name;
                     } else {
                         $executablePath = $name;
                     }
 
-                    $process = new Process($executablePath . " " . $option);
+                    $process = new Process($executablePath . ' ' . $option);
                     $process->run();
 
                     if ($process->isSuccessful() || self::$customCheckMethod($process)) {
-                        if (empty($path) && self::getSystemEnvironment() == "unix") {
+                        if (empty($path) && self::getSystemEnvironment() == 'unix') {
                             // get the full qualified path, seems to solve a lot of problems :)
                             // if not using the full path, timeout, nohup and nice will fail
-                            $fullQualifiedPath = shell_exec("which " . $executablePath);
+                            $fullQualifiedPath = shell_exec('which ' . $executablePath);
                             $fullQualifiedPath = trim($fullQualifiedPath);
                             if ($fullQualifiedPath) {
                                 $executablePath = $fullQualifiedPath;
@@ -137,30 +140,28 @@ class Console
         return false;
     }
 
-    /**
-     *
-     */
     protected static function setupComposer()
     {
         // composer needs either COMPOSER_HOME or HOME to be set
-        if (!getenv("COMPOSER_HOME") && !getenv("HOME")) {
-            $composerHome = PIMCORE_PRIVATE_VAR . "/composer";
+        if (!getenv('COMPOSER_HOME') && !getenv('HOME')) {
+            $composerHome = PIMCORE_PRIVATE_VAR . '/composer';
             if (!is_dir($composerHome)) {
                 mkdir($composerHome, 0777, true);
             }
-            putenv("COMPOSER_HOME=" . $composerHome);
+            putenv('COMPOSER_HOME=' . $composerHome);
         }
 
-        putenv("COMPOSER_DISABLE_XDEBUG_WARN=true");
+        putenv('COMPOSER_DISABLE_XDEBUG_WARN=true');
     }
 
     /**
      * @param $process
+     *
      * @return bool
      */
     protected static function checkPngout($process)
     {
-        if (strpos($process->getOutput() . $process->getErrorOutput(), "bitdepth") !== false) {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), 'bitdepth') !== false) {
             return true;
         }
 
@@ -169,12 +170,13 @@ class Console
 
     /**
      * @param $process
+     *
      * @return bool
      */
     protected static function checkCjpeg($process)
     {
-        if (strpos($process->getOutput() . $process->getErrorOutput(), "-optimize") !== false) {
-            if (strpos($process->getOutput() . $process->getErrorOutput(), "mozjpeg") !== false) {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), '-optimize') !== false) {
+            if (strpos($process->getOutput() . $process->getErrorOutput(), 'mozjpeg') !== false) {
                 return true;
             }
         }
@@ -184,6 +186,7 @@ class Console
 
     /**
      * @param $process
+     *
      * @return bool
      */
     protected static function checkComposite($process)
@@ -193,11 +196,12 @@ class Console
 
     /**
      * @param $process
+     *
      * @return bool
      */
     protected static function checkConvert($process)
     {
-        if (strpos($process->getOutput() . $process->getErrorOutput(), "imagemagick.org") !== false) {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
             return true;
         }
 
@@ -206,6 +210,7 @@ class Console
 
     /**
      * @param $process
+     *
      * @return bool
      */
     protected static function checkDummy($process)
@@ -215,11 +220,12 @@ class Console
 
     /**
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function getPhpCli()
     {
-        return self::getExecutable("php", true);
+        return self::getExecutable('php', true);
     }
 
     /**
@@ -227,26 +233,27 @@ class Console
      */
     public static function getTimeoutBinary()
     {
-        return self::getExecutable("timeout");
+        return self::getExecutable('timeout');
     }
 
     /**
      * @param $script
      * @param $arguments
+     *
      * @return string
      */
     protected static function buildPhpScriptCmd($script, $arguments)
     {
-        $phpCli = Console::getPhpCli();
+        $phpCli = self::getPhpCli();
 
-        $cmd = $phpCli . " " . $script;
+        $cmd = $phpCli . ' ' . $script;
 
         if (Config::getEnvironment()) {
-            $cmd .= " --environment=" . Config::getEnvironment();
+            $cmd .= ' --environment=' . Config::getEnvironment();
         }
 
         if (!empty($arguments)) {
-            $cmd .= " " . $arguments;
+            $cmd .= ' ' . $arguments;
         }
 
         return $cmd;
@@ -257,12 +264,13 @@ class Console
      * @param $arguments
      * @param $outputFile
      * @param $timeout
+     *
      * @return string
      */
-    public static function runPhpScript($script, $arguments = "", $outputFile = null, $timeout = null)
+    public static function runPhpScript($script, $arguments = '', $outputFile = null, $timeout = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $return = Console::exec($cmd, $outputFile, $timeout);
+        $return = self::exec($cmd, $outputFile, $timeout);
 
         return $return;
     }
@@ -271,12 +279,13 @@ class Console
      * @param $script
      * @param $arguments
      * @param $outputFile
+     *
      * @return string
      */
-    public static function runPhpScriptInBackground($script, $arguments = "", $outputFile = null)
+    public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $return = Console::execInBackground($cmd, $outputFile);
+        $return = self::execInBackground($cmd, $outputFile);
 
         return $return;
     }
@@ -285,6 +294,7 @@ class Console
      * @param $cmd
      * @param null $outputFile
      * @param null $timeout
+     *
      * @return string
      */
     public static function exec($cmd, $outputFile = null, $timeout = null)
@@ -293,34 +303,34 @@ class Console
 
             // check if --kill-after flag is supported in timeout
             if (self::$timeoutKillAfterSupport === null) {
-                $out = self::exec(self::getTimeoutBinary() . " --help");
-                if (strpos($out, "--kill-after")) {
+                $out = self::exec(self::getTimeoutBinary() . ' --help');
+                if (strpos($out, '--kill-after')) {
                     self::$timeoutKillAfterSupport = true;
                 } else {
                     self::$timeoutKillAfterSupport = false;
                 }
             }
 
-            $killAfter = "";
+            $killAfter = '';
             if (self::$timeoutKillAfterSupport) {
-                $killAfter = " -k 1m";
+                $killAfter = ' -k 1m';
             }
 
-            $cmd = self::getTimeoutBinary() . $killAfter . " " . $timeout . "s " . $cmd;
+            $cmd = self::getTimeoutBinary() . $killAfter . ' ' . $timeout . 's ' . $cmd;
         } elseif ($timeout) {
-            Logger::warn("timeout binary not found, executing command without timeout");
+            Logger::warn('timeout binary not found, executing command without timeout');
         }
 
         if ($outputFile) {
-            $cmd = $cmd . " > ". $outputFile ." 2>&1";
+            $cmd = $cmd . ' > '. $outputFile .' 2>&1';
         } else {
             // send stderr to /dev/null otherwise this goes to the apache error log and can fill it up pretty quickly
             if (self::getSystemEnvironment() != 'windows') {
-                $cmd .= " 2> /dev/null";
+                $cmd .= ' 2> /dev/null';
             }
         }
 
-        Logger::debug("Executing command `" . $cmd . "` on the current shell");
+        Logger::debug('Executing command `' . $cmd . '` on the current shell');
         $return = shell_exec($cmd);
 
         return $return;
@@ -328,8 +338,10 @@ class Console
 
     /**
      * @static
+     *
      * @param string $cmd
      * @param null|string $outputFile
+     *
      * @return int
      */
     public static function execInBackground($cmd, $outputFile = null)
@@ -345,24 +357,26 @@ class Console
 
     /**
      * @static
+     *
      * @param string $cmd
      * @param string $outputFile
+     *
      * @return int
      */
     protected static function execInBackgroundUnix($cmd, $outputFile)
     {
         if (!$outputFile) {
-            $outputFile = "/dev/null";
+            $outputFile = '/dev/null';
         }
 
-        $nice = (string) self::getExecutable("nice");
+        $nice = (string) self::getExecutable('nice');
         if ($nice) {
-            $nice .= " -n 19 ";
+            $nice .= ' -n 19 ';
         }
 
-        $nohup = (string) self::getExecutable("nohup");
+        $nohup = (string) self::getExecutable('nohup');
         if ($nohup) {
-            $nohup .= " ";
+            $nohup .= ' ';
         }
 
         /**
@@ -376,33 +390,35 @@ class Console
             }
         }
 
-        $commandWrapped = $nohup . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
-        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
+        $commandWrapped = $nohup . $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
         $pid = shell_exec($commandWrapped);
 
-        Logger::debug("Process started with PID " . $pid);
+        Logger::debug('Process started with PID ' . $pid);
 
         return $pid;
     }
 
     /**
      * @static
+     *
      * @param string $cmd
      * @param string $outputFile
+     *
      * @return int
      */
     protected static function execInBackgroundWindows($cmd, $outputFile)
     {
         if (!$outputFile) {
-            $outputFile = "NUL";
+            $outputFile = 'NUL';
         }
 
-        $commandWrapped = "cmd /c " . $cmd . " > ". $outputFile . " 2>&1";
-        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
+        $commandWrapped = 'cmd /c ' . $cmd . ' > '. $outputFile . ' 2>&1';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
 
-        $WshShell = new \COM("WScript.Shell");
+        $WshShell = new \COM('WScript.Shell');
         $WshShell->Run($commandWrapped, 0, false);
-        Logger::debug("Process started - returning the PID is not supported on Windows Systems");
+        Logger::debug('Process started - returning the PID is not supported on Windows Systems');
 
         return 0;
     }
@@ -410,7 +426,8 @@ class Console
     /**
      * Returns a hash with all options passed to a cli script
      *
-     * @param boolean $onlyFullNotationArgs
+     * @param bool $onlyFullNotationArgs
+     *
      * @return array
      */
     public static function getOptions($onlyFullNotationArgs = false)
@@ -424,7 +441,7 @@ class Console
             if ($onlyFullNotationArgs && substr($optionString, 0, 2) != '--') {
                 continue;
             }
-            $exploded = explode("=", $optionString, 2);
+            $exploded = explode('=', $optionString, 2);
             $options[str_replace('-', '', $exploded[0])] =  $exploded[1];
         }
 
@@ -435,6 +452,7 @@ class Console
      * @param $options
      * @param string $concatenator
      * @param string $arrayConcatenator
+     *
      * @return string
      */
     public static function getOptionString($options, $concatenator = '=', $arrayConcatenator = ',')
@@ -457,11 +475,12 @@ class Console
 
     /**
      * @param array $allowedUsers
+     *
      * @throws \Exception
      */
     public static function checkExecutingUser($allowedUsers = [])
     {
-        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        $configFile = \Pimcore\Config::locateConfigFile('system.php');
         $owner = fileowner($configFile);
         if ($owner == false) {
             throw new \Exception("Couldn't get user from file " . $configFile);
@@ -483,7 +502,7 @@ class Console
     public static function checkCliExecution()
     {
         if (php_sapi_name() != 'cli') {
-            throw new \Exception("Script execution is restricted to CLI");
+            throw new \Exception('Script execution is restricted to CLI');
         }
     }
 }

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,26 +22,25 @@ use Pimcore\Model\Object;
 
 class ExternalImage extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "externalImage";
+    public $fieldtype = 'externalImage';
 
     /**
-     * @var integer
+     * @var int
      */
     public $previewWidth;
 
     /**
-     * @var integer
+     * @var int
      */
     public $inputWidth;
 
     /**
-     * @var integer
+     * @var int
      */
     public $previewHeight;
 
@@ -49,22 +49,21 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "longtext";
+    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "longtext";
-
+    public $columnType = 'longtext';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ExternalImage";
+    public $phpdocType = '\\Pimcore\\Model\\Object\\Data\\ExternalImage';
 
     /**
      * @return int
@@ -114,13 +113,13 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         $this->inputWidth = $this->getAsIntegerCast($inputWidth);
     }
 
-
-
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -134,9 +133,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -146,9 +147,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -158,9 +161,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -174,9 +179,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -186,9 +193,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param string $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -200,12 +209,14 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         return $data;
     }
 
-
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
@@ -222,6 +233,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -229,11 +241,12 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         return new Model\Object\Data\ExternalImage($importValue);
     }
 
-
     /**
      * converts data to be exposed via webservices
+     *
      * @param string $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -241,13 +254,14 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         return $this->getForCsvExport($object, $params);
     }
 
-
     /**
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
+     *
      * @return mixed|void
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
@@ -255,11 +269,10 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         return $this->getFromCsvImport($value, $relatedObject, $params);
     }
 
-
-
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -269,9 +282,11 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
@@ -282,7 +297,6 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
         return $data;
     }
-
 
     /**
      * @param Model\Object\ClassDefinition\Data $masterDefinition
@@ -296,6 +310,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
 
     /**
      * @param Object\Data\ExternalImage $data
+     *
      * @return bool
      */
     public function isEmpty($data)

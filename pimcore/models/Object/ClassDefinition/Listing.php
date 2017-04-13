@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-
     /**
      * Contains the results of the list. They are all an instance of Object|Class
      *
@@ -31,9 +31,9 @@ class Listing extends Model\Listing\AbstractListing
      */
     public $classes;
 
-
     /**
      * @param $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
@@ -51,6 +51,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param $classes
+     *
      * @return $this
      */
     public function setClasses($classes)

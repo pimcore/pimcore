@@ -39,6 +39,7 @@ class TemplateResolver extends AbstractRequestResolver
 
     /**
      * @param Request $request
+     *
      * @return null|string
      */
     public function getTemplate(Request $request = null)

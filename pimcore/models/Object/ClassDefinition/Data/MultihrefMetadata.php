@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,14 +19,13 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Object;
 
 class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 {
-
     /**
      * @var
      */
@@ -36,21 +36,22 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      *
      * @var string
      */
-    public $fieldtype = "multihrefMetadata";
+    public $fieldtype = 'multihrefMetadata';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ElementMetadata[]";
-
+    public $phpdocType = '\\Pimcore\\Model\\Object\\Data\\ElementMetadata[]';
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -63,17 +64,17 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
                     $return[] = [
-                        "dest_id" => $element->getId(),
-                        "type" => Element\Service::getElementType($element),
-                        "fieldname" => $this->getName(),
-                        "index" => $counter
+                        'dest_id' => $element->getId(),
+                        'type' => Element\Service::getElementType($element),
+                        'fieldname' => $this->getName(),
+                        'index' => $counter
                     ];
                 }
                 $counter++;
             }
 
             return $return;
-        } elseif (is_array($data) and count($data)===0) {
+        } elseif (is_array($data) and count($data) === 0) {
             //give empty array if data was not null
             return [];
         } else {
@@ -84,9 +85,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -96,30 +99,28 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 $destination = null;
-                $source = Object::getById($element["src_id"]);
+                $source = Object::getById($element['src_id']);
 
-
-                if ($element["type"] == "object") {
-                    $destination = Object::getById($element["dest_id"]);
-                } elseif ($element["type"] == "asset") {
-                    $destination = Asset::getById($element["dest_id"]);
-                } elseif ($element["type"] == "document") {
-                    $destination = Document::getById($element["dest_id"]);
+                if ($element['type'] == 'object') {
+                    $destination = Object::getById($element['dest_id']);
+                } elseif ($element['type'] == 'asset') {
+                    $destination = Asset::getById($element['dest_id']);
+                } elseif ($element['type'] == 'document') {
+                    $destination = Document::getById($element['dest_id']);
                 }
 
                 if ($destination instanceof Element\ElementInterface) {
-                    $metaData = \Pimcore::getContainer()->get("pimcore.model.factory")
+                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\Object\Data\ElementMetadata', [
-                            "fieldname" => $this->getName(),
-                            "columns" => $this->getColumnKeys(),
-                            "element" => $destination
+                            'fieldname' => $this->getName(),
+                            'columns' => $this->getColumnKeys(),
+                            'element' => $destination
                         ]);
 
-                    $ownertype = $element["ownertype"] ? $element["ownertype"] : "";
-                    $ownername = $element["ownername"] ? $element["ownername"] : "";
-                    $position = $element["position"] ? $element["position"] : "0";
-                    $type = $element["type"];
-
+                    $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
+                    $ownername = $element['ownername'] ? $element['ownername'] : '';
+                    $position = $element['position'] ? $element['position'] : '0';
+                    $type = $element['type'];
 
                     $metaData->load($source, $destination, $this->getName(), $ownertype, $ownername, $position, $type);
                     $objects[] = $metaData;
@@ -136,6 +137,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * @param $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @throws \Exception
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -153,23 +155,25 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
                     $elementType = Element\Service::getElementType($element);
-                    $d[] = $elementType . "|" . $element->getId();
+                    $d[] = $elementType . '|' . $element->getId();
                 }
             }
 
-            return "," . implode(",", $ids) . ",";
+            return ',' . implode(',', $ids) . ',';
         } elseif (is_array($data) && count($data) === 0) {
-            return "";
+            return '';
         } else {
-            throw new \Exception("invalid data passed to getDataForQueryResource - must be array");
+            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -183,22 +187,21 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $itemData = null;
 
                 if ($element instanceof Object\Concrete) {
-                    $itemData = ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "object", "subtype" => $element->getClassName()];
+                    $itemData = ['id' => $element->getId(), 'path' => $element->getRealFullPath(), 'type' => 'object', 'subtype' => $element->getClassName()];
                 } elseif ($element instanceof Object\AbstractObject) {
-                    $itemData = ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "object",  "subtype" => "folder"];
+                    $itemData = ['id' => $element->getId(), 'path' => $element->getRealFullPath(), 'type' => 'object',  'subtype' => 'folder'];
                 } elseif ($element instanceof Asset) {
-                    $itemData = ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "asset",  "subtype" => $element->getType()];
+                    $itemData = ['id' => $element->getId(), 'path' => $element->getRealFullPath(), 'type' => 'asset',  'subtype' => $element->getType()];
                 } elseif ($element instanceof Document) {
-                    $itemData= ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "document", "subtype" => $element->getType()];
+                    $itemData= ['id' => $element->getId(), 'path' => $element->getRealFullPath(), 'type' => 'document', 'subtype' => $element->getType()];
                 }
 
                 if (!$itemData) {
                     continue;
                 }
 
-
                 foreach ($this->getColumns() as $c) {
-                    $getter = "get" . ucfirst($c['key']);
+                    $getter = 'get' . ucfirst($c['key']);
                     $itemData[$c['key']] = $metaObject->$getter();
                 }
                 $return[] = $itemData;
@@ -211,12 +214,13 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         }
     }
 
-
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -229,25 +233,25 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         $multihrefMetadata = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-                if ($element["type"] == "object") {
-                    $e = Object::getById($element["id"]);
-                } elseif ($element["type"] == "asset") {
-                    $e = Asset::getById($element["id"]);
-                } elseif ($element["type"] == "document") {
-                    $e = Document::getById($element["id"]);
+                if ($element['type'] == 'object') {
+                    $e = Object::getById($element['id']);
+                } elseif ($element['type'] == 'asset') {
+                    $e = Asset::getById($element['id']);
+                } elseif ($element['type'] == 'document') {
+                    $e = Document::getById($element['id']);
                 }
 
                 if ($e instanceof Element\ElementInterface) {
-                    $metaData = \Pimcore::getContainer()->get("pimcore.model.factory")
+                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\Object\Data\ElementMetadata', [
-                            "fieldname" => $this->getName(),
-                            "columns" => $this->getColumnKeys(),
-                            "element" => $e
+                            'fieldname' => $this->getName(),
+                            'columns' => $this->getColumnKeys(),
+                            'element' => $e
                         ]);
 
                     foreach ($this->getColumns() as $columnConfig) {
-                        $key = $columnConfig["key"];
-                        $setter = "set" . ucfirst($key);
+                        $key = $columnConfig['key'];
+                        $setter = 'set' . ucfirst($key);
                         $value = $element[$key];
                         $metaData->$setter($value);
                     }
@@ -266,6 +270,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * @param $data
      * @param null $object
      * @param array $params
+     *
      * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
@@ -285,9 +290,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param array $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -295,10 +302,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getElement();
-                $pathes[] = Element\Service::getElementType($o) . " " . $o->getRealFullPath();
+                $pathes[] = Element\Service::getElementType($o) . ' ' . $o->getRealFullPath();
             }
 
-            return implode("<br />", $pathes);
+            return implode('<br />', $pathes);
         }
     }
 
@@ -306,19 +313,20 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (is_array($data)) {
             foreach ($data as $elementMetadata) {
                 if (!($elementMetadata instanceof Object\Data\ElementMetadata)) {
-                    throw new Element\ValidationException("Expected Object\\Data\\ElementMetadata");
+                    throw new Element\ValidationException('Expected Object\\Data\\ElementMetadata');
                 }
 
                 $d = $elementMetadata->getElement();
@@ -335,7 +343,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException("Invalid multihref relation", null, null);
+                    throw new Element\ValidationException('Invalid multihref relation', null, null);
                 }
             }
         }
@@ -343,9 +351,12 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
@@ -356,11 +367,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = Element\Service::getType($eo) . ":" . $eo->getRealFullPath();
+                    $paths[] = Element\Service::getType($eo) . ':' . $eo->getRealFullPath();
                 }
             }
 
-            return implode(",", $paths);
+            return implode(',', $paths);
         } else {
             return null;
         }
@@ -370,26 +381,27 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array|mixed
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        $values = explode(",", $importValue);
+        $values = explode(',', $importValue);
 
         $value = [];
         foreach ($values as $element) {
-            $tokens = explode(":", $element);
+            $tokens = explode(':', $element);
 
             $type = $tokens[0];
             $path = $tokens[1];
             $el = Element\Service::getElementByPath($type, $path);
 
             if ($el) {
-                $metaObject = \Pimcore::getContainer()->get("pimcore.model.factory")
+                $metaObject = \Pimcore::getContainer()->get('pimcore.model.factory')
                     ->build('Pimcore\Model\Object\Data\ElementMetadata', [
-                        "fieldname" => $this->getName(),
-                        "columns" => $this->getColumnKeys(),
-                        "element" => $el
+                        'fieldname' => $this->getName(),
+                        'columns' => $this->getColumnKeys(),
+                        'element' => $el
                     ]);
 
                 $value[] = $metaObject;
@@ -399,12 +411,12 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         return $value;
     }
 
-
     /**
      * This is a dummy and is mostly implemented by relation types
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -427,10 +439,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         return $tags;
     }
 
-
     /**
      * @param Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array|mixed|null
      */
     public function getForWebserviceExport($object, $params = [])
@@ -442,11 +454,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
                     $item = [];
-                    $item["type"] = Element\Service::getType($eo);
-                    $item["id"] = $eo->getId();
+                    $item['type'] = Element\Service::getType($eo);
+                    $item['id'] = $eo->getId();
 
                     foreach ($this->getColumns() as $c) {
-                        $getter = "get" . ucfirst($c['key']);
+                        $getter = 'get' . ucfirst($c['key']);
                         $item[$c['key']] = $metaObject->$getter();
                     }
                     $items[] = $item;
@@ -459,13 +471,14 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         }
     }
 
-
     /**
      * @param mixed $value
      * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
+     *
      * @return mixed|void
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
@@ -477,9 +490,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             foreach ($value as $href) {
                 // cast is needed to make it work for both SOAP and REST
                 $href = (array) $href;
-                if (is_array($href) and array_key_exists("id", $href) and array_key_exists("type", $href)) {
-                    $type = $href["type"];
-                    $id = $href["id"];
+                if (is_array($href) and array_key_exists('id', $href) and array_key_exists('type', $href)) {
+                    $type = $href['type'];
+                    $id = $href['id'];
                     if ($idMapper) {
                         $id = $idMapper->getMappedId($type, $id);
                     }
@@ -493,17 +506,16 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                         $elMeta = new Object\Data\ElementMetadata($this->getName(), $this->getColumnKeys(), $e);
 
                         foreach ($this->getColumns() as $c) {
-                            $setter = "set" . ucfirst($c['key']);
+                            $setter = 'set' . ucfirst($c['key']);
                             $elMeta->$setter($href[$c['key']]);
                         }
-
 
                         $hrefs[] = $elMeta;
                     } else {
                         if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                            throw new \Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
+                            throw new \Exception('cannot get values from web service import - unknown element of type [ ' . $href['type'] . ' ] with id [' . $href['id'] . '] is referenced');
                         } else {
-                            $idMapper->recordMappingFailure("object", $relatedObject->getId(), $type, $href["id"]);
+                            $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $href['id']);
                         }
                     }
                 }
@@ -511,10 +523,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
             return $hrefs;
         } else {
-            throw new \Exception("cannot get values from web service import - invalid data");
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
-
 
     /**
      * @param Object\Concrete $object
@@ -545,25 +556,25 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             $classId = $object->getClassId();
         }
 
-        $table = "object_metadata_" . $classId;
+        $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
         $this->enrichRelation($object, $params, $classId, $relation);
 
-        $position = (isset($relation["position"]) && $relation["position"]) ? $relation["position"] : "0";
+        $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
 
-        if ($params && $params["context"] && $params["context"]["containerType"] == "fieldcollection" && $params["context"]["subContainerType"] == "localizedfield") {
-            $context = $params["context"];
-            $index = $context["index"];
-            $containerName = $context["fieldname"];
+        if ($params && $params['context'] && $params['context']['containerType'] == 'fieldcollection' && $params['context']['subContainerType'] == 'localizedfield') {
+            $context = $params['context'];
+            $index = $context['index'];
+            $containerName = $context['fieldname'];
 
-            $sql = $db->quoteInto("o_id = ?", $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%")
-                . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
-                . " AND " . $db->quoteInto("position = ?", $position);
+            $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
         } else {
-            $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
-                . " AND " . $db->quoteInto("position = ?", $position);
+            $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
         }
 
         $db->deleteWhere($table, $sql);
@@ -577,8 +588,8 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             }
 
             foreach ($multihrefMetadata as $meta) {
-                $ownerName = isset($relation["ownername"]) ? $relation["ownername"] : null;
-                $ownerType = isset($relation["ownertype"]) ? $relation["ownertype"] : null;
+                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
+                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
                 $meta->save($objectConcrete, $ownerType, $ownerName, $position);
             }
         }
@@ -589,6 +600,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     /**
      * @param $object
      * @param array $params
+     *
      * @return array|mixed|null
      */
     public function preGetData($object, $params = [])
@@ -598,15 +610,15 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
-                $data = $this->load($object, ["force" => true]);
+                $data = $this->load($object, ['force' => true]);
 
-                $setter = "set" . ucfirst($this->getName());
+                $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->$setter($data);
                 }
             }
         } elseif ($object instanceof Object\Localizedfield) {
-            $data = $params["data"];
+            $data = $params['data'];
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
@@ -615,7 +627,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
-            /** @var  $listElement Object\Data\ElementMetadata */
+            /** @var $listElement Object\Data\ElementMetadata */
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement->getElement())) {
                     $publishedList[] = $listElement;
@@ -636,26 +648,27 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     {
         $db = Db::get();
 
-        if ($params && $params["context"] && $params["context"]["containerType"] == "fieldcollection" && $params["context"]["subContainerType"] == "localizedfield") {
-            $context = $params["context"];
-            $index = $context["index"];
-            $containerName = $context["fieldname"];
+        if ($params && $params['context'] && $params['context']['containerType'] == 'fieldcollection' && $params['context']['subContainerType'] == 'localizedfield') {
+            $context = $params['context'];
+            $index = $context['index'];
+            $containerName = $context['fieldname'];
 
-            $db->deleteWhere("object_metadata_" . $object->getClassId(),
-                $db->quoteInto("o_id = ?", $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%")
-                . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
+            $db->deleteWhere('object_metadata_' . $object->getClassId(),
+                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
             );
         } else {
-            $db->delete("object_metadata_" . $object->getClassId(), [
-                "o_id" => $object->getId(),
-                "fieldname" => $this->getName()
+            $db->delete('object_metadata_' . $object->getClassId(), [
+                'o_id' => $object->getId(),
+                'fieldname' => $this->getName()
             ]);
         }
     }
 
     /**
      * @param $columns
+     *
      * @return $this
      */
     public function setColumns($columns)
@@ -700,6 +713,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     /**
      * @param $a
      * @param $b
+     *
      * @return int
      */
     public function sort($a, $b)
@@ -716,9 +730,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      */
     public function classSaved($class)
     {
-        $temp = \Pimcore::getContainer()->get("pimcore.model.factory")
+        $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build('Pimcore\Model\Object\Data\ElementMetadata', [
-                "fieldname" => null
+                'fieldname' => null
             ]);
 
         $temp->getDao()->createOrUpdateTable($class);
@@ -734,9 +748,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
+     *
      * @return Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
@@ -781,6 +797,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
     /**
      * @param $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -792,9 +809,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $e = $metaElement->getElement();
                 if ($e instanceof Element\ElementInterface) {
                     $elementType = Element\Service::getElementType($e);
-                    $dependencies[$elementType . "_" . $e->getId()] = [
-                        "id" => $e->getId(),
-                        "type" => $elementType
+                    $dependencies[$elementType . '_' . $e->getId()] = [
+                        'id' => $e->getId(),
+                        'type' => $elementType
                     ];
                 }
             }
@@ -807,26 +824,27 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
             $result = [];
-            /** @var  $elementMetadata Object\Data\ElementMetadata */
+            /** @var $elementMetadata Object\Data\ElementMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
                 $result[] =  [
-                    "element" => [
-                        "type" => $type,
-                        "id" => $id
+                    'element' => [
+                        'type' => $type,
+                        'id' => $id
                     ],
-                    "fieldname" => $elementMetadata->getFieldname(),
-                    "columns" => $elementMetadata->getColumns(),
-                    "data" => $elementMetadata->data];
+                    'fieldname' => $elementMetadata->getFieldname(),
+                    'columns' => $elementMetadata->getColumns(),
+                    'data' => $elementMetadata->data];
             }
 
             return $result;
@@ -839,6 +857,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function unmarshal($value, $object = null, $params = [])
@@ -846,15 +865,15 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($value)) {
             $result = [];
             foreach ($value as $elementMetadata) {
-                $elementData = $elementMetadata["element"];
+                $elementData = $elementMetadata['element'];
 
-                $type = $elementData["type"];
-                $id = $elementData["id"];
+                $type = $elementData['type'];
+                $id = $elementData['id'];
                 $element = Element\Service::getElementById($type, $id);
                 if ($element) {
-                    $columns = $elementMetadata["columns"];
-                    $fieldname = $elementMetadata["fieldname"];
-                    $data = $elementMetadata["data"];
+                    $columns = $elementMetadata['columns'];
+                    $fieldname = $elementMetadata['fieldname'];
+                    $data = $elementMetadata['data'];
 
                     $item = new Object\Data\ElementMetadata($fieldname, $columns, $element);
                     $item->data = $data;

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -22,40 +23,41 @@ use Pimcore\Tool\Serialize;
 
 class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "geopolygon";
+    public $fieldtype = 'geopolygon';
 
     /**
      * Type for the column to query
      *
      * @var string
      */
-    public $queryColumnType = "longtext";
+    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "longtext";
+    public $columnType = 'longtext';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "array";
+    public $phpdocType = 'array';
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -65,9 +67,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -77,9 +81,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -89,9 +95,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params     *
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -101,8 +109,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 $points = [];
                 foreach ($data as $point) {
                     $points[] = [
-                        "latitude" => $point->getLatitude(),
-                        "longitude" => $point->getLongitude()
+                        'latitude' => $point->getLatitude(),
+                        'longitude' => $point->getLongitude()
                     ];
                 }
 
@@ -115,9 +123,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -125,7 +135,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (is_array($data)) {
             $points = [];
             foreach ($data as $point) {
-                $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
+                $points[] = new Object\Data\Geopoint($point['longitude'], $point['latitude']);
             }
 
             return $points;
@@ -136,21 +146,26 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param string $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return "";
+        return '';
     }
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
@@ -161,10 +176,10 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $rows = [];
             if (is_array($dataArray)) {
                 foreach ($dataArray as $point) {
-                    $rows[] = implode(";", $point);
+                    $rows[] = implode(';', $point);
                 }
 
-                return implode("|", $rows);
+                return implode('|', $rows);
             }
         }
 
@@ -175,15 +190,16 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array|mixed
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        $rows = explode("|", $importValue);
+        $rows = explode('|', $importValue);
         $points = [];
         if (is_array($rows)) {
             foreach ($rows as $row) {
-                $coords = explode(";", $row);
+                $coords = explode(';', $row);
                 $points[] = new  Object\Data\Geopoint($coords[1], $coords[0]);
             }
         }
@@ -194,17 +210,20 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
     {
-        return "";
+        return '';
     }
 
     /**
      * converts data to be exposed via webservices
+     *
      * @param string $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -222,7 +241,9 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param null $idMapper
+     *
      * @return mixed|void
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -233,22 +254,23 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $points = [];
             foreach ($value as $point) {
                 $point = (array) $point;
-                if ($point["longitude"]!=null and  $point["latitude"]!=null) {
-                    $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
+                if ($point['longitude'] != null and $point['latitude'] != null) {
+                    $points[] = new Object\Data\Geopoint($point['longitude'], $point['latitude']);
                 } else {
-                    throw new \Exception("cannot get values from web service import - invalid data");
+                    throw new \Exception('cannot get values from web service import - invalid data');
                 }
             }
 
             return $points;
         } else {
-            throw new \Exception("cannot get values from web service import - invalid data");
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -258,25 +280,26 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if (!empty($data)) {
-            $line = "";
+            $line = '';
             $isFirst = true;
             if (is_array($data)) {
                 foreach ($data as $point) {
                     if (!$isFirst) {
-                        $line .= " ";
+                        $line .= ' ';
                     }
-                    $line .= $point->getLatitude() . "," . $point->getLongitude();
+                    $line .= $point->getLatitude() . ',' . $point->getLongitude();
                     $isFirst = false;
                 }
-
 
                 return $line;
             }
@@ -289,6 +312,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
@@ -297,7 +321,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var  $point Object\Data\Geopoint */
+                /** @var $point Object\Data\Geopoint */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
@@ -307,7 +331,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             }
 
             return [
-                "value" => json_encode($result)
+                'value' => json_encode($result)
             ];
         }
     }
@@ -316,12 +340,13 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($value && $value["value"]) {
-            $value = json_decode($value["value"]);
+        if ($value && $value['value']) {
+            $value = json_decode($value['value']);
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {

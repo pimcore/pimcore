@@ -24,9 +24,10 @@ class Factory extends ImplementationLoader
     /**
      * @param string $name
      * @param array $params
+     *
      * @return AbstractModel
      */
-    public function build(string $name, array $params = []) : AbstractModel
+    public function build(string $name, array $params = []): AbstractModel
     {
         return parent::build($name, $params);
     }

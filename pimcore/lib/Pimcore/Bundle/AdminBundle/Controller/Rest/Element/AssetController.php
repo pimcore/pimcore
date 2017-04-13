@@ -48,6 +48,7 @@ class AssetController extends AbstractElementController
      * @param int|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function getAction(Request $request, $id = null)
@@ -60,16 +61,16 @@ class AssetController extends AbstractElementController
         if ($asset instanceof Asset\Folder) {
             $object = $this->service->getAssetFolderById($id);
         } else {
-            $light   = $request->get("light");
+            $light   = $request->get('light');
             $options = [
-                "LIGHT" => $light ? 1 : 0
+                'LIGHT' => $light ? 1 : 0
             ];
 
             $object = $this->service->getAssetFileById($id, $options);
-            $algo   = "sha1";
+            $algo   = 'sha1';
 
-            $thumbnailConfig = $request->get("thumbnail");
-            if ($thumbnailConfig && $asset->getType() === "image") {
+            $thumbnailConfig = $request->get('thumbnail');
+            if ($thumbnailConfig && $asset->getType() === 'image') {
                 /** @var Asset\Image $asset */
                 $checksum = $asset->getThumbnail($thumbnailConfig)->getChecksum($algo);
 
@@ -79,8 +80,8 @@ class AssetController extends AbstractElementController
             }
 
             $object->checksum = [
-                "algo"  => $algo,
-                "value" => $checksum
+                'algo'  => $algo,
+                'value' => $checksum
             ];
 
             if ($light) {
@@ -166,6 +167,7 @@ class AssetController extends AbstractElementController
      * @param int|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function deleteAction(Request $request, $id = null)

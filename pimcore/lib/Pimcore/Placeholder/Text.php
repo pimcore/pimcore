@@ -16,7 +16,6 @@ namespace Pimcore\Placeholder;
 
 class Text extends AbstractPlaceholder
 {
-
     /**
      * Returns a value for test replacement
      *

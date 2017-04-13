@@ -26,9 +26,10 @@ final class FrontendEvents
      *  - frontendPath | string | Web-path, relative
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const ASSET_IMAGE_THUMBNAIL = "pimcore.frontend.path.asset.image.thumbnail";
+    const ASSET_IMAGE_THUMBNAIL = 'pimcore.frontend.path.asset.image.thumbnail';
 
     /**
      * Allows to rewrite the frontend path of an video image thumbnail
@@ -40,9 +41,10 @@ final class FrontendEvents
      *  - frontendPath | string | Web-path, relative
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const ASSET_VIDEO_IMAGE_THUMBNAIL = "pimcore.frontend.path.asset.video.image-thumbnail";
+    const ASSET_VIDEO_IMAGE_THUMBNAIL = 'pimcore.frontend.path.asset.video.image-thumbnail';
 
     /**
      * Allows to rewrite the frontend path of an video thumbnail (mp4)
@@ -54,9 +56,10 @@ final class FrontendEvents
      *  - frontendPath | string | Web-path, relative
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const ASSET_VIDEO_THUMBNAIL = "pimcore.frontend.path.asset.video.thumbnail";
+    const ASSET_VIDEO_THUMBNAIL = 'pimcore.frontend.path.asset.video.thumbnail';
 
     /**
      * Allows to rewrite the frontend path of an video thumbnail (mp4)
@@ -68,9 +71,10 @@ final class FrontendEvents
      *  - frontendPath | string | Web-path, relative
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const ASSET_DOCUMENT_IMAGE_THUMBNAIL = "pimcore.frontend.path.asset.document.image-thumbnail";
+    const ASSET_DOCUMENT_IMAGE_THUMBNAIL = 'pimcore.frontend.path.asset.document.image-thumbnail';
 
     /**
      * Allows to rewrite the frontend path of an asset (no matter which type)
@@ -81,9 +85,10 @@ final class FrontendEvents
      *  - frontendPath | string | Web-path, relative
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const ASSET_PATH = "pimcore.frontend.path.asset";
+    const ASSET_PATH = 'pimcore.frontend.path.asset';
 
     /**
      * Allows to rewrite the frontend path of a document (no matter which type)
@@ -94,9 +99,10 @@ final class FrontendEvents
      *  - frontendPath | string | Web-path, relative
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const DOCUMENT_PATH = "pimcore.frontend.path.document";
+    const DOCUMENT_PATH = 'pimcore.frontend.path.document';
 
     /**
      * Allows to rewrite the frontend path of a static route
@@ -110,9 +116,10 @@ final class FrontendEvents
      *  - encode | bool
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const STATICROUTE_PATH = "pimcore.frontend.path.staticroute";
+    const STATICROUTE_PATH = 'pimcore.frontend.path.staticroute';
 
     /**
      * Subject: 	\Pimcore\Templating\Helper\HeadLink
@@ -120,9 +127,10 @@ final class FrontendEvents
      *  - item | stdClass
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const VIEW_HELPER_HEAD_LINK = "pimcore.frontend.view.helper.head-link";
+    const VIEW_HELPER_HEAD_LINK = 'pimcore.frontend.view.helper.head-link';
 
     /**
      * Subject: 	\Pimcore\Templating\Helper\HeadScript
@@ -130,7 +138,8 @@ final class FrontendEvents
      *  - item | stdClass
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
+     *
      * @var string
      */
-    const VIEW_HELPER_HEAD_SCRIPT = "pimcore.frontend.view.helper.head-script";
+    const VIEW_HELPER_HEAD_SCRIPT = 'pimcore.frontend.view.helper.head-script';
 }

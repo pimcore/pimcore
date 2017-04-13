@@ -65,12 +65,14 @@ class HeadScript extends CacheBusterAware
 
     /**
      * Registry key for placeholder
+     *
      * @var string
      */
     protected $_regKey = 'HeadScript';
 
     /**
      * Are arbitrary attributes allowed?
+     *
      * @var bool
      */
     protected $_arbitraryAttributes = false;
@@ -87,6 +89,7 @@ class HeadScript extends CacheBusterAware
 
     /**
      * Optional allowed attributes for script tag
+     *
      * @var array
      */
     protected $_optionalAttributes = [
@@ -95,6 +98,7 @@ class HeadScript extends CacheBusterAware
 
     /**
      * Required attributes for script tag
+     *
      * @var string
      */
     protected $_requiredAttributes = ['type'];
@@ -102,6 +106,7 @@ class HeadScript extends CacheBusterAware
     /**
      * Whether or not to format scripts using CDATA; used only if doctype
      * helper is not accessible
+     *
      * @var bool
      */
     public $useCdata = false;
@@ -119,7 +124,6 @@ class HeadScript extends CacheBusterAware
         $this->setSeparator(PHP_EOL);
     }
 
-
     /**
      * @inheritDoc
      */
@@ -127,7 +131,6 @@ class HeadScript extends CacheBusterAware
     {
         return 'headScript';
     }
-
 
     /**
      * Return headScript object
@@ -140,9 +143,10 @@ class HeadScript extends CacheBusterAware
      * @param  string $placement Append, prepend, or set
      * @param  array $attrs Array of script attributes
      * @param  string $type Script type and/or array of script attributes
+     *
      * @return HeadScript
      */
-    public function __invoke($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
+    public function __invoke($mode = self::FILE, $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
     {
         if ((null !== $spec) && is_string($spec)) {
             $action    = ucfirst(strtolower($mode));
@@ -168,6 +172,7 @@ class HeadScript extends CacheBusterAware
      *
      * @param  mixed $captureType
      * @param  string $typeOrAttrs
+     *
      * @return void
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', $attrs = [])
@@ -225,7 +230,9 @@ class HeadScript extends CacheBusterAware
      *
      * @param  string $method
      * @param  array $args
+     *
      * @return HeadScript
+     *
      * @throws Exception if too few arguments or invalid method
      */
     public function __call($method, $args)
@@ -267,7 +274,7 @@ class HeadScript extends CacheBusterAware
                     break;
                 case 'file':
                 default:
-                    if (!$this->_isDuplicate($content) || $action=='set') {
+                    if (!$this->_isDuplicate($content) || $action == 'set') {
                         $attrs['src'] = $content;
                         $item = $this->createData($type, $attrs);
                         if ('offsetSet' == $action) {
@@ -289,6 +296,7 @@ class HeadScript extends CacheBusterAware
      * Is the file specified a duplicate?
      *
      * @param  string $file
+     *
      * @return bool
      */
     protected function _isDuplicate($file)
@@ -309,6 +317,7 @@ class HeadScript extends CacheBusterAware
      *
      * @param  mixed $value
      * @param  string $method
+     *
      * @return bool
      */
     protected function _isValid($value)
@@ -326,6 +335,7 @@ class HeadScript extends CacheBusterAware
      * Override append
      *
      * @param  string $value
+     *
      * @return void
      */
     public function append($value)
@@ -341,6 +351,7 @@ class HeadScript extends CacheBusterAware
      * Override prepend
      *
      * @param  string $value
+     *
      * @return void
      */
     public function prepend($value)
@@ -356,6 +367,7 @@ class HeadScript extends CacheBusterAware
      * Override set
      *
      * @param  string $value
+     *
      * @return void
      */
     public function set($value)
@@ -372,6 +384,7 @@ class HeadScript extends CacheBusterAware
      *
      * @param  string|int $index
      * @param  mixed $value
+     *
      * @return void
      */
     public function offsetSet($index, $value)
@@ -387,6 +400,7 @@ class HeadScript extends CacheBusterAware
      * Set flag indicating if arbitrary attributes are allowed
      *
      * @param  bool $flag
+     *
      * @return HeadScript
      */
     public function setAllowArbitraryAttributes($flag)
@@ -413,6 +427,7 @@ class HeadScript extends CacheBusterAware
      * @param  array $attributes
      * @param  string $content
      * @param  string|int $indent
+     *
      * @return string
      */
     public function itemToString($item, $indent, $escapeStart, $escapeEnd)
@@ -471,6 +486,7 @@ class HeadScript extends CacheBusterAware
      * Retrieve string representation
      *
      * @param  string|int $indent
+     *
      * @return string
      */
     public function toString($indent = null)
@@ -485,7 +501,7 @@ class HeadScript extends CacheBusterAware
             $useCdata = $this->useCdata ? true : false;
         }
         $escapeStart = ($useCdata) ? '//<![CDATA[' : '//<!--';
-        $escapeEnd   = ($useCdata) ? '//]]>'       : '//-->';
+        $escapeEnd   = ($useCdata) ? '//]]>' : '//-->';
 
         $items = [];
         $this->getContainer()->ksort();
@@ -502,9 +518,6 @@ class HeadScript extends CacheBusterAware
         return $return;
     }
 
-    /**
-     *
-     */
     protected function prepareEntries()
     {
         foreach ($this as &$item) {
@@ -515,17 +528,17 @@ class HeadScript extends CacheBusterAware
             if ($this->isCacheBuster()) {
                 // adds the automatic cache buster functionality
                 if (is_array($item->attributes)) {
-                    if (isset($item->attributes["src"])) {
-                        $realFile = PIMCORE_WEB_ROOT . $item->attributes["src"];
+                    if (isset($item->attributes['src'])) {
+                        $realFile = PIMCORE_WEB_ROOT . $item->attributes['src'];
                         if (file_exists($realFile)) {
-                            $item->attributes["src"] = "/cache-buster-" . filemtime($realFile) . $item->attributes["src"];
+                            $item->attributes['src'] = '/cache-buster-' . filemtime($realFile) . $item->attributes['src'];
                         }
                     }
                 }
             }
 
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_SCRIPT, new GenericEvent($this, [
-                "item" => $item
+                'item' => $item
             ]));
         }
     }
@@ -536,6 +549,7 @@ class HeadScript extends CacheBusterAware
      * @param  string $type
      * @param  array $attributes
      * @param  string $content
+     *
      * @return \stdClass
      */
     public function createData($type, array $attributes, $content = null)

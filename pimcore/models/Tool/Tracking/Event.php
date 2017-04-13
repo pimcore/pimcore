@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Event extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -56,6 +56,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return Event
      */
     public static function getById($id)
@@ -73,6 +74,7 @@ class Event extends Model\AbstractModel
      * @param $day
      * @param $month
      * @param $year
+     *
      * @return Event
      */
     public static function getByDate($category, $action, $label, $day, $month, $year)
@@ -92,6 +94,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -111,6 +114,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $category
+     *
      * @return $this
      */
     public function setCategory($category)
@@ -130,6 +134,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -149,6 +154,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $label
+     *
      * @return $this
      */
     public function setLabel($label)
@@ -168,6 +174,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $timestamp
+     *
      * @return $this
      */
     public function setTimestamp($timestamp)
@@ -187,6 +194,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $data
+     *
      * @return $this
      */
     public function setData($data)

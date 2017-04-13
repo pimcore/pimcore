@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -27,7 +28,6 @@ use Pimcore\Model;
  */
 class Setup extends Model\AbstractModel
 {
-
     /**
      * @param array $config
      */
@@ -37,7 +37,7 @@ class Setup extends Model\AbstractModel
 
         // check for an initial configuration template
         // used eg. by the demo installer
-        $configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . "/system.php";
+        $configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . '/system.php';
         if (file_exists($configTemplatePath)) {
             try {
                 $configTemplate = new \Pimcore\Config\Config(include($configTemplatePath));
@@ -45,8 +45,8 @@ class Setup extends Model\AbstractModel
                     $settings = $configTemplate->toArray();
 
                     // unset database configuration
-                    unset($settings["database"]["params"]["host"]);
-                    unset($settings["database"]["params"]["port"]);
+                    unset($settings['database']['params']['host']);
+                    unset($settings['database']['params']['port']);
                 }
             } catch (\Exception $e) {
             }
@@ -56,113 +56,113 @@ class Setup extends Model\AbstractModel
         if (!$settings) {
             // write configuration file
             $settings = [
-                "general" => [
-                    "timezone" => "Europe/Berlin",
-                    "language" => "en",
-                    "validLanguages" => "en",
+                'general' => [
+                    'timezone' => 'Europe/Berlin',
+                    'language' => 'en',
+                    'validLanguages' => 'en',
                 ],
-                "database" => [
-                    "params" => [
-                        "username" => "root",
-                        "password" => "",
-                        "dbname" => "",
+                'database' => [
+                    'params' => [
+                        'username' => 'root',
+                        'password' => '',
+                        'dbname' => '',
                     ]
                 ],
-                "documents" => [
-                    "versions" => [
-                        "steps" => "10"
+                'documents' => [
+                    'versions' => [
+                        'steps' => '10'
                     ],
-                    "default_controller" => "default",
-                    "default_action" => "default",
-                    "error_pages" => [
-                        "default" => "/"
+                    'default_controller' => 'default',
+                    'default_action' => 'default',
+                    'error_pages' => [
+                        'default' => '/'
                     ],
-                    "createredirectwhenmoved" => "",
-                    "allowtrailingslash" => "no",
-                    "generatepreview" => "1"
+                    'createredirectwhenmoved' => '',
+                    'allowtrailingslash' => 'no',
+                    'generatepreview' => '1'
                 ],
-                "objects" => [
-                    "versions" => [
-                        "steps" => "10"
+                'objects' => [
+                    'versions' => [
+                        'steps' => '10'
                     ]
                 ],
-                "assets" => [
-                    "versions" => [
-                        "steps" => "10"
+                'assets' => [
+                    'versions' => [
+                        'steps' => '10'
                     ]
                 ],
-                "services" => [],
-                "cache" => [
-                    "excludeCookie" => ""
+                'services' => [],
+                'cache' => [
+                    'excludeCookie' => ''
                 ],
-                "httpclient" => [
-                    "adapter" => "Socket"
+                'httpclient' => [
+                    'adapter' => 'Socket'
                 ],
-                "email" => [
-                    "sender" => [
-                        "name" => "",
-                        "email" => ""
+                'email' => [
+                    'sender' => [
+                        'name' => '',
+                        'email' => ''
                     ],
-                    "return" => [
-                        "name" => "",
-                        "email" => ""
+                    'return' => [
+                        'name' => '',
+                        'email' => ''
                     ],
-                    "method" => "mail",
-                    "smtp" => [
-                        "host" => "",
-                        "port" => "",
-                        "ssl" => null,
-                        "name" => "",
-                        "auth" => [
-                            "method" => null,
-                            "username" => "",
-                            "password" => ""
+                    'method' => 'mail',
+                    'smtp' => [
+                        'host' => '',
+                        'port' => '',
+                        'ssl' => null,
+                        'name' => '',
+                        'auth' => [
+                            'method' => null,
+                            'username' => '',
+                            'password' => ''
                         ]
                     ],
-                    "debug" => [
-                        "emailaddresses" => ""
+                    'debug' => [
+                        'emailaddresses' => ''
                     ]
                 ],
-                "newsletter" => [
-                    "sender" => [
-                        "name" => "",
-                        "email" => ""
+                'newsletter' => [
+                    'sender' => [
+                        'name' => '',
+                        'email' => ''
                     ],
-                    "return" => [
-                        "name" => "",
-                        "email" => ""
+                    'return' => [
+                        'name' => '',
+                        'email' => ''
                     ],
-                    "method" => "mail",
-                    "smtp" => [
-                        "host" => "",
-                        "port" => "",
-                        "ssl" => null,
-                        "name" => "",
-                        "auth" => [
-                            "method" => null,
-                            "username" => "",
-                            "password" => ""
+                    'method' => 'mail',
+                    'smtp' => [
+                        'host' => '',
+                        'port' => '',
+                        'ssl' => null,
+                        'name' => '',
+                        'auth' => [
+                            'method' => null,
+                            'username' => '',
+                            'password' => ''
                         ]
                     ],
-                    "usespecific" => ""
+                    'usespecific' => ''
                 ]
             ];
         }
 
         $settings = array_replace_recursive($settings, $config);
 
-        $configFile = \Pimcore\Config::locateConfigFile("system.php");
+        $configFile = \Pimcore\Config::locateConfigFile('system.php');
         File::putPhpFile($configFile, to_php_data_file_format($settings));
 
-        File::putPhpFile(PIMCORE_CONFIGURATION_DIRECTORY . "/debug-mode.php", to_php_data_file_format([
-            "active" => true,
-            "ip" => "",
+        File::putPhpFile(PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php', to_php_data_file_format([
+            'active' => true,
+            'ip' => '',
         ]));
 
         // generate parameters.yml
-        $parameters = file_get_contents(PIMCORE_APP_ROOT . "/config/parameters.example.yml");
+        $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
         $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
-        File::put(PIMCORE_APP_ROOT . "/config/parameters.yml", $parameters);
+        File::put(PIMCORE_APP_ROOT . '/config/parameters.yml', $parameters);
     }
 
     /**
@@ -180,21 +180,21 @@ class Setup extends Model\AbstractModel
     public function createOrUpdateUser($config = [])
     {
         $defaultConfig = [
-            "username" => "admin",
-            "password" => md5(microtime())
+            'username' => 'admin',
+            'password' => md5(microtime())
         ];
 
         $settings = array_replace_recursive($defaultConfig, $config);
 
-        if ($user = Model\User::getByName($settings["username"])) {
+        if ($user = Model\User::getByName($settings['username'])) {
             $user->delete();
         }
 
         $user = Model\User::create([
-            "parentId" => 0,
-            "username" => $settings["username"],
-            "password" => \Pimcore\Tool\Authentication::getPasswordHash($settings["username"], $settings["password"]),
-            "active" => true
+            'parentId' => 0,
+            'username' => $settings['username'],
+            'password' => \Pimcore\Tool\Authentication::getPasswordHash($settings['username'], $settings['password']),
+            'active' => true
         ]);
         $user->setAdmin(true);
         $user->save();

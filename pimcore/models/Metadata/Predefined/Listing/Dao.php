@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Metadata
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,14 +24,10 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("predefined-asset-metadata");
+        $this->setFile('predefined-asset-metadata');
     }
 
     /**
@@ -45,7 +42,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $definitions = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($definitions as $propertyData) {
-            $properties[] = Model\Metadata\Predefined::getById($propertyData["id"]);
+            $properties[] = Model\Metadata\Predefined::getById($propertyData['id']);
         }
 
         $this->model->setDefinitions($properties);

@@ -49,6 +49,7 @@ class InlineScript extends HeadScript
 {
     /**
      * Registry key for placeholder
+     *
      * @var string
      */
     protected $_regKey = 'InlineScript';

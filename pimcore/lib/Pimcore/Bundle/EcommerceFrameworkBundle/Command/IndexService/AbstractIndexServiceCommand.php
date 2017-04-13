@@ -18,5 +18,5 @@ use Pimcore\Console\AbstractCommand;
 
 abstract class AbstractIndexServiceCommand extends AbstractCommand
 {
-    const LOGGER_NAME = "indexupdater";
+    const LOGGER_NAME = 'indexupdater';
 }

@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class StoreConfigEvent extends Event
 {
-
     /**
      * @var StoreConfig
      */
@@ -27,6 +26,7 @@ class StoreConfigEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param StoreConfig $storeConfig
      */
     public function __construct(StoreConfig $storeConfig)

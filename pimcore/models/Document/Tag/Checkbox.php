@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,26 +24,26 @@ use Pimcore\Model;
  */
 class Checkbox extends Model\Document\Tag
 {
-
     /**
      * Contains the checkbox value
      *
-     * @var boolean
+     * @var bool
      */
     public $value = false;
 
-
     /**
      * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "checkbox";
+        return 'checkbox';
     }
 
     /**
      * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -52,6 +53,7 @@ class Checkbox extends Model\Document\Tag
 
     /**
      * @see TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
@@ -61,7 +63,9 @@ class Checkbox extends Model\Document\Tag
 
     /**
      * @see TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -73,7 +77,9 @@ class Checkbox extends Model\Document\Tag
 
     /**
      * @see TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -84,7 +90,7 @@ class Checkbox extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -92,7 +98,7 @@ class Checkbox extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isChecked()
     {
@@ -104,6 +110,7 @@ class Checkbox extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      *
      * @todo: replace or with ||
@@ -114,7 +121,7 @@ class Checkbox extends Model\Document\Tag
         if ($data->bool === null or is_bool($data)) {
             $this->value = (bool) $data->value;
         } else {
-            throw new \Exception("cannot get values from web service import - invalid data");
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 }

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,9 +25,9 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -35,22 +36,22 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM targeting_personas WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM targeting_personas WHERE id = ?', $this->model->getId());
 
-        if ($data["id"]) {
-            $data["conditions"] = Serialize::unserialize($data["conditions"]);
-            $data["actions"] = (isset($data["actions"]) ? Serialize::unserialize($data["actions"]) : []);
+        if ($data['id']) {
+            $data['conditions'] = Serialize::unserialize($data['conditions']);
+            $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("persona with id " . $this->model->getId() . " doesn't exist");
+            throw new \Exception('persona with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 
     /**
      * Save object to database
      *
-     * @return boolean
+     * @return bool
      *
      * @todo: update and create don't return anything
      */
@@ -68,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("targeting_personas", ["id" => $this->model->getId()]);
+        $this->db->delete('targeting_personas', ['id' => $this->model->getId()]);
     }
 
     /**
@@ -81,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = [];
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns("targeting_personas"))) {
+                if (in_array($key, $this->getValidTableColumns('targeting_personas'))) {
                     if (is_array($value) || is_object($value)) {
                         $value = Serialize::serialize($value);
                     }
@@ -92,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update("targeting_personas", $data, ["id" => $this->model->getId()]);
+            $this->db->update('targeting_personas', $data, ['id' => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -101,11 +102,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return boolean
+     * @return bool
      */
     public function create()
     {
-        $this->db->insert("targeting_personas", []);
+        $this->db->insert('targeting_personas', []);
 
         $this->model->setId($this->db->lastInsertId());
 

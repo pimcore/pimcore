@@ -19,12 +19,10 @@ use Pimcore\Logger;
 
 class CartItem extends AbstractCartItem implements ICartItem
 {
-
     /**
      * @var int
      */
     protected $sortIndex = 0;
-
 
     /**
      * @param int $sortIndex
@@ -42,7 +40,6 @@ class CartItem extends AbstractCartItem implements ICartItem
         return $this->sortIndex;
     }
 
-
     public function getCart()
     {
         if (empty($this->cart)) {
@@ -51,9 +48,6 @@ class CartItem extends AbstractCartItem implements ICartItem
 
         return $this->cart;
     }
-
-
-
 
     public function save()
     {
@@ -66,9 +60,9 @@ class CartItem extends AbstractCartItem implements ICartItem
         $this->getDao()->save();
     }
 
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "")
+    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
     {
-        $cacheKey = CartItem\Dao::TABLE_NAME . "_" . $cartId . "_" . $parentKey . $itemKey;
+        $cacheKey = CartItem\Dao::TABLE_NAME . '_' . $cartId . '_' . $parentKey . $itemKey;
 
         try {
             $cartItem = Runtime::get($cacheKey);
@@ -102,9 +96,9 @@ class CartItem extends AbstractCartItem implements ICartItem
         if ($this->subItems == null) {
             $this->subItems = [];
 
-            $itemClass = get_class($this) . "\\Listing";
+            $itemClass = get_class($this) . '\\Listing';
             if (!\Pimcore\Tool::classExists($itemClass)) {
-                $itemClass = get_class($this) . "_List";
+                $itemClass = get_class($this) . '_List';
                 if (!\Pimcore\Tool::classExists($itemClass)) {
                     throw new \Exception("Class $itemClass does not exist.");
                 }
@@ -112,13 +106,13 @@ class CartItem extends AbstractCartItem implements ICartItem
             $itemList = new $itemClass();
 
             $db = \Pimcore\Db::get();
-            $itemList->setCondition("cartId = " . $db->quote($this->getCartId()) . " AND parentItemKey = " . $db->quote($this->getItemKey()));
+            $itemList->setCondition('cartId = ' . $db->quote($this->getCartId()) . ' AND parentItemKey = ' . $db->quote($this->getItemKey()));
 
             foreach ($itemList->getCartItems() as $item) {
                 if ($item->getProduct() != null) {
                     $this->subItems[] = $item;
                 } else {
-                    Logger::warn("product " . $item->getProductId() . " not found");
+                    Logger::warn('product ' . $item->getProductId() . ' not found');
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "ecommerceframework_vouchertoolkit_statistics";
+    const TABLE_NAME = 'ecommerceframework_vouchertoolkit_statistics';
 
     public function __construct()
     {
@@ -25,14 +25,15 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param int $id
+     *
      * @return bool|string
      */
     public function getById($id)
     {
         try {
-            $result = $this->db->fetchOne("SELECT * FROM " . self::TABLE_NAME . " WHERE id = ? GROUP BY date", $id);
+            $result = $this->db->fetchOne('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = ? GROUP BY date', $id);
             if (empty($result)) {
-                throw new \Exception("Statistic with id " . $id . " not found.");
+                throw new \Exception('Statistic with id ' . $id . ' not found.');
             }
             $this->assignVariablesToModel($result);
 

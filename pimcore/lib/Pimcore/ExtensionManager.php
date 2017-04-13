@@ -14,8 +14,6 @@
 
 namespace Pimcore;
 
-use Pimcore\Config;
-
 /**
  * @deprecated Superseded by PimcoreBundleManager and AreabrickManager in Pimcore 5
  */
@@ -33,6 +31,7 @@ class ExtensionManager
 
     /**
      * @static
+     *
      * @return Config\Config
      */
     public static function getConfig()
@@ -42,6 +41,7 @@ class ExtensionManager
 
     /**
      * @static
+     *
      * @param Config\Config $config
      */
     public static function setConfig(Config\Config $config)
@@ -61,8 +61,10 @@ class ExtensionManager
 
     /**
      * @static
+     *
      * @param  $type
      * @param  $id
+     *
      * @return bool
      */
     public static function isEnabled($type, $id)
@@ -71,7 +73,7 @@ class ExtensionManager
 
         $config = self::getConfig();
 
-        if ($type == "brick") {
+        if ($type == 'brick') {
             // bricks are enabled per default
             if (!isset($config->brick->$id)) {
                 return true;
@@ -90,6 +92,7 @@ class ExtensionManager
 
     /**
      * @static
+     *
      * @param  $type
      * @param  $id
      */
@@ -106,7 +109,7 @@ class ExtensionManager
 
         // call enable.php inside the extension
         $extensionDir = self::getPathForExtension($id, $type);
-        $enableScript = $extensionDir . "/enable.php";
+        $enableScript = $extensionDir . '/enable.php';
         if (is_file($enableScript)) {
             include($enableScript);
         }
@@ -114,6 +117,7 @@ class ExtensionManager
 
     /**
      * @static
+     *
      * @param  $type
      * @param  $id
      */
@@ -130,12 +134,11 @@ class ExtensionManager
 
         // call disable.php inside the extension
         $extensionDir = self::getPathForExtension($id, $type);
-        $disableScript = $extensionDir . "/disable.php";
+        $disableScript = $extensionDir . '/disable.php';
         if (is_file($disableScript)) {
             include($disableScript);
         }
     }
-
 
     /**
      * @return array $pluginConfigs
@@ -148,16 +151,16 @@ class ExtensionManager
             $pluginDirs = scandir(PIMCORE_PLUGINS_PATH);
             if (is_array($pluginDirs)) {
                 foreach ($pluginDirs as $d) {
-                    if ($d != "." and $d != ".." and is_dir(PIMCORE_PLUGINS_PATH . "//" . $d)) {
-                        if (file_exists(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml")) {
+                    if ($d != '.' and $d != '..' and is_dir(PIMCORE_PLUGINS_PATH . '//' . $d)) {
+                        if (file_exists(PIMCORE_PLUGINS_PATH . '/' . $d . '/plugin.xml')) {
                             try {
-                                $pluginConfArray = xmlToArray(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
+                                $pluginConfArray = xmlToArray(PIMCORE_PLUGINS_PATH . '/' . $d . '/plugin.xml');
                                 $pluginConf = new Config\Config($pluginConfArray);
                                 if ($pluginConf != null) {
                                     $pluginConfigs[] = $pluginConf->toArray();
                                 }
                             } catch (\Exception $e) {
-                                Logger::error("Unable to initialize plugin with ID: " . $d);
+                                Logger::error('Unable to initialize plugin with ID: ' . $d);
                                 Logger::error($e);
                             }
                         }
@@ -173,6 +176,7 @@ class ExtensionManager
      * @param $id
      *
      * @return array
+     *
      * @throws \Exception
      */
     public static function getPluginConfig($id)
@@ -180,12 +184,12 @@ class ExtensionManager
         $pluginConfigs = self::getPluginConfigs();
 
         foreach ($pluginConfigs as $config) {
-            if ($config["plugin"]["pluginName"] == $id) {
+            if ($config['plugin']['pluginName'] == $id) {
                 return $config;
             }
         }
 
-        throw new \Exception("Plugin with id: " . $id . " does not exists");
+        throw new \Exception('Plugin with id: ' . $id . ' does not exists');
     }
 
     /**
@@ -312,13 +316,14 @@ class ExtensionManager
 
     /**
      * @param null $customPath
+     *
      * @return array|mixed
      */
     public static function getBrickDirectories($customPath = null)
     {
-        $cacheKey = "brick_directories";
+        $cacheKey = 'brick_directories';
         if ($customPath) {
-            $cacheKey .= "_" . crc32($customPath);
+            $cacheKey .= '_' . crc32($customPath);
         }
 
         $areas = [];
@@ -329,19 +334,19 @@ class ExtensionManager
                 $areaRepositories = [$customPath];
             } else {
                 $areaRepositories = [
-                    PIMCORE_WEBSITE_PATH . "/views/areas",
-                    PIMCORE_WEBSITE_VAR . "/areas"
+                    PIMCORE_WEBSITE_PATH . '/views/areas',
+                    PIMCORE_WEBSITE_VAR . '/areas'
                 ];
             }
 
             // include area repositories from active plugins
-            $configs = ExtensionManager::getPluginConfigs();
+            $configs = self::getPluginConfigs();
             foreach ($configs as $config) {
-                $className = $config["plugin"]["pluginClassName"];
+                $className = $config['plugin']['pluginClassName'];
 
                 if (!empty($className)) {
-                    $isEnabled = ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
-                    $areaDir = PIMCORE_PLUGINS_PATH . "/" . $config["plugin"]["pluginName"] . "/views/areas";
+                    $isEnabled = self::isEnabled('plugin', $config['plugin']['pluginName']);
+                    $areaDir = PIMCORE_PLUGINS_PATH . '/' . $config['plugin']['pluginName'] . '/views/areas';
 
                     if ($isEnabled && file_exists($areaDir)) {
                         $areaRepositories[] = $areaDir;
@@ -355,9 +360,9 @@ class ExtensionManager
                     $blockDirs = scandir($respository);
 
                     foreach ($blockDirs as $blockDir) {
-                        if (is_dir($respository . "/" . $blockDir)) {
-                            if (is_file($respository . "/" . $blockDir . "/area.xml")) {
-                                $areas[$blockDir] = $respository . "/" . $blockDir;
+                        if (is_dir($respository . '/' . $blockDir)) {
+                            if (is_file($respository . '/' . $blockDir . '/area.xml')) {
+                                $areas[$blockDir] = $respository . '/' . $blockDir;
                             }
                         }
                     }
@@ -371,13 +376,14 @@ class ExtensionManager
 
     /**
      * @param null $customPath
+     *
      * @return array|mixed
      */
     public static function getBrickConfigs($customPath = null)
     {
-        $cacheKey = "brick_configs";
+        $cacheKey = 'brick_configs';
         if ($customPath) {
-            $cacheKey .= "_" . crc32($customPath);
+            $cacheKey .= '_' . crc32($customPath);
         }
 
         try {
@@ -387,10 +393,10 @@ class ExtensionManager
 
             foreach (self::getBrickDirectories($customPath) as $areaName => $path) {
                 try {
-                    $configArray = xmlToArray($path . "/area.xml");
+                    $configArray = xmlToArray($path . '/area.xml');
                     $configs[$areaName] = new Config\Config($configArray);
                 } catch (\Exception $e) {
-                    Logger::error("Unable to initalize brick with id: " . $areaName);
+                    Logger::error('Unable to initalize brick with id: ' . $areaName);
                     Logger::error($e);
                 }
             }
@@ -404,6 +410,7 @@ class ExtensionManager
     /**
      * @param $id
      * @param $path
+     *
      * @throws \Exception
      *
      * @return mixed|array
@@ -418,7 +425,7 @@ class ExtensionManager
             }
         }
 
-        throw new \Exception("Areabrick with id: " . $id . " does not exists");
+        throw new \Exception('Areabrick with id: ' . $id . ' does not exists');
     }
 
     /**
@@ -429,12 +436,12 @@ class ExtensionManager
     {
         static::validateType($type);
 
-        if ($type == "plugin") {
-            $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id;
+        if ($type == 'plugin') {
+            $pluginDir = PIMCORE_PLUGINS_PATH . '/' . $id;
             if (is_writeable($pluginDir)) {
                 recursiveDelete($pluginDir, true);
             }
-        } elseif ($type == "brick") {
+        } elseif ($type == 'brick') {
             $brickDirs = self::getBrickDirectories();
             $brickDir = $brickDirs[$id];
 
@@ -447,17 +454,18 @@ class ExtensionManager
     /**
      * @param $id
      * @param $type
+     *
      * @return string
      */
     public static function getPathForExtension($id, $type)
     {
         static::validateType($type);
 
-        $extensionDir = "";
+        $extensionDir = '';
 
-        if ($type == "plugin") {
-            $extensionDir = PIMCORE_PLUGINS_PATH . "/" . $id;
-        } elseif ($type == "brick") {
+        if ($type == 'plugin') {
+            $extensionDir = PIMCORE_PLUGINS_PATH . '/' . $id;
+        } elseif ($type == 'brick') {
             $brickDirs = self::getBrickDirectories();
             $extensionDir = $brickDirs[$id];
         }

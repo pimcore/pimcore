@@ -44,12 +44,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/tree-get-childs-by-id")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeGetChildsByIdAction(Request $request)
     {
-        $object = Object\AbstractObject::getById($request->get("node"));
+        $object = Object\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
         $cv = false;
@@ -67,23 +69,22 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         }
 
         if ($object->hasChildren($objectTypes)) {
-            $limit = intval($request->get("limit"));
-            if (!$request->get("limit")) {
+            $limit = intval($request->get('limit'));
+            if (!$request->get('limit')) {
                 $limit = 100000000;
             }
-            $offset = intval($request->get("start"));
-
+            $offset = intval($request->get('start'));
 
             $childsList = new Object\Listing();
             $condition = "objects.o_parentId = '" . $object->getId() . "'";
 
             // custom views start
-            if ($request->get("view")) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get("view"));
+            if ($request->get('view')) {
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get('view'));
 
-                if ($cv["classes"]) {
+                if ($cv['classes']) {
                     $cvConditions = [];
-                    $cvClasses = explode(",", $cv["classes"]);
+                    $cvClasses = explode(',', $cv['classes']);
                     foreach ($cvClasses as $cvClass) {
                         $cvConditions[] = "objects.o_classId = '" . $cvClass . "'";
                     }
@@ -91,7 +92,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     $cvConditions[] = "objects.o_type = 'folder'";
 
                     if (count($cvConditions) > 0) {
-                        $condition .= " AND (" . implode(" OR ", $cvConditions) . ")";
+                        $condition .= ' AND (' . implode(' OR ', $cvConditions) . ')';
                     }
                 }
             }
@@ -100,13 +101,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             if (!$this->getUser()->isAdmin()) {
                 $userIds = $this->getUser()->getRoles();
                 $userIds[] = $this->getUser()->getId();
-                $condition .= " AND (
-                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                $condition .= ' AND (
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )";
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
             }
-
 
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
@@ -121,7 +121,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             foreach ($childs as $child) {
                 $tmpObject = $this->getTreeNodeConfig($child);
 
-                if ($child->isAllowed("list")) {
+                if ($child->isAllowed('list')) {
                     $objects[] = $tmpObject;
                 }
             }
@@ -135,19 +135,18 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $event = new GenericEvent($this, [
-            "objects" => $objects,
+            'objects' => $objects,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
-        $objects = $event->getArgument("objects");
+        $objects = $event->getArgument('objects');
 
-
-        if ($request->get("limit")) {
+        if ($request->get('limit')) {
             return $this->json([
-                "offset" => $offset,
-                "limit" => $limit,
-                "total" => $total,
-                "nodes" => $objects,
-                "fromPaging" => intval($request->get("fromPaging"))
+                'offset' => $offset,
+                'limit' => $limit,
+                'total' => $total,
+                'nodes' => $objects,
+                'fromPaging' => intval($request->get('fromPaging'))
             ]);
         } else {
             return $this->json($objects);
@@ -156,6 +155,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @param Object\AbstractObject $element
+     *
      * @return array
      */
     protected function getTreeNodeConfig($element)
@@ -163,14 +163,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $child = $element;
 
         $tmpObject = [
-            "id" => $child->getId(),
-            "text" => $child->getKey(),
-            "type" => $child->getType(),
-            "path" => $child->getRealFullPath(),
-            "basePath" => $child->getRealPath(),
-            "elementType" => "object",
-            "locked" => $child->isLocked(),
-            "lockOwner" => $child->getLocked() ? true : false
+            'id' => $child->getId(),
+            'text' => $child->getKey(),
+            'type' => $child->getType(),
+            'path' => $child->getRealFullPath(),
+            'basePath' => $child->getRealPath(),
+            'elementType' => 'object',
+            'locked' => $child->isLocked(),
+            'lockOwner' => $child->getLocked() ? true : false
         ];
 
         $allowedTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER];
@@ -180,67 +180,64 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         $hasChildren = $child->hasChildren($allowedTypes);
 
-        $tmpObject["isTarget"] = false;
-        $tmpObject["allowDrop"] = false;
-        $tmpObject["allowChildren"] = false;
+        $tmpObject['isTarget'] = false;
+        $tmpObject['allowDrop'] = false;
+        $tmpObject['allowChildren'] = false;
 
-        $tmpObject["leaf"] = !$hasChildren;
+        $tmpObject['leaf'] = !$hasChildren;
 
-        $tmpObject["isTarget"] = true;
-        if ($tmpObject["type"] != "variant") {
-            $tmpObject["allowDrop"] = true;
+        $tmpObject['isTarget'] = true;
+        if ($tmpObject['type'] != 'variant') {
+            $tmpObject['allowDrop'] = true;
         }
 
-        $tmpObject["allowChildren"] = true;
-        $tmpObject["leaf"] = !$hasChildren;
-        $tmpObject["cls"] = "";
+        $tmpObject['allowChildren'] = true;
+        $tmpObject['leaf'] = !$hasChildren;
+        $tmpObject['cls'] = '';
 
-        $tmpObject["qtipCfg"] = $child->getElementAdminStyle()->getElementQtipConfig();
+        $tmpObject['qtipCfg'] = $child->getElementAdminStyle()->getElementQtipConfig();
 
-        if ($child->getType() != "folder") {
-            $tmpObject["published"] = $child->isPublished();
-            $tmpObject["className"] = $child->getClass()->getName();
-
+        if ($child->getType() != 'folder') {
+            $tmpObject['published'] = $child->isPublished();
+            $tmpObject['className'] = $child->getClass()->getName();
 
             if (!$child->isPublished()) {
-                $tmpObject["cls"] .= "pimcore_unpublished ";
+                $tmpObject['cls'] .= 'pimcore_unpublished ';
             }
 
-            $tmpObject["allowVariants"] = $child->getClass()->getAllowVariants();
+            $tmpObject['allowVariants'] = $child->getClass()->getAllowVariants();
         }
-        if ($tmpObject["type"] == "variant") {
-            $tmpObject["iconCls"] = "pimcore_icon_variant";
+        if ($tmpObject['type'] == 'variant') {
+            $tmpObject['iconCls'] = 'pimcore_icon_variant';
         } else {
             if ($child->getElementAdminStyle()->getElementIcon()) {
-                $tmpObject["icon"] = $child->getElementAdminStyle()->getElementIcon();
+                $tmpObject['icon'] = $child->getElementAdminStyle()->getElementIcon();
             }
 
             if ($child->getElementAdminStyle()->getElementIconClass()) {
-                $tmpObject["iconCls"] = $child->getElementAdminStyle()->getElementIconClass();
+                $tmpObject['iconCls'] = $child->getElementAdminStyle()->getElementIconClass();
             }
         }
 
         if ($child->getElementAdminStyle()->getElementCssClass()) {
-            $tmpObject["cls"] .= $child->getElementAdminStyle()->getElementCssClass() . " ";
+            $tmpObject['cls'] .= $child->getElementAdminStyle()->getElementCssClass() . ' ';
         }
 
-
-        $tmpObject["expanded"] = !$hasChildren;
-        $tmpObject["permissions"] = $child->getUserPermissions();
-
+        $tmpObject['expanded'] = !$hasChildren;
+        $tmpObject['permissions'] = $child->getUserPermissions();
 
         if ($child->isLocked()) {
-            $tmpObject["cls"] .= "pimcore_treenode_locked ";
+            $tmpObject['cls'] .= 'pimcore_treenode_locked ';
         }
         if ($child->getLocked()) {
-            $tmpObject["cls"] .= "pimcore_treenode_lockOwner ";
+            $tmpObject['cls'] .= 'pimcore_treenode_lockOwner ';
         }
 
-        if ($tmpObject["leaf"]) {
-            $tmpObject["expandable"] = false;
-            $tmpObject["expanded"] = true;
-            $tmpObject["leaf"] = false;
-            $tmpObject["loaded"] = true;
+        if ($tmpObject['leaf']) {
+            $tmpObject['expandable'] = false;
+            $tmpObject['expanded'] = true;
+            $tmpObject['leaf'] = false;
+            $tmpObject['loaded'] = true;
         }
 
         return $tmpObject;
@@ -248,16 +245,18 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/get-id-path-paging-info")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getIdPathPagingInfoAction(Request $request)
     {
-        $path = $request->get("path");
-        $pathParts = explode("/", $path);
+        $path = $request->get('path');
+        $pathParts = explode('/', $path);
         $id = array_pop($pathParts);
 
-        $limit = $request->get("limit");
+        $limit = $request->get('limit');
 
         if (empty($limit)) {
             $limit = 30;
@@ -270,20 +269,20 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         while ($parent = $object->getParent()) {
             $list = new Object\Listing();
-            $list->setCondition("o_parentId = ?", $parent->getId());
+            $list->setCondition('o_parentId = ?', $parent->getId());
             $list->setUnpublished(true);
             $total = $list->getTotalCount();
 
             $info = [
-                "total" => $total
+                'total' => $total
             ];
 
             if ($total > $limit) {
                 $idList = $list->loadIdList();
                 $position = array_search($object->getId(), $idList);
-                $info["position"] = $position + 1;
+                $info['position'] = $position + 1;
 
-                $info["page"] = ceil($info["position"] / $limit);
+                $info['page'] = ceil($info['position'] / $limit);
                 $containsPaging = true;
             }
 
@@ -297,20 +296,22 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAction(Request $request)
     {
         // check for lock
-        if (Element\Editlock::isLocked($request->get("id"), "object")) {
+        if (Element\Editlock::isLocked($request->get('id'), 'object')) {
             return $this->json([
-                "editlock" => Element\Editlock::getByElement($request->get("id"), "object")
+                'editlock' => Element\Editlock::getByElement($request->get('id'), 'object')
             ]);
         }
-        Element\Editlock::lock($request->get("id"), "object");
+        Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = Object::getById(intval($request->get("id")));
+        $object = Object::getById(intval($request->get('id')));
         $object = clone $object;
 
         // set the latest available version for editmode
@@ -320,55 +321,54 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $objectFromVersion = $latestObject === $object ? false : true;
         $object = $latestObject;
 
-        if ($object->isAllowed("view")) {
+        if ($object->isAllowed('view')) {
             $objectData = [];
 
-            $objectData["idPath"] = Element\Service::getIdPath($object);
-            $objectData["previewUrl"] = $object->getClass()->getPreviewUrl();
+            $objectData['idPath'] = Element\Service::getIdPath($object);
+            $objectData['previewUrl'] = $object->getClass()->getPreviewUrl();
 
-            $objectData["general"] = [];
-            $allowedKeys = ["o_published", "o_key", "o_id", "o_modificationDate", "o_creationDate", "o_classId", "o_className", "o_locked", "o_type", "o_parentId", "o_userOwner", "o_userModification"];
+            $objectData['general'] = [];
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
 
             foreach (get_object_vars($object) as $key => $value) {
-                if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
-                    $objectData["general"][$key] = $value;
+                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                    $objectData['general'][$key] = $value;
                 }
             }
 
-            $objectData["general"]["o_locked"] = $object->isLocked();
+            $objectData['general']['o_locked'] = $object->isLocked();
 
             $this->getDataForObject($object, $objectFromVersion);
-            $objectData["data"] = $this->objectData;
+            $objectData['data'] = $this->objectData;
 
-            $objectData["metaData"] = $this->metaData;
+            $objectData['metaData'] = $this->metaData;
 
-            $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
+            $objectData['layout'] = $object->getClass()->getLayoutDefinitions();
 
-            $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData["userPermissions"] = $object->getUserPermissions();
+            $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
+            $objectData['userPermissions'] = $object->getUserPermissions();
             $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
-            $objectData["versions"] = array_splice($objectVersions, 0, 1);
-            $objectData["scheduledTasks"] = $object->getScheduledTasks();
-            $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
-            $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
-            $objectData["general"]["fullpath"] = $object->getRealFullPath();
+            $objectData['versions'] = array_splice($objectVersions, 0, 1);
+            $objectData['scheduledTasks'] = $object->getScheduledTasks();
+            $objectData['general']['allowVariants'] = $object->getClass()->getAllowVariants();
+            $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
+            $objectData['general']['fullpath'] = $object->getRealFullPath();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
-                $objectData["general"]["icon"] = $object->getElementAdminStyle()->getElementIcon();
+                $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
             }
             if ($object->getElementAdminStyle()->getElementIconClass()) {
-                $objectData["general"]["iconCls"] = $object->getElementAdminStyle()->getElementIconClass();
+                $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
             }
-
 
             if ($object instanceof Object\Concrete) {
-                $objectData["lazyLoadedFields"] = $object->getLazyLoadedFields();
+                $objectData['lazyLoadedFields'] = $object->getLazyLoadedFields();
             }
 
-            $objectData["childdata"]["id"] = $object->getId();
-            $objectData["childdata"]["data"]["classes"] = $this->prepareChildClasses($object->getDao()->getClasses());
+            $objectData['childdata']['id'] = $object->getId();
+            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
-            $currentLayoutId = $request->get("layoutId", null);
+            $currentLayoutId = $request->get('layoutId', null);
 
             $validLayouts = Object\Service::getValidLayouts($object);
 
@@ -381,10 +381,10 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
             }
             if (!empty($validLayouts)) {
-                $objectData["validLayouts"] = [ ];
+                $objectData['validLayouts'] = [ ];
 
                 foreach ($validLayouts as $validLayout) {
-                    $objectData["validLayouts"][] = ["id" => $validLayout->getId(), "name" => $validLayout->getName()];
+                    $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                 }
 
                 $user = Tool\Admin::getCurrentUser();
@@ -398,36 +398,35 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     if ($validLayouts && $validLayouts[$currentLayoutId]) {
                         $customLayout = Object\ClassDefinition\CustomLayout::getById($currentLayoutId);
                         $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                        $objectData["layout"] = $customLayoutDefinition;
+                        $objectData['layout'] = $customLayoutDefinition;
                     } else {
                         $currentLayoutId = 0;
                     }
                 } elseif ($currentLayoutId == -1 && $user->isAdmin()) {
                     $layout = Object\Service::getSuperLayoutDefinition($object);
-                    $objectData["layout"] = $layout;
+                    $objectData['layout'] = $layout;
                 }
 
-                $objectData["currentLayoutId"] = $currentLayoutId;
+                $objectData['currentLayoutId'] = $currentLayoutId;
             }
 
             $objectData = $this->filterLocalizedFields($object, $objectData);
-            Object\Service::enrichLayoutDefinition($objectData["layout"], $object);
-
+            Object\Service::enrichLayoutDefinition($objectData['layout'], $object);
 
             //Hook for modifying return value - e.g. for changing permissions based on object data
             //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
             $event = new GenericEvent($this, [
-                "data" => $objectData,
-                "object" => $object,
+                'data' => $objectData,
+                'object' => $object,
             ]);
             \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
-            $data = $event->getArgument("data");
+            $data = $event->getArgument('data');
 
             return $this->json($data);
         } else {
-            Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
+            Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');
 
-            return $this->json(["success" => false, "message" => "missing_permission"]);
+            return $this->json(['success' => false, 'message' => 'missing_permission']);
         }
     }
 
@@ -464,7 +463,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
         $parent = Object\Service::hasInheritableParentObject($object);
-        $getter = "get" . ucfirst($key);
+        $getter = 'get' . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         // nonownerobjects should go in there anyway (regardless if it a version or not), so that the values can be loaded
@@ -501,9 +500,9 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 } else {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof Object\ClassDefinition\Data\Objects) {
-                            $data[] = [$rel["id"], $rel["path"], $rel["subtype"]];
+                            $data[] = [$rel['id'], $rel['path'], $rel['subtype']];
                         } else {
-                            $data[] = [$rel["id"], $rel["path"], $rel["type"], $rel["subtype"]];
+                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype']];
                         }
                     }
                 }
@@ -517,7 +516,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
             if ($fielddefinition instanceof Object\ClassDefinition\Data\CalculatedValue) {
                 $fieldData = new Object\Data\CalculatedValue($fielddefinition->getName());
-                $fieldData->setContextualData("object", null, null, null);
+                $fieldData->setContextualData('object', null, null, null);
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
             } else {
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
@@ -526,17 +525,16 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             // following some exceptions for special data types (localizedfields, objectbricks)
             if ($value && ($fieldData instanceof Object\Localizedfield || $fieldData instanceof Object\Classificationstore)) {
                 // make sure that the localized field participates in the inheritance detection process
-                $isInheritedValue = $value["inherited"];
+                $isInheritedValue = $value['inherited'];
             }
             if ($fielddefinition instanceof Object\ClassDefinition\Data\Objectbricks && is_array($value)) {
                 // make sure that the objectbricks participate in the inheritance detection process
                 foreach ($value as $singleBrickData) {
-                    if ($singleBrickData["inherited"]) {
+                    if ($singleBrickData['inherited']) {
                         $isInheritedValue = true;
                     }
                 }
             }
-
 
             if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
@@ -559,12 +557,13 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @param $object
      * @param $key
+     *
      * @return mixed
      */
     private function getParentValue($object, $key)
     {
         $parent = Object\Service::hasInheritableParentObject($object);
-        $getter = "get" . ucfirst($key);
+        $getter = 'get' . ucfirst($key);
         if ($parent) {
             $value = $parent->$getter();
             if ($value) {
@@ -581,6 +580,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @param Object\ClassDefinition\Data $fielddefinition
+     *
      * @return bool
      */
     private function isInheritableField(Object\ClassDefinition\Data $fielddefinition)
@@ -596,13 +596,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/lock")
+     *
      * @param Request $request
      */
     public function lockAction(Request $request)
     {
-        $object = Object::getById($request->get("id"));
+        $object = Object::getById($request->get('id'));
         if ($object instanceof Object\AbstractObject) {
-            $object->setLocked((bool)$request->get("locked"));
+            $object->setLocked((bool)$request->get('locked'));
             //TODO: if latest version published - publish
             //if latest version not published just save new version
         }
@@ -615,15 +616,15 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      */
     public function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
     {
-        if ($layout->{"fieldtype"} == "localizedfields") {
+        if ($layout->{'fieldtype'} == 'localizedfields') {
             if (is_array($allowedView) && count($allowedView) > 0) {
-                $layout->{"permissionView"} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedView), true);
+                $layout->{'permissionView'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedView), true);
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
-                $layout->{"permissionEdit"} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedEdit), true);
+                $layout->{'permissionEdit'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedEdit), true);
             }
         } else {
-            if (method_exists($layout, "getChilds")) {
+            if (method_exists($layout, 'getChilds')) {
                 $children = $layout->getChilds();
                 if (is_array($children)) {
                     foreach ($children as $child) {
@@ -637,6 +638,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @param Object\AbstractObject $object
      * @param $objectData
+     *
      * @return mixed
      */
     public function filterLocalizedFields(Object\AbstractObject $object, $objectData)
@@ -652,19 +654,19 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         $fieldDefinitions = $object->getClass()->getFieldDefinitions();
         if ($fieldDefinitions) {
-            $languageAllowedView = Object\Service::getLanguagePermissions($object, $user, "lView");
-            $languageAllowedEdit = Object\Service::getLanguagePermissions($object, $user, "lEdit");
+            $languageAllowedView = Object\Service::getLanguagePermissions($object, $user, 'lView');
+            $languageAllowedEdit = Object\Service::getLanguagePermissions($object, $user, 'lEdit');
 
             foreach ($fieldDefinitions as $key => $fd) {
-                if ($fd->getFieldtype() == "localizedfields") {
-                    foreach ($objectData["data"][$key]["data"] as $language => $languageData) {
+                if ($fd->getFieldtype() == 'localizedfields') {
+                    foreach ($objectData['data'][$key]['data'] as $language => $languageData) {
                         if (!is_null($languageAllowedView) && !$languageAllowedView[$language]) {
-                            unset($objectData["data"][$key]["data"][$language]);
+                            unset($objectData['data'][$key]['data'][$language]);
                         }
                     }
                 }
             }
-            $this->setLayoutPermission($objectData["layout"], $languageAllowedView, $languageAllowedEdit);
+            $this->setLayoutPermission($objectData['layout'], $languageAllowedView, $languageAllowedEdit);
         }
 
         return $objectData;
@@ -672,49 +674,51 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/get-folder")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getFolderAction(Request $request)
     {
         // check for lock
-        if (Element\Editlock::isLocked($request->get("id"), "object")) {
+        if (Element\Editlock::isLocked($request->get('id'), 'object')) {
             return $this->json([
-                "editlock" => Element\Editlock::getByElement($request->get("id"), "object")
+                'editlock' => Element\Editlock::getByElement($request->get('id'), 'object')
             ]);
         }
-        Element\Editlock::lock($request->get("id"), "object");
+        Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = Object::getById(intval($request->get("id")));
-        if ($object->isAllowed("view")) {
+        $object = Object::getById(intval($request->get('id')));
+        if ($object->isAllowed('view')) {
             $objectData = [];
 
-            $objectData["general"] = [];
-            $objectData["idPath"] = Element\Service::getIdPath($object);
-            $allowedKeys = ["o_published", "o_key", "o_id", "o_type", "o_path", "o_modificationDate", "o_creationDate", "o_userOwner", "o_userModification"];
+            $objectData['general'] = [];
+            $objectData['idPath'] = Element\Service::getIdPath($object);
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
             foreach (get_object_vars($object) as $key => $value) {
-                if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
-                    $objectData["general"][$key] = $value;
+                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                    $objectData['general'][$key] = $value;
                 }
             }
-            $objectData["general"]["fullpath"] = $object->getRealFullPath();
+            $objectData['general']['fullpath'] = $object->getRealFullPath();
 
-            $objectData["general"]["o_locked"] = $object->isLocked();
+            $objectData['general']['o_locked'] = $object->isLocked();
 
-            $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["classes"] = $this->prepareChildClasses($object->getDao()->getClasses());
+            $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
+            $objectData['userPermissions'] = $object->getUserPermissions();
+            $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             // grid-config
-            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
+            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getUser()->getId() . '.psf';
             if (is_file($configFile)) {
                 $gridConfig = Tool\Serialize::unserialize(file_get_contents($configFile));
                 if ($gridConfig) {
-                    $selectedClassId = $gridConfig["classId"];
+                    $selectedClassId = $gridConfig['classId'];
 
-                    foreach ($objectData["classes"] as $class) {
-                        if ($class["id"] == $selectedClassId) {
-                            $objectData["selectedClass"] = $selectedClassId;
+                    foreach ($objectData['classes'] as $class) {
+                        if ($class['id'] == $selectedClassId) {
+                            $objectData['selectedClass'] = $selectedClassId;
                             break;
                         }
                     }
@@ -723,14 +727,15 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
             return $this->json($objectData);
         } else {
-            Logger::debug("prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
+            Logger::debug('prevented getting folder id [ ' . $object->getId() . ' ] because of missing permissions');
 
-            return $this->json(["success" => false, "message" => "missing_permission"]);
+            return $this->json(['success' => false, 'message' => 'missing_permission']);
         }
     }
 
     /**
      * @param $classes
+     *
      * @return array
      */
     protected function prepareChildClasses($classes)
@@ -738,8 +743,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $reduced = [];
         foreach ($classes as $class) {
             $reduced[] = [
-                "id" => $class->getId(),
-                "name" => $class->getName()
+                'id' => $class->getId(),
+                'name' => $class->getName()
             ];
         }
 
@@ -748,96 +753,100 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/add")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addAction(Request $request)
     {
         $success = false;
 
-        $className = "Pimcore\\Model\\Object\\" . ucfirst($request->get("className"));
-        $parent = Object::getById($request->get("parentId"));
+        $className = 'Pimcore\\Model\\Object\\' . ucfirst($request->get('className'));
+        $parent = Object::getById($request->get('parentId'));
 
-        $message = "";
-        if ($parent->isAllowed("create")) {
-            $intendedPath = $parent->getRealFullPath() . "/" . $request->get("key");
+        $message = '';
+        if ($parent->isAllowed('create')) {
+            $intendedPath = $parent->getRealFullPath() . '/' . $request->get('key');
 
             if (!Object\Service::pathExists($intendedPath)) {
-                $object = $this->get("pimcore.model.factory")->build($className);
+                $object = $this->get('pimcore.model.factory')->build($className);
                 if ($object instanceof Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
                 }
 
-                if ($request->get("variantViaTree")) {
-                    $parentId = $request->get("parentId");
+                if ($request->get('variantViaTree')) {
+                    $parentId = $request->get('parentId');
                     $parent = Object::getById($parentId);
                     $object->setClassId($parent->getClass()->getId());
                 } else {
-                    $object->setClassId($request->get("classId"));
+                    $object->setClassId($request->get('classId'));
                 }
 
-                $object->setClassName($request->get("className"));
-                $object->setParentId($request->get("parentId"));
-                $object->setKey($request->get("key"));
+                $object->setClassName($request->get('className'));
+                $object->setParentId($request->get('parentId'));
+                $object->setKey($request->get('key'));
                 $object->setCreationDate(time());
                 $object->setUserOwner($this->getUser()->getId());
                 $object->setUserModification($this->getUser()->getId());
                 $object->setPublished(false);
 
-                if ($request->get("objecttype") == Object\AbstractObject::OBJECT_TYPE_OBJECT
-                    || $request->get("objecttype") == Object\AbstractObject::OBJECT_TYPE_VARIANT) {
-                    $object->setType($request->get("objecttype"));
+                if ($request->get('objecttype') == Object\AbstractObject::OBJECT_TYPE_OBJECT
+                    || $request->get('objecttype') == Object\AbstractObject::OBJECT_TYPE_VARIANT) {
+                    $object->setType($request->get('objecttype'));
                 }
 
                 try {
                     $object->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    return $this->json(["success" => false, "message" => $e->getMessage()]);
+                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
-                $message = "prevented creating object because object with same path+key already exists";
+                $message = 'prevented creating object because object with same path+key already exists';
                 Logger::debug($message);
             }
         } else {
-            $message = "prevented adding object because of missing permissions";
+            $message = 'prevented adding object because of missing permissions';
             Logger::debug($message);
         }
 
         if ($success) {
             return $this->json([
-                "success" => $success,
-                "id" => $object->getId(),
-                "type" => $object->getType(),
-                "message" => $message
+                'success' => $success,
+                'id' => $object->getId(),
+                'type' => $object->getType(),
+                'message' => $message
             ]);
         } else {
             return $this->json([
-                "success" => $success,
-                "message" => $message
+                'success' => $success,
+                'message' => $message
             ]);
         }
     }
 
     /**
      * @Route("/add-folder")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addFolderAction(Request $request)
     {
         $success = false;
 
-        $parent = Object::getById($request->get("parentId"));
-        if ($parent->isAllowed("create")) {
-            if (!Object\Service::pathExists($parent->getRealFullPath() . "/" . $request->get("key"))) {
+        $parent = Object::getById($request->get('parentId'));
+        if ($parent->isAllowed('create')) {
+            if (!Object\Service::pathExists($parent->getRealFullPath() . '/' . $request->get('key'))) {
                 $folder = Object\Folder::create([
-                    "o_parentId" => $request->get("parentId"),
-                    "o_creationDate" => time(),
-                    "o_userOwner" => $this->getUser()->getId(),
-                    "o_userModification" => $this->getUser()->getId(),
-                    "o_key" => $request->get("key"),
-                    "o_published" => true
+                    'o_parentId' => $request->get('parentId'),
+                    'o_creationDate' => time(),
+                    'o_userOwner' => $this->getUser()->getId(),
+                    'o_userModification' => $this->getUser()->getId(),
+                    'o_key' => $request->get('key'),
+                    'o_published' => true
                 ]);
 
                 $folder->setCreationDate(time());
@@ -848,61 +857,65 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     $folder->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    return $this->json(["success" => false, "message" => $e->getMessage()]);
+                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
             }
         } else {
-            Logger::debug("prevented creating object id because of missing permissions");
+            Logger::debug('prevented creating object id because of missing permissions');
         }
 
-        return $this->json(["success" => $success]);
+        return $this->json(['success' => $success]);
     }
 
     /**
      * @Route("/delete")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
-        if ($request->get("type") == "childs") {
-            $parentObject = Object::getById($request->get("id"));
+        if ($request->get('type') == 'childs') {
+            $parentObject = Object::getById($request->get('id'));
 
             $list = new Object\Listing();
             $list->setCondition("o_path LIKE '" . $parentObject->getRealFullPath() . "/%'");
-            $list->setLimit(intval($request->get("amount")));
-            $list->setOrderKey("LENGTH(o_path)", false);
-            $list->setOrder("DESC");
+            $list->setLimit(intval($request->get('amount')));
+            $list->setOrderKey('LENGTH(o_path)', false);
+            $list->setOrder('DESC');
 
             $objects = $list->load();
 
             $deletedItems = [];
             foreach ($objects as $object) {
                 $deletedItems[] = $object->getRealFullPath();
-                if ($object->isAllowed("delete")) {
+                if ($object->isAllowed('delete')) {
                     $object->delete();
                 }
             }
 
-            return $this->json(["success" => true, "deleted" => $deletedItems]);
-        } elseif ($request->get("id")) {
-            $object = Object::getById($request->get("id"));
+            return $this->json(['success' => true, 'deleted' => $deletedItems]);
+        } elseif ($request->get('id')) {
+            $object = Object::getById($request->get('id'));
             if ($object) {
-                if (!$object->isAllowed("delete")) {
-                    return $this->json(["success" => false, "message" => "missing_permission"]);
+                if (!$object->isAllowed('delete')) {
+                    return $this->json(['success' => false, 'message' => 'missing_permission']);
                 } else {
                     $object->delete();
                 }
             }
 
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
-            return $this->json(["success" => true]);
+            return $this->json(['success' => true]);
         }
     }
 
     /**
      * @Route("/delete-info")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function deleteInfoAction(Request $request)
@@ -913,7 +926,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         $totalChilds = 0;
 
-        $ids = $request->get("id");
+        $ids = $request->get('id');
         $ids = explode(',', $ids);
 
         foreach ($ids as $id) {
@@ -924,18 +937,17 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
                 $hasDependency |= $object->getDependencies()->isRequired();
             } catch (\Exception $e) {
-                Logger::err("failed to access object with id: " . $id);
+                Logger::err('failed to access object with id: ' . $id);
                 continue;
             }
-
 
             // check for children
             if ($object instanceof Object\AbstractObject) {
                 $recycleJobs[] = [[
-                    "url" => "/admin/recyclebin/add",
-                    "params" => [
-                        "type" => "object",
-                        "id" => $object->getId()
+                    'url' => '/admin/recyclebin/add',
+                    'params' => [
+                        'type' => 'object',
+                        'id' => $object->getId()
                     ]
                 ]];
 
@@ -956,12 +968,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                         $deleteObjectsPerRequest = 5;
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
-                                "url" => "/admin/object/delete",
-                                "params" => [
-                                    "step" => $i,
-                                    "amount" => $deleteObjectsPerRequest,
-                                    "type" => "childs",
-                                    "id" => $object->getId()
+                                'url' => '/admin/object/delete',
+                                'params' => [
+                                    'step' => $i,
+                                    'amount' => $deleteObjectsPerRequest,
+                                    'type' => 'childs',
+                                    'id' => $object->getId()
                                 ]
                             ]];
                         }
@@ -970,9 +982,9 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
                 // the object itself is the last one
                 $deleteJobs[] = [[
-                    "url" => "/admin/object/delete",
-                    "params" => [
-                        "id" => $object->getId()
+                    'url' => '/admin/object/delete',
+                    'params' => [
+                        'id' => $object->getId()
                     ]
                 ]];
             }
@@ -987,18 +999,21 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
 
         return $this->json([
-            "hasDependencies" => $hasDependency,
-            "childs" => $totalChilds,
-            "deletejobs" => $deleteJobs,
-            "batchDelete" => count($ids) > 1,
-            "elementKey" => $elementKey
+            'hasDependencies' => $hasDependency,
+            'childs' => $totalChilds,
+            'deletejobs' => $deleteJobs,
+            'batchDelete' => count($ids) > 1,
+            'elementKey' => $elementKey
         ]);
     }
 
     /**
      * @Route("/update")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function updateAction(Request $request)
@@ -1006,7 +1021,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $success = false;
         $allowUpdate = true;
 
-        $object = Object::getById($request->get("id"));
+        $object = Object::getById($request->get('id'));
         if ($object instanceof Object\Concrete) {
             $object->setOmitMandatoryCheck(true);
         }
@@ -1016,47 +1031,46 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         if ($object instanceof Object\Concrete) {
             $latestVersion = $object->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
-                return $this->json(["success" => false, "message" => "You can't relocate if there's a newer not published version"]);
+                return $this->json(['success' => false, 'message' => "You can't relocate if there's a newer not published version"]);
             }
         }
 
+        $values = $this->decodeJson($request->get('values'));
 
-        $values = $this->decodeJson($request->get("values"));
-
-        if ($object->isAllowed("settings")) {
-            if ($values["key"] && $object->isAllowed("rename")) {
-                $object->setKey($values["key"]);
-            } elseif ($values["key"] != $object->getKey()) {
-                Logger::debug("prevented renaming object because of missing permissions ");
+        if ($object->isAllowed('settings')) {
+            if ($values['key'] && $object->isAllowed('rename')) {
+                $object->setKey($values['key']);
+            } elseif ($values['key'] != $object->getKey()) {
+                Logger::debug('prevented renaming object because of missing permissions ');
             }
 
-            if ($values["parentId"]) {
-                $parent = Object::getById($values["parentId"]);
+            if ($values['parentId']) {
+                $parent = Object::getById($values['parentId']);
 
                 //check if parent is changed
                 if ($object->getParentId() != $parent->getId()) {
-                    if (!$parent->isAllowed("create")) {
-                        throw new \Exception("Prevented moving object - no create permission on new parent ");
+                    if (!$parent->isAllowed('create')) {
+                        throw new \Exception('Prevented moving object - no create permission on new parent ');
                     }
 
-                    $objectWithSamePath = Object::getByPath($parent->getRealFullPath() . "/" . $object->getKey());
+                    $objectWithSamePath = Object::getByPath($parent->getRealFullPath() . '/' . $object->getKey());
 
                     if ($objectWithSamePath != null) {
                         $allowUpdate = false;
 
-                        return $this->json(["success" => false, "message" => "prevented creating object because object with same path+key already exists"]);
+                        return $this->json(['success' => false, 'message' => 'prevented creating object because object with same path+key already exists']);
                     }
 
                     if ($object->isLocked()) {
-                        return $this->json(["success" => false, "message" => "prevented moving object, because it is locked: ID: " . $object->getId()]);
+                        return $this->json(['success' => false, 'message' => 'prevented moving object, because it is locked: ID: ' . $object->getId()]);
                     }
 
-                    $object->setParentId($values["parentId"]);
+                    $object->setParentId($values['parentId']);
                 }
             }
 
-            if (array_key_exists("locked", $values)) {
-                $object->setLocked($values["locked"]);
+            if (array_key_exists('locked', $values)) {
+                $object->setLocked($values['locked']);
             }
 
             if ($allowUpdate) {
@@ -1069,39 +1083,42 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 } catch (\Exception $e) {
                     Logger::error($e);
 
-                    return $this->json(["success" => false, "message" => $e->getMessage()]);
+                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
-                Logger::debug("prevented move of object, object with same path+key already exists in this location.");
+                Logger::debug('prevented move of object, object with same path+key already exists in this location.');
             }
-        } elseif ($object->isAllowed("rename") && $values["key"]) {
+        } elseif ($object->isAllowed('rename') && $values['key']) {
             //just rename
             try {
-                $object->setKey($values["key"]);
+                $object->setKey($values['key']);
                 $object->save();
                 $success = true;
             } catch (\Exception $e) {
                 Logger::error($e);
 
-                return $this->json(["success" => false, "message" => $e->getMessage()]);
+                return $this->json(['success' => false, 'message' => $e->getMessage()]);
             }
         } else {
-            Logger::debug("prevented update object because of missing permissions.");
+            Logger::debug('prevented update object because of missing permissions.');
         }
 
-        return $this->json(["success" => $success]);
+        return $this->json(['success' => $success]);
     }
 
     /**
      * @Route("/save")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function saveAction(Request $request)
     {
         try {
-            $object = Object::getById($request->get("id"));
+            $object = Object::getById($request->get('id'));
             $originalModificationDate = $object->getModificationDate();
 
             // set the latest available version for editmode
@@ -1109,15 +1126,15 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $object->setUserModification($this->getUser()->getId());
 
             // data
-            if ($request->get("data")) {
-                $data = $this->decodeJson($request->get("data"));
+            if ($request->get('data')) {
+                $data = $this->decodeJson($request->get('data'));
                 foreach ($data as $key => $value) {
                     $fd = $object->getClass()->getFieldDefinition($key);
                     if ($fd) {
                         if ($fd instanceof Object\ClassDefinition\Data\Localizedfields) {
                             $user = Tool\Admin::getCurrentUser();
                             if (!$user->getAdmin()) {
-                                $allowedLanguages = Object\Service::getLanguagePermissions($object, $user, "lEdit");
+                                $allowedLanguages = Object\Service::getLanguagePermissions($object, $user, 'lEdit');
                                 if (!is_null($allowedLanguages)) {
                                     $allowedLanguages = array_keys($allowedLanguages);
                                     $submittedLanguages = array_keys($data[$key]);
@@ -1130,7 +1147,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                             }
                         }
 
-                        if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
+                        if (method_exists($fd, 'isRemoteOwner') and $fd->isRemoteOwner()) {
                             $remoteClass = Object\ClassDefinition::getByName($fd->getOwnerClassName());
                             $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                             $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
@@ -1147,13 +1164,13 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
             // general settings
             // @TODO: IS THIS STILL NECESSARY?
-            if ($request->get("general")) {
-                $general = $this->decodeJson($request->get("general"));
+            if ($request->get('general')) {
+                $general = $this->decodeJson($request->get('general'));
 
                 // do not allow all values to be set, will cause problems (eg. icon)
                 if (is_array($general) && count($general) > 0) {
                     foreach ($general as $key => $value) {
-                        if (!in_array($key, ["o_id", "o_classId", "o_className", "o_type", "icon", "o_userOwner", "o_userModification"])) {
+                        if (!in_array($key, ['o_id', 'o_classId', 'o_className', 'o_type', 'icon', 'o_userOwner', 'o_userModification'])) {
                             $object->setValue($key, $value);
                         }
                     }
@@ -1162,15 +1179,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
             $object = $this->assignPropertiesFromEditmode($request, $object);
 
-
             // scheduled tasks
-            if ($request->get("scheduler")) {
+            if ($request->get('scheduler')) {
                 $tasks = [];
-                $tasksData = $this->decodeJson($request->get("scheduler"));
+                $tasksData = $this->decodeJson($request->get('scheduler'));
 
                 if (!empty($tasksData)) {
                     foreach ($tasksData as $taskData) {
-                        $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
+                        $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
 
                         $task = new Model\Schedule\Task($taskData);
                         $tasks[] = $task;
@@ -1180,19 +1196,19 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $object->setScheduledTasks($tasks);
             }
 
-            if ($request->get("task") == "unpublish") {
+            if ($request->get('task') == 'unpublish') {
                 $object->setPublished(false);
             }
-            if ($request->get("task") == "publish") {
+            if ($request->get('task') == 'publish') {
                 $object->setPublished(true);
             }
 
             // unpublish and save version is possible without checking mandatory fields
-            if ($request->get("task") == "unpublish" || $request->get("task") == "version") {
+            if ($request->get('task') == 'unpublish' || $request->get('task') == 'version') {
                 $object->setOmitMandatoryCheck(true);
             }
 
-            if (($request->get("task") == "publish" && $object->isAllowed("publish")) or ($request->get("task") == "unpublish" && $object->isAllowed("unpublish"))) {
+            if (($request->get('task') == 'publish' && $object->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish'))) {
                 if ($data) {
                     $this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data);
                 }
@@ -1201,34 +1217,34 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $treeData = $this->getTreeNodeConfig($object);
 
                 return $this->json([
-                    "success" => true,
-                    "general" => ["o_modificationDate" => $object->getModificationDate()],
-                    "treeData" => $treeData]);
-            } elseif ($request->get("task") == "session") {
+                    'success' => true,
+                    'general' => ['o_modificationDate' => $object->getModificationDate()],
+                    'treeData' => $treeData]);
+            } elseif ($request->get('task') == 'session') {
 
                 //$object->_fulldump = true; // not working yet, donno why
 
                 Tool\Session::useSession(function (AttributeBagInterface $session) use ($object) {
-                    $key = "object_" . $object->getId();
+                    $key = 'object_' . $object->getId();
                     $session->set($key, $object);
-                }, "pimcore_objects");
+                }, 'pimcore_objects');
 
-                return $this->json(["success" => true]);
+                return $this->json(['success' => true]);
             } else {
-                if ($object->isAllowed("save")) {
+                if ($object->isAllowed('save')) {
                     $object->saveVersion();
                     $treeData = $this->getTreeNodeConfig($object);
 
                     return $this->json([
-                        "success" => true,
-                        "general" => ["o_modificationDate" => $object->getModificationDate()],
-                        "treeData" => $treeData]);
+                        'success' => true,
+                        'general' => ['o_modificationDate' => $object->getModificationDate()],
+                        'treeData' => $treeData]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
@@ -1239,11 +1255,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      * @param Object\Concrete $object
      * @param $originalModificationDate
      * @param $data
+     *
      * @return JsonResponse
      */
     public function performFieldcollectionModificationCheck(Request $request, Object\Concrete $object, $originalModificationDate, $data)
     {
-        $modificationDate = $request->get("modificationDate");
+        $modificationDate = $request->get('modificationDate');
         if ($modificationDate != $originalModificationDate) {
             $fielddefinitions = $object->getClass()->getFieldDefinitions();
             foreach ($fielddefinitions as $fd) {
@@ -1251,12 +1268,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     if (isset($data[$fd->getName()])) {
                         $allowedTypes = $fd->getAllowedTypes();
                         foreach ($allowedTypes as $type) {
-                            /** @var  $fdDef Object\Fieldcollection\Definition */
+                            /** @var $fdDef Object\Fieldcollection\Definition */
                             $fdDef = Object\Fieldcollection\Definition::getByKey($type);
                             $childDefinitions = $fdDef->getFieldDefinitions();
                             foreach ($childDefinitions as $childDef) {
                                 if ($childDef instanceof Object\ClassDefinition\Data\Localizedfields) {
-                                    return $this->json(["success" => false, "message" => "Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again"]);
+                                    return $this->json(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
                                 }
                             }
                         }
@@ -1268,19 +1285,21 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/save-folder")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function saveFolderAction(Request $request)
     {
-        $object = Object::getById($request->get("id"));
+        $object = Object::getById($request->get('id'));
 
-        if ($object->isAllowed("publish")) {
+        if ($object->isAllowed('publish')) {
             try {
-                $classId = $request->get("class_id");
+                $classId = $request->get('class_id');
 
                 // general settings
-                $general = $this->decodeJson($request->get("general"));
+                $general = $this->decodeJson($request->get('general'));
                 $object->setValues($general);
                 $object->setUserModification($this->getUser()->getId());
 
@@ -1288,23 +1307,24 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
                 $object->save();
 
-                return $this->json(["success" => true]);
+                return $this->json(['success' => true]);
             } catch (\Exception $e) {
-                return $this->json(["success" => false, "message" => $e->getMessage()]);
+                return $this->json(['success' => false, 'message' => $e->getMessage()]);
             }
         }
 
-        return $this->json(["success" => false, "message" => "missing_permission"]);
+        return $this->json(['success' => false, 'message' => 'missing_permission']);
     }
 
     /**
      * @param Request $request
      * @param $object
+     *
      * @return mixed
      */
     protected function assignPropertiesFromEditmode(Request $request, $object)
     {
-        if ($request->get("properties")) {
+        if ($request->get('properties')) {
             $properties = [];
             // assign inherited properties
             foreach ($object->getProperties() as $p) {
@@ -1313,24 +1333,23 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
             }
 
-            $propertiesData = $this->decodeJson($request->get("properties"));
+            $propertiesData = $this->decodeJson($request->get('properties'));
 
             if (is_array($propertiesData)) {
                 foreach ($propertiesData as $propertyName => $propertyData) {
-                    $value = $propertyData["data"];
-
+                    $value = $propertyData['data'];
 
                     try {
                         $property = new Model\Property();
-                        $property->setType($propertyData["type"]);
+                        $property->setType($propertyData['type']);
                         $property->setName($propertyName);
-                        $property->setCtype("object");
+                        $property->setCtype('object');
                         $property->setDataFromEditmode($value);
-                        $property->setInheritable($propertyData["inheritable"]);
+                        $property->setInheritable($propertyData['inheritable']);
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        Logger::err("Can't add " . $propertyName . " to object " . $object->getRealFullPath());
+                        Logger::err("Can't add " . $propertyName . ' to object ' . $object->getRealFullPath());
                     }
                 }
             }
@@ -1342,61 +1361,66 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @Route("/publish-version")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById($request->get("id"));
+        $version = Model\Version::getById($request->get('id'));
         $object = $version->loadData();
 
         $currentObject = Object::getById($object->getId());
-        if ($currentObject->isAllowed("publish")) {
+        if ($currentObject->isAllowed('publish')) {
             $object->setPublished(true);
             $object->setUserModification($this->getUser()->getId());
             try {
                 $object->save();
                 $treeData = [];
-                $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
+                $treeData['qtipCfg'] = $object->getElementAdminStyle()->getElementQtipConfig();
 
                 return $this->json([
-                        "success" => true,
-                        "general" => ["o_modificationDate" => $object->getModificationDate() ],
-                        "treeData" => $treeData]
+                        'success' => true,
+                        'general' => ['o_modificationDate' => $object->getModificationDate() ],
+                        'treeData' => $treeData]
                 );
             } catch (\Exception $e) {
-                return $this->json(["success" => false, "message" => $e->getMessage()]);
+                return $this->json(['success' => false, 'message' => $e->getMessage()]);
             }
         }
 
-        return $this->json(["success" => false, "message" => "missing_permission"]);
+        return $this->json(['success' => false, 'message' => 'missing_permission']);
     }
 
     /**
      * @Route("/preview-version")
+     *
      * @param Request $request
      * @TemplatePhp()
+     *
      * @throws \Exception
+     *
      * @return array
      */
     public function previewVersionAction(Request $request)
     {
         Object\AbstractObject::setDoNotRestoreKeyAndPath(true);
 
-        $id = intval($request->get("id"));
+        $id = intval($request->get('id'));
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
         Object\AbstractObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object) {
-            if ($object->isAllowed("versions")) {
-                return ["object" => $object];
+            if ($object->isAllowed('versions')) {
+                return ['object' => $object];
             } else {
-                throw new \Exception("Permission denied, version id [" . $id . "]");
+                throw new \Exception('Permission denied, version id [' . $id . ']');
             }
         } else {
-            throw new \Exception("Version with id [" . $id . "] doesn't exist");
+            throw new \Exception('Version with id [' . $id . "] doesn't exist");
         }
     }
 
@@ -1407,7 +1431,9 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      * @param Request $request
      * @param from
      * @param to
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public function diffVersionsAction(Request $request, $from, $to)
@@ -1426,29 +1452,31 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         Object\AbstractObject::setDoNotRestoreKeyAndPath(false);
 
         if ($object1 && $object2) {
-            if ($object1->isAllowed("versions") && $object2->isAllowed("versions")) {
+            if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
                 return [
-                    "object1" => $object1,
-                    "object2" => $object2
+                    'object1' => $object1,
+                    'object2' => $object2
                 ];
             } else {
-                throw new \Exception("Permission denied, version ids [" . $id1 . ", " . $id2 . "]");
+                throw new \Exception('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
         } else {
-            throw new \Exception("Version with ids [" . $id1 . ", " . $id2 . "] doesn't exist");
+            throw new \Exception('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
         }
     }
 
     /**
      * @Route("/grid-proxy")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function gridProxyAction(Request $request)
     {
-        $requestedLanguage = $request->get("language");
+        $requestedLanguage = $request->get('language');
         if ($requestedLanguage) {
-            if ($requestedLanguage != "default") {
+            if ($requestedLanguage != 'default') {
                 //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
@@ -1456,47 +1484,47 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $requestedLanguage = $request->getLocale();
         }
 
-        if ($request->get("data")) {
-            if ($request->get("xaction") == "update") {
+        if ($request->get('data')) {
+            if ($request->get('xaction') == 'update') {
                 try {
-                    $data = $this->decodeJson($request->get("data"));
+                    $data = $this->decodeJson($request->get('data'));
 
                     // save
-                    $object = Object::getById($data["id"]);
+                    $object = Object::getById($data['id']);
                     /** @var Object\ClassDefinition $class */
                     $class = $object->getClass();
 
-                    if (!$object->isAllowed("publish")) {
+                    if (!$object->isAllowed('publish')) {
                         throw new \Exception("Permission denied. You don't have the rights to save this object.");
                     }
 
                     $user = Tool\Admin::getCurrentUser();
                     $allLanguagesAllowed = false;
                     if (!$user->isAdmin()) {
-                        $languagePermissions = $object->getPermissions("lEdit", $user);
+                        $languagePermissions = $object->getPermissions('lEdit', $user);
 
                         //sets allowed all languages modification when the lEdit column is empty
-                        $allLanguagesAllowed = $languagePermissions["lEdit"] == '';
+                        $allLanguagesAllowed = $languagePermissions['lEdit'] == '';
 
-                        $languagePermissions = explode(",", $languagePermissions["lEdit"]);
+                        $languagePermissions = explode(',', $languagePermissions['lEdit']);
                     }
 
                     $objectData = [];
                     foreach ($data as $key => $value) {
-                        $parts = explode("~", $key);
-                        if (substr($key, 0, 1) == "~") {
+                        $parts = explode('~', $key);
+                        if (substr($key, 0, 1) == '~') {
                             $type = $parts[1];
                             $field = $parts[2];
                             $keyid = $parts[3];
 
-                            if ($type == "classificationstore") {
-                                $groupKeyId = explode("-", $keyid);
+                            if ($type == 'classificationstore') {
+                                $groupKeyId = explode('-', $keyid);
                                 $groupId = $groupKeyId[0];
                                 $keyid = $groupKeyId[1];
 
-                                $getter = "get" . ucfirst($field);
+                                $getter = 'get' . ucfirst($field);
                                 if (method_exists($object, $getter)) {
-                                    /** @var  $classificationStoreData Object\Classificationstore */
+                                    /** @var $classificationStoreData Object\Classificationstore */
                                     $classificationStoreData = $object->$getter();
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
                                 }
@@ -1506,14 +1534,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                             $brickKey = $parts[1];
                             $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
 
-                            $fieldGetter = "get" . ucfirst($brickField);
-                            $brickGetter = "get" . ucfirst($brickType);
-                            $valueSetter = "set" . ucfirst($brickKey);
+                            $fieldGetter = 'get' . ucfirst($brickField);
+                            $brickGetter = 'get' . ucfirst($brickType);
+                            $valueSetter = 'set' . ucfirst($brickKey);
 
                             $brick = $object->$fieldGetter()->$brickGetter();
                             if (empty($brick)) {
-                                $classname = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($brickType);
-                                $brickSetter = "set" . ucfirst($brickType);
+                                $classname = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($brickType);
+                                $brickSetter = 'set' . ucfirst($brickType);
                                 $brick = new $classname($object);
                                 $object->$fieldGetter()->$brickSetter($brick);
                             }
@@ -1523,11 +1551,11 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                                 $fd = $class->getFieldDefinition($key);
                                 if (!$fd) {
                                     // try to get via localized fields
-                                    $localized = $class->getFieldDefinition("localizedfields");
+                                    $localized = $class->getFieldDefinition('localizedfields');
                                     if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
-                                            $currentLocale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+                                            $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
                                             if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }
@@ -1542,48 +1570,47 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
                     $object->setValues($objectData);
 
-
                     $object->save();
 
-                    return $this->json(["data" => Object\Service::gridObjectData($object, $request->get("fields"), $requestedLanguage), "success" => true]);
+                    return $this->json(['data' => Object\Service::gridObjectData($object, $request->get('fields'), $requestedLanguage), 'success' => true]);
                 } catch (\Exception $e) {
-                    return $this->json(["success" => false, "message" => $e->getMessage()]);
+                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
             }
         } else {
             // get list of objects
-            $folder = Object::getById($request->get("folderId"));
-            $class = Object\ClassDefinition::getById($request->get("classId"));
+            $folder = Object::getById($request->get('folderId'));
+            $class = Object\ClassDefinition::getById($request->get('classId'));
             $className = $class->getName();
 
             $colMappings = [
-                "filename" => "o_key",
-                "fullpath" => ["o_path", "o_key"],
-                "id" => "o_id",
-                "published" => "o_published",
-                "modificationDate" => "o_modificationDate",
-                "creationDate" => "o_creationDate"
+                'filename' => 'o_key',
+                'fullpath' => ['o_path', 'o_key'],
+                'id' => 'o_id',
+                'published' => 'o_published',
+                'modificationDate' => 'o_modificationDate',
+                'creationDate' => 'o_creationDate'
             ];
 
             $start = 0;
             $limit = 20;
-            $orderKey = "o_id";
-            $order = "ASC";
+            $orderKey = 'o_id';
+            $order = 'ASC';
 
             $fields = [];
             $bricks = [];
-            if ($request->get("fields")) {
-                $fields = $request->get("fields");
+            if ($request->get('fields')) {
+                $fields = $request->get('fields');
 
                 foreach ($fields as $f) {
-                    $parts = explode("~", $f);
+                    $parts = explode('~', $f);
                     $sub = substr($f, 0, 1);
-                    if (substr($f, 0, 1) == "~") {
+                    if (substr($f, 0, 1) == '~') {
                         $type = $parts[1];
                         //                        $field = $parts[2];
                         //                        $keyid = $parts[3];
                         // key value, ignore for now
-                        if ($type == "classificationstore") {
+                        if ($type == 'classificationstore') {
                         }
                     } elseif (count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
@@ -1591,13 +1618,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
             }
 
-            if ($request->get("limit")) {
-                $limit = $request->get("limit");
+            if ($request->get('limit')) {
+                $limit = $request->get('limit');
             }
-            if ($request->get("start")) {
-                $start = $request->get("start");
+            if ($request->get('start')) {
+                $start = $request->get('start');
             }
-
 
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
@@ -1608,14 +1634,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             }
             if (strlen($sortingSettings['orderKey']) > 0) {
                 $orderKey = $sortingSettings['orderKey'];
-                if (!(substr($orderKey, 0, 1) == "~")) {
+                if (!(substr($orderKey, 0, 1) == '~')) {
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
                     } elseif ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
-                        $orderKey = "concat(" . $orderKey . "__unit, " . $orderKey . "__value)";
+                        $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                         $doNotQuote = true;
-                    } elseif (strpos($orderKey, "~") !== false) {
-                        $orderKeyParts = explode("~", $orderKey);
+                    } elseif (strpos($orderKey, '~') !== false) {
+                        $orderKeyParts = explode('~', $orderKey);
                         if (count($orderKeyParts) == 2) {
                             $orderKey = $orderKeyParts[1];
                         }
@@ -1623,40 +1649,38 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
             }
 
-            $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
+            $listClass = '\\Pimcore\\Model\\Object\\' . ucfirst($className) . '\\Listing';
 
             $conditionFilters = [];
-            if ($request->get("only_direct_children") == "true") {
-                $conditionFilters[] = "o_parentId = " . $folder->getId();
+            if ($request->get('only_direct_children') == 'true') {
+                $conditionFilters[] = 'o_parentId = ' . $folder->getId();
             } else {
-                $conditionFilters[] = "(o_path = '" . $folder->getRealFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%')";
+                $conditionFilters[] = "(o_path = '" . $folder->getRealFullPath() . "' OR o_path LIKE '" . str_replace('//', '/', $folder->getRealFullPath() . '/') . "%')";
             }
 
             if (!$this->getUser()->isAdmin()) {
                 $userIds = $this->getUser()->getRoles();
                 $userIds[] = $this->getUser()->getId();
-                $conditionFilters[] .= " (
-                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                $conditionFilters[] .= ' (
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )";
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
             }
-
-
 
             $featureJoins = [];
             $featureFilters = false;
 
             // create filter condition
-            if ($request->get("filter")) {
-                $conditionFilters[] = Object\Service::getFilterCondition($request->get("filter"), $class);
-                $featureFilters = Object\Service::getFeatureFilters($request->get("filter"), $class);
+            if ($request->get('filter')) {
+                $conditionFilters[] = Object\Service::getFilterCondition($request->get('filter'), $class);
+                $featureFilters = Object\Service::getFeatureFilters($request->get('filter'), $class);
                 if ($featureFilters) {
-                    $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
+                    $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
                 }
             }
-            if ($request->get("condition")) {
-                $conditionFilters[] = "(" . $request->get("condition") . ")";
+            if ($request->get('condition')) {
+                $conditionFilters[] = '(' . $request->get('condition') . ')';
             }
 
             $list = new $listClass();
@@ -1666,15 +1690,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 }
             }
 
-            $list->setCondition(implode(" AND ", $conditionFilters));
+            $list->setCondition(implode(' AND ', $conditionFilters));
             $list->setLimit($limit);
             $list->setOffset($start);
 
-
-            if (isset($sortingSettings["isFeature"]) && $sortingSettings["isFeature"]) {
-                $orderKey = "cskey_" . $sortingSettings["fieldname"] . "_" . $sortingSettings["groupId"]. "_" . $sortingSettings["keyId"];
+            if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
+                $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId']. '_' . $sortingSettings['keyId'];
                 $list->setOrderKey($orderKey);
-                $list->setGroupBy("o_id");
+                $list->setGroupBy('o_id');
 
                 $featureJoins[] = $sortingSettings;
             } else {
@@ -1696,13 +1719,15 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $objects[] = $o;
             }
 
-            return $this->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 
     /**
      * @Route("/copy-info")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function copyInfoAction(Request $request)
@@ -1711,21 +1736,21 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $pasteJobs = [];
 
         Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
-            $session->set($transactionId, ["idMapping" => []]);
-        }, "pimcore_copy");
+            $session->set($transactionId, ['idMapping' => []]);
+        }, 'pimcore_copy');
 
-        if ($request->get("type") == "recursive" || $request->get("type") == "recursive-update-references") {
-            $object = Object::getById($request->get("sourceId"));
+        if ($request->get('type') == 'recursive' || $request->get('type') == 'recursive-update-references') {
+            $object = Object::getById($request->get('sourceId'));
 
             // first of all the new parent
             $pasteJobs[] = [[
-                "url" => "/admin/object/copy",
-                "params" => [
-                    "sourceId" => $request->get("sourceId"),
-                    "targetId" => $request->get("targetId"),
-                    "type" => "child",
-                    "transactionId" => $transactionId,
-                    "saveParentId" => true
+                'url' => '/admin/object/copy',
+                'params' => [
+                    'sourceId' => $request->get('sourceId'),
+                    'targetId' => $request->get('targetId'),
+                    'type' => 'child',
+                    'transactionId' => $transactionId,
+                    'saveParentId' => true
                 ]
             ]];
 
@@ -1733,21 +1758,21 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 // get amount of children
                 $list = new Object\Listing();
                 $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
-                $list->setOrderKey("LENGTH(o_path)", false);
-                $list->setOrder("ASC");
+                $list->setOrderKey('LENGTH(o_path)', false);
+                $list->setOrder('ASC');
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            "url" => "/admin/object/copy",
-                            "params" => [
-                                "sourceId" => $id,
-                                "targetParentId" => $request->get("targetId"),
-                                "sourceParentId" => $request->get("sourceId"),
-                                "type" => "child",
-                                "transactionId" => $transactionId
+                            'url' => '/admin/object/copy',
+                            'params' => [
+                                'sourceId' => $id,
+                                'targetParentId' => $request->get('targetId'),
+                                'sourceParentId' => $request->get('sourceId'),
+                                'type' => 'child',
+                                'transactionId' => $transactionId
                             ]
                         ]];
                     }
@@ -1755,121 +1780,123 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             }
 
             // add id-rewrite steps
-            if ($request->get("type") == "recursive-update-references") {
+            if ($request->get('type') == 'recursive-update-references') {
                 for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = [[
-                        "url" => "/admin/object/copy-rewrite-ids",
-                        "params" => [
-                            "transactionId" => $transactionId,
-                            "_dc" => uniqid()
+                        'url' => '/admin/object/copy-rewrite-ids',
+                        'params' => [
+                            'transactionId' => $transactionId,
+                            '_dc' => uniqid()
                         ]
                     ]];
                 }
             }
-        } elseif ($request->get("type") == "child" || $request->get("type") == "replace") {
+        } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                "url" => "/admin/object/copy",
-                "params" => [
-                    "sourceId" => $request->get("sourceId"),
-                    "targetId" => $request->get("targetId"),
-                    "type" => $request->get("type"),
-                    "transactionId" => $transactionId
+                'url' => '/admin/object/copy',
+                'params' => [
+                    'sourceId' => $request->get('sourceId'),
+                    'targetId' => $request->get('targetId'),
+                    'type' => $request->get('type'),
+                    'transactionId' => $transactionId
                 ]
             ]];
         }
 
-
         return $this->json([
-            "pastejobs" => $pasteJobs
+            'pastejobs' => $pasteJobs
         ]);
     }
 
     /**
      * @Route("/copy-rewrite-ids")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function copyRewriteIdsAction(Request $request)
     {
-        $transactionId = $request->get("transactionId");
+        $transactionId = $request->get('transactionId');
 
         $idStore = Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
             return $session->get($transactionId);
-        }, "pimcore_copy");
+        }, 'pimcore_copy');
 
-        if (!array_key_exists("rewrite-stack", $idStore)) {
-            $idStore["rewrite-stack"] = array_values($idStore["idMapping"]);
+        if (!array_key_exists('rewrite-stack', $idStore)) {
+            $idStore['rewrite-stack'] = array_values($idStore['idMapping']);
         }
 
-        $id = array_shift($idStore["rewrite-stack"]);
+        $id = array_shift($idStore['rewrite-stack']);
         $object = Object::getById($id);
 
         // create rewriteIds() config parameter
-        $rewriteConfig = ["object" => $idStore["idMapping"]];
+        $rewriteConfig = ['object' => $idStore['idMapping']];
 
         $object = Object\Service::rewriteIds($object, $rewriteConfig);
 
         $object->setUserModification($this->getUser()->getId());
         $object->save();
 
-
         // write the store back to the session
         Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId, $idStore) {
             $session->set($transactionId, $idStore);
-        }, "pimcore_copy");
+        }, 'pimcore_copy');
 
         return $this->json([
-            "success" => true,
-            "id" => $id
+            'success' => true,
+            'id' => $id
         ]);
     }
 
     /**
      * @Route("/copy")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function copyAction(Request $request)
     {
         $success = false;
-        $message = "";
-        $sourceId = intval($request->get("sourceId"));
+        $message = '';
+        $sourceId = intval($request->get('sourceId'));
         $source = Object::getById($sourceId);
-        $session = Tool\Session::get("pimcore_copy");
+        $session = Tool\Session::get('pimcore_copy');
 
-        $targetId = intval($request->get("targetId"));
-        if ($request->get("targetParentId")) {
-            $sourceParent = Object::getById($request->get("sourceParentId"));
+        $targetId = intval($request->get('targetId'));
+        if ($request->get('targetParentId')) {
+            $sourceParent = Object::getById($request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
-            if ($session->{$request->get("transactionId")}["parentId"]) {
-                $targetParent = Object::getById($session->{$request->get("transactionId")}["parentId"]);
+            if ($session->{$request->get('transactionId')}['parentId']) {
+                $targetParent = Object::getById($session->{$request->get('transactionId')}['parentId']);
             } else {
-                $targetParent = Object::getById($request->get("targetParentId"));
+                $targetParent = Object::getById($request->get('targetParentId'));
             }
 
-            $targetPath = preg_replace("@^" . $sourceParent->getRealFullPath() . "@", $targetParent . "/", $source->getRealPath());
+            $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
             $target = Object::getByPath($targetPath);
         } else {
             $target = Object::getById($targetId);
         }
 
-        if ($target->isAllowed("create")) {
+        if ($target->isAllowed('create')) {
             $source = Object::getById($sourceId);
             if ($source != null) {
                 try {
-                    if ($request->get("type") == "child") {
+                    if ($request->get('type') == 'child') {
                         $newObject = $this->_objectService->copyAsChild($target, $source);
 
-                        $session->{$request->get("transactionId")}["idMapping"][(int)$source->getId()] = (int)$newObject->getId();
+                        $session->{$request->get('transactionId')}['idMapping'][(int)$source->getId()] = (int)$newObject->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists
-                        if ($request->get("saveParentId")) {
-                            $session->{$request->get("transactionId")}["parentId"] = $newObject->getId();
+                        if ($request->get('saveParentId')) {
+                            $session->{$request->get('transactionId')}['parentId'] = $newObject->getId();
                             Tool\Session::writeClose();
                         }
-                    } elseif ($request->get("type") == "replace") {
+                    } elseif ($request->get('type') == 'replace') {
                         $this->_objectService->copyContents($target, $source);
                     }
 
@@ -1877,33 +1904,35 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 } catch (\Exception $e) {
                     Logger::err($e);
                     $success = false;
-                    $message = $e->getMessage() . " in object " . $source->getRealFullPath() . " [id: " . $source->getId() . "]";
+                    $message = $e->getMessage() . ' in object ' . $source->getRealFullPath() . ' [id: ' . $source->getId() . ']';
                 }
             } else {
                 Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");
 
-                return $this->json(["success" => false, "message" => "source object not found"]);
+                return $this->json(['success' => false, 'message' => 'source object not found']);
             }
         } else {
-            Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+            Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
 
-            return $this->json(["error" => false, "message" => "missing_permission"]);
+            return $this->json(['error' => false, 'message' => 'missing_permission']);
         }
 
-        return $this->json(["success" => $success, "message" => $message]);
+        return $this->json(['success' => $success, 'message' => $message]);
     }
 
     /**
      * @Route("/preview")
+     *
      * @param Request $request
+     *
      * @return Response|RedirectResponse
      */
     public function previewAction(Request $request)
     {
-        $id = $request->get("id");
-        $key = "object_" . $id;
+        $id = $request->get('id');
+        $key = 'object_' . $id;
 
-        $session = Tool\Session::getReadOnly("pimcore_objects");
+        $session = Tool\Session::getReadOnly('pimcore_objects');
         if ($session->has($key)) {
             $object = $session->get($key);
         } else {
@@ -1916,19 +1945,19 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $vars = get_object_vars($object);
         foreach ($vars as $key => $value) {
             if (!empty($value) && (is_string($value) || is_numeric($value))) {
-                $url = str_replace("%" . $key, urlencode($value), $url);
+                $url = str_replace('%' . $key, urlencode($value), $url);
             } else {
-                if (strpos($url, "%" . $key) !== false) {
-                    return new Response("No preview available, please ensure that all fields which are required for the preview are filled correctly.");
+                if (strpos($url, '%' . $key) !== false) {
+                    return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
                 }
             }
         }
 
         // replace all remainaing % signs
-        $url = str_replace("%", "%25", $url);
+        $url = str_replace('%', '%25', $url);
 
         $urlParts = parse_url($url);
-        $this->redirect($urlParts["path"] . "?pimcore_object_preview=" . $id . "&_dc=" . time() . "&" . $urlParts["query"]);
+        $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . '&' . $urlParts['query']);
     }
 
     /**
@@ -1939,8 +1968,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      */
     protected function processRemoteOwnerRelations($object, $toDelete, $toAdd, $ownerFieldName)
     {
-        $getter = "get" . ucfirst($ownerFieldName);
-        $setter = "set" . ucfirst($ownerFieldName);
+        $getter = 'get' . ucfirst($ownerFieldName);
+        $setter = 'set' . ucfirst($ownerFieldName);
 
         foreach ($toDelete as $id) {
             $owner = Object::getById($id);
@@ -1954,14 +1983,13 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                             $owner->$setter($currentData);
                             $owner->setUserModification($this->getUser()->getId());
                             $owner->save();
-                            Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: deleted [ " . $object->getId() . " ] from [ $ownerFieldName]");
+                            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
                         }
                     }
                 }
             }
         }
-
 
         foreach ($toAdd as $id) {
             $owner = Object::getById($id);
@@ -1973,7 +2001,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $owner->$setter($currentData);
                 $owner->setUserModification($this->getUser()->getId());
                 $owner->save();
-                Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: added [ " . $object->getId() . " ] to [ $ownerFieldName ]");
+                Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: added [ ' . $object->getId() . " ] to [ $ownerFieldName ]");
             }
         }
     }
@@ -1981,6 +2009,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @param  array $relations
      * @param  array $value
+     *
      * @return array
      */
     protected function detectDeletedRemoteOwnerRelations($relations, $value)
@@ -1988,7 +2017,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $originals = [];
         $changed = [];
         foreach ($relations as $r) {
-            $originals[] = $r["dest_id"];
+            $originals[] = $r['dest_id'];
         }
         if (is_array($value)) {
             foreach ($value as $row) {
@@ -2003,6 +2032,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @param  array $relations
      * @param  array $value
+     *
      * @return array
      */
     protected function detectAddedRemoteOwnerRelations($relations, $value)
@@ -2010,7 +2040,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $originals = [];
         $changed = [];
         foreach ($relations as $r) {
-            $originals[] = $r["dest_id"];
+            $originals[] = $r['dest_id'];
         }
         if (is_array($value)) {
             foreach ($value as $row) {
@@ -2024,6 +2054,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
     /**
      * @param  Object\Concrete $object
+     *
      * @return Object\Concrete
      */
     protected function getLatestVersion(Object\Concrete $object)
@@ -2055,8 +2086,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         // check permissions
         $notRestrictedActions = [];
-        if (!in_array($request->get("action"), $notRestrictedActions)) {
-            $this->checkPermission("objects");
+        if (!in_array($request->get('action'), $notRestrictedActions)) {
+            $this->checkPermission('objects');
         }
 
         $this->_objectService = new Object\Service($this->getUser());

@@ -23,21 +23,22 @@ class HybridAuth
      */
     public static function init()
     {
-        $cacheService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.full_page_cache");
-        $cacheService->disable("HybridAuth");
+        $cacheService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.full_page_cache');
+        $cacheService->disable('HybridAuth');
     }
 
     /**
      * @return mixed|null
+     *
      * @throws \Exception
      */
     public static function getConfiguration()
     {
         $config = null;
-        $configFile = \Pimcore\Config::locateConfigFile("hybridauth.php");
+        $configFile = \Pimcore\Config::locateConfigFile('hybridauth.php');
         if (is_file($configFile)) {
             $config = include($configFile);
-            $config["base_url"] = \Pimcore\Tool::getHostUrl() . "/hybridauth/endpoint";
+            $config['base_url'] = \Pimcore\Tool::getHostUrl() . '/hybridauth/endpoint';
         } else {
             throw new \Exception("HybridAuth configuration not found. Please place it into this file: $configFile");
         }
@@ -64,6 +65,7 @@ class HybridAuth
     /**
      * @param string $provider
      * @param array|null $params
+     *
      * @return \Hybrid_Provider_Adapter
      */
     public static function authenticate($provider, $params = null)
@@ -83,9 +85,6 @@ class HybridAuth
         return $adapter;
     }
 
-    /**
-     *
-     */
     public static function process()
     {
         self::init();

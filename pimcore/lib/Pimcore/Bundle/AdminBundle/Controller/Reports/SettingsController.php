@@ -24,21 +24,22 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SettingsController extends ReportsControllerBase
 {
-
     /**
      * @Route("/get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAction(Request $request)
     {
-        $this->checkPermission("system_settings");
+        $this->checkPermission('system_settings');
 
         $conf = $this->getConfig();
 
         $response = [
-            "values" => $conf->toArray(),
-            "config" => []
+            'values' => $conf->toArray(),
+            'config' => []
         ];
 
         return $this->json($response);
@@ -46,18 +47,20 @@ class SettingsController extends ReportsControllerBase
 
     /**
      * @Route("/save")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function saveAction(Request $request)
     {
-        $this->checkPermission("system_settings");
+        $this->checkPermission('system_settings');
 
-        $values = $this->decodeJson($request->get("data"));
+        $values = $this->decodeJson($request->get('data'));
 
-        $configFile = \Pimcore\Config::locateConfigFile("reports.php");
+        $configFile = \Pimcore\Config::locateConfigFile('reports.php');
         File::putPhpFile($configFile, to_php_data_file_format($values));
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 }

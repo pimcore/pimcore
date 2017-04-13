@@ -67,43 +67,43 @@ class SystemConfigParamResource
     protected function getDefaultParameters()
     {
         return [
-            "database"   => [
-                "params" => [
-                    "host"     => "localhost",
-                    "port"     => 3306,
-                    "dbname"   => "",
-                    "username" => "root",
-                    "password" => "",
+            'database'   => [
+                'params' => [
+                    'host'     => 'localhost',
+                    'port'     => 3306,
+                    'dbname'   => '',
+                    'username' => 'root',
+                    'password' => '',
                 ]
             ],
-            "email"      => [
-                "method" => "mail",
-                "smtp"   => [
-                    "host" => "",
-                    "port" => "",
-                    "ssl"  => null,
-                    "name" => "",
-                    "auth" => [
-                        "method"   => null,
-                        "username" => "",
-                        "password" => ""
+            'email'      => [
+                'method' => 'mail',
+                'smtp'   => [
+                    'host' => '',
+                    'port' => '',
+                    'ssl'  => null,
+                    'name' => '',
+                    'auth' => [
+                        'method'   => null,
+                        'username' => '',
+                        'password' => ''
                     ]
                 ],
-                "debug"  => [
-                    "emailaddresses" => ""
+                'debug'  => [
+                    'emailaddresses' => ''
                 ]
             ],
-            "newsletter" => [
-                "method" => "mail",
-                "smtp"   => [
-                    "host" => "",
-                    "port" => "",
-                    "ssl"  => null,
-                    "name" => "",
-                    "auth" => [
-                        "method"   => null,
-                        "username" => "",
-                        "password" => ""
+            'newsletter' => [
+                'method' => 'mail',
+                'smtp'   => [
+                    'host' => '',
+                    'port' => '',
+                    'ssl'  => null,
+                    'name' => '',
+                    'auth' => [
+                        'method'   => null,
+                        'username' => '',
+                        'password' => ''
                     ]
                 ]
             ]

@@ -60,7 +60,6 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
             throw new \Exception('Tenant is not of type AbstractBatchProcessingWorker');
         }
 
-
         if ($queue == 'preparation') {
             $worker->resetPreparationQueue();
         } elseif ($queue == 'update-index') {

@@ -40,7 +40,6 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
         $value = trim($value);
         $currentFilter[$field] = $value;
 
-
         if (!empty($value)) {
             $productList->addCondition([$value], $field);
         }

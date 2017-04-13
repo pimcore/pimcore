@@ -32,7 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class WorkflowController extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @var Workflow\Manager $manager;
      */
@@ -65,8 +64,11 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
     /**
      * Returns a JSON of the available workflow actions to the admin panel
+     *
      * @Route("/get-workflow-form")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getWorkflowFormAction(Request $request)
@@ -88,8 +90,8 @@ class WorkflowController extends AdminController implements EventedControllerInt
         try {
 
             //get user selections
-            $this->selectedAction = empty($params['action'])    ? null : $params['action'];
-            $this->newState       = empty($params['newState'])  ? null : $params['newState'];
+            $this->selectedAction = empty($params['action']) ? null : $params['action'];
+            $this->newState       = empty($params['newState']) ? null : $params['newState'];
             $this->newStatus      = empty($params['newStatus']) ? null : $params['newStatus'];
 
             //always return the available actions
@@ -103,7 +105,6 @@ class WorkflowController extends AdminController implements EventedControllerInt
             } elseif ($this->selectedAction && !$workflow->isValidAction($this->selectedAction)) {
                 $this->selectedAction = null;
             }
-
 
             //if user has selected an action & it's valid
             if ($this->selectedAction) {
@@ -141,7 +142,9 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
     /**
      * @Route("/submit-workflow-transition")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function submitWorkflowTransitionAction(Request $request)
@@ -150,7 +153,6 @@ class WorkflowController extends AdminController implements EventedControllerInt
         $params = $request->get('workflow', []);
 
         if ($manager->validateAction($params['action'], $params['newState'], $params['newStatus'])) {
-
 
             //perform the action on the element
             try {
@@ -174,13 +176,12 @@ class WorkflowController extends AdminController implements EventedControllerInt
             ];
         }
 
-
         return $this->json($data, true);
     }
 
-
     /**
      * Returns a new workflow manager for the current element
+     *
      * @return Workflow\Manager
      */
     protected function getWorkflowManager()
@@ -192,9 +193,9 @@ class WorkflowController extends AdminController implements EventedControllerInt
         return $this->manager;
     }
 
-
     /**
      * Returns a Decorator for the Workflow
+     *
      * @return Workflow\Decorator
      */
     protected function getDecorator()
@@ -209,6 +210,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
     /**
      * @param  Document|Asset|ConcreteObject $element
+     *
      * @return Document|Asset|ConcreteObject
      */
     protected function getLatestVersion($element)
@@ -243,6 +245,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
     /**
      * @param FilterControllerEvent $event
+     *
      * @throws \Exception
      */
     public function onKernelController(FilterControllerEvent $event)

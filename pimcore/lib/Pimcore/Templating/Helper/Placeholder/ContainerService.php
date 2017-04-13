@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Registry
@@ -45,6 +44,7 @@ class ContainerService
 {
     /**
      * Placeholder containers
+     *
      * @var array
      */
     protected $_items = [];
@@ -54,6 +54,7 @@ class ContainerService
      *
      * @param  string $key
      * @param  array $value
+     *
      * @return Container
      */
     public function createContainer($key, array $value = [])
@@ -69,6 +70,7 @@ class ContainerService
      * Retrieve a placeholder container
      *
      * @param  string $key
+     *
      * @return Container
      */
     public function getContainer($key)
@@ -87,6 +89,7 @@ class ContainerService
      * Does a particular container exist?
      *
      * @param  string $key
+     *
      * @return bool
      */
     public function containerExists($key)
@@ -102,6 +105,7 @@ class ContainerService
      *
      * @param  string $key
      * @param  Container $container
+     *
      * @return ContainerService
      */
     public function setContainer($key, Container $container)
@@ -116,6 +120,7 @@ class ContainerService
      * Delete a container
      *
      * @param  string $key
+     *
      * @return bool
      */
     public function deleteContainer($key)

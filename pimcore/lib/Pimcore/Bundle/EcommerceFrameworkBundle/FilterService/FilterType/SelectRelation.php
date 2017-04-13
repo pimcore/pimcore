@@ -24,11 +24,10 @@ class SelectRelation extends AbstractFilterType
     {
         $field = $this->getField($filterDefinition);
 
-
         $values = $productList->getGroupByRelationValues($field, true);
 
         $objects = [];
-        Logger::info("Load Objects...");
+        Logger::info('Load Objects...');
 
         $availableRelations = [];
         if ($filterDefinition->getAvailableRelations()) {
@@ -40,7 +39,7 @@ class SelectRelation extends AbstractFilterType
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
-        Logger::info("done.");
+        Logger::info('done.');
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
@@ -49,14 +48,14 @@ class SelectRelation extends AbstractFilterType
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $values,
-            "objects" => $objects,
-            "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $values,
+            'objects' => $objects,
+            'fieldname' => $field,
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -73,12 +72,10 @@ class SelectRelation extends AbstractFilterType
         return $availableRelationsArray;
     }
 
-
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
-
 
         $value = $params[$field];
 
@@ -97,12 +94,11 @@ class SelectRelation extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
-
         if (!empty($value)) {
             //            if($isPrecondition) {
 //                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
 //            } else {
-                $productList->addRelationCondition($field, "dest = " . $productList->quote($value));
+                $productList->addRelationCondition($field, 'dest = ' . $productList->quote($value));
 //            }
         }
 

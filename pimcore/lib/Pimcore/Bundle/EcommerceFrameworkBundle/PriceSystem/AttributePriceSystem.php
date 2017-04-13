@@ -27,7 +27,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
  */
 class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 {
-
     /**
      * @param $productIds
      * @param $fromPrice
@@ -35,11 +34,12 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      * @param $order
      * @param $offset
      * @param $limit
+     *
      * @throws \Exception
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
     {
-        throw new \Exception("not supported yet");
+        throw new \Exception('not supported yet');
     }
 
     /**
@@ -48,6 +48,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      * @param $products
      *
      * @internal param $infoConstructorParams
+     *
      * @return AbstractPriceInfo
      */
     public function createPriceInfoInstance($quantityScale, $product, $products)
@@ -57,7 +58,6 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
         $amount = $this->calculateAmount($product, $products);
         $price = $this->getPriceClassInstance($amount);
         $totalPrice = $this->getPriceClassInstance($amount * $quantityScale);
-
 
         if ($taxClass) {
             $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
@@ -79,12 +79,14 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      *
      * @param $product
      * @param $products
+     *
      * @return float
+     *
      * @throws \Exception
      */
     protected function calculateAmount($product, $products)
     {
-        $getter = "get" . ucfirst($this->config->attributename);
+        $getter = 'get' . ucfirst($this->config->attributename);
         if (method_exists($product, $getter)) {
             if (!empty($products)) {
                 $sum = 0;
@@ -117,7 +119,9 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      * creates instance of IPrice
      *
      * @param $amount
+     *
      * @return IPrice
+     *
      * @throws \Exception
      */
     protected function getPriceClassInstance($amount)

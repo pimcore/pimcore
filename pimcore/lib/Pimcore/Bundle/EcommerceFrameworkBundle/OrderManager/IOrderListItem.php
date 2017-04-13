@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
-use \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 
 interface IOrderListItem
 {
@@ -23,7 +23,6 @@ interface IOrderListItem
      * @return int
      */
     public function getId();
-
 
     /**
      * @return Order|OrderItem

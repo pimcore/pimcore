@@ -26,11 +26,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class VoucherController
+ *
  * @Route("/voucher")
  */
 class VoucherController extends FrontendController
 {
-
     /**
      * @param FilterControllerEvent $event
      */
@@ -39,7 +39,7 @@ class VoucherController extends FrontendController
         // set language
         $user = $this->get('pimcore_admin.security.token_storage_user_resolver')->getUser();
         if ($user) {
-            $this->get("translator")->setLocale($user->getLanguage());
+            $this->get('translator')->setLocale($user->getLanguage());
             $event->getRequest()->setLocale($user->getLanguage());
         }
 
@@ -51,9 +51,9 @@ class VoucherController extends FrontendController
         $this->setViewAutoRender($event->getRequest(), true, 'php');
     }
 
-
     /**
      * Loads and shows voucherservice backend tab
+     *
      * @Route("/voucher-code-tab", name="pimcore_ecommerce_backend_voucher_voucher-code-tab")
      */
     public function voucherCodeTabAction(Request $request)
@@ -84,6 +84,7 @@ class VoucherController extends FrontendController
 
     /**
      * Export tokens to file. The action should implement all export formats defined in IExportableTokenManager.
+     *
      * @Route("/export-tokens", name="pimcore_ecommerce_backend_voucher_export-tokens")
      */
     public function exportTokensAction(Request $request)
@@ -150,6 +151,7 @@ class VoucherController extends FrontendController
 
     /**
      * Generates new Tokens or Applies single token settings.
+     *
      * @Route("/generate", name="pimcore_ecommerce_backend_voucher_generate")
      */
     public function generateAction(Request $request)
@@ -159,7 +161,7 @@ class VoucherController extends FrontendController
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $result = $tokenManager->insertOrUpdateVoucherSeries();
 
-                $translator = $this->get("translator");
+                $translator = $this->get('translator');
                 $params = ['id' => $request->get('id')]; //$request->query->all();
 
                 if ($result == true) {
@@ -169,7 +171,7 @@ class VoucherController extends FrontendController
                 }
 
                 return $this->redirectToRoute(
-                    "pimcore_ecommerce_backend_voucher_voucher-code-tab",
+                    'pimcore_ecommerce_backend_voucher_voucher-code-tab',
                     $params
                 );
             }
@@ -180,6 +182,7 @@ class VoucherController extends FrontendController
 
     /**
      * Removes tokens due to given filter parameters.
+     *
      * @Route("/cleanup", name="pimcore_ecommerce_backend_voucher_cleanup")
      */
     public function cleanupAction(Request $request)
@@ -203,7 +206,7 @@ class VoucherController extends FrontendController
                 }
 
                 return $this->redirectToRoute(
-                    "pimcore_ecommerce_backend_voucher_voucher-code-tab",
+                    'pimcore_ecommerce_backend_voucher_voucher-code-tab',
                     $params
                 );
             }
@@ -216,17 +219,18 @@ class VoucherController extends FrontendController
      * Removes token reservations due to given duration.
      *
      * @Route("/cleanup-reservations", name="pimcore_ecommerce_backend_voucher_cleanup-reservations")
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function cleanupReservationsAction(Request $request)
     {
         $duration = $request->get('duration');
         $id = $request->get('id');
-        $translator = $this->get("translator");
+        $translator = $this->get('translator');
 
         if (!isset($duration)) {
             return $this->redirectToRoute(
-                "pimcore_ecommerce_backend_voucher_voucher-code-tab",
+                'pimcore_ecommerce_backend_voucher_voucher-code-tab',
                 ['error' => $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations-duration-missing', [], 'admin'), 'id' => $id]
             );
         }
@@ -236,7 +240,7 @@ class VoucherController extends FrontendController
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 if ($tokenManager->cleanUpReservations($duration, $id)) {
                     return $this->redirectToRoute(
-                        "pimcore_ecommerce_backend_voucher_voucher-code-tab",
+                        'pimcore_ecommerce_backend_voucher_voucher-code-tab',
                         ['success' => $translator->trans('bundle_ecommerce_voucherservice_msg-success-cleanup-reservations', [], 'admin'), 'id' => $id]
                     );
                 }
@@ -244,7 +248,7 @@ class VoucherController extends FrontendController
         }
 
         return $this->redirectToRoute(
-            "pimcore_ecommerce_backend_voucher_voucher-code-tab",
+            'pimcore_ecommerce_backend_voucher_voucher-code-tab',
             ['error' => $translator->trans('bundle_ecommerce_voucherservice_msg-error-cleanup-reservations', [], 'admin'), 'id' => $id]
         );
     }

@@ -18,10 +18,6 @@ use Pimcore\Service\RequestMatcherFactory;
 
 class PimcoreContextGuesser
 {
-
-
-
-
     /**
      * @param RequestMatcherFactory $factory
      */

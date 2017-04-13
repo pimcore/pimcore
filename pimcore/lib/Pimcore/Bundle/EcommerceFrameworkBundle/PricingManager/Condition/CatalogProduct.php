@@ -31,7 +31,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
@@ -49,7 +49,6 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
                 $productsPool[] = $item->getProduct();
             }
         }
-
 
         // test
         foreach ($productsPool as $currentProduct) {

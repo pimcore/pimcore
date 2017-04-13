@@ -10,6 +10,7 @@ trait SymfonyProxyTestTrait
 {
     /**
      * @param SymfonyAdapterProxy|null $itemPool
+     *
      * @return TagAwareAdapterInterface
      */
     protected function getTagAwareAdapter(SymfonyAdapterProxy $itemPool = null)
@@ -28,6 +29,7 @@ trait SymfonyProxyTestTrait
 
     /**
      * @param TagAwareAdapterInterface|null $tagAwareAdapter
+     *
      * @return AdapterInterface
      */
     protected function getItemsAdapter(TagAwareAdapterInterface $tagAwareAdapter = null)

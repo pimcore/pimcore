@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,13 +21,12 @@ use Pimcore\Model;
 
 class Button extends Model\Object\ClassDefinition\Layout
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "button";
+    public $fieldtype = 'button';
 
     /**
      * @var
@@ -53,6 +53,7 @@ class Button extends Model\Object\ClassDefinition\Layout
 
     /**
      * @param $text
+     *
      * @return $this
      */
     public function setText($text)
@@ -72,6 +73,7 @@ class Button extends Model\Object\ClassDefinition\Layout
 
     /**
      * @param $handler
+     *
      * @return $this
      */
     public function setHandler($handler)
@@ -91,6 +93,7 @@ class Button extends Model\Object\ClassDefinition\Layout
 
     /**
      * @param $icon
+     *
      * @return $this
      */
     public function setIcon($icon)

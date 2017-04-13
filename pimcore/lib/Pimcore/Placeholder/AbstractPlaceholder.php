@@ -68,6 +68,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $string
+     *
      * @return $this
      */
     public function setPlaceholderString($string)
@@ -87,6 +88,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $key
+     *
      * @return $this
      */
     public function setPlaceholderKey($key)
@@ -108,6 +110,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param \Pimcore\Config\Config $config
+     *
      * @return $this
      */
     public function setPlaceholderConfig(\Pimcore\Config\Config $config)
@@ -129,6 +132,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $params
+     *
      * @return $this
      */
     public function setParams($params)
@@ -154,6 +158,7 @@ abstract class AbstractPlaceholder
      * Returns a specific parameter
      *
      * @param string $key
+     *
      * @return mixed
      */
     public function getParam($key)
@@ -167,6 +172,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $contentString
+     *
      * @return $this
      */
     public function setContentString($contentString)
@@ -200,6 +206,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $document
+     *
      * @return $this
      */
     public function setDocument($document)
@@ -239,6 +246,7 @@ abstract class AbstractPlaceholder
      * Try to set the locale from different sources
      *
      * @param $locale
+     *
      * @return $this
      */
     public function setLocale($locale = null)
@@ -249,12 +257,12 @@ abstract class AbstractPlaceholder
             $this->setLocale(($this->getParam('locale')) ? $this->getParam('locale') : $this->getParam('language'));
         } else {
             $document = $this->getDocument();
-            if ($document instanceof Document && $document->getProperty("language")) {
-                $this->setLocale($document->getProperty("language"));
+            if ($document instanceof Document && $document->getProperty('language')) {
+                $this->setLocale($document->getProperty('language'));
             }
 
             if (is_null($this->locale)) { //last chance -> get it from service container or use the first Language defined in the system settings
-                $this->locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+                $this->locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
                 if (!$this->locale) {
                     list($language) = \Pimcore\Tool::getValidLanguages();
                     $this->locale = $language;
@@ -285,11 +293,11 @@ abstract class AbstractPlaceholder
         return '';
     }
 
-
     /**
      * Has to return an appropriate value for a test replacement
      *
      * @abstract
+     *
      * @return string
      */
     abstract public function getTestValue();
@@ -298,6 +306,7 @@ abstract class AbstractPlaceholder
      * Has to return the placeholder with the corresponding value
      *
      * @abstract
+     *
      * @return string
      */
     abstract public function getReplacement();

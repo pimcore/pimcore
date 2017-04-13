@@ -41,20 +41,19 @@ class OrderManager implements IOrderManager
     /**
      * @var string
      */
-    protected $orderClassName = "";
+    protected $orderClassName = '';
 
     /**
      * @var string
      */
-    protected $orderItemClassName = "";
-
+    protected $orderItemClassName = '';
 
     /**
      * @param Config $config
      */
     public function __construct(Config $config)
     {
-        $this->config = new HelperContainer($config, "ordermanager");
+        $this->config = new HelperContainer($config, 'ordermanager');
     }
 
     /**
@@ -79,7 +78,6 @@ class OrderManager implements IOrderManager
         return new $this->config->orderAgent->class(Factory::getInstance(), $order);
     }
 
-
     /**
      * @param string $classname
      */
@@ -99,7 +97,6 @@ class OrderManager implements IOrderManager
 
         return $this->orderClassName;
     }
-
 
     /**
      * @param string $classname
@@ -131,7 +128,6 @@ class OrderManager implements IOrderManager
         }
     }
 
-
     protected function getOrderParentFolder()
     {
         if (empty($this->orderParentFolder)) {
@@ -154,16 +150,19 @@ class OrderManager implements IOrderManager
      * returns cart id for order object
      *
      * @param ICart $cart
+     *
      * @return string
      */
     protected function createCartId(ICart $cart)
     {
-        return get_class($cart) . "_" . $cart->getId();
+        return get_class($cart) . '_' . $cart->getId();
     }
 
     /**
      * @param ICart $cart
+     *
      * @return null|AbstractOrder
+     *
      * @throws \Exception
      */
     public function getOrderFromCart(ICart $cart)
@@ -171,7 +170,7 @@ class OrderManager implements IOrderManager
         $cartId = $this->createCartId($cart);
 
         $orderList = $this->buildOrderList();
-        $orderList->setCondition("cartId = ?", [$cartId]);
+        $orderList->setCondition('cartId = ?', [$cartId]);
 
         $orders = $orderList->load();
         if (count($orders) > 1) {
@@ -187,7 +186,9 @@ class OrderManager implements IOrderManager
 
     /**
      * @param ICart $cart
+     *
      * @return AbstractOrder
+     *
      * @throws \Exception
      * @throws UnsupportedException
      *
@@ -241,9 +242,7 @@ class OrderManager implements IOrderManager
         $currency = $cart->getPriceCalculator()->getGrandTotal()->getCurrency();
         $order->setCurrency($currency->getShortName());
 
-
         $order->save();
-
 
         //for each cart item and cart sub item create corresponding order items
         $orderItems = $this->applyOrderItems($cart->getItems(), $order);
@@ -264,6 +263,7 @@ class OrderManager implements IOrderManager
     /**
      * @param array $items
      * @param AbstractOrder $order
+     *
      * @return array
      */
     protected function applyOrderItems(array $items, AbstractOrder $order, $giftItems = false)
@@ -291,7 +291,6 @@ class OrderManager implements IOrderManager
 
         return $orderItems;
     }
-
 
     protected function applyVoucherTokens(AbstractOrder $order, ICart $cart)
     {
@@ -337,7 +336,9 @@ class OrderManager implements IOrderManager
      * default implementation gets current customer from environment and sets it into order
      *
      * @param AbstractOrder $order
+     *
      * @return AbstractOrder
+     *
      * @throws UnsupportedException
      */
     protected function setCurrentCustomerToOrder(AbstractOrder $order)
@@ -345,14 +346,13 @@ class OrderManager implements IOrderManager
         //sets customer to order - if available
         $env = Factory::getInstance()->getEnvironment();
 
-        if (@\Pimcore\Tool::classExists("\\Pimcore\\Model\\Object\\Customer")) {
+        if (@\Pimcore\Tool::classExists('\\Pimcore\\Model\\Object\\Customer')) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
             $order->setCustomer($customer);
         }
 
         return $order;
     }
-
 
     /**
      * hook for creating order number - can be overwritten
@@ -361,18 +361,19 @@ class OrderManager implements IOrderManager
      */
     protected function createOrderNumber()
     {
-        return uniqid("ord_");
+        return uniqid('ord_');
     }
 
     /**
      * @return AbstractOrder
+     *
      * @throws \Exception
      */
     protected function getNewOrderObject()
     {
         $orderClassName = $this->getOrderClassName();
         if (!\Pimcore\Tool::classExists($orderClassName)) {
-            throw new \Exception("Order Class" . $orderClassName . " does not exist.");
+            throw new \Exception('Order Class' . $orderClassName . ' does not exist.');
         }
 
         return new $orderClassName();
@@ -380,13 +381,14 @@ class OrderManager implements IOrderManager
 
     /**
      * @return AbstractOrderItem
+     *
      * @throws \Exception
      */
     protected function getNewOrderItemObject()
     {
         $orderItemClassName = $this->getOrderItemClassName();
         if (!\Pimcore\Tool::classExists($orderItemClassName)) {
-            throw new \Exception("OrderItem Class" . $orderItemClassName . " does not exist.");
+            throw new \Exception('OrderItem Class' . $orderItemClassName . ' does not exist.');
         }
 
         return new $orderItemClassName();
@@ -398,6 +400,7 @@ class OrderManager implements IOrderManager
      * @param bool $isGiftItem
      *
      * @return AbstractOrderItem
+     *
      * @throws \Exception
      */
     protected function createOrderItem(ICartItem $item, $parent, $isGiftItem = false)
@@ -405,7 +408,7 @@ class OrderManager implements IOrderManager
         $key = $this->buildOrderItemKey($item);
 
         $orderItemList = $this->buildOrderItemList();
-        $orderItemList->setCondition("o_parentId = ? AND o_key = ?", [$parent->getId(), $key]);
+        $orderItemList->setCondition('o_parentId = ? AND o_key = ?', [$parent->getId(), $key]);
 
         $orderItems = $orderItemList->load();
         if (count($orderItems) > 1) {
@@ -468,6 +471,7 @@ class OrderManager implements IOrderManager
 
     /**
      * @param TaxEntry[] $taxItems
+     *
      * @return array
      */
     protected function buildTaxArray(array $taxItems)
@@ -476,7 +480,7 @@ class OrderManager implements IOrderManager
         foreach ($taxItems as $taxEntry) {
             $taxArray[] = [
                 $taxEntry->getEntry()->getName(),
-                $taxEntry->getPercent() . "%",
+                $taxEntry->getPercent() . '%',
                 $taxEntry->getAmount()
             ];
         }
@@ -488,6 +492,7 @@ class OrderManager implements IOrderManager
      * Build order item key from cart item
      *
      * @param ICartItem $item
+     *
      * @return string
      */
     protected function buildOrderItemKey(ICartItem $item)
@@ -505,7 +510,9 @@ class OrderManager implements IOrderManager
      * Build list class name, try namespaced first and fall back to legacy naming
      *
      * @param $className
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     protected function buildListClassName($className)
@@ -525,6 +532,7 @@ class OrderManager implements IOrderManager
      * Build class name for order list
      *
      * @return string
+     *
      * @throws \Exception
      */
     protected function buildOrderListClassName()
@@ -536,6 +544,7 @@ class OrderManager implements IOrderManager
      * Build class name for order item list
      *
      * @return string
+     *
      * @throws \Exception
      */
     protected function buildOrderItemListClassName()
@@ -547,6 +556,7 @@ class OrderManager implements IOrderManager
      * Build order listing
      *
      * @return \Pimcore\Model\Object\Listing\Concrete
+     *
      * @throws \Exception
      */
     public function buildOrderList()
@@ -561,6 +571,7 @@ class OrderManager implements IOrderManager
      * Build order item listing
      *
      * @return \Pimcore\Model\Object\Listing\Concrete
+     *
      * @throws \Exception
      */
     public function buildOrderItemList()
@@ -573,6 +584,7 @@ class OrderManager implements IOrderManager
 
     /**
      * @param IStatus $paymentStatus
+     *
      * @return AbstractOrder
      */
     public function getOrderByPaymentStatus(IStatus $paymentStatus)
@@ -580,7 +592,7 @@ class OrderManager implements IOrderManager
         //this call is needed in order to really load most updated object from cache or DB (otherwise it could be loaded from process)
         \Pimcore::collectGarbage();
 
-        $orderId = explode("~", $paymentStatus->getInternalPaymentId());
+        $orderId = explode('~', $paymentStatus->getInternalPaymentId());
         $orderId = $orderId[1];
         $orderClass = $this->getOrderClassName();
 

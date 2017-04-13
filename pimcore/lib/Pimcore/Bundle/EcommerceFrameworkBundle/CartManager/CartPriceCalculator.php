@@ -28,7 +28,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
  */
 class CartPriceCalculator implements ICartPriceCalculator
 {
-
     /**
      * @var bool
      */
@@ -59,7 +58,6 @@ class CartPriceCalculator implements ICartPriceCalculator
      */
     protected $cart;
 
-
     /**
      * @param $config
      * @param ICart $cart
@@ -77,7 +75,6 @@ class CartPriceCalculator implements ICartPriceCalculator
         $this->cart = $cart;
         $this->isCalculated = false;
     }
-
 
     /**
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
@@ -104,7 +101,7 @@ class CartPriceCalculator implements ICartPriceCalculator
                 }
 
                 if ($currency->getShortName() != $item->getPrice()->getCurrency()->getShortName()) {
-                    throw new UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
+                    throw new UnsupportedException('Different currencies within one cart are not supported. See cart ' . $this->cart->getId() . ' and product ' . $item->getProduct()->getId() . ')');
                 }
 
                 $subTotalNet += $item->getTotalPrice()->getNetAmount();
@@ -135,12 +132,10 @@ class CartPriceCalculator implements ICartPriceCalculator
         $this->subTotal->setTaxEntries($subTotalTaxes);
         $this->subTotal->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_FIXED);
 
-
         //consider all price modificators
         $currentSubTotal = $this->getDefaultPriceObject($subTotalGross, $currency);
         $currentSubTotal->setNetAmount($subTotalNet);
         $currentSubTotal->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_FIXED);
-
 
         $this->modifications = [];
         foreach ($this->getModificators() as $modificator) {
@@ -169,7 +164,6 @@ class CartPriceCalculator implements ICartPriceCalculator
         $this->isCalculated = true;
     }
 
-
     /**
      * gets default currency object based on the default currency locale defined in the environment
      *
@@ -185,6 +179,7 @@ class CartPriceCalculator implements ICartPriceCalculator
      *
      * @param $amount
      * @param Currency $currency
+     *
      * @return IPrice
      */
     protected function getDefaultPriceObject($amount, Currency $currency)

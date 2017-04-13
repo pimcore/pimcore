@@ -24,12 +24,13 @@ class CleanupReservationsCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('ecommerce:voucher:cleanup-reservations');
-        $this->setDescription("Cleans the token reservations due to sysConfig duration settings");
+        $this->setDescription('Cleans the token reservations due to sysConfig duration settings');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     protected function execute(InputInterface $input, OutputInterface $output)

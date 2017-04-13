@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Property
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @return null
      */
@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $raw = null;
         if ($cid) {
-            $data = $this->db->fetchRow("SELECT * FROM properties WHERE type=? AND cid = ? AND name=?", [$type, $cid, $name]);
+            $data = $this->db->fetchRow('SELECT * FROM properties WHERE type=? AND cid = ? AND name=?', [$type, $cid, $name]);
             $raw = $data['data'];
         }
 
@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->model->getData();
 
-        if ($this->model->getType() == "object" || $this->model->getType() == "asset" || $this->model->getType() == "document") {
+        if ($this->model->getType() == 'object' || $this->model->getType() == 'asset' || $this->model->getType() == 'document') {
             if ($data instanceof Model\Element\ElementInterface) {
                 $data = $data->getId();
             } else {
@@ -56,21 +56,20 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-
         if (is_array($data) || is_object($data)) {
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
         $saveData = [
-            "cid" => $this->model->getCid(),
-            "ctype" => $this->model->getCtype(),
-            "cpath" => $this->model->getCpath(),
-            "name" => $this->model->getName(),
-            "type" => $this->model->getType(),
-            "inheritable" => (int)$this->model->getInheritable(),
-            "data" => $data
+            'cid' => $this->model->getCid(),
+            'ctype' => $this->model->getCtype(),
+            'cpath' => $this->model->getCpath(),
+            'name' => $this->model->getName(),
+            'type' => $this->model->getType(),
+            'inheritable' => (int)$this->model->getInheritable(),
+            'data' => $data
         ];
 
-        $this->db->insertOrUpdate("properties", $saveData);
+        $this->db->insertOrUpdate('properties', $saveData);
     }
 }

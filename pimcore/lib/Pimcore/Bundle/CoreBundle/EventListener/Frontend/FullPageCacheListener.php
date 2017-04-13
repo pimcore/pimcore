@@ -51,6 +51,7 @@ class FullPageCacheListener extends AbstractFrontendListener
 
     /**
      * @param null $reason
+     *
      * @return bool
      */
     public function disable($reason = null)
@@ -84,6 +85,7 @@ class FullPageCacheListener extends AbstractFrontendListener
 
     /**
      * @param $lifetime
+     *
      * @return $this
      */
     public function setLifetime($lifetime)
@@ -101,17 +103,11 @@ class FullPageCacheListener extends AbstractFrontendListener
         return $this->lifetime;
     }
 
-    /**
-     *
-     */
     public function disableExpireHeader()
     {
         $this->addExpireHeader = false;
     }
 
-    /**
-     *
-     */
     public function enableExpireHeader()
     {
         $this->addExpireHeader = true;
@@ -119,6 +115,7 @@ class FullPageCacheListener extends AbstractFrontendListener
 
     /**
      * @param GetResponseEvent $event
+     *
      * @return mixed
      */
     public function onKernelRequest(GetResponseEvent $event)
@@ -141,19 +138,19 @@ class FullPageCacheListener extends AbstractFrontendListener
         $excludePatterns = [];
 
         // only enable GET method
-        if (!$request->isMethod("GET")) {
+        if (!$request->isMethod('GET')) {
             return $this->disable();
         }
 
         // disable the output-cache if browser wants the most recent version
         // unfortunately only Chrome + Firefox if not using SSL
         if (!$request->isSecure()) {
-            if (isset($_SERVER["HTTP_CACHE_CONTROL"]) && $_SERVER["HTTP_CACHE_CONTROL"] == "no-cache") {
-                return $this->disable("HTTP Header Cache-Control: no-cache was sent");
+            if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] == 'no-cache') {
+                return $this->disable('HTTP Header Cache-Control: no-cache was sent');
             }
 
-            if (isset($_SERVER["HTTP_PRAGMA"]) && $_SERVER["HTTP_PRAGMA"] == "no-cache") {
-                return $this->disable("HTTP Header Pragma: no-cache was sent");
+            if (isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] == 'no-cache') {
+                return $this->disable('HTTP Header Pragma: no-cache was sent');
             }
         }
 
@@ -167,7 +164,7 @@ class FullPageCacheListener extends AbstractFrontendListener
                 }
 
                 if (\Pimcore::inDebugMode()) {
-                    return $this->disable("in debug mode");
+                    return $this->disable('in debug mode');
                 }
 
                 if ($conf->lifetime) {
@@ -175,25 +172,25 @@ class FullPageCacheListener extends AbstractFrontendListener
                 }
 
                 if ($conf->excludePatterns) {
-                    $confExcludePatterns = explode(",", $conf->excludePatterns);
+                    $confExcludePatterns = explode(',', $conf->excludePatterns);
                     if (!empty($confExcludePatterns)) {
                         $excludePatterns = $confExcludePatterns;
                     }
                 }
 
                 if ($conf->excludeCookie) {
-                    $cookies = explode(",", strval($conf->excludeCookie));
+                    $cookies = explode(',', strval($conf->excludeCookie));
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {
-                            return $this->disable("exclude cookie in system-settings matches");
+                            return $this->disable('exclude cookie in system-settings matches');
                         }
                     }
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
                 if (Tool\Session::requestHasSessionId($request)) {
-                    return $this->disable("backend user is logged in");
+                    return $this->disable('backend user is logged in');
                 }
             } else {
                 return $this->disable();
@@ -201,12 +198,12 @@ class FullPageCacheListener extends AbstractFrontendListener
         } catch (\Exception $e) {
             Logger::error($e);
 
-            return $this->disable("ERROR: Exception (see debug.log)");
+            return $this->disable('ERROR: Exception (see debug.log)');
         }
 
         foreach ($excludePatterns as $pattern) {
             if (@preg_match($pattern, $requestUri)) {
-                return $this->disable("exclude path pattern in system-settings matches");
+                return $this->disable('exclude path pattern in system-settings matches');
             }
         }
 
@@ -214,18 +211,18 @@ class FullPageCacheListener extends AbstractFrontendListener
         $device = $deviceDetector->getDevice();
         $deviceDetector->setWasUsed(false);
 
-        $appendKey = "";
+        $appendKey = '';
         // this is for example for the image-data-uri plugin
-        if (isset($_REQUEST["pimcore_cache_tag_suffix"])) {
-            $tags = $_REQUEST["pimcore_cache_tag_suffix"];
+        if (isset($_REQUEST['pimcore_cache_tag_suffix'])) {
+            $tags = $_REQUEST['pimcore_cache_tag_suffix'];
             if (is_array($tags)) {
-                $appendKey = "_" . implode("_", $tags);
+                $appendKey = '_' . implode('_', $tags);
             }
         }
 
-        $this->defaultCacheKey = "output_" . md5(\Pimcore\Tool::getHostname() . $requestUri . $appendKey);
+        $this->defaultCacheKey = 'output_' . md5(\Pimcore\Tool::getHostname() . $requestUri . $appendKey);
         $cacheKeys = [
-            $this->defaultCacheKey . "_" . $device,
+            $this->defaultCacheKey . '_' . $device,
             $this->defaultCacheKey,
         ];
 
@@ -243,9 +240,9 @@ class FullPageCacheListener extends AbstractFrontendListener
              * @var $response Response
              */
             $response = $cacheItem;
-            $response->headers->set("X-Pimcore-Output-Cache-Tag", $cacheKey, true);
-            $cacheItemDate = strtotime($response->headers->get("X-Pimcore-Cache-Date"));
-            $response->headers->set("Age", (time()-$cacheItemDate));
+            $response->headers->set('X-Pimcore-Output-Cache-Tag', $cacheKey, true);
+            $cacheItemDate = strtotime($response->headers->get('X-Pimcore-Cache-Date'));
+            $response->headers->set('Age', (time() - $cacheItemDate));
 
             $event->setResponse($response);
         }
@@ -253,6 +250,7 @@ class FullPageCacheListener extends AbstractFrontendListener
 
     /**
      * @param KernelEvent $event
+     *
      * @return bool|void
      */
     public function onKernelResponse(KernelEvent $event)
@@ -272,39 +270,39 @@ class FullPageCacheListener extends AbstractFrontendListener
         }
 
         if ($this->enabled && session_id()) {
-            $this->disable("session in use");
+            $this->disable('session in use');
         }
 
         if ($this->disableReason) {
-            $response->headers->set("X-Pimcore-Output-Cache-Disable-Reason", $this->disableReason, true);
+            $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', $this->disableReason, true);
         }
 
         if ($this->enabled && $response->getStatusCode() == 200 && $this->defaultCacheKey) {
             try {
                 if ($this->lifetime && $this->addExpireHeader) {
                     // add cache control for proxies and http-caches like varnish, ...
-                    $response->headers->set("Cache-Control", "public, max-age=" . $this->lifetime, true);
+                    $response->headers->set('Cache-Control', 'public, max-age=' . $this->lifetime, true);
 
                     // add expire header
-                    $date = new \DateTime("now");
-                    $date->add(new \DateInterval("PT" . $this->lifetime . "S"));
-                    $response->headers->set("Expires", $date->format(\DateTime::RFC1123), true);
+                    $date = new \DateTime('now');
+                    $date->add(new \DateInterval('PT' . $this->lifetime . 'S'));
+                    $response->headers->set('Expires', $date->format(\DateTime::RFC1123), true);
                 }
 
-                $now = new \DateTime("now");
-                $response->headers->set("X-Pimcore-Cache-Date", $now->format(\DateTime::ISO8601));
+                $now = new \DateTime('now');
+                $response->headers->set('X-Pimcore-Cache-Date', $now->format(\DateTime::ISO8601));
 
                 $cacheKey = $this->defaultCacheKey;
                 $deviceDetector = Tool\DeviceDetector::getInstance();
                 if ($deviceDetector->wasUsed()) {
-                    $cacheKey .= "_" . $deviceDetector->getDevice();
+                    $cacheKey .= '_' . $deviceDetector->getDevice();
                 }
 
                 $cacheItem = $response;
 
-                $tags = ["output"];
+                $tags = ['output'];
                 if ($this->lifetime) {
-                    $tags = ["output_lifetime"];
+                    $tags = ['output_lifetime'];
                 }
 
                 CacheManager::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);

@@ -18,17 +18,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-
     /**
      * @var array|IRule
      */
     protected $rules;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $validate;
-
 
     /**
      * @param bool $state
@@ -63,6 +61,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @param array $rules
+     *
      * @return void
      */
     public function setRules(array $rules)

@@ -4,10 +4,10 @@ namespace Pimcore\Tests\Cache\Adapter\SymfonyProxy;
 
 use PHPUnit\Framework\TestCase;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
+use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 
 class SymfonyProxyTest extends TestCase
 {

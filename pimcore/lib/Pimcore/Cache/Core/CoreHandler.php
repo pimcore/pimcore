@@ -45,42 +45,49 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * Actually write/load to/from cache?
+     *
      * @var bool
      */
     protected $enabled = true;
 
     /**
      * Is the cache handled in CLI mode?
+     *
      * @var bool
      */
     protected $handleCli = false;
 
     /**
      * Contains the items which should be written to the cache on shutdown
+     *
      * @var CacheQueueItem[]
      */
     protected $saveQueue = [];
 
     /**
      * Tags which were already cleared
+     *
      * @var array
      */
     protected $clearedTags = [];
 
     /**
      * Items having one of the tags in this list are not saved
+     *
      * @var array
      */
     protected $tagsIgnoredOnSave = [];
 
     /**
      * Items having one of the tags in this list are not cleared when calling clearTags
+     *
      * @var array
      */
     protected $tagsIgnoredOnClear = [];
 
     /**
      * Items having tags which are in this array are cleared on shutdown. This is especially for the output-cache.
+     *
      * @var array
      */
     protected $tagsClearedOnShutdown = [];
@@ -96,18 +103,21 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Tags in this list are shifted to the clearTagsOnShutdown list when scheduled via clearTags. See comment on normalizeClearTags
      * method why this exists.
+     *
      * @var array
      */
     protected $shutdownTags = ['output'];
 
     /**
      * If set to true items are directly written into the cache, and do not get into the queue
+     *
      * @var bool
      */
     protected $forceImmediateWrite = false;
 
     /**
      * How many items should stored to the cache within one process
+     *
      * @var int
      */
     protected $maxWriteToCacheItems = 50;
@@ -130,6 +140,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param PimcoreCacheItemPoolInterface $itemPool
+     *
      * @return $this
      */
     protected function setItemPool(PimcoreCacheItemPoolInterface $itemPool)
@@ -195,6 +206,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @codeCoverageIgnore
      *
      * @param bool $handleCli
+     *
      * @return $this
      */
     public function setHandleCli($handleCli)
@@ -218,6 +230,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @codeCoverageIgnore
      *
      * @param bool $forceImmediateWrite
+     *
      * @return $this
      */
     public function setForceImmediateWrite($forceImmediateWrite)
@@ -231,6 +244,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Load data from cache (retrieves data from cache item)
      *
      * @param $key
+     *
      * @return bool|mixed
      */
     public function load($key)
@@ -255,6 +269,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Get PSR-6 cache item
      *
      * @param $key
+     *
      * @return PimcoreCacheItemInterface
      */
     public function getItem($key)
@@ -285,6 +300,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @param int|\DateInterval|null $lifetime
      * @param int|null $priority
      * @param bool $force
+     *
      * @return bool
      */
     public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
@@ -342,6 +358,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Add item to save queue, respecting maxWriteToCacheItems setting
      *
      * @param CacheQueueItem $item
+     *
      * @return bool
      */
     protected function addToSaveQueue(CacheQueueItem $item)
@@ -450,6 +467,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @param PimcoreCacheItemInterface $cacheItem
      * @param $data
      * @param array $tags
+     *
      * @return null|PimcoreCacheItemInterface
      */
     protected function prepareCacheTags(PimcoreCacheItemInterface $cacheItem, $data, array $tags = [])
@@ -514,6 +532,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @param PimcoreCacheItemInterface $item
      * @param mixed $data
      * @param bool $force
+     *
      * @return bool
      */
     protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
@@ -561,6 +580,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Remove a cache item
      *
      * @param $key
+     *
      * @return bool
      */
     public function remove($key)
@@ -596,6 +616,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param string $tag
+     *
      * @return bool
      */
     public function clearTag($tag)
@@ -605,6 +626,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param string[] $tags
+     *
      * @return bool
      */
     public function clearTags(array $tags)
@@ -667,6 +689,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Normalize (unique) clear tags and shift special tags to shutdown (e.g. output)
      *
      * @param array $tags
+     *
      * @return array
      */
     protected function normalizeClearTags(array $tags)
@@ -700,6 +723,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Add tag to list of cleared tags (internal use only)
      *
      * @param string $tags
+     *
      * @return $this
      */
     protected function addClearedTags($tags)
@@ -721,6 +745,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
      *
      * @param string $tag
+     *
      * @return $this
      */
     public function addTagClearedOnShutdown($tag)
@@ -735,6 +760,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function addTagIgnoredOnSave($tag)
@@ -747,6 +773,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function removeTagIgnoredOnSave($tag)
@@ -760,6 +787,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function addTagIgnoredOnClear($tag)
@@ -772,6 +800,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function removeTagIgnoredOnClear($tag)
@@ -842,6 +871,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Shut down pimcore - write cache entries and clean up
      *
      * @param bool $forceWrite
+     *
      * @return $this
      */
     public function shutdown($forceWrite = false)

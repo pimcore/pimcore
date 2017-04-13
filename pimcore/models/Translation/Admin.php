@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Translation
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -36,7 +37,9 @@ class Admin extends AbstractTranslation
      * @param bool $create
      * @param bool $returnIdIfEmpty
      * @param null $language
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
@@ -50,14 +53,13 @@ class Admin extends AbstractTranslation
         }
 
         if (!$language) {
-            $language = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
         }
 
         if (!in_array($language, Tool\Admin::getLanguages())) {
             $config = \Pimcore\Config::getSystemConfig();
             $language = $config->general->language;
         }
-
 
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }

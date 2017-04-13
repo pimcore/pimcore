@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class UserRoleEvent extends Event
 {
-
     /**
      * @var AbstractUser
      */
@@ -27,6 +26,7 @@ class UserRoleEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param AbstractUser $userRole
      */
     public function __construct(AbstractUser $userRole)

@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
 use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\ClassDefinition\Service;
 use Pimcore\Model\Object\Objectbrick\Definition;
 
@@ -35,6 +34,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
      * @param string $filename
+     *
      * @return string
      */
     protected function getDefinitionName($filename)
@@ -49,6 +49,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
      * Try to load definition by name
      *
      * @param $name
+     *
      * @return AbstractModel|null
      */
     protected function loadDefinition($name)
@@ -64,6 +65,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
      * Create a new definition
      *
      * @param $name
+     *
      * @return AbstractModel
      */
     protected function createDefinition($name)
@@ -79,6 +81,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
      *
      * @param AbstractModel $definition
      * @param string $json
+     *
      * @return bool
      */
     protected function import(AbstractModel $definition, $json)

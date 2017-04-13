@@ -22,20 +22,16 @@ use Pimcore\Model\Object\ClassDefinition\Data\Select;
 
 class IndexFieldSelectionCombo extends Select
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "indexFieldSelectionCombo";
-
+    public $fieldtype = 'indexFieldSelectionCombo';
 
     public $specificPriceField = false;
     public $showAllFields = false;
     public $considerTenants = false;
-
-
 
     public function __construct()
     {
@@ -53,15 +49,15 @@ class IndexFieldSelectionCombo extends Select
 
             foreach ($indexColumns as $c) {
                 $options[] = [
-                    "key" => $c,
-                    "value" => $c
+                    'key' => $c,
+                    'value' => $c
                 ];
             }
 
             if ($this->getSpecificPriceField()) {
                 $options[] = [
-                    "key" => IProductList::ORDERKEY_PRICE,
-                    "value" => IProductList::ORDERKEY_PRICE
+                    'key' => IProductList::ORDERKEY_PRICE,
+                    'value' => IProductList::ORDERKEY_PRICE
                 ];
             }
 

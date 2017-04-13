@@ -59,6 +59,7 @@ class UserProvider implements UserProviderInterface
 
     /**
      * @param PimcoreUser $pimcoreUser
+     *
      * @return User
      */
     protected function buildUser(PimcoreUser $pimcoreUser)

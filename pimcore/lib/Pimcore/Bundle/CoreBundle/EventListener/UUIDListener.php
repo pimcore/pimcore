@@ -25,7 +25,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UUIDListener implements EventSubscriberInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -35,12 +34,12 @@ class UUIDListener implements EventSubscriberInterface
             ObjectEvents::POST_ADD  => 'onPostAdd',
             DocumentEvents::POST_ADD  => 'onPostAdd',
             AssetEvents::POST_ADD  => 'onPostAdd',
-            ObjectClassDefinitionEvents::POST_ADD => "onPostAdd",
+            ObjectClassDefinitionEvents::POST_ADD => 'onPostAdd',
 
             ObjectEvents::POST_DELETE => 'onPostDelete',
             DocumentEvents::POST_DELETE => 'onPostDelete',
             AssetEvents::POST_DELETE => 'onPostDelete',
-            ObjectClassDefinitionEvents::POST_DELETE => "onPostDelete"
+            ObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete'
         ];
     }
 
@@ -90,6 +89,7 @@ class UUIDListener implements EventSubscriberInterface
 
     /**
      * @param Event $event
+     *
      * @return null|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Object\ClassDefinition
      */
     protected function extractElement(Event $event)

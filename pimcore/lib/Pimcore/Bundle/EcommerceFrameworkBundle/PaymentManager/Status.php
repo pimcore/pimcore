@@ -51,7 +51,6 @@ class Status implements IStatus
      */
     protected $data = [];
 
-
     /**
      * @param string $internalPaymentId
      * @param string $paymentReference

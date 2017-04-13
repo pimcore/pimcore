@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class AbstractWorkspace extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -84,9 +84,9 @@ class AbstractWorkspace extends Model\AbstractModel
      */
     public $properties = false;
 
-
     /**
      * @param $create
+     *
      * @return $this
      */
     public function setCreate($create)
@@ -97,7 +97,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getCreate()
     {
@@ -106,6 +106,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $delete
+     *
      * @return $this
      */
     public function setDelete($delete)
@@ -116,7 +117,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDelete()
     {
@@ -125,6 +126,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $list
+     *
      * @return $this
      */
     public function setList($list)
@@ -135,7 +137,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getList()
     {
@@ -144,6 +146,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $properties
+     *
      * @return $this
      */
     public function setProperties($properties)
@@ -154,7 +157,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getProperties()
     {
@@ -163,6 +166,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $publish
+     *
      * @return $this
      */
     public function setPublish($publish)
@@ -173,7 +177,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getPublish()
     {
@@ -182,6 +186,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $rename
+     *
      * @return $this
      */
     public function setRename($rename)
@@ -192,7 +197,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getRename()
     {
@@ -201,6 +206,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $settings
+     *
      * @return $this
      */
     public function setSettings($settings)
@@ -211,7 +217,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getSettings()
     {
@@ -220,6 +226,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $versions
+     *
      * @return $this
      */
     public function setVersions($versions)
@@ -230,7 +237,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getVersions()
     {
@@ -239,6 +246,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $view
+     *
      * @return $this
      */
     public function setView($view)
@@ -249,7 +257,7 @@ class AbstractWorkspace extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getView()
     {
@@ -258,6 +266,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $cid
+     *
      * @return $this
      */
     public function setCid($cid)
@@ -277,6 +286,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $userId
+     *
      * @return $this
      */
     public function setUserId($userId)
@@ -296,6 +306,7 @@ class AbstractWorkspace extends Model\AbstractModel
 
     /**
      * @param $cpath
+     *
      * @return $this
      */
     public function setCpath($cpath)

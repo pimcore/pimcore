@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -28,21 +29,21 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @var string
      */
-    public $type = "newsletter";
+    public $type = 'newsletter';
 
     /**
      * Contains the email subject
      *
      * @var string
      */
-    public $subject = "";
+    public $subject = '';
 
     /**
      * Contains the from email address
      *
      * @var string
      */
-    public $from = "";
+    public $from = '';
 
     /**
      * enables adding tracking parameters to all links
@@ -54,29 +55,28 @@ class Newsletter extends Model\Document\PageSnippet
     /**
      * @var string
      */
-    public $trackingParameterSource = "newsletter";
+    public $trackingParameterSource = 'newsletter';
 
     /**
      * @var string
      */
-    public $trackingParameterMedium = "email";
+    public $trackingParameterMedium = 'email';
 
     /**
      * @var string
      */
     public $trackingParameterName = null;
 
-
     /**
      * @var string
      */
     public $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
 
-
     /**
      * Contains the email subject
      *
      * @param string $subject
+     *
      * @return $this
      */
     public function setSubject($subject)
@@ -100,6 +100,7 @@ class Newsletter extends Model\Document\PageSnippet
      * Sets the "from" email address
      *
      * @param string $from
+     *
      * @return $this
      */
     public function setFrom($from)
@@ -132,7 +133,7 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getEnableTrackingParameters()
     {
@@ -140,7 +141,7 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
-     * @param boolean $enableTrackingParameters
+     * @param bool $enableTrackingParameters
      */
     public function setEnableTrackingParameters($enableTrackingParameters)
     {
@@ -222,6 +223,6 @@ class Newsletter extends Model\Document\PageSnippet
      */
     public function getTmpStoreId()
     {
-        return "newsletter__" . $this->getId();
+        return 'newsletter__' . $this->getId();
     }
 }

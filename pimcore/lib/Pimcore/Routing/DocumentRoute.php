@@ -35,6 +35,7 @@ class DocumentRoute extends Route implements RouteObjectInterface
 
     /**
      * @param Document $document
+     *
      * @return $this
      */
     public function setDocument($document)

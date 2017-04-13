@@ -34,9 +34,9 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypeSingle) {
-            $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabSingle.html.php";
+            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabSingle.html.php';
         } else {
-            throw new InvalidConfigException("Invalid Configuration Class for type VoucherTokenTypeSingle.");
+            throw new InvalidConfigException('Invalid Configuration Class for type VoucherTokenTypeSingle.');
         }
     }
 
@@ -56,7 +56,6 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     {
     }
 
-
     public function cleanupReservations($duration = 0, $seriesId = null)
     {
         return Reservation::cleanUpReservations($duration, $seriesId);
@@ -65,6 +64,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @param $viewParamsBag
      * @param array $params
+     *
      * @return string
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
@@ -100,7 +100,9 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
      * Get data for export
      *
      * @param array $params
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected function getExportData(array $params)
@@ -139,6 +141,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param null|array $params
+     *
      * @return array|bool
      */
     public function getCodes($params = null)
@@ -151,7 +154,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         $now = new \DateTime();
         $periodData = [];
         for ($i = $usagePeriod; $i > 0; $i--) {
-            $index = $now->format("Y-m-d");
+            $index = $now->format('Y-m-d');
             $periodData[$index] = isset($data[$index]) ? $data[$index] : 0;
             $now->modify('-1 day');
         }
@@ -182,6 +185,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @param string $code
      * @param ICart $cart
+     *
      * @return bool
      */
     public function reserveToken($code, ICart $cart)
@@ -194,7 +198,6 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
         return false;
     }
-
 
     /**
      * @param string $code
@@ -229,12 +232,12 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         return false;
     }
 
-
     /**
      * cleans up the token usage and the ordered token object if necessary
      *
      * @param OnlineShopVoucherToken $tokenObject
      * @param AbstractOrder $order
+     *
      * @return bool
      */
     public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
@@ -249,6 +252,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @param string $code
      * @param ICart $cart
+     *
      * @return bool
      */
     public function releaseToken($code, ICart $cart)
@@ -259,6 +263,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @param string $code
      * @param ICart $cart
+     *
      * @return bool
      */
     public function checkToken($code, ICart $cart)

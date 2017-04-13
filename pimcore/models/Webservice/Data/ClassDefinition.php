@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,7 +21,6 @@ use Pimcore\Model;
 
 class ClassDefinition extends Model\Webservice\Data
 {
-
     /**
      * @var int
      */
@@ -71,17 +71,17 @@ class ClassDefinition extends Model\Webservice\Data
     public $useTraits;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $allowInherit = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $allowVariants = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $showVariants = false;
 
@@ -104,7 +104,7 @@ class ClassDefinition extends Model\Webservice\Data
      * @var string
      */
     public $previewUrl;
-     /**
+    /**
      * @var string
      */
     public $group;

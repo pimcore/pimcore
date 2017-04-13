@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 /**
  * This file is only for IDE auto complete and deprecated visualization
  */
@@ -25,10 +24,7 @@ namespace  {
  */
 interface OnlineShop_Framework_ProductInterfaces_ICheckoutable extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -36,10 +32,7 @@ interface OnlineShop_Framework_ProductInterfaces_ICheckoutable extends \Pimcore\
  */
 interface OnlineShop_Framework_ProductInterfaces_IIndexable extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -47,10 +40,7 @@ interface OnlineShop_Framework_ProductInterfaces_IIndexable extends \Pimcore\Bun
  */
 interface OnlineShop_Framework_IEnvironment extends \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -58,10 +48,7 @@ interface OnlineShop_Framework_IEnvironment extends \Pimcore\Bundle\EcommerceFra
  */
 interface OnlineShop_Framework_IComponent extends \Pimcore\Bundle\EcommerceFrameworkBundle\IComponent
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -69,10 +56,7 @@ interface OnlineShop_Framework_IComponent extends \Pimcore\Bundle\EcommerceFrame
  */
 interface OnlineShop_Framework_ICheckoutStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -80,10 +64,7 @@ interface OnlineShop_Framework_ICheckoutStep extends \Pimcore\Bundle\EcommerceFr
  */
 interface OnlineShop_Framework_ICheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -91,10 +72,7 @@ interface OnlineShop_Framework_ICheckoutManager extends \Pimcore\Bundle\Ecommerc
  */
 interface OnlineShop_Framework_ICommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -102,10 +80,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor extends \Pimcore\Bundle\Eco
  */
 interface OnlineShop_Framework_ICachingPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ICachingPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -113,10 +88,7 @@ interface OnlineShop_Framework_ICachingPriceSystem extends \Pimcore\Bundle\Ecomm
  */
 interface OnlineShop_Framework_IModificatedPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -124,10 +96,7 @@ interface OnlineShop_Framework_IModificatedPrice extends \Pimcore\Bundle\Ecommer
  */
 interface OnlineShop_Framework_IPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -135,10 +104,7 @@ interface OnlineShop_Framework_IPrice extends \Pimcore\Bundle\EcommerceFramework
  */
 interface OnlineShop_Framework_IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -146,10 +112,7 @@ interface OnlineShop_Framework_IPriceInfo extends \Pimcore\Bundle\EcommerceFrame
  */
 interface OnlineShop_Framework_IPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -157,10 +120,7 @@ interface OnlineShop_Framework_IPriceSystem extends \Pimcore\Bundle\EcommerceFra
  */
 interface OnlineShop_Framework_Pricing_IRule extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -168,10 +128,7 @@ interface OnlineShop_Framework_Pricing_IRule extends \Pimcore\Bundle\EcommerceFr
  */
 interface OnlineShop_Framework_Pricing_IAction extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -179,10 +136,7 @@ interface OnlineShop_Framework_Pricing_IAction extends \Pimcore\Bundle\Ecommerce
  */
 interface OnlineShop_Framework_Pricing_ICondition extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -190,10 +144,7 @@ interface OnlineShop_Framework_Pricing_ICondition extends \Pimcore\Bundle\Ecomme
  */
 interface OnlineShop_Framework_Pricing_IEnvironment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -201,10 +152,7 @@ interface OnlineShop_Framework_Pricing_IEnvironment extends \Pimcore\Bundle\Ecom
  */
 interface OnlineShop_Framework_Pricing_IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -212,10 +160,7 @@ interface OnlineShop_Framework_Pricing_IPriceInfo extends \Pimcore\Bundle\Ecomme
  */
 interface OnlineShop_Framework_IPricingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -223,10 +168,7 @@ interface OnlineShop_Framework_IPricingManager extends \Pimcore\Bundle\Ecommerce
  */
 interface OnlineShop_Framework_Pricing_Action_IDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -234,10 +176,7 @@ interface OnlineShop_Framework_Pricing_Action_IDiscount extends \Pimcore\Bundle\
  */
 interface OnlineShop_Framework_Pricing_Action_IGift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IGift
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -245,10 +184,7 @@ interface OnlineShop_Framework_Pricing_Action_IGift extends \Pimcore\Bundle\Ecom
  */
 interface OnlineShop_Framework_Pricing_Condition_IBracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -256,10 +192,7 @@ interface OnlineShop_Framework_Pricing_Condition_IBracket extends \Pimcore\Bundl
  */
 interface OnlineShop_Framework_Pricing_Condition_ICartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartAmount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -267,10 +200,7 @@ interface OnlineShop_Framework_Pricing_Condition_ICartAmount extends \Pimcore\Bu
  */
 interface OnlineShop_Framework_Pricing_Condition_ICartProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -278,10 +208,7 @@ interface OnlineShop_Framework_Pricing_Condition_ICartProduct extends \Pimcore\B
  */
 interface OnlineShop_Framework_Pricing_Condition_ICatalogProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICatalogProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -289,10 +216,7 @@ interface OnlineShop_Framework_Pricing_Condition_ICatalogProduct extends \Pimcor
  */
 interface OnlineShop_Framework_Pricing_Condition_ICategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -300,10 +224,7 @@ interface OnlineShop_Framework_Pricing_Condition_ICategory extends \Pimcore\Bund
  */
 interface OnlineShop_Framework_Pricing_Condition_IDateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IDateRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -311,10 +232,7 @@ interface OnlineShop_Framework_Pricing_Condition_IDateRange extends \Pimcore\Bun
  */
 interface OnlineShop_Framework_ICart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -322,10 +240,7 @@ interface OnlineShop_Framework_ICart extends \Pimcore\Bundle\EcommerceFrameworkB
  */
 interface OnlineShop_Framework_ICartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -333,10 +248,7 @@ interface OnlineShop_Framework_ICartItem extends \Pimcore\Bundle\EcommerceFramew
  */
 interface OnlineShop_Framework_ICartManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -344,10 +256,7 @@ interface OnlineShop_Framework_ICartManager extends \Pimcore\Bundle\EcommerceFra
  */
 interface OnlineShop_Framework_ICartPriceCalculator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -355,10 +264,7 @@ interface OnlineShop_Framework_ICartPriceCalculator extends \Pimcore\Bundle\Ecom
  */
 interface OnlineShop_Framework_ICartPriceModificator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -366,10 +272,7 @@ interface OnlineShop_Framework_ICartPriceModificator extends \Pimcore\Bundle\Eco
  */
 interface OnlineShop_Framework_CartPriceModificator_IDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -377,10 +280,7 @@ interface OnlineShop_Framework_CartPriceModificator_IDiscount extends \Pimcore\B
  */
 interface OnlineShop_Framework_CartPriceModificator_IShipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -388,10 +288,7 @@ interface OnlineShop_Framework_CartPriceModificator_IShipping extends \Pimcore\B
  */
 interface OnlineShop_Framework_IAvailability extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -399,10 +296,7 @@ interface OnlineShop_Framework_IAvailability extends \Pimcore\Bundle\EcommerceFr
  */
 interface OnlineShop_Framework_IAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -410,10 +304,7 @@ interface OnlineShop_Framework_IAvailabilitySystem extends \Pimcore\Bundle\Ecomm
  */
 interface OnlineShop_OfferTool_IService extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -421,10 +312,7 @@ interface OnlineShop_OfferTool_IService extends \Pimcore\Bundle\EcommerceFramewo
  */
 interface OnlineShop_Framework_IndexService_Tenant_IConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -432,10 +320,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IConfig extends \Pimcore\Bund
  */
 interface OnlineShop_Framework_IndexService_Tenant_IElasticSearchConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -443,10 +328,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IElasticSearchConfig extends 
  */
 interface OnlineShop_Framework_IndexService_Tenant_IFactFinderConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -454,10 +336,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IFactFinderConfig extends \Pi
  */
 interface OnlineShop_Framework_IndexService_Tenant_IFindologicConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -465,10 +344,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IFindologicConfig extends \Pi
  */
 interface OnlineShop_Framework_IndexService_Tenant_IMockupConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -476,10 +352,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IMockupConfig extends \Pimcor
  */
 interface OnlineShop_Framework_IndexService_Tenant_IMysqlConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -487,10 +360,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IMysqlConfig extends \Pimcore
  */
 interface OnlineShop_Framework_IndexService_ExtendedGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IExtendedGetter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -498,10 +368,7 @@ interface OnlineShop_Framework_IndexService_ExtendedGetter extends \Pimcore\Bund
  */
 interface OnlineShop_Framework_IndexService_Getter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -509,10 +376,7 @@ interface OnlineShop_Framework_IndexService_Getter extends \Pimcore\Bundle\Ecomm
  */
 interface OnlineShop_Framework_IndexService_Interpreter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -520,10 +384,7 @@ interface OnlineShop_Framework_IndexService_Interpreter extends \Pimcore\Bundle\
  */
 interface OnlineShop_Framework_IndexService_RelationInterpreter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -531,10 +392,7 @@ interface OnlineShop_Framework_IndexService_RelationInterpreter extends \Pimcore
  */
 interface OnlineShop_Framework_IProductList extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -542,10 +400,7 @@ interface OnlineShop_Framework_IProductList extends \Pimcore\Bundle\EcommerceFra
  */
 interface OnlineShop_Framework_IndexService_Tenant_IBatchProcessingWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -553,10 +408,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IBatchProcessingWorker extend
  */
 interface OnlineShop_Framework_IndexService_Tenant_IWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -564,10 +416,7 @@ interface OnlineShop_Framework_IndexService_Tenant_IWorker extends \Pimcore\Bund
  */
 interface OnlineShop_Framework_IPaymentManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -575,10 +424,7 @@ interface OnlineShop_Framework_IPaymentManager extends \Pimcore\Bundle\Ecommerce
  */
 interface OnlineShop_Framework_Payment_IStatus extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -586,10 +432,7 @@ interface OnlineShop_Framework_Payment_IStatus extends \Pimcore\Bundle\Ecommerce
  */
 interface OnlineShop_Framework_IPayment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -597,10 +440,7 @@ interface OnlineShop_Framework_IPayment extends \Pimcore\Bundle\EcommerceFramewo
  */
 interface OnlineShop_Framework_IVoucherService extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -608,10 +448,7 @@ interface OnlineShop_Framework_IVoucherService extends \Pimcore\Bundle\Ecommerce
  */
 interface OnlineShop_Framework_VoucherService_ITokenManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -619,10 +456,7 @@ interface OnlineShop_Framework_VoucherService_ITokenManager extends \Pimcore\Bun
  */
 abstract class OnlineShop_Framework_AbstractFilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -630,10 +464,7 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends \Pimcore\Bu
  */
 abstract class OnlineShop_Framework_AbstractFilterDefinitionType extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -641,10 +472,7 @@ abstract class OnlineShop_Framework_AbstractFilterDefinitionType extends \Pimcor
  */
 abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -652,10 +480,7 @@ abstract class OnlineShop_Framework_AbstractCart extends \Pimcore\Bundle\Ecommer
  */
 abstract class OnlineShop_Framework_AbstractCartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartCheckoutData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -663,10 +488,7 @@ abstract class OnlineShop_Framework_AbstractCartCheckoutData extends \Pimcore\Bu
  */
 abstract class OnlineShop_Framework_AbstractCartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -674,10 +496,7 @@ abstract class OnlineShop_Framework_AbstractCartItem extends \Pimcore\Bundle\Eco
  */
 abstract class OnlineShop_Framework_Impl_Checkout_AbstractStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\AbstractStep
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -685,10 +504,7 @@ abstract class OnlineShop_Framework_Impl_Checkout_AbstractStep extends \Pimcore\
  */
 abstract class OnlineShop_Framework_FilterService_AbstractFilterType extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -696,10 +512,7 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType extends \Pi
  */
 abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -707,10 +520,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Config_AbstractConfig ex
  */
 abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -718,10 +528,7 @@ abstract class OnlineShop_Framework_IndexService_Tenant_Worker_Abstract extends 
  */
 abstract class OnlineShop_Framework_CategoryFilterDefinitionType extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -729,10 +536,7 @@ abstract class OnlineShop_Framework_CategoryFilterDefinitionType extends \Pimcor
  */
 abstract class OnlineShop_Framework_AbstractPaymentInformation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -740,10 +544,7 @@ abstract class OnlineShop_Framework_AbstractPaymentInformation extends \Pimcore\
  */
 abstract class OnlineShop_Framework_Impl_AbstractPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -751,10 +552,7 @@ abstract class OnlineShop_Framework_Impl_AbstractPriceSystem extends \Pimcore\Bu
  */
 abstract class OnlineShop_Framework_Impl_CachingPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\CachingPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -762,10 +560,7 @@ abstract class OnlineShop_Framework_Impl_CachingPriceSystem extends \Pimcore\Bun
  */
 abstract class OnlineShop_Framework_Impl_Pricing_Condition_AbstractOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\AbstractOrder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -773,10 +568,7 @@ abstract class OnlineShop_Framework_Impl_Pricing_Condition_AbstractOrder extends
  */
 abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\AbstractTokenManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -784,10 +576,7 @@ abstract class OnlineShop_Framework_VoucherService_AbstractTokenManager extends 
  */
 abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -795,10 +584,7 @@ abstract class OnlineShop_Framework_AbstractVoucherSeries extends \Pimcore\Bundl
  */
 class OnlineShop_Framework_AbstractCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -806,10 +592,7 @@ class OnlineShop_Framework_AbstractCategory extends \Pimcore\Bundle\EcommerceFra
  */
 class OnlineShop_Framework_AbstractOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -817,10 +600,7 @@ class OnlineShop_Framework_AbstractOrder extends \Pimcore\Bundle\EcommerceFramew
  */
 class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -828,10 +608,7 @@ class OnlineShop_Framework_AbstractOrderItem extends \Pimcore\Bundle\EcommerceFr
  */
 class OnlineShop_Framework_AbstractProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -839,10 +616,7 @@ class OnlineShop_Framework_AbstractProduct extends \Pimcore\Bundle\EcommerceFram
  */
 class OnlineShop_Framework_AbstractSetProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -850,10 +624,7 @@ class OnlineShop_Framework_AbstractSetProduct extends \Pimcore\Bundle\EcommerceF
  */
 class OnlineShop_Framework_AbstractSetProductEntry extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -861,10 +632,7 @@ class OnlineShop_Framework_AbstractSetProductEntry extends \Pimcore\Bundle\Ecomm
  */
 class OnlineShop_Framework_AbstractVoucherTokenType extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -872,10 +640,7 @@ class OnlineShop_Framework_AbstractVoucherTokenType extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_Framework_ProductList_DefaultMockup extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -883,10 +648,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_Impl_Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -894,10 +656,7 @@ class OnlineShop_Framework_Impl_Environment extends \Pimcore\Bundle\EcommerceFra
  */
 class OnlineShop_OfferTool_AbstractOffer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -905,10 +664,7 @@ class OnlineShop_OfferTool_AbstractOffer extends \Pimcore\Bundle\EcommerceFramew
  */
 class OnlineShop_OfferTool_AbstractOfferItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -916,10 +672,7 @@ class OnlineShop_OfferTool_AbstractOfferItem extends \Pimcore\Bundle\EcommerceFr
  */
 class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferToolProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -927,10 +680,7 @@ class OnlineShop_OfferTool_AbstractOfferToolProduct extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_OfferTool_Impl_DefaultService extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -938,10 +688,7 @@ class OnlineShop_OfferTool_Impl_DefaultService extends \Pimcore\Bundle\Ecommerce
  */
 class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\DeliveryAddress
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -949,10 +696,7 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends \Pimcore\Bundle
  */
 class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\DeliveryDate
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -960,10 +704,7 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryDate extends \Pimcore\Bundle\Ec
  */
 class OnlineShop_Framework_Impl_CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -971,10 +712,7 @@ class OnlineShop_Framework_Impl_CheckoutManager extends \Pimcore\Bundle\Ecommerc
  */
 class OnlineShop_Framework_Impl_CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -982,10 +720,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_Impl_Pricing_Rule extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -993,10 +728,7 @@ class OnlineShop_Framework_Impl_Pricing_Rule extends \Pimcore\Bundle\EcommerceFr
  */
 class OnlineShop_Framework_Impl_Pricing_Rule_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1004,10 +736,7 @@ class OnlineShop_Framework_Impl_Pricing_Rule_Resource extends \Pimcore\Bundle\Ec
  */
 class OnlineShop_Framework_Impl_Pricing_Rule_List extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1015,10 +744,7 @@ class OnlineShop_Framework_Impl_Pricing_Rule_List extends \Pimcore\Bundle\Ecomme
  */
 class OnlineShop_Framework_Impl_Pricing_Rule_List_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1026,10 +752,7 @@ class OnlineShop_Framework_Impl_Pricing_Rule_List_Resource extends \Pimcore\Bund
  */
 class OnlineShop_Framework_Impl_Pricing_Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1037,10 +760,7 @@ class OnlineShop_Framework_Impl_Pricing_Environment extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_Framework_Impl_Pricing_PriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1048,10 +768,7 @@ class OnlineShop_Framework_Impl_Pricing_PriceInfo extends \Pimcore\Bundle\Ecomme
  */
 class OnlineShop_Framework_Impl_PricingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1059,10 +776,7 @@ class OnlineShop_Framework_Impl_PricingManager extends \Pimcore\Bundle\Ecommerce
  */
 class OnlineShop_Framework_Impl_Pricing_Action_CartDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1070,10 +784,7 @@ class OnlineShop_Framework_Impl_Pricing_Action_CartDiscount extends \Pimcore\Bun
  */
 class OnlineShop_Framework_Impl_Pricing_Action_FreeShipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\FreeShipping
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1081,10 +792,7 @@ class OnlineShop_Framework_Impl_Pricing_Action_FreeShipping extends \Pimcore\Bun
  */
 class OnlineShop_Framework_Impl_Pricing_Action_Gift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\Gift
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1092,10 +800,7 @@ class OnlineShop_Framework_Impl_Pricing_Action_Gift extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1103,10 +808,7 @@ class OnlineShop_Framework_Impl_Pricing_Action_ProductDiscount extends \Pimcore\
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_Bracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1114,10 +816,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Bracket extends \Pimcore\Bundl
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_CartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1125,10 +824,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CartAmount extends \Pimcore\Bu
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1136,10 +832,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogCategory extends \Pimco
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1147,10 +840,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_CatalogProduct extends \Pimcor
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_ClientIp extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ClientIp
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1158,10 +848,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_ClientIp extends \Pimcore\Bund
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_DateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1169,10 +856,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_DateRange extends \Pimcore\Bun
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_Sales extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sales
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1180,10 +864,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sales extends \Pimcore\Bundle\
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sold
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1191,10 +872,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Sold extends \Pimcore\Bundle\E
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_Tenant extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Tenant
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1202,10 +880,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Tenant extends \Pimcore\Bundle
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_Token extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Token
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1213,10 +888,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_Token extends \Pimcore\Bundle\
  */
 class OnlineShop_Framework_Impl_Pricing_Condition_VoucherToken extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1224,10 +896,7 @@ class OnlineShop_Framework_Impl_Pricing_Condition_VoucherToken extends \Pimcore\
  */
 class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1235,10 +904,7 @@ class OnlineShop_Framework_VoucherService_Reservation extends \Pimcore\Bundle\Ec
  */
 class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1246,10 +912,7 @@ class OnlineShop_Framework_VoucherService_Reservation_Resource extends \Pimcore\
  */
 class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1257,10 +920,7 @@ class OnlineShop_Framework_VoucherService_Statistic extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_Framework_VoucherService_Statistic_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1268,10 +928,7 @@ class OnlineShop_Framework_VoucherService_Statistic_Resource extends \Pimcore\Bu
  */
 class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1279,10 +936,7 @@ class OnlineShop_Framework_VoucherService_Token extends \Pimcore\Bundle\Ecommerc
  */
 class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1290,10 +944,7 @@ class OnlineShop_Framework_VoucherService_Token_Resource extends \Pimcore\Bundle
  */
 class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1301,10 +952,7 @@ class OnlineShop_Framework_VoucherService_Token_List extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1312,10 +960,7 @@ class OnlineShop_Framework_VoucherService_Token_List_Resource extends \Pimcore\B
  */
 class OnlineShop_Framework_VoucherService_Default extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1323,10 +968,7 @@ class OnlineShop_Framework_VoucherService_Default extends \Pimcore\Bundle\Ecomme
  */
 class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Pattern
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1334,10 +976,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Pattern extends \Pimcore\
  */
 class OnlineShop_Framework_VoucherService_TokenManager_Single extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Single
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1345,10 +984,7 @@ class OnlineShop_Framework_VoucherService_TokenManager_Single extends \Pimcore\B
  */
 class OnlineShop_Framework_Impl_Cart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1356,10 +992,7 @@ class OnlineShop_Framework_Impl_Cart extends \Pimcore\Bundle\EcommerceFrameworkB
  */
 class OnlineShop_Framework_Impl_CartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1367,10 +1000,7 @@ class OnlineShop_Framework_Impl_CartCheckoutData extends \Pimcore\Bundle\Ecommer
  */
 class OnlineShop_Framework_Impl_CartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1378,10 +1008,7 @@ class OnlineShop_Framework_Impl_CartItem extends \Pimcore\Bundle\EcommerceFramew
  */
 class OnlineShop_Framework_Impl_SessionCart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1389,10 +1016,7 @@ class OnlineShop_Framework_Impl_SessionCart extends \Pimcore\Bundle\EcommerceFra
  */
 class OnlineShop_Framework_Impl_SessionCartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartCheckoutData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1400,10 +1024,7 @@ class OnlineShop_Framework_Impl_SessionCartCheckoutData extends \Pimcore\Bundle\
  */
 class OnlineShop_Framework_Impl_SessionCartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1411,10 +1032,7 @@ class OnlineShop_Framework_Impl_SessionCartItem extends \Pimcore\Bundle\Ecommerc
  */
 class OnlineShop_Framework_Impl_Cart_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1422,10 +1040,7 @@ class OnlineShop_Framework_Impl_Cart_Resource extends \Pimcore\Bundle\EcommerceF
  */
 class OnlineShop_Framework_Impl_Cart_List extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1433,10 +1048,7 @@ class OnlineShop_Framework_Impl_Cart_List extends \Pimcore\Bundle\EcommerceFrame
  */
 class OnlineShop_Framework_Impl_Cart_List_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1444,10 +1056,7 @@ class OnlineShop_Framework_Impl_Cart_List_Resource extends \Pimcore\Bundle\Ecomm
  */
 class OnlineShop_Framework_Impl_CartCheckoutData_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1455,10 +1064,7 @@ class OnlineShop_Framework_Impl_CartCheckoutData_Resource extends \Pimcore\Bundl
  */
 class OnlineShop_Framework_Impl_CartCheckoutData_List extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1466,10 +1072,7 @@ class OnlineShop_Framework_Impl_CartCheckoutData_List extends \Pimcore\Bundle\Ec
  */
 class OnlineShop_Framework_Impl_CartCheckoutData_List_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1477,10 +1080,7 @@ class OnlineShop_Framework_Impl_CartCheckoutData_List_Resource extends \Pimcore\
  */
 class OnlineShop_Framework_Impl_CartItem_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1488,10 +1088,7 @@ class OnlineShop_Framework_Impl_CartItem_Resource extends \Pimcore\Bundle\Ecomme
  */
 class OnlineShop_Framework_Impl_CartItem_List extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1499,10 +1096,7 @@ class OnlineShop_Framework_Impl_CartItem_List extends \Pimcore\Bundle\EcommerceF
  */
 class OnlineShop_Framework_Impl_CartItem_List_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1510,10 +1104,7 @@ class OnlineShop_Framework_Impl_CartItem_List_Resource extends \Pimcore\Bundle\E
  */
 class OnlineShop_Framework_Impl_CartPriceCalculator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1521,10 +1112,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_Framework_Impl_MultiCartManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1532,10 +1120,7 @@ class OnlineShop_Framework_Impl_MultiCartManager extends \Pimcore\Bundle\Ecommer
  */
 class OnlineShop_Framework_Impl_CartPriceModificator_Discount extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1543,10 +1128,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Discount extends \Pimcore\B
  */
 class OnlineShop_Framework_Impl_CartPriceModificator_Shipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1554,10 +1136,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping extends \Pimcore\B
  */
 class OnlineShop_Framework_Impl_AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1565,10 +1144,7 @@ class OnlineShop_Framework_Impl_AttributeAvailabilitySystem extends \Pimcore\Bun
  */
 class OnlineShop_Framework_Exception_InvalidConfigException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1576,10 +1152,7 @@ class OnlineShop_Framework_Exception_InvalidConfigException extends \Pimcore\Bun
  */
 class OnlineShop_Framework_Exception_UnsupportedException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1587,10 +1160,7 @@ class OnlineShop_Framework_Exception_UnsupportedException extends \Pimcore\Bundl
  */
 class OnlineShop_Framework_Exception_VoucherServiceException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1598,10 +1168,7 @@ class OnlineShop_Framework_Exception_VoucherServiceException extends \Pimcore\Bu
  */
 class OnlineShop_Framework_FilterService_FilterGroupHelper extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1609,10 +1176,7 @@ class OnlineShop_Framework_FilterService_FilterGroupHelper extends \Pimcore\Bund
  */
 class OnlineShop_Framework_FilterService extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1620,10 +1184,7 @@ class OnlineShop_Framework_FilterService extends \Pimcore\Bundle\EcommerceFramew
  */
 class OnlineShop_Framework_FilterService_Helper extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1631,10 +1192,7 @@ class OnlineShop_Framework_FilterService_Helper extends \Pimcore\Bundle\Ecommerc
  */
 class OnlineShop_Framework_FilterService_Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Input
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1642,10 +1200,7 @@ class OnlineShop_Framework_FilterService_Input extends \Pimcore\Bundle\Ecommerce
  */
 class OnlineShop_Framework_FilterService_MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1653,10 +1208,7 @@ class OnlineShop_Framework_FilterService_MultiSelect extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1664,10 +1216,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends \Pimcore\
  */
 class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1675,10 +1224,7 @@ class OnlineShop_Framework_FilterService_MultiSelectFromMultiSelect extends \Pim
  */
 class OnlineShop_Framework_FilterService_MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1686,10 +1232,7 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends \Pimcore\Bu
  */
 class OnlineShop_Framework_FilterService_NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1697,10 +1240,7 @@ class OnlineShop_Framework_FilterService_NumberRange extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_FilterService_NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1708,10 +1248,7 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends \Pimcore\B
  */
 class OnlineShop_Framework_FilterService_ProxyFilter extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ProxyFilter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1719,10 +1256,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_FilterService_Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1730,10 +1264,7 @@ class OnlineShop_Framework_FilterService_Select extends \Pimcore\Bundle\Ecommerc
  */
 class OnlineShop_Framework_FilterService_SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1741,10 +1272,7 @@ class OnlineShop_Framework_FilterService_SelectCategory extends \Pimcore\Bundle\
  */
 class OnlineShop_Framework_FilterService_SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1752,10 +1280,7 @@ class OnlineShop_Framework_FilterService_SelectRelation extends \Pimcore\Bundle\
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\Input
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1763,10 +1288,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_Input extends \Pimcore\Bu
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1774,10 +1296,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelect extends \Pimc
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1785,10 +1304,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectFromMultiSelec
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1796,10 +1312,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_MultiSelectRelation exten
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1807,10 +1320,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_NumberRange extends \Pimc
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\NumberRangeSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1818,10 +1328,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_NumberRangeSelection exte
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1829,10 +1336,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_Select extends \Pimcore\B
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1840,10 +1344,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectCategory extends \P
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1851,10 +1352,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectFromMultiSelect ext
  */
 class OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1862,10 +1360,7 @@ class OnlineShop_Framework_FilterService_ElasticSearch_SelectRelation extends \P
  */
 class OnlineShop_Framework_FilterService_FactFinder_MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1873,10 +1368,7 @@ class OnlineShop_Framework_FilterService_FactFinder_MultiSelect extends \Pimcore
  */
 class OnlineShop_Framework_FilterService_FactFinder_NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1884,10 +1376,7 @@ class OnlineShop_Framework_FilterService_FactFinder_NumberRange extends \Pimcore
  */
 class OnlineShop_Framework_FilterService_FactFinder_Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1895,10 +1384,7 @@ class OnlineShop_Framework_FilterService_FactFinder_Select extends \Pimcore\Bund
  */
 class OnlineShop_Framework_FilterService_FactFinder_SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1906,10 +1392,7 @@ class OnlineShop_Framework_FilterService_FactFinder_SelectCategory extends \Pimc
  */
 class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1917,10 +1400,7 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelect extends \Pimcore
  */
 class OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\MultiSelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1928,10 +1408,7 @@ class OnlineShop_Framework_FilterService_Findologic_MultiSelectRelation extends 
  */
 class OnlineShop_Framework_FilterService_Findologic_NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1939,10 +1416,7 @@ class OnlineShop_Framework_FilterService_Findologic_NumberRange extends \Pimcore
  */
 class OnlineShop_Framework_FilterService_Findologic_NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\NumberRangeSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1950,10 +1424,7 @@ class OnlineShop_Framework_FilterService_Findologic_NumberRangeSelection extends
  */
 class OnlineShop_Framework_FilterService_Findologic_Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1961,10 +1432,7 @@ class OnlineShop_Framework_FilterService_Findologic_Select extends \Pimcore\Bund
  */
 class OnlineShop_Framework_FilterService_Findologic_SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1972,10 +1440,7 @@ class OnlineShop_Framework_FilterService_Findologic_SelectCategory extends \Pimc
  */
 class OnlineShop_Framework_FilterService_Findologic_SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1983,10 +1448,7 @@ class OnlineShop_Framework_FilterService_Findologic_SelectRelation extends \Pimc
  */
 class OnlineShop_Framework_IndexService extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -1994,10 +1456,7 @@ class OnlineShop_Framework_IndexService extends \Pimcore\Bundle\EcommerceFramewo
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2005,10 +1464,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder extends 
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2016,10 +1472,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultFindologic extends 
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2027,10 +1480,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql extends \Pimc
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlInheritColumnConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2038,10 +1488,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnC
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2049,10 +1496,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfi
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2060,10 +1504,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch extends \Pim
  */
 class OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2071,10 +1512,7 @@ class OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql extends \Pi
  */
 class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2082,10 +1520,7 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter extends \Pimco
  */
 class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequence
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2093,10 +1528,7 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence extend
  */
 class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2104,10 +1536,7 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
  */
 class OnlineShop_Framework_IndexService_Interpreter_AssetId extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\AssetId
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2115,10 +1544,7 @@ class OnlineShop_Framework_IndexService_Interpreter_AssetId extends \Pimcore\Bun
  */
 class OnlineShop_Framework_IndexService_Interpreter_DefaultObjects extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultObjects
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2126,10 +1552,7 @@ class OnlineShop_Framework_IndexService_Interpreter_DefaultObjects extends \Pimc
  */
 class OnlineShop_Framework_IndexService_Interpreter_DefaultRelations extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2137,10 +1560,7 @@ class OnlineShop_Framework_IndexService_Interpreter_DefaultRelations extends \Pi
  */
 class OnlineShop_Framework_IndexService_Interpreter_DefaultStructuredTable extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultStructuredTable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2148,10 +1568,7 @@ class OnlineShop_Framework_IndexService_Interpreter_DefaultStructuredTable exten
  */
 class OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DimensionUnitField
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2159,10 +1576,7 @@ class OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField extends \
  */
 class OnlineShop_Framework_IndexService_Interpreter_Numeric extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Numeric
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2170,10 +1584,7 @@ class OnlineShop_Framework_IndexService_Interpreter_Numeric extends \Pimcore\Bun
  */
 class OnlineShop_Framework_IndexService_Interpreter_ObjectId extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectId
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2181,10 +1592,7 @@ class OnlineShop_Framework_IndexService_Interpreter_ObjectId extends \Pimcore\Bu
  */
 class OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectIdSum
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2192,10 +1600,7 @@ class OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum extends \Pimcore
  */
 class OnlineShop_Framework_IndexService_Interpreter_ObjectValue extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectValue
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2203,10 +1608,7 @@ class OnlineShop_Framework_IndexService_Interpreter_ObjectValue extends \Pimcore
  */
 class OnlineShop_Framework_IndexService_Interpreter_Round extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Round
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2214,10 +1616,7 @@ class OnlineShop_Framework_IndexService_Interpreter_Round extends \Pimcore\Bundl
  */
 class OnlineShop_Framework_IndexService_Interpreter_Soundex extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Soundex
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2225,10 +1624,7 @@ class OnlineShop_Framework_IndexService_Interpreter_Soundex extends \Pimcore\Bun
  */
 class OnlineShop_Framework_IndexService_Interpreter_StructuredTable extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\StructuredTable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2236,10 +1632,7 @@ class OnlineShop_Framework_IndexService_Interpreter_StructuredTable extends \Pim
  */
 class OnlineShop_Framework_ProductList_DefaultElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2247,10 +1640,7 @@ class OnlineShop_Framework_ProductList_DefaultElasticSearch extends \Pimcore\Bun
  */
 class OnlineShop_Framework_ProductList_DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFactFinder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2258,10 +1648,7 @@ class OnlineShop_Framework_ProductList_DefaultFactFinder extends \Pimcore\Bundle
  */
 class OnlineShop_Framework_ProductList_DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2269,10 +1656,7 @@ class OnlineShop_Framework_ProductList_DefaultFindologic extends \Pimcore\Bundle
  */
 class OnlineShop_Framework_ProductList_DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2280,10 +1664,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql extends \Pimcore\Bundle\Ecom
  */
 class OnlineShop_Framework_ProductList_DefaultMysql_Resource extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2291,10 +1672,7 @@ class OnlineShop_Framework_ProductList_DefaultMysql_Resource extends \Pimcore\Bu
  */
 class OnlineShop_Framework_IndexService_Tool_IndexUpdater extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2302,10 +1680,7 @@ class OnlineShop_Framework_IndexService_Tool_IndexUpdater extends \Pimcore\Bundl
  */
 class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2313,10 +1688,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch extends \Pim
  */
 class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2324,10 +1696,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder extends 
  */
 class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2335,10 +1704,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic extends 
  */
 class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2346,10 +1712,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql extends \Pimc
  */
 class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2357,10 +1720,7 @@ class OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql extends \Pi
  */
 class OnlineShop_Framework_Impl_PaymentManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2368,10 +1728,7 @@ class OnlineShop_Framework_Impl_PaymentManager extends \Pimcore\Bundle\Ecommerce
  */
 class OnlineShop_Framework_Payment_Status extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2379,10 +1736,7 @@ class OnlineShop_Framework_Payment_Status extends \Pimcore\Bundle\EcommerceFrame
  */
 class OnlineShop_Framework_Impl_Payment_Datatrans extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Datatrans
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2390,10 +1744,7 @@ class OnlineShop_Framework_Impl_Payment_Datatrans extends \Pimcore\Bundle\Ecomme
  */
 class OnlineShop_Framework_Impl_Payment_Klarna extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Klarna
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2401,10 +1752,7 @@ class OnlineShop_Framework_Impl_Payment_Klarna extends \Pimcore\Bundle\Ecommerce
  */
 class OnlineShop_Framework_Impl_Payment_PayPal extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPal
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2412,10 +1760,7 @@ class OnlineShop_Framework_Impl_Payment_PayPal extends \Pimcore\Bundle\Ecommerce
  */
 class OnlineShop_Framework_Impl_Payment_QPay extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2423,10 +1768,7 @@ class OnlineShop_Framework_Impl_Payment_QPay extends \Pimcore\Bundle\EcommerceFr
  */
 class OnlineShop_Framework_AbstractPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2434,10 +1776,7 @@ class OnlineShop_Framework_AbstractPriceInfo extends \Pimcore\Bundle\EcommerceFr
  */
 class OnlineShop_Framework_Impl_AttributePriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2445,10 +1784,7 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends \Pimcore\Bundle\Ecomm
  */
 class OnlineShop_Framework_Impl_AttributePriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2456,10 +1792,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\LazyLoadingPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2467,10 +1800,7 @@ class OnlineShop_Framework_Impl_LazyLoadingPriceInfo extends \Pimcore\Bundle\Eco
  */
 class OnlineShop_Framework_Impl_ModificatedPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2478,10 +1808,7 @@ class OnlineShop_Framework_Impl_ModificatedPrice extends \Pimcore\Bundle\Ecommer
  */
 class OnlineShop_Framework_Impl_Price extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2489,10 +1816,7 @@ class OnlineShop_Framework_Impl_Price extends \Pimcore\Bundle\EcommerceFramework
  */
 class OnlineShop_Framework_Config_HelperContainer extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2500,8 +1824,7 @@ class OnlineShop_Framework_Config_HelperContainer extends \Pimcore\Bundle\Ecomme
  */
 class OnlineShop_Framework_Factory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Factory
 {
-};
-
+}
 
 }
 
@@ -2515,10 +1838,7 @@ namespace OnlineShop\Framework {
  */
 interface IEnvironment extends \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2526,10 +1846,7 @@ interface IEnvironment extends \Pimcore\Bundle\EcommerceFrameworkBundle\IEnviron
  */
 interface IComponent extends \Pimcore\Bundle\EcommerceFrameworkBundle\IComponent
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2537,10 +1854,7 @@ interface IComponent extends \Pimcore\Bundle\EcommerceFrameworkBundle\IComponent
  */
 interface IOrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2548,10 +1862,7 @@ interface IOrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderMa
  */
 class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2559,8 +1870,7 @@ class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
  */
 class Factory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Factory
 {
-};
-
+}
 
 }
 
@@ -2574,10 +1884,7 @@ namespace OnlineShop\Framework\AvailabilitySystem {
  */
 interface IAvailability extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2585,10 +1892,7 @@ interface IAvailability extends \Pimcore\Bundle\EcommerceFrameworkBundle\Availab
  */
 interface IAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2596,8 +1900,7 @@ interface IAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\A
  */
 class AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem
 {
-};
-
+}
 
 }
 
@@ -2611,10 +1914,7 @@ namespace OnlineShop\Framework\CartManager {
  */
 interface ICart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2622,10 +1922,7 @@ interface ICart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICa
  */
 interface ICartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2633,10 +1930,7 @@ interface ICartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager
  */
 interface ICartManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2644,10 +1938,7 @@ interface ICartManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartMana
  */
 interface ICartPriceCalculator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2655,10 +1946,7 @@ interface ICartPriceCalculator extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 abstract class AbstractCart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2666,10 +1954,7 @@ abstract class AbstractCart extends \Pimcore\Bundle\EcommerceFrameworkBundle\Car
  */
 abstract class AbstractCartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartCheckoutData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2677,10 +1962,7 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Bundle\EcommerceFramewo
  */
 abstract class AbstractCartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2688,10 +1970,7 @@ abstract class AbstractCartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle
  */
 class Cart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2699,10 +1978,7 @@ class Cart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
  */
 class CartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2710,10 +1986,7 @@ class CartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartMana
  */
 class CartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2721,10 +1994,7 @@ class CartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
  */
 class SessionCart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2732,10 +2002,7 @@ class SessionCart extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\S
  */
 class SessionCartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartCheckoutData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2743,10 +2010,7 @@ class SessionCartCheckoutData extends \Pimcore\Bundle\EcommerceFrameworkBundle\C
  */
 class SessionCartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2754,10 +2018,7 @@ class SessionCartItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManag
  */
 class CartPriceCalculator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2765,8 +2026,7 @@ class CartPriceCalculator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartM
  */
 class MultiCartManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager
 {
-};
-
+}
 
 }
 
@@ -2780,10 +2040,7 @@ namespace OnlineShop\Framework\CartManager\Cart {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2791,8 +2048,7 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing
 {
-};
-
+}
 
 }
 
@@ -2806,10 +2062,7 @@ namespace OnlineShop\Framework\CartManager\CartCheckoutData {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2817,8 +2070,7 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheck
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing
 {
-};
-
+}
 
 }
 
@@ -2832,8 +2084,7 @@ namespace OnlineShop\Framework\CartManager\CartCheckoutData\Listing {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing\Dao
 {
-};
-
+}
 
 }
 
@@ -2847,10 +2098,7 @@ namespace OnlineShop\Framework\CartManager\CartItem {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2858,8 +2106,7 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing
 {
-};
-
+}
 
 }
 
@@ -2873,8 +2120,7 @@ namespace OnlineShop\Framework\CartManager\CartItem\Listing {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing\Dao
 {
-};
-
+}
 
 }
 
@@ -2888,10 +2134,7 @@ namespace OnlineShop\Framework\CartManager\CartPriceModificator {
  */
 interface ICartPriceModificator extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2899,10 +2142,7 @@ interface ICartPriceModificator extends \Pimcore\Bundle\EcommerceFrameworkBundle
  */
 interface IDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2910,10 +2150,7 @@ interface IDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager
  */
 interface IShipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2921,10 +2158,7 @@ interface IShipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager
  */
 class Discount extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2932,8 +2166,7 @@ class Discount extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
  */
 class Shipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping
 {
-};
-
+}
 
 }
 
@@ -2947,8 +2180,7 @@ namespace OnlineShop\Framework\CartManager\Cart\Listing {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao
 {
-};
-
+}
 
 }
 
@@ -2962,10 +2194,7 @@ namespace OnlineShop\Framework\CheckoutManager {
  */
 interface ICheckoutStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2973,10 +2202,7 @@ interface ICheckoutStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\Checkou
  */
 interface ICheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2984,10 +2210,7 @@ interface ICheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
  */
 interface ICommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -2995,10 +2218,7 @@ interface ICommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle
  */
 abstract class AbstractStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\AbstractStep
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3006,10 +2226,7 @@ abstract class AbstractStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\Che
  */
 class DeliveryAddress extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\DeliveryAddress
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3017,10 +2234,7 @@ class DeliveryAddress extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
  */
 class DeliveryDate extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\DeliveryDate
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3028,10 +2242,7 @@ class DeliveryDate extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutMana
  */
 class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3039,8 +2250,7 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
  */
 class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
 {
-};
-
+}
 
 }
 
@@ -3054,8 +2264,7 @@ namespace OnlineShop\Framework\Console\Command {
  */
 class CleanupPendingOrdersCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\CleanupPendingOrdersCommand
 {
-};
-
+}
 
 }
 
@@ -3069,10 +2278,7 @@ namespace OnlineShop\Framework\Console\Command\Voucher {
  */
 class AbstractVoucherCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\AbstractVoucherCommand
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3080,10 +2286,7 @@ class AbstractVoucherCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Co
  */
 class CleanupCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\CleanupCommand
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3091,10 +2294,7 @@ class CleanupCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Co
  */
 class CleanupReservationsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\CleanupReservationsCommand
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3102,8 +2302,7 @@ class CleanupReservationsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundl
  */
 class CleanupStatisticsCommand extends \Pimcore\Bundle\EcommerceFrameworkBundle\Console\Command\Voucher\CleanupStatisticsCommand
 {
-};
-
+}
 
 }
 
@@ -3117,10 +2316,7 @@ namespace OnlineShop\Framework\Exception {
  */
 class InvalidConfigException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3128,10 +2324,7 @@ class InvalidConfigException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Ex
  */
 class UnsupportedException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3139,8 +2332,7 @@ class UnsupportedException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exce
  */
 class VoucherServiceException extends \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
 {
-};
-
+}
 
 }
 
@@ -3154,10 +2346,7 @@ namespace OnlineShop\Framework\FilterService {
  */
 class FilterGroupHelper extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3165,10 +2354,7 @@ class FilterGroupHelper extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
  */
 class FilterService extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3176,8 +2362,7 @@ class FilterService extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServi
  */
 class Helper extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper
 {
-};
-
+}
 
 }
 
@@ -3191,10 +2376,7 @@ namespace OnlineShop\Framework\FilterService\FilterType {
  */
 abstract class AbstractFilterType extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3202,10 +2384,7 @@ abstract class AbstractFilterType extends \Pimcore\Bundle\EcommerceFrameworkBund
  */
 class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Input
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3213,10 +2392,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
  */
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3224,10 +2400,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class MultiSelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3235,10 +2408,7 @@ class MultiSelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
  */
 class SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3246,10 +2416,7 @@ class SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Fil
  */
 class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3257,10 +2424,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
  */
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3268,10 +2432,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
  */
 class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3279,10 +2440,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3290,10 +2448,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
  */
 class ProxyFilter extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ProxyFilter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3301,10 +2456,7 @@ class ProxyFilter extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3312,10 +2464,7 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
  */
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3323,8 +2472,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
  */
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
 {
-};
-
+}
 
 }
 
@@ -3338,10 +2486,7 @@ namespace OnlineShop\Framework\FilterService\FilterType\ElasticSearch {
  */
 class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\Input
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3349,10 +2494,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
  */
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3360,10 +2502,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3371,10 +2510,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
  */
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3382,10 +2518,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
  */
 class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3393,10 +2526,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\NumberRangeSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3404,10 +2534,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
  */
 class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3415,10 +2542,7 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
  */
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3426,10 +2550,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
  */
 class SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectFromMultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3437,8 +2558,7 @@ class SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Fil
  */
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\SelectRelation
 {
-};
-
+}
 
 }
 
@@ -3452,10 +2572,7 @@ namespace OnlineShop\Framework\FilterService\FilterType\FactFinder {
  */
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3463,10 +2580,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3474,10 +2588,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3485,8 +2596,7 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
  */
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactFinder\SelectCategory
 {
-};
-
+}
 
 }
 
@@ -3500,10 +2610,7 @@ namespace OnlineShop\Framework\FilterService\FilterType\Findologic {
  */
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\MultiSelect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3511,10 +2618,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\MultiSelectRelation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3522,10 +2626,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
  */
 class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\NumberRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3533,10 +2634,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
  */
 class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\NumberRangeSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3544,10 +2642,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
  */
 class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\Select
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3555,10 +2650,7 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
  */
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3566,8 +2658,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
  */
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectRelation
 {
-};
-
+}
 
 }
 
@@ -3581,8 +2672,7 @@ namespace OnlineShop\Framework\Impl {
  */
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager
 {
-};
-
+}
 
 }
 
@@ -3596,10 +2686,7 @@ namespace OnlineShop\Framework\Impl\OrderManager\Order {
  */
 class Agent extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3607,8 +2694,7 @@ class Agent extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing
 {
-};
-
+}
 
 }
 
@@ -3622,8 +2708,7 @@ namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing {
  */
 class Item extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Item
 {
-};
-
+}
 
 }
 
@@ -3637,10 +2722,7 @@ namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter {
  */
 class OrderDateTime extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3648,10 +2730,7 @@ class OrderDateTime extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManage
  */
 class OrderSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3659,10 +2738,7 @@ class OrderSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\
  */
 class Payment extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Payment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3670,10 +2746,7 @@ class Payment extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Orde
  */
 class Product extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Product
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3681,10 +2754,7 @@ class Product extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Orde
  */
 class ProductType extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3692,8 +2762,7 @@ class ProductType extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\
  */
 class Search extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search
 {
-};
-
+}
 
 }
 
@@ -3707,10 +2776,7 @@ namespace OnlineShop\Framework\Impl\OrderManager\Order\Listing\Filter\Search {
  */
 class Customer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search\Customer
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3718,10 +2784,7 @@ class Customer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Ord
  */
 class CustomerEmail extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search\CustomerEmail
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3729,8 +2792,7 @@ class CustomerEmail extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManage
  */
 class PaymentReference extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search\PaymentReference
 {
-};
-
+}
 
 }
 
@@ -3744,8 +2806,7 @@ namespace OnlineShop\Framework\IndexService {
  */
 class IndexService extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService
 {
-};
-
+}
 
 }
 
@@ -3759,10 +2820,7 @@ namespace OnlineShop\Framework\IndexService\Config {
  */
 interface IConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3770,10 +2828,7 @@ interface IConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\
  */
 interface IElasticSearchConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3781,10 +2836,7 @@ interface IElasticSearchConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 interface IFactFinderConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3792,10 +2844,7 @@ interface IFactFinderConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\Ind
  */
 interface IFindologicConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3803,10 +2852,7 @@ interface IFindologicConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\Ind
  */
 interface IMockupConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3814,10 +2860,7 @@ interface IMockupConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 interface IMysqlConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3825,10 +2868,7 @@ interface IMysqlConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSer
  */
 abstract class AbstractConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3836,10 +2876,7 @@ abstract class AbstractConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\I
  */
 class DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3847,10 +2884,7 @@ class DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 class DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3858,10 +2892,7 @@ class DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 class DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3869,10 +2900,7 @@ class DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService
  */
 class DefaultMysqlInheritColumnConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlInheritColumnConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3880,10 +2908,7 @@ class DefaultMysqlInheritColumnConfig extends \Pimcore\Bundle\EcommerceFramework
  */
 class DefaultMysqlSubTenantConfig extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3891,10 +2916,7 @@ class DefaultMysqlSubTenantConfig extends \Pimcore\Bundle\EcommerceFrameworkBund
  */
 class ElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3902,8 +2924,7 @@ class ElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexServic
  */
 class OptimizedMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
 {
-};
-
+}
 
 }
 
@@ -3917,10 +2938,7 @@ namespace OnlineShop\Framework\IndexService\Getter {
  */
 interface IExtendedGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IExtendedGetter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3928,10 +2946,7 @@ interface IExtendedGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\Index
  */
 interface IGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3939,10 +2954,7 @@ interface IGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\
  */
 class DefaultBrickGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3950,10 +2962,7 @@ class DefaultBrickGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexS
  */
 class DefaultBrickGetterSequence extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequence
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3961,10 +2970,7 @@ class DefaultBrickGetterSequence extends \Pimcore\Bundle\EcommerceFrameworkBundl
  */
 class DefaultBrickGetterSequenceToMultiselect extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3972,8 +2978,7 @@ class DefaultBrickGetterSequenceToMultiselect extends \Pimcore\Bundle\EcommerceF
  */
 class TagsGetter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\TagsGetter
 {
-};
-
+}
 
 }
 
@@ -3987,10 +2992,7 @@ namespace OnlineShop\Framework\IndexService\Interpreter {
  */
 interface IInterpreter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -3998,10 +3000,7 @@ interface IInterpreter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSer
  */
 interface IRelationInterpreter extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4009,10 +3008,7 @@ interface IRelationInterpreter extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 class AssetId extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\AssetId
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4020,10 +3016,7 @@ class AssetId extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Inte
  */
 class DefaultObjects extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultObjects
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4031,10 +3024,7 @@ class DefaultObjects extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexServi
  */
 class DefaultRelations extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4042,10 +3032,7 @@ class DefaultRelations extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSer
  */
 class DefaultStructuredTable extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultStructuredTable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4053,10 +3040,7 @@ class DefaultStructuredTable extends \Pimcore\Bundle\EcommerceFrameworkBundle\In
  */
 class DimensionUnitField extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DimensionUnitField
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4064,10 +3048,7 @@ class DimensionUnitField extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexS
  */
 class IdList extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IdList
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4075,10 +3056,7 @@ class IdList extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Inter
  */
 class Numeric extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Numeric
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4086,10 +3064,7 @@ class Numeric extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Inte
  */
 class ObjectId extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectId
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4097,10 +3072,7 @@ class ObjectId extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Int
  */
 class ObjectIdSum extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectIdSum
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4108,10 +3080,7 @@ class ObjectIdSum extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\
  */
 class ObjectValue extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\ObjectValue
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4119,10 +3088,7 @@ class ObjectValue extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\
  */
 class Round extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Round
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4130,10 +3096,7 @@ class Round extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interp
  */
 class Soundex extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Soundex
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4141,8 +3104,7 @@ class Soundex extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Inte
  */
 class StructuredTable extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\StructuredTable
 {
-};
-
+}
 
 }
 
@@ -4156,10 +3118,7 @@ namespace OnlineShop\Framework\IndexService\ProductList {
  */
 interface IProductList extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4167,10 +3126,7 @@ interface IProductList extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSer
  */
 class DefaultElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4178,10 +3134,7 @@ class DefaultElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\Inde
  */
 class DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFactFinder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4189,10 +3142,7 @@ class DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 class DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4200,8 +3150,7 @@ class DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 class DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
 {
-};
-
+}
 
 }
 
@@ -4215,8 +3164,7 @@ namespace OnlineShop\Framework\IndexService\ProductList\DefaultMysql {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql\Dao
 {
-};
-
+}
 
 }
 
@@ -4230,8 +3178,7 @@ namespace OnlineShop\Framework\IndexService\Tool {
  */
 class IndexUpdater extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater
 {
-};
-
+}
 
 }
 
@@ -4245,10 +3192,7 @@ namespace OnlineShop\Framework\IndexService\Worker {
  */
 interface IBatchProcessingWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4256,10 +3200,7 @@ interface IBatchProcessingWorker extends \Pimcore\Bundle\EcommerceFrameworkBundl
  */
 interface IWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4267,10 +3208,7 @@ interface IWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\
  */
 abstract class AbstractBatchProcessingWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4278,10 +3216,7 @@ abstract class AbstractBatchProcessingWorker extends \Pimcore\Bundle\EcommerceFr
  */
 abstract class AbstractMockupCacheWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractMockupCacheWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4289,10 +3224,7 @@ abstract class AbstractMockupCacheWorker extends \Pimcore\Bundle\EcommerceFramew
  */
 abstract class AbstractWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4300,10 +3232,7 @@ abstract class AbstractWorker extends \Pimcore\Bundle\EcommerceFrameworkBundle\I
  */
 class DefaultElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4311,10 +3240,7 @@ class DefaultElasticSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\Inde
  */
 class DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4322,10 +3248,7 @@ class DefaultFactFinder extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 class DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4333,10 +3256,7 @@ class DefaultFindologic extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexSe
  */
 class DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4344,8 +3264,7 @@ class DefaultMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService
  */
 class OptimizedMysql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql
 {
-};
-
+}
 
 }
 
@@ -4359,8 +3278,7 @@ namespace OnlineShop\Framework\IndexService\Worker\Helper {
  */
 class MySql extends \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper\MySql
 {
-};
-
+}
 
 }
 
@@ -4374,10 +3292,7 @@ namespace OnlineShop\Framework\Model {
  */
 interface ICheckoutable extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4385,10 +3300,7 @@ interface ICheckoutable extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\I
  */
 interface IIndexable extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4396,10 +3308,7 @@ interface IIndexable extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\IInd
  */
 interface IProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4407,10 +3316,7 @@ interface IProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProdu
  */
 abstract class AbstractFilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4418,10 +3324,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Bundle\EcommerceFramewo
  */
 abstract class AbstractFilterDefinitionType extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4429,10 +3332,7 @@ abstract class AbstractFilterDefinitionType extends \Pimcore\Bundle\EcommerceFra
  */
 abstract class CategoryFilterDefinitionType extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4440,10 +3340,7 @@ abstract class CategoryFilterDefinitionType extends \Pimcore\Bundle\EcommerceFra
  */
 abstract class AbstractPaymentInformation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4451,10 +3348,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Bundle\EcommerceFrame
  */
 abstract class AbstractVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4462,10 +3356,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkB
  */
 class AbstractCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4473,10 +3364,7 @@ class AbstractCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Ab
  */
 class AbstractOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4484,10 +3372,7 @@ class AbstractOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Abstr
  */
 class AbstractOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4495,10 +3380,7 @@ class AbstractOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\A
  */
 class AbstractProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4506,10 +3388,7 @@ class AbstractProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Abs
  */
 class AbstractSetProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4517,10 +3396,7 @@ class AbstractSetProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\
  */
 class AbstractSetProductEntry extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4528,10 +3404,7 @@ class AbstractSetProductEntry extends \Pimcore\Bundle\EcommerceFrameworkBundle\M
  */
 class AbstractVoucherTokenType extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4539,8 +3412,7 @@ class AbstractVoucherTokenType extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 class DefaultMockup extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
 {
-};
-
+}
 
 }
 
@@ -4554,10 +3426,7 @@ namespace OnlineShop\Framework\OfferTool {
  */
 interface IService extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4565,10 +3434,7 @@ interface IService extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IS
  */
 class AbstractOffer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4576,10 +3442,7 @@ class AbstractOffer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\A
  */
 class AbstractOfferItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4587,10 +3450,7 @@ class AbstractOfferItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTo
  */
 class AbstractOfferToolProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferToolProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4598,8 +3458,7 @@ class AbstractOfferToolProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 class DefaultService extends \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService
 {
-};
-
+}
 
 }
 
@@ -4613,10 +3472,7 @@ namespace OnlineShop\Framework\OrderManager {
  */
 interface IOrderAgent extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4624,10 +3480,7 @@ interface IOrderAgent extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderMana
  */
 interface IOrderList extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4635,10 +3488,7 @@ interface IOrderList extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManag
  */
 interface IOrderListFilter extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4646,10 +3496,7 @@ interface IOrderListFilter extends \Pimcore\Bundle\EcommerceFrameworkBundle\Orde
  */
 interface IOrderListItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4657,10 +3504,7 @@ interface IOrderListItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderM
  */
 interface IOrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4668,10 +3512,7 @@ interface IOrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderMa
  */
 abstract class AbstractOrderList extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4679,10 +3520,7 @@ abstract class AbstractOrderList extends \Pimcore\Bundle\EcommerceFrameworkBundl
  */
 abstract class AbstractOrderListItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderListItem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4690,8 +3528,7 @@ abstract class AbstractOrderListItem extends \Pimcore\Bundle\EcommerceFrameworkB
  */
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager
 {
-};
-
+}
 
 }
 
@@ -4705,10 +3542,7 @@ namespace OnlineShop\Framework\OrderManager\Order {
  */
 class Agent extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4716,8 +3550,7 @@ class Agent extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing
 {
-};
-
+}
 
 }
 
@@ -4731,8 +3564,7 @@ namespace OnlineShop\Framework\OrderManager\Order\Listing {
  */
 class Item extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Item
 {
-};
-
+}
 
 }
 
@@ -4746,10 +3578,7 @@ namespace OnlineShop\Framework\OrderManager\Order\Listing\Filter {
  */
 abstract class AbstractSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\AbstractSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4757,10 +3586,7 @@ abstract class AbstractSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\O
  */
 class OrderDateTime extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4768,10 +3594,7 @@ class OrderDateTime extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManage
  */
 class OrderSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4779,10 +3602,7 @@ class OrderSearch extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\
  */
 class Payment extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Payment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4790,10 +3610,7 @@ class Payment extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Orde
  */
 class Product extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Product
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4801,10 +3618,7 @@ class Product extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Orde
  */
 class ProductType extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4812,8 +3626,7 @@ class ProductType extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\
  */
 class Search extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search
 {
-};
-
+}
 
 }
 
@@ -4827,10 +3640,7 @@ namespace OnlineShop\Framework\OrderManager\Order\Listing\Filter\Search {
  */
 class Customer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search\Customer
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4838,10 +3648,7 @@ class Customer extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Ord
  */
 class CustomerEmail extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search\CustomerEmail
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4849,8 +3656,7 @@ class CustomerEmail extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManage
  */
 class PaymentReference extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search\PaymentReference
 {
-};
-
+}
 
 }
 
@@ -4864,10 +3670,7 @@ namespace OnlineShop\Framework\PaymentManager {
  */
 interface IPaymentManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4875,10 +3678,7 @@ interface IPaymentManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Payme
  */
 interface IStatus extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4886,10 +3686,7 @@ interface IStatus extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManage
  */
 class PaymentManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4897,8 +3694,7 @@ class PaymentManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentMan
  */
 class Status extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status
 {
-};
-
+}
 
 }
 
@@ -4912,10 +3708,7 @@ namespace OnlineShop\Framework\PaymentManager\Payment {
  */
 interface IPayment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4923,10 +3716,7 @@ interface IPayment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManag
  */
 class Datatrans extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Datatrans
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4934,10 +3724,7 @@ class Datatrans extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\
  */
 class Klarna extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Klarna
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4945,10 +3732,7 @@ class Klarna extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Pay
  */
 class PayPal extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPal
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4956,10 +3740,7 @@ class PayPal extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Pay
  */
 class QPay extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4967,8 +3748,7 @@ class QPay extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payme
  */
 class WirecardSeamless extends \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless
 {
-};
-
+}
 
 }
 
@@ -4982,10 +3762,7 @@ namespace OnlineShop\Framework\PriceSystem {
  */
 interface ICachingPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ICachingPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -4993,10 +3770,7 @@ interface ICachingPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\P
  */
 interface IModificatedPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5004,10 +3778,7 @@ interface IModificatedPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\Pri
  */
 interface IPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5015,10 +3786,7 @@ interface IPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IP
  */
 interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5026,10 +3794,7 @@ interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSyste
  */
 interface IPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5037,10 +3802,7 @@ interface IPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSys
  */
 abstract class AbstractPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5048,10 +3810,7 @@ abstract class AbstractPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBun
  */
 abstract class CachingPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\CachingPriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5059,10 +3818,7 @@ abstract class CachingPriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBund
  */
 class AbstractPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5070,10 +3826,7 @@ class AbstractPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSy
  */
 class AttributePriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5081,10 +3834,7 @@ class AttributePriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceS
  */
 class AttributePriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5092,10 +3842,7 @@ class AttributePriceSystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Pric
  */
 class LazyLoadingPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\LazyLoadingPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5103,10 +3850,7 @@ class LazyLoadingPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\Pric
  */
 class ModificatedPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5114,8 +3858,7 @@ class ModificatedPrice extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSys
  */
 class Price extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price
 {
-};
-
+}
 
 }
 
@@ -5129,10 +3872,7 @@ namespace OnlineShop\Framework\PriceSystem\TaxManagement {
  */
 class TaxCalculationService extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5140,8 +3880,7 @@ class TaxCalculationService extends \Pimcore\Bundle\EcommerceFrameworkBundle\Pri
  */
 class TaxEntry extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry
 {
-};
-
+}
 
 }
 
@@ -5155,10 +3894,7 @@ namespace OnlineShop\Framework\PricingManager {
  */
 interface IRule extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5166,10 +3902,7 @@ interface IRule extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
  */
 interface IAction extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5177,10 +3910,7 @@ interface IAction extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManage
  */
 interface ICondition extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5188,10 +3918,7 @@ interface ICondition extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMan
  */
 interface IEnvironment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5199,10 +3926,7 @@ interface IEnvironment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingM
  */
 interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5210,10 +3934,7 @@ interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMan
  */
 interface IPricingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5221,10 +3942,7 @@ interface IPricingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Prici
  */
 class Rule extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5232,10 +3950,7 @@ class Rule extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule
  */
 class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5243,10 +3958,7 @@ class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManage
  */
 class PriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5254,8 +3966,7 @@ class PriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
  */
 class PricingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager
 {
-};
-
+}
 
 }
 
@@ -5269,10 +3980,7 @@ namespace OnlineShop\Framework\PricingManager\Action {
  */
 interface IDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5280,10 +3988,7 @@ interface IDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMana
  */
 interface IGift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IGift
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5291,10 +3996,7 @@ interface IGift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
  */
 interface IProductDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IProductDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5302,10 +4004,7 @@ interface IProductDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\Pric
  */
 class CartDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartDiscount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5313,10 +4012,7 @@ class CartDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManag
  */
 class FreeShipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\FreeShipping
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5324,10 +4020,7 @@ class FreeShipping extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManag
  */
 class Gift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\Gift
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5335,8 +4028,7 @@ class Gift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Actio
  */
 class ProductDiscount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount
 {
-};
-
+}
 
 }
 
@@ -5350,10 +4042,7 @@ namespace OnlineShop\Framework\PricingManager\Condition {
  */
 interface IBracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5361,10 +4050,7 @@ interface IBracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManag
  */
 interface ICartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartAmount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5372,10 +4058,7 @@ interface ICartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
  */
 interface ICartProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5383,10 +4066,7 @@ interface ICartProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingM
  */
 interface ICatalogProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICatalogProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5394,10 +4074,7 @@ interface ICatalogProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\Prici
  */
 interface ICategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5405,10 +4082,7 @@ interface ICategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMana
  */
 interface IDateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IDateRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5416,10 +4090,7 @@ interface IDateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMan
  */
 abstract class AbstractOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\AbstractOrder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5427,10 +4098,7 @@ abstract class AbstractOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Pr
  */
 class AbstractObjectListCondition extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\AbstractObjectListCondition
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5438,10 +4106,7 @@ class AbstractObjectListCondition extends \Pimcore\Bundle\EcommerceFrameworkBund
  */
 class Bracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5449,10 +4114,7 @@ class Bracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Co
  */
 class CartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5460,10 +4122,7 @@ class CartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager
  */
 class CatalogCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogCategory
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5471,10 +4130,7 @@ class CatalogCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
  */
 class CatalogProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProduct
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5482,10 +4138,7 @@ class CatalogProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMan
  */
 class ClientIp extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ClientIp
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5493,10 +4146,7 @@ class ClientIp extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\C
  */
 class DateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5504,10 +4154,7 @@ class DateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
  */
 class Sales extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sales
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5515,10 +4162,7 @@ class Sales extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Cond
  */
 class Sold extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sold
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5526,10 +4170,7 @@ class Sold extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condi
  */
 class Tenant extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Tenant
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5537,10 +4178,7 @@ class Tenant extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Con
  */
 class Token extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Token
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5548,8 +4186,7 @@ class Token extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Cond
  */
 class VoucherToken extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken
 {
-};
-
+}
 
 }
 
@@ -5563,10 +4200,7 @@ namespace OnlineShop\Framework\PricingManager\Rule {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5574,8 +4208,7 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\D
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing
 {
-};
-
+}
 
 }
 
@@ -5589,8 +4222,7 @@ namespace OnlineShop\Framework\PricingManager\Rule\Listing {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing\Dao
 {
-};
-
+}
 
 }
 
@@ -5604,8 +4236,7 @@ namespace OnlineShop\Framework\Tools\Config {
  */
 class HelperContainer extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer
 {
-};
-
+}
 
 }
 
@@ -5619,10 +4250,7 @@ namespace OnlineShop\Framework\Tracking {
  */
 interface ICheckout extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5630,10 +4258,7 @@ interface ICheckout extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IC
  */
 interface ICheckoutComplete extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5641,10 +4266,7 @@ interface ICheckoutComplete extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tra
  */
 interface ICheckoutStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5652,10 +4274,7 @@ interface ICheckoutStep extends \Pimcore\Bundle\EcommerceFrameworkBundle\Trackin
  */
 interface IProductActionAdd extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5663,10 +4282,7 @@ interface IProductActionAdd extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tra
  */
 interface IProductActionRemove extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5674,10 +4290,7 @@ interface IProductActionRemove extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 interface IProductImpression extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductImpression
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5685,10 +4298,7 @@ interface IProductImpression extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tr
  */
 interface IProductView extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5696,10 +4306,7 @@ interface IProductView extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking
  */
 interface ITracker extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5707,10 +4314,7 @@ interface ITracker extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITr
  */
 interface ITrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingItemBuilder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5718,10 +4322,7 @@ interface ITrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 interface ITrackingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5729,10 +4330,7 @@ interface ITrackingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Trac
  */
 abstract class Tracker extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5740,10 +4338,7 @@ abstract class Tracker extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking
  */
 class AbstractData extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\AbstractData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5751,10 +4346,7 @@ class AbstractData extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Abs
  */
 class AbstractProductData extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\AbstractProductData
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5762,10 +4354,7 @@ class AbstractProductData extends \Pimcore\Bundle\EcommerceFrameworkBundle\Track
  */
 class ProductAction extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5773,10 +4362,7 @@ class ProductAction extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Pr
  */
 class ProductImpression extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5784,10 +4370,7 @@ class ProductImpression extends \Pimcore\Bundle\EcommerceFrameworkBundle\Trackin
  */
 class Transaction extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5795,10 +4378,7 @@ class Transaction extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tran
  */
 class TrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5806,8 +4386,7 @@ class TrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Track
  */
 class TrackingManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager
 {
-};
-
+}
 
 }
 
@@ -5821,10 +4400,7 @@ namespace OnlineShop\Framework\Tracking\Tracker\Analytics {
  */
 class Ecommerce extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5832,10 +4408,7 @@ class Ecommerce extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracke
  */
 class EnhancedEcommerce extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5843,8 +4416,7 @@ class EnhancedEcommerce extends \Pimcore\Bundle\EcommerceFrameworkBundle\Trackin
  */
 class UniversalEcommerce extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce
 {
-};
-
+}
 
 }
 
@@ -5858,10 +4430,7 @@ namespace OnlineShop\Framework\VoucherService {
  */
 interface IVoucherService extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5869,10 +4438,7 @@ interface IVoucherService extends \Pimcore\Bundle\EcommerceFrameworkBundle\Vouch
  */
 class Reservation extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5880,10 +4446,7 @@ class Reservation extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherServic
  */
 class Statistic extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5891,10 +4454,7 @@ class Statistic extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\
  */
 class Token extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5902,8 +4462,7 @@ class Token extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Toke
  */
 class DefaultService extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService
 {
-};
-
+}
 
 }
 
@@ -5917,8 +4476,7 @@ namespace OnlineShop\Framework\VoucherService\Reservation {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao
 {
-};
-
+}
 
 }
 
@@ -5932,8 +4490,7 @@ namespace OnlineShop\Framework\VoucherService\Statistic {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao
 {
-};
-
+}
 
 }
 
@@ -5947,10 +4504,7 @@ namespace OnlineShop\Framework\VoucherService\Token {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5958,8 +4512,7 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\
  */
 class Listing extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing
 {
-};
-
+}
 
 }
 
@@ -5973,10 +4526,7 @@ namespace OnlineShop\Framework\VoucherService\TokenManager {
  */
 interface IExportableTokenManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\IExportableTokenManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5984,10 +4534,7 @@ interface IExportableTokenManager extends \Pimcore\Bundle\EcommerceFrameworkBund
  */
 interface ITokenManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -5995,10 +4542,7 @@ interface ITokenManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\Voucher
  */
 abstract class AbstractTokenManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\AbstractTokenManager
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -6006,10 +4550,7 @@ abstract class AbstractTokenManager extends \Pimcore\Bundle\EcommerceFrameworkBu
  */
 class Pattern extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Pattern
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -6017,8 +4558,7 @@ class Pattern extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\To
  */
 class Single extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Single
 {
-};
-
+}
 
 }
 
@@ -6032,8 +4572,7 @@ namespace OnlineShop\Framework\VoucherService\Token\Listing {
  */
 class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao
 {
-};
-
+}
 
 }
 
@@ -6047,10 +4586,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data {
  */
 class IndexFieldSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -6058,10 +4594,7 @@ class IndexFieldSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\CoreE
  */
 class IndexFieldSelectionCombo extends \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo
 {
-};
-
-
-
+}
 
 /**
  * @deprecated
@@ -6069,8 +4602,7 @@ class IndexFieldSelectionCombo extends \Pimcore\Bundle\EcommerceFrameworkBundle\
  */
 class IndexFieldSelectionField extends \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField
 {
-};
-
+}
 
 }
 
@@ -6084,8 +4616,7 @@ namespace Pimcore\Model\Object\Data {
  */
 class IndexFieldSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection
 {
-};
-
+}
 
 }
 

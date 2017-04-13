@@ -30,7 +30,7 @@ class ObjectTest extends ModelTestCase
      */
     public function testParentIs0()
     {
-        $savedObject = TestHelper::createEmptyObject("", false);
+        $savedObject = TestHelper::createEmptyObject('', false);
         $this->assertTrue($savedObject->getId() == 0);
 
         $savedObject->setParentId(0);

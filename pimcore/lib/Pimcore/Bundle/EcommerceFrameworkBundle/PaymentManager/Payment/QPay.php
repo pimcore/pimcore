@@ -53,6 +53,7 @@ class QPay implements IPayment
 
     /**
      * Keep old implementation for backwards compatibility
+     *
      * @var string
      */
     protected $hashAlgorithm = self::HASH_ALGO_MD5;
@@ -64,6 +65,7 @@ class QPay implements IPayment
 
     /**
      * Whitelist of optional properties allowed for payment init
+     *
      * @var array
      */
     protected $optionalPaymentProperties = [
@@ -150,19 +152,14 @@ class QPay implements IPayment
     /**
      * @param IPrice $price
      * @param array $config
+     *
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
     public function initPayment(IPrice $price, array $config)
     {
         // check params
         $required = [
-            'successURL' => null
-            , 'cancelURL' => null
-            , 'failureURL' => null
-            , 'serviceURL' => null
-            , 'orderDescription' => null
-            , 'orderIdent' => null
-            , 'language' => null
+            'successURL' => null, 'cancelURL' => null, 'failureURL' => null, 'serviceURL' => null, 'orderDescription' => null, 'orderIdent' => null, 'language' => null
         ];
 
         $check = array_intersect_key($config, $required);
@@ -207,7 +204,7 @@ class QPay implements IPayment
         ]);
         $form->setAction('https://www.qenta.com/qpay/init.php');
         $form->setMethod('post');
-        $form->setAttribute("data-currency", "EUR");
+        $form->setAttribute('data-currency', 'EUR');
 
         // omit these keys from the form
         $blacklistedFormKeys = ['secret'];
@@ -224,7 +221,6 @@ class QPay implements IPayment
         $form->add('requestFingerprint', HiddenType::class);
         $formData['requestFingerprint'] = $fingerprint;
 
-
         // add submit button
         $form->add('submitbutton', SubmitType::class, ['attr' => ['class' => 'btn']]);
 
@@ -237,6 +233,7 @@ class QPay implements IPayment
      * @param mixed $response
      *
      * @return IStatus
+     *
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -250,12 +247,8 @@ class QPay implements IPayment
         ];
 
         $authorizedData = [
-            'orderNumber' => null
-            , 'language' => null
-            , 'amount' => null
-            , 'currency' => null
+            'orderNumber' => null, 'language' => null, 'amount' => null, 'currency' => null
         ];
-
 
         // check fields
         $check = array_intersect_key($response, $required);
@@ -272,7 +265,7 @@ class QPay implements IPayment
 
         // compute and check fingerprint
         $fingerprint = $this->computeFingerprint($fingerprintParams);
-        if ($response["paymentState"] !== "FAILURE" && $fingerprint != $response['responseFingerprint']) {
+        if ($response['paymentState'] !== 'FAILURE' && $fingerprint != $response['responseFingerprint']) {
             // fingerprint is wrong, ignore this response
             return new Status(
                 $response['orderIdent'], $response['orderNumber'], $response['avsResponseMessage'] ?: $response['message'] ?: 'fingerprint error', IStatus::STATUS_CANCELLED
@@ -283,19 +276,14 @@ class QPay implements IPayment
         $authorizedData = array_intersect_key($response, $authorizedData);
         $this->setAuthorizedData($authorizedData);
 
-
         // restore price object for payment status
         $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
-
 
         return new Status(
             $response['orderIdent'], $response['orderNumber'], $response['avsResponseMessage'] ?: $response['message'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
                 ? IStatus::STATUS_AUTHORIZED
                 : IStatus::STATUS_CANCELLED, [
-                'qpay_amount' => (string)$price
-                , 'qpay_paymentType' => $response['paymentType']
-                , 'qpay_paymentState' => $response['paymentState']
-                , 'qpay_response' => $response
+                'qpay_amount' => (string)$price, 'qpay_paymentType' => $response['paymentType'], 'qpay_paymentState' => $response['paymentState'], 'qpay_response' => $response
             ]
         );
     }
@@ -327,6 +315,7 @@ class QPay implements IPayment
      * @param string                      $reference
      *
      * @return IStatus
+     *
      * @throws \Exception
      */
     public function executeDebit(IPrice $price = null, $reference = null)
@@ -335,68 +324,33 @@ class QPay implements IPayment
         // https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
         // https://integration.wirecard.at/doku.php/backend:deposit
 
-
         if ($price) {
             // recurPayment
 
             $request = [
-                'customerId' => $this->customer
-                , 'toolkitPassword' => $this->toolkitPassword
-                , 'command' => 'recurPayment'
-                , 'language' => $this->authorizedData['language']
-                , 'requestFingerprint' => ''
-                , 'orderDescription' => $reference
-                , 'sourceOrderNumber' => $this->authorizedData['orderNumber']
-                , 'amount' => $price->getAmount()
-                , 'currency' => $price->getCurrency()->getShortName()
+                'customerId' => $this->customer, 'toolkitPassword' => $this->toolkitPassword, 'command' => 'recurPayment', 'language' => $this->authorizedData['language'], 'requestFingerprint' => '', 'orderDescription' => $reference, 'sourceOrderNumber' => $this->authorizedData['orderNumber'], 'amount' => $price->getAmount(), 'currency' => $price->getCurrency()->getShortName()
             ];
-
 
             // add fingerprint
             $request['requestFingerprint'] = $this->computeFingerprint([
-                $request['customerId']
-                , $request['toolkitPassword']
-                , $this->secret
-                , $request['command']
-                , $request['language']
-                , $request['sourceOrderNumber']
-                , $request['orderDescription']
-                , $request['amount']
-                , $request['currency']
+                $request['customerId'], $request['toolkitPassword'], $this->secret, $request['command'], $request['language'], $request['sourceOrderNumber'], $request['orderDescription'], $request['amount'], $request['currency']
             ]);
         } else {
             // default clearing auth
             $price = new Price($this->authorizedData['amount'], new Currency($this->authorizedData['currency']));
 
             $request = [
-                'customerId' => $this->customer
-                , 'toolkitPassword' => $this->toolkitPassword
-                , 'command' => 'deposit'
-                , 'language' => $this->authorizedData['language']
-                , 'requestFingerprint' => ''
-                , 'orderNumber' => $this->authorizedData['orderNumber']
-                , 'amount' => $price->getAmount()
-                , 'currency' => $price->getCurrency()->getShortName()
+                'customerId' => $this->customer, 'toolkitPassword' => $this->toolkitPassword, 'command' => 'deposit', 'language' => $this->authorizedData['language'], 'requestFingerprint' => '', 'orderNumber' => $this->authorizedData['orderNumber'], 'amount' => $price->getAmount(), 'currency' => $price->getCurrency()->getShortName()
             ];
-
 
             // add fingerprint
             $request['requestFingerprint'] = $this->computeFingerprint([
-                $request['customerId']
-                , $request['toolkitPassword']
-                , $this->secret
-                , $request['command']
-                , $request['language']
-                , $request['orderNumber']
-                , $request['amount']
-                , $request['currency']
+                $request['customerId'], $request['toolkitPassword'], $this->secret, $request['command'], $request['language'], $request['orderNumber'], $request['amount'], $request['currency']
             ]);
         }
 
-
         // execute request
         $response = $this->serverToServerRequest('https://checkout.wirecard.com/page/toolkit.php', $request);
-
 
         // check response
         if ($response['status'] === '0') {
@@ -404,9 +358,7 @@ class QPay implements IPayment
 
             return new Status(
                 $reference, $response['paymentNumber'] ?: $response['orderNumber'], '', IStatus::STATUS_CLEARED, [
-                    'qpay_amount' => (string)$price
-                    , 'qpay_command' => $request['command']
-                    , 'qpay_response' => $response
+                    'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
         } elseif ($response['errors']) {
@@ -419,9 +371,7 @@ class QPay implements IPayment
 
             return new Status(
                 $reference, $response['paymentNumber'] ?: $response['orderNumber'], implode("\n", $error), IStatus::STATUS_CANCELLED, [
-                    'qpay_amount' => (string)$price
-                    , 'qpay_command' => $request['command']
-                    , 'qpay_response' => $response
+                    'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
         } else {
@@ -442,35 +392,16 @@ class QPay implements IPayment
     {
         // init request
         $request = [
-            'customerId' => $this->customer
-            , 'toolkitPassword' => $this->toolkitPassword
-            , 'command' => 'refund'
-            , 'language' => $this->authorizedData['language']
-            , 'requestFingerprint' => ''
-            , 'orderNumber' => $reference
-            , 'amount' => $price->getAmount()
-            , 'currency' => $price->getCurrency()->getShortName()
-            , 'merchantReference' => $transactionId
+            'customerId' => $this->customer, 'toolkitPassword' => $this->toolkitPassword, 'command' => 'refund', 'language' => $this->authorizedData['language'], 'requestFingerprint' => '', 'orderNumber' => $reference, 'amount' => $price->getAmount(), 'currency' => $price->getCurrency()->getShortName(), 'merchantReference' => $transactionId
         ];
-
 
         // add fingerprint
         $request['requestFingerprint'] = $this->computeFingerprint([
-            $request['customerId']
-            , $request['toolkitPassword']
-            , $this->secret
-            , $request['command']
-            , $request['language']
-            , $request['orderNumber']
-            , $request['amount']
-            , $request['currency']
-            , $request['merchantReference']
+            $request['customerId'], $request['toolkitPassword'], $this->secret, $request['command'], $request['language'], $request['orderNumber'], $request['amount'], $request['currency'], $request['merchantReference']
         ]);
-
 
         // execute request
         $response = $this->wirecardServerRequest('/page/toolkit.php', $request);
-
 
         // check response
         if ($response['status'] === '0') {
@@ -478,9 +409,7 @@ class QPay implements IPayment
 
             return new Status(
                 $transactionId, $reference, 'executeCredit', IStatus::STATUS_CLEARED, [
-                    'qpay_amount' => (string)$price
-                    , 'qpay_command' => $request['command']
-                    , 'qpay_response' => $response
+                    'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
         } elseif ($response['errorCode']) {
@@ -488,9 +417,7 @@ class QPay implements IPayment
 
             return new Status(
                 $transactionId, $reference, $response['message'], IStatus::STATUS_CANCELLED, [
-                    'qpay_amount' => (string)$price
-                    , 'qpay_command' => $request['command']
-                    , 'qpay_response' => $response
+                    'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
         } else {
@@ -502,6 +429,7 @@ class QPay implements IPayment
      * Compute fingerprint for array of input parameters depending on configured algorithm
      *
      * @param array $params
+     *
      * @return string
      */
     protected function computeFingerprint(array $params)
@@ -522,6 +450,7 @@ class QPay implements IPayment
      * Compute MD5 fingerprint
      *
      * @param $data
+     *
      * @return string
      */
     protected function computeMd5Fingerprint($data)
@@ -533,6 +462,7 @@ class QPay implements IPayment
      * Calculate HMAC_SHA512 fingerprint
      *
      * @param $data
+     *
      * @return string
      */
     protected function computeHmacSha512Fingerprint($data)
@@ -552,7 +482,7 @@ class QPay implements IPayment
         foreach ($params as $key => $value) {
             $postFields .= $key . '=' . $value . '&';
         }
-        $postFields = substr($postFields, 0, strlen($postFields)-1);
+        $postFields = substr($postFields, 0, strlen($postFields) - 1);
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -570,7 +500,6 @@ class QPay implements IPayment
 
         return $r;
     }
-
 
     public function setPaymentType($paymentType)
     {

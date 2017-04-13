@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 
-use \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
-use \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderListItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem;
 
@@ -29,19 +29,19 @@ class Item extends AbstractOrderListItem implements IOrderListItem
         return $this->resultRow['Id'];
     }
 
-
     /**
      * @param $method
      * @param $args
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function __call($method, $args)
     {
         $field = substr($method, 3);
         if (substr($method, 0, 3) == 'get' && array_key_exists($field, $this->resultRow)) {
-            return $this->resultRow[ $field ];
+            return $this->resultRow[$field];
         }
 
         $object = $this->reference();

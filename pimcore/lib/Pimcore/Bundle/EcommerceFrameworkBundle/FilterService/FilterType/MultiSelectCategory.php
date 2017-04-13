@@ -37,9 +37,8 @@ class MultiSelectCategory extends AbstractFilterType
             }
         }
 
-
         foreach ($rawValues as $v) {
-            $explode = explode(",", $v['value']);
+            $explode = explode(',', $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
                     if ($values[$e]) {
@@ -47,19 +46,19 @@ class MultiSelectCategory extends AbstractFilterType
                     } else {
                         $count = $v['count'];
                     }
-                    $values[$e] = ['value' => $e, "count" => $count];
+                    $values[$e] = ['value' => $e, 'count' => $count];
                 }
             }
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => array_values($values),
-            "fieldname" => $filterDefinition->getField(),
-            "metaData" => $filterDefinition->getMetaData(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$filterDefinition->getField()],
+            'values' => array_values($values),
+            'fieldname' => $filterDefinition->getField(),
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -75,7 +74,6 @@ class MultiSelectCategory extends AbstractFilterType
 
         $currentFilter[$filterDefinition->getField()] = $value;
 
-
         $conditions = [];
         if (!empty($value)) {
             foreach ($value as $category) {
@@ -83,11 +81,9 @@ class MultiSelectCategory extends AbstractFilterType
                     $category = $category->getId();
                 }
 
+                $category = '%,' . trim($category) . ',%';
 
-                $category = "%," . trim($category) . ",%";
-
-
-                $conditions[] = $filterDefinition->getField() . " LIKE " . $productList->quote($category);
+                $conditions[] = $filterDefinition->getField() . ' LIKE ' . $productList->quote($category);
             }
         }
 
@@ -99,7 +95,7 @@ class MultiSelectCategory extends AbstractFilterType
             }
 
             if ($isPrecondition) {
-                $productList->addCondition($conditions, "PRECONDITION_" . $filterDefinition->getField());
+                $productList->addCondition($conditions, 'PRECONDITION_' . $filterDefinition->getField());
             } else {
                 $productList->addCondition($conditions, $filterDefinition->getField());
             }

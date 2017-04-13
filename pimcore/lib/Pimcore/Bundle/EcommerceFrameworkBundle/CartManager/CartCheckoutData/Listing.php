@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-
     /**
      * @var array
      */
@@ -27,7 +26,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function isValidOrderKey($key)
     {
-        if ($key == "key" || $key == "cartId") {
+        if ($key == 'key' || $key == 'cartId') {
             return true;
         }
 
@@ -48,6 +47,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @param array $cartCheckoutDataItems
+     *
      * @return void
      */
     public function setCartCheckoutDataItems($cartCheckoutDataItems)

@@ -10,24 +10,23 @@
  *
  * @category   Pimcore
  * @package    Object\ClassDefinition
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Logger;
 
 class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 {
-
     /**
      * @var bool
      */
     public static $remoteOwner = true;
-
 
     /**
      * @return bool
@@ -54,12 +53,14 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * NonOwnerObjects must be lazy loading!
-     * @var boolean
+     *
+     * @var bool
      */
     public $lazyLoading = true;
 
     /**
      * @param array $classes
+     *
      * @return $this
      */
     public function setClasses($classes)
@@ -69,7 +70,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getLazyLoading()
     {
@@ -78,6 +79,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * @param  $lazyLoading
+     *
      * @return $this
      */
     public function setLazyLoading($lazyLoading)
@@ -86,9 +88,9 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
         return $this;
     }
 
-
     /**
      * @param string $ownerClassName
+     *
      * @return $this
      */
     public function setOwnerClassName($ownerClassName)
@@ -143,6 +145,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * @param  string $fieldName
+     *
      * @return $this
      */
     public function setOwnerFieldName($fieldName)
@@ -152,12 +155,13 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
         return $this;
     }
 
-
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -167,9 +171,11 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -180,14 +186,16 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     /**
      *
      * Checks if an object is an allowed relation
+     *
      * @param Model\Object\AbstractObject $object
-     * @return boolean
+     *
+     * @return bool
      */
     protected function allowObjectRelation($object)
     {
         //only relations of owner type are allowed
         $ownerClass = Object\ClassDefinition::getByName($this->getOwnerClassName());
-        if ($ownerClass->getId()>0 and $ownerClass->getId() == $object->getClassId()) {
+        if ($ownerClass->getId() > 0 and $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
             if ($fd instanceof Object\ClassDefinition\Data\Objects) {
                 return $fd->allowObjectRelation($object);
@@ -197,26 +205,26 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
         }
     }
 
-
     /**
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         //TODO
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (is_array($data)) {
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or!($o instanceof Object\Concrete)) {
-                    throw new Model\Element\ValidationException("Invalid non owner object relation to object [".$o->getId()."]", null, null);
+                if (!$allowClass or !($o instanceof Object\Concrete)) {
+                    throw new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']', null, null);
                 }
             }
         }
@@ -224,22 +232,28 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        return "";
+        return '';
     }
 
     /**
      * fills object field data values from CSV Import String
+     *
      * @abstract
+     *
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -252,6 +266,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -261,6 +276,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * @param mixed $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -271,6 +287,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     /**
      * @param Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
@@ -280,10 +297,12 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * converts data to be imported via webservices
+     *
      * @param mixed $value
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param $idMapper
+     *
      * @return mixed
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)

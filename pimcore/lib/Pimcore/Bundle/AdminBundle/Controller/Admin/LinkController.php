@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Event\AdminEvents;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,21 +31,23 @@ class LinkController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
 
         // check for lock
-        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
             return $this->json([
-                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
+                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
-        Element\Editlock::lock($request->get("id"), "document");
+        Element\Editlock::lock($request->get('id'), 'document');
 
-        $link = Document\Link::getById($request->get("id"));
+        $link = Document\Link::getById($request->get('id'));
         $link = clone $link;
 
         $link->setObject(null);
@@ -61,13 +63,13 @@ class LinkController extends DocumentControllerBase
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = object2array($link);
         $event = new GenericEvent($this, [
-            "data" => $data,
-            "document" => $link
+            'data' => $data,
+            'document' => $link
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument("data");
+        $data = $event->getArgument('data');
 
-        if ($link->isAllowed("view")) {
+        if ($link->isAllowed('view')) {
             return $this->json($data);
         }
 
@@ -76,38 +78,41 @@ class LinkController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function saveAction(Request $request)
     {
         try {
-            if ($request->get("id")) {
-                $link = Document\Link::getById($request->get("id"));
+            if ($request->get('id')) {
+                $link = Document\Link::getById($request->get('id'));
                 $this->setValuesToDocument($request, $link);
 
                 $link->setModificationDate(time());
                 $link->setUserModification($this->getUser()->getId());
 
-                if ($request->get("task") == "unpublish") {
+                if ($request->get('task') == 'unpublish') {
                     $link->setPublished(false);
                 }
-                if ($request->get("task") == "publish") {
+                if ($request->get('task') == 'publish') {
                     $link->setPublished(true);
                 }
 
                 // only save when publish or unpublish
-                if (($request->get("task") == "publish" && $link->isAllowed("publish")) || ($request->get("task") == "unpublish" && $link->isAllowed("unpublish"))) {
+                if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
                     $link->save();
 
-                    return $this->json(["success" => true]);
+                    return $this->json(['success' => true]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
@@ -123,31 +128,31 @@ class LinkController extends DocumentControllerBase
     {
 
         // data
-        if ($request->get("data")) {
-            $data = $this->decodeJson($request->get("data"));
+        if ($request->get('data')) {
+            $data = $this->decodeJson($request->get('data'));
 
-            if (!empty($data["path"])) {
-                if ($document = Document::getByPath($data["path"])) {
-                    $data["linktype"] = "internal";
-                    $data["internalType"] = "document";
-                    $data["internal"] = $document->getId();
-                } elseif ($asset = Asset::getByPath($data["path"])) {
-                    $data["linktype"] = "internal";
-                    $data["internalType"] = "asset";
-                    $data["internal"] = $asset->getId();
+            if (!empty($data['path'])) {
+                if ($document = Document::getByPath($data['path'])) {
+                    $data['linktype'] = 'internal';
+                    $data['internalType'] = 'document';
+                    $data['internal'] = $document->getId();
+                } elseif ($asset = Asset::getByPath($data['path'])) {
+                    $data['linktype'] = 'internal';
+                    $data['internalType'] = 'asset';
+                    $data['internal'] = $asset->getId();
                 } else {
-                    $data["linktype"] = "direct";
-                    $data["direct"] = $data["path"];
+                    $data['linktype'] = 'direct';
+                    $data['direct'] = $data['path'];
                 }
             } else {
                 // clear content of link
-                $data["linktype"] = "internal";
-                $data["direct"] = "";
-                $data["internalType"] = null;
-                $data["internal"] = null;
+                $data['linktype'] = 'internal';
+                $data['direct'] = '';
+                $data['internalType'] = null;
+                $data['internal'] = null;
             }
 
-            unset($data["path"]);
+            unset($data['path']);
 
             $link->setValues($data);
         }

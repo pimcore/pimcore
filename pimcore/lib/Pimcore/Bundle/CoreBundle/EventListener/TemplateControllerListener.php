@@ -107,8 +107,8 @@ class TemplateControllerListener implements EventSubscriberInterface
             $template->setEngine($engine);
             $templateReference = $guesser->guessTemplateName($controller, $request, $engine);
 
-            if ($templateReference->get("bundle") == "AppBundle") {
-                $templateReference->set("bundle", "");
+            if ($templateReference->get('bundle') == 'AppBundle') {
+                $templateReference->set('bundle', '');
             }
 
             $template->setTemplate($templateReference);

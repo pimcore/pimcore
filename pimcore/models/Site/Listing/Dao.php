@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Site
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
     /**
      * Loads a list of thumanils for the specicifies parameters, returns an array of Thumbnail elements
      *
@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $sites = [];
-        $sitesData = $this->db->fetchCol("SELECT id FROM sites" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $sitesData = $this->db->fetchCol('SELECT id FROM sites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($sitesData as $siteData) {
             $sites[] = Model\Site::getById($siteData);

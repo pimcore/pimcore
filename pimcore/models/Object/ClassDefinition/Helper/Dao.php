@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,7 +26,7 @@ trait Dao
      * @param $table
      * @param string $columnTypeGetter
      */
-    protected function addIndexToField($field, $table, $columnTypeGetter = "getColumnType")
+    protected function addIndexToField($field, $table, $columnTypeGetter = 'getColumnType')
     {
         $columnType = $field->$columnTypeGetter();
 
@@ -33,25 +34,25 @@ trait Dao
             if (is_array($columnType)) {
                 // multicolumn field
                 foreach ($columnType as $fkey => $fvalue) {
-                    $columnName = $field->getName() . "__" . $fkey;
-                    $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                    $columnName = $field->getName() . '__' . $fkey;
+                    $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` ADD INDEX `p_index_' . $columnName . '` (`' . $columnName . '`);');
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
-                $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` ADD INDEX `p_index_' . $columnName . '` (`' . $columnName . '`);');
             }
         } else {
             if (is_array($columnType)) {
                 // multicolumn field
                 foreach ($columnType as $fkey => $fvalue) {
-                    $columnName = $field->getName() . "__" . $fkey;
-                    $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                    $columnName = $field->getName() . '__' . $fkey;
+                    $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` DROP INDEX `p_index_' . $columnName . '`;');
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
-                $this->db->queryIgnoreError("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` DROP INDEX `p_index_' . $columnName . '`;');
             }
         }
     }

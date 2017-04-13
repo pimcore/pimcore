@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Fieldcollection
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,7 +25,6 @@ use Pimcore\Model\Object;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param Object\Concrete $object
      */
@@ -35,13 +35,13 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param Object\Concrete $object
+     *
      * @return array
      */
     public function load(Object\Concrete $object)
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = [];
-
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -53,30 +53,30 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $results = $this->db->fetchAll("SELECT * FROM " . $tableName . " WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC", [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAll('SELECT * FROM ' . $tableName . ' WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
 
             $fieldDefinitions = $definition->getFieldDefinitions();
-            $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($type);
+            $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($type);
 
             foreach ($results as $result) {
                 $collection = new $collectionClass();
-                $collection->setIndex($result["index"]);
-                $collection->setFieldname($result["fieldname"]);
+                $collection->setIndex($result['index']);
+                $collection->setFieldname($result['fieldname']);
                 $collection->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if (method_exists($fd, "load")) {
+                    if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
                         $value = $fd->load($collection,
                             [
-                                "context" => [
-                                    "containerType" => "fieldcollection",
-                                    "containerKey" => $type,
-                                    "fieldname" =>  $this->model->getFieldname(),
-                                    "index" => $result["index"]
+                                'context' => [
+                                    'containerType' => 'fieldcollection',
+                                    'containerKey' => $type,
+                                    'fieldname' =>  $this->model->getFieldname(),
+                                    'index' => $result['index']
                             ]]);
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
@@ -85,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
+                                $multidata[$key . '__' . $fkey] = $result[$key . '__' . $fkey];
                             }
                             $collection->setValue($key, $fd->getDataFromResource($multidata));
                         } else {
@@ -120,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                /** @var  $definition Definition */
+                /** @var $definition Definition */
                 $definition = Object\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
@@ -130,21 +130,21 @@ class Dao extends Model\Dao\AbstractDao
 
             try {
                 $this->db->delete($tableName, [
-                    "o_id" => $object->getId(),
-                    "fieldname" => $this->model->getFieldname()
+                    'o_id' => $object->getId(),
+                    'fieldname' => $this->model->getFieldname()
                 ]);
             } catch (\Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
             }
 
-            if ($definition->getFieldDefinition("localizedfields")) {
+            if ($definition->getFieldDefinition('localizedfields')) {
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
                     $this->db->delete($tableName, [
-                        "ooo_id" => $object->getId(),
-                        "fieldname" => $this->model->getFieldname()
+                        'ooo_id' => $object->getId(),
+                        'fieldname' => $this->model->getFieldname()
                     ]);
                 } catch (\Exception $e) {
                     \Logger::error($e);
@@ -155,12 +155,12 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    if (method_exists($fd, "delete")) {
+                    if (method_exists($fd, 'delete')) {
                         $fd->delete($object, [
-                                "context" => [
-                                    "containerType" => "fieldcollection",
-                                    "containerKey" => $type,
-                                    "fieldname" =>  $this->model->getFieldname()
+                                'context' => [
+                                    'containerType' => 'fieldcollection',
+                                    'containerKey' => $type,
+                                    'fieldname' =>  $this->model->getFieldname()
                                 ]
                             ]
                         );
@@ -170,9 +170,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // empty relation table
-        $this->db->deleteWhere("object_relations_" . $object->getClassId(),
-            "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()) . ")"
-            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $this->model->getFieldname() . "/%") . ")"
+        $this->db->deleteWhere('object_relations_' . $object->getClassId(),
+            "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname()) . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
+            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $this->model->getFieldname() . '/%') . ')'
         );
     }
 }

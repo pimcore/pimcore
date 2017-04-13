@@ -68,6 +68,7 @@ class AdminSessionStorageFactory
 
     /**
      * @param string $name
+     *
      * @return mixed|null
      */
     public function getOption($name)

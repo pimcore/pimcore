@@ -27,7 +27,9 @@ class ConnectionFactory
      * Create a connection
      *
      * @param array $options
+     *
      * @return \Credis_Client
+     *
      * @throws CacheException
      */
     public static function createConnection($options = [])
@@ -77,7 +79,6 @@ class ConnectionFactory
         $resolver->setNormalizer('read_timeout', function (Options $options, $value) {
             return (float)$value;
         });
-
 
         $resolver->setNormalizer('database', function (Options $options, $value) {
             return (int)$value;

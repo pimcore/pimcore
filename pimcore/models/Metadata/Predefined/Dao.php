@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Metadata
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,18 +24,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("predefined-asset-metadata");
+        $this->setFile('predefined-asset-metadata');
     }
 
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -45,37 +43,37 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->getById($this->model->getId());
 
-        if (isset($data["id"])) {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("Predefined asset metadata with id: " . $this->model->getId() . " does not exist");
+            throw new \Exception('Predefined asset metadata with id: ' . $this->model->getId() . ' does not exist');
         }
     }
-
 
     /**
      * @param null $name
      * @param null $language
+     *
      * @throws \Exception
      */
     public function getByNameAndLanguage($name = null, $language = null)
     {
         $data = $this->db->fetchAll(function ($row) use ($name, $language) {
             $return = true;
-            if ($name && $row["name"] != $name) {
+            if ($name && $row['name'] != $name) {
                 $return = false;
             }
-            if ($language && $row["language"] != $language) {
+            if ($language && $row['language'] != $language) {
                 $return = false;
             }
 
             return $return;
         });
 
-        if (count($data) && $data[0]["id"]) {
+        if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
         } else {
-            throw new \Exception("Predefined asset metadata with name: " . $name . " and language: " . $language . " does not exist");
+            throw new \Exception('Predefined asset metadata with name: ' . $name . ' and language: ' . $language . ' does not exist');
         }
     }
 
@@ -93,8 +91,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id", "name", "description", "language", "type", "data",
-                "targetSubtype", "config", "creationDate", "modificationDate"];
+            $allowedProperties = ['id', 'name', 'description', 'language', 'type', 'data',
+                'targetSubtype', 'config', 'creationDate', 'modificationDate'];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

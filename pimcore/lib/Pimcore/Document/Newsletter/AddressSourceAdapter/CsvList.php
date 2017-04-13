@@ -19,7 +19,6 @@ use Pimcore\Document\Newsletter\SendingParamContainer;
 
 class CsvList implements AddressSourceAdapterInterface
 {
-
     /**
      * @var string[]
      */
@@ -27,11 +26,12 @@ class CsvList implements AddressSourceAdapterInterface
 
     /**
      * IAddressSourceAdapter constructor.
+     *
      * @param $params
      */
     public function __construct($params)
     {
-        $this->emailAddresses = array_filter(explode(",", $params['csvList']));
+        $this->emailAddresses = array_filter(explode(',', $params['csvList']));
     }
 
     /**
@@ -53,6 +53,7 @@ class CsvList implements AddressSourceAdapterInterface
      * returns params to be set on mail for test sending
      *
      * @param string $emailAddress
+     *
      * @return SendingParamContainer
      */
     public function getParamsForTestSending($emailAddress)
@@ -77,6 +78,7 @@ class CsvList implements AddressSourceAdapterInterface
      *
      * @param $limit
      * @param $offset
+     *
      * @return array
      */
     public function getParamsForSingleSending($limit, $offset)

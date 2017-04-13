@@ -42,9 +42,9 @@ use Pimcore\Templating\Helper\Placeholder\Container;
 
 class HeadTitle extends AbstractHelper
 {
-
     /**
      * Registry key for placeholder
+     *
      * @var string
      */
     protected $_regKey = 'HeadTitle';
@@ -55,7 +55,6 @@ class HeadTitle extends AbstractHelper
      * @var string
      */
     protected $_defaultAttachOrder = null;
-
 
     /**
      * @inheritDoc
@@ -68,6 +67,7 @@ class HeadTitle extends AbstractHelper
     /**
      * @param null $title
      * @param null $setType
+     *
      * @return $this
      */
     public function __invoke($title = null, $setType = null)
@@ -97,6 +97,7 @@ class HeadTitle extends AbstractHelper
      * Set a default order to add titles
      *
      * @param string $setType
+     *
      * @return $this
      */
     public function setDefaultAttachOrder($setType)
@@ -129,6 +130,7 @@ class HeadTitle extends AbstractHelper
      *
      * @param  string|null $indent
      * @param  string|null $locale
+     *
      * @return string
      */
     public function toString($indent = null, $locale = null)
@@ -146,7 +148,7 @@ class HeadTitle extends AbstractHelper
         $separator = $this->getSeparator();
         $output = '';
         if (($prefix = $this->getPrefix())) {
-            $output  .= $prefix;
+            $output .= $prefix;
         }
         $output .= implode($separator, $items);
         if (($postfix = $this->getPostfix())) {

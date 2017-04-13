@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -27,7 +28,6 @@ use Pimcore\Model\Element;
  */
 class Service extends Model\Element\Service
 {
-
     /**
      * @var Model\User
      */
@@ -48,6 +48,7 @@ class Service extends Model\Element\Service
     /**
      * @param  Model\Asset $target
      * @param  Model\Asset $source
+     *
      * @return Model\Asset copied asset
      */
     public function copyRecursive($target, $source)
@@ -69,7 +70,7 @@ class Service extends Model\Element\Service
             $new->setChildren(null);
         }
 
-        $new->setFilename(Element\Service::getSaveCopyName("asset", $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -101,6 +102,7 @@ class Service extends Model\Element\Service
     /**
      * @param  Asset $target
      * @param  Asset $source
+     *
      * @return Asset copied asset
      */
     public function copyAsChild($target, $source)
@@ -113,7 +115,7 @@ class Service extends Model\Element\Service
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);
         }
-        $new->setFilename(Element\Service::getSaveCopyName("asset", $new->getFilename(), $target));
+        $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -138,7 +140,9 @@ class Service extends Model\Element\Service
     /**
      * @param $target
      * @param $source
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function copyContents($target, $source)
@@ -146,7 +150,7 @@ class Service extends Model\Element\Service
 
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
-            throw new \Exception("Source and target have to be the same type");
+            throw new \Exception('Source and target have to be the same type');
         }
 
         if (!$source instanceof Asset\Folder) {
@@ -161,9 +165,9 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-
     /**
      * @param  Asset $asset
+     *
      * @return $this
      */
     public static function gridAssetData($asset)
@@ -175,8 +179,10 @@ class Service extends Model\Element\Service
 
     /**
      * @static
+     *
      * @param $path
      * @param null $type
+     *
      * @return bool
      */
     public static function pathExists($path, $type = null)
@@ -199,7 +205,9 @@ class Service extends Model\Element\Service
 
     /**
      * @static
+     *
      * @param Element\ElementInterface $element
+     *
      * @return Element\ElementInterface
      */
     public static function loadAllFields(Element\ElementInterface $element)
@@ -219,8 +227,10 @@ class Service extends Model\Element\Service
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param $asset
      * @param $rewriteConfig
+     *
      * @return Asset
      */
     public static function rewriteIds($asset, $rewriteConfig)
@@ -238,6 +248,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param $metadata
+     *
      * @return array
      */
     public static function minimizeMetadata($metadata)
@@ -248,17 +259,17 @@ class Service extends Model\Element\Service
 
         $result = [];
         foreach ($metadata as $item) {
-            $type = $item["type"];
+            $type = $item['type'];
             switch ($type) {
-                case "document":
-                case "asset":
-                case "object":
+                case 'document':
+                case 'asset':
+                case 'object':
                     {
-                        $element = Element\Service::getElementByPath($type, $item["data"]);
+                        $element = Element\Service::getElementByPath($type, $item['data']);
                         if ($element) {
-                            $item["data"] = $element->getId();
+                            $item['data'] = $element->getId();
                         } else {
-                            $item["data"] = "";
+                            $item['data'] = '';
                         }
                     }
 
@@ -274,6 +285,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param $metadata
+     *
      * @return array
      */
     public static function expandMetadataForEditmode($metadata)
@@ -284,20 +296,20 @@ class Service extends Model\Element\Service
 
         $result = [];
         foreach ($metadata as $item) {
-            $type = $item["type"];
+            $type = $item['type'];
             switch ($type) {
-                case "document":
-                case "asset":
-                case "object":
+                case 'document':
+                case 'asset':
+                case 'object':
                 {
-                    $element = $item["data"];
-                    if (is_numeric($item["data"])) {
-                        $element = Element\Service::getElementById($type, $item["data"]);
+                    $element = $item['data'];
+                    if (is_numeric($item['data'])) {
+                        $element = Element\Service::getElementById($type, $item['data']);
                     }
                     if ($element instanceof Element\ElementInterface) {
-                        $item["data"] = $element->getRealFullPath();
+                        $item['data'] = $element->getRealFullPath();
                     } else {
-                        $item["data"] = "";
+                        $item['data'] = '';
                     }
                 }
 
@@ -321,15 +333,17 @@ class Service extends Model\Element\Service
     /**
      * @param $item \Pimcore\Model\Asset
      * @param int $nr
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();
-        $key = Element\Service::getValidKey($item->getKey(), "asset");
+        $key = Element\Service::getValidKey($item->getKey(), 'asset');
         if (!$key) {
-            throw new \Exception("No item key set.");
+            throw new \Exception('No item key set.');
         }
         if ($nr) {
             if ($item->getType() == 'folder') {
@@ -343,7 +357,7 @@ class Service extends Model\Element\Service
 
         $parent = $item->getParent();
         if (!$parent) {
-            throw new \Exception("You have to set a parent folder to determine a unique Key");
+            throw new \Exception('You have to set a parent folder to determine a unique Key');
         }
 
         if (!$item->getId()) {

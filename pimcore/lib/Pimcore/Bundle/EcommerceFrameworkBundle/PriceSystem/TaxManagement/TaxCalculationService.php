@@ -22,8 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
  */
 class TaxCalculationService
 {
-    const CALCULATION_FROM_NET = "net";
-    const CALCULATION_FROM_GROSS = "gross";
+    const CALCULATION_FROM_NET = 'net';
+    const CALCULATION_FROM_GROSS = 'gross';
 
     /**
      * Updates taxes in given price by using its tax entries and net or gross amount based on the given $calculationMode
@@ -31,7 +31,9 @@ class TaxCalculationService
      *
      * @param IPrice $price
      * @param string $calculationMode - valid options are TaxCalculationService::CALCULATION_FROM_NET (default) and TaxCalculationService::CALCULATION_FROM_GROSS
+     *
      * @return IPrice
+     *
      * @throws UnsupportedException
      */
     public function updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET)
@@ -42,7 +44,7 @@ class TaxCalculationService
             case self::CALCULATION_FROM_GROSS:
                 return $this->calculationFromGross($price);
             default:
-                throw new UnsupportedException("Calculation Mode [" . $calculationMode . "] not supported.");
+                throw new UnsupportedException('Calculation Mode [' . $calculationMode . '] not supported.');
         }
     }
 
@@ -50,7 +52,9 @@ class TaxCalculationService
      * calculates taxes based on the net amount of the price and the tax entries
      *
      * @param IPrice $price
+     *
      * @return IPrice
+     *
      * @throws UnsupportedException
      */
     protected function calculationFromNet(IPrice $price)
@@ -74,8 +78,6 @@ class TaxCalculationService
                     $price->setGrossAmount($netAmount);
                 }
 
-
-
                 break;
 
             case TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER:
@@ -95,12 +97,10 @@ class TaxCalculationService
                     $price->setGrossAmount($netAmount);
                 }
 
-
-
                 break;
 
             default:
-                throw new UnsupportedException("Combination Mode [" . $price->getTaxEntryCombinationMode() . "] cannot be recalculated.");
+                throw new UnsupportedException('Combination Mode [' . $price->getTaxEntryCombinationMode() . '] cannot be recalculated.');
                 break;
 
         }
@@ -108,12 +108,13 @@ class TaxCalculationService
         return $price;
     }
 
-
     /**
      * Calculates taxes based on the gross amount of the price and the tax entries
      *
      * @param IPrice $price
+     *
      * @return IPrice
+     *
      * @throws UnsupportedException
      */
     protected function calculationFromGross(IPrice $price)
@@ -170,7 +171,7 @@ class TaxCalculationService
                 break;
 
             default:
-                throw new UnsupportedException("Combination Mode [" . $price->getTaxEntryCombinationMode() . "] cannot be recalculated.");
+                throw new UnsupportedException('Combination Mode [' . $price->getTaxEntryCombinationMode() . '] cannot be recalculated.');
                 break;
 
         }

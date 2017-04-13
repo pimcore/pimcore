@@ -31,6 +31,7 @@ class DelegatingTagHandler implements TagHandlerInterface
      * Register a handler
      *
      * @param TagHandlerInterface $handler
+     *
      * @return $this
      */
     public function addHandler(TagHandlerInterface $handler)
@@ -42,6 +43,7 @@ class DelegatingTagHandler implements TagHandlerInterface
      * Get the matching handler for a view
      *
      * @param ViewModelInterface|View $view
+     *
      * @return TagHandlerInterface
      */
     public function getHandlerForView($view)
@@ -62,6 +64,7 @@ class DelegatingTagHandler implements TagHandlerInterface
      * Get the matching handler for a Tag
      *
      * @param Tag|Tag\Area|Tag\Areablock $tag
+     *
      * @return TagHandlerInterface
      */
     public function getHandlerForTag(Tag $tag)

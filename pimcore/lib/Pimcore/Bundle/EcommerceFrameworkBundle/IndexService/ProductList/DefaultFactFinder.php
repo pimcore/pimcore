@@ -75,12 +75,12 @@ class DefaultFactFinder implements IProductList
     protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $limit = 10;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $offset = 0;
 
@@ -96,6 +96,7 @@ class DefaultFactFinder implements IProductList
 
     /**
      * json result from factfinder
+     *
      * @var string[]
      */
     protected $searchResult;
@@ -104,7 +105,6 @@ class DefaultFactFinder implements IProductList
      * @var string[]
      */
     protected $groupedValues = [];
-
 
     /**
      * @var string[]
@@ -142,7 +142,7 @@ class DefaultFactFinder implements IProductList
     protected $logger;
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getTransmitSessionId()
     {
@@ -150,7 +150,7 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param boolean $transmitSessionId
+     * @param bool $transmitSessionId
      *
      * @return $this
      */
@@ -162,7 +162,7 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUseAsn()
     {
@@ -170,7 +170,7 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param boolean $useAsn
+     * @param bool $useAsn
      *
      * @return $this
      */
@@ -230,7 +230,7 @@ class DefaultFactFinder implements IProductList
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_factfinder");
+        $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_factfinder');
     }
 
     /**
@@ -245,8 +245,6 @@ class DefaultFactFinder implements IProductList
         return $this->products;
     }
 
-
-
     /**
      * @param string $condition
      * @param string $fieldname
@@ -254,7 +252,7 @@ class DefaultFactFinder implements IProductList
     public function addCondition($condition, $fieldname = '')
     {
         $this->products = null;
-        $this->conditions[ $fieldname ][] = $condition;
+        $this->conditions[$fieldname][] = $condition;
     }
 
     /**
@@ -268,7 +266,6 @@ class DefaultFactFinder implements IProductList
         unset($this->conditions[$fieldname]);
     }
 
-
     /**
      * Adds query condition to product list for fulltext search
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
@@ -277,7 +274,7 @@ class DefaultFactFinder implements IProductList
      * @param $condition
      * @param string $fieldname
      */
-    public function addQueryCondition($condition, $fieldname = "")
+    public function addQueryCondition($condition, $fieldname = '')
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
@@ -287,6 +284,7 @@ class DefaultFactFinder implements IProductList
      * Reset query condition for fieldname
      *
      * @param $fieldname
+     *
      * @return mixed
      */
     public function resetQueryCondition($fieldname)
@@ -294,8 +292,6 @@ class DefaultFactFinder implements IProductList
         $this->products = null;
         unset($this->queryConditions[$fieldname]);
     }
-
-
 
     /**
      * resets all conditions of product list
@@ -308,7 +304,6 @@ class DefaultFactFinder implements IProductList
         $this->conditionPriceTo = null;
         $this->products = null;
     }
-
 
     /**
      * @param string $fieldname
@@ -331,9 +326,8 @@ class DefaultFactFinder implements IProductList
         $this->conditionPriceTo = $to;
     }
 
-
     /**
-     * @param boolean $inProductList
+     * @param bool $inProductList
      */
     public function setInProductList($inProductList)
     {
@@ -342,13 +336,12 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getInProductList()
     {
         return $this->inProductList;
     }
-
 
     /**
      * @param string $order
@@ -407,7 +400,6 @@ class DefaultFactFinder implements IProductList
         return $this->offset;
     }
 
-
     public function setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category)
     {
         $this->products = null;
@@ -430,7 +422,6 @@ class DefaultFactFinder implements IProductList
         return $this->variantMode;
     }
 
-
     /**
      * @return IIndexable[]
      */
@@ -440,14 +431,13 @@ class DefaultFactFinder implements IProductList
         $data = $this->sendRequest();
 
         if (!is_array($data)) {
-            throw new \Exception("Got no data from Factfinder " .print_r($data, true));
+            throw new \Exception('Got no data from Factfinder ' .print_r($data, true));
         }
 
         if (array_key_exists('error', $data)) {
             throw new Exception($data['error']);
         }
         $searchResult = $data['searchResult'];
-
 
         // load products found
         $this->products = $this->productPositionMap= [];
@@ -479,7 +469,6 @@ class DefaultFactFinder implements IProductList
             }
         }
 
-
         // extract grouped values
         $this->groupedValues = [];
         $elements = $searchResult['groups'];
@@ -494,23 +483,21 @@ class DefaultFactFinder implements IProductList
                 }
             }
 
-            $this->groupedValues[ $item['name'] ] = $item;
+            $this->groupedValues[$item['name']] = $item;
         }
-
 
         // save request
         $this->totalCount = (int)$searchResult['resultCount'];
         $this->searchResult = $searchResult;
 
-
         return $this->products;
     }
-
 
     /**
      * builds system conditions
      *
      * @param array $filter
+     *
      * @return array
      */
     protected function buildSystemConditions(array $filter)
@@ -522,7 +509,6 @@ class DefaultFactFinder implements IProductList
                 $filter[$key] = $value;
             }
         }
-
 
         // variant handling
         switch ($this->getVariantMode()) {
@@ -540,7 +526,6 @@ class DefaultFactFinder implements IProductList
                 break;
         }
 
-
         return $filter;
     }
 
@@ -548,6 +533,7 @@ class DefaultFactFinder implements IProductList
      * builds filter condition of user specific conditions
      *
      * @param array $params
+     *
      * @return array
      */
     protected function buildFilterConditions(array $params)
@@ -568,9 +554,8 @@ class DefaultFactFinder implements IProductList
                 $value = $condition;
             }
 
-            $params[ 'filter' . $fieldname ] = $value;
+            $params['filter' . $fieldname] = $value;
         }
-
 
         if ($this->conditionPriceFrom || $this->conditionPriceTo) {
             // Format: 0+-+175
@@ -582,7 +567,6 @@ class DefaultFactFinder implements IProductList
             }
         }
 
-
         return $params;
     }
 
@@ -590,6 +574,7 @@ class DefaultFactFinder implements IProductList
      * builds query condition of query filters
      *
      * @param array $params
+     *
      * @return array
      */
     protected function buildQueryConditions(array $params)
@@ -612,7 +597,6 @@ class DefaultFactFinder implements IProductList
         return $params;
     }
 
-
     /**
      * @param array $params
      *
@@ -631,7 +615,6 @@ class DefaultFactFinder implements IProductList
                 $params['sort' . $field] = $order ?: 'asc';
             };
 
-
             if (is_array($this->getOrderKey())) {
                 foreach ($this->getOrderKey() as $orderKey) {
                     $appendSort($orderKey[0], $orderKey[1]);
@@ -643,7 +626,6 @@ class DefaultFactFinder implements IProductList
 
         return $params;
     }
-
 
     /**
      * prepares all group by values for given field names and cache them in local variable
@@ -660,7 +642,6 @@ class DefaultFactFinder implements IProductList
         throw new \Exception('not yet implemented');
     }
 
-
     /**
      * resets all set prepared group by values
      *
@@ -676,6 +657,7 @@ class DefaultFactFinder implements IProductList
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     *
      * @return void
      */
     public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
@@ -688,6 +670,7 @@ class DefaultFactFinder implements IProductList
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     *
      * @return void
      */
     public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
@@ -703,6 +686,7 @@ class DefaultFactFinder implements IProductList
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
@@ -723,27 +707,24 @@ class DefaultFactFinder implements IProductList
         $groups = [];
 
         if (array_key_exists($fieldname, $this->groupedValues)) {
-            $field = $this->groupedValues[ $fieldname ];
+            $field = $this->groupedValues[$fieldname];
 
             foreach ($field['elements'] as $item) {
                 $groups[] = [
-                    'value' => $item['name']
-                    , 'count' => $item['recordCount']
+                    'value' => $item['name'], 'count' => $item['recordCount']
                 ];
             }
         }
 
-
         return $groups;
     }
-
 
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         return $this->getGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
     }
 
-/**
+    /**
      * Do a FactFinder request and consider the timeout header
      * If a timeout occures it will retry 4 times to get the data (delay of 0.25 Seconds per request)
      *
@@ -751,6 +732,7 @@ class DefaultFactFinder implements IProductList
      * @param int $trys internal counter - don't pass a value!
      *
      * @return ResponseInterface
+     *
      * @throws \Exception
      */
     protected function doRequest($url, $trys = 0)
@@ -758,12 +740,12 @@ class DefaultFactFinder implements IProductList
         // start request
         $this->getLogger()->info('Request: ' . $url);
 
-        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $response = $client->request('GET', $url);
 
         $factFinderTimeout = $response->getHeader('X-FF-Timeout');
         if ($factFinderTimeout === 'true') {
-            $errorMessage = "FactFinder Read timeout:" . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys+1);
+            $errorMessage = 'FactFinder Read timeout:' . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys + 1);
             $this->getLogger()->err($errorMessage);
             $trys++;
             if ($trys > 2) {
@@ -802,13 +784,13 @@ class DefaultFactFinder implements IProductList
 
     /**
      * returns the Fact-Finder query
+     *
      * @return string
      */
     public function getQuery()
     {
         // init
         $params = $this->getDefaultParams();
-
 
         // add conditions
         $params = $this->buildSystemConditions($params);
@@ -819,12 +801,11 @@ class DefaultFactFinder implements IProductList
 
         $params = $this->buildSorting($params);
 
-
         // add paging
         if ($this->getOffset() == 0) {
             $params['page']=1;
         } else {
-            $params['page'] = ceil($this->getOffset() / $this->getLimit())+1;
+            $params['page'] = ceil($this->getOffset() / $this->getLimit()) + 1;
         }
         $params['productsPerPage'] = $this->getLimit();
         $params['idsOnly'] = 'true';
@@ -850,7 +831,6 @@ class DefaultFactFinder implements IProductList
 
         return $url;
     }
-
 
     /**
      * @return null
@@ -896,8 +876,6 @@ class DefaultFactFinder implements IProductList
         return $data;
     }
 
-
-
     /**
      * @return Logger
      */
@@ -906,12 +884,12 @@ class DefaultFactFinder implements IProductList
         return $this->logger;
     }
 
-
-
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Count elements of an object
+     *
      * @link http://php.net/manual/en/countable.count.php
+     *
      * @return int The custom count as an integer.
      * </p>
      * <p>
@@ -927,7 +905,9 @@ class DefaultFactFinder implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the current element
+     *
      * @link http://php.net/manual/en/iterator.current.php
+     *
      * @return mixed Can return any type.
      */
     public function current()
@@ -941,8 +921,9 @@ class DefaultFactFinder implements IProductList
     /**
      * Returns an collection of items for a page.
      *
-     * @param  integer $offset Page offset
-     * @param  integer $itemCountPerPage Number of items per page
+     * @param  int $offset Page offset
+     * @param  int $itemCountPerPage Number of items per page
+     *
      * @return array
      */
     public function getItems($offset, $itemCountPerPage)
@@ -966,7 +947,9 @@ class DefaultFactFinder implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
+     *
      * @link http://php.net/manual/en/iterator.key.php
+     *
      * @return scalar on success, integer
      * 0 on failure.
      */
@@ -981,7 +964,9 @@ class DefaultFactFinder implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Move forward to next element
+     *
      * @link http://php.net/manual/en/iterator.next.php
+     *
      * @return void Any returned value is ignored.
      */
     public function next()
@@ -993,7 +978,9 @@ class DefaultFactFinder implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Rewind the Iterator to the first element
+     *
      * @link http://php.net/manual/en/iterator.rewind.php
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind()
@@ -1005,8 +992,10 @@ class DefaultFactFinder implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Checks if current position is valid
+     *
      * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
+     *
+     * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
     public function valid()

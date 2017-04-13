@@ -3,6 +3,7 @@ namespace Pimcore\Tests;
 
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -15,7 +16,7 @@ namespace Pimcore\Tests;
  * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
  *
  * @SuppressWarnings(PHPMD)
-*/
+ */
 class RestTester extends \Codeception\Actor
 {
     use _generated\RestTesterActions;

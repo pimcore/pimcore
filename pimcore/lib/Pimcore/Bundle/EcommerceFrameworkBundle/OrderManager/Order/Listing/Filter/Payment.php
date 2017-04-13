@@ -29,6 +29,7 @@ class Payment implements IOrderListFilter
 
     /**
      * Allowed origin values
+     *
      * @var array
      */
     protected $allowedValues = [
@@ -50,6 +51,7 @@ class Payment implements IOrderListFilter
 
     /**
      * @param IOrderList $orderList
+     *
      * @return IOrderListFilter
      */
     public function apply(IOrderList $orderList)

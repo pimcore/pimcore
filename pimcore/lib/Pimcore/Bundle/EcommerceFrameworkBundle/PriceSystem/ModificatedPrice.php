@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 
 class ModificatedPrice extends Price implements IModificatedPrice
 {
-
     /**
      * @var null|string
      */

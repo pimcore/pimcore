@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Sanitycheck extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -44,6 +44,7 @@ class Sanitycheck extends Model\AbstractModel
 
     /**
      * @param  int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -63,6 +64,7 @@ class Sanitycheck extends Model\AbstractModel
 
     /**
      * @param  string $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -90,11 +92,12 @@ class Sanitycheck extends Model\AbstractModel
 
     /**
      * @static
+     *
      * @return Sanitycheck
      */
     public static function getNext()
     {
-        $sanityCheck = new Sanitycheck();
+        $sanityCheck = new self();
         $sanityCheck->getDao()->getNext();
         if ($sanityCheck->getId() and $sanityCheck->getType()) {
             return $sanityCheck;

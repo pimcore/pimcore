@@ -55,7 +55,6 @@ class PriceInfo implements IPriceInfo
      */
     protected $environment;
 
-
     /**
      * @param IPriceInfo           $priceInfo
      * @param IEnvironment $environment
@@ -65,7 +64,6 @@ class PriceInfo implements IPriceInfo
         $this->priceInfo = $priceInfo;
         $this->environment = $environment;
     }
-
 
     /**
      * @param IRule $rule
@@ -97,7 +95,6 @@ class PriceInfo implements IPriceInfo
         return $this;
     }
 
-
     /**
      * checks if environment changed based on hash
      * if so, resets valid rules
@@ -106,7 +103,7 @@ class PriceInfo implements IPriceInfo
      */
     protected function environmentHashChanged()
     {
-        $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : "";
+        $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : '';
         if ($this->priceEnvironmentHash != $hash) {
             $this->validRules = null;
 
@@ -116,11 +113,11 @@ class PriceInfo implements IPriceInfo
         return false;
     }
 
-
     /**
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
+     *
      * @return array|IRule
      */
     public function getRules($forceRecalc = false)
@@ -172,7 +169,6 @@ class PriceInfo implements IPriceInfo
                 $this->setAmount(0);
             }
         }
-
 
         $price->setAmount($this->getAmount(), IPrice::PRICE_MODE_GROSS, true);
 
@@ -273,6 +269,7 @@ class PriceInfo implements IPriceInfo
 
     /**
      * loop through any other calls
+     *
      * @param $name
      * @param $arguments
      *
@@ -299,7 +296,6 @@ class PriceInfo implements IPriceInfo
         return $this->priceInfo->getTotalPrice();
     }
 
-
     /**
      * @return bool
      */
@@ -308,9 +304,9 @@ class PriceInfo implements IPriceInfo
         return $this->getPrice()->getAmount() < $this->getOriginalPrice()->getAmount();
     }
 
-
     /**
      * get discount rate
+     *
      * @return IPrice
      */
     public function getDiscount()
@@ -323,9 +319,9 @@ class PriceInfo implements IPriceInfo
         return $price;
     }
 
-
     /**
      * get total discount rate
+     *
      * @return IPrice
      */
     public function getTotalDiscount()
@@ -338,9 +334,9 @@ class PriceInfo implements IPriceInfo
         return $price;
     }
 
-
     /**
      * get discount in percent
+     *
      * @return float
      */
     public function getDiscountPercent()
@@ -352,7 +348,6 @@ class PriceInfo implements IPriceInfo
 
         return round($percent, 2);
     }
-
 
     /**
      * @return bool

@@ -140,11 +140,12 @@ abstract class FrontendController extends Controller implements EventedControlle
      * @param $view
      * @param array $parameters
      * @param Response|null $response
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function renderTemplate($view, array $parameters = array(), Response $response = null) {
-
-        $viewModel = $this->get("pimcore.service.request.view_model_resolver")->getViewModel();
+    public function renderTemplate($view, array $parameters = [], Response $response = null)
+    {
+        $viewModel = $this->get('pimcore.service.request.view_model_resolver')->getViewModel();
         $parameters = array_merge($viewModel->getAllParameters(), $parameters);
 
         return $this->render($view, $parameters, $response);

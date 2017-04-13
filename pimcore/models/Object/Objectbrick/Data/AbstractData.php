@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Objectbrick
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,7 +25,6 @@ use Pimcore\Model\Object;
  */
 class AbstractData extends Model\AbstractModel
 {
-
     /**
      * @var string
      */
@@ -39,7 +39,6 @@ class AbstractData extends Model\AbstractModel
      * @var Object\Concrete
      */
     public $object;
-
 
     /**
      * @param Object\Concrete $object
@@ -59,6 +58,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param $fieldname
+     *
      * @return $this
      */
     public function setFieldname($fieldname)
@@ -88,6 +88,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param $doDelete
+     *
      * @return $this
      */
     public function setDoDelete($doDelete)
@@ -132,9 +133,9 @@ class AbstractData extends Model\AbstractModel
         $parent = Object\Service::hasInheritableParentObject($this->getObject());
 
         if (!empty($parent)) {
-            $containerGetter = "get" . ucfirst($this->fieldname);
-            $brickGetter = "get" . ucfirst($this->getType());
-            $getter = "get" . ucfirst($key);
+            $containerGetter = 'get' . ucfirst($this->fieldname);
+            $brickGetter = 'get' . ucfirst($this->getType());
+            $getter = 'get' . ucfirst($key);
 
             if ($parent->$containerGetter()->$brickGetter()) {
                 return $parent->$containerGetter()->$brickGetter()->$getter();
@@ -146,6 +147,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param Object\Concrete $object
+     *
      * @return $this
      */
     public function setObject($object)
@@ -165,6 +167,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param string $key
+     *
      * @return mixed
      */
     public function getValueForFieldName($key)

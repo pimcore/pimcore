@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Objectbrick
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,9 +25,9 @@ use Pimcore\Model\Object;
  */
 class Dao extends Model\Object\Fieldcollection\Dao
 {
-
     /**
      * @param Object\Concrete $object
+     *
      * @return array
      */
     public function load(Object\Concrete $object)
@@ -44,21 +45,21 @@ class Dao extends Model\Object\Fieldcollection\Dao
             $tableName = $definition->getTableName($object->getClass(), false);
 
             try {
-                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = ? AND fieldname = ?", [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAll('SELECT * FROM '.$tableName.' WHERE o_id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
 
             $fieldDefinitions = $definition->getFieldDefinitions();
-            $brickClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($type);
+            $brickClass = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($type);
 
             foreach ($results as $result) {
                 $brick = new $brickClass($object);
-                $brick->setFieldname($result["fieldname"]);
+                $brick->setFieldname($result['fieldname']);
                 $brick->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if (method_exists($fd, "load")) {
+                    if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
                         $value = $fd->load($brick);
                         if ($value === 0 || !empty($value)) {
@@ -68,7 +69,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
+                                $multidata[$key . '__' . $fkey] = $result[$key . '__' . $fkey];
                             }
                             $brick->setValue(
                                 $key,
@@ -81,7 +82,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
                     }
                 }
 
-                $setter = "set" . ucfirst($type);
+                $setter = 'set' . ucfirst($type);
                 $this->model->$setter($brick);
 
                 $values[] = $brick;
@@ -93,6 +94,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
 
     /**
      * @throws \Exception
+     *
      * @param Object\Concrete $object
      */
     public function delete(Object\Concrete $object)
@@ -107,7 +109,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
             }
 
             $tableName = $definition->getTableName($object->getClass(), true);
-            $this->db->delete($tableName, ["o_id" => $object->getId()]);
+            $this->db->delete($tableName, ['o_id' => $object->getId()]);
         }
     }
 }

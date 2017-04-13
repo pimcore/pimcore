@@ -10,17 +10,18 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element\Export;
 
-use Pimcore\Model\Webservice;
-use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+use Pimcore\Model\Object;
+use Pimcore\Model\Webservice;
 
 class Service
 {
@@ -36,6 +37,7 @@ class Service
 
     /**
      * @param  Element\ElementInterface $element
+     *
      * @return mixed
      */
     public function getApiElement($element)
@@ -65,6 +67,7 @@ class Service
      * @param $apiElementKeys
      * @param $recursive
      * @param $includeRelations
+     *
      * @return array
      */
     public function extractRelations($element, $apiElementKeys, $recursive, $includeRelations)
@@ -76,8 +79,8 @@ class Service
             if ($dependency) {
                 foreach ($dependency->getRequires() as $r) {
                     if ($e = Element\Service::getDependedElement($r)) {
-                        if ($element->getId() != $e->getId() and !in_array(Element\Service::getElementType($e) . "_" . $e->getId(), $apiElementKeys)) {
-                            $foundRelations[Element\Service::getElementType($e) . "_" . $e->getId()] = ["elementType" => Element\Service::getType($e), "element" => $e->getId(), "recursive" => false];
+                        if ($element->getId() != $e->getId() and !in_array(Element\Service::getElementType($e) . '_' . $e->getId(), $apiElementKeys)) {
+                            $foundRelations[Element\Service::getElementType($e) . '_' . $e->getId()] = ['elementType' => Element\Service::getType($e), 'element' => $e->getId(), 'recursive' => false];
                         }
                     }
                 }
@@ -87,8 +90,8 @@ class Service
         $childs = $element->getChilds();
         if ($recursive and $childs) {
             foreach ($childs as $child) {
-                if (!in_array(Element\Service::getType($child) . "_" . $child->getId(), $apiElementKeys)) {
-                    $foundRelations[Element\Service::getType($child) . "_" . $child->getId()] = ["elementType" => Element\Service::getType($child), "element" => $child->getId(), "recursive" => $recursive];
+                if (!in_array(Element\Service::getType($child) . '_' . $child->getId(), $apiElementKeys)) {
+                    $foundRelations[Element\Service::getType($child) . '_' . $child->getId()] = ['elementType' => Element\Service::getType($child), 'element' => $child->getId(), 'recursive' => $recursive];
                 }
             }
         }

@@ -69,6 +69,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * Get pimcore context from request
      *
      * @param Request|null $request
+     *
      * @return string|null
      */
     public function getPimcoreContext(Request $request = null)
@@ -109,6 +110,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * Guess the pimcore context
      *
      * @param Request $request
+     *
      * @return string
      */
     public function guess(Request $request)
@@ -122,7 +124,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
             }
         }
 
-        return PimcoreContextResolver::CONTEXT_DEFAULT;
+        return self::CONTEXT_DEFAULT;
     }
 
     /**

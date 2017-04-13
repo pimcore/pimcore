@@ -23,6 +23,7 @@ class LanguageSwitcher
 
     /**
      * @param Document $document
+     *
      * @return array
      */
     public function getLocalizedLinks(Document $document)

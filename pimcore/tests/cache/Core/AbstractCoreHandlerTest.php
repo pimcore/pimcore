@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Cache\Core;
 
-use Cache\IntegrationTests\CachePoolTest;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
@@ -139,6 +138,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @param string $property
      * @param CoreHandlerInterface $handler
+     *
      * @return mixed
      */
     protected function getHandlerPropertyValue($property, CoreHandlerInterface $handler = null)
@@ -157,6 +157,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     /**
      * @param string $key
+     *
      * @return bool
      */
     protected function cacheHasItem($key)

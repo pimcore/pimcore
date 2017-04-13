@@ -14,28 +14,22 @@
 
 namespace Pimcore\Log\Handler;
 
-use Pimcore\Db as Database;
 use Monolog\Handler\AbstractProcessingHandler;
+use Pimcore\Db as Database;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
+    const TABLE_NAME = 'application_logs';
 
-    /**
-     *
-     */
-    const TABLE_NAME = "application_logs";
-
-    /**
-     *
-     */
-    const TABLE_ARCHIVE_PREFIX = "application_logs_archive";
+    const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
      * ApplicationLoggerDb constructor.
+     *
      * @param string $level
      * @param bool|true $bubble
      */
-    public function __construct($level = "debug", $bubble = true)
+    public function __construct($level = 'debug', $bubble = true)
     {
 
         // Zend_Log compatibility
@@ -57,14 +51,14 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
         $data = [
             'pid' => getmypid(),
-            'priority' => strtolower($record["level_name"]),
-            'message' => $record["message"],
-            'timestamp' => $record["datetime"]->format("Y-m-d H:i:s"),
-            'fileobject' => (array_key_exists('context', $record) && array_key_exists('fileObject', $record['context'])) ? $record["context"]["fileObject"] : null,
-            'relatedobject' => isset($record["context"]["relatedObject"]) ? $record["context"]["relatedObject"] : null,
-            'relatedobjecttype' => isset($record["context"]["relatedObjectType"]) ? $record["context"]["relatedObjectType"] : null,
-            'component' => $record["context"]["component"],
-            'source' => $record["context"]["source"]
+            'priority' => strtolower($record['level_name']),
+            'message' => $record['message'],
+            'timestamp' => $record['datetime']->format('Y-m-d H:i:s'),
+            'fileobject' => (array_key_exists('context', $record) && array_key_exists('fileObject', $record['context'])) ? $record['context']['fileObject'] : null,
+            'relatedobject' => isset($record['context']['relatedObject']) ? $record['context']['relatedObject'] : null,
+            'relatedobjecttype' => isset($record['context']['relatedObjectType']) ? $record['context']['relatedObjectType'] : null,
+            'component' => $record['context']['component'],
+            'source' => $record['context']['source']
         ];
 
         $db->insert(self::TABLE_NAME, $data);
@@ -72,6 +66,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     /**
      * @deprecated
+     *
      * @param $level
      */
     public function setFilterPriority($level)
@@ -86,38 +81,40 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     /**
      * @static
+     *
      * @return string[]
      */
     public static function getComponents()
     {
         $db = Database::get();
 
-        $components = $db->fetchCol("SELECT component FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(component) GROUP BY component;");
+        $components = $db->fetchCol('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
 
         return $components;
     }
 
     /**
      * @static
+     *
      * @return string[]
      */
     public static function getPriorities()
     {
         $priorities = [];
         $priorityNames = [
-            "debug" => "DEBUG",
-            "info" => "INFO",
-            "notice" => "NOTICE",
-            "warning" => "WARN",
-            "error" => "ERR",
-            "critical" => "CRIT",
-            "alert" => "ALERT",
-            "emergency" => "EMERG"
+            'debug' => 'DEBUG',
+            'info' => 'INFO',
+            'notice' => 'NOTICE',
+            'warning' => 'WARN',
+            'error' => 'ERR',
+            'critical' => 'CRIT',
+            'alert' => 'ALERT',
+            'emergency' => 'EMERG'
         ];
 
         $db = Database::get();
 
-        $priorityNumbers = $db->fetchCol("SELECT priority FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(priority) GROUP BY priority;");
+        $priorityNumbers = $db->fetchCol('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }

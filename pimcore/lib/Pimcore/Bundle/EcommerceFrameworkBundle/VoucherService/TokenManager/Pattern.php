@@ -38,18 +38,18 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     protected $template;
 
     protected $characterPools = [
-        'alphaNumeric' => "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ",
-        'numeric' => "123456789",
-        'alpha' => "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+        'alphaNumeric' => '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
+        'numeric' => '123456789',
+        'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
     ];
 
     public function __construct(AbstractVoucherTokenType $configuration)
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
-            $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabPattern.html.php";
+            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabPattern.html.php';
         } else {
-            throw new VoucherServiceException("Invalid Configuration Class for Type VoucherTokenTypePattern.");
+            throw new VoucherServiceException('Invalid Configuration Class for Type VoucherTokenTypePattern.');
         }
     }
 
@@ -67,6 +67,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param array|null $filter Associative with the indices: "usage" and "olderThan".
+     *
      * @return bool
      */
     public function cleanUpCodes($filter = [])
@@ -77,7 +78,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @param string $code
      * @param ICart $cart
+     *
      * @throws VoucherServiceException
+     *
      * @return bool|int
      */
     public function checkToken($code, ICart $cart)
@@ -98,7 +101,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @param string $code
      * @param ICart $cart
+     *
      * @throws VoucherServiceException
+     *
      * @return bool
      */
     public function reserveToken($code, ICart $cart)
@@ -107,10 +112,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             if (Reservation::create($code, $cart)) {
                 return true;
             } else {
-                throw new VoucherServiceException("Token Reservation not possible.", 3);
+                throw new VoucherServiceException('Token Reservation not possible.', 3);
             }
         }
-        throw new VoucherServiceException("No Token for this code exists.", 4);
+        throw new VoucherServiceException('No Token for this code exists.', 4);
     }
 
     /**
@@ -146,12 +151,12 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         return false;
     }
 
-
     /**
      * cleans up the token usage and the ordered token object if necessary
      *
      * @param OnlineShopVoucherToken $tokenObject
      * @param AbstractOrder $order
+     *
      * @return bool
      */
     public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
@@ -166,10 +171,10 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         }
     }
 
-
     /**
      * @param string $code
      * @param ICart $cart
+     *
      * @return bool
      */
     public function releaseToken($code, ICart $cart)
@@ -179,13 +184,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param array|null $filter
+     *
      * @return array|bool
      */
     public function getCodes($filter = null)
     {
         return Token\Listing::getCodes($this->seriesId, $filter);
     }
-
 
     /**
      * @return array
@@ -310,7 +315,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
     protected function generateCode()
     {
-        $key = "";
+        $key = '';
         $charPool = $this->getCharacterPool();
         $size = strlen($charPool);
         for ($i = 0; $i < $this->configuration->getLength(); $i++) {
@@ -325,6 +330,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * Puts the code in the defined format. Incl. prefix and separators.
      *
      * @param string $code Generated Code.
+     *
      * @return string formated Code.
      */
     protected function formatCode($code)
@@ -349,6 +355,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      *
      * @param string|array $tokens One or more tokens.
      * @param array $cTokens Array of tokens.
+     *
      * @return bool
      */
     protected function tokenExists($tokens, $cTokens)
@@ -367,6 +374,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * Builds an insert query for an array of tokens.
      *
      * @param $insertTokens
+     *
      * @return string
      */
     protected function buildInsertQuery($insertTokens)
@@ -381,13 +389,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                     $token .
                     "'," .
                     $finalLength .
-                    "," .
+                    ',' .
                     $this->seriesId .
-                    ")";
+                    ')';
             }
         }
 
-        return $query . "VALUES " . implode(",", $insertParts);
+        return $query . 'VALUES ' . implode(',', $insertParts);
     }
 
     /**
@@ -419,7 +427,6 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             $insertCount = 0;
             // Count for tokens to check in db in on segment
             $checkTokenCount = 0;
-
 
             // Create unique tokens
             while ($insertCount < $this->configuration->getCount()) {
@@ -492,7 +499,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         $now = new \DateTime();
         $periodData = [];
         for ($i = $usagePeriod; $i > 0; $i--) {
-            $index = $now->format("Y-m-d");
+            $index = $now->format('Y-m-d');
             $periodData[$index] = isset($data[$index]) ? $data[$index] : 0;
             $now->modify('-1 day');
         }
@@ -504,6 +511,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      *
      * @param $viewParamsBag
      * @param array $params
+     *
      * @return string
      */
     public function prepareConfigurationView(&$viewParamsBag, $params)
@@ -515,8 +523,8 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (\Exception $e) {
-            $this->template = "PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php";
-            $viewParamsBag['errors'][] = $e->getMessage() . " | Error-Code: " . $e->getCode();
+            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php';
+            $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
         if ($tokens) {
@@ -564,7 +572,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * Get data for export
      *
      * @param array $params
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected function getExportData(array $params)
@@ -594,6 +604,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * Removes reservations
      *
      * @param int $duration
+     *
      * @return bool
      */
     public function cleanUpReservations($duration = 0)
@@ -606,6 +617,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * the character pool member array.
      *
      * @param $poolName
+     *
      * @return bool
      */
     protected function characterPoolExists($poolName)
@@ -630,7 +642,6 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     /**
      * @return \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern
      */
-
     public function getConfiguration()
     {
         return $this->configuration;

@@ -121,6 +121,7 @@ class CacheQueueItem
 
     /**
      * @param PimcoreCacheItemInterface $cacheItem
+     *
      * @return $this
      */
     public function setCacheItem(PimcoreCacheItemInterface $cacheItem)

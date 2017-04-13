@@ -44,6 +44,7 @@ class JsonFormatter
      * @param  string $json
      * @param  bool   $unescapeUnicode Un escape unicode
      * @param  bool   $unescapeSlashes Un escape slashes
+     *
      * @return string
      */
     public static function format($json, $unescapeUnicode, $unescapeSlashes)

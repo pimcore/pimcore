@@ -29,6 +29,7 @@ class ObjectEvent extends Event implements ElementEventInterface
 
     /**
      * DocumentEvent constructor.
+     *
      * @param AbstractObject $object
      * @param array $arguments
      */

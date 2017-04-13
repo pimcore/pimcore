@@ -33,7 +33,9 @@ class SearchController extends AdminController
 {
     /**
      * @Route("/find")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      *
      * @todo: $forbiddenConditions could be undefined
@@ -47,32 +49,32 @@ class SearchController extends AdminController
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
-            "requestParams" => $allParams
+            'requestParams' => $allParams
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
-        $allParams = $filterPrepareEvent->getArgument("requestParams");
+        $allParams = $filterPrepareEvent->getArgument('requestParams');
         $user = $this->getUser();
 
-        $query = $allParams["query"];
-        if ($query == "*") {
-            $query = "";
+        $query = $allParams['query'];
+        if ($query == '*') {
+            $query = '';
         }
 
-        $query = str_replace("%", "*", $query);
-        $query = str_replace("@", "#", $query);
-        $query = preg_replace("@([^ ])\-@", "$1 ", $query);
+        $query = str_replace('%', '*', $query);
+        $query = str_replace('@', '#', $query);
+        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
 
-        $types = explode(",", $allParams["type"]);
-        $subtypes = explode(",", $allParams["subtype"]);
-        $classnames = explode(",", $allParams["class"]);
+        $types = explode(',', $allParams['type']);
+        $subtypes = explode(',', $allParams['subtype']);
+        $classnames = explode(',', $allParams['class']);
 
-        if ($allParams["type"] == "object" && is_array($classnames) && empty($classnames[0])) {
-            $subtypes = ["object", "variant", "folder"];
+        if ($allParams['type'] == 'object' && is_array($classnames) && empty($classnames[0])) {
+            $subtypes = ['object', 'variant', 'folder'];
         }
 
-        $offset = intval($allParams["start"]);
-        $limit = intval($allParams["limit"]);
+        $offset = intval($allParams['start']);
+        $limit = intval($allParams['limit']);
 
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
@@ -82,58 +84,56 @@ class SearchController extends AdminController
         $db = \Pimcore\Db::get();
 
         //exclude forbidden assets
-        if (in_array("asset", $types)) {
-            if (!$user->isAllowed("assets")) {
+        if (in_array('asset', $types)) {
+            if (!$user->isAllowed('assets')) {
                 $forbiddenConditions[] = " `type` != 'asset' ";
             } else {
-                $forbiddenAssetPaths = Element\Service::findForbiddenPaths("asset", $user);
+                $forbiddenAssetPaths = Element\Service::findForbiddenPaths('asset', $user);
                 if (count($forbiddenAssetPaths) > 0) {
                     for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
-                        $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . "%") . ")";
+                        $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . '%') . ')';
                     }
-                    $forbiddenConditions[] = implode(" AND ", $forbiddenAssetPaths) ;
+                    $forbiddenConditions[] = implode(' AND ', $forbiddenAssetPaths) ;
                 }
             }
         }
 
-
         //exclude forbidden documents
-        if (in_array("document", $types)) {
-            if (!$user->isAllowed("documents")) {
+        if (in_array('document', $types)) {
+            if (!$user->isAllowed('documents')) {
                 $forbiddenConditions[] = " `type` != 'document' ";
             } else {
-                $forbiddenDocumentPaths = Element\Service::findForbiddenPaths("document", $user);
+                $forbiddenDocumentPaths = Element\Service::findForbiddenPaths('document', $user);
                 if (count($forbiddenDocumentPaths) > 0) {
                     for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
-                        $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . "%") . ")";
+                        $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . '%') . ')';
                     }
-                    $forbiddenConditions[] =  implode(" AND ", $forbiddenDocumentPaths) ;
+                    $forbiddenConditions[] =  implode(' AND ', $forbiddenDocumentPaths) ;
                 }
             }
         }
 
         //exclude forbidden objects
-        if (in_array("object", $types)) {
-            if (!$user->isAllowed("objects")) {
+        if (in_array('object', $types)) {
+            if (!$user->isAllowed('objects')) {
                 $forbiddenConditions[] = " `type` != 'object' ";
             } else {
-                $forbiddenObjectPaths = Element\Service::findForbiddenPaths("object", $user);
+                $forbiddenObjectPaths = Element\Service::findForbiddenPaths('object', $user);
                 if (count($forbiddenObjectPaths) > 0) {
                     for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
-                        $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . "%") . ")";
+                        $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . '%') . ')';
                     }
-                    $forbiddenConditions[] = implode(" AND ", $forbiddenObjectPaths);
+                    $forbiddenConditions[] = implode(' AND ', $forbiddenObjectPaths);
                 }
             }
         }
 
         if ($forbiddenConditions) {
-            $conditionParts[] = "(" . implode(" AND ", $forbiddenConditions) . ")";
+            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
-
         if (!empty($query)) {
-            $queryCondition = "( MATCH (`data`,`properties`) AGAINST (" . $db->quote($query) . " IN BOOLEAN MODE) )";
+            $queryCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
 
             // the following should be done with an exact-search now "ID", because the Element-ID is now in the fulltext index
             // if the query is numeric the user might want to search by id
@@ -144,16 +144,15 @@ class SearchController extends AdminController
             $conditionParts[] = $queryCondition;
         }
 
-
         //For objects - handling of bricks
         $fields = [];
         $bricks = [];
-        if ($allParams["fields"]) {
-            $fields = $allParams["fields"];
+        if ($allParams['fields']) {
+            $fields = $allParams['fields'];
 
             foreach ($fields as $f) {
-                $parts = explode("~", $f);
-                if (substr($f, 0, 1) == "~") {
+                $parts = explode('~', $f);
+                if (substr($f, 0, 1) == '~') {
                     //                    $type = $parts[1];
 //                    $field = $parts[2];
 //                    $keyid = $parts[3];
@@ -165,8 +164,8 @@ class SearchController extends AdminController
         }
 
         // filtering for objects
-        if ($allParams["filter"] && $allParams["class"]) {
-            $class = Object\ClassDefinition::getByName($allParams["class"]);
+        if ($allParams['filter'] && $allParams['class']) {
+            $class = Object\ClassDefinition::getByName($allParams['class']);
 
             // add Localized Fields filtering
             $params = $this->decodeJson($allParams['filter']);
@@ -191,28 +190,28 @@ class SearchController extends AdminController
                 ? Object\Service::getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
                 : null;
             $localizedConditionFilters = count($localizedFieldsFilters)
-                ?  Object\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
+                ? Object\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
                 : null;
 
-            $join = "";
+            $join = '';
             foreach ($bricks as $ob) {
-                $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
+                $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId();
 
-                $join .= " `" . $ob . "`";
-                $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
+                $join .= ' `' . $ob . '`';
+                $join .= ' ON `' . $ob . '`.o_id = `object_' . $class->getId() . '`.o_id';
             }
 
             if (null !== $conditionFilters) {
                 //add condition query for non localised fields
-                $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId()
-                    . $join . " WHERE " . $conditionFilters . ") )";
+                $conditionParts[] = '( id IN (SELECT `object_' . $class->getId() . '`.o_id FROM object_' . $class->getId()
+                    . $join . ' WHERE ' . $conditionFilters . ') )';
             }
 
             if (null !== $localizedConditionFilters) {
                 //add condition query for localised fields
-                $conditionParts[] = "( id IN (SELECT `object_localized_data_" . $class->getId()
-                    . "`.ooo_id FROM object_localized_data_" . $class->getId() . $join . " WHERE "
-                    . $localizedConditionFilters . " GROUP BY ooo_id " . ") )";
+                $conditionParts[] = '( id IN (SELECT `object_localized_data_' . $class->getId()
+                    . '`.ooo_id FROM object_localized_data_' . $class->getId() . $join . ' WHERE '
+                    . $localizedConditionFilters . ' GROUP BY ooo_id ' . ') )';
             }
         }
 
@@ -220,54 +219,51 @@ class SearchController extends AdminController
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
             }
-            if (in_array("folder", $subtypes)) {
+            if (in_array('folder', $subtypes)) {
                 $conditionTypeParts[] = $db->quote('folder');
             }
-            $conditionParts[] = "( maintype IN (" . implode(",", $conditionTypeParts) . ") )";
+            $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
         if (is_array($subtypes) and !empty($subtypes[0])) {
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
             }
-            $conditionParts[] = "( type IN (" . implode(",", $conditionSubtypeParts) . ") )";
+            $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
         if (is_array($classnames) and !empty($classnames[0])) {
-            if (in_array("folder", $subtypes)) {
-                $classnames[]="folder";
+            if (in_array('folder', $subtypes)) {
+                $classnames[]='folder';
             }
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);
             }
-            $conditionParts[] = "( subtype IN (" . implode(",", $conditionClassnameParts) . ") )";
+            $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
         }
 
-
         //filtering for tags
-        $tagIds = $allParams["tagIds"];
+        $tagIds = $allParams['tagIds'];
         if ($tagIds) {
             foreach ($tagIds as $tagId) {
                 foreach ($types as $type) {
-                    if ($allParams["considerChildTags"] =="true") {
+                    if ($allParams['considerChildTags'] == 'true') {
                         $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
-                            $conditionParts[] = "id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = " . $db->quote($type) . " AND (id = " . intval($tagId) . " OR idPath LIKE " . $db->quote($tagPath . "%") . "))";
+                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote($tagPath . '%') . '))';
                         }
                     } else {
-                        $conditionParts[] = "id IN (SELECT cId FROM tags_assignment WHERE ctype = " . $db->quote($type) . " AND tagid = " . intval($tagId) . ")";
+                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' . intval($tagId) . ')';
                     }
                 }
             }
         }
 
-
         if (count($conditionParts) > 0) {
-            $condition = implode(" AND ", $conditionParts);
+            $condition = implode(' AND ', $conditionParts);
             $searcherList->setCondition($condition);
         }
-
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
@@ -280,7 +276,7 @@ class SearchController extends AdminController
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
-                "classname" => "subtype"
+                'classname' => 'subtype'
             ];
 
             $sort = $sortingSettings['orderKey'];
@@ -293,20 +289,18 @@ class SearchController extends AdminController
             $searcherList->setOrder($sortingSettings['order']);
         }
 
-
-
         $beforeListLoadEvent = new GenericEvent($this, [
-            "list" => $searcherList
+            'list' => $searcherList
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
-        $searcherList = $beforeListLoadEvent->getArgument("list");
+        $searcherList = $beforeListLoadEvent->getArgument('list');
 
         $hits = $searcherList->load();
 
         $elements=[];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element->isAllowed("list")) {
+            if ($element->isAllowed('list')) {
                 if ($element instanceof Object\AbstractObject) {
                     $data = Object\Service::gridObjectData($element, $fields);
                 } elseif ($element instanceof Document) {
@@ -323,20 +317,19 @@ class SearchController extends AdminController
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if ($allParams["limit"]) {
+        if ($allParams['limit']) {
             $totalMatches = $searcherList->getTotalCount();
         } else {
             $totalMatches = count($elements);
         }
 
-        $result = ["data" => $elements, "success" => true, "total" => $totalMatches];
-
+        $result = ['data' => $elements, 'success' => true, 'total' => $totalMatches];
 
         $afterListLoadEvent = new GenericEvent($this, [
-            "list" => $result
+            'list' => $result
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
-        $result = $afterListLoadEvent->getArgument("list");
+        $result = $afterListLoadEvent->getArgument('list');
 
         return $this->json($result);
     }

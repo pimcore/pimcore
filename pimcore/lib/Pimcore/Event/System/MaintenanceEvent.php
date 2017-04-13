@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class MaintenanceEvent extends Event
 {
-
     /**
      * @var Procedural
      */
@@ -27,6 +26,7 @@ class MaintenanceEvent extends Event
 
     /**
      * MaintenanceEvent constructor.
+     *
      * @param Procedural $manager
      */
     public function __construct(Procedural $manager)

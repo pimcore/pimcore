@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Model\User;
 use Symfony\Component\Console\Question\Question;
 
 class ResetPasswordCommand extends AbstractCommand
@@ -34,12 +34,12 @@ class ResetPasswordCommand extends AbstractCommand
             ->addArgument(
                 'user',
                 InputArgument::REQUIRED,
-                "Username or ID of user"
+                'Username or ID of user'
             )
             ->addOption(
-                "password", "p",
+                'password', 'p',
                 InputOption::VALUE_OPTIONAL,
-                "Plaintext password - if not set, script will prompt for the new password (recommended)"
+                'Plaintext password - if not set, script will prompt for the new password (recommended)'
             );
     }
 
@@ -48,7 +48,7 @@ class ResetPasswordCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $userArgument = $input->getArgument("user");
+        $userArgument = $input->getArgument('user');
 
         $method = is_numeric($userArgument) ? 'getById' : 'getByName';
 
@@ -56,12 +56,12 @@ class ResetPasswordCommand extends AbstractCommand
         $user = User::$method($userArgument);
 
         if (!$user) {
-            $this->writeError("User with name/ID " . $userArgument . " could not be found. Exiting");
+            $this->writeError('User with name/ID ' . $userArgument . ' could not be found. Exiting');
             exit;
         }
 
-        if ($input->getOption("password")) {
-            $plainPassword = $input->getOption("password");
+        if ($input->getOption('password')) {
+            $plainPassword = $input->getOption('password');
         } else {
             $plainPassword = $this->askForPassword($input, $output);
         }
@@ -70,7 +70,7 @@ class ResetPasswordCommand extends AbstractCommand
         $user->setPassword($password);
         $user->save();
 
-        $this->output->writeln("Password for user " . $user->getName() . " reset successfully.");
+        $this->output->writeln('Password for user ' . $user->getName() . ' reset successfully.');
     }
 
     protected function askForPassword(InputInterface $input, OutputInterface $output)

@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class CollectionConfigEvent extends Event
 {
-
     /**
      * @var CollectionConfig
      */
@@ -27,6 +26,7 @@ class CollectionConfigEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param CollectionConfig $collectionConfig
      */
     public function __construct(CollectionConfig $collectionConfig)

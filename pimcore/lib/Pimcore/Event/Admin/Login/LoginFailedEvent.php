@@ -70,6 +70,7 @@ class LoginFailedEvent extends Event
 
     /**
      * @param User $user
+     *
      * @return $this
      */
     public function setUser(User $user)

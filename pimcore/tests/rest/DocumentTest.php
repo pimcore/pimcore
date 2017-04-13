@@ -21,11 +21,11 @@ class DocumentTest extends RestTestCase
 
         $result = $this->restClient->createDocument($unsavedObject);
 
-        $this->assertTrue($result->success, "request not successful");
+        $this->assertTrue($result->success, 'request not successful');
         $this->assertEquals(2, TestHelper::getDocumentCount());
 
         $id = $result->id;
-        $this->assertTrue($id > 1, "id must be greater than 1");
+        $this->assertTrue($id > 1, 'id must be greater than 1');
 
         $documentDirect = Document::getById($id);
         $creationDate   = $documentDirect->getCreationDate();
@@ -54,13 +54,13 @@ class DocumentTest extends RestTestCase
         $documentDirect = Document::getById(2);
 
         // do not use assertNull, otherwise phpunit will dump the entire bloody object
-        $this->assertTrue($documentDirect === null, "document still exists");
+        $this->assertTrue($documentDirect === null, 'document still exists');
     }
 
     public function testFolder()
     {
         // create folder but don't save it
-        $folder = TestHelper::createDocumentFolder("myfolder", false);
+        $folder = TestHelper::createDocumentFolder('myfolder', false);
 
         $fitem = Document::getById($folder->getId());
         $this->assertNull($fitem);
@@ -69,7 +69,7 @@ class DocumentTest extends RestTestCase
         $this->assertTrue($response->success, "request wasn't successful");
 
         $id = $response->id;
-        $this->assertTrue($id > 1, "id not set");
+        $this->assertTrue($id > 1, 'id not set');
 
         $folderDirect = Document::getById($id);
         $this->assertEquals('folder', $folderDirect->getType());
@@ -78,13 +78,13 @@ class DocumentTest extends RestTestCase
         $folderRest = $this->restClient->getDocumentById($id);
         $this->assertEquals('folder', $folderRest->getType());
         $this->assertInstanceOf(Document\Folder::class, $folderRest);
-        $this->assertTrue(TestHelper::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
+        $this->assertTrue(TestHelper::documentsAreEqual($folderRest, $folderDirect, false), 'documents are not equal');
 
         $this->restClient->deleteDocument($id);
 
         \Pimcore::collectGarbage();
 
         $folderDirect = Document::getById($id);
-        $this->assertNull($folderDirect, "folder still exists");
+        $this->assertNull($folderDirect, 'folder still exists');
     }
 }

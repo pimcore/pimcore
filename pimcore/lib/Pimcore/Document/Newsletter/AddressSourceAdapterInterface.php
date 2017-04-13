@@ -16,9 +16,9 @@ namespace Pimcore\Document\Newsletter;
 
 interface AddressSourceAdapterInterface
 {
-
     /**
      * AddressSourceAdapterInterface constructor.
+     *
      * @param $params
      */
     public function __construct($params);
@@ -34,6 +34,7 @@ interface AddressSourceAdapterInterface
      * returns params to be set on mail for test sending
      *
      * @param string $emailAddress
+     *
      * @return SendingParamContainer
      */
     public function getParamsForTestSending($emailAddress);
@@ -50,6 +51,7 @@ interface AddressSourceAdapterInterface
      *
      * @param $limit
      * @param $offset
+     *
      * @return SendingParamContainer[]
      */
     public function getParamsForSingleSending($limit, $offset);

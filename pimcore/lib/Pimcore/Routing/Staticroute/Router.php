@@ -128,13 +128,13 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         // check for a site in the options, if valid remove it from the options
         $hostname = null;
-        if (isset($parameters["site"])) {
+        if (isset($parameters['site'])) {
             $config = Config::getSystemConfig();
-            $site   = $parameters["site"];
+            $site   = $parameters['site'];
             if (!empty($site)) {
                 try {
                     $site = Site::getBy($site);
-                    unset($parameters["site"]);
+                    unset($parameters['site']);
                     $hostname = $site->getMainDomain();
                     $siteId   = $site->getId();
                 } catch (\Exception $e) {
@@ -157,8 +157,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $url = $route->assemble($parameters, $reset, $encode);
 
             // if there's a site, prepend the host to the generated URL
-            if ($hostname && !preg_match("/^https?:/i", $url)) {
-                $url = "//" . $hostname . $url;
+            if ($hostname && !preg_match('/^https?:/i', $url)) {
+                $url = '//' . $hostname . $url;
             }
 
             return $url;
@@ -185,6 +185,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
+     *
      * @return array
      */
     protected function doMatch($pathinfo)
@@ -204,7 +205,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 // Pimcore_Controller_Action_Frontend::getRenderScript()
                 // to determine if a call to an action was made through a staticroute or not
                 // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
-                $routeParams["pimcore_request_source"] = "staticroute";
+                $routeParams['pimcore_request_source'] = 'staticroute';
                 $routeParams['_route']                 = $route->getName();
 
                 $routeParams = $this->processRouteParams($routeParams);
@@ -218,6 +219,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param array $routeParams
+     *
      * @return array
      */
     protected function processRouteParams(array $routeParams)
@@ -270,18 +272,18 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
             $list->setOrder(function ($a, $b) {
                 // give site ids a higher priority
-                if ($a["siteId"] && !$b["siteId"]) {
+                if ($a['siteId'] && !$b['siteId']) {
                     return -1;
                 }
-                if (!$a["siteId"] && $b["siteId"]) {
+                if (!$a['siteId'] && $b['siteId']) {
                     return 1;
                 }
 
-                if ($a["priority"] == $b["priority"]) {
+                if ($a['priority'] == $b['priority']) {
                     return 0;
                 }
 
-                return ($a["priority"] < $b["priority"]) ? 1 : -1;
+                return ($a['priority'] < $b['priority']) ? 1 : -1;
             });
 
             $this->staticRoutes = $list->load();

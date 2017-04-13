@@ -24,7 +24,6 @@ interface IStatus
     const STATUS_CANCELLED = 'cancelled';
     const STATUS_CLEARED = 'committed';
 
-
     /**
      * payment reference from payment provider
      *

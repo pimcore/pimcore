@@ -37,7 +37,6 @@ class FindologicController extends FrontendController
 
         $db = \Pimcore\Db::getConnection();
 
-
         // load export items
         $query = <<<SQL
 SELECT SQL_CALC_FOUND_ROWS id, data
@@ -47,11 +46,9 @@ LIMIT {$start}, {$count}
 SQL;
         $items = $db->fetchAll($query, ['shop_key' => $shopKey]);
 
-
         // get counts
         $indexCount = $db->fetchOne('SELECT FOUND_ROWS()');
         $itemCount = count($items);
-
 
         // create xml header
         $xml = <<<XML
@@ -59,7 +56,6 @@ SQL;
 <findologic version="0.9">
     <items start="{$start}" count="{$itemCount}" total="{$indexCount}">
 XML;
-
 
         // add items
         $transmitIds = [];
@@ -69,13 +65,11 @@ XML;
             $transmitIds[] = $row['id'];
         }
 
-
         // complete xml
         $xml .= <<<XML
     </items>
 </findologic>
 XML;
-
 
         // output
         if ($this->getParam('validate')) {
@@ -88,7 +82,6 @@ XML;
             $response = new Response($xml);
             $response->headers->set('Content-Type', 'text/xml');
 
-
             // mark items as transmitted
             if ($transmitIds) {
                 $db->query(sprintf('UPDATE %1$s SET last_transmit = now() WHERE id in(%2$s)', $this->getExportTableName(), implode(',', $transmitIds)
@@ -98,7 +91,6 @@ XML;
 
         return $response;
     }
-
 
     /**
      * @return string

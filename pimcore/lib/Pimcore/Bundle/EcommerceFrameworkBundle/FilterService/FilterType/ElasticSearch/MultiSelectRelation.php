@@ -30,7 +30,6 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
-
         $value = $params[$field];
 
         if (empty($value) && !$params['is_reload']) {
@@ -38,7 +37,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
             $value = [];
 
             if (!is_array($objects)) {
-                $objects = explode(",", $objects);
+                $objects = explode(',', $objects);
             }
 
             if (is_array($objects)) {

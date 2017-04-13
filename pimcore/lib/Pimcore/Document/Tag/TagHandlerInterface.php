@@ -25,6 +25,7 @@ interface TagHandlerInterface
      * Determine if handler supports the tag
      *
      * @param ViewModelInterface|View $view
+     *
      * @return bool
      */
     public function supports($view);
@@ -64,6 +65,7 @@ interface TagHandlerInterface
      * @param string $action
      * @param string|null $parent Bundle or module (legacy) name
      * @param array $params
+     *
      * @return string
      */
     public function renderAction($view, $controller, $action, $parent = null, array $params = []);

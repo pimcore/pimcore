@@ -18,7 +18,6 @@ use Pimcore\Model;
 
 class Document extends Url
 {
-
     /**
      * @var string
      */
@@ -54,9 +53,9 @@ class Document extends Url
      */
     protected $customSettings = [];
 
-
     /**
      * @param  $tabindex
+     *
      * @return $this
      */
     public function setTabindex($tabindex)
@@ -74,9 +73,9 @@ class Document extends Url
         return $this->_tabindex;
     }
 
-
     /**
      * @param null $character
+     *
      * @return $this
      */
     public function setAccesskey($character = null)
@@ -96,6 +95,7 @@ class Document extends Url
 
     /**
      * @param  $relation
+     *
      * @return $this
      */
     public function setRelation($relation)
@@ -115,6 +115,7 @@ class Document extends Url
 
     /**
      * @param $document
+     *
      * @return $this
      */
     public function setDocument($document)
@@ -201,6 +202,7 @@ class Document extends Url
     /**
      * @param $name
      * @param $value
+     *
      * @return $this
      */
     public function setCustomSetting($name, $value)
@@ -212,6 +214,7 @@ class Document extends Url
 
     /**
      * @param $name
+     *
      * @return null
      */
     public function getCustomSetting($name)

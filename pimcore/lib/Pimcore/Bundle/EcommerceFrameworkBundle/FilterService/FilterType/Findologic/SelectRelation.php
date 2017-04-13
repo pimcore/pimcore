@@ -29,11 +29,10 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
     {
         $field = $this->getField($filterDefinition);
 
-
         $values = $productList->getGroupByValues($field, true);
 
         $objects = [];
-        Logger::info("Load Objects...");
+        Logger::info('Load Objects...');
 
         $availableRelations = [];
         if ($filterDefinition->getAvailableRelations()) {
@@ -45,7 +44,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
                 $objects[$v['label']] = \Pimcore\Model\Object\AbstractObject::getById($v['label']);
             }
         }
-        Logger::info("done.");
+        Logger::info('done.');
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
@@ -54,13 +53,13 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $values,
-            "objects" => $objects,
-            "fieldname" => $field,
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $values,
+            'objects' => $objects,
+            'fieldname' => $field,
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -79,7 +78,6 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         $value = trim($value);
         $currentFilter[$field] = $value;
-
 
         if (!empty($value)) {
             $productList->addCondition([$value], $field);

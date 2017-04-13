@@ -19,7 +19,6 @@ use Pimcore\Logger;
 
 class Cart extends AbstractCart implements ICart
 {
-
     /**
      * @return string
      */
@@ -60,7 +59,7 @@ class Cart extends AbstractCart implements ICart
     {
         $this->setIgnoreReadonly();
 
-        $cacheKey = Cart\Dao::TABLE_NAME . "_" . $this->getId();
+        $cacheKey = Cart\Dao::TABLE_NAME . '_' . $this->getId();
         Runtime::set($cacheKey, null);
 
         CartItem::removeAllFromCart($this->getId());
@@ -69,7 +68,6 @@ class Cart extends AbstractCart implements ICart
         $this->clear();
         $this->getDao()->delete();
     }
-
 
     /**
      * @param callable $value_compare_func
@@ -94,11 +92,12 @@ class Cart extends AbstractCart implements ICart
 
     /**
      * @param int $id
+     *
      * @return Cart
      */
     public static function getById($id)
     {
-        $cacheKey = Cart\Dao::TABLE_NAME . "_" . $id;
+        $cacheKey = Cart\Dao::TABLE_NAME . '_' . $id;
         try {
             $cart = Runtime::get($cacheKey);
         } catch (\Exception $e) {
@@ -113,8 +112,7 @@ class Cart extends AbstractCart implements ICart
                 $cart->setModificationDate($mod);
 
                 $dataList = new CartCheckoutData\Listing();
-                $dataList->setCondition("cartId = " . $dataList->quote($cart->getId()));
-
+                $dataList->setCondition('cartId = ' . $dataList->quote($cart->getId()));
 
                 foreach ($dataList->getCartCheckoutDataItems() as $data) {
                     $cart->setCheckoutData($data->getKey(), $data->getData());
@@ -138,7 +136,7 @@ class Cart extends AbstractCart implements ICart
         if ($this->items === null) {
             $itemList = new CartItem\Listing();
             $itemList->setCartItemClassName($this->getCartItemClassName());
-            $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
+            $itemList->setCondition('cartId = ' . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
             $itemList->setOrderKey(['sortIndex', 'addedDateTimestamp']);
             $items = [];
             foreach ($itemList->getCartItems() as $item) {
@@ -156,9 +154,9 @@ class Cart extends AbstractCart implements ICart
         return $this->items;
     }
 
-
     /**
      * @param bool|false $countSubItems
+     *
      * @return int
      */
     public function getItemCount($countSubItems = false)
@@ -169,7 +167,7 @@ class Cart extends AbstractCart implements ICart
             if ($this->itemCount == null) {
                 $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName($this->getCartItemClassName());
-                $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
+                $itemList->setCondition('cartId = ' . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
                 $this->itemCount = $itemList->getTotalCount();
             }
 
@@ -185,7 +183,7 @@ class Cart extends AbstractCart implements ICart
             if ($this->itemAmount == null) {
                 $itemList = new CartItem\Listing();
                 $itemList->setCartItemClassName($this->getCartItemClassName());
-                $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
+                $itemList->setCondition('cartId = ' . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
                 $this->itemAmount = $itemList->getTotalAmount();
             }
 
@@ -195,14 +193,16 @@ class Cart extends AbstractCart implements ICart
 
     /**
      * @static
+     *
      * @param int $userId
+     *
      * @return array
      */
     public static function getAllCartsForUser($userId)
     {
         $list = new Cart\Listing();
         $db = \Pimcore\Db::get();
-        $list->setCondition("userid = " . $db->quote($userId));
+        $list->setCondition('userid = ' . $db->quote($userId));
         $list->setCartClass(get_called_class());
 
         return $list->getCarts();

@@ -27,7 +27,7 @@ class AssetTest extends RestTestCase
         $this->assertTrue(strlen($originalContent) > 0);
         $this->assertEquals(1, TestHelper::getAssetCount());
 
-        $asset = TestHelper::createImageAsset("", $originalContent, false);
+        $asset = TestHelper::createImageAsset('', $originalContent, false);
 
         // object not saved, asset count must still be one
         $this->assertEquals(1, TestHelper::getAssetCount());
@@ -36,22 +36,22 @@ class AssetTest extends RestTestCase
 
         $result = $this->restClient->createAsset($asset);
 
-        $this->assertTrue($result->id > 0, "request not successful");
+        $this->assertTrue($result->id > 0, 'request not successful');
         $this->assertEquals(2, TestHelper::getAssetCount());
 
         $id = $result->id;
-        $this->assertTrue($id > 1, "id must be greater than 1");
+        $this->assertTrue($id > 1, 'id must be greater than 1');
 
         $assetDirect  = Asset::getById($id);
         $creationDate = $assetDirect->getCreationDate();
 
-        $this->assertGreaterThanOrEqual($time, $creationDate, "wrong creation date");
+        $this->assertGreaterThanOrEqual($time, $creationDate, 'wrong creation date');
 
         $properties = $asset->getProperties();
-        $this->assertEquals(1, count($properties), "property count does not match");
+        $this->assertEquals(1, count($properties), 'property count does not match');
 
         $property = $properties[0];
-        $this->assertEquals("bla", $property->getData());
+        $this->assertEquals('bla', $property->getData());
 
         // as the asset key is unique there must be exactly one object with that key
         $list = $this->restClient->getAssetList("filename = '" . $asset->getKey() . "'");
@@ -62,13 +62,13 @@ class AssetTest extends RestTestCase
 
         $savedContent = file_get_contents($filename);
 
-        $this->assertEquals($originalContent, $savedContent, "asset was not saved correctly");
+        $this->assertEquals($originalContent, $savedContent, 'asset was not saved correctly');
     }
 
     public function testDelete()
     {
         $originalContent = $this->getAssetFileContent();
-        $savedAsset      = TestHelper::createImageAsset("", $originalContent, true);
+        $savedAsset      = TestHelper::createImageAsset('', $originalContent, true);
 
         $savedAsset = Asset::getById($savedAsset->getId());
         $this->assertNotNull($savedAsset);
@@ -80,13 +80,13 @@ class AssetTest extends RestTestCase
         \Pimcore::collectGarbage();
 
         $savedAsset = Asset::getById($savedAsset->getId());
-        $this->assertTrue($savedAsset === null, "asset still exists");
+        $this->assertTrue($savedAsset === null, 'asset still exists');
     }
 
     public function testFolder()
     {
         // create folder but don't save it
-        $folder = TestHelper::createAssetFolder("myfolder", false);
+        $folder = TestHelper::createAssetFolder('myfolder', false);
 
         $fitem = Asset::getById($folder->getId());
         $this->assertNull($fitem);
@@ -95,20 +95,20 @@ class AssetTest extends RestTestCase
         $this->assertTrue($response->id > 0, "request wasn't successful");
 
         $id = $response->id;
-        $this->assertTrue($id > 1, "id not set");
+        $this->assertTrue($id > 1, 'id not set');
 
         $folderDirect = Asset::getById($id);
         $this->assertEquals('folder', $folderDirect->getType());
 
         $folderRest = $this->restClient->getAssetById($id);
-        $this->assertTrue(TestHelper::assetsAreEqual($folderRest, $folderDirect, false), "assets are not equal");
+        $this->assertTrue(TestHelper::assetsAreEqual($folderRest, $folderDirect, false), 'assets are not equal');
 
         $this->restClient->deleteAsset($id);
 
         \Pimcore::collectGarbage();
 
         $folderDirect = Asset::getById($id);
-        $this->assertNull($folderDirect, "folder still exists");
+        $this->assertNull($folderDirect, 'folder still exists');
     }
 
     /**

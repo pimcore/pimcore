@@ -78,7 +78,7 @@ class DocumentMetaDataListener extends AbstractFrontendListener implements Event
         $document = $this->documentResolverService->getDocument($request);
 
         //check if document is set and if route is a document route for exactly that document
-        if ($document && $request->get("_route") == "document_" . $document->getId()) {
+        if ($document && $request->get('_route') == 'document_' . $document->getId()) {
             if ($document instanceof Page && is_array($document->getMetaData())) {
                 foreach ($document->getMetaData() as $meta) {
                     $this->headMeta->addRaw($meta);

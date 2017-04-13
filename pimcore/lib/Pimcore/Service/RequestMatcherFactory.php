@@ -24,6 +24,7 @@ class RequestMatcherFactory
      * configuration).
      *
      * @param array $entries
+     *
      * @return RequestMatcherInterface[]
      */
     public function buildRequestMatchers(array $entries)
@@ -40,6 +41,7 @@ class RequestMatcherFactory
      * Builds a request matcher from a route configuration
      *
      * @param array $entry
+     *
      * @return RequestMatcher
      */
     public function buildRequestMatcher(array $entry)

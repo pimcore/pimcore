@@ -29,10 +29,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class QrcodeController extends ReportsControllerBase implements EventedControllerInterface
 {
-
     /**
      * @Route("/tree")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeAction(Request $request)
@@ -44,8 +45,8 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
         foreach ($items as $item) {
             $codes[] = [
-                "id" => $item->getName(),
-                "text" => $item->getName()
+                'id' => $item->getName(),
+                'text' => $item->getName()
             ];
         }
 
@@ -54,64 +55,71 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
     /**
      * @Route("/add")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addAction(Request $request)
     {
         $success = false;
 
-        $code = Qrcode\Config::getByName($request->get("name"));
+        $code = Qrcode\Config::getByName($request->get('name'));
 
         if (!$code) {
             $code = new Qrcode\Config();
-            $code->setName($request->get("name"));
+            $code->setName($request->get('name'));
             $code->save();
 
             $success = true;
         }
 
-        return $this->json(["success" => $success, "id" => $code->getName()]);
+        return $this->json(['success' => $success, 'id' => $code->getName()]);
     }
 
     /**
      * @Route("/delete")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
-        $code = Qrcode\Config::getByName($request->get("name"));
+        $code = Qrcode\Config::getByName($request->get('name'));
         $code->delete();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
-
 
     /**
      * @Route("/get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAction(Request $request)
     {
-        $code = Qrcode\Config::getByName($request->get("name"));
+        $code = Qrcode\Config::getByName($request->get('name'));
 
         return $this->json($code);
     }
 
     /**
      * @Route("/update")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function updateAction(Request $request)
     {
-        $code = Qrcode\Config::getByName($request->get("name"));
-        $data = $this->decodeJson($request->get("configuration"));
+        $code = Qrcode\Config::getByName($request->get('name'));
+        $data = $this->decodeJson($request->get('configuration'));
 
         foreach ($data as $key => $value) {
-            $setter = "set" . ucfirst($key);
+            $setter = 'set' . ucfirst($key);
             if (method_exists($code, $setter)) {
                 $code->$setter($value);
             }
@@ -119,27 +127,29 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
         $code->save();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/code")
+     *
      * @param Request $request
+     *
      * @return BinaryFileResponse
      */
     public function codeAction(Request $request)
     {
-        $url = "";
+        $url = '';
 
-        if ($request->get("name")) {
-            $url = $request->getScheme() . "://" . $request->getHttpHost() . "/qr~-~code/" .
-                $request->get("name");
-        } elseif ($request->get("documentId")) {
-            $doc = Document::getById($request->get("documentId"));
-            $url = $request->getScheme() . "://" . $request->getHttpHost()
+        if ($request->get('name')) {
+            $url = $request->getScheme() . '://' . $request->getHttpHost() . '/qr~-~code/' .
+                $request->get('name');
+        } elseif ($request->get('documentId')) {
+            $doc = Document::getById($request->get('documentId'));
+            $url = $request->getScheme() . '://' . $request->getHttpHost()
                 . $doc->getFullPath();
-        } elseif ($request->get("url")) {
-            $url = $request->get("url");
+        } elseif ($request->get('url')) {
+            $url = $request->get('url');
         }
 
         $code = new \Endroid\QrCode\QrCode;
@@ -148,32 +158,30 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         $code->setSize(500);
 
         $hexToRGBA = function ($hex) {
-            list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
+            list($r, $g, $b) = sscanf($hex, '#%02x%02x%02x');
 
-            return ["r" => $r, "g" => $g, "b" => $b, "a" => 0];
+            return ['r' => $r, 'g' => $g, 'b' => $b, 'a' => 0];
         };
 
-        if (strlen($request->get("foreColor", "")) == 7) {
-            $code->setForegroundColor($hexToRGBA($request->get("foreColor")));
+        if (strlen($request->get('foreColor', '')) == 7) {
+            $code->setForegroundColor($hexToRGBA($request->get('foreColor')));
         }
 
-        if (strlen($request->get("backgroundColor", "")) == 7) {
-            $code->setBackgroundColor($hexToRGBA($request->get("backgroundColor")));
+        if (strlen($request->get('backgroundColor', '')) == 7) {
+            $code->setBackgroundColor($hexToRGBA($request->get('backgroundColor')));
         }
 
-        $tmpFile = PIMCORE_PRIVATE_VAR . "/qr-code-" . uniqid() . ".png";
+        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
         $code->render($tmpFile);
         $response = new BinaryFileResponse($tmpFile);
 
-        if ($request->get("download")) {
+        if ($request->get('download')) {
             $code->setSize(4000);
-            $response->setContentDisposition("attachment", 'qrcode-' . $request->get("name", "preview") . '.png');
+            $response->setContentDisposition('attachment', 'qrcode-' . $request->get('name', 'preview') . '.png');
         }
 
-
         $response->deleteFileAfterSend(true);
-        $response->headers->set("Content-Type", "image/png");
-
+        $response->headers->set('Content-Type', 'image/png');
 
         return $response;
     }
@@ -190,9 +198,9 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
         $request = $event->getRequest();
 
-        $notRestrictedActions = ["code"];
-        if (!in_array($request->get("action"), $notRestrictedActions)) {
-            $this->checkPermission("qr_codes");
+        $notRestrictedActions = ['code'];
+        if (!in_array($request->get('action'), $notRestrictedActions)) {
+            $this->checkPermission('qr_codes');
         }
     }
 

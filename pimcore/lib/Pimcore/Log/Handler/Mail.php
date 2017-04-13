@@ -14,13 +14,12 @@
 
 namespace Pimcore\Log\Handler;
 
-use Monolog\Logger;
 use Monolog\Handler\MailHandler;
+use Monolog\Logger;
 use Pimcore\Tool;
 
 class Mail extends MailHandler
 {
-
     /**
      * @var null
      */
@@ -28,6 +27,7 @@ class Mail extends MailHandler
 
     /**
      * Mail constructor.
+     *
      * @param int $address
      * @param bool|int $level
      * @param bool|true $bubble
@@ -44,7 +44,7 @@ class Mail extends MailHandler
      */
     public function send($content, array $records)
     {
-        $mail = Tool::getMail([$this->address], "pimcore log notification");
+        $mail = Tool::getMail([$this->address], 'pimcore log notification');
         $mail->setIgnoreDebugMode(true);
         $mail->setBodyText($content);
         $mail->send();

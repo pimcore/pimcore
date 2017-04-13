@@ -37,6 +37,7 @@ interface WriteLockInterface
      * Set a write lock (prevents items being written to cache)
      *
      * @param bool $force
+     *
      * @return bool
      */
     public function lock($force = false);

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,12 +24,12 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param $id
      * @param $data
      * @param $tag
      * @param $lifetime
+     *
      * @return bool
      */
     public function add($id, $data, $tag, $lifetime)
@@ -40,13 +41,13 @@ class Dao extends Model\Dao\AbstractDao
                 $data = serialize($data);
             }
 
-            $this->db->insertOrUpdate("tmp_store", [
-                "id" => $id,
-                "data" => $data,
-                "tag" => $tag,
-                "date" => time(),
-                "expiryDate" => (time()+$lifetime),
-                "serialized" => (int) $serialized
+            $this->db->insertOrUpdate('tmp_store', [
+                'id' => $id,
+                'data' => $data,
+                'tag' => $tag,
+                'date' => time(),
+                'expiryDate' => (time() + $lifetime),
+                'serialized' => (int) $serialized
             ]);
 
             return true;
@@ -60,20 +61,21 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete($id)
     {
-        $this->db->delete("tmp_store", ["id" => $id]);
+        $this->db->delete('tmp_store', ['id' => $id]);
     }
 
     /**
      * @param $id
+     *
      * @return bool
      */
     public function getById($id)
     {
-        $item = $this->db->fetchRow("SELECT * FROM tmp_store WHERE id = ?", $id);
+        $item = $this->db->fetchRow('SELECT * FROM tmp_store WHERE id = ?', $id);
 
-        if (is_array($item) && array_key_exists("id", $item)) {
-            if ($item["serialized"]) {
-                $item["data"] = unserialize($item["data"]);
+        if (is_array($item) && array_key_exists('id', $item)) {
+            if ($item['serialized']) {
+                $item['data'] = unserialize($item['data']);
             }
 
             $this->assignVariablesToModel($item);
@@ -84,21 +86,19 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    /**
-     *
-     */
     public function cleanup()
     {
-        $this->db->deleteWhere("tmp_store", "expiryDate < " . time());
+        $this->db->deleteWhere('tmp_store', 'expiryDate < ' . time());
     }
 
     /**
      * @param $tag
+     *
      * @return array
      */
     public function getIdsByTag($tag)
     {
-        $items = $this->db->fetchCol("SELECT id FROM tmp_store WHERE tag = ?", [$tag]);
+        $items = $this->db->fetchCol('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
 
         return $items;
     }

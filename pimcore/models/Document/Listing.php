@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -32,11 +33,10 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
-
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
      *
-     * @var boolean
+     * @var bool
      */
     public $objectTypeDocument = false;
 
@@ -48,7 +48,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $documents = null;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $unpublished = false;
 
@@ -58,17 +58,18 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @var array
      */
     public $validOrderKeys = [
-        "creationDate",
-        "modificationDate",
-        "id",
-        "key",
-        "index"
+        'creationDate',
+        'modificationDate',
+        'id',
+        'key',
+        'index'
     ];
 
     /**
      * Tests if the given key is an valid order key to sort the results
      *
      * @param $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
@@ -94,6 +95,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Assign documents to the listing.
      *
      * @param array $documents
+     *
      * @return Listing
      */
     public function setDocuments($documents)
@@ -117,6 +119,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Set the unpublished flag for the document.
      *
      * @param $unpublished
+     *
      * @return bool
      */
     public function setUnpublished($unpublished)
@@ -137,10 +140,10 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
         if ($condition) {
             if (Document::doHideUnpublished() && !$this->getUnpublished()) {
-                $condition = " (" . $condition . ") AND published = 1";
+                $condition = ' (' . $condition . ') AND published = 1';
             }
         } elseif (Document::doHideUnpublished() && !$this->getUnpublished()) {
-            $condition = "published = 1";
+            $condition = 'published = 1';
         }
 
         return $condition;
@@ -166,6 +169,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      *
      * @param int $offset
      * @param int $itemCountPerPage
+     *
      * @return Listing
      */
     public function getItems($offset, $itemCountPerPage)
@@ -183,7 +187,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         return $this;
     }
-
 
     /**
      * Methods for Iterator

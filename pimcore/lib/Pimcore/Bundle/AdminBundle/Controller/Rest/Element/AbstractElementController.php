@@ -171,13 +171,13 @@ abstract class AbstractElementController extends AbstractRestController
 
         if ($wsData instanceof \Pimcore\Model\Webservice\Data\Object) {
             /** @var \Pimcore\Model\Webservice\Data\Object key */
-            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, "object");
+            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, 'object');
         } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Document) {
             /** @var \Pimcore\Model\Webservice\Data\Document key */
-            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, "document");
+            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, 'document');
         } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Asset) {
             /** @var \Pimcore\Model\Webservice\Data\Asset $wsData */
-            $wsData->filename = \Pimcore\Model\Element\Service::getValidKey($wsData->filename, "asset");
+            $wsData->filename = \Pimcore\Model\Element\Service::getValidKey($wsData->filename, 'asset');
         }
 
         return $wsData;

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 
 abstract class AbstractObjectListCondition
@@ -24,6 +23,7 @@ abstract class AbstractObjectListCondition
      *
      * @param $objectProperty
      * @param $idProperty
+     *
      * @return array
      */
     protected function handleSleep($objectProperty, $idProperty)
@@ -71,6 +71,7 @@ abstract class AbstractObjectListCondition
      * Load object by ID
      *
      * @param int $id
+     *
      * @return Concrete|null
      */
     protected function loadObject($id)

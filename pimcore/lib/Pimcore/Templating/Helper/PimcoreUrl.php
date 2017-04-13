@@ -46,6 +46,7 @@ class PimcoreUrl extends Helper
      * @param bool $reset
      * @param bool $encode
      * @param bool $relative
+     *
      * @return string
      */
     public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
@@ -65,6 +66,7 @@ class PimcoreUrl extends Helper
      * @param null $name
      * @param array $parameters
      * @param int $referenceType
+     *
      * @return string
      */
     protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
@@ -95,6 +97,6 @@ class PimcoreUrl extends Helper
      */
     public function getName()
     {
-        return "pimcoreUrl";
+        return 'pimcoreUrl';
     }
 }

@@ -39,7 +39,6 @@ class PimcoreRest extends REST
         return ['json'];
     }
 
-
     public function _before(TestInterface $test)
     {
         parent::_before($test);

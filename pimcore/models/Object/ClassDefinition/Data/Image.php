@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -22,23 +23,22 @@ use Pimcore\Model\Element;
 
 class Image extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "image";
+    public $fieldtype = 'image';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
      * Type for the column to query
      *
-     * @var integer
+     * @var int
      */
     public $height;
 
@@ -52,24 +52,24 @@ class Image extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "int(11)";
+    public $queryColumnType = 'int(11)';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "int(11)";
+    public $columnType = 'int(11)';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Asset\\Image";
+    public $phpdocType = '\\Pimcore\\Model\\Asset\\Image';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -77,7 +77,8 @@ class Image extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -88,7 +89,7 @@ class Image extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -96,7 +97,8 @@ class Image extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -108,10 +110,12 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForResource
+     *
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return integer|null
+     *
+     * @return int|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -124,9 +128,11 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromResource
-     * @param integer $data
+     *
+     * @param int $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return Asset
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -140,10 +146,12 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return integer|null
+     *
+     * @return int|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -156,10 +164,12 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return integer
+     *
+     * @return int
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -168,9 +178,11 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
-     * @param integer $data
+     *
+     * @param int $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return Asset
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -180,9 +192,11 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param Asset\Image $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -194,9 +208,12 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Model\Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
@@ -213,6 +230,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed|null|Asset
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -230,11 +248,12 @@ class Image extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
     {
-        return "";
+        return '';
     }
 
     /**
@@ -242,6 +261,7 @@ class Image extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -259,6 +279,7 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -266,20 +287,21 @@ class Image extends Model\Object\ClassDefinition\Data
         $dependencies = [];
 
         if ($data instanceof Asset) {
-            $dependencies["asset_" . $data->getId()] = [
-                "id" => $data->getId(),
-                "type" => "asset"
+            $dependencies['asset_' . $data->getId()] = [
+                'id' => $data->getId(),
+                'type' => 'asset'
             ];
         }
 
         return $dependencies;
     }
 
-
     /**
      * converts data to be exposed via webservices
+     *
      * @param string $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -290,13 +312,14 @@ class Image extends Model\Object\ClassDefinition\Data
         }
     }
 
-
     /**
      * @param mixed $value
      * @param null $object
      * @param array $params
      * @param null $idMapper
+     *
      * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -304,7 +327,7 @@ class Image extends Model\Object\ClassDefinition\Data
         $id = $value;
 
         if ($idMapper && !empty($value)) {
-            $id = $idMapper->getMappedId("asset", $value);
+            $id = $idMapper->getMappedId('asset', $value);
             $fromMapper = true;
         }
 
@@ -315,15 +338,16 @@ class Image extends Model\Object\ClassDefinition\Data
             return $asset;
         } else {
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                throw new \Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
+                throw new \Exception('cannot get values from web service import - invalid data, referencing unknown asset with id [ '.$value.' ]');
             } else {
-                $idMapper->recordMappingFailure("object", $object->getId(), "asset", $value);
+                $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
     }
 
     /**
      * @param $uploadPath
+     *
      * @return $this
      */
     public function setUploadPath($uploadPath)
@@ -344,6 +368,7 @@ class Image extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -353,26 +378,28 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         $versionPreview = null;
         if ($data instanceof Asset\Image) {
-            $versionPreview = "/admin/asset/get-image-thumbnail?id=" . $data->getId() . "&width=150&height=150&aspectratio=true";
+            $versionPreview = '/admin/asset/get-image-thumbnail?id=' . $data->getId() . '&width=150&height=150&aspectratio=true';
         }
 
         if ($versionPreview) {
             $value = [];
-            $value["src"] = $versionPreview;
-            $value["type"] = "img";
+            $value['src'] = $versionPreview;
+            $value['type'] = 'img';
 
             return $value;
         } else {
-            return "";
+            return '';
         }
     }
 
@@ -386,17 +413,19 @@ class Image extends Model\Object\ClassDefinition\Data
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
+     *
      * @return Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset\Image) {
-            if (array_key_exists("asset", $idMapping) and array_key_exists($data->getId(), $idMapping["asset"])) {
-                return Asset::getById($idMapping["asset"][$data->getId()]);
+            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getId(), $idMapping['asset'])) {
+                return Asset::getById($idMapping['asset'][$data->getId()]);
             }
         }
 
@@ -415,14 +444,15 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
     {
         if ($value instanceof \Pimcore\Model\Asset\Image) {
             return [
-                "type" => "asset",
-                "id" => $value->getId()
+                'type' => 'asset',
+                'id' => $value->getId()
             ];
         }
     }
@@ -431,11 +461,12 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        $id = $value["id"];
+        $id = $value['id'];
         if (intval($id) > 0) {
             return Asset\Image::getById($id);
         }

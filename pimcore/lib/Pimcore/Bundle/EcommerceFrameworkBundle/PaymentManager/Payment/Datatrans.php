@@ -84,7 +84,6 @@ class Datatrans implements IPayment
             $this->useDigitalSignature = (bool)$settings->digitalSignature;
         }
 
-
         if ($config->mode == 'live') {
             $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
             $this->endpoint['script'] = 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
@@ -108,10 +107,12 @@ class Datatrans implements IPayment
 
     /**
      * start payment
+     *
      * @param IPrice $price
      * @param array                       $config
      *
      * @return \Symfony\Component\Form\FormBuilderInterface
+     *
      * @throws \Exception
      *
      * @see https://pilot.datatrans.biz/showcase/doc/Technical_Implementation_Guide.pdf
@@ -120,21 +121,13 @@ class Datatrans implements IPayment
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [  'successUrl' => null
-                       , 'errorUrl' => null
-                       , 'cancelUrl' => null
-                       , 'refno' => null
-                       , 'useAlias' => null
-                       , 'reqtype' => null
-                       , 'language' => null
+        $required = [  'successUrl' => null, 'errorUrl' => null, 'cancelUrl' => null, 'refno' => null, 'useAlias' => null, 'reqtype' => null, 'language' => null
         ];
         $config = array_intersect_key($config, $required);
 
         if (count($required) != count($config)) {
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
-
-
 
         // collect payment data
         $paymentData['amount'] = round($price->getAmount(), 2) * 100;
@@ -143,20 +136,15 @@ class Datatrans implements IPayment
         // NOA – Authorisation only (default)
         // CAA – Authorisation and settlement
 
-
         // create sign
         if (!$this->useDigitalSignature) {
             $sign = $this->sign;
         } else {
             $data = [
-                'merchantId' => $this->merchantId
-                , 'amount' => $paymentData['amount']
-                , 'currency' => $paymentData['currency']
-                , 'refno' => $config['refno']
+                'merchantId' => $this->merchantId, 'amount' => $paymentData['amount'], 'currency' => $paymentData['currency'], 'refno' => $config['refno']
             ];
             $sign = hash_hmac('SHA256', implode('', $data), hex2bin($this->sign));
         }
-
 
         $formAttributes = [];
         $formData = [];
@@ -214,13 +202,9 @@ class Datatrans implements IPayment
         $form->add('reqtype', HiddenType::class);
         $formData['reqtype'] = $paymentData['reqtype'];
 
-
-
-
         if ($config['useAlias']) {
             $form->add('hidden', 'useAlias', ['value' => 'yes']);
         }
-
 
         // add submit button
         $form->add('submitbutton', SubmitType::class);
@@ -235,6 +219,7 @@ class Datatrans implements IPayment
      * @param mixed $response
      *
      * @return IStatus
+     *
      * @throws \Exception
      *
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf : Page 7 > 2.3 Authorisation response
@@ -249,14 +234,7 @@ class Datatrans implements IPayment
         // check required fields
         $required = $this->getRequiredResponseFields($response);
         $authorizedData = [
-            'aliasCC' => null
-            , 'expm' => null
-            , 'expy' => null
-            , 'reqtype' => null
-            , 'uppTransactionId' => null
-            , 'amount' => null
-            , 'currency' => null
-            , 'refno' => null
+            'aliasCC' => null, 'expm' => null, 'expy' => null, 'reqtype' => null, 'uppTransactionId' => null, 'amount' => null, 'currency' => null, 'refno' => null
         ];
 
         // check fields
@@ -265,15 +243,12 @@ class Datatrans implements IPayment
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $response)))));
         }
 
-
         // handle
         $authorizedData = array_intersect_key($response, $authorizedData);
         $this->setAuthorizedData($authorizedData);
 
-
         // restore price object for payment status
         $price = new Price($response['amount'] / 100, new Currency($response['currency']));
-
 
         $paymentState = null;
         if (in_array($response['responseCode'], ['01', '02'])) {
@@ -290,18 +265,16 @@ class Datatrans implements IPayment
             $message = $response['errorDetail'];
         }
 
-
         return new Status(
             $response['refno'], $response['uppTransactionId'], $message, $paymentState, [
-                'datatrans_amount' => (string)$price
-                , 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode']
-                , 'datatrans_response' => $response
+                'datatrans_amount' => (string)$price, 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'], 'datatrans_response' => $response
             ]
         );
     }
 
     /**
      * @param $response
+     *
      * @return array
      */
     protected function getRequiredResponseFields($response)
@@ -350,6 +323,7 @@ class Datatrans implements IPayment
      * @param string $reference
      *
      * @return Status|IStatus
+     *
      * @throws \Exception
      */
     public function executeDebit(IPrice $price = null, $reference = null)
@@ -362,7 +336,7 @@ class Datatrans implements IPayment
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
-                self::TRANS_TYPE_DEBIT, $this->authorizedData['amount'], $this->authorizedData['currency'], $reference ? : $this->authorizedData['refno'], $this->authorizedData['uppTransactionId']
+                self::TRANS_TYPE_DEBIT, $this->authorizedData['amount'], $this->authorizedData['currency'], $reference ?: $this->authorizedData['refno'], $this->authorizedData['uppTransactionId']
             );
 
             $uppTransactionId = $this->authorizedData['uppTransactionId'];
@@ -375,7 +349,6 @@ class Datatrans implements IPayment
                 'CAA', self::TRANS_TYPE_DEBIT, $price->getAmount() * 100, $price->getCurrency()->getShortName(), $reference, $this->authorizedData['aliasCC'], $this->authorizedData['expm'], $this->authorizedData['expy']
             );
         }
-
 
         // handle response
         $transaction = $xml->body->transaction;
@@ -393,13 +366,10 @@ class Datatrans implements IPayment
             $message = (string)$response->errorMessage.' | '.(string)$response->errorDetail;
         }
 
-
         // create and return status
         $status = new Status(
             (string)$transaction->attributes()['refno'], (string)$response->uppTransactionId ?: $uppTransactionId, $message, $paymentState, [
-                'datatrans_amount' => (string)$price
-                , 'datatrans_responseXML' => $transaction->asXML()
-                , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                'datatrans_amount' => (string)$price, 'datatrans_responseXML' => $transaction->asXML(), 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
 
@@ -408,6 +378,7 @@ class Datatrans implements IPayment
 
     /**
      * gutschrift ausführen
+     *
      * @param IPrice $price
      * @param string $reference
      * @param string $transactionId
@@ -431,7 +402,6 @@ class Datatrans implements IPayment
             );
         }
 
-
         // handle response
         $transaction = $xml->body->transaction;
         $status = (string)$transaction->attributes()['trxStatus'];
@@ -447,13 +417,10 @@ class Datatrans implements IPayment
             $message = (string)$response->errorMessage.' | '.(string)$response->errorDetail;
         }
 
-
         // create and return status
         $status = new Status(
             (string)$transaction->attributes()['refno'], (string)$response->uppTransactionId, $message, $paymentState, [
-                'datatrans_amount' => (string)$price
-                , 'datatrans_responseXML' => $transaction->asXML()
-                , 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                'datatrans_amount' => (string)$price, 'datatrans_responseXML' => $transaction->asXML(), 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
 
@@ -530,6 +497,7 @@ class Datatrans implements IPayment
 
     /**
      * transmit to datatrans
+     *
      * @param string $reqType              NOA = nur authorisieren, CAA = authorisieren und ausführen, COA = ausführen sofern es authorisiert wurde
      * @param string $transType            05 = debit transaction, 06 = – credit transaction
      * @param int    $amount               in kleinster einheit > 1,10 € > 110 !
@@ -540,6 +508,7 @@ class Datatrans implements IPayment
      * @param string $expireYear
      *
      * @return \SimpleXMLElement
+     *
      * @see https://www.datatrans.ch/showcase/authorisation/xml-authorisation
      */
     protected function xmlAuthorisation($reqType, $transType, $amount, $currency, $refno, $aliasCC, $expireMonth, $expireYear)
@@ -576,6 +545,7 @@ XML;
 
     /**
      * authorisiertes settlement ausführen
+     *
      * @param string $transType 05 = settlement debit
      *                          06 = settlement credit
      * @param int    $amount    in kleinster einheit > 1,10 € > 110 !
@@ -657,6 +627,7 @@ XML;
     /**
      * @param string $endpoint
      * @param string $xml
+     *
      * @return \SimpleXMLElement
      */
     protected function xmlRequest($endpoint, $xml)

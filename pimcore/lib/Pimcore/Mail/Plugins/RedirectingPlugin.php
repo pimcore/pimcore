@@ -29,12 +29,11 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
     {
         $explodedRecipientArray = [];
         foreach ($recipient as $r) {
-            $explodedRecipientArray = array_merge($explodedRecipientArray, array_filter(explode(",", $r)));
+            $explodedRecipientArray = array_merge($explodedRecipientArray, array_filter(explode(',', $r)));
         }
 
         parent::__construct($explodedRecipientArray, $whitelist);
     }
-
 
     /**
      * Invoked immediately before the Message is sent.
@@ -80,7 +79,6 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
         }
     }
 
-
     /**
      * Appends debug information to message
      *
@@ -101,7 +99,6 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
 
                 $html = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $html);
                 $html = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $html);
-
 
                 $message->setBody($html, 'text/html');
             }

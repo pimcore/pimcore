@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem
 {
-
     /**
      * @var ICheckoutable
      */
@@ -30,7 +29,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $itemKey;
     protected $count;
     protected $comment;
-    protected $parentItemKey = "";
+    protected $parentItemKey = '';
 
     protected $subItems = null;
 
@@ -40,12 +39,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $cart;
     protected $cartId;
 
-
     /**
      * @var int unix timestamp
      */
     protected $addedDateTimestamp;
-
 
     public function __construct()
     {
@@ -165,6 +162,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     /**
      * @param  \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $subItems
+     *
      * @return void
      */
     public function setSubItems($subItems)
@@ -175,7 +173,6 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->subItems = $subItems;
     }
 
-
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
      */
@@ -183,8 +180,6 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         return $this->getPriceInfo()->getPrice();
     }
-
-
 
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
@@ -247,7 +242,6 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         return $this->comment;
     }
-
 
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice

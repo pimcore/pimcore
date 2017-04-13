@@ -19,14 +19,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
  */
 interface ICommitOrderProcessor
 {
-
-
     /**
      * check if order is already committed and payment information with same internal payment id has same state
      *
      * @param array|\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $paymentResponseParams
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     *
      * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     *
      * @throws \Exception
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
@@ -41,6 +41,7 @@ interface ICommitOrderProcessor
      *
      * @param $paymentResponseParams
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
@@ -54,6 +55,7 @@ interface ICommitOrderProcessor
      *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $paymentStatus
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function commitOrderPayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $paymentStatus, \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
@@ -62,6 +64,7 @@ interface ICommitOrderProcessor
      * commits order
      *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function commitOrder(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
@@ -70,7 +73,6 @@ interface ICommitOrderProcessor
      * @param string $confirmationMail
      */
     public function setConfirmationMail($confirmationMail);
-
 
     /**
      * cleans up orders with state pending payment after 1h

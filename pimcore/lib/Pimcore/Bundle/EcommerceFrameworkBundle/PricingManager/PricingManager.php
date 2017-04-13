@@ -27,7 +27,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class PricingManager implements IPricingManager
 {
-
     /**
      * @var Config
      */
@@ -48,10 +47,9 @@ class PricingManager implements IPricingManager
      */
     public function __construct(Config $config, SessionInterface $containerSession)
     {
-        $this->config = new HelperContainer($config, "pricingmanager");
+        $this->config = new HelperContainer($config, 'pricingmanager');
         $this->containerSession = $containerSession;
     }
-
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
@@ -60,13 +58,12 @@ class PricingManager implements IPricingManager
      */
     public function applyProductRules(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo)
     {
-        if ((string)$this->config->disabled == "true") {
+        if ((string)$this->config->disabled == 'true') {
             return $priceInfo;
         }
 
         // create new price info with pricing rules
         $priceInfoWithRules = $this->getPriceInfo($priceInfo);
-
 
         // add all valid rules to the price info
         foreach ($this->getValidRules() as $rule) {
@@ -84,7 +81,7 @@ class PricingManager implements IPricingManager
      */
     public function applyCartRules(ICart $cart)
     {
-        if ((string)$this->config->disabled == "true") {
+        if ((string)$this->config->disabled == 'true') {
             return $this;
         }
 
@@ -96,7 +93,7 @@ class PricingManager implements IPricingManager
         $categories = [];
         foreach ($cart->getItems() as $item) {
             if ($product = $item->getProduct()) {
-                if (method_exists($product, "getCategories")) {
+                if (method_exists($product, 'getCategories')) {
                     $productCategories = $product->getCategories();
                     if (is_array($productCategories)) {
                         foreach ($productCategories as $c) {
@@ -108,7 +105,6 @@ class PricingManager implements IPricingManager
         }
         $env->setCategories(array_values($categories));
 
-
         //clean up discount pricing modificators in cart price calculator
         $priceCalculator = $cart->getPriceCalculator();
         $priceModificators = $priceCalculator->getModificators();
@@ -119,7 +115,6 @@ class PricingManager implements IPricingManager
                 }
             }
         }
-
 
         // execute all valid rules
         foreach ($this->getValidRules() as $rule) {
@@ -142,7 +137,6 @@ class PricingManager implements IPricingManager
 
         return $this;
     }
-
 
     /**
      * @return IRule[]
@@ -173,6 +167,7 @@ class PricingManager implements IPricingManager
 
     /**
      * Factory
+     *
      * @return IRule
      */
     public function getRule()
@@ -186,6 +181,7 @@ class PricingManager implements IPricingManager
      * @param string $type
      *
      * @return ICondition
+     *
      * @throws InvalidConfigException
      */
     public function getCondition($type)
@@ -200,6 +196,7 @@ class PricingManager implements IPricingManager
 
     /**
      * Factory
+     *
      * @param $type
      *
      * @return IAction
@@ -215,11 +212,12 @@ class PricingManager implements IPricingManager
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
      *
      * @return IPriceInfo
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getPriceInfo(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo)
     {
-        if ((string)$this->config->disabled == "true") {
+        if ((string)$this->config->disabled == 'true') {
             return $priceInfo;
         }
 
@@ -228,14 +226,12 @@ class PricingManager implements IPricingManager
             throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
         }
 
-
         // create environment
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
-        if (method_exists($priceInfo->getProduct(), "getCategories")) {
+        if (method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }
-
 
         $priceInfoWithRules = new $class($priceInfo, $environment);
         $environment->setPriceInfo($priceInfoWithRules);

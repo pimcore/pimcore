@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,15 +19,14 @@ namespace Pimcore\Model\Asset\Video;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
-use Pimcore\Model\Asset\Image;
-use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Asset\Image;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ImageThumbnail
 {
-
     /**
      * @var \Pimcore\Model\Asset\Video
      */
@@ -74,6 +74,7 @@ class ImageThumbnail
 
     /**
      * ImageThumbnail constructor.
+     *
      * @param $asset
      * @param null $config
      * @param null $timeOffset
@@ -93,15 +94,15 @@ class ImageThumbnail
     public function getPath()
     {
         $fsPath = $this->getFileSystemPath();
-        $path = str_replace(PIMCORE_WEB_ROOT, "", $fsPath);
+        $path = str_replace(PIMCORE_WEB_ROOT, '', $fsPath);
         $path = urlencode_ignore_slash($path);
 
         $event = new GenericEvent($this, [
-            "filesystemPath" => $fsPath,
-            "frontendPath" => $path
+            'filesystemPath' => $fsPath,
+            'frontendPath' => $path
         ]);
         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL, $event);
-        $path = $event->getArgument("frontendPath");
+        $path = $event->getArgument('frontendPath');
 
         return $path;
     }
@@ -118,9 +119,6 @@ class ImageThumbnail
         return $this->filesystemPath;
     }
 
-    /**
-     *
-     */
     public function generate()
     {
         $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
@@ -130,8 +128,8 @@ class ImageThumbnail
         if (!$this->asset) {
             $this->filesystemPath = $errorImage;
         } elseif (!$this->filesystemPath) {
-            $cs = $this->asset->getCustomSetting("image_thumbnail_time");
-            $im = $this->asset->getCustomSetting("image_thumbnail_asset");
+            $cs = $this->asset->getCustomSetting('image_thumbnail_time');
+            $im = $this->asset->getCustomSetting('image_thumbnail_asset');
 
             if ($im || $this->imageAsset) {
                 if ($this->imageAsset) {
@@ -159,14 +157,14 @@ class ImageThumbnail
 
                 $converter = \Pimcore\Video::getInstance();
                 $converter->load($this->asset->getFileSystemPath());
-                $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->asset->getId() . "__thumbnail_" . $timeOffset . ".png";
+                $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-image-cache/video_' . $this->asset->getId() . '__thumbnail_' . $timeOffset . '.png';
 
                 if (!is_dir(dirname($path))) {
                     File::mkdir(dirname($path));
                 }
 
                 if (!is_file($path)) {
-                    $lockKey = "video_image_thumbnail_" . $this->asset->getId() . "_" . $timeOffset;
+                    $lockKey = 'video_image_thumbnail_' . $this->asset->getId() . '_' . $timeOffset;
                     Model\Tool\Lock::acquire($lockKey);
 
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
@@ -179,7 +177,7 @@ class ImageThumbnail
                 }
 
                 if ($this->getConfig()) {
-                    $this->getConfig()->setFilenameSuffix("time-" . $timeOffset);
+                    $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
                         $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, $deferred,
@@ -195,15 +193,12 @@ class ImageThumbnail
             }
 
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::VIDEO_IMAGE_THUMBNAIL, new GenericEvent($this, [
-                "deferred" => $deferred,
-                "generated" => $generated
+                'deferred' => $deferred,
+                'generated' => $generated
             ]));
         }
     }
 
-    /**
-     *
-     */
     public function reset()
     {
         $this->filesystemPath = null;
@@ -217,8 +212,9 @@ class ImageThumbnail
      * Get the public path to the thumbnail image.
      * This method is here for backwards compatility.
      * Up to Pimcore 1.4.8 a thumbnail was returned as a path to an image.
+     *
      * @return string Public path to thumbnail image.
-    */
+     */
     public function __toString()
     {
         return $this->getPath();
@@ -226,7 +222,7 @@ class ImageThumbnail
 
     /**
      * @return int Width of the generated thumbnail image.
-    */
+     */
     public function getWidth()
     {
         if (!$this->width) {
@@ -238,8 +234,9 @@ class ImageThumbnail
 
     /**
      * Get the width of the generated thumbnail image in pixels.
+     *
      * @return int Height of the generated thumbnail image.
-    */
+     */
     public function getHeight()
     {
         if (!$this->height) {
@@ -251,7 +248,7 @@ class ImageThumbnail
 
     /**
      * @return int real Width of the generated thumbnail image. (when using high resolution option)
-    */
+     */
     public function getRealWidth()
     {
         if (!$this->realWidth) {
@@ -263,8 +260,9 @@ class ImageThumbnail
 
     /**
      * Get the real width of the generated thumbnail image in pixels. (when using high resolution option)
+     *
      * @return int Height of the generated thumbnail image.
-    */
+     */
     public function getRealHeight()
     {
         if (!$this->realHeight) {
@@ -287,13 +285,13 @@ class ImageThumbnail
             $info = @getimagesize($this->getFileSystemPath());
             if ($info) {
                 $dimensions = [
-                    "width" => $info[0],
-                    "height" => $info[1]
+                    'width' => $info[0],
+                    'height' => $info[1]
                 ];
             }
 
-            $this->width = $dimensions["width"];
-            $this->height = $dimensions["height"];
+            $this->width = $dimensions['width'];
+            $this->height = $dimensions['height'];
 
             // the following is only relevant if using high-res option (retina, ...)
             $this->realHeight = $this->height;
@@ -306,14 +304,14 @@ class ImageThumbnail
         }
 
         return [
-            "width" => $this->width,
-            "height" => $this->height
+            'width' => $this->width,
+            'height' => $this->height
         ];
     }
 
     /**
      * @return \Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
-    */
+     */
     public function getAsset()
     {
         return $this->asset;
@@ -321,6 +319,7 @@ class ImageThumbnail
 
     /**
      * Get thumbnail image configuration.
+     *
      * @return Image\Thumbnail\Config
      */
     public function getConfig()
@@ -330,6 +329,7 @@ class ImageThumbnail
 
     /**
      * @param $selector
+     *
      * @return bool|static
      */
     protected function createConfig($selector)
@@ -337,8 +337,8 @@ class ImageThumbnail
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
         if ($config) {
             $format = strtolower($config->getFormat());
-            if ($format == "source") {
-                $config->setFormat("PNG");
+            if ($format == 'source') {
+                $config->setFormat('PNG');
             }
         }
 

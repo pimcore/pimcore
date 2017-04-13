@@ -31,11 +31,10 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
      */
     protected $countCart = false;
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
@@ -67,9 +66,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     {
         // basic
         $json = [
-            'type' => 'Sold'
-            , 'count' => $this->getCount()
-            , 'countCart' => $this->isCountCart()
+            'type' => 'Sold', 'count' => $this->getCount(), 'countCart' => $this->isCountCart()
         ];
 
         return json_encode($json);
@@ -107,7 +104,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCountCart()
     {
@@ -115,7 +112,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     }
 
     /**
-     * @param boolean $countCart
+     * @param bool $countCart
      *
      * @return $this
      */
@@ -126,7 +123,6 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
         return $this;
     }
 
-
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart|null
      */
@@ -135,9 +131,9 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
         // use this in your own implementation
     }
 
-
     /**
      * return a count how often the rule is already uses in the cart
+     *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart          $cart
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule  $rule
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem|null $cartItem
@@ -163,7 +159,6 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
                     }
                 }
             }
-
 
             // search for current rule
             foreach ($rules as $r) {

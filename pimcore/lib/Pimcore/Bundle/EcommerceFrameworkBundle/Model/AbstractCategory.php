@@ -19,17 +19,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 class AbstractCategory extends \Pimcore\Model\Object\Concrete
 {
-
     /**
      * @static
+     *
      * @param int $id
+     *
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id)
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof AbstractCategory) {
+        if ($object instanceof self) {
             return $object;
         }
 

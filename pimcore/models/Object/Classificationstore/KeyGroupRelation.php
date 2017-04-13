@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,17 +24,15 @@ use Pimcore\Model;
  */
 class KeyGroupRelation extends Model\AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $keyId;
 
     /**
-     * @var integer
+     * @var int
      */
     public $groupId;
-
 
     /** The key
      * @var string
@@ -55,7 +54,7 @@ class KeyGroupRelation extends Model\AbstractModel
      */
     public $type;
 
-    /** @var  int */
+    /** @var int */
     public $sorter;
 
     /** The group name
@@ -63,10 +62,10 @@ class KeyGroupRelation extends Model\AbstractModel
      */
     public $groupName;
 
-    /** @var  bool */
+    /** @var bool */
     public $mandatory;
 
-    /** @var  bool */
+    /** @var bool */
     public $enabled;
 
     /**
@@ -193,7 +192,7 @@ class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isMandatory()
     {
@@ -201,7 +200,7 @@ class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $mandatory
+     * @param bool $mandatory
      */
     public function setMandatory($mandatory)
     {
@@ -209,7 +208,7 @@ class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
@@ -217,24 +216,23 @@ class KeyGroupRelation extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $enabled
+     * @param bool $enabled
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
     }
 
-
-
     /**
      * @param $groupId
      * @param $keyId
+     *
      * @return KeyGroupRelation
      */
     public static function getByGroupAndKeyId($groupId, $keyId)
     {
         $relation = new KeyGroupRelation\Listing();
-        $relation->setCondition("groupId = " . $relation->quote($groupId) . " and keyId = " . $relation->quote($keyId));
+        $relation->setCondition('groupId = ' . $relation->quote($groupId) . ' and keyId = ' . $relation->quote($keyId));
         $relation->setLimit(1);
         $relation = $relation->load();
         if ($relation) {

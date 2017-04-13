@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -26,9 +27,10 @@ class DefinitionCache
     /**
      * @param $id
      * @param string $type
+     *
      * @return mixed|KeyConfig
      */
-    public static function get($id, $type = "key")
+    public static function get($id, $type = 'key')
     {
         $key = $type . $id;
         $config = self::$cache[$key];
@@ -79,14 +81,15 @@ class DefinitionCache
 
     /**
      * @param $config
+     *
      * @return string
      */
     protected static function getType($config)
     {
         if ($config instanceof KeyConfig) {
-            $type = "key";
+            $type = 'key';
         } elseif ($config instanceof GroupConfig) {
-            $type = "group";
+            $type = 'group';
         }
 
         return $type;

@@ -23,6 +23,7 @@ interface IExportableTokenManager
      * Export tokens to CSV
      *
      * @param array $params
+     *
      * @return string
      */
     public function exportCsv(array $params);
@@ -31,6 +32,7 @@ interface IExportableTokenManager
      * Export tokens to plain text list
      *
      * @param array $params
+     *
      * @return string
      */
     public function exportPlain(array $params);

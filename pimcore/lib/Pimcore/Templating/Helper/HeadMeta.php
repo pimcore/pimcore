@@ -62,6 +62,7 @@ class HeadMeta extends AbstractHelper
 
     /**
      * Types of attributes
+     *
      * @var array
      */
     protected $_typeKeys     = ['name', 'http-equiv', 'charset', 'property'];
@@ -103,6 +104,7 @@ class HeadMeta extends AbstractHelper
      * @param  string $keyType
      * @param  array $modifiers
      * @param  string $placement
+     *
      * @return HeadMeta
      */
     public function __invoke($content = null, $keyValue = null, $keyType = 'name', $modifiers = [], $placement = Container::APPEND)
@@ -158,6 +160,7 @@ class HeadMeta extends AbstractHelper
      *
      * @param  string $method
      * @param  array $args
+     *
      * @return HeadMeta
      */
     public function __call($method, $args)
@@ -201,7 +204,8 @@ class HeadMeta extends AbstractHelper
      * Determine if item is valid
      *
      * @param  mixed $item
-     * @return boolean
+     *
+     * @return bool
      */
     protected function _isValid($item)
     {
@@ -212,7 +216,9 @@ class HeadMeta extends AbstractHelper
      * Append
      *
      * @param  string $value
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function append($value)
@@ -229,7 +235,9 @@ class HeadMeta extends AbstractHelper
      *
      * @param  string|int $index
      * @param  string $value
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function offsetSet($index, $value)
@@ -245,7 +253,9 @@ class HeadMeta extends AbstractHelper
      * OffsetUnset
      *
      * @param  string|int $index
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function offsetUnset($index)
@@ -261,7 +271,9 @@ class HeadMeta extends AbstractHelper
      * Prepend
      *
      * @param  string $value
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function prepend($value)
@@ -277,7 +289,9 @@ class HeadMeta extends AbstractHelper
      * Set
      *
      * @param  string $value
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function set($value)
@@ -303,6 +317,7 @@ class HeadMeta extends AbstractHelper
      * @param  string $typeValue
      * @param  string $content
      * @param  array $modifiers
+     *
      * @return string
      */
     public function itemToString(\stdClass $item)
@@ -351,6 +366,7 @@ class HeadMeta extends AbstractHelper
      * Render placeholder as string
      *
      * @param  string|int $indent
+     *
      * @return string
      */
     public function toString($indent = null)
@@ -386,6 +402,7 @@ class HeadMeta extends AbstractHelper
      * @param  string $typeValue
      * @param  string $content
      * @param  array $modifiers
+     *
      * @return \stdClass
      */
     public function createData($type, $typeValue, $content, array $modifiers)
@@ -399,9 +416,9 @@ class HeadMeta extends AbstractHelper
         return $data;
     }
 
-
     /**
      * @param string $html
+     *
      * @return $this
      */
     public function addRaw($html)
@@ -423,12 +440,13 @@ class HeadMeta extends AbstractHelper
      * @param string $string
      * @param int $length
      * @param string $suffix
+     *
      * @return $this
      */
-    public function setDescription($string, $length = null, $suffix = "")
+    public function setDescription($string, $length = null, $suffix = '')
     {
         $string = $this->normalizeString($string, $length, $suffix);
 
-        return $this->setName("description", $string);
+        return $this->setName('description', $string);
     }
 }

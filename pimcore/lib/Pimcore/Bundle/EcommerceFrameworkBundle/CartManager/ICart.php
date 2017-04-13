@@ -21,21 +21,23 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
  */
 interface ICart
 {
-
     /**
      * @abstract
+     *
      * @return int
      */
     public function getId();
 
     /**
      * @param $id int
+     *
      * @return void
      */
     public function setId($id);
 
     /**
      * @abstract
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[]
      */
     public function getItems();
@@ -74,6 +76,7 @@ interface ICart
 
     /**
      * @abstract
+     *
      * @param ICheckoutable $product
      * @param int $count
      * @param null $itemKey
@@ -81,13 +84,14 @@ interface ICart
      * @param array $params optional additional item information
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry[] $subProducts
      * @param string $comment
+     *
      * @return string $itemKey
      */
     public function addItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
 
-
     /**
      * @abstract
+     *
      * @param string $itemKey
      * @param ICheckoutable $product
      * @param int $count
@@ -95,6 +99,7 @@ interface ICart
      * @param array $params optional additional item information
      * @param array $subProducts
      * @param null $comment
+     *
      * @return string $itemKey
      */
     public function updateItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
@@ -104,6 +109,7 @@ interface ICart
      *
      * @param $itemKey
      * @param $count
+     *
      * @return mixed
      */
     public function updateItemCount($itemKey, $count);
@@ -116,10 +122,10 @@ interface ICart
      * @param array $params optional additional item information
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry[] $subProducts
      * @param string $comment
+     *
      * @return string $itemKey
      */
     public function addGiftItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
-
 
     /**
      * @param string $itemKey
@@ -129,13 +135,16 @@ interface ICart
      * @param array $params optional additional item information
      * @param array $subProducts
      * @param null $comment
+     *
      * @return string $itemKey
      */
     public function updateGiftItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * @abstract
+     *
      * @param string $itemKey
+     *
      * @return void
      */
     public function removeItem($itemKey);
@@ -144,6 +153,7 @@ interface ICart
      * clears all items of cart
      *
      * @abstract
+     *
      * @return void
      */
     public function clear();
@@ -152,6 +162,7 @@ interface ICart
      * calculates amount of items in cart
      *
      * @abstract
+     *
      * @param bool $countSubItems
      *
      * @return int
@@ -162,10 +173,10 @@ interface ICart
      * counts items in cart (does not consider item amount)
      *
      * @param bool|false $countSubItems
+     *
      * @return int
      */
     public function getItemCount($countSubItems = false);
-
 
     /**
      * @param int $count
@@ -174,11 +185,11 @@ interface ICart
      */
     public function getRecentlyAddedItems($count);
 
-
     /**
      * returns price calculator of cart
      *
      * @abstract
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator
      */
     public function getPriceCalculator();
@@ -188,8 +199,10 @@ interface ICart
      * can be used for delivery information, ...
      *
      * @abstract
+     *
      * @param  $key string
      * @param  $data string
+     *
      * @return void
      */
     public function setCheckoutData($key, $data);
@@ -198,7 +211,9 @@ interface ICart
      * Get custom checkout data for cart with given key.
      *
      * @abstract
+     *
      * @param  $key string
+     *
      * @return string
      */
     public function getCheckoutData($key);
@@ -207,6 +222,7 @@ interface ICart
      * get name of cart.
      *
      * @abstract
+     *
      * @return string
      */
     public function getName();
@@ -215,7 +231,9 @@ interface ICart
      * set name of cart.
      *
      * @abstract
+     *
      * @param $name
+     *
      * @return void
      */
     public function setName($name);
@@ -225,32 +243,39 @@ interface ICart
      * default implementation checks if all products of cart a bookable.
      *
      * @abstract
+     *
      * @return bool
      */
     public function getIsBookable();
 
     /**
      * @abstract
+     *
      * @return \DateTime
      */
     public function getCreationDate();
 
     /**
      * @abstract
+     *
      * @param null|\DateTime $creationDate
+     *
      * @return void
      */
     public function setCreationDate(\DateTime $creationDate = null);
 
     /**
      * @abstract
+     *
      * @return \DateTime
      */
     public function getModificationDate();
 
     /**
      * @abstract
+     *
      * @param null|\DateTime $modificationDate
+     *
      * @return void
      */
     public function setModificationDate(\DateTime $modificationDate = null);
@@ -259,6 +284,7 @@ interface ICart
      * sorts all items in cart according to a given callback function
      *
      * @param callable $value_compare_func
+     *
      * @return ICart
      */
     public function sortItems(callable $value_compare_func);
@@ -267,6 +293,7 @@ interface ICart
      * saves cart
      *
      * @abstract
+     *
      * @return void
      */
     public function save();
@@ -275,15 +302,17 @@ interface ICart
      * deletes cart
      *
      * @abstract
+     *
      * @return void
      */
     public function delete();
 
-
     /**
      * @static
      * @abstract
+     *
      * @param $id
+     *
      * @return ICart
      */
     public static function getById($id);
@@ -293,20 +322,25 @@ interface ICart
      *
      * @static
      * @abstract
+     *
      * @param $userId
+     *
      * @return ICart[]
      */
     public static function getAllCartsForUser($userId);
 
     /**
      * @param string $token
+     *
      * @throws \Exception
+     *
      * @return bool
      */
     public function addVoucherToken($token);
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token $token
+     *
      * @return bool
      */
     public function removeVoucherToken($token);

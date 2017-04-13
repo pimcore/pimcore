@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 interface IComponent
 {
-
     /**
      * @return mixed
      */

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,6 +24,7 @@ class JsonEncoder
     /**
      * @param $data
      * @param bool $returnData
+     *
      * @return string
      */
     public function encode($data, $returnData = false)
@@ -42,6 +44,7 @@ class JsonEncoder
 
     /**
      * @param $data
+     *
      * @return mixed
      */
     public function decode($data)

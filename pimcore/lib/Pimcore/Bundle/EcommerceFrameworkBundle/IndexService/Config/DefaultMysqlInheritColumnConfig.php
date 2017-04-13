@@ -36,11 +36,11 @@ class DefaultMysqlInheritColumnConfig extends DefaultMysql
 
     public function getTablename()
     {
-        return "ecommerceframework_productindex3";
+        return 'ecommerceframework_productindex3';
     }
 
     public function getRelationTablename()
     {
-        return "ecommerceframework_productindex_relations3";
+        return 'ecommerceframework_productindex_relations3';
     }
 }

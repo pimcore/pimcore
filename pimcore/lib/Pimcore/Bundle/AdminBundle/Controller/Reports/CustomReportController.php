@@ -31,15 +31,17 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 {
     /**
      * @Route("/tree")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeAction(Request $request)
     {
         $reports = CustomReport\Config::getReportsList();
 
-        if ($request->get("portlet")) {
-            return $this->json(["data" => $reports]);
+        if ($request->get('portlet')) {
+            return $this->json(['data' => $reports]);
         } else {
             return $this->json($reports);
         }
@@ -47,67 +49,75 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/add")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addAction(Request $request)
     {
         $success = false;
 
-        $report = CustomReport\Config::getByName($request->get("name"));
+        $report = CustomReport\Config::getByName($request->get('name'));
 
         if (!$report) {
             $report = new CustomReport\Config();
-            $report->setName($request->get("name"));
+            $report->setName($request->get('name'));
             $report->save();
 
             $success = true;
         }
 
-        return $this->json(["success" => $success, "id" => $report->getName()]);
+        return $this->json(['success' => $success, 'id' => $report->getName()]);
     }
 
     /**
      * @Route("/delete")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
-        $report = CustomReport\Config::getByName($request->get("name"));
+        $report = CustomReport\Config::getByName($request->get('name'));
         $report->delete();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAction(Request $request)
     {
-        $report = CustomReport\Config::getByName($request->get("name"));
+        $report = CustomReport\Config::getByName($request->get('name'));
 
         return $this->json($report);
     }
 
     /**
      * @Route("/update")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function updateAction(Request $request)
     {
-        $report = CustomReport\Config::getByName($request->get("name"));
-        $data = $this->decodeJson($request->get("configuration"));
+        $report = CustomReport\Config::getByName($request->get('name'));
+        $data = $this->decodeJson($request->get('configuration'));
 
-        if (!is_array($data["yAxis"])) {
-            $data["yAxis"] = strlen($data["yAxis"]) ? [$data["yAxis"]] : [];
+        if (!is_array($data['yAxis'])) {
+            $data['yAxis'] = strlen($data['yAxis']) ? [$data['yAxis']] : [];
         }
 
         foreach ($data as $key => $value) {
-            $setter = "set" . ucfirst($key);
+            $setter = 'set' . ucfirst($key);
             if (method_exists($report, $setter)) {
                 $report->$setter($value);
             }
@@ -115,23 +125,25 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $report->save();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/column-config")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function columnConfigAction(Request $request)
     {
-        $report = CustomReport\Config::getByName($request->get("name"));
+        $report = CustomReport\Config::getByName($request->get('name'));
         $columnConfiguration = $report->getColumnConfiguration();
         if (!is_array($columnConfiguration)) {
             $columnConfiguration = [];
         }
 
-        $configuration = json_decode($request->get("configuration"));
+        $configuration = json_decode($request->get('configuration'));
         $configuration = $configuration[0];
 
         $success = false;
@@ -148,7 +160,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             }
 
             foreach ($columnConfiguration as $item) {
-                $name = $item["name"];
+                $name = $item['name'];
                 if (in_array($name, $columns)) {
                     $result[] = $name;
                     array_splice($columns, array_search($name, $columns), 1);
@@ -164,16 +176,17 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         }
 
         return $this->json([
-            "success" => $success,
-            "columns" => $result,
-            "errorMessage" => $errorMessage
+            'success' => $success,
+            'columns' => $result,
+            'errorMessage' => $errorMessage
         ]);
     }
 
-
     /**
      * @Route("/get-report-config")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getReportConfigAction(Request $request)
@@ -183,95 +196,100 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $list = new CustomReport\Config\Listing();
         $items = $list->load();
 
-        /** @var  $report CustomReport\Config */
+        /** @var $report CustomReport\Config */
         foreach ($items as $report) {
             $reports[] = [
-                "name" => $report->getName(),
-                "niceName" => $report->getNiceName(),
-                "iconClass" => $report->getIconClass(),
-                "group" => $report->getGroup(),
-                "groupIconClass" => $report->getGroupIconClass(),
-                "menuShortcut" => $report->getMenuShortcut(),
-                "reportClass" => $report->getReportClass()
+                'name' => $report->getName(),
+                'niceName' => $report->getNiceName(),
+                'iconClass' => $report->getIconClass(),
+                'group' => $report->getGroup(),
+                'groupIconClass' => $report->getGroupIconClass(),
+                'menuShortcut' => $report->getMenuShortcut(),
+                'reportClass' => $report->getReportClass()
             ];
         }
 
         return $this->json([
-            "success" => true,
-            "reports" => $reports
+            'success' => true,
+            'reports' => $reports
         ]);
     }
 
     /**
      * @Route("/data")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function dataAction(Request $request)
     {
-        $offset = $request->get("start", 0);
-        $limit = $request->get("limit", 40);
+        $offset = $request->get('start', 0);
+        $limit = $request->get('limit', 40);
         $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
         }
 
-        $filters = ($request->get("filter") ? json_decode($request->get("filter"), true) : null);
+        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
 
-        $drillDownFilters = $request->get("drillDownFilters", null);
+        $drillDownFilters = $request->get('drillDownFilters', null);
 
-        $config = CustomReport\Config::getByName($request->get("name"));
+        $config = CustomReport\Config::getByName($request->get('name'));
         $configuration = $config->getDataSourceConfig();
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
 
-
         return $this->json([
-            "success" => true,
-            "data" => $result['data'],
-            "total" => $result['total']
+            'success' => true,
+            'data' => $result['data'],
+            'total' => $result['total']
         ]);
     }
 
     /**
      * @Route("/drill-down-options")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function drillDownOptionsAction(Request $request)
     {
-        $field = $request->get("field");
-        $filters = ($request->get("filter") ? json_decode($request->get("filter"), true) : null);
-        $drillDownFilters = $request->get("drillDownFilters", null);
+        $field = $request->get('field');
+        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $drillDownFilters = $request->get('drillDownFilters', null);
 
-        $config = CustomReport\Config::getByName($request->get("name"));
+        $config = CustomReport\Config::getByName($request->get('name'));
         $configuration = $config->getDataSourceConfig();
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
 
         return $this->json([
-            "success" => true,
-            "data" => $result['data'],
+            'success' => true,
+            'data' => $result['data'],
         ]);
     }
 
     /**
      * @Route("/chart")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function chartAction(Request $request)
     {
-        $sort = $request->get("sort");
-        $dir = $request->get("dir");
-        $filters = ($request->get("filter") ? json_decode($request->get("filter"), true) : null);
-        $drillDownFilters = $request->get("drillDownFilters", null);
+        $sort = $request->get('sort');
+        $dir = $request->get('dir');
+        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $drillDownFilters = $request->get('drillDownFilters', null);
 
-        $config = CustomReport\Config::getByName($request->get("name"));
+        $config = CustomReport\Config::getByName($request->get('name'));
 
         $configuration = $config->getDataSourceConfig();
 
@@ -280,28 +298,30 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         return $this->json([
-            "success" => true,
-            "data" => $result['data'],
-            "total" => $result['total']
+            'success' => true,
+            'data' => $result['data'],
+            'total' => $result['total']
         ]);
     }
 
     /**
      * @Route("/download-csv")
+     *
      * @param Request $request
+     *
      * @return BinaryFileResponse
      */
     public function downloadCsvAction(Request $request)
     {
         set_time_limit(300);
 
-        $sort = $request->get("sort");
-        $dir = $request->get("dir");
-        $filters = ($request->get("filter") ? json_decode($request->get("filter"), true) : null);
-        $drillDownFilters = $request->get("drillDownFilters", null);
+        $sort = $request->get('sort');
+        $dir = $request->get('dir');
+        $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
+        $drillDownFilters = $request->get('drillDownFilters', null);
         $includeHeaders = $request->get('headers', false);
 
-        $config = CustomReport\Config::getByName($request->get("name"));
+        $config = CustomReport\Config::getByName($request->get('name'));
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
@@ -321,7 +341,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/report-export-" . uniqid() . ".csv";
+        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
         @unlink($exportFile);
 
         $fp = fopen($exportFile, 'w');
@@ -337,8 +357,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         fclose($fp);
 
         $response = new BinaryFileResponse($exportFile);
-        $response->headers->set("Content-Type", "text/csv; charset=UTF-8");
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, "export.csv");
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
         $response->deleteFileAfterSend(true);
 
         return $response;
@@ -354,7 +374,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             return;
         }
 
-        $this->checkPermission("reports");
+        $this->checkPermission('reports');
     }
 
     /**

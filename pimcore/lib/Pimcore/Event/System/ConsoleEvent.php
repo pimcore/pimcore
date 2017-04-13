@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ConsoleEvent extends Event
 {
-
     /**
      * @var Application
      */
@@ -27,6 +26,7 @@ class ConsoleEvent extends Event
 
     /**
      * ConsoleEvent constructor.
+     *
      * @param Application $application
      */
     public function __construct(Application $application)

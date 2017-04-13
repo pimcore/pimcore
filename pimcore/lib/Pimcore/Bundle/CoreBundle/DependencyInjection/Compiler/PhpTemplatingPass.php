@@ -52,6 +52,7 @@ class PhpTemplatingPass implements CompilerPassInterface
      * Find registered brokers by tag
      *
      * @param ContainerBuilder $container
+     *
      * @return array
      */
     protected function findHelperBrokers(ContainerBuilder $container)

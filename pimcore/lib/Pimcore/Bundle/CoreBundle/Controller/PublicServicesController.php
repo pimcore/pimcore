@@ -27,13 +27,14 @@ class PublicServicesController extends FrameworkController
 {
     /**
      * @param Request $request
+     *
      * @return BinaryFileResponse
      */
     public function thumbnailAction(Request $request)
     {
-        $assetId = $request->get("assetId");
-        $thumbnailName = $request->get("thumbnailName");
-        $filename = $request->get("filename");
+        $assetId = $request->get('assetId');
+        $thumbnailName = $request->get('thumbnailName');
+        $filename = $request->get('filename');
 
         if ($asset = Asset::getById($assetId)) {
             try {
@@ -52,7 +53,7 @@ class PublicServicesController extends FrameworkController
 
                 if (!$thumbnailConfig) {
                     // check if there's an item in the TmpStore
-                    $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
+                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5($request->getPathInfo());
                     if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                         $thumbnailConfig = $thumbnailConfigItem->getData();
                         TmpStore::delete($deferredConfigId);
@@ -68,8 +69,8 @@ class PublicServicesController extends FrameworkController
                 }
 
                 if ($asset instanceof Asset\Document) {
-                    $thumbnailConfig->setName(preg_replace("/\-[\d]+/", "", $thumbnailConfig->getName()));
-                    $thumbnailConfig->setName(str_replace("document_", "", $thumbnailConfig->getName()));
+                    $thumbnailConfig->setName(preg_replace("/\-[\d]+/", '', $thumbnailConfig->getName()));
+                    $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
                     $thumbnailFile = $asset->getImageThumbnail($thumbnailConfig, $page)->getFileSystemPath();
                 } elseif ($asset instanceof Asset\Image) {
@@ -78,7 +79,7 @@ class PublicServicesController extends FrameworkController
                     preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $filename, $matches);
 
                     if (array_key_exists(2, $matches)) {
-                        $highResFactor = (float) str_replace(["@", "x"], "", $matches[2]);
+                        $highResFactor = (float) str_replace(['@', 'x'], '', $matches[2]);
                         $thumbnailConfig->setHighResolution($highResFactor);
                     }
 
@@ -97,8 +98,8 @@ class PublicServicesController extends FrameworkController
                     $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
                     return new BinaryFileResponse($thumbnailFile, 200, [
-                        "Cache-Control" => "public, max-age=" . $lifetime,
-                        "Expires" => date("D, d M Y H:i:s T", time()+$lifetime)
+                        'Cache-Control' => 'public, max-age=' . $lifetime,
+                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime)
                     ]);
                 }
             } catch (\Exception $e) {
@@ -110,13 +111,13 @@ class PublicServicesController extends FrameworkController
 
     /**
      * @param Request $request
+     *
      * @return Response
      */
     public function commonFilesAction(Request $request)
     {
         return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
     }
-
 
     /**
      * @param Request $request
@@ -128,26 +129,27 @@ class PublicServicesController extends FrameworkController
 
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function qrcodeAction(Request $request)
     {
-        $code = Tool\Qrcode\Config::getByName($request->get("key"));
+        $code = Tool\Qrcode\Config::getByName($request->get('key'));
         if ($code) {
             $url = $code->getUrl();
             if ($code->getGoogleAnalytics()) {
-                $glue = "?";
-                if (strpos($url, "?")) {
-                    $glue = "&";
+                $glue = '?';
+                if (strpos($url, '?')) {
+                    $glue = '&';
                 }
 
                 $url .= $glue;
-                $url .= "utm_source=Mobile&utm_medium=QR-Code&utm_campaign=" . $code->getName();
+                $url .= 'utm_source=Mobile&utm_medium=QR-Code&utm_campaign=' . $code->getName();
             }
 
             return $this->redirect($url);
         } else {
-            Logger::error("called an QR code but '" . $request->get("key") . " is not a code in the system.");
+            Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
         }
     }
 }

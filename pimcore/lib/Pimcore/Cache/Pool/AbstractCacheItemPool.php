@@ -91,6 +91,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      * Transform cache key into storage ID (e.g. prefix with namespace)
      *
      * @param string $key
+     *
      * @return string
      */
     protected function getId($key)
@@ -107,6 +108,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      * @param mixed $value
      * @param array $tags
      * @param bool $isHit
+     *
      * @return PimcoreCacheItemInterface
      */
     public function createCacheItem($key, $value = null, array $tags = [], $isHit = false)
@@ -123,6 +125,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @param array $items
      * @param array $keys
+     *
      * @return \Generator|PimcoreCacheItemInterface[]
      */
     protected function generateItems($items, &$keys)
@@ -147,6 +150,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 
     /**
      * @param mixed $data
+     *
      * @return string
      */
     protected function serializeData($data)
@@ -156,6 +160,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 
     /**
      * @param string $serialized
+     *
      * @return mixed
      */
     protected function unserializeData($serialized)
@@ -326,6 +331,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @param string[] $keys
      *   An array of keys that should be removed from the pool.
+     *
      * @throws InvalidArgumentException
      *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
      *   MUST be thrown.

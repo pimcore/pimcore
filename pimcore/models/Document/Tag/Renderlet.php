@@ -10,30 +10,30 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Model;
 use Pimcore\Config;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
-use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
+use Pimcore\Model\Object;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
 class Renderlet extends Model\Document\Tag
 {
-
     /**
      * Contains the ID of the linked object
      *
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -44,14 +44,12 @@ class Renderlet extends Model\Document\Tag
      */
     public $o;
 
-
     /**
      * Contains the type
      *
      * @var string
      */
     public $type;
-
 
     /**
      * Contains the subtype
@@ -62,23 +60,25 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "renderlet";
+        return 'renderlet';
     }
 
     /**
      * @see Document\Tag\TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
     {
         return [
-            "id" => $this->id,
-            "type" => $this->getObjectType(),
-            "subtype" => $this->subtype
+            'id' => $this->id,
+            'type' => $this->getObjectType(),
+            'subtype' => $this->subtype
         ];
     }
 
@@ -91,9 +91,9 @@ class Renderlet extends Model\Document\Tag
     {
         if ($this->o instanceof Element\ElementInterface) {
             return [
-                "id" => $this->id,
-                "type" => $this->getObjectType(),
-                "subtype" => $this->subtype
+                'id' => $this->id,
+                'type' => $this->getObjectType(),
+                'subtype' => $this->subtype
             ];
         }
 
@@ -102,6 +102,7 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
@@ -113,9 +114,9 @@ class Renderlet extends Model\Document\Tag
             return null;
         }
 
-        if (!$this->options["controller"] && !$this->options["action"]) {
-            $this->options["controller"] = Config::getSystemConfig()->documents->default_controller;
-            $this->options["action"] = Config::getSystemConfig()->documents->default_action;
+        if (!$this->options['controller'] && !$this->options['action']) {
+            $this->options['controller'] = Config::getSystemConfig()->documents->default_controller;
+            $this->options['action'] = Config::getSystemConfig()->documents->default_action;
         }
 
         $document = null;
@@ -123,25 +124,25 @@ class Renderlet extends Model\Document\Tag
             $document = $this->o;
         }
 
-        if (method_exists($this->o, "isPublished")) {
+        if (method_exists($this->o, 'isPublished')) {
             if (!$this->o->isPublished()) {
-                return "";
+                return '';
             }
         }
 
         if ($this->o instanceof Element\ElementInterface) {
-            $blockparams = ["action", "controller", "module", "template"];
+            $blockparams = ['action', 'controller', 'module', 'template'];
 
             $params = [
-                "template" => isset($this->options["template"]) ? $this->options["template"] : null,
-                "object" => $this->o,
-                "element" => $this->o,
-                "document" => $document,
-                "id" => $this->id,
-                "type" => $this->type,
-                "subtype" => $this->subtype,
-                "pimcore_request_source" => "renderlet",
-                "disableBlockClearing" => true
+                'template' => isset($this->options['template']) ? $this->options['template'] : null,
+                'object' => $this->o,
+                'element' => $this->o,
+                'document' => $document,
+                'id' => $this->id,
+                'type' => $this->type,
+                'subtype' => $this->subtype,
+                'pimcore_request_source' => 'renderlet',
+                'disableBlockClearing' => true
             ];
 
             foreach ($this->options as $key => $value) {
@@ -170,7 +171,7 @@ class Renderlet extends Model\Document\Tag
                 return $content;
             } catch (\Exception $e) {
                 if (\Pimcore::inDebugMode()) {
-                    return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
+                    return 'ERROR: ' . $e->getMessage() . ' (for details see debug.log)';
                 }
                 Logger::error($e);
             }
@@ -179,16 +180,18 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
     {
         $data = \Pimcore\Tool\Serialize::unserialize($data);
 
-        $this->id = $data["id"];
-        $this->type = $data["type"];
-        $this->subtype = $data["subtype"];
+        $this->id = $data['id'];
+        $this->type = $data['type'];
+        $this->subtype = $data['subtype'];
 
         $this->setElement();
 
@@ -197,14 +200,16 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
     {
-        $this->id = $data["id"];
-        $this->type = $data["type"];
-        $this->subtype = $data["subtype"];
+        $this->id = $data['id'];
+        $this->type = $data['type'];
+        $this->subtype = $data['subtype'];
 
         $this->setElement();
 
@@ -234,11 +239,11 @@ class Renderlet extends Model\Document\Tag
 
         if ($this->o instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($this->o);
-            $key = $elementType . "_" . $this->o->getId();
+            $key = $elementType . '_' . $this->o->getId();
 
             $dependencies[$key] = [
-                "id" => $this->o->getId(),
-                "type" => $elementType
+                'id' => $this->o->getId(),
+                'type' => $elementType
             ];
         }
 
@@ -247,8 +252,11 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * get correct type of object as string
+     *
      * @param null $object
+     *
      * @return bool|string
+     *
      * @internal param mixed $data
      */
     public function getObjectType($object = null)
@@ -265,9 +273,8 @@ class Renderlet extends Model\Document\Tag
         }
     }
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -285,12 +292,13 @@ class Renderlet extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
-        if ($data->id !==null) {
+        if ($data->id !== null) {
             $this->type = $data->type;
             $this->subtype = $data->subtype;
             if (is_numeric($this->id)) {
@@ -298,39 +306,39 @@ class Renderlet extends Model\Document\Tag
                     $id = $idMapper->getMappedId($this->type, $this->id);
                 }
 
-                if ($this->type == "asset") {
+                if ($this->type == 'asset') {
                     $this->o = Asset::getById($id);
                     if (!$this->o instanceof Asset) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
                         } else {
-                            throw new \Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
+                            throw new \Exception('cannot get values from web service import - referenced asset with id [ '.$this->id.' ] is unknown');
                         }
                     }
-                } elseif ($this->type == "document") {
+                } elseif ($this->type == 'document') {
                     $this->o = Document::getById($id);
                     if (!$this->o instanceof Document) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
                         } else {
-                            throw new \Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
+                            throw new \Exception('cannot get values from web service import - referenced document with id [ '.$this->id.' ] is unknown');
                         }
                     }
-                } elseif ($this->type == "object") {
+                } elseif ($this->type == 'object') {
                     $this->o = Object::getById($id);
                     if (!$this->o instanceof Object\AbstractObject) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
                         } else {
-                            throw new \Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
+                            throw new \Exception('cannot get values from web service import - referenced object with id [ '.$this->id.' ] is unknown');
                         }
                     }
                 } else {
                     p_r($this);
-                    throw new \Exception("cannot get values from web service import - type is not valid");
+                    throw new \Exception('cannot get values from web service import - type is not valid');
                 }
             } else {
-                throw new \Exception("cannot get values from web service import - id is not valid");
+                throw new \Exception('cannot get values from web service import - id is not valid');
             }
         }
     }
@@ -345,7 +353,7 @@ class Renderlet extends Model\Document\Tag
             $el = Element\Service::getElementById($this->type, $this->id);
             if (!$el instanceof Element\ElementInterface) {
                 $sane = false;
-                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                Logger::notice('Detected insane relation, removing reference to non existent '.$this->type.' with id ['.$this->id.']');
                 $this->id = null;
                 $this->type = null;
                 $this->o=null;
@@ -363,7 +371,7 @@ class Renderlet extends Model\Document\Tag
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ["o"];
+        $blockedVars = ['o'];
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
@@ -385,6 +393,7 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param int $id
+     *
      * @return Document\Tag\Renderlet
      */
     public function setId($id)
@@ -404,6 +413,7 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param Asset|Document|Object $o
+     *
      * @return Document\Tag\Renderlet
      */
     public function setO($o)
@@ -423,6 +433,7 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param string $subtype
+     *
      * @return Document\Tag\Renderlet
      */
     public function setSubtype($subtype)
@@ -450,6 +461,7 @@ class Renderlet extends Model\Document\Tag
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param array $idMapping
      */
     public function rewriteIds($idMapping)

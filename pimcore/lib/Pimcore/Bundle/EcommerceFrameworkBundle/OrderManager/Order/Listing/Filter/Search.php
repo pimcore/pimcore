@@ -21,6 +21,7 @@ class Search extends AbstractSearch
 {
     /**
      * Search column
+     *
      * @var string
      */
     protected $column;

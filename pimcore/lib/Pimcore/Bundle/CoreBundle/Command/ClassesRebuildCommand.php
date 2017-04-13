@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object;
+use Pimcore\Model\Object\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,7 +31,7 @@ class ClassesRebuildCommand extends AbstractCommand
             ->addOption(
                 'create-classes', 'c',
                 InputOption::VALUE_NONE,
-                "Create missing Classes (Classes that exists in var/classes but not in the database)"
+                'Create missing Classes (Classes that exists in var/classes but not in the database)'
             )
         ;
     }
@@ -45,13 +45,13 @@ class ClassesRebuildCommand extends AbstractCommand
         $list->load();
 
         if ($output->isVerbose()) {
-            $output->writeln("---------------------");
-            $output->writeln("Saving all classes");
+            $output->writeln('---------------------');
+            $output->writeln('Saving all classes');
         }
 
-        if ($input->getOption("create-classes")) {
+        if ($input->getOption('create-classes')) {
             $objectClassesFolder = PIMCORE_CLASS_DIRECTORY ;
-            $files = glob($objectClassesFolder . "/*.php");
+            $files = glob($objectClassesFolder . '/*.php');
 
             foreach ($files as $file) {
                 $class = include $file;
@@ -61,13 +61,13 @@ class ClassesRebuildCommand extends AbstractCommand
 
                     if ($existingClass instanceof ClassDefinition) {
                         if ($output->isVerbose()) {
-                            $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
+                            $output->writeln($class->getName() . ' [' . $class->getId() . '] saved');
                         }
 
                         $existingClass->save(false);
                     } else {
                         if ($output->isVerbose()) {
-                            $output->writeln($class->getName() . " [" . $class->getId() . "] created");
+                            $output->writeln($class->getName() . ' [' . $class->getId() . '] created');
                         }
 
                         $class->save(false);
@@ -77,7 +77,7 @@ class ClassesRebuildCommand extends AbstractCommand
         } else {
             foreach ($list->getClasses() as $class) {
                 if ($output->isVerbose()) {
-                    $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
+                    $output->writeln($class->getName() . ' [' . $class->getId() . '] saved');
                 }
 
                 $class->save(false);
@@ -85,29 +85,28 @@ class ClassesRebuildCommand extends AbstractCommand
         }
 
         if ($output->isVerbose()) {
-            $output->writeln("---------------------");
-            $output->writeln("Saving all object bricks");
+            $output->writeln('---------------------');
+            $output->writeln('Saving all object bricks');
         }
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
         foreach ($list as $brickDefinition) {
             if ($output->isVerbose()) {
-                $output->writeln($brickDefinition->getKey() . " saved");
+                $output->writeln($brickDefinition->getKey() . ' saved');
             }
 
             $brickDefinition->save();
         }
 
-
         if ($output->isVerbose()) {
-            $output->writeln("---------------------");
-            $output->writeln("Saving all field collections");
+            $output->writeln('---------------------');
+            $output->writeln('Saving all field collections');
         }
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
         foreach ($list as $fc) {
             if ($output->isVerbose()) {
-                $output->writeln($fc->getKey() . " saved");
+                $output->writeln($fc->getKey() . ' saved');
             }
 
             $fc->save();

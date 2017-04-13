@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -17,28 +18,27 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Object;
 
 class Video extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "video";
+    public $fieldtype = 'video';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
      * Type for the column to query
      *
-     * @var integer
+     * @var int
      */
     public $height;
 
@@ -47,24 +47,24 @@ class Video extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "text";
+    public $queryColumnType = 'text';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "text";
+    public $columnType = 'text';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\Video";
+    public $phpdocType = '\\Pimcore\\Model\\Object\\Data\\Video';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -72,7 +72,8 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -83,7 +84,7 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -91,7 +92,8 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -103,10 +105,12 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return integer|null
+     *
+     * @return int|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -129,9 +133,11 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
-     * @param integer $data
+     *
+     * @param int $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return Asset
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -139,25 +145,25 @@ class Video extends Model\Object\ClassDefinition\Data
         if ($data) {
             $raw = unserialize($data);
 
-            if ($raw["type"] == "asset") {
-                if ($asset = Asset::getById($raw["data"])) {
-                    $raw["data"] = $asset;
+            if ($raw['type'] == 'asset') {
+                if ($asset = Asset::getById($raw['data'])) {
+                    $raw['data'] = $asset;
                 }
             }
 
-            if ($raw["poster"]) {
-                if ($poster = Asset::getById($raw["poster"])) {
-                    $raw["poster"] = $poster;
+            if ($raw['poster']) {
+                if ($poster = Asset::getById($raw['poster'])) {
+                    $raw['poster'] = $poster;
                 }
             }
 
-            if ($raw["data"]) {
+            if ($raw['data']) {
                 $video = new Object\Data\Video();
-                $video->setData($raw["data"]);
-                $video->setType($raw["type"]);
-                $video->setPoster($raw["poster"]);
-                $video->setTitle($raw["title"]);
-                $video->setDescription($raw["description"]);
+                $video->setData($raw['data']);
+                $video->setType($raw['type']);
+                $video->setPoster($raw['poster']);
+                $video->setTitle($raw['title']);
+                $video->setDescription($raw['description']);
 
                 return $video;
             }
@@ -168,10 +174,12 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return integer|null
+     *
+     * @return int|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -180,10 +188,12 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return integer
+     *
+     * @return int
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -203,38 +213,40 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
-     * @param integer $data
+     *
+     * @param int $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return Asset
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         $video = null;
 
-        if ($data["type"] == "asset") {
-            if ($asset = Asset::getByPath($data["data"])) {
-                $data["data"] = $asset;
+        if ($data['type'] == 'asset') {
+            if ($asset = Asset::getByPath($data['data'])) {
+                $data['data'] = $asset;
             } else {
-                $data["data"] = null;
+                $data['data'] = null;
             }
         }
 
-        if ($data["poster"]) {
-            if ($poster = Asset::getByPath($data["poster"])) {
-                $data["poster"] = $poster;
+        if ($data['poster']) {
+            if ($poster = Asset::getByPath($data['poster'])) {
+                $data['poster'] = $poster;
             } else {
-                $data["poster"] = null;
+                $data['poster'] = null;
             }
         }
 
-        if (!empty($data["data"])) {
+        if (!empty($data['data'])) {
             $video = new Object\Data\Video();
-            $video->setData($data["data"]);
-            $video->setType($data["type"]);
-            $video->setPoster($data["poster"]);
-            $video->setTitle($data["title"]);
-            $video->setDescription($data["description"]);
+            $video->setData($data['data']);
+            $video->setType($data['type']);
+            $video->setPoster($data['poster']);
+            $video->setTitle($data['title']);
+            $video->setDescription($data['description']);
         }
 
         return $video;
@@ -244,25 +256,28 @@ class Video extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
+        if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
             return $data->getData()->getId();
         }
     }
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param Asset\Image $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
+        if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
             return '<img src="/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true" />';
         }
 
@@ -271,9 +286,12 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
@@ -285,7 +303,7 @@ class Video extends Model\Object\ClassDefinition\Data
                 $value = $value->getId();
             }
 
-            return $data->getType() . "~" . $value;
+            return $data->getType() . '~' . $value;
         } else {
             return null;
         }
@@ -295,18 +313,19 @@ class Video extends Model\Object\ClassDefinition\Data
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = null;
 
-        if ($importValue && strpos($importValue, "~")) {
-            list($type, $data) = explode("~", $importValue);
+        if ($importValue && strpos($importValue, '~')) {
+            list($type, $data) = explode('~', $importValue);
             if ($type && $data) {
                 $video = new Object\Data\Video();
                 $video->setType($type);
-                if ($type == "asset") {
+                if ($type == 'asset') {
                     if ($asset = Asset::getById($data)) {
                         $video->setData($asset);
                     } else {
@@ -324,18 +343,19 @@ class Video extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Video) {
-            $value = $data->getTitle() . " " . $data->getDescription();
+            $value = $data->getTitle() . ' ' . $data->getDescription();
 
             return $value;
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -343,6 +363,7 @@ class Video extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -366,6 +387,7 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -373,27 +395,28 @@ class Video extends Model\Object\ClassDefinition\Data
         $dependencies = [];
 
         if ($data && $data->getData() instanceof Asset) {
-            $dependencies["asset_" . $data->getData()->getId()] = [
-                "id" => $data->getData()->getId(),
-                "type" => "asset"
+            $dependencies['asset_' . $data->getData()->getId()] = [
+                'id' => $data->getData()->getId(),
+                'type' => 'asset'
             ];
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
-            $dependencies["asset_" . $data->getPoster()->getId()] = [
-                "id" => $data->getPoster()->getId(),
-                "type" => "asset"
+            $dependencies['asset_' . $data->getPoster()->getId()] = [
+                'id' => $data->getPoster()->getId(),
+                'type' => 'asset'
             ];
         }
 
         return $dependencies;
     }
 
-
-        /**
+    /**
      * converts data to be exposed via webservices
+     *
      * @param string $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -404,13 +427,14 @@ class Video extends Model\Object\ClassDefinition\Data
         }
     }
 
-
     /**
      * converts data to be imported via webservices
+     *
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params
      * @param $idMapper
+     *
      * @return mixed
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
@@ -423,6 +447,7 @@ class Video extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -432,9 +457,11 @@ class Video extends Model\Object\ClassDefinition\Data
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
@@ -447,19 +474,20 @@ class Video extends Model\Object\ClassDefinition\Data
 
         if ($versionPreview) {
             $value = [];
-            $value["src"] = $versionPreview;
-            $value["type"] = "img";
+            $value['src'] = $versionPreview;
+            $value['type'] = 'img';
 
             return $value;
         }
 
-        return "";
+        return '';
     }
 
     /**
      * @param $object
      * @param $idMapping
      * @param array $params
+     *
      * @return mixed
      */
     public function rewriteIds($object, $idMapping, $params = [])
@@ -467,14 +495,14 @@ class Video extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data && $data->getData() instanceof Asset) {
-            if (array_key_exists("asset", $idMapping) and array_key_exists($data->getData()->getId(), $idMapping["asset"])) {
-                $data->setData(Asset::getById($idMapping["asset"][$data->getData()->getId()]));
+            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getData()->getId(), $idMapping['asset'])) {
+                $data->setData(Asset::getById($idMapping['asset'][$data->getData()->getId()]));
             }
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
-            if (array_key_exists("asset", $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping["asset"])) {
-                $data->setPoster(Asset::getById($idMapping["asset"][$data->getPoster()->getId()]));
+            if (array_key_exists('asset', $idMapping) and array_key_exists($data->getPoster()->getId(), $idMapping['asset'])) {
+                $data->setPoster(Asset::getById($idMapping['asset'][$data->getPoster()->getId()]));
             }
         }
 
@@ -485,38 +513,39 @@ class Video extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
     {
         if ($value instanceof Object\Data\Video) {
             $result = [];
-            $result["type"] = $value->getType();
+            $result['type'] = $value->getType();
             if ($value->getTitle()) {
-                $result["title"] = $value->getTitle();
+                $result['title'] = $value->getTitle();
             }
 
             if ($value->getDescription()) {
-                $result["description"] = $value->getDescription();
+                $result['description'] = $value->getDescription();
             }
 
             $poster = $value->getPoster();
             if ($poster) {
-                $result["poster"] = [
-                    "type" => Model\Element\Service::getType($poster),
-                    "id" => $poster->getId()
+                $result['poster'] = [
+                    'type' => Model\Element\Service::getType($poster),
+                    'id' => $poster->getId()
                 ];
             }
 
             $data = $value->getData();
 
-            if ($data && $value->getType() == "asset") {
-                $result["data"] = [
-                    "type" => Model\Element\Service::getType($data),
-                    "id" => $data->getId()
+            if ($data && $value->getType() == 'asset') {
+                $result['data'] = [
+                    'type' => Model\Element\Service::getType($data),
+                    'id' => $data->getId()
                 ];
             } else {
-                $result["data"] = $data;
+                $result['data'] = $data;
             }
 
             return $result;
@@ -529,25 +558,26 @@ class Video extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
             $video = new Object\Data\Video();
-            $video->setType($value["type"]);
-            $video->setTitle($value["title"]);
-            $video->setDescription($value["description"]);
+            $video->setType($value['type']);
+            $video->setTitle($value['title']);
+            $video->setDescription($value['description']);
 
-            if ($value["poster"]) {
-                $video->setPoster(Model\Element\Service::getElementById($value["poster"]["type"], $value["poster"]["id"]));
+            if ($value['poster']) {
+                $video->setPoster(Model\Element\Service::getElementById($value['poster']['type'], $value['poster']['id']));
             }
 
-            if ($value["data"]) {
-                if (is_array($value["data"])) {
-                    $video->setData(Model\Element\Service::getElementById($value["data"]["type"], $value["data"]["id"]));
+            if ($value['data']) {
+                if (is_array($value['data'])) {
+                    $video->setData(Model\Element\Service::getElementById($value['data']['type'], $value['data']['id']));
                 } else {
-                    $video->setData($value["data"]);
+                    $video->setData($value['data']);
                 }
             }
 

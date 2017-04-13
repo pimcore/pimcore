@@ -21,6 +21,7 @@ interface IGift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
 {
     /**
      * set gift product
+     *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct $product
      *
      * @return IGift

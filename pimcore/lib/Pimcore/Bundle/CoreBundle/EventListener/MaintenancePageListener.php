@@ -36,6 +36,7 @@ class MaintenancePageListener
 
     /**
      * CookiePolicyNotice constructor.
+     *
      * @param Kernel $kernel
      */
     public function __construct(Kernel $kernel)
@@ -84,14 +85,14 @@ class MaintenancePageListener
 
         if (is_file($file)) {
             $conf = include($file);
-            if (isset($conf["sessionId"])) {
+            if (isset($conf['sessionId'])) {
                 try {
                     $requestSessionId = Session::getSessionIdFromRequest($event->getRequest());
                 } catch (\Exception $e) {
                     $requestSessionId = null;
                 }
 
-                if ($conf["sessionId"] != $requestSessionId) {
+                if ($conf['sessionId'] != $requestSessionId) {
                     $maintenance = true;
                 }
             } else {
@@ -101,7 +102,7 @@ class MaintenancePageListener
 
         // do not activate the maintenance for the server itself
         // this is to avoid problems with monitoring agents
-        $serverIps = ["127.0.0.1"];
+        $serverIps = ['127.0.0.1'];
 
         if ($maintenance && !in_array($event->getRequest()->getClientIp(), $serverIps)) {
             $response = new Response($this->getTemplateCode(), 503);

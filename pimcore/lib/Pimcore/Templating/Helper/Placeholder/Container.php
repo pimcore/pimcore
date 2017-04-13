@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Container_Abstract
@@ -44,60 +43,70 @@ class Container extends \ArrayObject
 {
     /**
      * Whether or not to override all contents of placeholder
+     *
      * @const string
      */
     const SET    = 'SET';
 
     /**
      * Whether or not to append contents to placeholder
+     *
      * @const string
      */
     const APPEND = 'APPEND';
 
     /**
      * Whether or not to prepend contents to placeholder
+     *
      * @const string
      */
     const PREPEND = 'PREPEND';
 
     /**
      * What text to prefix the placeholder with when rendering
+     *
      * @var string
      */
     protected $_prefix    = '';
 
     /**
      * What text to append the placeholder with when rendering
+     *
      * @var string
      */
     protected $_postfix   = '';
 
     /**
      * What string to use between individual items in the placeholder when rendering
+     *
      * @var string
      */
     protected $_separator = '';
 
     /**
      * What string to use as the indentation of output, this will typically be spaces. Eg: '    '
+     *
      * @var string
      */
     protected $_indent = '';
 
     /**
      * Whether or not we're already capturing for this given container
+     *
      * @var bool
      */
     protected $_captureLock = false;
 
     /**
      * What type of capture (overwrite (set), append, prepend) to use
+     *
      * @var string
      */
     protected $_captureType;
 
     /**
      * Key to which to capture content
+     *
      * @var string
      */
     protected $_captureKey;
@@ -106,6 +115,7 @@ class Container extends \ArrayObject
      * Set a single value
      *
      * @param  mixed $value
+     *
      * @return void
      */
     public function set($value)
@@ -117,6 +127,7 @@ class Container extends \ArrayObject
      * Prepend a value to the top of the container
      *
      * @param  mixed $value
+     *
      * @return void
      */
     public function prepend($value)
@@ -150,6 +161,7 @@ class Container extends \ArrayObject
      * Set prefix for __toString() serialization
      *
      * @param  string $prefix
+     *
      * @return Container
      */
     public function setPrefix($prefix)
@@ -173,6 +185,7 @@ class Container extends \ArrayObject
      * Set postfix for __toString() serialization
      *
      * @param  string $postfix
+     *
      * @return Container
      */
     public function setPostfix($postfix)
@@ -198,6 +211,7 @@ class Container extends \ArrayObject
      * Used to implode elements in container
      *
      * @param  string $separator
+     *
      * @return Container
      */
     public function setSeparator($separator)
@@ -222,6 +236,7 @@ class Container extends \ArrayObject
      * optionally, if a number is passed, it will be the number of spaces
      *
      * @param  string|int $indent
+     *
      * @return Container
      */
     public function setIndent($indent)
@@ -245,6 +260,7 @@ class Container extends \ArrayObject
      * Retrieve whitespace representation of $indent
      *
      * @param  int|string $indent
+     *
      * @return string
      */
     public function getWhitespace($indent)
@@ -261,10 +277,12 @@ class Container extends \ArrayObject
      *
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
      * @param null       $key
+     *
      * @throws Exception
+     *
      * @return void
      */
-    public function captureStart($type = Container::APPEND, $key = null)
+    public function captureStart($type = self::APPEND, $key = null)
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest placeholder captures for the same placeholder');
@@ -340,6 +358,7 @@ class Container extends \ArrayObject
      * Next Index
      *
      * as defined by the PHP manual
+     *
      * @return int
      */
     public function nextIndex()
@@ -356,6 +375,7 @@ class Container extends \ArrayObject
      * Render the placeholder
      *
      * @param null $indent
+     *
      * @return string
      */
     public function toString($indent = null)

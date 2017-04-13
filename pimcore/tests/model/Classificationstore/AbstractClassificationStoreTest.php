@@ -23,12 +23,12 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
             $class = $this->tester->setupClass($name, $file);
 
             /** @var $fd ClassificationStoreDefinition */
-            $fd = $class->getFieldDefinition("csstore");
+            $fd = $class->getFieldDefinition('csstore');
 
-            $store = Classificationstore\StoreConfig::getByName("teststore");
+            $store = Classificationstore\StoreConfig::getByName('teststore');
             if (!$store) {
                 $store = new Classificationstore\StoreConfig();
-                $store->setName("teststore");
+                $store->setName('teststore');
                 $store->save();
             }
 
@@ -47,23 +47,23 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
      */
     protected function configureStore(Classificationstore\StoreConfig $store)
     {
-        $group1 = Classificationstore\GroupConfig::getByName("testgroup1");
+        $group1 = Classificationstore\GroupConfig::getByName('testgroup1');
         if (!$group1) {
             $group1 = new Classificationstore\GroupConfig();
             $group1->setStoreId($store->getId());
-            $group1->setName("testgroup1");
+            $group1->setName('testgroup1');
             $group1->save();
         }
 
-        $group2 = Classificationstore\GroupConfig::getByName("testgroup2");
+        $group2 = Classificationstore\GroupConfig::getByName('testgroup2');
         if (!$group2) {
             $group2 = new Classificationstore\GroupConfig();
             $group2->setStoreId($store->getId());
-            $group2->setName("testgroup2");
+            $group2->setName('testgroup2');
             $group2->save();
         }
 
-        $keyNames = ["key1", "key2", "key3", "key4", "key5", "key6"];
+        $keyNames = ['key1', 'key2', 'key3', 'key4', 'key5', 'key6'];
         for ($i = 0; $i < count($keyNames); $i++) {
             $keyName   = $keyNames[$i];
             $keyConfig = Classificationstore\KeyConfig::getByName($keyName, $i < 3 ? $group1->getId() : $group2->getId());
@@ -71,9 +71,9 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                 $keyConfig = new Classificationstore\KeyConfig();
                 $keyConfig->setStoreId($store->getId());
                 $keyConfig->setName($keyName);
-                $keyConfig->setDescription("keyDesc" . $keyName . "Desc");
+                $keyConfig->setDescription('keyDesc' . $keyName . 'Desc');
                 $keyConfig->setEnabled(true);
-                $keyConfig->setType("input");
+                $keyConfig->setType('input');
 
                 if ($i < 3) {
                     $definition = new ClassDefinition\Data\Input();

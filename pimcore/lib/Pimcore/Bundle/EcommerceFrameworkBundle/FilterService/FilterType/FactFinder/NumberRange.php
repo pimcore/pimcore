@@ -27,7 +27,6 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
     {
     }
 
-
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param IProductList                 $productList
@@ -43,7 +42,6 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $field = $this->getField($filterDefinition);
         $value = $params[$field];
 
-
         // set default preselect
         if (empty($value)) {
             $value['from'] = $filterDefinition->getPreSelectFrom();
@@ -51,7 +49,6 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
             $currentFilter[$field] = $value;
         }
-
 
         // add condition
         if (!empty($value)) {

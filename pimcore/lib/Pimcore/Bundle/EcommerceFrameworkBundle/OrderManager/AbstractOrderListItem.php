@@ -25,7 +25,6 @@ abstract class AbstractOrderListItem
      */
     protected $resultRow;
 
-
     /**
      * @param array $resultRow
      */
@@ -33,7 +32,6 @@ abstract class AbstractOrderListItem
     {
         $this->resultRow = $resultRow;
     }
-
 
     /**
      * @return int

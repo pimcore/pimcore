@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -32,17 +33,15 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
-
     /**
      * @var array
      */
     public $objects = null;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $unpublished = false;
-
 
     /**
      * @var array
@@ -53,16 +52,17 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @var array
      */
     public $validOrderKeys = [
-        "o_creationDate",
-        "o_modificationDate",
-        "o_id",
-        "o_key",
-        "o_index"
+        'o_creationDate',
+        'o_modificationDate',
+        'o_id',
+        'o_key',
+        'o_index'
     ];
 
     /**
      * @param string $key
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -88,6 +88,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param string $objects
+     *
      * @return $this
      */
     public function setObjects($objects)
@@ -107,6 +108,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param $unpublished
+     *
      * @return bool
      */
     public function setUnpublished($unpublished)
@@ -118,6 +120,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param  $objectTypes
+     *
      * @return $this
      */
     public function setObjectTypes($objectTypes)
@@ -139,6 +142,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param $key
      * @param null $value
      * @param string $concatenator
+     *
      * @return $this
      */
     public function addConditionParam($key, $value = null, $concatenator = 'AND')
@@ -157,6 +161,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param $condition
      * @param null $conditionVariables
+     *
      * @return $this
      */
     public function setCondition($condition, $conditionVariables = null)
@@ -167,6 +172,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param $groupBy
      * @param bool $qoute
+     *
      * @return $this
      */
     public function setGroupBy($groupBy, $qoute = true)
@@ -198,6 +204,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param int $offset
      * @param int $itemCountPerPage
+     *
      * @return array
      */
     public function getItems($offset, $itemCountPerPage)
@@ -218,10 +225,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * Methods for Iterator
-     */
-
-    /**
-     *
      */
     public function rewind()
     {

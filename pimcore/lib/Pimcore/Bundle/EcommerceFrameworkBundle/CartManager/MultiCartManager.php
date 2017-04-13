@@ -20,14 +20,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Logger;
-use \Pimcore\Tool;
+use Pimcore\Tool;
 
 /**
  * Class MultiCartManager
  */
 class MultiCartManager implements ICartManager
 {
-
     /**
      * @var ICart[]
      */
@@ -40,11 +39,12 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param $config
+     *
      * @throws InvalidConfigException
      */
     public function __construct($config)
     {
-        $config = new HelperContainer($config, "cartmanager");
+        $config = new HelperContainer($config, 'cartmanager');
         $this->checkConfig($config);
         $this->config = $config;
     }
@@ -53,6 +53,7 @@ class MultiCartManager implements ICartManager
      * checks configuration and if specified classes exist
      *
      * @param $config
+     *
      * @throws InvalidConfigException
      */
     protected function checkConfig($config)
@@ -60,28 +61,28 @@ class MultiCartManager implements ICartManager
         $tempCart = null;
 
         if (empty($config->cart->class)) {
-            throw new InvalidConfigException("No Cart class defined.");
+            throw new InvalidConfigException('No Cart class defined.');
         } else {
             if (Tool::classExists($config->cart->class)) {
                 $tempCart = new $config->cart->class($config->cart);
                 if (!($tempCart instanceof ICart)) {
-                    throw new InvalidConfigException("Cart class " . $config->cart->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart.');
+                    throw new InvalidConfigException('Cart class ' . $config->cart->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart.');
                 }
             } else {
-                throw new InvalidConfigException("Cart class " . $config->cart->class . " not found.");
+                throw new InvalidConfigException('Cart class ' . $config->cart->class . ' not found.');
             }
         }
 
         if (empty($config->pricecalculator->class)) {
-            throw new InvalidConfigException("No pricecalculator class defined.");
+            throw new InvalidConfigException('No pricecalculator class defined.');
         } else {
             if (Tool::classExists($config->pricecalculator->class)) {
                 $tempCalc = new $config->pricecalculator->class($config->pricecalculator->config, $tempCart);
                 if (!($tempCalc instanceof ICartPriceCalculator)) {
-                    throw new InvalidConfigException("Cart class " . $config->pricecalculator->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator.');
+                    throw new InvalidConfigException('Cart class ' . $config->pricecalculator->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator.');
                 }
             } else {
-                throw new InvalidConfigException("pricecalculator class " . $config->pricecalculator->class . " not found.");
+                throw new InvalidConfigException('pricecalculator class ' . $config->pricecalculator->class . ' not found.');
             }
         }
     }
@@ -113,9 +114,6 @@ class MultiCartManager implements ICartManager
         }
     }
 
-    /**
-     *
-     */
     protected function initSavedCarts()
     {
         $env = Factory::getInstance()->getEnvironment();
@@ -135,11 +133,11 @@ class MultiCartManager implements ICartManager
                     $this->carts[$c->getId()] = $c;
                 } else {
                     //cart is already committed - cleanup cart and environment
-                    Logger::warn("Deleting cart with id " . $c->getId() . " because linked order " . $order->getId() . " is already committed.");
+                    Logger::warn('Deleting cart with id ' . $c->getId() . ' because linked order ' . $order->getId() . ' is already committed.');
                     $c->delete();
 
                     $env = Factory::getInstance()->getEnvironment();
-                    $env->removeCustomItem(CheckoutManager::CURRENT_STEP . "_" . $c->getId());
+                    $env->removeCustomItem(CheckoutManager::CURRENT_STEP . '_' . $c->getId());
                     $env->save();
                 }
             }
@@ -155,14 +153,16 @@ class MultiCartManager implements ICartManager
      * @param array $params
      * @param array $subProducts
      * @param null $comment
+     *
      * @return null|string
+     *
      * @throws InvalidConfigException
      */
     public function addToCart(ICheckoutable $product, $count, $key = null, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
         $this->checkForInit();
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException("Cart " . $key . " not found.");
+            throw new InvalidConfigException('Cart ' . $key . ' not found.');
         }
 
         $itemKey = $this->carts[$key]->addItem($product, $count, $itemKey, $replace, $params, $subProducts, $comment);
@@ -170,7 +170,6 @@ class MultiCartManager implements ICartManager
 
         return $itemKey;
     }
-
 
     /**
      * @return void
@@ -183,9 +182,9 @@ class MultiCartManager implements ICartManager
         }
     }
 
-
     /**
      * @param null $key
+     *
      * @throws InvalidConfigException
      */
     public function deleteCart($key = null)
@@ -197,7 +196,9 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param array $param
+     *
      * @return int|string
+     *
      * @throws InvalidConfigException
      */
     public function createCart($param)
@@ -205,7 +206,7 @@ class MultiCartManager implements ICartManager
         $this->checkForInit();
 
         if (array_key_exists($param['id'], $this->carts)) {
-            throw new InvalidConfigException("Cart with id " . $param['id'] . " exists already.");
+            throw new InvalidConfigException('Cart with id ' . $param['id'] . ' exists already.');
         }
 
         // create cart
@@ -228,13 +229,14 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param null $key
+     *
      * @throws InvalidConfigException
      */
     public function clearCart($key = null)
     {
         $this->checkForInit();
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException("Cart " . $key . " not found.");
+            throw new InvalidConfigException('Cart ' . $key . ' not found.');
         }
 
         $class = $this->getCartClassName();
@@ -244,14 +246,16 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param null $key
+     *
      * @return ICart
+     *
      * @throws InvalidConfigException
      */
     public function getCart($key = null)
     {
         $this->checkForInit();
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException("Cart " . $key . " not found.");
+            throw new InvalidConfigException('Cart ' . $key . ' not found.');
         }
 
         return $this->carts[$key];
@@ -259,6 +263,7 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param string $name
+     *
      * @return null|ICart
      */
     public function getCartByName($name)
@@ -273,7 +278,6 @@ class MultiCartManager implements ICartManager
         return null;
     }
 
-
     /**
      * @return ICart[]
      */
@@ -287,13 +291,14 @@ class MultiCartManager implements ICartManager
     /**
      * @param string $itemKey
      * @param null $key
+     *
      * @throws InvalidConfigException
      */
     public function removeFromCart($itemKey, $key = null)
     {
         $this->checkForInit();
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException("Cart " . $key . " not found.");
+            throw new InvalidConfigException('Cart ' . $key . ' not found.');
         }
         $this->carts[$key]->removeItem($itemKey);
     }
@@ -302,7 +307,9 @@ class MultiCartManager implements ICartManager
      * @deprecated
      *
      * use getCartPriceCalculator instead
+     *
      * @param ICart $cart
+     *
      * @return ICartPriceCalculator
      */
     public function getCartPriceCalcuator(ICart $cart)
@@ -312,6 +319,7 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param ICart $cart
+     *
      * @return ICartPriceCalculator
      */
     public function getCartPriceCalculator(ICart $cart)
@@ -319,10 +327,6 @@ class MultiCartManager implements ICartManager
         return new $this->config->pricecalculator->class($this->config->pricecalculator->config, $cart);
     }
 
-
-    /**
-     *
-     */
     public function reset()
     {
         $this->carts = [];

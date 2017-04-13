@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-
     /**
      * @var array
      */
@@ -34,7 +33,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function isValidOrderKey($key)
     {
-        if ($key == "userId" || $key == "name") {
+        if ($key == 'userId' || $key == 'name') {
             return true;
         }
 
@@ -55,6 +54,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @param array $carts
+     *
      * @return void
      */
     public function setCarts($carts)

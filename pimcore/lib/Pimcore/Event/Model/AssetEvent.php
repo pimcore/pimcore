@@ -29,6 +29,7 @@ class AssetEvent extends Event implements ElementEventInterface
 
     /**
      * DocumentEvent constructor.
+     *
      * @param Asset $asset
      * @param array $arguments
      */

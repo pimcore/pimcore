@@ -168,10 +168,10 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
 
         // do not allow requests including /app.php/ => SEO
         // this is after the first redirect check, to allow redirects in app.php?xxx
-        if (preg_match("@^/app.php(.*)@", $path, $matches) && $request->getMethod() === 'GET') {
+        if (preg_match('@^/app.php(.*)@', $path, $matches) && $request->getMethod() === 'GET') {
             $redirectUrl = $matches[1];
-            $redirectUrl = ltrim($redirectUrl, "/");
-            $redirectUrl = "/" . $redirectUrl;
+            $redirectUrl = ltrim($redirectUrl, '/');
+            $redirectUrl = '/' . $redirectUrl;
 
             $event->setResponse(new RedirectResponse($redirectUrl, Response::HTTP_MOVED_PERMANENTLY));
         }
@@ -213,7 +213,7 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
 
             // TODO use symfony logger service
             // log all redirects to the redirect log
-            \Pimcore\Log\Simple::log('redirect', Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $request->getRequestUri() . " -> " . $url);
+            \Pimcore\Log\Simple::log('redirect', Tool::getAnonymizedClientIp() . " \t Host-Redirect Source: " . $request->getRequestUri() . ' -> ' . $url);
 
             $event->setResponse(new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY));
         }

@@ -32,7 +32,6 @@ class Discount implements IDiscount
      */
     protected $rule = null;
 
-
     /**
      * @param IRule $rule
      */
@@ -40,7 +39,6 @@ class Discount implements IDiscount
     {
         $this->rule = $rule;
     }
-
 
     /**
      * modificator name
@@ -53,7 +51,7 @@ class Discount implements IDiscount
             return $this->rule->getName();
         }
 
-        return "discount";
+        return 'discount';
     }
 
     /**
@@ -74,7 +72,7 @@ class Discount implements IDiscount
 
             $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
 
-            $taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
+            $taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
             if ($taxClass) {
                 $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
                 $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));

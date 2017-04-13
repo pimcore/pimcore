@@ -32,6 +32,7 @@ class HelperShortcuts implements HelperBrokerInterface
 
     /**
      * Supported methods
+     *
      * @var array
      */
     protected $shortcuts = [
@@ -85,6 +86,7 @@ class HelperShortcuts implements HelperBrokerInterface
     /**
      * @param PhpEngine $engine
      * @param array $arguments
+     *
      * @return string
      */
     protected function url(PhpEngine $engine, array $arguments)
@@ -98,6 +100,7 @@ class HelperShortcuts implements HelperBrokerInterface
     /**
      * @param PhpEngine $engine
      * @param array $arguments
+     *
      * @return string
      */
     protected function path(PhpEngine $engine, array $arguments)
@@ -111,6 +114,7 @@ class HelperShortcuts implements HelperBrokerInterface
     /**
      * @param PhpEngine $engine
      * @param array $arguments
+     *
      * @return string
      */
     protected function t(PhpEngine $engine, array $arguments)

@@ -24,7 +24,6 @@ class OrderSearch implements IOrderListFilter
      */
     protected $keyword;
 
-
     /**
      * @param IOrderList $orderList
      *
@@ -34,7 +33,6 @@ class OrderSearch implements IOrderListFilter
     {
         // init
         $query = $orderList->getQuery();
-
 
         if ($this->getKeyword()) {
             $condition = <<<'SQL'

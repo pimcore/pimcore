@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
-use Pimcore\Logger;
 use Pimcore\Cache;
+use Pimcore\Logger;
 
 class MySql
 {
@@ -37,14 +37,13 @@ class MySql
 
     public function getValidTableColumns($table)
     {
-        $cacheKey = "plugin_ecommerce_productindex_columns_" . $table;
-
+        $cacheKey = 'plugin_ecommerce_productindex_columns_' . $table;
 
         if (!Cache\Runtime::isRegistered($cacheKey)) {
             $columns = [];
-            $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
+            $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $table);
             foreach ($data as $d) {
-                $columns[] = $d["Field"];
+                $columns[] = $d['Field'];
             }
 
             Cache\Runtime::save($columns, $cacheKey);
@@ -65,10 +64,9 @@ class MySql
         $this->db->insertOrUpdate($this->tenantConfig->getTablename(), $data);
     }
 
-
     public function getSystemAttributes()
     {
-        return ["o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_virtualProductActive", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList"];
+        return ['o_id', 'o_classId', 'o_parentId', 'o_virtualProductId', 'o_virtualProductActive', 'o_type', 'categoryIds', 'parentCategoryIds', 'priceSystemName', 'active', 'inProductList'];
     }
 
     public function createOrUpdateIndexStructures()
@@ -76,7 +74,7 @@ class MySql
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getTablename() . "` (
+        $this->dbexec('CREATE TABLE IF NOT EXISTS `' . $this->tenantConfig->getTablename() . "` (
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
           `o_virtualProductActive` TINYINT(1) NOT NULL,
@@ -91,10 +89,10 @@ class MySql
           PRIMARY KEY  (`o_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-        $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $this->tenantConfig->getTablename());
+        $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
         $columns = [];
         foreach ($data as $d) {
-            $columns[$d["Field"]] = $d["Field"];
+            $columns[$d['Field']] = $d['Field'];
         }
 
         $systemColumns = $this->getSystemAttributes();
@@ -130,7 +128,6 @@ class MySql
             }
         }
 
-
         foreach ($columnsToAdd as $c => $type) {
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD `' . $c . '` ' . $type . ';');
         }
@@ -148,11 +145,10 @@ class MySql
             foreach ($searchIndexColums as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);
             }
-            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD FULLTEXT INDEX search (' . implode(",", $columnNames) . ');');
+            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD FULLTEXT INDEX search (' . implode(',', $columnNames) . ');');
         }
 
-
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getRelationTablename() . "` (
+        $this->dbexec('CREATE TABLE IF NOT EXISTS `' . $this->tenantConfig->getRelationTablename() . "` (
           `src` $idColumnType,
           `src_virtualProductId` int(11) NOT NULL,
           `dest` int(11) NOT NULL,
@@ -162,7 +158,7 @@ class MySql
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
 
         if ($this->tenantConfig->getTenantRelationTablename()) {
-            $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $this->tenantConfig->getTenantRelationTablename() . "` (
+            $this->dbexec('CREATE TABLE IF NOT EXISTS `' . $this->tenantConfig->getTenantRelationTablename() . "` (
               `o_id` $idColumnType,
               `subtenant_id` int(11) NOT NULL,
               PRIMARY KEY (`o_id`,`subtenant_id`)
@@ -190,10 +186,10 @@ class MySql
         if (!empty($this->_sqlChangeLog)) {
             $log = implode("\n\n\n", $this->_sqlChangeLog);
 
-            $filename = "db-change-log_".time()."_productindex.sql";
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/".$filename;
-            if (defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
-                $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
+            $filename = 'db-change-log_'.time().'_productindex.sql';
+            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$filename;
+            if (defined('PIMCORE_DB_CHANGELOG_DIRECTORY')) {
+                $file = PIMCORE_DB_CHANGELOG_DIRECTORY.'/'.$filename;
             }
 
             file_put_contents($file, $log);

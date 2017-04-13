@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Staticroute
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,18 +24,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("staticroutes");
+        $this->setFile('staticroutes');
     }
 
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -45,16 +43,17 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->getById($this->model->getId());
 
-        if (isset($data["id"])) {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("Route with id: " . $this->model->getId() . " does not exist");
+            throw new \Exception('Route with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 
     /**
      * @param null $name
      * @param null $siteId
+     *
      * @throws \Exception
      */
     public function getByName($name = null, $siteId = null)
@@ -66,25 +65,25 @@ class Dao extends Model\Dao\PhpArrayTable
         $name = $this->model->getName();
 
         $data = $this->db->fetchAll(function ($row) use ($name, $siteId) {
-            if ($row["name"] == $name) {
-                if (empty($row["siteId"]) || in_array($siteId, $row["siteId"])) {
+            if ($row['name'] == $name) {
+                if (empty($row['siteId']) || in_array($siteId, $row['siteId'])) {
                     return true;
                 }
             }
 
             return false;
         }, function ($a, $b) {
-            if ($a["siteId"] == $b["siteId"]) {
+            if ($a['siteId'] == $b['siteId']) {
                 return 0;
             }
 
-            return ($a["siteId"] < $b["siteId"]) ? 1 : -1;
+            return ($a['siteId'] < $b['siteId']) ? 1 : -1;
         });
 
-        if (count($data) && $data[0]["id"]) {
+        if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
         } else {
-            throw new \Exception("Route with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception('Route with name: ' . $this->model->getName() . ' does not exist');
         }
     }
 
@@ -94,11 +93,11 @@ class Dao extends Model\Dao\PhpArrayTable
     public function getAll()
     {
         $data = $this->db->fetchAll(null, function ($a, $b) {
-            if ($a["siteId"] == $b["siteId"]) {
+            if ($a['siteId'] == $b['siteId']) {
                 return 0;
             }
 
-            return ($a["siteId"] < $b["siteId"]) ? 1 : -1;
+            return ($a['siteId'] < $b['siteId']) ? 1 : -1;
         });
 
         $routes = [];
@@ -126,8 +125,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id", "name", "pattern", "reverse", "module", "controller",
-                "action", "variables", "defaults", "siteId", "priority", "legacy", "creationDate", "modificationDate"];
+            $allowedProperties = ['id', 'name', 'pattern', 'reverse', 'module', 'controller',
+                'action', 'variables', 'defaults', 'siteId', 'priority', 'legacy', 'creationDate', 'modificationDate'];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

@@ -37,6 +37,7 @@ class TemplateVarsValueResolver implements ArgumentValueResolverInterface
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
+     *
      * @return bool
      */
     public function supports(Request $request, ArgumentMetadata $argument)
@@ -47,6 +48,7 @@ class TemplateVarsValueResolver implements ArgumentValueResolverInterface
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
+     *
      * @return \Generator|array
      */
     public function resolve(Request $request, ArgumentMetadata $argument)

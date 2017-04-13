@@ -41,20 +41,20 @@ class SelectFromMultiSelect extends AbstractFilterType
                     if ($values[$e]) {
                         $values[$e]['count'] += $v['count'];
                     } else {
-                        $values[$e] = ['value' => $e, "count" => $v['count']];
+                        $values[$e] = ['value' => $e, 'count' => $v['count']];
                     }
                 }
             }
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => array_values($values),
-            "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => array_values($values),
+            'fieldname' => $field,
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -75,13 +75,12 @@ class SelectFromMultiSelect extends AbstractFilterType
 
         $currentFilter[$field] = $value;
 
-
         if (!empty($value)) {
-            $value =  "%" . IWorker::MULTISELECT_DELIMITER  . $value .  IWorker::MULTISELECT_DELIMITER . "%";
+            $value =  '%' . IWorker::MULTISELECT_DELIMITER  . $value .  IWorker::MULTISELECT_DELIMITER . '%';
             if ($isPrecondition) {
-                $productList->addCondition($field . " LIKE " . $productList->quote($value), "PRECONDITION_" . $field);
+                $productList->addCondition($field . ' LIKE ' . $productList->quote($value), 'PRECONDITION_' . $field);
             } else {
-                $productList->addCondition($field . " LIKE " . $productList->quote($value), $field);
+                $productList->addCondition($field . ' LIKE ' . $productList->quote($value), $field);
             }
         }
 

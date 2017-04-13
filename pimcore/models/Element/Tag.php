@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Tag extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -54,10 +54,11 @@ class Tag extends Model\AbstractModel
      */
     public $parent;
 
-
     /**
      * @static
+     *
      * @param $id
+     *
      * @return Tag|null
      */
     public static function getById($id)
@@ -77,11 +78,12 @@ class Tag extends Model\AbstractModel
      *
      * @param $cType
      * @param $cId
+     *
      * @return Tag[]
      */
     public static function getTagsForElement($cType, $cId)
     {
-        $tag = new Tag();
+        $tag = new self();
 
         return $tag->getDao()->getTagsForElement($cType, $cId);
     }
@@ -120,7 +122,7 @@ class Tag extends Model\AbstractModel
      */
     public static function setTagsForElement($cType, $cId, array $tags)
     {
-        $tag = new Tag();
+        $tag = new self();
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
 
@@ -132,7 +134,7 @@ class Tag extends Model\AbstractModel
      */
     public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false)
     {
-        $tag = new Tag();
+        $tag = new self();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
     }
 
@@ -169,6 +171,7 @@ class Tag extends Model\AbstractModel
 
     /**
      * @param int $id
+     *
      * @return Tag
      */
     public function setId($id)
@@ -188,6 +191,7 @@ class Tag extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return Tag
      */
     public function setName($name)
@@ -207,6 +211,7 @@ class Tag extends Model\AbstractModel
 
     /**
      * @param int $parentId
+     *
      * @return Tag
      */
     public function setParentId($parentId)
@@ -224,7 +229,7 @@ class Tag extends Model\AbstractModel
     public function getParent()
     {
         if ($this->parent == null) {
-            $this->parent = Tag::getById($this->getParentId());
+            $this->parent = self::getById($this->getParentId());
         }
 
         return $this->parent;
@@ -243,11 +248,12 @@ class Tag extends Model\AbstractModel
      */
     public function getFullIdPath()
     {
-        return $this->getIdPath() . $this->getId() . "/";
+        return $this->getIdPath() . $this->getId() . '/';
     }
 
     /**
      * @param bool $includeOwnName
+     *
      * @return string
      */
     public function getNamePath($includeOwnName = true)
@@ -265,7 +271,7 @@ class Tag extends Model\AbstractModel
 
         $parentNames = array_reverse($parentNames);
 
-        return "/" . implode("/", $parentNames) . "/";
+        return '/' . implode('/', $parentNames) . '/';
     }
 
     /**
@@ -275,8 +281,8 @@ class Tag extends Model\AbstractModel
     {
         if ($this->children == null) {
             $listing = new Tag\Listing();
-            $listing->setCondition("parentId = ?", $this->getId());
-            $listing->setOrderKey("name");
+            $listing->setCondition('parentId = ?', $this->getId());
+            $listing->setOrderKey('name');
             $this->children = $listing->load();
         }
 
@@ -291,7 +297,6 @@ class Tag extends Model\AbstractModel
         return count($this->getChildren()) > 0;
     }
 
-
     public function correctPath()
     {
         //set id path to correct value
@@ -304,9 +309,9 @@ class Tag extends Model\AbstractModel
 
         $parentIds = array_reverse($parentIds);
         if ($parentIds) {
-            $this->idPath = "/" . implode("/", $parentIds) . "/";
+            $this->idPath = '/' . implode('/', $parentIds) . '/';
         } else {
-            $this->idPath = "/";
+            $this->idPath = '/';
         }
     }
 }

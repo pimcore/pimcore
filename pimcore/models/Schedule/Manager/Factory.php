@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Schedule
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,7 +21,9 @@ class Factory
 {
     /**
      * @static
+     *
      * @param  string $pidFile
+     *
      * @return Procedural
      */
     public static function getManager($pidFile)

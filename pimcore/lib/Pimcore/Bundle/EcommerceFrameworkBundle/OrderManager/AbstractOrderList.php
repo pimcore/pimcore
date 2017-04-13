@@ -16,8 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Zend\Paginator\Adapter\AdapterInterface;
 
-use Pimcore\Resource;
-
 abstract class AbstractOrderList implements IOrderList
 {
     /**
@@ -55,7 +53,6 @@ abstract class AbstractOrderList implements IOrderList
      */
     protected $itemClassName;
 
-
     /**
      * @return string
      */
@@ -63,7 +60,6 @@ abstract class AbstractOrderList implements IOrderList
     {
         return $this->itemClassName;
     }
-
 
     /**
      * @param string $className
@@ -77,7 +73,6 @@ abstract class AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * @param array $row
      *
@@ -90,7 +85,6 @@ abstract class AbstractOrderList implements IOrderList
         return new $class($row);
     }
 
-
     /**
      * @param string $type
      *
@@ -102,7 +96,6 @@ abstract class AbstractOrderList implements IOrderList
 
         return $this;
     }
-
 
     /**
      * @return string
@@ -132,7 +125,6 @@ abstract class AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * @return IOrderListItem[]
      */
@@ -149,7 +141,6 @@ abstract class AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
@@ -160,12 +151,11 @@ abstract class AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * Returns an collection of items for a page.
      *
-     * @param  integer $offset           Page offset
-     * @param  integer $itemCountPerPage Number of items per page
+     * @param  int $offset           Page offset
+     * @param  int $itemCountPerPage Number of items per page
      *
      * @return IOrderListItem[]
      */
@@ -176,7 +166,6 @@ abstract class AbstractOrderList implements IOrderList
             ->setLimit($itemCountPerPage, $offset)
             ->load();
     }
-
 
     /**
      * @return int
@@ -208,12 +197,12 @@ abstract class AbstractOrderList implements IOrderList
         return $this->limit;
     }
 
-
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Return the current element
      *
      * @link http://php.net/manual/en/iterator.current.php
+     *
      * @return mixed Can return any type.
      */
     public function current()
@@ -229,6 +218,7 @@ abstract class AbstractOrderList implements IOrderList
      * Move forward to next element
      *
      * @link http://php.net/manual/en/iterator.next.php
+     *
      * @return void Any returned value is ignored.
      */
     public function next()
@@ -242,6 +232,7 @@ abstract class AbstractOrderList implements IOrderList
      * Return the key of the current element
      *
      * @link http://php.net/manual/en/iterator.key.php
+     *
      * @return mixed scalar on success, or null on failure.
      */
     public function key()
@@ -256,7 +247,8 @@ abstract class AbstractOrderList implements IOrderList
      * Checks if current position is valid
      *
      * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
+     *
+     * @return bool The return value will be casted to boolean and then evaluated.
      *       Returns true on success or false on failure.
      */
     public function valid()
@@ -271,6 +263,7 @@ abstract class AbstractOrderList implements IOrderList
      * Rewind the Iterator to the first element
      *
      * @link http://php.net/manual/en/iterator.rewind.php
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind()
@@ -302,6 +295,7 @@ abstract class AbstractOrderList implements IOrderList
      * Count elements of an object
      *
      * @link http://php.net/manual/en/countable.count.php
+     *
      * @return int The custom count as an integer.
      *       </p>
      *       <p>
@@ -324,7 +318,7 @@ abstract class AbstractOrderList implements IOrderList
      *                      An offset to check for.
      *                      </p>
      *
-     * @return boolean true on success or false on failure.
+     * @return bool true on success or false on failure.
      * </p>
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class WorkflowState extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -48,11 +48,11 @@ class WorkflowState extends Model\AbstractModel
      */
     public $status;
 
-
     /**
      * @param $cid
      * @param $ctype
      * @param $workflowId
+     *
      * @return null|WorkflowState
      */
     public static function getByPrimary($cid, $ctype, $workflowId)
@@ -66,7 +66,6 @@ class WorkflowState extends Model\AbstractModel
             return null;
         }
     }
-
 
     /**
      * @return int

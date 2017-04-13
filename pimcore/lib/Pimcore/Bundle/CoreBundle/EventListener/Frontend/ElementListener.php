@@ -250,6 +250,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
 
     /**
      * @param Document|Dao $document
+     *
      * @return mixed|Document|Document\PageSnippet
      */
     protected function handleEditmode(Document $document)
@@ -305,7 +306,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
 
                 // TODO remove \Pimcore\Cache\Runtime
                 // add the object to the registry so every call to Object::getById() will return this object instead of the real one
-                \Pimcore\Cache\Runtime::set("object_" . $object->getId(), $object);
+                \Pimcore\Cache\Runtime::set('object_' . $object->getId(), $object);
             }
         }
     }

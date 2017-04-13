@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Translation
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -28,7 +29,6 @@ class Dao extends Model\Translation\AbstractTranslation\Listing\Dao
      *
      * @return array
      */
-
     public static function getTableName()
     {
         return Model\Translation\Website\Dao::$_tableName;
@@ -39,6 +39,6 @@ class Dao extends Model\Translation\AbstractTranslation\Listing\Dao
      */
     public static function getItemClass()
     {
-        return "\\Pimcore\\Model\\Translation\\Website";
+        return '\\Pimcore\\Model\\Translation\\Website';
     }
 }

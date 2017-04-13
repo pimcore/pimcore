@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Event\AdminEvents;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,20 +30,22 @@ class FolderController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
         // check for lock
-        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
             return $this->json([
-                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
+                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
-        Element\Editlock::lock($request->get("id"), "document");
+        Element\Editlock::lock($request->get('id'), 'document');
 
-        $folder = Document\Folder::getById($request->get("id"));
+        $folder = Document\Folder::getById($request->get('id'));
         $folder = clone $folder;
 
         $folder->idPath = Element\Service::getIdPath($folder);
@@ -58,13 +60,13 @@ class FolderController extends DocumentControllerBase
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = object2array($folder);
         $event = new GenericEvent($this, [
-            "data" => $data,
-            "document" => $folder
+            'data' => $data,
+            'document' => $folder
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument("data");
+        $data = $event->getArgument('data');
 
-        if ($folder->isAllowed("view")) {
+        if ($folder->isAllowed('view')) {
             return $this->json($data);
         }
 
@@ -73,29 +75,32 @@ class FolderController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function saveAction(Request $request)
     {
         try {
-            if ($request->get("id")) {
-                $folder = Document\Folder::getById($request->get("id"));
+            if ($request->get('id')) {
+                $folder = Document\Folder::getById($request->get('id'));
                 $folder->setModificationDate(time());
                 $folder->setUserModification($this->getUser()->getId());
 
-                if ($folder->isAllowed("publish")) {
+                if ($folder->isAllowed('publish')) {
                     $this->setValuesToDocument($request, $folder);
                     $folder->save();
 
-                    return $this->json(["success" => true]);
+                    return $this->json(['success' => true]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }

@@ -36,7 +36,6 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         $preSelect = $this->getPreSelect($filterDefinition);
         $value = $params[$field];
 
-
         // set defaults
         //only works with Root categories!
 
@@ -44,10 +43,8 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
              $value[] = $preSelect->getId();
          }
 
-
 //        $value = trim($value);
         $currentFilter[$field] = $value;
-
 
         // add condition
         if (!empty($value)) {
@@ -66,14 +63,12 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         return $currentFilter;
     }
 
-
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
         // init
         $script = $filterDefinition->getScriptPath() ?: $this->script;
         $rawValues = $productList->getGroupByValues('CategoryPath', true);
         $values = [];
-
 
         // ...
         $availableRelations = [];
@@ -83,10 +78,9 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             }
         }
 
-
         // prepare values
         foreach ($rawValues as $v) {
-            $explode = explode(",", $v['value']);
+            $explode = explode(',', $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
                     if ($values[$e]) {
@@ -94,21 +88,14 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
                     } else {
                         $count = $v['count'];
                     }
-                    $values[$e] = ['value' => $e, "count" => $count];
+                    $values[$e] = ['value' => $e, 'count' => $count];
                 }
             }
         }
 
-
         // done
         return $this->render($script, [
-            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()])
-            , 'label' => $filterDefinition->getLabel()
-            , 'currentValue' => $currentFilter[$filterDefinition->getField()]
-            , 'values' => array_values($values)
-            , 'fieldname' => $filterDefinition->getField()
-            , 'metaData' => $filterDefinition->getMetaData()
-            , "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]), 'label' => $filterDefinition->getLabel(), 'currentValue' => $currentFilter[$filterDefinition->getField()], 'values' => array_values($values), 'fieldname' => $filterDefinition->getField(), 'metaData' => $filterDefinition->getMetaData(), 'resultCount' => $productList->count()
         ]);
     }
 }

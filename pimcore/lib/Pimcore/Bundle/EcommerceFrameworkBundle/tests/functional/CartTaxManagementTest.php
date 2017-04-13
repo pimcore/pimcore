@@ -53,28 +53,28 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
         $config = new \stdClass();
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$config], [
-            "getTaxClassForProduct" => function () use ($taxClass) {
+            'getTaxClassForProduct' => function () use ($taxClass) {
                 return $taxClass;
             },
-            "getTaxClassForPriceModification" => function () use ($taxClass) {
+            'getTaxClassForPriceModification' => function () use ($taxClass) {
                 return $taxClass;
             },
-            "getPriceClassInstance" => function ($amount) {
-                return new Price($amount, new Currency("EUR"));
+            'getPriceClassInstance' => function ($amount) {
+                return new Price($amount, new Currency('EUR'));
             },
-            "calculateAmount" => function () use ($grossPrice) {
+            'calculateAmount' => function () use ($grossPrice) {
                 return $grossPrice;
             }
         ]);
 
         return Stub::construct(AbstractProduct::class, [], [
-            "getId" => function () {
+            'getId' => function () {
                 return rand();
             },
-            "getPriceSystemImplementation" => function () use ($priceSystem) {
+            'getPriceSystemImplementation' => function () use ($priceSystem) {
                 return $priceSystem;
             },
-            "getCategories" => function () {
+            'getCategories' => function () {
                 return [];
             }
         ]);
@@ -85,20 +85,21 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
      */
     private function setUpCart()
     {
-        return Stub::construct("\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart", [], [
-            "getSession" => function () {
+        return Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
+            'getSession' => function () {
                 return [];
             },
-            "isCartReadOnly" => function () {
+            'isCartReadOnly' => function () {
                 return false;
             },
-            "modified" => function () {
+            'modified' => function () {
             }
         ]);
     }
 
     /**
      * @param ICart $cart
+     *
      * @return CartPriceCalculator
      */
     private function setUpCartCalculator(ICart $cart, $withModificators = false, $taxes = [])
@@ -129,21 +130,19 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
 
         $items = $cart->getItems();
 
-        $this->assertEquals(2, count($items), "item count");
-        $this->assertEquals(3, $cart->getItemAmount(), "item amount");
-
+        $this->assertEquals(2, count($items), 'item count');
+        $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
         $calculator = $this->setUpCartCalculator($cart);
         $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
-        $this->assertEquals(250, $subTotal->getGrossAmount(), "subtotal gross");
-        $this->assertEquals(250, $subTotal->getNetAmount(), "subtotal net");
+        $this->assertEquals(250, $subTotal->getGrossAmount(), 'subtotal gross');
+        $this->assertEquals(250, $subTotal->getNetAmount(), 'subtotal net');
 
-        $this->assertEquals(250, $grandTotal->getGrossAmount(), "grandtotal gross");
-        $this->assertEquals(250, $grandTotal->getNetAmount(), "grandtotal net");
+        $this->assertEquals(250, $grandTotal->getGrossAmount(), 'grandtotal gross');
+        $this->assertEquals(250, $grandTotal->getNetAmount(), 'grandtotal net');
     }
-
 
     public function testCartWithTaxEntriesCombine()
     {
@@ -156,32 +155,30 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
 
         $items = $cart->getItems();
 
-        $this->assertEquals(2, count($items), "item count");
-        $this->assertEquals(3, $cart->getItemAmount(), "item amount");
-
+        $this->assertEquals(2, count($items), 'item count');
+        $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
         $calculator = $this->setUpCartCalculator($cart);
         $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
-        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), "subtotal gross");
-        $this->assertEquals(205.45, round($subTotal->getNetAmount(), 2), "subtotal net");
+        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), 'subtotal gross');
+        $this->assertEquals(205.45, round($subTotal->getNetAmount(), 2), 'subtotal net');
         $taxEntries = $subTotal->getTaxEntries();
 
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "subtotal taxentry 1 percent");
-        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), "subtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "subtotal taxentry 2 percent");
-        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), "subtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'subtotal taxentry 1 percent');
+        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), 'subtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'subtotal taxentry 2 percent');
+        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), 'subtotal taxentry 2 amount');
 
-        $this->assertEquals(250, round($grandTotal->getGrossAmount(), 2), "grandtotal gross");
-        $this->assertEquals(205.45, round($grandTotal->getNetAmount(), 2), "grandtotal net");
+        $this->assertEquals(250, round($grandTotal->getGrossAmount(), 2), 'grandtotal gross');
+        $this->assertEquals(205.45, round($grandTotal->getNetAmount(), 2), 'grandtotal net');
         $taxEntries = $grandTotal->getTaxEntries();
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "grandtotal taxentry 1 percent");
-        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), "grandtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "grandtotal taxentry 2 percent");
-        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), "grandtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'grandtotal taxentry 1 percent');
+        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), 'grandtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'grandtotal taxentry 2 percent');
+        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), 'grandtotal taxentry 2 amount');
     }
-
 
     public function testPriceSystemWithTaxEntriesOneAfterAnother()
     {
@@ -194,32 +191,29 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
 
         $items = $cart->getItems();
 
-        $this->assertEquals(2, count($items), "item count");
-        $this->assertEquals(3, $cart->getItemAmount(), "item amount");
-
+        $this->assertEquals(2, count($items), 'item count');
+        $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
         $calculator = $this->setUpCartCalculator($cart);
         $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
-        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), "subtotal gross");
-        $this->assertEquals(203.56, round($subTotal->getNetAmount(), 2), "subtotal net");
+        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), 'subtotal gross');
+        $this->assertEquals(203.56, round($subTotal->getNetAmount(), 2), 'subtotal net');
         $taxEntries = $subTotal->getTaxEntries();
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "subtotal taxentry 1 percent");
-        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), "subtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "subtotal taxentry 2 percent");
-        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), "subtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'subtotal taxentry 1 percent');
+        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), 'subtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'subtotal taxentry 2 percent');
+        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), 'subtotal taxentry 2 amount');
 
-        $this->assertEquals(250, round($grandTotal->getGrossAmount(), 2), "grandtotal gross");
-        $this->assertEquals(203.56, round($grandTotal->getNetAmount(), 2), "grandtotal net");
+        $this->assertEquals(250, round($grandTotal->getGrossAmount(), 2), 'grandtotal gross');
+        $this->assertEquals(203.56, round($grandTotal->getNetAmount(), 2), 'grandtotal net');
         $taxEntries = $grandTotal->getTaxEntries();
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "grandtotal taxentry 1 percent");
-        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), "grandtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "grandtotal taxentry 2 percent");
-        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), "grandtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'grandtotal taxentry 1 percent');
+        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), 'grandtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'grandtotal taxentry 2 percent');
+        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), 'grandtotal taxentry 2 amount');
     }
-
-
 
     public function testCartWithoutTaxEntriesWithModificators()
     {
@@ -232,21 +226,19 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
 
         $items = $cart->getItems();
 
-        $this->assertEquals(2, count($items), "item count");
-        $this->assertEquals(3, $cart->getItemAmount(), "item amount");
-
+        $this->assertEquals(2, count($items), 'item count');
+        $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
         $calculator = $this->setUpCartCalculator($cart, true);
         $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
-        $this->assertEquals(250, $subTotal->getGrossAmount(), "subtotal gross");
-        $this->assertEquals(250, $subTotal->getNetAmount(), "subtotal net");
+        $this->assertEquals(250, $subTotal->getGrossAmount(), 'subtotal gross');
+        $this->assertEquals(250, $subTotal->getNetAmount(), 'subtotal net');
 
-        $this->assertEquals(260, $grandTotal->getGrossAmount(), "grandtotal gross");
-        $this->assertEquals(260, $grandTotal->getNetAmount(), "grandtotal net");
+        $this->assertEquals(260, $grandTotal->getGrossAmount(), 'grandtotal gross');
+        $this->assertEquals(260, $grandTotal->getNetAmount(), 'grandtotal net');
     }
-
 
     public function testCartWithTaxEntriesCombineWithModificators()
     {
@@ -259,34 +251,32 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
 
         $items = $cart->getItems();
 
-        $this->assertEquals(2, count($items), "item count");
-        $this->assertEquals(3, $cart->getItemAmount(), "item amount");
+        $this->assertEquals(2, count($items), 'item count');
+        $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
-
-        $calculator = $this->setUpCartCalculator($cart, true, ["shipping" => 20]);
+        $calculator = $this->setUpCartCalculator($cart, true, ['shipping' => 20]);
         $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
-        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), "subtotal gross");
-        $this->assertEquals(205.45, round($subTotal->getNetAmount(), 2), "subtotal net");
+        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), 'subtotal gross');
+        $this->assertEquals(205.45, round($subTotal->getNetAmount(), 2), 'subtotal net');
         $taxEntries = $subTotal->getTaxEntries();
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "subtotal taxentry 1 percent");
-        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), "subtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "subtotal taxentry 2 percent");
-        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), "subtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'subtotal taxentry 1 percent');
+        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), 'subtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'subtotal taxentry 2 percent');
+        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), 'subtotal taxentry 2 amount');
 
-        $this->assertEquals(260, round($grandTotal->getGrossAmount(), 2), "grandtotal gross");
-        $this->assertEquals(213.79, round($grandTotal->getNetAmount(), 2), "grandtotal net");
+        $this->assertEquals(260, round($grandTotal->getGrossAmount(), 2), 'grandtotal gross');
+        $this->assertEquals(213.79, round($grandTotal->getNetAmount(), 2), 'grandtotal net');
         $taxEntries = $grandTotal->getTaxEntries();
 
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "grandtotal taxentry 1 percent");
-        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), "grandtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "grandtotal taxentry 2 percent");
-        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), "grandtotal taxentry 2 amount");
-        $this->assertEquals(20, round($taxEntries['shipping-20']->getPercent(), 2), "grandtotal taxentry 3 percent");
-        $this->assertEquals(1.67, round($taxEntries['shipping-20']->getAmount(), 2), "grandtotal taxentry 3 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'grandtotal taxentry 1 percent');
+        $this->assertEquals(20.55, round($taxEntries['1-10']->getAmount(), 2), 'grandtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'grandtotal taxentry 2 percent');
+        $this->assertEquals(24, round($taxEntries['2-15']->getAmount(), 2), 'grandtotal taxentry 2 amount');
+        $this->assertEquals(20, round($taxEntries['shipping-20']->getPercent(), 2), 'grandtotal taxentry 3 percent');
+        $this->assertEquals(1.67, round($taxEntries['shipping-20']->getAmount(), 2), 'grandtotal taxentry 3 amount');
     }
-
 
     public function testPriceSystemWithTaxEntriesOneAfterAnotherWithModificators()
     {
@@ -299,32 +289,31 @@ class CartTaxManagementTest extends \Codeception\Test\Unit
 
         $items = $cart->getItems();
 
-        $this->assertEquals(2, count($items), "item count");
-        $this->assertEquals(3, $cart->getItemAmount(), "item amount");
+        $this->assertEquals(2, count($items), 'item count');
+        $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
-
-        $calculator = $this->setUpCartCalculator($cart, true, ["shipping" => 20]);
+        $calculator = $this->setUpCartCalculator($cart, true, ['shipping' => 20]);
         $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
-        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), "subtotal gross");
-        $this->assertEquals(203.56, round($subTotal->getNetAmount(), 2), "subtotal net");
+        $this->assertEquals(250, round($subTotal->getGrossAmount(), 2), 'subtotal gross');
+        $this->assertEquals(203.56, round($subTotal->getNetAmount(), 2), 'subtotal net');
         $taxEntries = $subTotal->getTaxEntries();
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "subtotal taxentry 1 percent");
-        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), "subtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "subtotal taxentry 2 percent");
-        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), "subtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'subtotal taxentry 1 percent');
+        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), 'subtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'subtotal taxentry 2 percent');
+        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), 'subtotal taxentry 2 amount');
 
-        $this->assertEquals(260, round($grandTotal->getGrossAmount(), 2), "grandtotal gross");
-        $this->assertEquals(211.89, round($grandTotal->getNetAmount(), 2), "grandtotal net");
+        $this->assertEquals(260, round($grandTotal->getGrossAmount(), 2), 'grandtotal gross');
+        $this->assertEquals(211.89, round($grandTotal->getNetAmount(), 2), 'grandtotal net');
         $taxEntries = $grandTotal->getTaxEntries();
 
-        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), "grandtotal taxentry 1 percent");
-        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), "grandtotal taxentry 1 amount");
-        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), "grandtotal taxentry 2 percent");
-        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), "grandtotal taxentry 2 amount");
+        $this->assertEquals(10, round($taxEntries['1-10']->getPercent(), 2), 'grandtotal taxentry 1 percent');
+        $this->assertEquals(20.36, round($taxEntries['1-10']->getAmount(), 2), 'grandtotal taxentry 1 amount');
+        $this->assertEquals(15, round($taxEntries['2-15']->getPercent(), 2), 'grandtotal taxentry 2 percent');
+        $this->assertEquals(26.09, round($taxEntries['2-15']->getAmount(), 2), 'grandtotal taxentry 2 amount');
 
-        $this->assertEquals(20, round($taxEntries['shipping-20']->getPercent(), 2), "grandtotal taxentry 3 percent");
-        $this->assertEquals(1.67, round($taxEntries['shipping-20']->getAmount(), 2), "grandtotal taxentry 3 amount");
+        $this->assertEquals(20, round($taxEntries['shipping-20']->getPercent(), 2), 'grandtotal taxentry 3 percent');
+        $this->assertEquals(1.67, round($taxEntries['shipping-20']->getAmount(), 2), 'grandtotal taxentry 3 amount');
     }
 }

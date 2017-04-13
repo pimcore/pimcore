@@ -28,15 +28,14 @@ interface IPayment
      */
     public function __construct(Config $config);
 
-
     /**
      * @return string
      */
     public function getName();
 
-
     /**
      * start payment
+     *
      * @param IPrice $price
      * @param array                       $config
      *
@@ -44,7 +43,6 @@ interface IPayment
      *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
      */
     public function initPayment(IPrice $price, array $config);
-
 
     /**
      * Handles response of payment provider and creates payment status object
@@ -55,23 +53,23 @@ interface IPayment
      */
     public function handleResponse($response);
 
-
     /**
      * return the authorized data from payment provider
+     *
      * @return array
      */
     public function getAuthorizedData();
 
-
     /**
      * set authorized data from payment provider
+     *
      * @param array $authorizedData
      */
     public function setAuthorizedData(array $authorizedData);
 
-
     /**
      * execute payment
+     *
      * @param IPrice $price
      * @param string                      $reference
      *
@@ -79,9 +77,9 @@ interface IPayment
      */
     public function executeDebit(IPrice $price = null, $reference = null);
 
-
     /**
      * execute credit
+     *
      * @param IPrice $price
      * @param string                      $reference
      * @param                             $transactionId

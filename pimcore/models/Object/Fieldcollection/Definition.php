@@ -10,15 +10,16 @@
  *
  * @category   Pimcore
  * @package    Object\Fieldcollection
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\Fieldcollection;
 
+use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\File;
 
 /**
  * @method \Pimcore\Model\Object\Fieldcollection\Definition\Dao getDao()
@@ -52,6 +53,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $key
+     *
      * @return $this
      */
     public function setKey($key)
@@ -71,6 +73,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $parentClass
+     *
      * @return $this
      */
     public function setParentClass($parentClass)
@@ -90,6 +93,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param array $layoutDefinitions
+     *
      * @return $this
      */
     public function setLayoutDefinitions($layoutDefinitions)
@@ -112,6 +116,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param array $fieldDefinitions
+     *
      * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
@@ -124,6 +129,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $key
      * @param Object\ClassDefinition\Data $data
+     *
      * @return $this
      */
     public function addFieldDefinition($key, $data)
@@ -135,7 +141,8 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param $key
-     * @return Object\ClassDefinition\Data|boolean
+     *
+     * @return Object\ClassDefinition\Data|bool
      */
     public function getFieldDefinition($key)
     {
@@ -166,21 +173,22 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param $key
+     *
      * @throws \Exception
      */
     public static function getByKey($key)
     {
         $fc = null;
-        $cacheKey = "fieldcollection_" . $key;
+        $cacheKey = 'fieldcollection_' . $key;
 
         try {
             $fc = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$fc) {
-                throw new \Exception("FieldCollection in registry is not valid");
+                throw new \Exception('FieldCollection in registry is not valid');
             }
         } catch (\Exception $e) {
-            $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
-            $fieldFile = $fieldCollectionFolder . "/" . $key . ".php";
+            $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
+            $fieldFile = $fieldCollectionFolder . '/' . $key . '.php';
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
@@ -192,7 +200,7 @@ class Definition extends Model\AbstractModel
             return $fc;
         }
 
-        throw new \Exception("Field-Collection with key: " . $key . " does not exist.");
+        throw new \Exception('Field-Collection with key: ' . $key . ' does not exist.');
     }
 
     /**
@@ -201,9 +209,8 @@ class Definition extends Model\AbstractModel
     public function save()
     {
         if (!$this->getKey()) {
-            throw new \Exception("A field-collection needs a key to be saved!");
+            throw new \Exception('A field-collection needs a key to be saved!');
         }
-
 
         $infoDocBlock = $this->getInfoDocBlock();
 
@@ -224,32 +231,30 @@ class Definition extends Model\AbstractModel
 
         \Pimcore\File::put($definitionFile, $data);
 
-
-        $extendClass = "Object\\Fieldcollection\\Data\\AbstractData";
+        $extendClass = 'Object\\Fieldcollection\\Data\\AbstractData';
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
-            $extendClass = "\\" . ltrim($extendClass, "\\");
+            $extendClass = '\\' . ltrim($extendClass, '\\');
         }
-
 
         // create class file
         $cd = '<?php ';
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
-        $cd .= "namespace Pimcore\\Model\\Object\\Fieldcollection\\Data;";
+        $cd .= 'namespace Pimcore\\Model\\Object\\Fieldcollection\\Data;';
         $cd .= "\n\n";
-        $cd .= "use Pimcore\\Model\\Object;";
+        $cd .= 'use Pimcore\\Model\\Object;';
         $cd .= "\n\n";
 
-        $cd .= "class " . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
         $cd .= "\n\n";
 
         $cd .= 'public $type = "' . $this->getKey() . "\";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                $cd .= "public $" . $key . ";\n";
+                $cd .= 'public $' . $key . ";\n";
             }
         }
 
@@ -261,7 +266,6 @@ class Definition extends Model\AbstractModel
                 /**
                  * @var $def Object\ClassDefinition\Data
                  */
-
                 $cd .= $def->getGetterCodeFieldcollection($this);
 
                 if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
@@ -310,9 +314,6 @@ class Definition extends Model\AbstractModel
         }
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         @unlink($this->getDefinitionFile());
@@ -340,8 +341,8 @@ class Definition extends Model\AbstractModel
      */
     protected function getDefinitionFile()
     {
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
-        $definitionFile = $fieldClassFolder . "/" . $this->getKey() . ".php";
+        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . '/fieldcollections';
+        $definitionFile = $fieldClassFolder . '/' . $this->getKey() . '.php';
 
         return $definitionFile;
     }
@@ -351,8 +352,8 @@ class Definition extends Model\AbstractModel
      */
     protected function getPhpClassFile()
     {
-        $classFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data";
-        $classFile = $classFolder . "/" . ucfirst($this->getKey()) . ".php";
+        $classFolder = PIMCORE_CLASS_DIRECTORY . '/Object/Fieldcollection/Data';
+        $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
 
         return $classFile;
     }
@@ -362,14 +363,14 @@ class Definition extends Model\AbstractModel
      */
     protected function getInfoDocBlock()
     {
-        $cd = "";
+        $cd = '';
 
-        $cd .= "/** ";
+        $cd .= '/** ';
         $cd .= "\n";
-        $cd .= "* Generated at: " . date('c') . "\n";
+        $cd .= '* Generated at: ' . date('c') . "\n";
 
-        if (isset($_SERVER["REMOTE_ADDR"])) {
-            $cd .= "* IP: " . $_SERVER["REMOTE_ADDR"] . "\n";
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            $cd .= '* IP: ' . $_SERVER['REMOTE_ADDR'] . "\n";
         }
 
         $cd .= "\n\n";
@@ -377,12 +378,11 @@ class Definition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $cd .= " - " . $fd->getName() . " [" . $fd->getFieldtype() . "]\n";
+                $cd .= ' - ' . $fd->getName() . ' [' . $fd->getFieldtype() . "]\n";
             }
         }
 
-        $cd .= "*/ ";
-
+        $cd .= '*/ ';
 
         return $cd;
     }

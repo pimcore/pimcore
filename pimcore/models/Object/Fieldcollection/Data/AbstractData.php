@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Fieldcollection
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 abstract class AbstractData extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -54,6 +54,7 @@ abstract class AbstractData extends Model\AbstractModel
 
     /**
      * @param int $index
+     *
      * @return $this
      */
     public function setIndex($index)
@@ -73,6 +74,7 @@ abstract class AbstractData extends Model\AbstractModel
 
     /**
      * @param $fieldname
+     *
      * @return $this
      */
     public function setFieldname($fieldname)
@@ -102,6 +104,7 @@ abstract class AbstractData extends Model\AbstractModel
 
     /**
      * @param Model\Object\Concrete $object
+     *
      * @return $this
      */
     public function setObject($object)

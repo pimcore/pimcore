@@ -2,10 +2,9 @@
 
 namespace Pimcore\Tests;
 
-use Pimcore\Model\Object\ClassDefinition;
-
 /**
  * Inherited Methods
+ *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)

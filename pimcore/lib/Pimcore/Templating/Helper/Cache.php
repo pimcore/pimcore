@@ -20,7 +20,6 @@ use Symfony\Component\Templating\Helper\Helper;
 
 class Cache extends Helper
 {
-
     /**
      * @var string
      */
@@ -51,7 +50,6 @@ class Cache extends Helper
         $this->editmodeResolver = $editmodeResolver;
     }
 
-
     /**
      * @inheritDoc
      */
@@ -60,16 +58,16 @@ class Cache extends Helper
         return 'cache';
     }
 
-
     /**
      * @param $name
      * @param null $lifetime
      * @param bool $force
+     *
      * @return mixed
      */
     public function __invoke($name, $lifetime = null, $force = false)
     {
-        $this->key = "pimcore_viewcache_" . $name;
+        $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
 
         if (!$lifetime) {
@@ -80,7 +78,6 @@ class Cache extends Helper
 
         return $this;
     }
-
 
     /**
      * @return bool
@@ -111,9 +108,9 @@ class Cache extends Helper
         if ($this->captureEnabled[$this->key]) {
             $this->captureEnabled[$this->key] = false;
 
-            $tags = ["in_template"];
+            $tags = ['in_template'];
             if (!$this->lifetime) {
-                $tags[] = "output";
+                $tags[] = 'output';
             }
 
             $content = ob_get_clean();

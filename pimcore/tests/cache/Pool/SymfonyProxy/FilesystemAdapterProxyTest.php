@@ -3,10 +3,10 @@
 namespace Pimcore\Tests\Cache\Adapter\SymfonyProxy;
 
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
-use Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
+use Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 
 /**
  * @group cache.core.file

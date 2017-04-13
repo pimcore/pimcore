@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,10 +26,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
-    /** @var  Callback function */
+    /** @var Callback function */
     protected $onCreateQueryCallback;
-
 
     /**
      * Get the assets from database
@@ -39,12 +38,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $assets = [];
 
-        $select = $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', 'type']);
         $assetsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($assetsData as $assetData) {
-            if ($assetData["type"]) {
-                if ($asset = Model\Asset::getById($assetData["id"])) {
+            if ($assetData['type']) {
+                if ($asset = Model\Asset::getById($assetData['id'])) {
                     $assets[] = $asset;
                 }
             }
@@ -57,13 +56,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @param $columns
+     *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
     public function getQuery($columns)
     {
         $select = $this->db->select();
         $select->from(
-            [ "assets" ], $columns
+            [ 'assets' ], $columns
         );
         $this->addConditions($select);
         $this->addOrder($select);
@@ -85,7 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', 'type']);
         $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
         return $assetIds;

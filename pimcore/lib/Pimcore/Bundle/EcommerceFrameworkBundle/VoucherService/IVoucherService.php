@@ -18,6 +18,7 @@ interface IVoucherService
 {
     /**
      * Voucherservice get initialized with config settings from Onlineshop Config.
+     *
      * @param $sysConfig
      */
     public function __construct($sysConfig);
@@ -27,7 +28,9 @@ interface IVoucherService
      *
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return bool
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      */
     public function checkToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
@@ -37,6 +40,7 @@ interface IVoucherService
      *
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return bool
      */
     public function reserveToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
@@ -46,6 +50,7 @@ interface IVoucherService
      *
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return bool
      */
     public function releaseToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
@@ -58,10 +63,10 @@ interface IVoucherService
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
      * @return bool
      */
     public function applyToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
-
 
     /**
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
@@ -69,16 +74,17 @@ interface IVoucherService
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
      * @return mixed
      */
     public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
-
 
     /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
      * set all reservations older than the set duration get removed.
      *
      * @param null|string $seriesId
+     *
      * @return bool
      */
     public function cleanUpReservations($seriesId = null);
@@ -88,6 +94,7 @@ interface IVoucherService
      * not considering any type of filter.
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     *
      * @return bool
      */
     public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series);
@@ -96,6 +103,7 @@ interface IVoucherService
      * Removes all statistics, optionally a seriesId can be passed, to only remove from one series.
      *
      * @param null|string $seriesId
+     *
      * @return bool
      */
     public function cleanUpStatistics($seriesId = null);

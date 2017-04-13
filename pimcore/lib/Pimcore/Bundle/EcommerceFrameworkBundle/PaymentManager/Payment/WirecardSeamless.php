@@ -58,17 +58,16 @@ class WirecardSeamless implements IPayment
         $this->partial = $config->partial;
         $this->js = $config->js;
 
-        $this->URL_WIRECARD_CHECKOUT = "https://checkout.wirecard.com";
-        $this->URL_DATASTORAGE_INIT = $this->URL_WIRECARD_CHECKOUT . "/seamless/dataStorage/init";
-        $this->URL_DATASTORAGE_READ = $this->URL_WIRECARD_CHECKOUT . "/seamless/dataStorage/read";
-        $this->URL_FRONTEND_INIT = $this->URL_WIRECARD_CHECKOUT . "/seamless/frontend/init";
+        $this->URL_WIRECARD_CHECKOUT = 'https://checkout.wirecard.com';
+        $this->URL_DATASTORAGE_INIT = $this->URL_WIRECARD_CHECKOUT . '/seamless/dataStorage/init';
+        $this->URL_DATASTORAGE_READ = $this->URL_WIRECARD_CHECKOUT . '/seamless/dataStorage/read';
+        $this->URL_FRONTEND_INIT = $this->URL_WIRECARD_CHECKOUT . '/seamless/frontend/init';
 
-        $WEBSITE_URL = rtrim($_SERVER['SERVER_NAME'] . ":" . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'], '/') . '/';
-        $this->WEBSITE_URL = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on" ? "https://$WEBSITE_URL" : "http://$WEBSITE_URL";
+        $WEBSITE_URL = rtrim($_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'], '/') . '/';
+        $this->WEBSITE_URL = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? "https://$WEBSITE_URL" : "http://$WEBSITE_URL";
 
         $this->CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
     }
-
 
     /**
      * @return string
@@ -78,13 +77,14 @@ class WirecardSeamless implements IPayment
         return 'WirecardSeamless';
     }
 
-
     /**
      * start payment
      *
      * @param IPrice $price
      * @param array $config
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function initPayment(IPrice $price, array $config)
@@ -99,11 +99,10 @@ class WirecardSeamless implements IPayment
             'customerId' => $this->settings->customerId,
             'shopId' => $this->settings->shopId,
             'orderIdent' => $this->encodeOrderIdent($orderIdent),
-            'returnUrl' => $this->WEBSITE_URL . "frontend/fallback_return.php",
+            'returnUrl' => $this->WEBSITE_URL . 'frontend/fallback_return.php',
             'language' => $config['language'] ?: 'de',
             'javascriptScriptVersion' => 'pci3'
         ];
-
 
         $requestFingerprint = $this->generateFingerPrint($fields);
 
@@ -111,17 +110,14 @@ class WirecardSeamless implements IPayment
             $fields['iframeCssUrl'] = 'http://' . $_SERVER['HTTP_HOST'] . $this->settings->iframeCssUrl;
         }
 
-
         $postFields = array_merge($fields, [
             'requestFingerprint' => $requestFingerprint,
         ]);
-
 
         $result = $this->serverToServerRequest($this->URL_DATASTORAGE_INIT, $postFields);
 
         $_SESSION['Wirecard_dataStorageId'] = $result['storageId'];
         $javascriptURL = $result['javascriptUrl'];
-
 
         $params = [];
         $params['javascriptUrl'] = $javascriptURL;
@@ -184,20 +180,16 @@ class WirecardSeamless implements IPayment
             $fields['orderReference'] = $config['orderReference'];
         }
 
-
         if ($paymentType == 'INVOICE') {
             $fields = $this->addPayolutionRequestFields($fields, $config['paymentInfo']->getObject(), $config);
         }
 
-
         list($requestFingerprint, $requestFingerprintOrder) = $this->generateFingerprint($fields, true);
-
 
         $postFields = array_merge($fields, [
             'requestFingerprint' => $requestFingerprint,
             'requestFingerprintOrder' => $requestFingerprintOrder,
         ]);
-
 
         $result = $this->serverToServerRequest($this->URL_FRONTEND_INIT, $postFields);
 
@@ -218,8 +210,6 @@ class WirecardSeamless implements IPayment
         if (!is_array($config['birthday']) || !$config['birthday']['year'] || !$config['birthday']['month'] || !$config['birthday']['day']) {
             throw new \Exception('no birthday passed');
         }
-
-
 
         $fields = array_merge($fields, [
             'consumerBillingFirstname' => $order->getCustomerFirstname(),
@@ -245,6 +235,7 @@ class WirecardSeamless implements IPayment
      * @param mixed $response
      *
      * @return IStatus
+     *
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -253,15 +244,9 @@ class WirecardSeamless implements IPayment
         $orderIdent = $this->decodeOrderIdent($orderIdent);
 
         $authorizedData = [
-            'orderNumber' => null
-            , 'paymentType' => null
-            , 'paymentState' => null
-            , 'amount' => null
-            , 'currency' => null
-            , 'gatewayReferenceNumber' => null
+            'orderNumber' => null, 'paymentType' => null, 'paymentState' => null, 'amount' => null, 'currency' => null, 'gatewayReferenceNumber' => null
         ];
         $authorizedData = array_intersect_key($response, $authorizedData);
-
 
         if ($response['paymentType'] == 'PREPAYMENT') {
 
@@ -272,10 +257,7 @@ class WirecardSeamless implements IPayment
 
             return new Status(
                 $orderIdent, '', '', IStatus::STATUS_AUTHORIZED, [
-                    'seamless_amount' => ''
-                    , 'seamless_paymentType' => 'PREPAYMENT'
-                    , 'seamless_paymentState' => 'SUCCESS'
-                    , 'seamless_response' => ''
+                    'seamless_amount' => '', 'seamless_paymentType' => 'PREPAYMENT', 'seamless_paymentState' => 'SUCCESS', 'seamless_response' => ''
                 ]
             );
         }
@@ -290,20 +272,15 @@ class WirecardSeamless implements IPayment
         Logger::debug('wirecard seamless response' . var_export($response, true));
 
         // check required fields
-        $required = ['responseFingerprintOrder' => null
-            , 'responseFingerprint' => null
+        $required = ['responseFingerprintOrder' => null, 'responseFingerprint' => null
         ];
-
 
         if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
             $status = new Status(
                 $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
                 ? IStatus::STATUS_CANCELLED
                 : IStatus::STATUS_CANCELLED, [
-                    'seamless_amount' => ''
-                    , 'seamless_paymentType' => ''
-                    , 'seamless_paymentState' => ''
-                    , 'seamless_response' => json_encode($response)
+                    'seamless_amount' => '', 'seamless_paymentType' => '', 'seamless_paymentState' => '', 'seamless_response' => json_encode($response)
                 ]
             );
 
@@ -319,28 +296,27 @@ class WirecardSeamless implements IPayment
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))));
         }
 
-
-        $fingerprintString = ""; // contains the values for computing the fingerprint
+        $fingerprintString = ''; // contains the values for computing the fingerprint
         $mandatoryFingerPrintFields = 0; // contains the number of received mandatory fields for the fingerprint
         $secretUsed = 0; // flag which contains 0 if secret has not been used or 1 if secret has been used
-        $order = explode(",", $response['responseFingerprintOrder']);
+        $order = explode(',', $response['responseFingerprintOrder']);
 
         $secret = $this->settings->secret;
         for ($i = 0; $i < count($order); $i++) {
             $key = $order[$i];
-            $value = isset($response[$order[$i]]) ? $response[$order[$i]] : "";
+            $value = isset($response[$order[$i]]) ? $response[$order[$i]] : '';
             // checks if there are enough fields in the responsefingerprint
-            if ((strcmp($key, "paymentState")) == 0 && (strlen($value) > 0)) {
+            if ((strcmp($key, 'paymentState')) == 0 && (strlen($value) > 0)) {
                 $mandatoryFingerPrintFields++;
             }
-            if ((strcmp($key, "orderNumber")) == 0 && (strlen($value) > 0)) {
+            if ((strcmp($key, 'orderNumber')) == 0 && (strlen($value) > 0)) {
                 $mandatoryFingerPrintFields++;
             }
-            if ((strcmp($key, "paymentType")) == 0 && (strlen($value) > 0)) {
+            if ((strcmp($key, 'paymentType')) == 0 && (strlen($value) > 0)) {
                 $mandatoryFingerPrintFields++;
             }
             // adds secret to fingerprint string
-            if (strcmp($key, "secret") == 0) {
+            if (strcmp($key, 'secret') == 0) {
                 $fingerprintString .= $secret;
                 $secretUsed = 1;
             } else {
@@ -350,32 +326,26 @@ class WirecardSeamless implements IPayment
         }
 
         // computes the fingerprint from the fingerprint string
-        $fingerprint = hash("sha512", $fingerprintString);
+        $fingerprint = hash('sha512', $fingerprintString);
 
         Logger::debug('#wirecard fingerprint: ' . $fingerprintString);
         Logger::debug('#wirecard response fingerprint: ' . $response['responseFingerprint']);
-
 
         if (!((strcmp($fingerprint, $response['responseFingerprint']) == 0)
             && ($mandatoryFingerPrintFields == 3)
             && ($secretUsed == 1))
         ) {
-            throw new \Exception("The verification of the response data was not successful.");
+            throw new \Exception('The verification of the response data was not successful.');
         }
-
 
         // restore price object for payment status
         $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
-
 
         $status = new Status(
             $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
             ? IStatus::STATUS_AUTHORIZED
             : IStatus::STATUS_CANCELLED, [
-                'seamless_amount' => (string)$price
-                , 'seamless_paymentType' => $response['paymentType']
-                , 'seamless_paymentState' => $response['paymentState']
-                , 'seamless_response' => print_r($response, true)
+                'seamless_amount' => (string)$price, 'seamless_paymentType' => $response['paymentType'], 'seamless_paymentState' => $response['paymentState'], 'seamless_response' => print_r($response, true)
             ]
         );
 
@@ -409,7 +379,9 @@ class WirecardSeamless implements IPayment
      *
      * @param IPrice|null $price
      * @param null $reference
+     *
      * @throws \Exception
+     *
      * @return IStatus
      */
     public function executeDebit(IPrice $price = null, $reference = null)
@@ -424,6 +396,7 @@ class WirecardSeamless implements IPayment
      * @param string $reference
      *
      * @return IStatus
+     *
      * @throws \Exception
      */
     public function deposit(IPrice $price = null, $reference = null, $transactionId = null)
@@ -439,7 +412,6 @@ class WirecardSeamless implements IPayment
             'currency' => $price->getCurrency()->getShortName()
         ];
 
-
         $requestFingerprint = $this->generateFingerprint($fields, false, true);
 
         unset($fields['secret']);
@@ -448,9 +420,7 @@ class WirecardSeamless implements IPayment
             'requestFingerprint' => $requestFingerprint,
         ]);
 
-
         $result = $this->serverToServerRequest($this->URL_DEPOSIT, $postFields);
-
 
         if ($result['errors']) {
             return new Status(
@@ -463,14 +433,15 @@ class WirecardSeamless implements IPayment
         }
     }
 
-
     /**
      * execute credit
      *
      * @param IPrice $price
      * @param string $reference
      * @param $transactionId
+     *
      * @throws \Exception
+     *
      * @return IStatus
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)
@@ -482,6 +453,7 @@ class WirecardSeamless implements IPayment
      * @param $reference
      * @param $transactionId
      * @param $paymentType
+     *
      * @return bool|Status
      */
     public function approveReversal($reference, $transactionId, $paymentType)
@@ -501,7 +473,6 @@ class WirecardSeamless implements IPayment
             'orderNumber' => $transactionId,
         ];
 
-
         $requestFingerprint = $this->generateFingerprint($fields, false, true);
 
         unset($fields['secret']);
@@ -510,9 +481,7 @@ class WirecardSeamless implements IPayment
             'requestFingerprint' => $requestFingerprint,
         ]);
 
-
         $result = $this->serverToServerRequest($this->URL_APPROVE_REVERSAL, $postFields);
-
 
         if (!$result['errors']) {
             return new Status(
@@ -522,7 +491,6 @@ class WirecardSeamless implements IPayment
             return false;
         }
     }
-
 
     /**
      * @return string
@@ -534,9 +502,8 @@ class WirecardSeamless implements IPayment
             $seed .= func_get_arg($i);
         }
 
-        return hash("sha512", $seed);
+        return hash('sha512', $seed);
     }
-
 
     /**
      * @param $url
@@ -565,7 +532,6 @@ class WirecardSeamless implements IPayment
         return $r;
     }
 
-
     public static function createCartByOrderIdent($response)
     {
         $orderIdent = $response['orderIdent'];
@@ -580,7 +546,7 @@ class WirecardSeamless implements IPayment
                 $cart->setId($cartId[1]);
 
                 $env = Factory::getInstance()->getEnvironment();
-                $env->setCustomItem(CheckoutManager::FINISHED . "_" . $cart->getId(), true);
+                $env->setCustomItem(CheckoutManager::FINISHED . '_' . $cart->getId(), true);
 
                 return $cart;
             }
@@ -612,13 +578,12 @@ class WirecardSeamless implements IPayment
             $requestFingerprintOrder .= 'secret,';
         }
 
-
         if ($withOrder) {
             $requestFingerprintOrder .= 'requestFingerprintOrder';
             $requestFingerprintSeed .= $requestFingerprintOrder;
         }
 
-        $requestFingerprint = hash("sha512", $requestFingerprintSeed);
+        $requestFingerprint = hash('sha512', $requestFingerprintSeed);
 
         if ($withOrder) {
             return [$requestFingerprint, $requestFingerprintOrder];
@@ -631,6 +596,7 @@ class WirecardSeamless implements IPayment
      * extracts seamless response of provider data from given payment information
      *
      * @param AbstractPaymentInformation $paymentInfo
+     *
      * @return null | array
      */
     public static function extractSeamlessResponse(AbstractPaymentInformation $paymentInfo)

@@ -25,9 +25,6 @@
  * pimcore/lib/Pimcore/Log/ApplicationLogger.php
  * pimcore/lib/Pimcore/Google/Cse.php
  */
-
-
-
 interface Zend_Paginator_Adapter_Interface extends Countable
 {
     public function getItems($offset, $itemCountPerPage);

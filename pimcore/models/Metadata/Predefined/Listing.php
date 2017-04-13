@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Metadata
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,7 +22,6 @@ namespace Pimcore\Model\Metadata\Predefined;
  */
 class Listing extends \Pimcore\Model\Listing\JsonListing
 {
-
     /**
      * Contains the results of the list. They are all an instance of Metadata\Predefined
      *
@@ -39,6 +39,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
 
     /**
      * @param $definitions
+     *
      * @return $this
      */
     public function setDefinitions($definitions)
@@ -51,13 +52,15 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     /**
      * @param $type
      * @param $subTypes
+     *
      * @return Listing
+     *
      * @throws \Exception
      */
     public static function getByTargetType($type, $subTypes)
     {
-        if ($type != "asset") {
-            throw new \Exception("other types than assets are currently not supported");
+        if ($type != 'asset') {
+            throw new \Exception('other types than assets are currently not supported');
         }
 
         $list = new self();
@@ -68,11 +71,11 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
 
         if (is_array($subTypes)) {
             $list->setFilter(function ($row) use ($subTypes) {
-                if (empty($row["targetSubtype"])) {
+                if (empty($row['targetSubtype'])) {
                     return true;
                 }
 
-                if (in_array($row["targetSubtype"], $subTypes)) {
+                if (in_array($row['targetSubtype'], $subTypes)) {
                     return true;
                 }
 
@@ -88,6 +91,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
      * @param $key
      * @param $language
      * @param null $targetSubtype
+     *
      * @return \Pimcore\Model\Metadata\Predefined
      */
     public static function getByKeyAndLanguage($key, $language, $targetSubtype = null)
@@ -95,15 +99,15 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
         $list = new self();
 
         $list->setFilter(function ($row) use ($key, $language, $targetSubtype) {
-            if ($row["name"] != $key) {
+            if ($row['name'] != $key) {
                 return false;
             }
 
-            if ($language && $language != $row["language"]) {
+            if ($language && $language != $row['language']) {
                 return false;
             }
 
-            if ($targetSubtype && $targetSubtype != $row["targetSubtype"]) {
+            if ($targetSubtype && $targetSubtype != $row['targetSubtype']) {
                 return false;
             }
         });

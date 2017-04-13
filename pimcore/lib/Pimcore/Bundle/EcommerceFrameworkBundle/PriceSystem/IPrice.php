@@ -22,25 +22,28 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
  */
 interface IPrice
 {
-    const PRICE_MODE_NET = "net";
-    const PRICE_MODE_GROSS = "gross";
+    const PRICE_MODE_NET = 'net';
+    const PRICE_MODE_GROSS = 'gross';
 
     /**
      * Returns $grossAmount
      *
      * @abstract
+     *
      * @return float
      */
     public function getAmount();
 
     /**
      * @abstract
+     *
      * @return Currency
      */
     public function getCurrency();
 
     /**
      * @abstract
+     *
      * @return bool
      */
     public function isMinPrice();
@@ -89,6 +92,7 @@ interface IPrice
      *
      * @param float $grossAmount
      * @param bool $recalc
+     *
      * @return void
      */
     public function setGrossAmount($grossAmount, $recalc = false);
@@ -99,6 +103,7 @@ interface IPrice
      *
      * @param float $netAmount
      * @param bool $recalc
+     *
      * @return void
      */
     public function setNetAmount($netAmount, $recalc = false);
@@ -107,6 +112,7 @@ interface IPrice
      * Sets tax entries for price.
      *
      * @param array $taxEntries
+     *
      * @return void
      */
     public function setTaxEntries($taxEntries);
@@ -115,6 +121,7 @@ interface IPrice
      * Sets $taxEntryCombinationMode for price.
      *
      * @param string $taxEntryCombinationMode
+     *
      * @return void
      */
     public function setTaxEntryCombinationMode($taxEntryCombinationMode);

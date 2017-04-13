@@ -53,6 +53,7 @@ class FilterService
      * just the name if the name is not defined in the EcommerceFramework configuration
      *
      * @param $name
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType | string
      */
     public function getFilterDefinitionClass($name)
@@ -66,6 +67,7 @@ class FilterService
 
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper
+     *
      * @throws \Exception
      */
     public function getFilterGroupHelper()
@@ -73,7 +75,7 @@ class FilterService
         if (!$this->filterGroupHelper) {
             $classname = (string)$this->config->helper;
             if (!class_exists($classname)) {
-                Logger::warn("FilterGroupHelper " . $classname . " does not exist, using default implementation.");
+                Logger::warn('FilterGroupHelper ' . $classname . ' does not exist, using default implementation.');
                 $classname = '\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper';
             }
 
@@ -83,13 +85,13 @@ class FilterService
         return $this->filterGroupHelper;
     }
 
-
     /**
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters
      *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject filter definition object to use
      * @param IProductList $productList product list to use and add conditions to
      * @param array $params request params with eventually set filter conditions
+     *
      * @return array returns set filters
      */
     public function initFilterService(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject, IProductList $productList, $params = [])
@@ -128,6 +130,7 @@ class FilterService
      * @param AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
      * @param IProductList $productList current product list (with all set filters) to get available options and counts
      * @param $currentFilter array current filter for this filter definition
+     *
      * @return string view snippet
      */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
@@ -145,6 +148,7 @@ class FilterService
      * @param $currentFilter
      * @param $params
      * @param bool $isPrecondition
+     *
      * @return array updated currentFilter array
      */
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)

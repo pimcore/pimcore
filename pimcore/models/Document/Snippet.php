@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,11 +24,10 @@ use Pimcore\Model;
  */
 class Snippet extends Model\Document\PageSnippet
 {
-
     /**
      * Static type of the document
      *
      * @var string
      */
-    public $type = "snippet";
+    public $type = 'snippet';
 }

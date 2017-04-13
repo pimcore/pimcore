@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Rest\DataType;
 
-use Codeception\Util\Debug;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeRestTestCase;

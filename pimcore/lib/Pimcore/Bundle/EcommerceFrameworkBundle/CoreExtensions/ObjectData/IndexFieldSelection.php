@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 
 class IndexFieldSelection
 {
-
     /**
      * @var string
      */

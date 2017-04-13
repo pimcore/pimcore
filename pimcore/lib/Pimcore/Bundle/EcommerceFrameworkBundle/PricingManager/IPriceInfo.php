@@ -35,6 +35,7 @@ interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSyste
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
+     *
      * @return IRule[]
      */
     public function getRules($forceRecalc = false);
@@ -90,6 +91,7 @@ interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSyste
 
     /**
      * get discount in percent
+     *
      * @return float
      */
     public function getDiscountPercent();

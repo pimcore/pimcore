@@ -11,7 +11,6 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
@@ -20,7 +19,7 @@ $loader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
 
 // tell the autoloader where to find Pimcore's generated class stubs
 // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
-$loader->addPsr4("Pimcore\\Model\\Object\\", PIMCORE_CLASS_DIRECTORY . "/Object");
+$loader->addPsr4('Pimcore\\Model\\Object\\', PIMCORE_CLASS_DIRECTORY . '/Object');
 
 // the following code is out of `app/autoload.php`
 // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
@@ -40,17 +39,17 @@ foreach ($apiDocAnnotations as $apiDocAnnotation) {
 
 // some pimcore specific generic includes
 // includes not covered by composer autoloader
-require_once PIMCORE_PATH . "/lib/helper-functions.php";
-require_once PIMCORE_PATH . "/lib/Pimcore.php";
+require_once PIMCORE_PATH . '/lib/helper-functions.php';
+require_once PIMCORE_PATH . '/lib/Pimcore.php';
 
-if (defined("PIMCORE_APP_BUNDLE_CLASS_FILE")) {
+if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
     require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
 }
 
-if (!class_exists("Zend_Date")) {
+if (!class_exists('Zend_Date')) {
     // if ZF is not loaded, we need to provide some compatibility stubs
     // for a detailed description see the included file
-    require_once PIMCORE_PATH . "/lib/compatibility-stubs.php";
+    require_once PIMCORE_PATH . '/lib/compatibility-stubs.php';
 }
 
 return $loader;

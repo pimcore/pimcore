@@ -15,7 +15,6 @@
 namespace Pimcore\Cache\Pool;
 
 use Pimcore\Cache\Pool\Exception\CacheException;
-use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
 /**
  * Redis2 item pool with tagging and LUA support.
@@ -91,6 +90,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * This value is defined by LUAI_MAXCSTACK in luaconf.h and for Redis it is set to 8000.
      *
      * @see https://github.com/antirez/redis/blob/b903145/deps/lua/src/luaconf.h#L439
+     *
      * @var int
      */
     protected $luaMaxCStack = 5000;
@@ -349,21 +349,21 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                     "redis.call('HMSET', ARGV[1]..ARGV[9], ARGV[2], ARGV[10], ARGV[3], ARGV[11], ARGV[4], ARGV[12], ARGV[5], ARGV[13]) " .
                     "if (ARGV[13] == '0') then " .
                     "redis.call('EXPIRE', ARGV[1]..ARGV[9], ARGV[14]) " .
-                    "end " .
-                    "if next(KEYS) ~= nil then " .
+                    'end ' .
+                    'if next(KEYS) ~= nil then ' .
                     "redis.call('SADD', ARGV[6], unpack(KEYS)) " .
-                    "for _, tagname in ipairs(KEYS) do " .
+                    'for _, tagname in ipairs(KEYS) do ' .
                     "redis.call('SADD', ARGV[7]..tagname, ARGV[9]) " .
-                    "end " .
-                    "end " .
+                    'end ' .
+                    'end ' .
                     "if (ARGV[15] == '1') then " .
                     "redis.call('SADD', ARGV[8], ARGV[9]) " .
-                    "end " .
-                    "if (oldTags ~= false) then " .
-                    "return oldTags " .
-                    "else " .
+                    'end ' .
+                    'if (oldTags ~= false) then ' .
+                    'return oldTags ' .
+                    'else ' .
                     "return '' " .
-                    "end";
+                    'end';
 
                 $res = $this->redis->eval($script, $tags, $sArgs);
             }
@@ -453,18 +453,18 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
             if (!$this->redis->evalSha(static::LUA_CLEAN_SH1, $pTags, $sArgs)) {
                 $script =
-                    "for i = 1, #KEYS, ARGV[5] do " .
+                    'for i = 1, #KEYS, ARGV[5] do ' .
                     "local keysToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
-                    "for _, keyname in ipairs(keysToDel) do " .
+                    'for _, keyname in ipairs(keysToDel) do ' .
                     "redis.call('DEL', ARGV[1]..keyname) " .
                     "if (ARGV[4] == '1') then " .
                     "redis.call('SREM', ARGV[3], keyname) " .
-                    "end " .
-                    "end " .
+                    'end ' .
+                    'end ' .
                     "redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
                     "redis.call('SREM', ARGV[2], unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
-                    "end " .
-                    "return true";
+                    'end ' .
+                    'return true';
 
                 $this->redis->eval($script, $pTags, $sArgs);
             }
@@ -533,44 +533,44 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 if (count($tagsBatch) == 10 || $counter == $tagsCount) {
                     if (!$this->redis->evalSha(static::LUA_GC_SH1, $tagsBatch, $sArgs)) {
                         $script =
-                            "local tagKeys = {} " .
-                            "local expired = {} " .
-                            "local expiredCount = 0 " .
-                            "local notExpiredCount = 0 " .
-                            "for _, tagName in ipairs(KEYS) do " .
+                            'local tagKeys = {} ' .
+                            'local expired = {} ' .
+                            'local expiredCount = 0 ' .
+                            'local notExpiredCount = 0 ' .
+                            'for _, tagName in ipairs(KEYS) do ' .
                             "tagKeys = redis.call('SMEMBERS', ARGV[4]..tagName) " .
-                            "for __, keyName in ipairs(tagKeys) do " .
+                            'for __, keyName in ipairs(tagKeys) do ' .
                             "if (redis.call('EXISTS', ARGV[1]..keyName) == 0) then " .
-                            "expiredCount = expiredCount + 1 " .
-                            "expired[expiredCount] = keyName " .
+                            'expiredCount = expiredCount + 1 ' .
+                            'expired[expiredCount] = keyName ' .
                             /* Redis Lua scripts have a hard limit of 8000 parameters per command */
-                            "if (expiredCount == 7990) then " .
+                            'if (expiredCount == 7990) then ' .
                             "redis.call('SREM', ARGV[4]..tagName, unpack(expired)) " .
                             "if (ARGV[5] == '1') then " .
                             "redis.call('SREM', ARGV[3], unpack(expired)) " .
-                            "end " .
-                            "expiredCount = 0 " .
-                            "expired = {} " .
-                            "end " .
-                            "else " .
-                            "notExpiredCount = notExpiredCount + 1 " .
-                            "end " .
-                            "end " .
-                            "if (expiredCount > 0) then " .
+                            'end ' .
+                            'expiredCount = 0 ' .
+                            'expired = {} ' .
+                            'end ' .
+                            'else ' .
+                            'notExpiredCount = notExpiredCount + 1 ' .
+                            'end ' .
+                            'end ' .
+                            'if (expiredCount > 0) then ' .
                             "redis.call('SREM', ARGV[4]..tagName, unpack(expired)) " .
                             "if (ARGV[5] == '1') then " .
                             "redis.call('SREM', ARGV[3], unpack(expired)) " .
-                            "end " .
-                            "end " .
-                            "if (notExpiredCount == 0) then " .
+                            'end ' .
+                            'end ' .
+                            'if (notExpiredCount == 0) then ' .
                             "redis.call ('DEL', ARGV[4]..tagName) " .
                             "redis.call ('SREM', ARGV[2], tagName) " .
-                            "end " .
-                            "expired = {} " .
-                            "expiredCount = 0 " .
-                            "notExpiredCount = 0 " .
-                            "end " .
-                            "return true";
+                            'end ' .
+                            'expired = {} ' .
+                            'expiredCount = 0 ' .
+                            'notExpiredCount = 0 ' .
+                            'end ' .
+                            'return true';
 
                         $this->redis->eval($script, $tagsBatch, $sArgs);
                     }
@@ -648,6 +648,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * In case of multiple tags, a logical OR is made between tags
      *
      * @param array $tags array of tags
+     *
      * @return array array of any matching cache ids (string)
      */
     protected function getIdsMatchingAnyTags($tags = [])
@@ -671,6 +672,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
     /**
      * @param $ids
+     *
      * @return array
      */
     protected function preprocessIds($ids)
@@ -682,6 +684,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
     /**
      * @param $tags
+     *
      * @return array
      */
     protected function preprocessTagIds($tags)
@@ -694,7 +697,9 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     /**
      * @param string $data
      * @param int $level
+     *
      * @throws \CredisException
+     *
      * @return string
      */
     protected function encodeData($data, $level)
@@ -717,7 +722,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                     throw new \CredisException("Unrecognized 'compression_lib'.");
             }
             if (!$data) {
-                throw new \CredisException("Could not compress cache data.");
+                throw new \CredisException('Could not compress cache data.');
             }
 
             return $this->compressPrefix . $data;
@@ -728,6 +733,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
     /**
      * @param bool|string $data
+     *
      * @return string
      */
     protected function decodeData($data)

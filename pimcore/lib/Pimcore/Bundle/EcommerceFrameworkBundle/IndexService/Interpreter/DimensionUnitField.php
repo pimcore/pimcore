@@ -19,7 +19,7 @@ class DimensionUnitField implements IInterpreter
     public static function interpret($value, $config = null)
     {
         if (!empty($value) && $value instanceof \Object_Data_DimensionUnitField) {
-            if ($config->onlyDimensionValue == "true") {
+            if ($config->onlyDimensionValue == 'true') {
                 $unit = $value->getUnit();
                 $value = $value->getValue();
 

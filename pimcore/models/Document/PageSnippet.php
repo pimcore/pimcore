@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -28,7 +29,6 @@ use Pimcore\Model\Document;
  */
 abstract class PageSnippet extends Model\Document
 {
-
     /**
      * @var string
      */
@@ -37,12 +37,12 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var string
      */
-    public $controller = "default";
+    public $controller = 'default';
 
     /**
      * @var string
      */
-    public $action = "default";
+    public $action = 'default';
 
     /**
      * @var string
@@ -121,7 +121,9 @@ abstract class PageSnippet extends Model\Document
     /**
      * @param bool $setModificationDate
      * @param bool $callPluginHook
+     *
      * @return null|Model\Version
+     *
      * @throws \Exception
      */
     public function saveVersion($setModificationDate = true, $callPluginHook = true)
@@ -130,7 +132,7 @@ abstract class PageSnippet extends Model\Document
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
-                "saveVersionOnly" => true
+                'saveVersionOnly' => true
             ]));
         }
 
@@ -152,7 +154,7 @@ abstract class PageSnippet extends Model\Document
             || $setModificationDate) {
             $version = new Model\Version();
             $version->setCid($this->getId());
-            $version->setCtype("document");
+            $version->setCtype('document');
             $version->setDate($this->getModificationDate());
             $version->setUserId($this->getUserModification());
             $version->setData($this);
@@ -162,7 +164,7 @@ abstract class PageSnippet extends Model\Document
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
-                "saveVersionOnly" => true
+                'saveVersionOnly' => true
             ]));
         }
 
@@ -189,6 +191,7 @@ abstract class PageSnippet extends Model\Document
      * Resolves dependencies and create tags for caching out of them
      *
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($tags = [])
@@ -206,6 +209,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @see Document::resolveDependencies
+     *
      * @return array
      */
     public function resolveDependencies()
@@ -217,10 +221,10 @@ abstract class PageSnippet extends Model\Document
         }
 
         if ($this->getContentMasterDocument() instanceof Document) {
-            $key = "document_" . $this->getContentMasterDocument()->getId();
+            $key = 'document_' . $this->getContentMasterDocument()->getId();
             $dependencies[$key] = [
-                "id" => $this->getContentMasterDocument()->getId(),
-                "type" => "document"
+                'id' => $this->getContentMasterDocument()->getId(),
+                'type' => 'document'
             ];
         }
 
@@ -233,7 +237,7 @@ abstract class PageSnippet extends Model\Document
     public function getAction()
     {
         if (empty($this->action)) {
-            return "default";
+            return 'default';
         }
 
         return $this->action;
@@ -245,7 +249,7 @@ abstract class PageSnippet extends Model\Document
     public function getController()
     {
         if (empty($this->controller)) {
-            return "default";
+            return 'default';
         }
 
         return $this->controller;
@@ -261,6 +265,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -272,6 +277,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $controller
+     *
      * @return $this
      */
     public function setController($controller)
@@ -283,6 +289,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $template
+     *
      * @return $this
      */
     public function setTemplate($template)
@@ -294,6 +301,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param $module
+     *
      * @return $this
      */
     public function setModule($module)
@@ -317,6 +325,7 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      * @param string $type
      * @param string $data
+     *
      * @return $this
      */
     public function setRawElement($name, $type, $data)
@@ -332,7 +341,7 @@ abstract class PageSnippet extends Model\Document
                 $this->elements[$name]->setDocumentId($this->getId());
             }
         } catch (\Exception $e) {
-            Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
+            Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());
         }
 
         return $this;
@@ -343,6 +352,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      * @param string $data
+     *
      * @return $this
      */
     public function setElement($name, $data)
@@ -352,9 +362,9 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
-
     /**
      * @param $name
+     *
      * @return $this
      */
     public function removeElement($name)
@@ -370,6 +380,7 @@ abstract class PageSnippet extends Model\Document
      * Get an element with the given key/name
      *
      * @param string $name
+     *
      * @return Document\Tag
      */
     public function getElement($name)
@@ -402,7 +413,9 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param int|null $contentMasterDocumentId
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function setContentMasterDocumentId($contentMasterDocumentId)
@@ -420,7 +433,7 @@ abstract class PageSnippet extends Model\Document
         }
 
         if ($contentMasterDocumentId == $this->getId()) {
-            throw new \Exception("You cannot use the current document as a master document, please choose a different one.");
+            throw new \Exception('You cannot use the current document as a master document, please choose a different one.');
         }
 
         $this->contentMasterDocumentId = $contentMasterDocumentId;
@@ -446,6 +459,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param $document
+     *
      * @return $this
      */
     public function setContentMasterDocument($document)
@@ -461,6 +475,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param  $name
+     *
      * @return bool
      */
     public function hasElement($name)
@@ -484,6 +499,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param array $elements
+     *
      * @return $this
      */
     public function setElements($elements)
@@ -507,6 +523,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param array $versions
+     *
      * @return $this
      */
     public function setVersions($versions)
@@ -518,6 +535,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @see Document::getFullPath
+     *
      * @return string
      */
     public function getHref()
@@ -541,6 +559,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param $scheduledTasks
+     *
      * @return $this
      */
     public function setScheduledTasks($scheduledTasks)
@@ -550,9 +569,6 @@ abstract class PageSnippet extends Model\Document
         return $this;
     }
 
-    /**
-     *
-     */
     public function saveScheduledTasks()
     {
         $scheduled_tasks = $this->getScheduledTasks();
@@ -563,21 +579,18 @@ abstract class PageSnippet extends Model\Document
                 $task->setId(null);
                 $task->setDao(null);
                 $task->setCid($this->getId());
-                $task->setCtype("document");
+                $task->setCtype('document');
                 $task->save();
             }
         }
     }
 
-    /**
-     *
-     */
     public function __sleep()
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ["inheritedElements"];
+        $blockedVars = ['inheritedElements'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

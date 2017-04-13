@@ -21,9 +21,8 @@ use Pimcore\Logger;
  */
 class WebsiteSetting extends AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -57,10 +56,9 @@ class WebsiteSetting extends AbstractModel
      */
     public $modificationDate;
 
-
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return WebsiteSetting
      */
     public static function getById($id)
@@ -76,6 +74,7 @@ class WebsiteSetting extends AbstractModel
     /**
      * @param string $name
      * @param null $siteId
+     *
      * @return WebsiteSetting
      */
     public static function getByName($name, $siteId = null)
@@ -96,16 +95,16 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -115,9 +114,9 @@ class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -137,6 +136,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)
@@ -156,6 +156,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $data
+     *
      * @return $this
      */
     public function setData($data)
@@ -175,6 +176,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -194,6 +196,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $siteId
+     *
      * @return $this
      */
     public function setSiteId($siteId)
@@ -213,6 +216,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -232,6 +236,6 @@ class WebsiteSetting extends AbstractModel
 
     public function clearDependentCache()
     {
-        \Pimcore\Cache::clearTag("website_config");
+        \Pimcore\Cache::clearTag('website_config');
     }
 }

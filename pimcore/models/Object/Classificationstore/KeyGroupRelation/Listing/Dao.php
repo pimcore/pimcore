@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,7 +25,6 @@ use Pimcore\Model\Object;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
     /**
      * Loads a list of Classificationstore group configs for the specified parameters, returns an array of config elements
      *
@@ -34,37 +34,33 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $condition = $this->getCondition();
         if ($condition) {
-            $condition = $condition . " AND ";
+            $condition = $condition . ' AND ';
         } else {
-            $condition = " where ";
+            $condition = ' where ';
         }
         $condition .= Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . ".keyId = " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".id";
+            . '.keyId = ' . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.id';
 
         $resourceGroupName = $this->model->getResolveGroupName();
 
         if ($resourceGroupName) {
-            $condition .= " and " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".id = "
-                . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".groupId";
+            $condition .= ' and ' . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.id = '
+                . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . '.groupId';
         }
 
-        $sql = "SELECT " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".*,"
-            . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".*";
-
+        $sql = 'SELECT ' . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . '.*,'
+            . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.*';
 
         if ($resourceGroupName) {
-            $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".name as groupName";
+            $sql .= ', ' . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.name as groupName';
         }
 
-
-        $sql .=  " FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . "," . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
+        $sql .= ' FROM ' . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . ',' . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
 
         if ($resourceGroupName) {
-            $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
+            $sql .= ', ' . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
         }
-
-
 
         $sql .= $condition;
         $sql .= $this->getOrder() . $this->getOffsetLimit();
@@ -89,7 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAll('SELECT * FROM ' . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
@@ -100,7 +96,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . " ". $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ' '. $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

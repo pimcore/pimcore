@@ -10,15 +10,16 @@
  *
  * @category   Pimcore
  * @package    Object\Objectbrick
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\Objectbrick;
 
+use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\File;
 
 /**
  * @method \Pimcore\Model\Object\Objectbrick\Definition\Dao getDao()
@@ -39,6 +40,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
     /**
      * @param $classDefinitions
+     *
      * @return $this
      */
     public function setClassDefinitions($classDefinitions)
@@ -58,23 +60,26 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
     /**
      * @static
+     *
      * @throws \Exception
+     *
      * @param $key
+     *
      * @return mixed
      */
     public static function getByKey($key)
     {
         $brick = null;
-        $cacheKey = "objectbrick_" . $key;
+        $cacheKey = 'objectbrick_' . $key;
 
         try {
             $brick = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$brick) {
-                throw new \Exception("ObjectBrick in Registry is not valid");
+                throw new \Exception('ObjectBrick in Registry is not valid');
             }
         } catch (\Exception $e) {
-            $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-            $fieldFile = $objectBrickFolder . "/" . $key . ".php";
+            $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
+            $fieldFile = $objectBrickFolder . '/' . $key . '.php';
 
             if (is_file($fieldFile)) {
                 $brick = include $fieldFile;
@@ -86,7 +91,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             return $brick;
         }
 
-        throw new \Exception("Object-Brick with key: " . $key . " does not exist.");
+        throw new \Exception('Object-Brick with key: ' . $key . ' does not exist.');
     }
 
     /**
@@ -95,7 +100,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     public function save()
     {
         if (!$this->getKey()) {
-            throw new \Exception("A object-brick needs a key to be saved!");
+            throw new \Exception('A object-brick needs a key to be saved!');
         }
 
         $definitionFile = $this->getDefinitionFile();
@@ -133,10 +138,10 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
         \Pimcore\File::put($definitionFile, $data);
 
-        $extendClass = "Object\\Objectbrick\\Data\\AbstractData";
+        $extendClass = 'Object\\Objectbrick\\Data\\AbstractData';
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
-            $extendClass = "\\" . ltrim($extendClass, "\\");
+            $extendClass = '\\' . ltrim($extendClass, '\\');
         }
 
         // create class
@@ -145,19 +150,19 @@ class Definition extends Model\Object\Fieldcollection\Definition
         $cd .= "\n\n";
         $cd .= $infoDocBlock;
         $cd .= "\n\n";
-        $cd .= "namespace Pimcore\\Model\\Object\\Objectbrick\\Data;";
+        $cd .= 'namespace Pimcore\\Model\\Object\\Objectbrick\\Data;';
         $cd .= "\n\n";
-        $cd .= "use Pimcore\\Model\\Object;";
+        $cd .= 'use Pimcore\\Model\\Object;';
         $cd .= "\n\n";
 
-        $cd .= "class " . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
         $cd .= "\n\n";
 
         $cd .= 'public $type = "' . $this->getKey() . "\";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                $cd .= "public $" . $key . ";\n";
+                $cd .= 'public $' . $key . ";\n";
             }
         }
 
@@ -200,8 +205,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 $class = Object\ClassDefinition::getById($cl['classname']);
                 if ($class) {
                     $path = $this->getContainerClassFolder($class->getName());
-                    @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
-
+                    @unlink($path . '/' . ucfirst($cl['fieldname'] . '.php'));
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
                         if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
@@ -278,7 +282,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
                 if (!$fd) {
-                    throw new \Exception("Could not resolve field definition for " . $cl['fieldname']);
+                    throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
                 $allowedTypes = $fd->getAllowedTypes();
                 if (!in_array($this->key, $allowedTypes)) {
@@ -302,7 +306,6 @@ class Definition extends Model\Object\Fieldcollection\Definition
             }
         }
 
-
         foreach ($containerDefinition as $classId => $cd) {
             $class = Object\ClassDefinition::getById($classId);
 
@@ -317,9 +320,9 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 $cd = '<?php ';
 
                 $cd .= "\n\n";
-                $cd .= "namespace " . $namespace . ";";
+                $cd .= 'namespace ' . $namespace . ';';
                 $cd .= "\n\n";
-                $cd .= "class " . $className . " extends \\Pimcore\\Model\\Object\\Objectbrick {";
+                $cd .= 'class ' . $className . ' extends \\Pimcore\\Model\\Object\\Objectbrick {';
                 $cd .= "\n\n";
 
                 $cd .= "\n\n";
@@ -332,7 +335,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
                     $cd .= '/**' . "\n";
                     $cd .= '* @return \\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . $brickKey . "\n";
                     $cd .= '*/' . "\n";
-                    $cd .= "public function get" . ucfirst($brickKey) . "() { \n";
+                    $cd .= 'public function get' . ucfirst($brickKey) . "() { \n";
 
                     if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\Object\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
@@ -350,8 +353,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
                     $cd .= '* @param \\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . $brickKey . ' $' . $brickKey . "\n";
                     $cd .= "* @return void\n";
                     $cd .= '*/' . "\n";
-                    $cd .= "public function set" . ucfirst($brickKey) . " (" . '$' . $brickKey . ") {\n";
-                    $cd .= "\t" . '$this->' . $brickKey . " = " . '$' . $brickKey . ";\n";
+                    $cd .= 'public function set' . ucfirst($brickKey) . ' (' . '$' . $brickKey . ") {\n";
+                    $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
                     $cd .= "\t" . 'return $this;' . ";\n";
                     $cd .= "}\n\n";
                 }
@@ -364,7 +367,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
                     File::mkdir($folder);
                 }
 
-                $file = $folder . "/" . ucfirst($fieldname) . ".php";
+                $file = $folder . '/' . ucfirst($fieldname) . '.php';
                 File::put($file, $cd);
             }
         }
@@ -373,6 +376,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     /**
      * @param $classname
      * @param $fieldname
+     *
      * @return string
      */
     private function getContainerClassName($classname, $fieldname)
@@ -383,20 +387,22 @@ class Definition extends Model\Object\Fieldcollection\Definition
     /**
      * @param $classname
      * @param $fieldname
+     *
      * @return string
      */
     private function getContainerNamespace($classname, $fieldname)
     {
-        return "Pimcore\\Model\\Object\\" . ucfirst($classname);
+        return 'Pimcore\\Model\\Object\\' . ucfirst($classname);
     }
 
     /**
      * @param $classname
+     *
      * @return string
      */
     private function getContainerClassFolder($classname)
     {
-        return PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($classname);
+        return PIMCORE_CLASS_DIRECTORY . '/Object/' . ucfirst($classname);
     }
 
     /**
@@ -416,7 +422,6 @@ class Definition extends Model\Object\Fieldcollection\Definition
                     $class = Object\ClassDefinition::getById($cl['classname']);
                     $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;
-
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
                         if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
@@ -455,8 +460,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     protected function getDefinitionFile()
     {
-        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-        $definitionFile = $objectBrickFolder . "/" . $this->getKey() . ".php";
+        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
+        $definitionFile = $objectBrickFolder . '/' . $this->getKey() . '.php';
 
         return $definitionFile;
     }
@@ -466,8 +471,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     protected function getPhpClassFile()
     {
-        $classFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
-        $classFile = $classFolder . "/" . ucfirst($this->getKey()) . ".php";
+        $classFolder = PIMCORE_CLASS_DIRECTORY . '/Object/Objectbrick/Data';
+        $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
 
         return $classFile;
     }

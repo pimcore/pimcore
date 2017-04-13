@@ -40,10 +40,10 @@ class GoogleSearchConsoleVerificationListener extends AbstractFrontendListener
 
             if (is_array($sites)) {
                 foreach ($sites as $site) {
-                    if ($site["verification"]) {
+                    if ($site['verification']) {
                         $request = $event->getRequest();
-                        if ($request->getPathInfo() == ("/".$site["verification"])) {
-                            $response = new Response("google-site-verification: " . $site["verification"], 503);
+                        if ($request->getPathInfo() == ('/'.$site['verification'])) {
+                            $response = new Response('google-site-verification: ' . $site['verification'], 503);
                             $event->setResponse($response);
                         }
                     }

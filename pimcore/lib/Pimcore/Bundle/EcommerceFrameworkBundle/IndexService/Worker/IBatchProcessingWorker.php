@@ -23,7 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
  */
 interface IBatchProcessingWorker extends IWorker
 {
-
     /**
      * fills queue based on path
      *
@@ -31,23 +30,22 @@ interface IBatchProcessingWorker extends IWorker
      */
     public function fillupPreparationQueue(IIndexable $object);
 
-
     /**
      * processes elements in the queue for preparation of index data
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *
      * @param int $limit
+     *
      * @return int number of entries
      */
     public function processPreparationQueue($limit = 200);
-
-
 
     /**
      * processes the update index queue - updates all elements where current_crc != index_crc
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *
      * @param int $limit
+     *
      * @return $int number of entries processed
      */
     public function processUpdateIndexQueue($limit = 200);

@@ -31,13 +31,13 @@ class Select extends AbstractFilterType
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $productList->getGroupByValues($field, true),
-            "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $productList->getGroupByValues($field, true),
+            'fieldname' => $field,
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -57,12 +57,11 @@ class Select extends AbstractFilterType
         $value = trim($value);
         $currentFilter[$field] = $value;
 
-
         if (!empty($value)) {
             if ($isPrecondition) {
-                $productList->addCondition("TRIM(`" . $field . "`) = " . $productList->quote($value), "PRECONDITION_" . $field);
+                $productList->addCondition('TRIM(`' . $field . '`) = ' . $productList->quote($value), 'PRECONDITION_' . $field);
             } else {
-                $productList->addCondition("TRIM(`" . $field . "`) = " . $productList->quote($value), $field);
+                $productList->addCondition('TRIM(`' . $field . '`) = ' . $productList->quote($value), $field);
             }
         }
 

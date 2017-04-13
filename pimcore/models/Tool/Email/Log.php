@@ -10,33 +10,33 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Email;
 
-use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Email\Log\Dao getDao()
  */
 class Log extends Model\AbstractModel
 {
-
     /**
      * EmailLog Id
      *
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
      * Id of the email document or null if no document was given
      *
-     * @var integer | null
+     * @var int | null
      */
     public $documentId;
 
@@ -50,7 +50,7 @@ class Log extends Model\AbstractModel
     /**
      * Modification date as timestamp
      *
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
@@ -92,21 +92,21 @@ class Log extends Model\AbstractModel
     /**
      * Contains 1 if a html logfile exists and 0 if no html logfile exists
      *
-     * @var integer
+     * @var int
      */
     public $emailLogExistsHtml;
 
     /**
      * Contains 1 if a text logfile exists and 0 if no text logfile exists
      *
-     * @var integer
+     * @var int
      */
     public $emailLogExistsText;
 
     /**
      * Contains the timestamp when the email was sent
      *
-     * @var integer
+     * @var int
      */
     public $sentDate;
 
@@ -133,6 +133,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setDocumentId($id)
@@ -144,6 +145,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $requestUri
+     *
      * @return $this
      */
     public function setRequestUri($requestUri)
@@ -166,7 +168,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the email log id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -175,6 +177,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -186,6 +189,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $subject
+     *
      * @return $this
      */
     public function setSubject($subject)
@@ -209,7 +213,9 @@ class Log extends Model\AbstractModel
      * Returns the EmailLog entry by the given id
      *
      * @static
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return Log|null
      */
     public static function getById($id)
@@ -239,6 +245,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $params
+     *
      * @return $this
      */
     public function setParams($params)
@@ -261,7 +268,8 @@ class Log extends Model\AbstractModel
     /**
      * Sets the modification date
      *
-     * @param integer $modificationDate
+     * @param int $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -274,7 +282,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the modification date
      *
-     * @return integer - Timestamp
+     * @return int - Timestamp
      */
     public function getModificationDate()
     {
@@ -284,7 +292,8 @@ class Log extends Model\AbstractModel
     /**
      * Sets the sent date and time
      *
-     * @param integer $sentDate - Timestamp
+     * @param int $sentDate - Timestamp
+     *
      * @return $this
      */
     public function setSentDate($sentDate)
@@ -297,7 +306,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the sent date and time as unix timestamp
      *
-     * @return integer
+     * @return int
      */
     public function getSentDate()
     {
@@ -318,7 +327,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns 1 if a html email log file exists and 0 if no html log file exists
      *
-     * @return integer - 0 or 1
+     * @return int - 0 or 1
      */
     public function getEmailLogExistsHtml()
     {
@@ -339,7 +348,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns 1 if a text email log file exists and 0 if no text log file exists
      *
-     * @return integer - 0 or 1
+     * @return int - 0 or 1
      */
     public function getEmailLogExistsText()
     {
@@ -380,11 +389,11 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-
     /**
      * Sets the creation date (unix timestamp)
      *
-     * @param integer $creationDate
+     * @param int $creationDate
+     *
      * @return $this
      *
      * @todo: creationDate not found in class
@@ -399,7 +408,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the creation date as unix timestamp
      *
-     * @return integer
+     * @return int
      */
     public function getCreationDate()
     {
@@ -443,6 +452,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $to
+     *
      * @return $this
      */
     public function setTo($to)
@@ -474,6 +484,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $cc
+     *
      * @return $this
      */
     public function setCc($cc)
@@ -505,6 +516,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $bcc
+     *
      * @return $this
      */
     public function setBcc($bcc)
@@ -536,6 +548,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $from
+     *
      * @return $this
      */
     public function setFrom($from)
@@ -557,6 +570,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $html
+     *
      * @return $this
      */
     public function setBodyHtml($html)
@@ -578,6 +592,7 @@ class Log extends Model\AbstractModel
 
     /**
      * @param $text
+     *
      * @return $this
      */
     public function setBodyText($text)
@@ -599,7 +614,9 @@ class Log extends Model\AbstractModel
 
     /**
      * Helper to get the recipients as array
+     *
      * @param $data
+     *
      * @return array
      */
     protected function buildArray($data)

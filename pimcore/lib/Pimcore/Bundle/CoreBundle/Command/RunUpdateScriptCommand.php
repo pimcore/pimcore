@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Update;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Update;
 
 class RunUpdateScriptCommand extends AbstractCommand
 {
@@ -27,7 +27,7 @@ class RunUpdateScriptCommand extends AbstractCommand
         $this
             ->setName('deployment:run-update-script')
             ->setDescription('Re-run an update script of a certain build')
-            ->addArgument("buildNumber", InputArgument::REQUIRED, "Build number of the script you want to run again");
+            ->addArgument('buildNumber', InputArgument::REQUIRED, 'Build number of the script you want to run again');
     }
 
     /**
@@ -35,13 +35,13 @@ class RunUpdateScriptCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $build = intval($input->getArgument("buildNumber"));
+        $build = intval($input->getArgument('buildNumber'));
 
-        $downloadUrl = "https://" . Update::$updateHost . "/v2/getUpdateFiles.php?for=" . $build;
+        $downloadUrl = 'https://' . Update::$updateHost . '/v2/getUpdateFiles.php?for=' . $build;
 
         Update::downloadData($build, $downloadUrl);
-        Update::executeScript($build, "preupdate");
-        Update::executeScript($build, "postupdate");
+        Update::executeScript($build, 'preupdate');
+        Update::executeScript($build, 'postupdate');
         Update::cleanup();
     }
 }

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class TmpStore extends Model\AbstractModel
 {
-
     /**
      * @var string
      */
@@ -76,6 +76,7 @@ class TmpStore extends Model\AbstractModel
      * @param $data
      * @param null $tag
      * @param null $lifetime
+     *
      * @return mixed
      */
     public static function add($id, $data, $tag = null, $lifetime = null)
@@ -95,6 +96,7 @@ class TmpStore extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public static function delete($id)
@@ -106,6 +108,7 @@ class TmpStore extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return null|TmpStore
      */
     public static function get($id)
@@ -122,9 +125,6 @@ class TmpStore extends Model\AbstractModel
         return null;
     }
 
-    /**
-     *
-     */
     public static function cleanup()
     {
         $instance = self::getInstance();
@@ -133,6 +133,7 @@ class TmpStore extends Model\AbstractModel
 
     /**
      * @param $tag
+     *
      * @return array
      */
     public static function getIdsByTag($tag)
@@ -208,7 +209,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSerialized()
     {
@@ -216,7 +217,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $serialized
+     * @param bool $serialized
      */
     public function setSerialized($serialized)
     {
@@ -241,6 +242,7 @@ class TmpStore extends Model\AbstractModel
 
     /**
      * @param null $lifetime
+     *
      * @return mixed
      */
     public function update($lifetime = null)

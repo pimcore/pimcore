@@ -42,6 +42,7 @@ class Check implements \ArrayAccess
 
     /**
      * Check constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
@@ -105,7 +106,7 @@ class Check implements \ArrayAccess
     public function getMessage()
     {
         if (empty($this->message)) {
-            return $this->getName() . " is required.";
+            return $this->getName() . ' is required.';
         }
 
         return $this->message;
@@ -121,6 +122,7 @@ class Check implements \ArrayAccess
 
     /**
      * @param string $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -130,11 +132,12 @@ class Check implements \ArrayAccess
 
     /**
      * @param string $offset
+     *
      * @return string
      */
     public function offsetGet($offset)
     {
-        return $this->{"get".$offset}();
+        return $this->{'get'.$offset}();
     }
 
     /**
@@ -143,7 +146,7 @@ class Check implements \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->{"set".$offset}($value);
+        $this->{'set'.$offset}($value);
     }
 
     /**

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,10 +24,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     *
-     */
-    const TABLE_NAME_RELATIONS = "classificationstore_collectionrelations";
+    const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
 
     /**
      * @param null $colId
@@ -42,9 +40,8 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setGroupId($groupId);
         }
 
-
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_RELATIONS
-            . "," . Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS. " WHERE colId = ? AND groupId = `?", $this->model->getColId(), $this->model->groupId);
+        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_RELATIONS
+            . ',' . Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS. ' WHERE colId = ? AND groupId = `?', $this->model->getColId(), $this->model->groupId);
 
         $this->assignVariablesToModel($data);
     }
@@ -52,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return boolean
+     * @return bool
      *
      * @todo: update don't returns anything
      */
@@ -67,8 +64,8 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
-            "colId" => $this->model->getColId(),
-            "groupId" => $this->model->getGroupId()
+            'colId' => $this->model->getColId(),
+            'groupId' => $this->model->getGroupId()
         ]);
     }
 
@@ -104,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return boolean
+     * @return bool
      */
     public function create()
     {

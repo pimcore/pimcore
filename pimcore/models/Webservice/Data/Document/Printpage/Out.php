@@ -10,13 +10,14 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Webservice\Data\Document\Printpage;
 
-use \Pimcore\Model\Webservice\Data\Document;
+use Pimcore\Model\Webservice\Data\Document;
 
 class Out extends Document\Printpage
 {
@@ -26,17 +27,17 @@ class Out extends Document\Printpage
     public $path;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userModification;
 }

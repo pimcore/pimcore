@@ -52,6 +52,7 @@ class Ecommerce extends Tracker implements ICheckoutComplete
     /**
      * @param Transaction $transaction
      * @param ProductAction[] $items
+     *
      * @return mixed
      */
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
@@ -71,7 +72,9 @@ class Ecommerce extends Tracker implements ICheckoutComplete
      * Transform transaction into classic analytics data array
      *
      * @note city, state, country were dropped as they were optional and never used
+     *
      * @param Transaction $transaction
+     *
      * @return array
      */
     protected function transformTransaction(Transaction $transaction)
@@ -90,6 +93,7 @@ class Ecommerce extends Tracker implements ICheckoutComplete
      * Transform product action into classic analytics data array
      *
      * @param ProductAction $item
+     *
      * @return array
      */
     protected function transformProductAction(ProductAction $item)

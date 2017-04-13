@@ -205,7 +205,7 @@ class QueryBuilder
      *     $qb->execute()->fetchAll();
      * </code>
      *
-     * @param string|integer $key   The parameter position or name.
+     * @param string|int $key   The parameter position or name.
      * @param mixed          $value The parameter value.
      * @param string|null    $type  One of the PDO::PARAM_* constants.
      *
@@ -309,7 +309,9 @@ class QueryBuilder
      * Set bind variables
      *
      * @deprecated Use setParameters() instead
+     *
      * @param mixed $bind
+     *
      * @return self
      */
     public function bind($bind)
@@ -327,6 +329,7 @@ class QueryBuilder
      * Makes the query SELECT DISTINCT.
      *
      * @param bool $flag Whether or not the SELECT is DISTINCT (default true).
+     *
      * @return self
      */
     public function distinct($flag = true)
@@ -358,6 +361,7 @@ class QueryBuilder
      *                                         relating correlation name to table name.
      * @param  array|string|Expression $cols The columns to select from this table.
      * @param  string $schema The schema name to specify, if any.
+     *
      * @return self
      */
     public function from($name, $cols = '*', $schema = null)
@@ -373,6 +377,7 @@ class QueryBuilder
      *
      * @param  array|string|Expression $cols The columns to select from this table.
      * @param  string $correlationName Correlation name of target table. OPTIONAL
+     *
      * @return self
      */
     public function columns($cols = '*', $correlationName = null)
@@ -383,7 +388,7 @@ class QueryBuilder
         }
 
         if (!array_key_exists($correlationName, $this->_parts[self::FROM])) {
-            throw new \Exception("No table has been specified for the FROM clause");
+            throw new \Exception('No table has been specified for the FROM clause');
         }
 
         $this->_tableCols($correlationName, $cols);
@@ -406,13 +411,14 @@ class QueryBuilder
      * </code>
      *
      * @param  array $select Array of select clauses for the union.
+     *
      * @return self
      */
     public function union($select = [], $type = self::SQL_UNION)
     {
         if (!is_array($select)) {
             throw new \Exception(
-                "union() only accepts an array of QueryBuilder instances of sql query strings."
+                'union() only accepts an array of QueryBuilder instances of sql query strings.'
             );
         }
 
@@ -437,6 +443,7 @@ class QueryBuilder
      * @param  string $cond Join on this condition.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function join($name, $cond, $cols = self::SQL_WILDCARD, $schema = null)
@@ -458,6 +465,7 @@ class QueryBuilder
      * @param  string $cond Join on this condition.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function joinInner($name, $cond, $cols = self::SQL_WILDCARD, $schema = null)
@@ -479,6 +487,7 @@ class QueryBuilder
      * @param  string $cond Join on this condition.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function joinLeft($name, $cond, $cols = self::SQL_WILDCARD, $schema = null)
@@ -501,6 +510,7 @@ class QueryBuilder
      * @param  string $cond Join on this condition.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function joinRight($name, $cond, $cols = self::SQL_WILDCARD, $schema = null)
@@ -523,6 +533,7 @@ class QueryBuilder
      * @param  string $cond Join on this condition.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function joinFull($name, $cond, $cols = self::SQL_WILDCARD, $schema = null)
@@ -540,6 +551,7 @@ class QueryBuilder
      * @param  array|string|Expression $name The table name.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function joinCross($name, $cols = self::SQL_WILDCARD, $schema = null)
@@ -560,6 +572,7 @@ class QueryBuilder
      * @param  array|string|Expression $name The table name.
      * @param  array|string $cols The columns to select from the joined table.
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
      */
     public function joinNatural($name, $cols = self::SQL_WILDCARD, $schema = null)
@@ -597,6 +610,7 @@ class QueryBuilder
      * @param string   $cond  The WHERE condition.
      * @param mixed    $value OPTIONAL The value to quote into the condition.
      * @param int      $type  OPTIONAL The type of the given value
+     *
      * @return self
      */
     public function where($cond, $value = null, $type = null)
@@ -614,6 +628,7 @@ class QueryBuilder
      * @param string   $cond  The WHERE condition.
      * @param mixed    $value OPTIONAL The value to quote into the condition.
      * @param int      $type  OPTIONAL The type of the given value
+     *
      * @return self
      *
      * @see where()
@@ -629,6 +644,7 @@ class QueryBuilder
      * Adds grouping to the query.
      *
      * @param  array|string $spec The column(s) to group by.
+     *
      * @return self
      */
     public function group($spec)
@@ -659,6 +675,7 @@ class QueryBuilder
      * @param string $cond The HAVING condition.
      * @param mixed    $value OPTIONAL The value to quote into the condition.
      * @param int      $type  OPTIONAL The type of the given value
+     *
      * @return self
      */
     public function having($cond, $value = null, $type = null)
@@ -684,6 +701,7 @@ class QueryBuilder
      * @param string $cond The HAVING condition.
      * @param mixed    $value OPTIONAL The value to quote into the condition.
      * @param int      $type  OPTIONAL The type of the given value
+     *
      * @return self
      *
      * @see having()
@@ -707,6 +725,7 @@ class QueryBuilder
      * Adds a row order to the query.
      *
      * @param mixed $spec The column(s) and direction to order by.
+     *
      * @return self
      */
     public function order($spec)
@@ -749,6 +768,7 @@ class QueryBuilder
      *
      * @param int $count OPTIONAL The number of rows to return.
      * @param int $offset OPTIONAL Start returning after this many rows.
+     *
      * @return self
      */
     public function limit($count = null, $offset = null)
@@ -764,11 +784,12 @@ class QueryBuilder
      *
      * @param int $page Limit results to this page number.
      * @param int $rowCount Use this many rows per page.
+     *
      * @return self
      */
     public function limitPage($page, $rowCount)
     {
-        $page     = ($page > 0)     ? $page     : 1;
+        $page     = ($page > 0) ? $page : 1;
         $rowCount = ($rowCount > 0) ? $rowCount : 1;
         $this->_parts[self::LIMIT_COUNT]  = (int) $rowCount;
         $this->_parts[self::LIMIT_OFFSET] = (int) $rowCount * ($page - 1);
@@ -780,6 +801,7 @@ class QueryBuilder
      * Makes the query SELECT FOR UPDATE.
      *
      * @param bool $flag Whether or not the SELECT is FOR UPDATE (default true).
+     *
      * @return self
      */
     public function forUpdate($flag = true)
@@ -793,7 +815,9 @@ class QueryBuilder
      * Get part of the structured information for the current query.
      *
      * @param string $part
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getPart($part)
@@ -809,8 +833,9 @@ class QueryBuilder
     /**
      * Executes the current select object and returns the result
      *
-     * @param integer $fetchMode OPTIONAL
+     * @param int $fetchMode OPTIONAL
      * @param  mixed  $bind An array of data to bind to the placeholders.
+     *
      * @return \Doctrine\DBAL\Driver\Statement
      */
     public function query($fetchMode = null, $bind = [])
@@ -863,6 +888,7 @@ class QueryBuilder
      * Clear parts of the Select object, or an individual part.
      *
      * @param string $part OPTIONAL
+     *
      * @return self
      */
     public function reset($part = null)
@@ -900,7 +926,9 @@ class QueryBuilder
      * @param  string $cond Join on this condition
      * @param  array|string $cols The columns to select from the joined table
      * @param  string $schema The database name to specify, if any.
+     *
      * @return self
+     *
      * @throws \Exception
      */
     protected function _join($type, $name, $cond, $cols, $schema = null)
@@ -910,7 +938,7 @@ class QueryBuilder
         }
 
         if (count($this->_parts[self::UNION])) {
-            throw new \Exception("Invalid use of table with " . self::SQL_UNION);
+            throw new \Exception('Invalid use of table with ' . self::SQL_UNION);
         }
 
         if (empty($name)) {
@@ -929,7 +957,7 @@ class QueryBuilder
                 }
                 break;
             }
-        } elseif ($name instanceof Expression|| $name instanceof self) {
+        } elseif ($name instanceof Expression || $name instanceof self) {
             $tableName = $name;
             $correlationName = $this->_uniqueCorrelation('t');
         } elseif (preg_match('/^(.+)\s+AS\s+(.+)$/i', $name, $m)) {
@@ -1016,7 +1044,7 @@ class QueryBuilder
     public function _joinUsing($type, $name, $cond, $cols = '*', $schema = null)
     {
         if (empty($this->_parts[self::FROM])) {
-            throw new \Exception("You can only perform a joinUsing after specifying a FROM table");
+            throw new \Exception('You can only perform a joinUsing after specifying a FROM table');
         }
 
         $join  = $this->_adapter->quoteIdentifier(key($this->_parts[self::FROM]), true);
@@ -1037,6 +1065,7 @@ class QueryBuilder
      * Generate a unique correlation name
      *
      * @param string|array $name A qualified identifier.
+     *
      * @return string A unique correlation name.
      */
     private function _uniqueCorrelation($name)
@@ -1047,7 +1076,7 @@ class QueryBuilder
         } else {
             // Extract just the last name of a qualified table name
             $dot = strrpos($name, '.');
-            $c = ($dot === false) ? $name : substr($name, $dot+1);
+            $c = ($dot === false) ? $name : substr($name, $dot + 1);
         }
         for ($i = 2; array_key_exists($c, $this->_parts[self::FROM]); ++$i) {
             $c = $name . '_' . (string) $i;
@@ -1063,6 +1092,7 @@ class QueryBuilder
      * @param  array|string $cols The list of columns; preferably as
      * an array, but possibly as a string containing one column.
      * @param  bool|string True if it should be prepended, a correlation name if it should be inserted
+     *
      * @return void
      */
     protected function _tableCols($correlationName, $cols, $afterCorrelationName = null)
@@ -1135,20 +1165,21 @@ class QueryBuilder
      * @param string   $condition
      * @param mixed    $value  optional
      * @param string   $type   optional
-     * @param boolean  $bool  true = AND, false = OR
+     * @param bool  $bool  true = AND, false = OR
+     *
      * @return string  clause
      */
     protected function _where($condition, $value = null, $type = null, $bool = true)
     {
         if (count($this->_parts[self::UNION])) {
-            throw new \Exception("Invalid use of where clause with " . self::SQL_UNION);
+            throw new \Exception('Invalid use of where clause with ' . self::SQL_UNION);
         }
 
         if ($value !== null) {
             $condition = $this->_adapter->quoteInto($condition, $value, $type);
         }
 
-        $cond = "";
+        $cond = '';
         if ($this->_parts[self::WHERE]) {
             if ($bool === true) {
                 $cond = self::SQL_AND . ' ';
@@ -1172,6 +1203,7 @@ class QueryBuilder
      * Return a quoted schema name
      *
      * @param string   $schema  The schema name OPTIONAL
+     *
      * @return string|null
      */
     protected function _getQuotedSchema($schema = null)
@@ -1188,6 +1220,7 @@ class QueryBuilder
      *
      * @param string   $tableName        The table name
      * @param string   $correlationName  The correlation name OPTIONAL
+     *
      * @return string
      */
     protected function _getQuotedTable($tableName, $correlationName = null)
@@ -1199,6 +1232,7 @@ class QueryBuilder
      * Render DISTINCT clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderDistinct($sql)
@@ -1214,6 +1248,7 @@ class QueryBuilder
      * Render DISTINCT clause
      *
      * @param string   $sql SQL query
+     *
      * @return string|null
      */
     protected function _renderColumns($sql)
@@ -1247,6 +1282,7 @@ class QueryBuilder
      * Render FROM clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderFrom($sql)
@@ -1295,6 +1331,7 @@ class QueryBuilder
      * Render UNION query
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderUnion($sql)
@@ -1320,6 +1357,7 @@ class QueryBuilder
      * Render WHERE clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderWhere($sql)
@@ -1335,6 +1373,7 @@ class QueryBuilder
      * Render GROUP clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderGroup($sql)
@@ -1354,6 +1393,7 @@ class QueryBuilder
      * Render HAVING clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderHaving($sql)
@@ -1369,6 +1409,7 @@ class QueryBuilder
      * Render ORDER clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderOrder($sql)
@@ -1398,6 +1439,7 @@ class QueryBuilder
      * Render LIMIT OFFSET clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderLimitoffset($sql)
@@ -1428,6 +1470,7 @@ class QueryBuilder
      * Render FOR UPDATE clause
      *
      * @param string   $sql SQL query
+     *
      * @return string
      */
     protected function _renderForupdate($sql)
@@ -1445,7 +1488,9 @@ class QueryBuilder
      *
      * @param string $method
      * @param array $args OPTIONAL query modifier
+     *
      * @return self
+     *
      * @throws \Exception If an invalid method is called.
      */
     public function __call($method, array $args)
@@ -1517,9 +1562,6 @@ class QueryBuilder
         return (string)$sql;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function __sleep()
     {
         $vars      = get_object_vars($this);

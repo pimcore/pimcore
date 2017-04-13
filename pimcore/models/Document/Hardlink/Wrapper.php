@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,7 +21,6 @@ use Pimcore\Model\Document;
 
 trait Wrapper
 {
-
     /**
      * @var Document\Hardlink
      */
@@ -84,7 +84,6 @@ trait Wrapper
                 }
             }
 
-
             $properties = array_merge($sourceProperties, $hardLinkProperties);
             $this->setProperties($properties);
         }
@@ -94,6 +93,7 @@ trait Wrapper
 
     /**
      * @param bool $unpublished
+     *
      * @return null
      */
     public function getChildren($unpublished = false)
@@ -110,7 +110,7 @@ trait Wrapper
                     if ($c) {
                         $c->setHardLinkSource($hardLink);
                         $c->setSourceDocument($sourceDocument);
-                        $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
+                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
 
                         $children[] = $c;
                     }
@@ -142,11 +142,12 @@ trait Wrapper
      */
     protected function raiseHardlinkError()
     {
-        throw new \Exception("Method no supported by hardlinked documents");
+        throw new \Exception('Method no supported by hardlinked documents');
     }
 
     /**
      * @param Document\Hardlink $hardLinkSource
+     *
      * @return $this
      */
     public function setHardLinkSource($hardLinkSource)

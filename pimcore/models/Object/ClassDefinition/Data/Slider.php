@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,21 +22,20 @@ use Pimcore\Model\Object;
 
 class Slider extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "slider";
+    public $fieldtype = 'slider';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
-     * @var integer
+     * @var int
      */
     public $height;
 
@@ -50,7 +50,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public $maxValue;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $vertical;
 
@@ -69,24 +69,24 @@ class Slider extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "double";
+    public $queryColumnType = 'double';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "double";
+    public $columnType = 'double';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "float";
+    public $phpdocType = 'float';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -94,7 +94,8 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -105,7 +106,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -113,7 +114,8 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -122,7 +124,6 @@ class Slider extends Model\Object\ClassDefinition\Data
 
         return $this;
     }
-
 
     /**
      * @return float
@@ -134,6 +135,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param float $minValue
+     *
      * @return $this
      */
     public function setMinValue($minValue)
@@ -153,7 +155,9 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $maxValue
+     *
      * @return $this
+     *
      * @internal param float $minValue
      */
     public function setMaxValue($maxValue)
@@ -164,7 +168,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getVertical()
     {
@@ -172,16 +176,16 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getDefaultValue()
     {
         return null;
     }
 
-
     /**
-     * @param boolean $vertical
+     * @param bool $vertical
+     *
      * @return $this
      */
     public function setVertical($vertical)
@@ -201,6 +205,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param float $increment
+     *
      * @return $this
      */
     public function setIncrement($increment)
@@ -209,7 +214,6 @@ class Slider extends Model\Object\ClassDefinition\Data
 
         return $this;
     }
-
 
     /**
      * @return int
@@ -221,6 +225,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param int $decimalPrecision
+     *
      * @return $this
      */
     public function setDecimalPrecision($decimalPrecision)
@@ -232,9 +237,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return float
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -244,9 +251,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return float
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -256,9 +265,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return float
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -268,9 +279,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return float
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -280,9 +293,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param float $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return float
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -292,9 +307,11 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param float $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return float
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -306,24 +323,25 @@ class Slider extends Model\Object\ClassDefinition\Data
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and $data === null) {
-            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ] ".strval($data));
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ] '.strval($data));
         }
 
         if (!empty($data) and !is_numeric($data)) {
-            throw new Model\Element\ValidationException("invalid slider data");
+            throw new Model\Element\ValidationException('invalid slider data');
         }
     }
-
 
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])

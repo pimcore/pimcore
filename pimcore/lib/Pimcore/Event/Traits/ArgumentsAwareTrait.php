@@ -16,7 +16,6 @@ namespace Pimcore\Event\Traits;
 
 trait ArgumentsAwareTrait
 {
-
     /**
      * Array of arguments.
      *

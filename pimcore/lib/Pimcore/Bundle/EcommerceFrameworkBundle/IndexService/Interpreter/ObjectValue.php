@@ -21,11 +21,11 @@ class ObjectValue implements IInterpreter
         $targetList = $config->target;
 
         if (empty($targetList->fieldname)) {
-            throw new \Exception("target fieldname missing.");
+            throw new \Exception('target fieldname missing.');
         }
 
         if ($value instanceof \Pimcore\Model\Object\AbstractObject) {
-            $fieldGetter = "get" . ucfirst($targetList->fieldname);
+            $fieldGetter = 'get' . ucfirst($targetList->fieldname);
 
             if (method_exists($value, $fieldGetter)) {
                 return $value->$fieldGetter($targetList->locale);

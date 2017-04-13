@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Test\RestTestCase;
 
 class ApiKeyAuthenticationTest extends RestTestCase

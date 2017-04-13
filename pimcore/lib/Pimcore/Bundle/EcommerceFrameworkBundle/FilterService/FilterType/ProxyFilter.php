@@ -26,26 +26,28 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ProxyFilter extends AbstractFilterType
 {
-    /** @var $proxy AbstractFilterType*/
+    /** @var $proxy AbstractFilterType */
     private $proxy;
     protected $field;
 
     /**
      * ProxyFilter constructor.
+     *
      * @param string $script
      * @param \Pimcore\Config\Config $config
      * @param TranslatorInterface $translator
      * @param EngineInterface $engine
+     *
      * @throws \Exception
      */
     public function __construct($script, $config, TranslatorInterface $translator, EngineInterface $engine)
     {
         parent::__construct($script, $config, $translator, $engine);
         if (!$config->proxyclass) {
-            throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting proxyclass is missing!");
+            throw new \Exception('wrong configuration for ' .  __CLASS__ . ': config setting proxyclass is missing!');
         }
         if (!$config->field) {
-            throw new \Exception("wrong configuration for " .  __CLASS__ . ": config setting field is missing!");
+            throw new \Exception('wrong configuration for ' .  __CLASS__ . ': config setting field is missing!');
         }
 
         $this->proxy = new $config->proxyclass($script, $config, $translator, $engine);

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -32,13 +33,12 @@ class In extends Model\Webservice\Data\Document\Link
 
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
-
         if ($idMapper) {
-            $sourceId = $idMapper->getMappedId("document", $sourceId);
+            $sourceId = $idMapper->getMappedId('document', $sourceId);
         }
 
         if ($idMapper) {
-            $idMapper->recordMappingFailure("object", $object->getId(), "document", $sourceId);
+            $idMapper->recordMappingFailure('object', $object->getId(), 'document', $sourceId);
         }
 
         $object->setSourceId = $sourceId;

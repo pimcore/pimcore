@@ -21,10 +21,9 @@ use Pimcore\Model\Object\OnlineShopTaxClass;
  */
 class TaxEntry
 {
-    const CALCULATION_MODE_COMBINE = "combine";
-    const CALCULATION_MODE_ONE_AFTER_ANOTHER = "oneAfterAnother";
-    const CALCULATION_MODE_FIXED = "fixed";
-
+    const CALCULATION_MODE_COMBINE = 'combine';
+    const CALCULATION_MODE_ONE_AFTER_ANOTHER = 'oneAfterAnother';
+    const CALCULATION_MODE_FIXED = 'fixed';
 
     /**
      * @var \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry
@@ -54,9 +53,9 @@ class TaxEntry
         return $this->entry;
     }
 
-
     /**
      * TaxEntry constructor.
+     *
      * @param $percent
      * @param $amount
      * @param \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry|null $entry
@@ -125,13 +124,12 @@ class TaxEntry
         $this->taxId = $taxId;
     }
 
-
-
     /**
      * Converts tax rate configuration of given OnlineShopTaxClass to TaxEntries that can be used for
      * tax calculation.
      *
      * @param OnlineShopTaxClass $taxClass
+     *
      * @return TaxEntry[]
      */
     public static function convertTaxEntries(OnlineShopTaxClass $taxClass)
@@ -139,7 +137,7 @@ class TaxEntry
         $convertedTaxEntries = [];
         if ($taxClass->getTaxEntries()) {
             foreach ($taxClass->getTaxEntries() as $index => $entry) {
-                $convertedTaxEntries[] = new TaxEntry($entry->getPercent(), 0, $entry->getName() . "-" . $entry->getPercent(), $entry);
+                $convertedTaxEntries[] = new self($entry->getPercent(), 0, $entry->getName() . '-' . $entry->getPercent(), $entry);
             }
         }
 

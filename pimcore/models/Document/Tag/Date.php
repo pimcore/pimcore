@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Date extends Model\Document\Tag
 {
-
     /**
      * Contains the date
      *
@@ -31,18 +31,19 @@ class Date extends Model\Document\Tag
      */
     public $date;
 
-
     /**
      * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "date";
+        return 'date';
     }
 
     /**
      * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -69,17 +70,18 @@ class Date extends Model\Document\Tag
      */
     public function frontend()
     {
-        if (!isset($this->options["format"]) || !$this->options["format"]) {
-            $this->options["format"] = \DateTime::ISO8601;
+        if (!isset($this->options['format']) || !$this->options['format']) {
+            $this->options['format'] = \DateTime::ISO8601;
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($this->options["format"]);
+            return $this->date->formatLocalized($this->options['format']);
         }
     }
 
     /**
      * @see Tag::getDataForResource
+     *
      * @return int|null
      */
     public function getDataForResource()
@@ -94,7 +96,9 @@ class Date extends Model\Document\Tag
 
     /**
      * @see TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -108,7 +112,9 @@ class Date extends Model\Document\Tag
 
     /**
      * @see TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -122,7 +128,7 @@ class Date extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -140,8 +146,9 @@ class Date extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param $idMapper
+     *
      * @throws \Exception
-    */
+     */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         if (!$wsElement or empty($wsElement->value)) {
@@ -149,15 +156,17 @@ class Date extends Model\Document\Tag
         } elseif (is_numeric($wsElement->value)) {
             $this->setDateFromTimestamp($wsElement->value);
         } else {
-            throw new \Exception("cannot get document tag date from WS - invalid value [  ".$wsElement->value." ]");
+            throw new \Exception('cannot get document tag date from WS - invalid value [  '.$wsElement->value.' ]');
         }
     }
 
     /**
      * Returns the current tag's data for web service export
+     *
      * @param $document
      * @param mixed $params
      * @abstract
+     *
      * @return array
      */
     public function getForWebserviceExport($document = null, $params = [])
@@ -174,7 +183,7 @@ class Date extends Model\Document\Tag
      */
     protected function setDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag("zend_date")) {
+        if (\Pimcore\Config::getFlag('zend_date')) {
             $this->date = new \Pimcore\Date($timestamp);
         } else {
             $this->date = new \Carbon\Carbon();

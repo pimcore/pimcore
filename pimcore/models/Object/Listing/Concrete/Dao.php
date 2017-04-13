@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -27,7 +28,6 @@ use Pimcore\Tool;
  */
 class Dao extends Model\Object\Listing\Dao
 {
-
     /**
      * @var bool
      */
@@ -43,15 +43,16 @@ class Dao extends Model\Object\Listing\Dao
      */
     protected $totalCount = 0;
 
-    /** @var  Callback function */
+    /** @var Callback function */
     protected $onCreateQueryCallback;
-
 
     /**
      * get select query
+     *
      * @param bool|false $forceNew
      *
      * @return QueryBuilder
+     *
      * @throws \Exception
      */
     public function getQuery($forceNew = false)
@@ -61,7 +62,7 @@ class Dao extends Model\Object\Listing\Dao
         $select = $this->db->select();
 
         // create base
-        $field = $this->getTableName() . ".o_id";
+        $field = $this->getTableName() . '.o_id';
         $select->from(
             [ $this->getTableName() ], [
                 new Expression(sprintf('%s as o_id', $this->getSelectPart($field, $field))), 'o_type'
@@ -93,6 +94,7 @@ class Dao extends Model\Object\Listing\Dao
 
     /**
      * @return array
+     *
      * @throws
      */
     public function loadIdList()
@@ -106,7 +108,9 @@ class Dao extends Model\Object\Listing\Dao
 
     /**
      * @param $e
+     *
      * @return array
+     *
      * @throws
      * @throws \Exception
      */
@@ -114,7 +118,7 @@ class Dao extends Model\Object\Listing\Dao
     {
 
         // create view if it doesn't exist already // HACK
-        $pdoMySQL = preg_match("/Base table or view not found/", $e->getMessage());
+        $pdoMySQL = preg_match('/Base table or view not found/', $e->getMessage());
         $Mysqli = preg_match("/Table (.*) doesn't exist/", $e->getMessage());
 
         if (($Mysqli || $pdoMySQL) && $this->firstException) {
@@ -132,6 +136,7 @@ class Dao extends Model\Object\Listing\Dao
 
     /**
      * @return string
+     *
      * @throws \Exception
      * @throws \Exception
      */
@@ -140,12 +145,12 @@ class Dao extends Model\Object\Listing\Dao
         if (empty($this->tableName)) {
 
             // default
-            $this->tableName = "object_" . $this->model->getClassId();
+            $this->tableName = 'object_' . $this->model->getClassId();
 
             if (!$this->model->getIgnoreLocalizedFields()) {
                 $language = null;
                 // check for a localized field and if they should be used for this list
-                if (property_exists("\\Pimcore\\Model\\Object\\" . ucfirst($this->model->getClassName()), "localizedfields")) {
+                if (property_exists('\\Pimcore\\Model\\Object\\' . ucfirst($this->model->getClassName()), 'localizedfields')) {
                     if ($this->model->getLocale()) {
                         if (Tool::isValidLanguage((string) $this->model->getLocale())) {
                             $language = (string) $this->model->getLocale();
@@ -153,7 +158,7 @@ class Dao extends Model\Object\Listing\Dao
                     }
 
                     if (!$language) {
-                        $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+                        $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
                         if (Tool::isValidLanguage((string) $locale)) {
                             $language = (string) $locale;
                         }
@@ -164,9 +169,9 @@ class Dao extends Model\Object\Listing\Dao
                     }
 
                     if (!$language) {
-                        throw new \Exception("No valid language/locale set. Use \$list->setLocale() to add a language to the listing, or register a global locale");
+                        throw new \Exception('No valid language/locale set. Use $list->setLocale() to add a language to the listing, or register a global locale');
                     }
-                    $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
+                    $this->tableName = 'object_localized_' . $this->model->getClassId() . '_' . $language;
                 }
             }
         }
@@ -174,23 +179,22 @@ class Dao extends Model\Object\Listing\Dao
         return $this->tableName;
     }
 
-
     /**
      * @param string $defaultString
      * @param string $column
+     *
      * @return string
      */
-    protected function getSelectPart($defaultString = "", $column = "oo_id")
+    protected function getSelectPart($defaultString = '', $column = 'oo_id')
     {
         $selectPart = $defaultString;
         $fieldCollections = $this->model->getFieldCollections();
         if (!empty($fieldCollections)) {
-            $selectPart = "DISTINCT " . $column;
+            $selectPart = 'DISTINCT ' . $column;
         }
 
         return $selectPart;
     }
-
 
     /**
      * @param QueryBuilder $select
@@ -208,9 +212,8 @@ class Dao extends Model\Object\Listing\Dao
                 $table = 'object_collection_' . $fc['type'] . '_' . $this->model->getClassId();
                 $name = $fc['type'];
                 if (!empty($fc['fieldname'])) {
-                    $name .= "~" . $fc['fieldname'];
+                    $name .= '~' . $fc['fieldname'];
                 }
-
 
                 // set join condition
                 $condition = <<<CONDITION
@@ -224,14 +227,12 @@ CONDITION;
 CONDITION;
                 }
 
-
                 // add join
                 $select->joinLeft(
                     [ $name => $table ], $condition, ''
                 );
             }
         }
-
 
         // add brick's
         $objectbricks = $this->model->getObjectbricks();
@@ -241,7 +242,6 @@ CONDITION;
                 // join info
                 $table = 'object_brick_query_' . $ob . '_' . $this->model->getClassId();
                 $name = $ob;
-
 
                 // add join
                 $select->joinLeft(
@@ -253,7 +253,6 @@ CONDITION
                 );
             }
         }
-
 
         return $this;
     }

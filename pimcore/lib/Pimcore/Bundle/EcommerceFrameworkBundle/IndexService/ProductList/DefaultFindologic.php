@@ -61,12 +61,12 @@ class DefaultFindologic implements IProductList
     protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $limit = 10;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $offset = 0;
 
@@ -82,6 +82,7 @@ class DefaultFindologic implements IProductList
 
     /**
      * json result from findologic
+     *
      * @var string[]
      */
     protected $response;
@@ -90,7 +91,6 @@ class DefaultFindologic implements IProductList
      * @var string[]
      */
     protected $groupedValues;
-
 
     /**
      * @var string[]
@@ -137,7 +137,6 @@ class DefaultFindologic implements IProductList
      */
     protected $timeout = 3;
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig
      */
@@ -147,12 +146,11 @@ class DefaultFindologic implements IProductList
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = \Pimcore::getContainer()->get("monolog.logger.pimcore_ecommerce_findologic");
-
+        $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_findologic');
 
         // set defaults for required params
-        $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER["REMOTE_ADDR"];
-        $this->referer = $_SERVER["HTTP_REFERER"];
+        $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
+        $this->referer = $_SERVER['HTTP_REFERER'];
     }
 
     /**
@@ -167,8 +165,6 @@ class DefaultFindologic implements IProductList
         return $this->products;
     }
 
-
-
     /**
      * @param string $condition
      * @param string $fieldname
@@ -176,7 +172,7 @@ class DefaultFindologic implements IProductList
     public function addCondition($condition, $fieldname = '')
     {
         $this->products = null;
-        $this->conditions[ $fieldname ][] = $condition;
+        $this->conditions[$fieldname][] = $condition;
     }
 
     /**
@@ -190,7 +186,6 @@ class DefaultFindologic implements IProductList
         unset($this->conditions[$fieldname]);
     }
 
-
     /**
      * Adds query condition to product list for fulltext search
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
@@ -199,7 +194,7 @@ class DefaultFindologic implements IProductList
      * @param $condition
      * @param string $fieldname
      */
-    public function addQueryCondition($condition, $fieldname = "")
+    public function addQueryCondition($condition, $fieldname = '')
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
@@ -209,6 +204,7 @@ class DefaultFindologic implements IProductList
      * Reset query condition for fieldname
      *
      * @param $fieldname
+     *
      * @return mixed
      */
     public function resetQueryCondition($fieldname)
@@ -216,8 +212,6 @@ class DefaultFindologic implements IProductList
         $this->products = null;
         unset($this->queryConditions[$fieldname]);
     }
-
-
 
     /**
      * resets all conditions of product list
@@ -230,7 +224,6 @@ class DefaultFindologic implements IProductList
         $this->conditionPriceTo = null;
         $this->products = null;
     }
-
 
     /**
      * @param string $fieldname
@@ -253,9 +246,8 @@ class DefaultFindologic implements IProductList
         $this->conditionPriceTo = $to;
     }
 
-
     /**
-     * @param boolean $inProductList
+     * @param bool $inProductList
      */
     public function setInProductList($inProductList)
     {
@@ -264,13 +256,12 @@ class DefaultFindologic implements IProductList
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getInProductList()
     {
         return $this->inProductList;
     }
-
 
     /**
      * @param string $order
@@ -329,7 +320,6 @@ class DefaultFindologic implements IProductList
         return $this->offset;
     }
 
-
     public function setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category)
     {
         $this->products = null;
@@ -352,7 +342,6 @@ class DefaultFindologic implements IProductList
         return $this->variantMode;
     }
 
-
     /**
      * @return IIndexable[]
      */
@@ -361,24 +350,20 @@ class DefaultFindologic implements IProductList
         // init
         $params = [];
 
-
         // add conditions
         $params = $this->buildSystemConditions($params);
         $params = $this->buildFilterConditions($params);
         $params = $this->buildQueryConditions($params);
         $params = $this->buildSorting($params);
 
-
         // add paging
         $params['first'] = $this->getOffset();
         $params['count'] = $this->getLimit();
-
 
         // send request
         $data = $this->sendRequest($params);
 
         // TODO error handling
-
 
         // load products found
         $this->products = [];
@@ -397,7 +382,6 @@ class DefaultFindologic implements IProductList
                     break;
             }
 
-
             if ($id) {
                 $product = $this->tenantConfig->getObjectMockupById($id);
                 if ($product) {
@@ -408,14 +392,13 @@ class DefaultFindologic implements IProductList
             }
         }
 
-
         // extract grouped values
         $this->groupedValues = [];
         $filters = json_encode($data->filters);
         $filters = json_decode($filters);
         if ($filters->filter) {
             foreach ($filters->filter as $filter) {
-                $this->groupedValues[ $filter->name ] = $filter;
+                $this->groupedValues[$filter->name] = $filter;
             }
         }
 
@@ -423,15 +406,14 @@ class DefaultFindologic implements IProductList
         $this->totalCount = (int)$data->results->count;
         $this->response = $data;
 
-
         return $this->products;
     }
-
 
     /**
      * builds system conditions
      *
      * @param array $filter
+     *
      * @return array
      */
     protected function buildSystemConditions(array $filter)
@@ -441,7 +423,6 @@ class DefaultFindologic implements IProductList
         if ($tenantCondition) {
             $filter['usergrouphash'] = $tenantCondition;
         }
-
 
         // variant handling
         switch ($this->getVariantMode()) {
@@ -456,15 +437,14 @@ class DefaultFindologic implements IProductList
                 break;
         }
 
-
         return $filter;
     }
-
 
     /**
      * builds filter condition of user specific conditions
      *
      * @param array $params
+     *
      * @return array
      */
     protected function buildFilterConditions(array $params)
@@ -494,9 +474,9 @@ class DefaultFindologic implements IProductList
         return $params;
     }
 
-
     /**
      * create category path
+     *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $currentCat
      *
      * @return string
@@ -516,6 +496,7 @@ class DefaultFindologic implements IProductList
      * builds query condition of query filters
      *
      * @param array $params
+     *
      * @return array
      */
     protected function buildQueryConditions(array $params)
@@ -535,7 +516,6 @@ class DefaultFindologic implements IProductList
 
         return $params;
     }
-
 
     /**
      * @param array $params
@@ -562,7 +542,6 @@ class DefaultFindologic implements IProductList
         return $params;
     }
 
-
     /**
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
@@ -577,7 +556,6 @@ class DefaultFindologic implements IProductList
     {
         // nothing todo
     }
-
 
     /**
      * resets all set prepared group by values
@@ -594,6 +572,7 @@ class DefaultFindologic implements IProductList
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     *
      * @return void
      */
     public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
@@ -606,6 +585,7 @@ class DefaultFindologic implements IProductList
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     *
      * @return void
      */
     public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
@@ -621,6 +601,7 @@ class DefaultFindologic implements IProductList
      * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
@@ -640,15 +621,13 @@ class DefaultFindologic implements IProductList
         // init
         $groups = [];
 
-
         // load values
         if ($this->groupedValues === null) {
             $this->doLoadGroupByValues();
         }
 
-
         if (array_key_exists($fieldname, $this->groupedValues)) {
-            $field = $this->groupedValues[ $fieldname ];
+            $field = $this->groupedValues[$fieldname];
 
             // special handling for nested category filters
             if ($this->getCategory() && $fieldname === \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
@@ -663,10 +642,7 @@ class DefaultFindologic implements IProductList
                 $rec = function (array $items) use (&$rec, &$groups) {
                     foreach ($items as $item) {
                         $groups[$item->name] = [
-                            'value' => $item->name
-                            , 'label' => $item->name
-                            , 'count' => $item->frequency
-                            , 'parameter' => $item->parameters
+                            'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
                         ];
 
                         if ($item->items) {
@@ -689,17 +665,13 @@ class DefaultFindologic implements IProductList
 
             foreach ($hits as $item) {
                 $groups[] = [
-                    'value' => $item->name
-                    , 'label' => $item->name
-                    , 'count' => $item->frequency
-                    , 'parameter' => $item->parameters
+                    'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
                 ];
             }
         }
 
         return $groups;
     }
-
 
     /**
      * @param string $fieldname
@@ -722,7 +694,6 @@ class DefaultFindologic implements IProductList
         return $relations;
     }
 
-
     /**
      * @return IIndexable[]
      */
@@ -731,18 +702,15 @@ class DefaultFindologic implements IProductList
         // init
         $params = [];
 
-
         // add conditions
         $params = $this->buildSystemConditions($params);
         $params = $this->buildFilterConditions($params);
         $params = $this->buildQueryConditions($params);
         $params = $this->buildSorting($params);
 
-
         // add paging
         $params['first'] = $this->getOffset();
         $params['count'] = $this->getLimit();
-
 
         // send request
         $data = $this->sendRequest($params);
@@ -754,19 +722,17 @@ class DefaultFindologic implements IProductList
 //        }
 //        $searchResult = $data->searchResult;
 
-
         // extract grouped values
         $this->groupedValues = [];
         $filters = json_encode($data->filters);
         $filters = json_decode($filters);
         foreach ($filters->filter as $item) {
-            $this->groupedValues[ $item->name ] = $item;
+            $this->groupedValues[$item->name] = $item;
         }
 
         // save request
         $this->totalCount = (int)$data->results->count;
     }
-
 
     /**
      * @param array $params
@@ -777,20 +743,14 @@ class DefaultFindologic implements IProductList
     {
         // add system params
         $params = [
-            'shopkey' => $this->tenantConfig->getClientConfig('shopKey')
-            , 'shopurl' => $this->tenantConfig->getClientConfig('shopUrl')
-            , 'userip' => $this->userIp
-            , 'referer' => $this->referer
-            , 'revision' => $this->revision
+            'shopkey' => $this->tenantConfig->getClientConfig('shopKey'), 'shopurl' => $this->tenantConfig->getClientConfig('shopUrl'), 'userip' => $this->userIp, 'referer' => $this->referer, 'revision' => $this->revision
         ] + $params;
-
 
         // we have different end points for search and navigation
         $endpoint = array_key_exists('query', $params)
             ? 'index.php'
             : 'selector.php'
         ;
-
 
         // create url
         $url = sprintf('http://%1$s/ps/xml_2.0/%2$s?', $this->tenantConfig->getClientConfig('serviceUrl'), $endpoint
@@ -799,15 +759,13 @@ class DefaultFindologic implements IProductList
 
         $this->getLogger()->info('Request: ' . $url);
 
-
         // start request
         $start = microtime(true);
-        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $response = $client->request('GET', $url, [
             'timeout' => $this->timeout
         ]);
         $this->getLogger()->info('Duration: ' . number_format(microtime(true) - $start, 3));
-
 
         if ($response->getStatusCode() != 200) {
             throw new \Exception((string)$response->getBody());
@@ -818,7 +776,6 @@ class DefaultFindologic implements IProductList
         return $data;
     }
 
-
     /**
      * @return Logger
      */
@@ -827,12 +784,12 @@ class DefaultFindologic implements IProductList
         return $this->logger;
     }
 
-
-
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Count elements of an object
+     *
      * @link http://php.net/manual/en/countable.count.php
+     *
      * @return int The custom count as an integer.
      * </p>
      * <p>
@@ -848,7 +805,9 @@ class DefaultFindologic implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the current element
+     *
      * @link http://php.net/manual/en/iterator.current.php
+     *
      * @return mixed Can return any type.
      */
     public function current()
@@ -862,8 +821,9 @@ class DefaultFindologic implements IProductList
     /**
      * Returns an collection of items for a page.
      *
-     * @param  integer $offset Page offset
-     * @param  integer $itemCountPerPage Number of items per page
+     * @param  int $offset Page offset
+     * @param  int $itemCountPerPage Number of items per page
+     *
      * @return array
      */
     public function getItems($offset, $itemCountPerPage)
@@ -887,7 +847,9 @@ class DefaultFindologic implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the key of the current element
+     *
      * @link http://php.net/manual/en/iterator.key.php
+     *
      * @return scalar on success, integer
      * 0 on failure.
      */
@@ -902,7 +864,9 @@ class DefaultFindologic implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Move forward to next element
+     *
      * @link http://php.net/manual/en/iterator.next.php
+     *
      * @return void Any returned value is ignored.
      */
     public function next()
@@ -914,7 +878,9 @@ class DefaultFindologic implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Rewind the Iterator to the first element
+     *
      * @link http://php.net/manual/en/iterator.rewind.php
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind()
@@ -926,8 +892,10 @@ class DefaultFindologic implements IProductList
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Checks if current position is valid
+     *
      * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
+     *
+     * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
     public function valid()

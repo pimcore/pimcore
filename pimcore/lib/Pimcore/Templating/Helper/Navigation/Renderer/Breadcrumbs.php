@@ -72,6 +72,7 @@ class Breadcrumbs extends AbstractHelper
 
     /**
      * @param Container|null $container
+     *
      * @return $this
      */
     public function breadcrumbs(Container $container = null)
@@ -87,6 +88,7 @@ class Breadcrumbs extends AbstractHelper
 
     /**
      * @param string $separator
+     *
      * @return $this
      */
     public function setSeparator($separator)
@@ -110,6 +112,7 @@ class Breadcrumbs extends AbstractHelper
 
     /**
      * @param bool $linkLast
+     *
      * @return $this
      */
     public function setLinkLast($linkLast)
@@ -147,7 +150,9 @@ class Breadcrumbs extends AbstractHelper
 
     /**
      * Alias of setTemplate()
+     *
      * @param  string $partial
+     *
      * @return $this
      */
     public function setPartial($partial)
@@ -159,6 +164,7 @@ class Breadcrumbs extends AbstractHelper
 
     /**
      * Alias of getTemplate()
+     *
      * @return string|array|null
      */
     public function getPartial()
@@ -173,6 +179,7 @@ class Breadcrumbs extends AbstractHelper
      * registered in the helper
      *
      * @param Container $container
+     *
      * @return string
      */
     public function renderStraight(Container $container = null)
@@ -193,7 +200,7 @@ class Breadcrumbs extends AbstractHelper
             $html = $this->htmlify($active);
         } else {
             $html = $active->getLabel();
-            $html = htmlspecialchars($html, ENT_COMPAT, "UTF-8");
+            $html = htmlspecialchars($html, ENT_COMPAT, 'UTF-8');
         }
 
         // walk back to root
@@ -219,7 +226,9 @@ class Breadcrumbs extends AbstractHelper
     /**
      * @param Container|null $container
      * @param string $partial
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function renderTemplate(Container $container = null, $partial = null)
@@ -261,11 +270,12 @@ class Breadcrumbs extends AbstractHelper
         return $this->getTemplatingEngine()->render($partial, $model);
     }
 
-
     /**
      * Alias of renderTemplate() for ZF1 backward compatibility
+     *
      * @param Container|null $container
      * @param null $partial
+     *
      * @return mixed
      */
     public function renderPartial(Container $container = null, $partial = null)
@@ -275,6 +285,7 @@ class Breadcrumbs extends AbstractHelper
 
     /**
      * @param Container|null $container
+     *
      * @return string
      */
     public function render(Container $container = null)

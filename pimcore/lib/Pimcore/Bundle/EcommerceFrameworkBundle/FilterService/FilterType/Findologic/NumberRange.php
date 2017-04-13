@@ -41,13 +41,13 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$this->getField($filterDefinition)],
-            "values" => $values,
-            "definition" => $filterDefinition,
-            "fieldname" => $this->getField($filterDefinition),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$this->getField($filterDefinition)],
+            'values' => $values,
+            'definition' => $filterDefinition,
+            'fieldname' => $this->getField($filterDefinition),
+            'resultCount' => $productList->count()
         ]);
     }
 

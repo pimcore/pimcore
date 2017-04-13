@@ -22,8 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
  */
 class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable, IProduct
 {
-
-// =============================================
+    // =============================================
 //     IIndexable Methods
 //  =============================================
 
@@ -37,22 +36,21 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
         return true;
     }
 
-
-
     /**
      * returns if product is active.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
      *
      * @param bool $inProductList
+     *
      * @throws UnsupportedException
+     *
      * @return bool
      */
     public function isActive($inProductList = false)
     {
-        throw new UnsupportedException("isActive is not supported for " . get_class($this));
+        throw new UnsupportedException('isActive is not supported for ' . get_class($this));
     }
-
 
     /**
      * defines the name of the price system for this product.
@@ -60,13 +58,13 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * it should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getPriceSystemName()
     {
-        throw new UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
+        throw new UnsupportedException('getPriceSystemName is not supported for ' . get_class($this));
     }
-
 
     /**
      * returns product type for product index (either object or variant).
@@ -78,7 +76,6 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
     {
         return $this->getType();
     }
-
 
     /**
      * returns parent id for product index.
@@ -96,13 +93,13 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * has to be overwritten either in pimcore object or mapped sub class.
      *
      * @throws UnsupportedException
+     *
      * @return array
      */
     public function getCategories()
     {
-        throw new UnsupportedException("getCategories is not supported for " . get_class($this));
+        throw new UnsupportedException('getCategories is not supported for ' . get_class($this));
     }
-
 
 // =============================================
 //     ICheckoutable Methods
@@ -113,11 +110,12 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getOSName()
     {
-        throw new UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new UnsupportedException('getOSName is not supported for ' . get_class($this));
     }
 
     /**
@@ -125,13 +123,13 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getOSProductNumber()
     {
-        throw new UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new UnsupportedException('getOSProductNumber is not supported for ' . get_class($this));
     }
-
 
     /**
      * defines the name of the availability system for this product.
@@ -139,13 +137,13 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * it should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getAvailabilitySystemName()
     {
-        return "default";
+        return 'default';
     }
-
 
     /**
      * checks if product is bookable
@@ -160,7 +158,6 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
 
         return !empty($price) && $this->isActive();
     }
-
 
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
@@ -186,6 +183,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * returns price for given quantity scale
      *
      * @param int $quantityScale
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = 1)
@@ -198,6 +196,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
@@ -209,6 +208,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * returns availability info based on given quantity
      *
      * @param int $quantity
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null)
@@ -216,23 +216,18 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }
 
-
-
-
-
-
-
-
     /**
      * @static
+     *
      * @param int $id
+     *
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id)
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof AbstractProduct) {
+        if ($object instanceof self) {
             return $object;
         }
 

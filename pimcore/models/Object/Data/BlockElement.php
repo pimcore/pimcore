@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,7 +21,6 @@ use Pimcore\Model\AbstractModel;
 
 class BlockElement extends AbstractModel
 {
-
     /**
      * @var string
      */
@@ -38,6 +38,7 @@ class BlockElement extends AbstractModel
 
     /**
      * BlockElement constructor.
+     *
      * @param string $name
      * @param string $type
      * @param mixed $data
@@ -97,12 +98,11 @@ class BlockElement extends AbstractModel
         $this->data = $data;
     }
 
-
     /**
      * @return string
      */
     public function __toString()
     {
-        return $this->name . "; " . $this->type;
+        return $this->name . '; ' . $this->type;
     }
 }

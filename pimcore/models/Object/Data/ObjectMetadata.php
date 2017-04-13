@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,7 +25,6 @@ use Pimcore\Model\Object;
  */
 class ObjectMetadata extends Model\AbstractModel
 {
-
     /**
      * @var Object\Concrete
      */
@@ -49,6 +49,7 @@ class ObjectMetadata extends Model\AbstractModel
      * @param $fieldname
      * @param array $columns
      * @param null $object
+     *
      * @throws \Exception
      */
     public function __construct($fieldname, $columns = [], $object = null)
@@ -61,13 +62,15 @@ class ObjectMetadata extends Model\AbstractModel
     /**
      * @param $name
      * @param $arguments
+     *
      * @return mixed|void
+     *
      * @throws \Exception
      */
     public function __call($name, $arguments)
     {
-        if (substr($name, 0, 3) == "get") {
-            $key = strtolower(substr($name, 3, strlen($name)-3));
+        if (substr($name, 0, 3) == 'get') {
+            $key = strtolower(substr($name, 3, strlen($name) - 3));
 
             if (in_array($key, $this->columns)) {
                 return $this->data[$key];
@@ -76,8 +79,8 @@ class ObjectMetadata extends Model\AbstractModel
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == "set") {
-            $key = strtolower(substr($name, 3, strlen($name)-3));
+        if (substr($name, 0, 3) == 'set') {
+            $key = strtolower(substr($name, 3, strlen($name) - 3));
             if (in_array($key, $this->columns)) {
                 $this->data[$key] = $arguments[0];
             } else {
@@ -92,7 +95,7 @@ class ObjectMetadata extends Model\AbstractModel
      * @param $ownername
      * @param $position
      */
-    public function save($object, $ownertype = "object", $ownername, $position)
+    public function save($object, $ownertype = 'object', $ownername, $position)
     {
         $this->getDao()->save($object, $ownertype, $ownername, $position);
     }
@@ -104,6 +107,7 @@ class ObjectMetadata extends Model\AbstractModel
      * @param $ownertype
      * @param $ownername
      * @param $position
+     *
      * @return mixed
      */
     public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
@@ -113,6 +117,7 @@ class ObjectMetadata extends Model\AbstractModel
 
     /**
      * @param $fieldname
+     *
      * @return $this
      */
     public function setFieldname($fieldname)
@@ -132,6 +137,7 @@ class ObjectMetadata extends Model\AbstractModel
 
     /**
      * @param $object
+     *
      * @return $this
      */
     public function setObject($object)
@@ -151,7 +157,9 @@ class ObjectMetadata extends Model\AbstractModel
 
     /**
      * @param $element
+     *
      * @return $this
+     *
      * @internal param $object
      */
     public function setElement($element)
@@ -169,6 +177,7 @@ class ObjectMetadata extends Model\AbstractModel
 
     /**
      * @param $columns
+     *
      * @return $this
      */
     public function setColumns($columns)

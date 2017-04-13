@@ -25,91 +25,108 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
  */
 interface ICartItem
 {
-
     /**
      * @abstract
+     *
      * @return ICheckoutable
      */
     public function getProduct();
 
     /**
      * @abstract
+     *
      * @return int
      */
     public function getCount();
 
     /**
      * @abstract
+     *
      * @return string
      */
     public function getItemKey();
 
     /**
      * @abstract
+     *
      * @param ICheckoutable $product
+     *
      * @return void
      */
     public function setProduct(ICheckoutable $product);
 
     /**
      * @abstract
+     *
      * @param int $count
+     *
      * @return void
      */
     public function setCount($count);
 
     /**
      * @abstract
+     *
      * @param ICart $cart
+     *
      * @return void
      */
     public function setCart(ICart $cart);
 
     /**
      * @abstract
+     *
      * @return ICart
      */
     public function getCart();
 
     /**
      * @abstract
+     *
      * @return ICartItem[]
      */
     public function getSubItems();
 
     /**
      * @abstract
+     *
      * @param  ICartItem[] $subItems
+     *
      * @return void
      */
     public function setSubItems($subItems);
 
     /**
      * @abstract
+     *
      * @return IPrice
      */
     public function getPrice();
 
     /**
      * @abstract
+     *
      * @return IPrice
      */
     public function getTotalPrice();
 
     /**
      * @abstract
+     *
      * @return IPriceInfo
      */
     public function getPriceInfo();
 
     /**
      * @param string $comment
+     *
      * @return void
      */
     public function setComment($comment);
 
     /**
      * @abstract
+     *
      * @return string
      */
     public function getComment();
@@ -121,37 +138,43 @@ interface ICartItem
 
     /**
      * @abstract
+     *
      * @return IAvailability
      */
     public function getAvailabilityInfo();
 
-
     /**
      * @static
      * @abstract
+     *
      * @param $cartId
      * @param $itemKey
      * @param string $parentKey
+     *
      * @return ICartItem
      */
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "");
+    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '');
 
     /**
      * @static
      * @abstract
+     *
      * @param $cartId
+     *
      * @return void
      */
     public static function removeAllFromCart($cartId);
 
     /**
      * @abstract
+     *
      * @return void
      */
     public function save();
 
     /**
      * @param \DateTime $date
+     *
      * @return void
      */
     public function setAddedDate(\DateTime $date = null);
@@ -168,12 +191,14 @@ interface ICartItem
 
     /**
      * @param int $time
+     *
      * @return void
      */
     public function setAddedDateTimestamp($time);
 
     /**
      * get item name
+     *
      * @return string
      */
     public function getName();

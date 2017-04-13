@@ -37,9 +37,8 @@ class SelectCategory extends AbstractFilterType
             }
         }
 
-
         foreach ($rawValues as $v) {
-            $explode = explode(",", $v['value']);
+            $explode = explode(',', $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
                     if ($values[$e]) {
@@ -47,7 +46,7 @@ class SelectCategory extends AbstractFilterType
                     } else {
                         $count = $v['count'];
                     }
-                    $values[$e] = ['value' => $e, "count" => $count];
+                    $values[$e] = ['value' => $e, 'count' => $count];
                 }
             }
         }
@@ -55,17 +54,16 @@ class SelectCategory extends AbstractFilterType
         $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
         $parameterBag = [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => array_values($values),
-            "fieldname" => $filterDefinition->getField(),
-            "metaData" => $filterDefinition->getMetaData(),
-            "rootCategory" => $filterDefinition->getRootCategory(),
-            "document" => $request->get("contentDocument"),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$filterDefinition->getField()],
+            'values' => array_values($values),
+            'fieldname' => $filterDefinition->getField(),
+            'metaData' => $filterDefinition->getMetaData(),
+            'rootCategory' => $filterDefinition->getRootCategory(),
+            'document' => $request->get('contentDocument'),
+            'resultCount' => $productList->count()
         ];
-
 
         return $this->render($script, $parameterBag);
     }
@@ -86,12 +84,12 @@ class SelectCategory extends AbstractFilterType
         $currentFilter[$filterDefinition->getField()] = $value;
 
         if (!empty($value)) {
-            $value = "%," . trim($value) . ",%";
+            $value = '%,' . trim($value) . ',%';
 
             if ($isPrecondition) {
-                $productList->addCondition($filterDefinition->getField() . " LIKE " . $productList->quote($value), "PRECONDITION_" . $filterDefinition->getField());
+                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $productList->quote($value), 'PRECONDITION_' . $filterDefinition->getField());
             } else {
-                $productList->addCondition($filterDefinition->getField() . " LIKE " . $productList->quote($value), $filterDefinition->getField());
+                $productList->addCondition($filterDefinition->getField() . ' LIKE ' . $productList->quote($value), $filterDefinition->getField());
             }
         }
 

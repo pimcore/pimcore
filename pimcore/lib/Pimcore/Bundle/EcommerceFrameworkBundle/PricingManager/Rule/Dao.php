@@ -59,11 +59,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->assignVariablesToModel($classRaw);
     }
 
-
     /**
      * Create a new record for the object in database
      *
-     * @return boolean
+     * @return bool
      */
     public function create()
     {
@@ -100,7 +99,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                     // handle localized Fields
                     $localizedValues = [];
                     foreach (\Pimcore\Tool::getValidLanguages() as $lang) {
-                        $localizedValues[ $lang ] = $value = $this->model->$getter($lang);
+                        $localizedValues[$lang] = $value = $this->model->$getter($lang);
                     }
                     $value = $localizedValues;
                 } else {

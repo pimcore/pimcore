@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Container_Standalone
@@ -66,6 +65,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
 
     /**
      * Registry key under which container registers itself
+     *
      * @var string
      */
     protected $_regKey;
@@ -73,13 +73,16 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
     /**
      * Flag whether to automatically escape output, must also be
      * enforced in the child class if __toString/toString is overwritten
+     *
      * @var bool
      */
     protected $_autoEscape = true;
 
     /**
      * AbstractHelper constructor.
+     *
      * @param ContainerService $containerService
+     *
      * @internal param Container $container
      */
     public function __construct(ContainerService $containerService)
@@ -91,6 +94,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * Set whether or not auto escaping should be used
      *
      * @param  bool $autoEscape whether or not to auto escape output
+     *
      * @return AbstractHelper
      */
     public function setAutoEscape($autoEscape = true)
@@ -114,6 +118,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * Escape a string
      *
      * @param  string $string
+     *
      * @return string
      */
     protected function _escape($string)
@@ -125,6 +130,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * Set container on which to operate
      *
      * @param  Container $container
+     *
      * @return AbstractHelper
      */
     public function setContainer(Container $container)
@@ -149,6 +155,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      *
      * @param  string $key
      * @param  mixed $value
+     *
      * @return void
      */
     public function __set($key, $value)
@@ -161,6 +168,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * Overloading: retrieve property
      *
      * @param  string $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -177,6 +185,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * Overloading: check if property is set
      *
      * @param  string $key
+     *
      * @return bool
      */
     public function __isset($key)
@@ -190,6 +199,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * Overloading: unset property
      *
      * @param  string $key
+     *
      * @return void
      */
     public function __unset($key)
@@ -207,6 +217,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      *
      * @param  string $method
      * @param  array $args
+     *
      * @return mixed
      */
     public function __call($method, $args)
@@ -261,6 +272,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * ArrayAccess: offsetExists
      *
      * @param  string|int $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -272,6 +284,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * ArrayAccess: offsetGet
      *
      * @param  string|int $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -284,6 +297,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      *
      * @param  string|int $offset
      * @param  mixed $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -295,6 +309,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      * ArrayAccess: offsetUnset
      *
      * @param  string|int $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)

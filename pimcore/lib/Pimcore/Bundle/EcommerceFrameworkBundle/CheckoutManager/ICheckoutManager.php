@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
  */
 interface ICheckoutManager
 {
-
     /**
      * returns all checkout steps defined for this checkout
      *
@@ -31,6 +30,7 @@ interface ICheckoutManager
      * returns checkout step with given name
      *
      * @param  string $stepName
+     *
      * @return ICheckoutStep
      */
     public function getCheckoutStep($stepName);
@@ -55,6 +55,7 @@ interface ICheckoutManager
      *
      * @param ICheckoutStep $step
      * @param  mixed                             $data
+     *
      * @return bool
      */
     public function commitStep(ICheckoutStep $step, $data);
@@ -91,6 +92,7 @@ interface ICheckoutManager
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
      * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
@@ -103,7 +105,6 @@ interface ICheckoutManager
      */
     public function getOrder();
 
-
     /**
      * facade method for
      * - handling payment response and
@@ -114,6 +115,7 @@ interface ICheckoutManager
      * delegates to commit order processor
      *
      * @param $paymentResponseParams
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
@@ -126,7 +128,9 @@ interface ICheckoutManager
      * delegates to commit order processor
      *
      * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
+     *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
      */
     public function commitOrderPayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status);

@@ -10,29 +10,28 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\ClassDefinition\Data\Relations;
 
-use Pimcore\Model;
-use Pimcore\Model\Object;
-use Pimcore\Model\Element;
 use Pimcore\Db;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Element;
+use Pimcore\Model\Object;
 
 abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * @var bool
      */
     public static $remoteOwner = false;
 
-
     /**
-     * @var boolean
+     * @var bool
      */
     public $lazyLoading;
 
@@ -58,18 +57,18 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $classes
+     *
      * @return $this
      */
     public function setClasses($classes)
     {
-        $this->classes = Element\Service::fixAllowedTypes($classes, "classes");
+        $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
 
         return $this;
     }
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public function getLazyLoading()
     {
@@ -78,6 +77,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
 
     /**
      * @param  $lazyLoading
+     *
      * @return $this
      */
     public function setLazyLoading($lazyLoading)
@@ -98,8 +98,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      *
      * Checks if an object is an allowed relation
+     *
      * @param Model\Object\AbstractObject $object
-     * @return boolean
+     *
+     * @return bool
      */
     protected function allowObjectRelation($object)
     {
@@ -125,9 +127,9 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         }
 
         if ($object instanceof Object\AbstractObject) {
-            Logger::debug("checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+            Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
         } else {
-            Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
+            Logger::debug('checked object relation to target in field [' . $this->getName() . '], not allowed, target ist not an object');
             Logger::debug($object);
         }
 
@@ -137,8 +139,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      *
      * Checks if an asset is an allowed relation
+     *
      * @param Model\Asset $asset
-     * @return boolean
+     *
+     * @return bool
      */
     protected function allowAssetRelation($asset)
     {
@@ -147,19 +151,19 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
-        } elseif ($this->getAssetsAllowed() and  is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
+        } elseif ($this->getAssetsAllowed() and is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
             //check for allowed asset types
             foreach ($allowedAssetTypes as $t) {
-                if (is_array($t) && array_key_exists("assetTypes", $t)) {
-                    $t = $t["assetTypes"];
+                if (is_array($t) && array_key_exists('assetTypes', $t)) {
+                    $t = $t['assetTypes'];
                 }
 
                 if ($t) {
                     if (is_string($t)) {
                         $allowedTypes[] = $t;
                     } elseif (is_array($t) && count($t) > 0) {
-                        if (isset($t["assetTypes"])) {
-                            $allowedTypes []= $t["assetTypes"];
+                        if (isset($t['assetTypes'])) {
+                            $allowedTypes[]= $t['assetTypes'];
                         } else {
                             $allowedTypes[]= $t;
                         }
@@ -173,7 +177,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             //don't check if no allowed asset types set
         }
 
-        Logger::debug("checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+        Logger::debug('checked object relation to target asset [' . $asset->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
 
         return $allowed;
     }
@@ -181,8 +185,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      *
      * Checks if an document is an allowed relation
+     *
      * @param Document $document
-     * @return boolean
+     *
+     * @return bool
      */
     protected function allowDocumentRelation($document)
     {
@@ -191,7 +197,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         $allowed = true;
         if (!$this->getDocumentsAllowed()) {
             $allowed = false;
-        } elseif ($this->getDocumentsAllowed() and  is_array($allowedDocumentTypes) and count($allowedDocumentTypes) > 0) {
+        } elseif ($this->getDocumentsAllowed() and is_array($allowedDocumentTypes) and count($allowedDocumentTypes) > 0) {
             //check for allowed asset types
             $allowedTypes = [];
             foreach ($allowedDocumentTypes as $t) {
@@ -207,7 +213,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             //don't check if no allowed document types set
         }
 
-        Logger::debug("checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+        Logger::debug('checked object relation to target document [' . $document->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
 
         return $allowed;
     }
@@ -225,36 +231,36 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         }
 
         if ($object instanceof Object\Concrete) {
-            $relation["src_id"] = $object->getId();
-            $relation["ownertype"] = "object";
+            $relation['src_id'] = $object->getId();
+            $relation['ownertype'] = 'object';
 
             $classId = $object->getClassId();
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
-            $relation["src_id"] = $object->getObject()->getId(); // use the id from the object, not from the field collection
-            $relation["ownertype"] = "fieldcollection";
-            $relation["ownername"] = $object->getFieldname();
-            $relation["position"] = $object->getIndex();
+            $relation['src_id'] = $object->getObject()->getId(); // use the id from the object, not from the field collection
+            $relation['ownertype'] = 'fieldcollection';
+            $relation['ownername'] = $object->getFieldname();
+            $relation['position'] = $object->getIndex();
 
             $classId = $object->getObject()->getClassId();
         } elseif ($object instanceof Object\Localizedfield) {
-            $relation["src_id"] = $object->getObject()->getId();
-            $relation["ownertype"] = "localizedfield";
-            $relation["ownername"] = "localizedfield";
+            $relation['src_id'] = $object->getObject()->getId();
+            $relation['ownertype'] = 'localizedfield';
+            $relation['ownername'] = 'localizedfield';
             $context = $object->getContext();
-            if ($context && $context["containerType"] == "fieldcollection") {
-                $fieldname = $context["fieldname"];
-                $index = $context["index"];
-                $relation["ownername"] = "/fieldcollection~" . $fieldname . "/" . $index . "/localizedfield~" . $relation["ownername"];
+            if ($context && $context['containerType'] == 'fieldcollection') {
+                $fieldname = $context['fieldname'];
+                $index = $context['index'];
+                $relation['ownername'] = '/fieldcollection~' . $fieldname . '/' . $index . '/localizedfield~' . $relation['ownername'];
             }
 
-            $relation["position"] = $params["language"];
+            $relation['position'] = $params['language'];
 
             $classId = $object->getObject()->getClassId();
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
-            $relation["src_id"] = $object->getObject()->getId();
-            $relation["ownertype"] = "objectbrick";
-            $relation["ownername"] = $object->getFieldname();
-            $relation["position"] = $object->getType();
+            $relation['src_id'] = $object->getObject()->getId();
+            $relation['ownertype'] = 'objectbrick';
+            $relation['ownername'] = $object->getFieldname();
+            $relation['position'] = $object->getType();
 
             $classId = $object->getObject()->getClassId();
         }
@@ -263,6 +269,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     *
      * @throws \Exception
      */
     public function save($object, $params = [])
@@ -276,13 +283,12 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             foreach ($relations as $relation) {
                 $this->enrichRelation($object, $params, $classId, $relation);
 
-
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
-                    $db->insert("object_relations_" . $classId, $relation);
+                    $db->insert('object_relations_' . $classId, $relation);
                 } catch (\Exception $e) {
-                    Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
-                        . " (fieldname: " . $this->getName() . ") already exist -> please check immediately!");
+                    Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
+                        . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
                     Logger::error($e);
 
                     // try it again with an update if the insert fails, shouldn't be the case, but it seems that
@@ -297,6 +303,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     *
      * @return null
      */
     public function load($object, $params = [])
@@ -305,30 +312,30 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         $data = null;
 
         if ($object instanceof Object\Concrete) {
-            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
+            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
             } else {
                 return null;
             }
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
         } elseif ($object instanceof Object\Localizedfield) {
-            if (isset($params["context"])&& $params["context"]["containerType"] == "fieldcollection") {
-                $context = $params["context"];
-                $fieldname = $context["fieldname"];
-                $index = $context["index"];
-                $filter = "/fieldcollection~" . $fieldname . "/" . $index . "/%";
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
-                    [$object->getObject()->getId(), $this->getName(), $params["language"], $filter]);
+            if (isset($params['context']) && $params['context']['containerType'] == 'fieldcollection') {
+                $context = $params['context'];
+                $fieldname = $context['fieldname'];
+                $index = $context['index'];
+                $filter = '/fieldcollection~' . $fieldname . '/' . $index . '/%';
+                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
+                    [$object->getObject()->getId(), $this->getName(), $params['language'], $filter]);
             } else {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params["language"]]);
+                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params['language']]);
             }
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
 
             // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
             if (count($relations) < 1) {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", [$object->getObject()->getId(), $this->getName(), $object->getFieldname()]);
+                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", [$object->getObject()->getId(), $this->getName(), $object->getFieldname()]);
             }
             // HACK END
         }
@@ -336,11 +343,11 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
         // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
         usort($relations, function ($a, $b) {
-            if ($a["index"] == $b["index"]) {
+            if ($a['index'] == $b['index']) {
                 return 0;
             }
 
-            return ($a["index"] < $b["index"]) ? -1 : 1;
+            return ($a['index'] < $b['index']) ? -1 : 1;
         });
 
         $data = $this->getDataFromResource($relations, $object, $params);
@@ -358,8 +365,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $data
      * @param array $idMapping
+     *
      * @return array
      */
     public function rewriteIdsService($data, $idMapping)
@@ -397,10 +406,11 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
     {
-        return "";
+        return '';
     }
 }

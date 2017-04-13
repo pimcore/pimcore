@@ -21,6 +21,7 @@ class Device extends Helper
 {
     /**
      * @param null $default
+     *
      * @return DeviceDetector
      */
     public function __invoke($default = null)
@@ -35,6 +36,6 @@ class Device extends Helper
      */
     public function getName()
     {
-        return "device";
+        return 'device';
     }
 }

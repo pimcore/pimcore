@@ -27,7 +27,7 @@ class MultiSelectRelation extends AbstractFilterType
         $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $objects = [];
-        Logger::info("Load Objects...");
+        Logger::info('Load Objects...');
         $availableRelations = [];
         if ($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
@@ -38,7 +38,7 @@ class MultiSelectRelation extends AbstractFilterType
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
-        Logger::info("done.");
+        Logger::info('done.');
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
@@ -47,14 +47,14 @@ class MultiSelectRelation extends AbstractFilterType
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $values,
-            "objects" => $objects,
-            "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $values,
+            'objects' => $objects,
+            'fieldname' => $field,
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -76,7 +76,6 @@ class MultiSelectRelation extends AbstractFilterType
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
 
-
         $value = $params[$field];
 
         if (empty($value) && !$params['is_reload']) {
@@ -84,7 +83,7 @@ class MultiSelectRelation extends AbstractFilterType
             $value = [];
 
             if (!is_array($objects)) {
-                $objects = explode(",", $objects);
+                $objects = explode(',', $objects);
             }
 
             if (is_array($objects)) {
@@ -112,10 +111,10 @@ class MultiSelectRelation extends AbstractFilterType
             if (!empty($quotedValues)) {
                 if ($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
-                        $productList->addRelationCondition($field, "dest = " . $value);
+                        $productList->addRelationCondition($field, 'dest = ' . $value);
                     }
                 } else {
-                    $productList->addRelationCondition($field, "dest IN (" . implode(",", $quotedValues) . ")");
+                    $productList->addRelationCondition($field, 'dest IN (' . implode(',', $quotedValues) . ')');
                 }
             }
         }

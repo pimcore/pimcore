@@ -24,7 +24,6 @@ use Pimcore\Logger;
  */
 class OptimizedMysql extends DefaultMysql implements IMockupConfig
 {
-
     /**
      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
      */
@@ -50,6 +49,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
      * @param $objectId
      * @param $data
      * @param $relations
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
      */
     public function createMockupObject($objectId, $data, $relations)
@@ -62,6 +62,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
      * always returns a object mockup if available
      *
      * @param $objectId
+     *
      * @return IIndexable | array
      */
     public function getObjectMockupById($objectId)

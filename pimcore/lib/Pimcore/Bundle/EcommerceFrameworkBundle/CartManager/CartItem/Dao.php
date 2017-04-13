@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "ecommerceframework_cartitem";
+    const TABLE_NAME = 'ecommerceframework_cartitem';
 
     /**
      * Contains all valid columns in the database table
@@ -28,7 +28,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * @var array
      */
-    protected $fieldsToSave = ["cartId", "productId", "count", "itemKey", "parentItemKey", "comment", "addedDateTimestamp", "sortIndex"];
+    protected $fieldsToSave = ['cartId', 'productId', 'count', 'itemKey', 'parentItemKey', 'comment', 'addedDateTimestamp', 'sortIndex'];
 
     /**
      * Get the valid columns from the database
@@ -43,13 +43,14 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * @param int $productId
      * @param int $cartId
+     *
      * @return void
      */
-    public function getByCartIdItemKey($cartId, $itemKey, $parentKey = "")
+    public function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
     {
-        $classRaw = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE itemKey=" . $this->db->quote($itemKey). " AND cartId = " . $this->db->quote($cartId) . " AND parentItemKey = " . $this->db->quote($parentKey));
+        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE itemKey=' . $this->db->quote($itemKey). ' AND cartId = ' . $this->db->quote($cartId) . ' AND parentItemKey = ' . $this->db->quote($parentKey));
         if (empty($classRaw)) {
-            throw new \Exception("CartItem for cartId " . $cartId . " and itemKey " . $itemKey . " not found.");
+            throw new \Exception('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
         }
         $this->assignVariablesToModel($classRaw);
     }
@@ -69,7 +70,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         foreach ($this->fieldsToSave as $field) {
             if (in_array($field, $this->validColumns)) {
-                $getter = "get" . ucfirst($field);
+                $getter = 'get' . ucfirst($field);
                 $value = $this->model->$getter();
 
                 if (is_array($value) || is_object($value)) {
@@ -84,7 +85,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         try {
             $this->db->insert(self::TABLE_NAME, $data);
         } catch (\Exception $e) {
-            $this->db->updateWhere(self::TABLE_NAME, $data, "itemKey=" . $this->db->quote($this->model->getItemKey()). " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
+            $this->db->updateWhere(self::TABLE_NAME, $data, 'itemKey=' . $this->db->quote($this->model->getItemKey()). ' AND cartId = ' . $this->db->quote($this->model->getCartId()) . ' AND parentItemKey = ' . $this->db->quote($this->model->getParentItemKey()));
         }
     }
 
@@ -95,11 +96,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, "itemKey=" . $this->db->quote($this->model->getItemKey()) . " AND cartId = " . $this->db->quote($this->model->getCartId()) . " AND parentItemKey = " . $this->db->quote($this->model->getParentItemKey()));
+        $this->db->deleteWhere(self::TABLE_NAME, 'itemKey=' . $this->db->quote($this->model->getItemKey()) . ' AND cartId = ' . $this->db->quote($this->model->getCartId()) . ' AND parentItemKey = ' . $this->db->quote($this->model->getParentItemKey()));
     }
 
     public function removeAllFromCart($cartId)
     {
-        $this->db->deleteWhere(self::TABLE_NAME, "cartId = " . $this->db->quote($cartId));
+        $this->db->deleteWhere(self::TABLE_NAME, 'cartId = ' . $this->db->quote($cartId));
     }
 }

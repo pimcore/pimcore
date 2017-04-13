@@ -153,8 +153,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
                     }
                 } catch (\Exception $e) {
-                    $iconPath = "";
-                    $icon = "";
+                    $iconPath = '';
+                    $icon = '';
                 }
             }
 

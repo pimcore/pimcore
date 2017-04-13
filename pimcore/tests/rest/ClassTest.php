@@ -3,7 +3,6 @@
 namespace Pimcore\Tests\Rest;
 
 use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -14,12 +13,12 @@ class ClassTest extends RestTestCase
         $object = TestHelper::createEmptyObject();
         $classId = $object->getClassId();
 
-        $this->assertEquals("unittest", ClassDefinition::getById($classId)->getName());
+        $this->assertEquals('unittest', ClassDefinition::getById($classId)->getName());
 
         $restClass1 = $this->restClient->getClassById($classId);
-        $this->assertEquals("unittest", $restClass1->getName());
+        $this->assertEquals('unittest', $restClass1->getName());
 
         $restClass2 = $this->restClient->getObjectMetaById($object->getId());
-        $this->assertEquals("unittest", $restClass2->getName());
+        $this->assertEquals('unittest', $restClass2->getName());
     }
 }

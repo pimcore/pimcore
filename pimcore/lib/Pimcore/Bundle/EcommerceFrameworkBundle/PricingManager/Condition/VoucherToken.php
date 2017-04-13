@@ -22,11 +22,10 @@ class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
     protected $whiteListIds = [];
     protected $whiteList = [];
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {

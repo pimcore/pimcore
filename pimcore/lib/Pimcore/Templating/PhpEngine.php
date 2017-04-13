@@ -55,6 +55,7 @@ use Symfony\Component\Templating\Storage\Storage;
  *  - tag integration
  *
  * Defined in \Pimcore\Templating\HelperBroker\HelperShortcuts
+ *
  * @method string getLocale()
  * @method Request getRequest()
  * @method SlotsHelper slots()
@@ -192,6 +193,7 @@ class PhpEngine extends BasePhpEngine
      *
      * @param $name
      * @param array $parameters
+     *
      * @return string
      */
     public function template($name, array $parameters = [])
@@ -222,6 +224,7 @@ class PhpEngine extends BasePhpEngine
      *
      * @param $name
      * @param null $default
+     *
      * @return mixed|null
      */
     public function getViewParameter($name, $default = null)

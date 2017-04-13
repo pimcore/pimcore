@@ -18,7 +18,6 @@ use Pimcore\Model\Element;
 
 class Id
 {
-
     /**
      * @var int
      */
@@ -38,7 +37,7 @@ class Id
         if ($webResource instanceof Element\ElementInterface) {
             $this->type = Element\Service::getType($webResource);
         } else {
-            $this->type = "unknown";
+            $this->type = 'unknown';
         }
     }
 

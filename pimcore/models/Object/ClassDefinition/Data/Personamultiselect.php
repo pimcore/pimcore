@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,30 +22,25 @@ use Pimcore\Model\Tool;
 
 class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "personamultiselect";
+    public $fieldtype = 'personamultiselect';
 
-
-    /**
-     *
-     */
     public function configureOptions()
     {
         $list = new Tool\Targeting\Persona\Listing();
-        $list->setOrder("asc");
-        $list->setOrderKey("name");
+        $list->setOrder('asc');
+        $list->setOrderKey('name');
         $personas = $list->load();
 
         $options = [];
         foreach ($personas as $persona) {
             $options[] = [
-                "value" => $persona->getId(),
-                "key" => $persona->getName()
+                'value' => $persona->getId(),
+                'key' => $persona->getName()
             ];
         }
 
@@ -53,6 +49,7 @@ class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect
 
     /**
      * @param $data
+     *
      * @return static
      */
     public static function __set_state($data)

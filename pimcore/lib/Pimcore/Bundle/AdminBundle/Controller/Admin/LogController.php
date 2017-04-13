@@ -33,7 +33,7 @@ class LogController extends AdminController implements EventedControllerInterfac
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        if (!$this->getUser()->isAllowed("application_logging")) {
+        if (!$this->getUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
         }
     }
@@ -47,101 +47,102 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/show")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function showAction(Request $request)
     {
-        $offset = $request->get("start");
-        $limit = $request->get("limit");
+        $offset = $request->get('start');
+        $limit = $request->get('limit');
 
-        $orderby = "ORDER BY id DESC";
+        $orderby = 'ORDER BY id DESC';
         $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
-            $orderby = "ORDER BY " . $sortingSettings['orderKey'] . " " . $sortingSettings['order'];
+            $orderby = 'ORDER BY ' . $sortingSettings['orderKey'] . ' ' . $sortingSettings['order'];
         }
 
-        $queryString = " WHERE 1=1";
+        $queryString = ' WHERE 1=1';
 
-        if ($request->get("priority") != "-1" && ($request->get("priority") == "0" || $request->get("priority"))) {
+        if ($request->get('priority') != '-1' && ($request->get('priority') == '0' || $request->get('priority'))) {
             $levels = [];
-            foreach (["emergency", "alert", "critical", "error", "warning", "notice", "info", "debug"] as $level) {
+            foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
                 $levels[] = "priority = '" . $level . "'";
 
-                if ($request->get("priority") == $level) {
+                if ($request->get('priority') == $level) {
                     break;
                 }
             }
 
-            $queryString .= " AND (" . implode(" OR ", $levels) . ")";
+            $queryString .= ' AND (' . implode(' OR ', $levels) . ')';
         }
 
-        if ($request->get("fromDate")) {
-            $datetime = $request->get("fromDate");
-            if ($request->get("fromTime")) {
-                $datetime =  substr($datetime, 0, 11) . substr($request->get("fromTime"), strpos($request->get("fromTime"), 'T')+1, strlen($request->get("fromTime")));
+        if ($request->get('fromDate')) {
+            $datetime = $request->get('fromDate');
+            if ($request->get('fromTime')) {
+                $datetime =  substr($datetime, 0, 11) . substr($request->get('fromTime'), strpos($request->get('fromTime'), 'T') + 1, strlen($request->get('fromTime')));
             }
             $queryString .= " AND timestamp >= '" . $datetime . "'";
         }
 
-        if ($request->get("toDate")) {
-            $datetime = $request->get("toDate");
-            if ($request->get("toTime")) {
-                $datetime =  substr($datetime, 0, 11) . substr($request->get("toTime"), strpos($request->get("toTime"), 'T')+1, strlen($request->get("toTime")));
+        if ($request->get('toDate')) {
+            $datetime = $request->get('toDate');
+            if ($request->get('toTime')) {
+                $datetime =  substr($datetime, 0, 11) . substr($request->get('toTime'), strpos($request->get('toTime'), 'T') + 1, strlen($request->get('toTime')));
             }
             $queryString .= " AND timestamp <= '" . $datetime . "'";
         }
 
-        if ($request->get("component")) {
-            $queryString .= " AND component =  '" . addslashes($request->get("component")) . "'";
+        if ($request->get('component')) {
+            $queryString .= " AND component =  '" . addslashes($request->get('component')) . "'";
         }
 
-        if ($request->get("relatedobject")) {
-            $queryString .= " AND relatedobject = " . $request->get("relatedobject");
+        if ($request->get('relatedobject')) {
+            $queryString .= ' AND relatedobject = ' . $request->get('relatedobject');
         }
 
-        if ($request->get("message")) {
-            $queryString .= " AND message like '%" . $request->get("message") ."%'";
+        if ($request->get('message')) {
+            $queryString .= " AND message like '%" . $request->get('message') ."%'";
         }
 
-        if ($request->get("pid")) {
-            $queryString .= " AND pid like '%" . $request->get("pid") ."%'";
+        if ($request->get('pid')) {
+            $queryString .= " AND pid like '%" . $request->get('pid') ."%'";
         }
-
 
         $db = Db::get();
-        $count = $db->fetchCol("SELECT count(*) FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString);
+        $count = $db->fetchCol('SELECT count(*) FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString);
         $total = $count[0];
 
-
-        $result = $db->fetchAll("SELECT * FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString . " $orderby LIMIT $offset, $limit");
+        $result = $db->fetchAll('SELECT * FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString . " $orderby LIMIT $offset, $limit");
 
         $errorDataList = [];
         if (!empty($result)) {
             foreach ($result as $r) {
-                $parts = explode("/", $r['filelink']);
-                $filename = $parts[count($parts)-1];
-                $fileobject = str_replace(PIMCORE_PROJECT_ROOT, "", $r['fileobject']);
+                $parts = explode('/', $r['filelink']);
+                $filename = $parts[count($parts) - 1];
+                $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $r['fileobject']);
 
-                $errorData =  ["id"=>$r['id'],
-                                    "pid" => $r['pid'],
-                                    "message"=>$r['message'],
-                                    "timestamp"=>$r['timestamp'],
-                                    "priority"=>$this->getPriorityName($r['priority']),
-                                    "filename" => $filename,
-                                    "fileobject" => $fileobject,
-                                    "relatedobject" => $r['relatedobject'],
-                                    "component" => $r['component'],
-                                    "source" => $r['source']];
+                $errorData =  ['id'=>$r['id'],
+                                    'pid' => $r['pid'],
+                                    'message'=>$r['message'],
+                                    'timestamp'=>$r['timestamp'],
+                                    'priority'=>$this->getPriorityName($r['priority']),
+                                    'filename' => $filename,
+                                    'fileobject' => $fileobject,
+                                    'relatedobject' => $r['relatedobject'],
+                                    'component' => $r['component'],
+                                    'source' => $r['source']];
                 $errorDataList[] = $errorData;
             }
         }
 
-        return $this->json(["p_totalCount"=>$total, "p_results"=>$errorDataList]);
+        return $this->json(['p_totalCount'=>$total, 'p_results'=>$errorDataList]);
     }
 
     /**
      * @param $priority
+     *
      * @return mixed
      */
     private function getPriorityName($priority)
@@ -153,57 +154,64 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/priority-json")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function priorityJsonAction(Request $request)
     {
-        $priorities[] = ["key" => "-1", "value" => "-"];
+        $priorities[] = ['key' => '-1', 'value' => '-'];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
-            $priorities[] = ["key" => $key, "value" => $p];
+            $priorities[] = ['key' => $key, 'value' => $p];
         }
 
-        return $this->json(["priorities" => $priorities]);
+        return $this->json(['priorities' => $priorities]);
     }
 
     /**
      * @Route("/log/component-json")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function componentJsonAction(Request $request)
     {
-        $components[] = ["key" => "", "value" => "-"];
+        $components[] = ['key' => '', 'value' => '-'];
         foreach (ApplicationLoggerDb::getComponents() as $p) {
-            $components[] = ["key" => $p, "value" => $p];
+            $components[] = ['key' => $p, 'value' => $p];
         }
 
-        return $this->json(["components" => $components]);
+        return $this->json(['components' => $components]);
     }
 
     /**
      * @Route("/log/show-file-object")
+     *
      * @param Request $request
+     *
      * @return Response
+     *
      * @throws \Exception
      */
     public function showFileObjectAction(Request $request)
     {
-        $filePath = $request->get("filePath");
-        $filePath = PIMCORE_PROJECT_ROOT . "/" . $filePath;
+        $filePath = $request->get('filePath');
+        $filePath = PIMCORE_PROJECT_ROOT . '/' . $filePath;
         $filePath = realpath($filePath);
 
-        if (!preg_match("@^" . PIMCORE_LOG_FILEOBJECT_DIRECTORY . "@", $filePath)) {
-            throw new AccessDeniedHttpException("Accessing file out of scope");
+        if (!preg_match('@^' . PIMCORE_LOG_FILEOBJECT_DIRECTORY . '@', $filePath)) {
+            throw new AccessDeniedHttpException('Accessing file out of scope');
         }
 
         $response = new Response();
-        $response->headers->set("Content-Type", "text/plain");
+        $response->headers->set('Content-Type', 'text/plain');
 
         if (file_exists($filePath)) {
             $response->setContent(file_get_contents($filePath));
         } else {
-            $response->setContent("Path `" . $filePath . "` not found.");
+            $response->setContent('Path `' . $filePath . '` not found.');
             $response->setStatusCode(404);
         }
 

@@ -33,6 +33,7 @@ class Factory
      * @param int $defaultLifetime
      * @param array $connectionOptions
      * @param array $options
+     *
      * @return Redis
      */
     public function createRedisItemPool($defaultLifetime, array $connectionOptions = [], array $options = [])
@@ -57,6 +58,7 @@ class Factory
 
     /**
      * @param int $defaultLifetime
+     *
      * @return SymfonyAdapterProxy
      */
     public function createArrayAdapterProxyItemPool($defaultLifetime = 0)
@@ -68,6 +70,7 @@ class Factory
 
     /**
      * @param int $defaultLifetime
+     *
      * @return SymfonyAdapterProxy
      */
     public function createFilesystemAdapterProxyItemPool($defaultLifetime = 0)
@@ -79,6 +82,7 @@ class Factory
 
     /**
      * @param AdapterInterface $adapter
+     *
      * @return SymfonyAdapterProxy
      */
     protected function createSymfonyProxyItemPool(AdapterInterface $adapter)

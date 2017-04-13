@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class CustomLayoutEvent extends Event
 {
-
     /**
      * @var ClassDefinition\CustomLayout
      */
@@ -27,6 +26,7 @@ class CustomLayoutEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param ClassDefinition\CustomLayout $customLayout
      */
     public function __construct(ClassDefinition\CustomLayout $customLayout)

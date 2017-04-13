@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,40 +26,40 @@ class Email extends Model\Webservice\Data\Document\Snippet
      *
      * @var string
      */
-    public $type = "email";
+    public $type = 'email';
 
     /**
      * Contains the email subject
      *
      * @var string
      */
-    public $subject = "";
+    public $subject = '';
 
     /**
      * Contains the from email address
      *
      * @var string
      */
-    public $from = "";
+    public $from = '';
 
     /**
      * Contains the email addresses of the recipients
      *
      * @var string
      */
-    public $to = "";
+    public $to = '';
 
     /**
      * Contains the carbon copy recipients
      *
      * @var string
      */
-    public $cc = "";
+    public $cc = '';
 
     /**
      * Contains the blind carbon copy recipients
      *
      * @var string
      */
-    public $bcc = "";
+    public $bcc = '';
 }

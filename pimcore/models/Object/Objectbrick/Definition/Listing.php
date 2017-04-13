@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Objectbrick
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,15 +19,14 @@ namespace Pimcore\Model\Object\Objectbrick\Definition;
 
 class Listing
 {
-
     /**
      * @return array
      */
     public function load()
     {
         $fields = [];
-        $objectBricksFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-        $files = glob($objectBricksFolder . "/*.php");
+        $objectBricksFolder = PIMCORE_CLASS_DIRECTORY . '/objectbricks';
+        $files = glob($objectBricksFolder . '/*.php');
 
         foreach ($files as $file) {
             $fields[] = include $file;

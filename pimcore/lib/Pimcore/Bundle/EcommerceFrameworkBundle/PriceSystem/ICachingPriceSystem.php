@@ -19,12 +19,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
  */
 interface ICachingPriceSystem extends IPriceSystem
 {
-
     /**
      * load price infos once for gives product entries and caches them
      *
      * @param $productEntries
      * @param $options
+     *
      * @return mixed
      */
     public function loadPriceInfos($productEntries, $options);
@@ -34,6 +34,7 @@ interface ICachingPriceSystem extends IPriceSystem
      *
      * @param $productEntries
      * @param $options
+     *
      * @return mixed
      */
     public function clearPriceInfos($productEntries, $options);

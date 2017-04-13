@@ -19,7 +19,6 @@ use Symfony\Component\DependencyInjection\Container;
 
 class Tool
 {
-
     /**
      * @var array
      */
@@ -39,16 +38,19 @@ class Tool
      * returns a valid cache key/tag string
      *
      * @param string $key
+     *
      * @return string
      */
     public static function getValidCacheKey($key)
     {
-        return preg_replace("/[^a-zA-Z0-9]/", "_", $key);
+        return preg_replace('/[^a-zA-Z0-9]/', '_', $key);
     }
 
     /**
      * @static
+     *
      * @param  $path
+     *
      * @return bool
      */
     public static function isValidPath($path)
@@ -63,7 +65,9 @@ class Tool
      * configured at all, false otherwise.
      *
      * @static
+     *
      * @param  string $language
+     *
      * @return bool
      */
     public static function isValidLanguage($language)
@@ -89,6 +93,7 @@ class Tool
      * An empty array is returned if no languages are configured.
      *
      * @static
+     *
      * @return string[]
      */
     public static function getValidLanguages()
@@ -101,8 +106,8 @@ class Tool
                 return [];
             }
 
-            $validLanguages = str_replace(" ", "", $validLanguages);
-            $languages = explode(",", $validLanguages);
+            $validLanguages = str_replace(' ', '', $validLanguages);
+            $languages = explode(',', $validLanguages);
 
             if (!is_array($languages)) {
                 $languages = [];
@@ -116,6 +121,7 @@ class Tool
 
     /**
      * @param $language
+     *
      * @return array
      */
     public static function getFallbackLanguagesFor($language)
@@ -124,7 +130,7 @@ class Tool
 
         $conf = Config::getSystemConfig();
         if ($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
-            $fallbackLanguages = explode(",", $conf->general->fallbackLanguages->$language);
+            $fallbackLanguages = explode(',', $conf->general->fallbackLanguages->$language);
             foreach ($fallbackLanguages as $l) {
                 if (self::isValidLanguage($l)) {
                     $languages[] = trim($l);
@@ -159,14 +165,15 @@ class Tool
 
     /**
      * @return array|mixed
+     *
      * @throws \Exception
      */
     public static function getSupportedLocales()
     {
-        $localeService = \Pimcore::getContainer()->get("pimcore.locale");
+        $localeService = \Pimcore::getContainer()->get('pimcore.locale');
         $locale = $localeService->findLocale();
 
-        $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
+        $cacheKey = 'system_supported_locales_' . strtolower((string) $locale);
         if (!$languageOptions = Cache::load($cacheKey)) {
             $languages = $localeService->getLocaleList();
 
@@ -176,7 +183,7 @@ class Tool
                 $displayRegion = \Locale::getDisplayRegion($code, $locale);
 
                 if ($displayRegion) {
-                    $translation .= " (" . $displayRegion . ")";
+                    $translation .= ' (' . $displayRegion . ')';
                 }
 
                 if (!$translation) {
@@ -188,7 +195,7 @@ class Tool
 
             asort($languageOptions);
 
-            Cache::save($languageOptions, $cacheKey, ["system"]);
+            Cache::save($languageOptions, $cacheKey, ['system']);
         }
 
         return $languageOptions;
@@ -196,6 +203,7 @@ class Tool
 
     /**
      * @param $language
+     *
      * @return string
      */
     public static function getLanguageFlagFile($language)
@@ -205,49 +213,49 @@ class Tool
         $iconFsBasePath = PIMCORE_WEB_ROOT . $relativePath;
 
         $code = strtolower($language);
-        $code = str_replace("_", "-", $code);
+        $code = str_replace('_', '-', $code);
         $countryCode = null;
         $fallbackLanguageCode = null;
 
-        $parts = explode("-", $code);
+        $parts = explode('-', $code);
         if (count($parts) > 1) {
             $countryCode = array_pop($parts);
             $fallbackLanguageCode = $parts[0];
         }
 
-        $languageFsPath = $iconFsBasePath . "/languages/" . $code . ".svg";
-        $countryFsPath = $iconFsBasePath . "/countries/" . $countryCode . ".svg";
-        $fallbackFsLanguagePath = $iconFsBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
+        $languageFsPath = $iconFsBasePath . '/languages/' . $code . '.svg';
+        $countryFsPath = $iconFsBasePath . '/countries/' . $countryCode . '.svg';
+        $fallbackFsLanguagePath = $iconFsBasePath . '/languages/' . $fallbackLanguageCode . '.svg';
 
-        $iconPath = $iconFsBasePath . "/countries/_unknown.svg";
+        $iconPath = $iconFsBasePath . '/countries/_unknown.svg';
 
         $languageCountryMapping = [
-            "aa" => "er", "af" => "za", "am" => "et", "as" => "in", "ast" => "es", "asa" => "tz",
-            "az" => "az", "bas" => "cm", "eu" => "es", "be" => "by", "bem" => "zm", "bez" => "tz", "bg" => "bg",
-            "bm" => "ml", "bn" => "bd", "br" => "fr", "brx" => "in", "bs" => "ba", "cs" => "cz", "da" => "dk",
-            "de" => "de", "dz" => "bt", "el" => "gr", "en" => "gb", "es" => "es", "et" => "ee", "fi" => "fi",
-            "fo" => "fo", "fr" => "fr", "ga" => "ie", "gv" => "im", "he" => "il", "hi" => "in", "hr" => "hr",
-            "hu" => "hu", "hy" => "am", "id" => "id", "ig" => "ng", "is" => "is", "it" => "it", "ja" => "jp",
-            "ka" => "ge", "os" => "ge", "kea" => "cv", "kk" => "kz", "kl" => "gl", "km" => "kh", "ko" => "kr",
-            "lg" => "ug", "lo" => "la", "lt" => "lv", "mg" => "mg", "mk" => "mk", "mn" => "mn", "ms" => "my",
-            "mt" => "mt", "my" => "mm", "nb" => "no", "ne" => "np", "nl" => "nl", "nn" => "no", "pl" => "pl",
-            "pt" => "pt", "ro" => "ro", "ru" => "ru", "sg" => "cf", "sk" => "sk", "sl" => "si", "sq" => "al",
-            "sr" => "rs", "sv" => "se", "swc" => "cd", "th" => "th", "to" => "to", "tr" => "tr", "tzm" => "ma",
-            "uk" => "ua", "uz" => "uz", "vi" => "vn", "zh" => "cn", "gd" => "gb-sct", "gd-gb" => "gb-sct",
-            "cy" => "gb-wls", "cy-gb" => "gb-wls", "fy" => "nl", "xh" => "za", "yo" => "bj", "zu" => "za",
-            "ta" => "lk", "te" => "in", "ss" => "za", "sw" => "ke", "so" => "so", "si" => "lk", "ii" => "cn",
-            "zh-hans" => "cn", "sn" => "zw", "rm" => "ch", "pa" => "in", "fa" => "ir", "lv" => "lv", "gl" => "es",
-            "fil" => "ph"
+            'aa' => 'er', 'af' => 'za', 'am' => 'et', 'as' => 'in', 'ast' => 'es', 'asa' => 'tz',
+            'az' => 'az', 'bas' => 'cm', 'eu' => 'es', 'be' => 'by', 'bem' => 'zm', 'bez' => 'tz', 'bg' => 'bg',
+            'bm' => 'ml', 'bn' => 'bd', 'br' => 'fr', 'brx' => 'in', 'bs' => 'ba', 'cs' => 'cz', 'da' => 'dk',
+            'de' => 'de', 'dz' => 'bt', 'el' => 'gr', 'en' => 'gb', 'es' => 'es', 'et' => 'ee', 'fi' => 'fi',
+            'fo' => 'fo', 'fr' => 'fr', 'ga' => 'ie', 'gv' => 'im', 'he' => 'il', 'hi' => 'in', 'hr' => 'hr',
+            'hu' => 'hu', 'hy' => 'am', 'id' => 'id', 'ig' => 'ng', 'is' => 'is', 'it' => 'it', 'ja' => 'jp',
+            'ka' => 'ge', 'os' => 'ge', 'kea' => 'cv', 'kk' => 'kz', 'kl' => 'gl', 'km' => 'kh', 'ko' => 'kr',
+            'lg' => 'ug', 'lo' => 'la', 'lt' => 'lv', 'mg' => 'mg', 'mk' => 'mk', 'mn' => 'mn', 'ms' => 'my',
+            'mt' => 'mt', 'my' => 'mm', 'nb' => 'no', 'ne' => 'np', 'nl' => 'nl', 'nn' => 'no', 'pl' => 'pl',
+            'pt' => 'pt', 'ro' => 'ro', 'ru' => 'ru', 'sg' => 'cf', 'sk' => 'sk', 'sl' => 'si', 'sq' => 'al',
+            'sr' => 'rs', 'sv' => 'se', 'swc' => 'cd', 'th' => 'th', 'to' => 'to', 'tr' => 'tr', 'tzm' => 'ma',
+            'uk' => 'ua', 'uz' => 'uz', 'vi' => 'vn', 'zh' => 'cn', 'gd' => 'gb-sct', 'gd-gb' => 'gb-sct',
+            'cy' => 'gb-wls', 'cy-gb' => 'gb-wls', 'fy' => 'nl', 'xh' => 'za', 'yo' => 'bj', 'zu' => 'za',
+            'ta' => 'lk', 'te' => 'in', 'ss' => 'za', 'sw' => 'ke', 'so' => 'so', 'si' => 'lk', 'ii' => 'cn',
+            'zh-hans' => 'cn', 'sn' => 'zw', 'rm' => 'ch', 'pa' => 'in', 'fa' => 'ir', 'lv' => 'lv', 'gl' => 'es',
+            'fil' => 'ph'
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
-            $iconPath = $iconFsBasePath . "/countries/" . $languageCountryMapping[$code] . ".svg";
+            $iconPath = $iconFsBasePath . '/countries/' . $languageCountryMapping[$code] . '.svg';
         } elseif (file_exists($languageFsPath)) {
             $iconPath = $languageFsPath;
         } elseif ($countryCode && file_exists($countryFsPath)) {
-            $iconPath = $iconFsBasePath . "/countries/" . $countryCode . ".svg";
+            $iconPath = $iconFsBasePath . '/countries/' . $countryCode . '.svg';
         } elseif ($fallbackLanguageCode && file_exists($fallbackFsLanguagePath)) {
-            $iconPath = $iconFsBasePath . "/languages/" . $fallbackLanguageCode . ".svg";
+            $iconPath = $iconFsBasePath . '/languages/' . $fallbackLanguageCode . '.svg';
         }
 
         return $iconPath;
@@ -255,6 +263,7 @@ class Tool
 
     /**
      * @static
+     *
      * @return array
      */
     public static function getRoutingDefaults()
@@ -264,17 +273,17 @@ class Tool
         if ($config) {
             // system default
             $routeingDefaults = [
-                "controller" => "default",
-                "action" => "default",
-                "module" => PIMCORE_FRONTEND_MODULE
+                'controller' => 'default',
+                'action' => 'default',
+                'module' => PIMCORE_FRONTEND_MODULE
             ];
 
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
 
             foreach ($routeingDefaults as $key => $value) {
-                if (isset($systemRoutingDefaults["default_" . $key]) && $systemRoutingDefaults["default_" . $key]) {
-                    $routeingDefaults[$key] = $systemRoutingDefaults["default_" . $key];
+                if (isset($systemRoutingDefaults['default_' . $key]) && $systemRoutingDefaults['default_' . $key]) {
+                    $routeingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
                 }
             }
 
@@ -284,9 +293,9 @@ class Tool
         }
     }
 
-
     /**
      * @static
+     *
      * @return bool
      */
     public static function isFrontend()
@@ -297,7 +306,7 @@ class Tool
 
         $isFrontend = true;
 
-        if ($isFrontend && php_sapi_name() == "cli") {
+        if ($isFrontend && php_sapi_name() == 'cli') {
             $isFrontend = false;
         }
 
@@ -314,7 +323,7 @@ class Tool
             ];
 
             foreach ($excludePatterns as $pattern) {
-                if (preg_match($pattern, $_SERVER["REQUEST_URI"])) {
+                if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
                     $isFrontend = false;
                     break;
                 }
@@ -331,7 +340,7 @@ class Tool
      */
     public static function isInstaller()
     {
-        if (preg_match("@^/install@", $_SERVER["REQUEST_URI"])) {
+        if (preg_match('@^/install@', $_SERVER['REQUEST_URI'])) {
             return true;
         }
 
@@ -343,12 +352,12 @@ class Tool
      */
     public static function isFrontentRequestByAdmin()
     {
-        if (array_key_exists("pimcore_editmode", $_REQUEST)
-            || array_key_exists("pimcore_preview", $_REQUEST)
-            || array_key_exists("pimcore_admin", $_REQUEST)
-            || array_key_exists("pimcore_object_preview", $_REQUEST)
-            || array_key_exists("pimcore_version", $_REQUEST)
-            || preg_match("@^/pimcore_document_tag_renderlet@", $_SERVER["REQUEST_URI"])) {
+        if (array_key_exists('pimcore_editmode', $_REQUEST)
+            || array_key_exists('pimcore_preview', $_REQUEST)
+            || array_key_exists('pimcore_admin', $_REQUEST)
+            || array_key_exists('pimcore_object_preview', $_REQUEST)
+            || array_key_exists('pimcore_version', $_REQUEST)
+            || preg_match('@^/pimcore_document_tag_renderlet@', $_SERVER['REQUEST_URI'])) {
             return true;
         }
 
@@ -357,6 +366,7 @@ class Tool
 
     /**
      * @static
+     *
      * @return bool
      */
     public static function useFrontendOutputFilters()
@@ -372,30 +382,30 @@ class Tool
         }
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists("pimcore_outputfilters_disabled", $_REQUEST) && PIMCORE_DEBUG) {
+        if (array_key_exists('pimcore_outputfilters_disabled', $_REQUEST) && PIMCORE_DEBUG) {
             return false;
         }
-
 
         return true;
     }
 
     /**
      * @static
+     *
      * @return string
      */
     public static function getHostname()
     {
-        if (isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && !empty($_SERVER["HTTP_X_FORWARDED_HOST"])) {
-            $hostParts = explode(",", $_SERVER["HTTP_X_FORWARDED_HOST"]);
+        if (isset($_SERVER['HTTP_X_FORWARDED_HOST']) && !empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+            $hostParts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
             $hostname = trim(end($hostParts));
         } else {
-            $hostname = $_SERVER["HTTP_HOST"];
+            $hostname = $_SERVER['HTTP_HOST'];
         }
 
         // remove port if set
-        if (strpos($hostname, ":") !== false) {
-            $hostname = preg_replace("@:[0-9]+@", "", $hostname);
+        if (strpos($hostname, ':') !== false) {
+            $hostname = preg_replace('@:[0-9]+@', '', $hostname);
         }
 
         return $hostname;
@@ -406,9 +416,9 @@ class Tool
      */
     public static function getRequestScheme()
     {
-        $requestScheme = "http";
-        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
-            $requestScheme = "https";
+        $requestScheme = 'http';
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+            $requestScheme = 'https';
         }
 
         return $requestScheme;
@@ -426,9 +436,9 @@ class Tool
         $protocol = self::getRequestScheme();
         $port = '';
 
-        if (isset($_SERVER["SERVER_PORT"])) {
-            if (!in_array((int) $_SERVER["SERVER_PORT"], [443, 80])) {
-                $port = ":" . $_SERVER["SERVER_PORT"];
+        if (isset($_SERVER['SERVER_PORT'])) {
+            if (!in_array((int) $_SERVER['SERVER_PORT'], [443, 80])) {
+                $port = ':' . $_SERVER['SERVER_PORT'];
             }
         }
 
@@ -441,7 +451,7 @@ class Tool
             if (!$hostname) {
                 Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
 
-                return "";
+                return '';
             }
         }
 
@@ -449,17 +459,17 @@ class Tool
             $protocol = $useProtocol;
         }
 
-        return $protocol . "://" . $hostname . $port;
+        return $protocol . '://' . $hostname . $port;
     }
-
 
     /**
      * @static
+     *
      * @return array|bool
      */
     public static function getCustomViewConfig()
     {
-        $configFile = \Pimcore\Config::locateConfigFile("customviews.php");
+        $configFile = \Pimcore\Config::locateConfigFile('customviews.php');
 
         if (!is_file($configFile)) {
             $cvData = false;
@@ -467,11 +477,11 @@ class Tool
             $confArray = include($configFile);
             $cvData = [];
 
-            foreach ($confArray["views"] as $tmp) {
-                if (isset($tmp["name"])) {
-                    $tmp["showroot"] = (bool) $tmp["showroot"];
+            foreach ($confArray['views'] as $tmp) {
+                if (isset($tmp['name'])) {
+                    $tmp['showroot'] = (bool) $tmp['showroot'];
 
-                    if ((bool) $tmp["hidden"]) {
+                    if ((bool) $tmp['hidden']) {
                         continue;
                     }
 
@@ -487,7 +497,9 @@ class Tool
      * @param null $recipients
      * @param null $subject
      * @param null $charset
+     *
      * @return Mail
+     *
      * @throws \Exception
      */
     public static function getMail($recipients = null, $subject = null, $charset = null)
@@ -512,18 +524,18 @@ class Tool
         return $mail;
     }
 
-
-
     /**
      * @static
+     *
      * @param $url
      * @param array $paramsGet
      * @param array $paramsPost
+     *
      * @return bool|string
      */
     public static function getHttpData($url, $paramsGet = [], $paramsPost = [])
     {
-        $client = \Pimcore::getContainer()->get("pimcore.http_client");
+        $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $requestType = 'GET';
 
         $config = [];
@@ -563,6 +575,7 @@ class Tool
      * @deprecated Use Request::getClientIp() instead
      *
      * @static
+     *
      * @return mixed
      */
     public static function getClientIp()
@@ -575,7 +588,7 @@ class Tool
             $ip = $_SERVER['REMOTE_ADDR'];
         }
 
-        $ips = explode(",", $ip);
+        $ips = explode(',', $ip);
         $ip = trim(array_shift($ips));
 
         return $ip;
@@ -589,8 +602,8 @@ class Tool
     public static function getAnonymizedClientIp()
     {
         $ip = self::getClientIp();
-        $aip = substr($ip, 0, strrpos($ip, ".")+1);
-        $aip .= "255";
+        $aip = substr($ip, 0, strrpos($ip, '.') + 1);
+        $aip .= '255';
 
         return $aip;
     }
@@ -629,39 +642,44 @@ class Tool
 
     /**
      * @static
+     *
      * @param $class
+     *
      * @return bool
      */
     public static function classExists($class)
     {
-        return self::classInterfaceExists($class, "class");
+        return self::classInterfaceExists($class, 'class');
     }
 
     /**
      * @static
+     *
      * @param $class
+     *
      * @return bool
      */
     public static function interfaceExists($class)
     {
-        return self::classInterfaceExists($class, "interface");
+        return self::classInterfaceExists($class, 'interface');
     }
 
     /**
      * @param $class
      * @param $type
+     *
      * @return bool
      */
     protected static function classInterfaceExists($class, $type)
     {
-        $functionName = $type . "_exists";
+        $functionName = $type . '_exists';
 
         // if the class is already loaded we can skip right here
         if ($functionName($class, false)) {
             return true;
         }
 
-        $class = "\\" . ltrim($class, "\\");
+        $class = '\\' . ltrim($class, '\\');
 
         // let's test if we have seens this class already before
         if (isset(self::$notFoundClassNames[$class])) {
@@ -695,26 +713,27 @@ class Tool
     {
         while (@ob_end_flush());
 
-        if (php_sapi_name() != "cli") {
+        if (php_sapi_name() != 'cli') {
             header('HTTP/1.1 503 Service Temporarily Unavailable');
         }
 
         die($message);
     }
 
-
     /**
      * @param $name
      * @param $arguments
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function __callStatic($name, $arguments)
     {
-        if (class_exists("Pimcore\\Tool\\Legacy")) {
-            return forward_static_call_array("Pimcore\\Tool\\Legacy::" . $name, $arguments);
+        if (class_exists('Pimcore\\Tool\\Legacy')) {
+            return forward_static_call_array('Pimcore\\Tool\\Legacy::' . $name, $arguments);
         }
 
-        throw new \Exception("Call to undefined static method " . $name . " on class Pimcore\\Tool");
+        throw new \Exception('Call to undefined static method ' . $name . ' on class Pimcore\\Tool');
     }
 }

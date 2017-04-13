@@ -25,15 +25,15 @@ class DefaultBrickGetterSequence implements IGetter
         }
 
         foreach ($sourceList as $source) {
-            $brickContainerGetter = "get" . ucfirst($source->brickfield);
+            $brickContainerGetter = 'get' . ucfirst($source->brickfield);
 
             if (method_exists($object, $brickContainerGetter)) {
                 $brickContainer = $object->$brickContainerGetter();
 
-                $brickGetter = "get" . ucfirst($source->bricktype);
+                $brickGetter = 'get' . ucfirst($source->bricktype);
                 $brick = $brickContainer->$brickGetter();
                 if ($brick) {
-                    $fieldGetter = "get" . ucfirst($source->fieldname);
+                    $fieldGetter = 'get' . ucfirst($source->fieldname);
                     $value = $brick->$fieldGetter();
                     if ($value) {
                         return $value;

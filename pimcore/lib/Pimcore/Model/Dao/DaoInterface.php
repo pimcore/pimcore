@@ -16,7 +16,6 @@ namespace Pimcore\Model\Dao;
 
 interface DaoInterface
 {
-
     /**
      * @param \Pimcore\Model\AbstractModel $model
      */

@@ -113,7 +113,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {

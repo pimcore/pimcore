@@ -16,9 +16,9 @@ use Pimcore\Tool\Authentication;
 
 class TestDataHelper extends Module
 {
-    const IMAGE = "sampleimage.jpg";
-    const DOCUMENT = "sampledocument.txt";
-    const HOTSPOT_IMAGE = "hotspot.jpg";
+    const IMAGE = 'sampleimage.jpg';
+    const DOCUMENT = 'sampledocument.txt';
+    const HOTSPOT_IMAGE = 'hotspot.jpg';
 
     /**
      * @param Concrete    $object
@@ -28,11 +28,11 @@ class TestDataHelper extends Module
      */
     public function fillInput(Concrete $object, $field, $seed = 1, $language = null)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         if ($language) {
-            $object->$setter($language . "content" . $seed, $language);
+            $object->$setter($language . 'content' . $seed, $language);
         } else {
-            $object->$setter("content" . $seed);
+            $object->$setter('content' . $seed);
         }
     }
 
@@ -44,14 +44,14 @@ class TestDataHelper extends Module
      */
     public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
         if ($language) {
             $value = $object->$getter($language);
         } else {
             $value = $object->$getter();
         }
 
-        $expected = $language . "content" . $seed;
+        $expected = $language . 'content' . $seed;
 
         $this->assertEquals($expected, $value);
     }
@@ -63,7 +63,7 @@ class TestDataHelper extends Module
      */
     public function fillNumber(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter(123 + $seed);
     }
 
@@ -74,9 +74,9 @@ class TestDataHelper extends Module
      */
     public function assertNumber(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = "123" + $seed;
+        $expected = '123' + $seed;
 
         $this->assertEquals($expected, $value);
     }
@@ -88,8 +88,8 @@ class TestDataHelper extends Module
      */
     public function fillTextarea(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter("sometext<br>" . $seed);
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('sometext<br>' . $seed);
     }
 
     /**
@@ -99,9 +99,9 @@ class TestDataHelper extends Module
      */
     public function assertTextarea(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = "sometext<br>" . $seed;
+        $expected = 'sometext<br>' . $seed;
 
         $this->assertEquals($expected, $value);
     }
@@ -113,7 +113,7 @@ class TestDataHelper extends Module
      */
     public function fillHref(Concrete $object, $field, $seed = 1)
     {
-        $setter  = "set" . ucfirst($field);
+        $setter  = 'set' . ucfirst($field);
         $objects = $this->getObjectList();
         $object->$setter($objects[0]);
     }
@@ -125,7 +125,7 @@ class TestDataHelper extends Module
      */
     public function assertHref(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
         $objects  = $this->getObjectList();
         $expected = $objects[0];
@@ -142,7 +142,7 @@ class TestDataHelper extends Module
      */
     public function fillMultihref(Concrete $object, $field, $seed = 1)
     {
-        $setter  = "set" . ucfirst($field);
+        $setter  = 'set' . ucfirst($field);
         $objects = $this->getObjectList();
         $objects = array_slice($objects, 0, 4);
 
@@ -156,7 +156,7 @@ class TestDataHelper extends Module
      */
     public function assertMultihref(Concrete $object, $field, $seed = 1)
     {
-        $getter        = "get" . ucfirst($field);
+        $getter        = 'get' . ucfirst($field);
         $value         = $object->$getter();
         $objects       = $this->getObjectList();
         $expectedArray = array_slice($objects, 0, 4);
@@ -177,7 +177,7 @@ class TestDataHelper extends Module
      */
     public function fillSlider(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter(7 + ($seed % 3));
     }
 
@@ -188,7 +188,7 @@ class TestDataHelper extends Module
      */
     public function assertSlider(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
         $expected = 7 + ($seed % 3);
 
@@ -202,11 +202,11 @@ class TestDataHelper extends Module
      */
     public function fillImage(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
 
-        $asset = Asset::getByPath("/" . static::IMAGE);
+        $asset = Asset::getByPath('/' . static::IMAGE);
         if (!$asset) {
-            $asset = TestHelper::createImageAsset("", null, false);
+            $asset = TestHelper::createImageAsset('', null, false);
             $asset->setFilename(static::IMAGE);
             $asset->save();
         }
@@ -221,9 +221,9 @@ class TestDataHelper extends Module
      */
     public function assertImage(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = Asset::getByPath("/" . static::IMAGE);
+        $expected = Asset::getByPath('/' . static::IMAGE);
 
         foreach ([$value, $expected] as $item) {
             $this->assertNotNull($item);
@@ -241,18 +241,18 @@ class TestDataHelper extends Module
         $result = [];
 
         $hotspot1         = new \stdClass();
-        $hotspot1->name   = "hotspot1";
-        $hotspot1->width  = "10";
-        $hotspot1->height = "20";
-        $hotspot1->top    = "30";
-        $hotspot1->left   = "40";
+        $hotspot1->name   = 'hotspot1';
+        $hotspot1->width  = '10';
+        $hotspot1->height = '20';
+        $hotspot1->top    = '30';
+        $hotspot1->left   = '40';
         $result[]        = $hotspot1;
 
         $hotspot2 = clone $hotspot1;
-        $hotspot2->width  = "10";
-        $hotspot2->height = "50";
-        $hotspot2->top    = "20";
-        $hotspot2->left   = "40";
+        $hotspot2->width  = '10';
+        $hotspot2->height = '50';
+        $hotspot2->top    = '20';
+        $hotspot2->left   = '40';
         $result[]        = $hotspot2;
 
         return $result;
@@ -265,11 +265,11 @@ class TestDataHelper extends Module
      */
     public function fillHotspotImage(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
 
-        $asset = Asset::getByPath("/" . static::HOTSPOT_IMAGE);
+        $asset = Asset::getByPath('/' . static::HOTSPOT_IMAGE);
         if (!$asset) {
-            $asset = TestHelper::createImageAsset("", null, false);
+            $asset = TestHelper::createImageAsset('', null, false);
             $asset->setFilename(static::HOTSPOT_IMAGE);
             $asset->save();
         }
@@ -286,7 +286,7 @@ class TestDataHelper extends Module
      */
     public function assertHotspotImage(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
 
         /** @var Object\Data\Hotspotimage $value */
         $value    = $object->$getter();
@@ -295,7 +295,7 @@ class TestDataHelper extends Module
         $this->assertCount(2, $hotspots);
         $this->assertInstanceOf(Object\Data\Hotspotimage::class, $value);
 
-        $asset    = Asset::getByPath("/" . static::HOTSPOT_IMAGE);
+        $asset    = Asset::getByPath('/' . static::HOTSPOT_IMAGE);
         $hotspots = $this->createHotspots();
         $expected = new Object\Data\Hotspotimage($asset, $hotspots);
 
@@ -310,8 +310,8 @@ class TestDataHelper extends Module
      */
     public function fillLanguage(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter("de");
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('de');
     }
 
     /**
@@ -321,9 +321,9 @@ class TestDataHelper extends Module
      */
     public function assertLanguage(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = "de";
+        $expected = 'de';
 
         $this->assertEquals($expected, $value);
     }
@@ -335,8 +335,8 @@ class TestDataHelper extends Module
      */
     public function fillCountry(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter("AU");
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('AU');
     }
 
     /**
@@ -346,9 +346,9 @@ class TestDataHelper extends Module
      */
     public function assertCountry(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = "AU";
+        $expected = 'AU';
 
         $this->assertEquals($expected, $value);
     }
@@ -360,7 +360,7 @@ class TestDataHelper extends Module
      */
     public function fillDate(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $date   = new \DateTime();
         $date->setDate(2000, 12, 24);
 
@@ -374,7 +374,7 @@ class TestDataHelper extends Module
      */
     public function assertDate(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         /** @var \DateTime $value */
         $value  = $object->$getter();
@@ -383,8 +383,8 @@ class TestDataHelper extends Module
         $expected->setDate(2000, 12, 24);
 
         $this->assertEquals(
-            $expected->format("Y-m-d"),
-            $value->format("Y-m-d")
+            $expected->format('Y-m-d'),
+            $value->format('Y-m-d')
         );
     }
 
@@ -395,7 +395,7 @@ class TestDataHelper extends Module
      */
     public function fillSelect(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter(1 + ($seed % 2));
     }
 
@@ -406,7 +406,7 @@ class TestDataHelper extends Module
      */
     public function assertSelect(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
         $expected = 1 + ($seed % 2);
 
@@ -420,8 +420,8 @@ class TestDataHelper extends Module
      */
     public function fillMultiSelect(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter(["1", "2"]);
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(['1', '2']);
     }
 
     /**
@@ -431,9 +431,9 @@ class TestDataHelper extends Module
      */
     public function assertMultiSelect(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = ["1", "2"];
+        $expected = ['1', '2'];
 
         $this->assertEquals($expected, $value);
     }
@@ -445,18 +445,18 @@ class TestDataHelper extends Module
      */
     public function fillUser(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
 
-        $username = "unittestdatauser" . $seed;
+        $username = 'unittestdatauser' . $seed;
         $user     = User::getByName($username);
 
         if (!$user) {
             /** @var User $user */
             $user = User::create([
-                "parentId" => 0,
-                "username" => $username,
-                "password" => Authentication::getPasswordHash($username, $username),
-                "active"   => true
+                'parentId' => 0,
+                'username' => $username,
+                'password' => Authentication::getPasswordHash($username, $username),
+                'active'   => true
             ]);
 
             $user->setAdmin(true);
@@ -473,9 +473,9 @@ class TestDataHelper extends Module
      */
     public function assertUser(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $user     = User::getByName("unittestdatauser" . $seed);
+        $user     = User::getByName('unittestdatauser' . $seed);
         $expected = $user->getId();
 
         $this->assertEquals($expected, $value);
@@ -488,7 +488,7 @@ class TestDataHelper extends Module
      */
     public function fillCheckbox(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter(($seed % 2) == true);
     }
 
@@ -499,7 +499,7 @@ class TestDataHelper extends Module
      */
     public function assertCheckbox(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
         $expected = ($seed % 2) == true;
 
@@ -513,8 +513,8 @@ class TestDataHelper extends Module
      */
     public function fillTime(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter("06:4" . $seed % 10);
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('06:4' . $seed % 10);
     }
 
     /**
@@ -524,9 +524,9 @@ class TestDataHelper extends Module
      */
     public function assertTime(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = "06:4" . $seed % 10;
+        $expected = '06:4' . $seed % 10;
 
         $this->assertEquals($expected, $value);
     }
@@ -558,8 +558,8 @@ class TestDataHelper extends Module
      */
     public function fillPassword(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter("sEcret$%!" . $seed);
+        $setter = 'set' . ucfirst($field);
+        $object->$setter('sEcret$%!' . $seed);
     }
 
     /**
@@ -569,7 +569,7 @@ class TestDataHelper extends Module
      */
     public function assertPassword(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
         $value  = $object->$getter();
 
         // it is intended that no password is sent
@@ -583,8 +583,8 @@ class TestDataHelper extends Module
      */
     public function fillCountryMultiSelect(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter(["1", "2"]);
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(['1', '2']);
     }
 
     /**
@@ -594,9 +594,9 @@ class TestDataHelper extends Module
      */
     public function assertCountryMultiSelect(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = ["1", "2"];
+        $expected = ['1', '2'];
 
         $this->assertEquals($expected, $value);
     }
@@ -608,8 +608,8 @@ class TestDataHelper extends Module
      */
     public function fillLanguageMultiSelect(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
-        $object->$setter(["1", "2"]);
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(['1', '2']);
     }
 
     /**
@@ -619,9 +619,9 @@ class TestDataHelper extends Module
      */
     public function assertLanguageMultiSelect(Concrete $object, $field, $seed = 1)
     {
-        $getter   = "get" . ucfirst($field);
+        $getter   = 'get' . ucfirst($field);
         $value    = $object->$getter();
-        $expected = ["1", "3"];
+        $expected = ['1', '3'];
 
         $this->assertEquals($expected, $value);
     }
@@ -645,7 +645,7 @@ class TestDataHelper extends Module
      */
     public function fillGeopoint(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeopointFixture());
     }
 
@@ -656,7 +656,7 @@ class TestDataHelper extends Module
      */
     public function assertGeopoint(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         /** @var Object\Data\Geopoint $value */
         $value  = $object->$getter();
@@ -688,7 +688,7 @@ class TestDataHelper extends Module
      */
     public function fillGeobounds(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeoboundsFixture());
     }
 
@@ -744,7 +744,7 @@ class TestDataHelper extends Module
      */
     public function fillGeopolygon(Concrete $object, $field, $seed = 1)
     {
-        $setter  = "set" . ucfirst($field);
+        $setter  = 'set' . ucfirst($field);
         $object->$setter($this->getGeopolygonFixture());
     }
 
@@ -795,7 +795,7 @@ class TestDataHelper extends Module
      */
     protected function getTableDataFixture($seed)
     {
-        return [["eins", "zwei", "drei"], [$seed, 2, 3], ["a", "b", "c"]];
+        return [['eins', 'zwei', 'drei'], [$seed, 2, 3], ['a', 'b', 'c']];
     }
 
     /**
@@ -805,7 +805,7 @@ class TestDataHelper extends Module
      */
     public function fillTable(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter($this->getTableDataFixture($seed));
     }
 
@@ -843,9 +843,9 @@ class TestDataHelper extends Module
      */
     public function fillLink(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
 
-        $doc = Document::getByPath("/" . static::DOCUMENT . $seed);
+        $doc = Document::getByPath('/' . static::DOCUMENT . $seed);
 
         if (!$doc) {
             $doc = TestHelper::createEmptyDocumentPage(null, false);
@@ -867,7 +867,7 @@ class TestDataHelper extends Module
      */
     public function assertLink(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         /** @var Object\Data\Link $link */
         $link = $object->$getter();
@@ -876,7 +876,7 @@ class TestDataHelper extends Module
         $this->assertInstanceOf(Object\Data\Link::class, $link);
 
         $document = Document::getByPath($link->getObject());
-        $expected = Document::getByPath("/" . static::DOCUMENT . $seed);
+        $expected = Document::getByPath('/' . static::DOCUMENT . $seed);
 
         foreach (['expected' => $expected, 'value' => $document] as $desc => $item) {
             $this->assertNotNull($item, $desc . ' is not null');
@@ -888,6 +888,7 @@ class TestDataHelper extends Module
 
     /**
      * @param int $seed
+     *
      * @return Object\Data\StructuredTable
      */
     private function getStructuredTableData($seed = 1)
@@ -896,9 +897,9 @@ class TestDataHelper extends Module
         $data['row2']['col1'] = 2 + $seed;
         $data['row3']['col1'] = 3 + $seed;
 
-        $data['row1']['col2'] = "text_a_" . $seed;
-        $data['row2']['col2'] = "text_b_" . $seed;
-        $data['row3']['col2'] = "text_c_" . $seed;
+        $data['row1']['col2'] = 'text_a_' . $seed;
+        $data['row2']['col2'] = 'text_b_' . $seed;
+        $data['row3']['col2'] = 'text_c_' . $seed;
 
         $st = new Object\Data\StructuredTable();
         $st->setData($data);
@@ -913,7 +914,7 @@ class TestDataHelper extends Module
      */
     public function fillStructuredtable(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter($this->getStructuredTableData($seed));
     }
 
@@ -925,7 +926,7 @@ class TestDataHelper extends Module
      */
     public function assertStructuredTable(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         /** @var Object\Data\StructuredTable $value */
         $value  = $object->$getter();
@@ -958,11 +959,11 @@ class TestDataHelper extends Module
      */
     public function fillObjects(Concrete $object, $field, $seed = 1, $language = null)
     {
-        $setter  = "set" . ucfirst($field);
+        $setter  = 'set' . ucfirst($field);
         $objects = $this->getObjectList("o_type = 'object'");
 
         if ($language) {
-            if ($language == "de") {
+            if ($language == 'de') {
                 $objects = array_slice($objects, 0, 6);
             } else {
                 $objects = array_slice($objects, 0, 5);
@@ -983,11 +984,11 @@ class TestDataHelper extends Module
      */
     public function assertObjects(Concrete $object, $field, $seed = 1, $language = null)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         $objects = $this->getObjectList("o_type = 'object'");
         if ($language) {
-            if ($language === "de") {
+            if ($language === 'de') {
                 $expectedArray = array_slice($objects, 0, 6);
             } else {
                 $expectedArray = array_slice($objects, 0, 5);
@@ -1030,9 +1031,9 @@ class TestDataHelper extends Module
 
         $metaobjects = [];
         foreach ($objects as $o) {
-            $mo = new Object\Data\ObjectMetadata($field, ["meta1", "meta2"], $o);
-            $mo->setMeta1("value1" . $seed);
-            $mo->setMeta2("value2" . $seed);
+            $mo = new Object\Data\ObjectMetadata($field, ['meta1', 'meta2'], $o);
+            $mo->setMeta1('value1' . $seed);
+            $mo->setMeta2('value2' . $seed);
             $metaobjects[] = $mo;
         }
 
@@ -1046,7 +1047,7 @@ class TestDataHelper extends Module
      */
     public function fillObjectsWithMetadata(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
         $object->$setter($this->getObjectsWithMetadataFixture($field, $seed));
     }
 
@@ -1058,7 +1059,7 @@ class TestDataHelper extends Module
      */
     public function assertObjectsWithMetadata(Concrete $object, $field, Concrete $comparisonObject = null, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
         $value  = $object->$getter();
 
         $expected = $this->getObjectsWithMetadataFixture($field, $seed);
@@ -1110,10 +1111,10 @@ class TestDataHelper extends Module
      */
     public function fillBricks(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         $brick = new Object\Objectbrick\Data\UnittestBrick($object);
-        $brick->setBrickInput("brickinput" . $seed);
+        $brick->setBrickInput('brickinput' . $seed);
 
         /** @var Object\Unittest\Mybricks $objectbricks */
         $objectbricks = $object->$getter();
@@ -1127,7 +1128,7 @@ class TestDataHelper extends Module
      */
     public function assertBricks(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         $value = $object->$getter();
 
@@ -1137,7 +1138,7 @@ class TestDataHelper extends Module
         /** @var Object\Objectbrick\Data\UnittestBrick $value */
         $value = $value->getBrickinput();
 
-        $expected = "brickinput" . $seed;
+        $expected = 'brickinput' . $seed;
 
         $this->assertEquals($expected, $value);
     }
@@ -1149,11 +1150,11 @@ class TestDataHelper extends Module
      */
     public function fillFieldCollection(Concrete $object, $field, $seed = 1)
     {
-        $setter = "set" . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
 
         $fc = new Object\Fieldcollection\Data\Unittestfieldcollection();
-        $fc->setFieldinput1("field1" . $seed);
-        $fc->setFieldinput2("field2" . $seed);
+        $fc->setFieldinput1('field1' . $seed);
+        $fc->setFieldinput2('field2' . $seed);
 
         $items = new Object\Fieldcollection([$fc], $field);
         $object->$setter($items);
@@ -1166,7 +1167,7 @@ class TestDataHelper extends Module
      */
     public function assertFieldCollection(Concrete $object, $field, $seed = 1)
     {
-        $getter = "get" . ucfirst($field);
+        $getter = 'get' . ucfirst($field);
 
         /** @var Object\Fieldcollection $value */
         $value = $object->$getter();
@@ -1240,6 +1241,7 @@ class TestDataHelper extends Module
 
     /**
      * @param ElementInterface[] $elements
+     *
      * @return array
      */
     private function getElementPaths(array $elements = [])
@@ -1265,8 +1267,8 @@ class TestDataHelper extends Module
 
         // object property
         $property = new Property();
-        $property->setType("object");
-        $property->setName("object");
+        $property->setType('object');
+        $property->setName('object');
         $property->setInheritable(true);
 
         $properties[] = $property;
@@ -1282,7 +1284,7 @@ class TestDataHelper extends Module
     private function getObjectList($condition = null)
     {
         $list = new Object\Listing();
-        $list->setOrderKey("o_id");
+        $list->setOrderKey('o_id');
         $list->setCondition($condition);
 
         $objects = $list->load();

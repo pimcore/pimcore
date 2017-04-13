@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class KeyConfigEvent extends Event
 {
-
     /**
      * @var KeyConfig
      */
@@ -27,6 +26,7 @@ class KeyConfigEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param KeyConfig $keyConfig
      */
     public function __construct(KeyConfig $keyConfig)

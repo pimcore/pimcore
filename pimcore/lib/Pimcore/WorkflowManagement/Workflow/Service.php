@@ -14,17 +14,16 @@
 
 namespace Pimcore\WorkflowManagement\Workflow;
 
+use Pimcore\Logger;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
-use Pimcore\Logger;
 
 class Service
 {
-
-
     /**
      * @param $fc - The field configuration from the Workflow
      * @param $value - The value
+     *
      * @return array
      */
     public static function createNoteData($fc, $value)
@@ -67,6 +66,7 @@ class Service
     /**
      * @param $data
      * @param $pimcoreTagName
+     *
      * @return mixed|null
      */
     public static function getDataFromEditmode($data, $pimcoreTagName)
@@ -87,15 +87,16 @@ class Service
         return null;
     }
 
-
     /**
      * Creates a note for an action with a transition
+     *
      * @param Element\AbstractElement $element
      * @param string $type
      * @param string $title
      * @param string $description
      * @param array $noteData
      * @param null $user
+     *
      * @return Element\Note $note
      */
     public static function createActionNote($element, $type, $title, $description, $noteData, $user=null)
@@ -132,9 +133,9 @@ class Service
         return $note;
     }
 
-
     /**
      * Sends an email
+     *
      * @param array $users
      * @param Element\Note $note
      */
@@ -170,11 +171,11 @@ class Service
        // }
     }
 
-
     /**
      * Returns a list of users given an array of ID's
      * if an ID is a role, all users associated with that role
      * will also be returned.
+     *
      * @param $userIds
      */
     private static function getNotificationUsers($userIds)

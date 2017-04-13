@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,12 +19,12 @@ namespace Pimcore\Model\Object\Data;
 
 class ExternalImage
 {
-
-    /** @var  string */
+    /** @var string */
     public $url;
 
     /**
      * ExternalImage constructor.
+     *
      * @param null $url
      */
     public function __construct($url = null)
@@ -46,7 +47,6 @@ class ExternalImage
     {
         $this->url = $url;
     }
-
 
     /**
      * @return string

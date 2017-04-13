@@ -34,6 +34,7 @@ class Product implements IOrderListFilter
 
     /**
      * @param IOrderList $orderList
+     *
      * @return IOrderListFilter
      */
     public function apply(IOrderList $orderList)

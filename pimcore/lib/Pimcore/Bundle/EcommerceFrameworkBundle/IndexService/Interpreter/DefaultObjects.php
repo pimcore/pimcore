@@ -22,10 +22,10 @@ class DefaultObjects implements IRelationInterpreter
 
         if (is_array($value)) {
             foreach ($value as $v) {
-                $result[] = ["dest" => $v->getId(), "type" => "object"];
+                $result[] = ['dest' => $v->getId(), 'type' => 'object'];
             }
         } elseif ($value instanceof \Pimcore\Model\Object\AbstractObject) {
-            $result[] = ["dest" => $value->getId(), "type" => "object"];
+            $result[] = ['dest' => $value->getId(), 'type' => 'object'];
         }
 
         return $result;

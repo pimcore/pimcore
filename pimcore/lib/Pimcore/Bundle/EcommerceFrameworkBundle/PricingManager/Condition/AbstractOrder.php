@@ -20,10 +20,10 @@ abstract class AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBundle
 {
     /**
      * persistenter cache für alle condition die von dieser ableiten
+     *
      * @var int[]
      */
     private static $cache = [];
-
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule
@@ -79,16 +79,14 @@ SQL;
                 );
 
                 $conn = \Pimcore\Db::getConnection();
-                self::$cache[ $rule->getId() ] = $conn->fetchRow($query);
+                self::$cache[$rule->getId()] = $conn->fetchRow($query);
             } catch (\Exception $e) {
                 Logger::error($e);
             }
         }
 
-
-        return self::$cache[ $rule->getId() ][ $field ];
+        return self::$cache[$rule->getId()][$field];
     }
-
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule
@@ -99,7 +97,6 @@ SQL;
     {
         return (int)$this->getData($rule, 'soldCount');
     }
-
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -60,18 +61,21 @@ class Info
 
     /**
      * @deprecated
+     *
      * @var string
      */
     public $name;
 
     /**
      * @deprecated
+     *
      * @var \Pimcore\Config\Config
      */
     public $config;
 
     /**
      * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
      * @var string
      */
     public $path;
@@ -86,6 +90,7 @@ class Info
 
     /**
      * @param string $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -121,6 +126,7 @@ class Info
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -192,6 +198,7 @@ class Info
 
     /**
      * @param int $index
+     *
      * @return $this
      */
     public function setIndex($index)
@@ -229,6 +236,7 @@ class Info
      * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
      *
      * @param \Pimcore\Config\Config $config
+     *
      * @return $this
      */
     public function setConfig($config)
@@ -248,11 +256,11 @@ class Info
         return $this->config;
     }
 
-
     /**
      * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
      *
      * @param string $path
+     *
      * @return $this
      */
     public function setPath($path)

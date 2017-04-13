@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Property
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,18 +24,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("custom-reports");
+        $this->setFile('custom-reports');
     }
 
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getByName($id = null)
@@ -45,11 +43,11 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->getById($this->model->getName());
 
-        if (isset($data["id"])) {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
-            $this->model->setName($data["id"]);
+            $this->model->setName($data['id']);
         } else {
-            throw new \Exception("Custom report with id: " . $this->model->getName() . " does not exist");
+            throw new \Exception('Custom report with id: ' . $this->model->getName() . ' does not exist');
         }
     }
 
@@ -67,9 +65,9 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["name", "sql", "dataSourceConfig", "columnConfiguration", "niceName", "group", "xAxis",
-                "groupIconClass", "iconClass", "reportClass", "creationDate", "modificationDate", "menuShortcut", "chartType", "pieColumn",
-                "pieLabelColumn", "yAxis"];
+            $allowedProperties = ['name', 'sql', 'dataSourceConfig', 'columnConfiguration', 'niceName', 'group', 'xAxis',
+                'groupIconClass', 'iconClass', 'reportClass', 'creationDate', 'modificationDate', 'menuShortcut', 'chartType', 'pieColumn',
+                'pieLabelColumn', 'yAxis'];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

@@ -17,11 +17,11 @@ class LocalizedFieldTest extends ModelTestCase
     {
         $object = TestHelper::createEmptyObject();
 
-        $object->setLinput("Test");
-        $this->assertEquals("Test", $object->getLinput());
+        $object->setLinput('Test');
+        $this->assertEquals('Test', $object->getLinput());
 
-        $object->setLinput("TestKo", "ko");
-        $this->assertEquals("TestKo", $object->getLinput("ko"));
+        $object->setLinput('TestKo', 'ko');
+        $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
     /**
@@ -34,7 +34,7 @@ class LocalizedFieldTest extends ModelTestCase
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
-        $object->setLinput("Test");
+        $object->setLinput('Test');
     }
 
     /**
@@ -47,6 +47,6 @@ class LocalizedFieldTest extends ModelTestCase
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
-        $object->setLinput("Test", "ko");
+        $object->setLinput('Test', 'ko');
     }
 }

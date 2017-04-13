@@ -38,7 +38,6 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
         $this->clientConfig = $tenantConfig->clientConfig->toArray();
     }
 
-
     /**
      * @param string $property
      *
@@ -51,7 +50,6 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
             : $this->clientConfig
         ;
     }
-
 
     /**
      * checks, if product should be in index for current tenant
@@ -114,13 +112,13 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
         return [];
     }
 
-
     /**
      * creates object mockup for given data
      *
      * @param $objectId
      * @param $data
      * @param $relations
+     *
      * @return mixed
      */
     public function createMockupObject($objectId, $data, $relations)

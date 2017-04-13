@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,15 +26,15 @@ use Pimcore\Model;
  */
 class CollectionConfig extends Model\AbstractModel
 {
-
     /** Group id.
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
      * Store ID
-     * @var integer
+     *
+     * @var int
      */
     public $storeId = 1;
 
@@ -48,18 +49,18 @@ class CollectionConfig extends Model\AbstractModel
     public $description;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Model\Object\Classificationstore\CollectionConfig
      */
     public static function getById($id)
@@ -77,6 +78,7 @@ class CollectionConfig extends Model\AbstractModel
     /**
      * @param $name
      * @param int $storeId
+     *
      * @return CollectionConfig
      */
     public static function getByName($name, $storeId = 1)
@@ -104,7 +106,8 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -115,16 +118,16 @@ class CollectionConfig extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -152,6 +155,7 @@ class CollectionConfig extends Model\AbstractModel
 
     /** Sets the description.
      * @param $description
+     *
      * @return Model\Object\Classificationstore\CollectionConfig
      */
     public function setDescription($description)
@@ -198,6 +202,7 @@ class CollectionConfig extends Model\AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -217,6 +222,7 @@ class CollectionConfig extends Model\AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)

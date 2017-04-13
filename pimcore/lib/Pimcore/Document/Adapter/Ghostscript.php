@@ -15,13 +15,12 @@
 namespace Pimcore\Document\Adapter;
 
 use Pimcore\Document\Adapter;
-use Pimcore\Tool\Console;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Tool\Console;
 
 class Ghostscript extends Adapter
 {
-
     /**
      * @var string
      */
@@ -47,6 +46,7 @@ class Ghostscript extends Adapter
 
     /**
      * @param string $fileType
+     *
      * @return bool
      */
     public function isFileTypeSupported($fileType)
@@ -62,26 +62,29 @@ class Ghostscript extends Adapter
 
     /**
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function getGhostscriptCli()
     {
-        return \Pimcore\Tool\Console::getExecutable("gs", true);
+        return \Pimcore\Tool\Console::getExecutable('gs', true);
     }
-
 
     /**
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function getPdftotextCli()
     {
-        return \Pimcore\Tool\Console::getExecutable("pdftotext", true);
+        return \Pimcore\Tool\Console::getExecutable('pdftotext', true);
     }
 
     /**
      * @param $path
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function load($path)
@@ -89,13 +92,13 @@ class Ghostscript extends Adapter
         $path = $this->preparePath($path);
 
         // avoid timeouts
-        $maxExecTime = (int) ini_get("max_execution_time");
+        $maxExecTime = (int) ini_get('max_execution_time');
         if ($maxExecTime > 1 && $maxExecTime < 250) {
             set_time_limit(250);
         }
 
         if (!$this->isFileTypeSupported($path)) {
-            $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
+            $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
             Logger::error($message);
             throw new \Exception($message);
         }
@@ -107,7 +110,9 @@ class Ghostscript extends Adapter
 
     /**
      * @param null $path
+     *
      * @return null|string
+     *
      * @throws \Exception
      */
     public function getPdf($path = null)
@@ -124,13 +129,14 @@ class Ghostscript extends Adapter
             return $path;
         }
 
-        $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
+        $message = "Couldn't load document " . $path . ' only PDF documents are currently supported';
         Logger::error($message);
         throw new \Exception($message);
     }
 
     /**
      * @return string
+     *
      * @throws \Exception
      */
     public function getPageCount()
@@ -139,7 +145,7 @@ class Ghostscript extends Adapter
         $pages = trim($pages);
 
         if (!is_numeric($pages)) {
-            throw new \Exception("Unable to get page-count of " . $this->path);
+            throw new \Exception('Unable to get page-count of ' . $this->path);
         }
 
         return $pages;
@@ -149,6 +155,7 @@ class Ghostscript extends Adapter
      * @param $path
      * @param int $page
      * @param int $resolution
+     *
      * @return $this|bool
      */
     public function saveImage($path, $page = 1, $resolution = 200)
@@ -157,10 +164,10 @@ class Ghostscript extends Adapter
             $realTargetPath = null;
             if (!stream_is_local($path)) {
                 $realTargetPath = $path;
-                $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ghostscript-tmp-" . uniqid() . "." . File::getFileExtension($path);
+                $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ghostscript-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             }
 
-            Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . escapeshellarg($path) . " " . escapeshellarg($this->path), null, 240);
+            Console::exec(self::getGhostscriptCli() . ' -sDEVICE=png16m -dFirstPage=' . $page . ' -dLastPage=' . $page . ' -r' . $resolution . ' -o ' . escapeshellarg($path) . ' ' . escapeshellarg($this->path), null, 240);
 
             if ($realTargetPath) {
                 File::rename($path, $realTargetPath);
@@ -177,27 +184,28 @@ class Ghostscript extends Adapter
     /**
      * @param null $page
      * @param null $path
+     *
      * @return bool|string
      */
     public function getText($page = null, $path = null)
     {
         try {
             $path = $path ? $this->preparePath($path) : $this->path;
-            $pageRange = "";
+            $pageRange = '';
 
             try {
                 // first try to use poppler's pdftotext, because this produces more accurate results than the txtwrite device from ghostscript
                 if ($page) {
-                    $pageRange = "-f " . $page . " -l " . $page . " ";
+                    $pageRange = '-f ' . $page . ' -l ' . $page . ' ';
                 }
-                $text = Console::exec(self::getPdftotextCli() . " " . $pageRange . escapeshellarg($path) . " -", null, 120);
+                $text = Console::exec(self::getPdftotextCli() . ' ' . $pageRange . escapeshellarg($path) . ' -', null, 120);
             } catch (\Exception $e) {
                 // pure ghostscript way
                 if ($page) {
-                    $pageRange = "-dFirstPage=" . $page . " -dLastPage=" . $page . " ";
+                    $pageRange = '-dFirstPage=' . $page . ' -dLastPage=' . $page . ' ';
                 }
-                $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
-                Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . escapeshellarg($path), null, 120);
+                $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/pdf-text-extract-' . uniqid() . '.txt';
+                Console::exec(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
 
                 if (is_file($textFile)) {
                     $text =  file_get_contents($textFile);

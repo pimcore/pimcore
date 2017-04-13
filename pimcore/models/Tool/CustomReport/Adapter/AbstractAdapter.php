@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Pimcore
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,7 +19,6 @@ namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
 abstract class AbstractAdapter
 {
-
     /**
      * @param $config
      * @param null $fullConfig
@@ -39,6 +39,7 @@ abstract class AbstractAdapter
      * @param $limit
      * @param null $fields - if set, only in fields specified columns are returned
      * @param null $drillDownFilters - if set, additional filters are set
+     *
      * @return array
      */
     abstract public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null);
@@ -47,6 +48,7 @@ abstract class AbstractAdapter
      * returns available columns for given configuration
      *
      * @param $configuration
+     *
      * @return mixed
      */
     abstract public function getColumns($configuration);
@@ -57,6 +59,7 @@ abstract class AbstractAdapter
      * @param $filters
      * @param $field
      * @param $drillDownFilters
+     *
      * @return mixed
      */
     abstract public function getAvailableOptions($filters, $field, $drillDownFilters);

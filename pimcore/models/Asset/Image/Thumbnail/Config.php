@@ -10,33 +10,33 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
-use Pimcore\Tool\Serialize;
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
  */
 class Config extends Model\AbstractModel
 {
-
     /**
      * format of array:
      * array(
-        array(
-            "method" => "myName",
-            "arguments" =>
-                array(
-                    "width" => 345,
-                    "height" => 200
-                )
-        )
+     array(
+     "method" => "myName",
+     "arguments" =>
+     array(
+     "width" => 345,
+     "height" => 200
+     )
+     )
      * )
      *
      * @var array
@@ -51,17 +51,17 @@ class Config extends Model\AbstractModel
     /**
      * @var string
      */
-    public $name = "";
+    public $name = '';
 
     /**
      * @var string
      */
-    public $description = "";
+    public $description = '';
 
     /**
      * @var string
      */
-    public $format = "SOURCE";
+    public $format = 'SOURCE';
 
     /**
      * @var mixed
@@ -100,6 +100,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $config
+     *
      * @return self|bool
      */
     public static function getByAutoDetect($config)
@@ -110,13 +111,13 @@ class Config extends Model\AbstractModel
             try {
                 $thumbnail = self::getByName($config);
             } catch (\Exception $e) {
-                Logger::error("requested thumbnail " . $config . " is not defined");
+                Logger::error('requested thumbnail ' . $config . ' is not defined');
 
                 return false;
             }
         } elseif (is_array($config)) {
             // check if it is a legacy config or a new one
-            if (array_key_exists("items", $config)) {
+            if (array_key_exists('items', $config)) {
                 $thumbnail = self::getByArrayConfig($config);
             } else {
                 $thumbnail = self::getByLegacyConfig($config);
@@ -130,17 +131,18 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return null|Config
      */
     public static function getByName($name)
     {
-        $cacheKey = "imagethumb_" . crc32($name);
+        $cacheKey = 'imagethumb_' . crc32($name);
 
         try {
             $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
             $thumbnail->setName($name);
             if (!$thumbnail) {
-                throw new \Exception("Thumbnail in registry is null");
+                throw new \Exception('Thumbnail in registry is null');
             }
         } catch (\Exception $e) {
             try {
@@ -169,16 +171,16 @@ class Config extends Model\AbstractModel
     public static function getPreviewConfig()
     {
         $thumbnail = new self();
-        $thumbnail->setName("pimcore-system-treepreview");
-        $thumbnail->addItem("scaleByWidth", [
-            "width" => 400
+        $thumbnail->setName('pimcore-system-treepreview');
+        $thumbnail->addItem('scaleByWidth', [
+            'width' => 400
         ]);
-        $thumbnail->addItem("setBackgroundImage", [
-            "path" => "/pimcore/static6/img/tree-preview-transparent-background.png",
-            "mode" => "cropTopLeft"
+        $thumbnail->addItem('setBackgroundImage', [
+            'path' => '/pimcore/static6/img/tree-preview-transparent-background.png',
+            'mode' => 'cropTopLeft'
         ]);
         $thumbnail->setQuality(60);
-        $thumbnail->setFormat("PJPEG");
+        $thumbnail->setFormat('PJPEG');
 
         return $thumbnail;
     }
@@ -189,8 +191,8 @@ class Config extends Model\AbstractModel
     public function getForWebserviceExport()
     {
         $arrayConfig = object2array($this);
-        $items = $arrayConfig["items"];
-        $arrayConfig["items"] = $items;
+        $items = $arrayConfig['items'];
+        $arrayConfig['items'] = $items;
 
         return $arrayConfig;
     }
@@ -209,17 +211,18 @@ class Config extends Model\AbstractModel
      * @param $name
      * @param $parameters
      * @param $media
+     *
      * @return bool
      */
     public function addItem($name, $parameters, $media = null)
     {
         $item = [
-            "method" => $name,
-            "arguments" => $parameters
+            'method' => $name,
+            'arguments' => $parameters
         ];
 
         // default is added to $this->items for compatibility reasons
-        if (!$media || $media == "default") {
+        if (!$media || $media == 'default') {
             $this->items[] = $item;
         } else {
             $this->createMediaIfNotExists($media);
@@ -234,11 +237,12 @@ class Config extends Model\AbstractModel
      * @param $name
      * @param $parameters
      * @param $media
+     *
      * @return bool
      */
     public function addItemAt($position, $name, $parameters, $media = null)
     {
-        if (!$media || $media == "default") {
+        if (!$media || $media == 'default') {
             $itemContainer = &$this->items;
         } else {
             $this->createMediaIfNotExists($media);
@@ -246,8 +250,8 @@ class Config extends Model\AbstractModel
         }
 
         array_splice($itemContainer, $position, 0, [[
-            "method" => $name,
-            "arguments" => $parameters
+            'method' => $name,
+            'arguments' => $parameters
         ]]);
 
         return true;
@@ -261,6 +265,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return bool
      */
     public function selectMedia($name)
@@ -269,9 +274,9 @@ class Config extends Model\AbstractModel
             $this->setItems($this->medias[$name]);
 
             $suffix = strtolower($name);
-            $suffix = preg_replace("/[^a-z\-0-9]/", "-", $suffix);
-            $suffix = trim($suffix, "-");
-            $suffix = preg_replace("/[\-]+/", "-", $suffix);
+            $suffix = preg_replace("/[^a-z\-0-9]/", '-', $suffix);
+            $suffix = trim($suffix, '-');
+            $suffix = preg_replace("/[\-]+/", '-', $suffix);
 
             $this->setFilenameSuffix($suffix);
 
@@ -431,122 +436,127 @@ class Config extends Model\AbstractModel
 
     /**
      * @static
+     *
      * @param $config
+     *
      * @return self
      */
     public static function getByArrayConfig($config)
     {
         $pipe = new self();
 
-        if (isset($config["format"]) && $config["format"]) {
-            $pipe->setFormat($config["format"]);
+        if (isset($config['format']) && $config['format']) {
+            $pipe->setFormat($config['format']);
         }
-        if (isset($config["quality"]) && $config["quality"]) {
-            $pipe->setQuality($config["quality"]);
+        if (isset($config['quality']) && $config['quality']) {
+            $pipe->setQuality($config['quality']);
         }
-        if (isset($config["items"]) && $config["items"]) {
-            $pipe->setItems($config["items"]);
+        if (isset($config['items']) && $config['items']) {
+            $pipe->setItems($config['items']);
         }
 
-        if (isset($config["highResolution"]) && $config["highResolution"]) {
-            $pipe->setHighResolution($config["highResolution"]);
+        if (isset($config['highResolution']) && $config['highResolution']) {
+            $pipe->setHighResolution($config['highResolution']);
         }
 
         // set name
         $hash = md5(Serialize::serialize($pipe));
-        $pipe->setName("auto_" . $hash);
+        $pipe->setName('auto_' . $hash);
 
         return $pipe;
     }
 
     /**
      * This is just for compatibility, this method will be removed with the next major release
+     *
      * @depricated
      * @static
+     *
      * @param $config
+     *
      * @return self
      */
     public static function getByLegacyConfig($config)
     {
         $pipe = new self();
 
-        if (isset($config["format"])) {
-            $pipe->setFormat($config["format"]);
+        if (isset($config['format'])) {
+            $pipe->setFormat($config['format']);
         }
 
-        if (isset($config["quality"])) {
-            $pipe->setQuality($config["quality"]);
+        if (isset($config['quality'])) {
+            $pipe->setQuality($config['quality']);
         }
 
-        if (isset($config["cover"])) {
-            $pipe->addItem("cover", [
-                "width" => $config["width"],
-                "height" => $config["height"],
-                "positioning" => ((isset($config["positioning"]) && !empty($config["positioning"])) ? (string)$config["positioning"] : "center"),
-                "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+        if (isset($config['cover'])) {
+            $pipe->addItem('cover', [
+                'width' => $config['width'],
+                'height' => $config['height'],
+                'positioning' => ((isset($config['positioning']) && !empty($config['positioning'])) ? (string)$config['positioning'] : 'center'),
+                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
             ]);
-        } elseif (isset($config["contain"])) {
-            $pipe->addItem("contain", [
-                "width" => $config["width"],
-                "height" => $config["height"],
-                "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+        } elseif (isset($config['contain'])) {
+            $pipe->addItem('contain', [
+                'width' => $config['width'],
+                'height' => $config['height'],
+                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
             ]);
-        } elseif (isset($config["frame"])) {
-            $pipe->addItem("frame", [
-                "width" => $config["width"],
-                "height" => $config["height"],
-                "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+        } elseif (isset($config['frame'])) {
+            $pipe->addItem('frame', [
+                'width' => $config['width'],
+                'height' => $config['height'],
+                'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
             ]);
-        } elseif (isset($config["aspectratio"]) && $config["aspectratio"]) {
-            if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
-                $pipe->addItem("contain", [
-                    "width" => $config["width"],
-                    "height" => $config["height"],
-                    "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+        } elseif (isset($config['aspectratio']) && $config['aspectratio']) {
+            if (isset($config['height']) && isset($config['width']) && $config['height'] > 0 && $config['width'] > 0) {
+                $pipe->addItem('contain', [
+                    'width' => $config['width'],
+                    'height' => $config['height'],
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
                 ]);
-            } elseif (isset($config["height"]) && $config["height"] > 0) {
-                $pipe->addItem("scaleByHeight", [
-                    "height" => $config["height"],
-                    "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+            } elseif (isset($config['height']) && $config['height'] > 0) {
+                $pipe->addItem('scaleByHeight', [
+                    'height' => $config['height'],
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
                 ]);
             } else {
-                $pipe->addItem("scaleByWidth", [
-                    "width" => $config["width"],
-                    "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+                $pipe->addItem('scaleByWidth', [
+                    'width' => $config['width'],
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
                 ]);
             }
         } else {
-            if (!isset($config["width"]) && isset($config["height"])) {
-                $pipe->addItem("scaleByHeight", [
-                    "height" => $config["height"],
-                    "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+            if (!isset($config['width']) && isset($config['height'])) {
+                $pipe->addItem('scaleByHeight', [
+                    'height' => $config['height'],
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
                 ]);
-            } elseif (isset($config["width"]) && !isset($config["height"])) {
-                $pipe->addItem("scaleByWidth", [
-                    "width" => $config["width"],
-                    "forceResize" => (isset($config["forceResize"]) ? (bool)$config["forceResize"] : false)
+            } elseif (isset($config['width']) && !isset($config['height'])) {
+                $pipe->addItem('scaleByWidth', [
+                    'width' => $config['width'],
+                    'forceResize' => (isset($config['forceResize']) ? (bool)$config['forceResize'] : false)
                 ]);
-            } elseif (isset($config["width"]) && isset($config["height"])) {
-                $pipe->addItem("resize", [
-                    "width" => $config["width"],
-                    "height" => $config["height"]
+            } elseif (isset($config['width']) && isset($config['height'])) {
+                $pipe->addItem('resize', [
+                    'width' => $config['width'],
+                    'height' => $config['height']
                 ]);
             }
         }
 
-        if (isset($config["highResolution"])) {
-            $pipe->setHighResolution($config["highResolution"]);
+        if (isset($config['highResolution'])) {
+            $pipe->setHighResolution($config['highResolution']);
         }
 
         $hash = md5(Serialize::serialize($pipe));
-        $pipe->setName("auto_" . $hash);
+        $pipe->setName('auto_' . $hash);
 
         return $pipe;
     }
 
-
     /**
      * @param $asset
+     *
      * @return array
      */
     public function getEstimatedDimensions($asset)
@@ -559,44 +569,44 @@ class Config extends Model\AbstractModel
         if (is_array($transformations) && count($transformations) > 0) {
             if ($originalWidth && $originalHeight) {
                 // this is the more accurate method than the other below
-                $dimensions["width"] = $originalWidth;
-                $dimensions["height"] = $originalHeight;
+                $dimensions['width'] = $originalWidth;
+                $dimensions['height'] = $originalHeight;
 
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
-                        $arg = $transformation["arguments"];
-                        if (in_array($transformation["method"], ["resize", "cover", "frame", "crop"])) {
-                            $dimensions["width"] = $arg["width"];
-                            $dimensions["height"] = $arg["height"];
-                        } elseif ($transformation["method"] == "scaleByWidth") {
-                            if ($arg["width"] <= $dimensions["width"] || $asset->isVectorGraphic()) {
-                                $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
-                                $dimensions["width"] = $arg["width"];
+                        $arg = $transformation['arguments'];
+                        if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
+                            $dimensions['width'] = $arg['width'];
+                            $dimensions['height'] = $arg['height'];
+                        } elseif ($transformation['method'] == 'scaleByWidth') {
+                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic()) {
+                                $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
+                                $dimensions['width'] = $arg['width'];
                             }
-                        } elseif ($transformation["method"] == "scaleByHeight") {
-                            if ($arg["height"] < $dimensions["height"] || $asset->isVectorGraphic()) {
-                                $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
-                                $dimensions["height"] = $arg["height"];
+                        } elseif ($transformation['method'] == 'scaleByHeight') {
+                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic()) {
+                                $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
+                                $dimensions['height'] = $arg['height'];
                             }
-                        } elseif ($transformation["method"] == "contain") {
-                            $x = $dimensions["width"] / $arg["width"];
-                            $y = $dimensions["height"] / $arg["height"];
+                        } elseif ($transformation['method'] == 'contain') {
+                            $x = $dimensions['width'] / $arg['width'];
+                            $y = $dimensions['height'] / $arg['height'];
 
                             if ($x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
                                 continue;
                             }
 
                             if ($x > $y) {
-                                $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
-                                $dimensions["width"] = $arg["width"];
+                                $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
+                                $dimensions['width'] = $arg['width'];
                             } else {
-                                $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
-                                $dimensions["height"] = $arg["height"];
+                                $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
+                                $dimensions['height'] = $arg['height'];
                             }
-                        } elseif ($transformation["method"] == "cropPercent") {
-                            $dimensions["width"] = ceil($dimensions["width"] * ($arg["width"] / 100));
-                            $dimensions["height"] = ceil($dimensions["height"] * ($arg["height"] / 100));
-                        } elseif (in_array($transformation["method"], ["rotate", "trim"])) {
+                        } elseif ($transformation['method'] == 'cropPercent') {
+                            $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
+                            $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
+                        } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
                             // unable to calculate dimensions -> return empty
                             return [];
                         }
@@ -608,9 +618,9 @@ class Config extends Model\AbstractModel
                 // and is only a very rough estimate, you should avoid falling back to this functionality
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
-                        if (is_array($transformation["arguments"]) && in_array($transformation["method"], ["resize", "scaleByWidth", "scaleByHeight", "cover", "frame"])) {
-                            foreach ($transformation["arguments"] as $key => $value) {
-                                if ($key == "width" || $key == "height") {
+                        if (is_array($transformation['arguments']) && in_array($transformation['method'], ['resize', 'scaleByWidth', 'scaleByHeight', 'cover', 'frame'])) {
+                            foreach ($transformation['arguments'] as $key => $value) {
+                                if ($key == 'width' || $key == 'height') {
                                     $dimensions[$key] = $value;
                                 }
                             }
@@ -621,12 +631,11 @@ class Config extends Model\AbstractModel
         }
 
         // ensure we return int's, sometimes $arg[...] contain strings
-        $dimensions["width"] = (int) $dimensions["width"];
-        $dimensions["height"] = (int) $dimensions["height"];
+        $dimensions['width'] = (int) $dimensions['width'];
+        $dimensions['height'] = (int) $dimensions['height'];
 
         return $dimensions;
     }
-
 
     /**
      * @param string $colorspace
@@ -677,7 +686,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isPreserveColor()
     {
@@ -685,7 +694,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $preserveColor
+     * @param bool $preserveColor
      */
     public function setPreserveColor($preserveColor)
     {
@@ -693,7 +702,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isPreserveMetaData()
     {
@@ -701,7 +710,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $preserveMetaData
+     * @param bool $preserveMetaData
      */
     public function setPreserveMetaData($preserveMetaData)
     {

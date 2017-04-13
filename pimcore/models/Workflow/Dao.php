@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Staticroute
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,18 +24,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("workflowmanagement");
+        $this->setFile('workflowmanagement');
     }
 
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -45,10 +43,10 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->getById($this->model->getId());
 
-        if (isset($data["id"])) {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("Workflow with id: " . $this->model->getId() . " does not exist");
+            throw new \Exception('Workflow with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 

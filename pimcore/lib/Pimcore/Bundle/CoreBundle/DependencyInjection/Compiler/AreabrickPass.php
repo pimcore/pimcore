@@ -236,7 +236,6 @@ class AreabrickPass implements CompilerPassInterface
             $subNamespace = '';
         }
 
-
         $brickName = Inflector::tableize($className);
 
         return sprintf('%s.area.brick.%s%s', $bundleName, $subNamespace, $brickName);

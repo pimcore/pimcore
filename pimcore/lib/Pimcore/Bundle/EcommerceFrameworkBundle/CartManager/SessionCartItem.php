@@ -25,15 +25,14 @@ class SessionCartItem extends AbstractCartItem implements ICartItem
         return $this->cart;
     }
 
-
     public function save()
     {
-        throw new \Exception("Not implemented, should not be needed for this cart type.");
+        throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "")
+    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
     {
-        throw new \Exception("Not implemented, should not be needed for this cart type.");
+        throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
     public static function removeAllFromCart($cartId)
@@ -52,7 +51,6 @@ class SessionCartItem extends AbstractCartItem implements ICartItem
         return (array)$this->subItems;
     }
 
-
     /**
      * @return array
      */
@@ -60,7 +58,7 @@ class SessionCartItem extends AbstractCartItem implements ICartItem
     {
         $vars = parent::__sleep();
 
-        $blockedVars = ["cart", "product"];
+        $blockedVars = ['cart', 'product'];
 
         $finalVars = [];
         foreach ($vars as $key) {

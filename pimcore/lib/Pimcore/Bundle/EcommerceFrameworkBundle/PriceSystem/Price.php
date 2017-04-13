@@ -20,7 +20,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
 class Price implements IPrice
 {
-
     /**
      * @var Currency
      */
@@ -51,9 +50,9 @@ class Price implements IPrice
      */
     private $taxEntries = [];
 
-
     /**
      * Price constructor.
+     *
      * @param $amount
      * @param Currency $currency
      * @param bool $minPrice
@@ -64,11 +63,11 @@ class Price implements IPrice
         $this->currency = $currency;
         $this->minPrice = $minPrice;
     }
+
     public function __toString()
     {
         return $this->getCurrency()->toCurrency($this->grossAmount);
     }
-
 
     /**
      * @return bool
@@ -162,6 +161,7 @@ class Price implements IPrice
 
     /**
      * @param float $grossAmount
+     *
      * @return void
      */
     public function setGrossAmount($grossAmount, $recalc = false)
@@ -175,6 +175,7 @@ class Price implements IPrice
 
     /**
      * @param float $netAmount
+     *
      * @return void
      */
     public function setNetAmount($netAmount, $recalc = false)
@@ -188,6 +189,7 @@ class Price implements IPrice
 
     /**
      * @param TaxEntry[] $taxEntries
+     *
      * @return void
      */
     public function setTaxEntries($taxEntries)
@@ -197,6 +199,7 @@ class Price implements IPrice
 
     /**
      * @param string $taxEntryCombinationMode
+     *
      * @return void
      */
     public function setTaxEntryCombinationMode($taxEntryCombinationMode)

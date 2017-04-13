@@ -20,6 +20,7 @@ class Image
 {
     /**
      * @return null|Adapter\GD|Adapter\Imagick
+     *
      * @throws \Exception
      */
     public static function getInstance()
@@ -32,18 +33,19 @@ class Image
 
     /**
      * @return null|Adapter\GD|Adapter\Imagick
+     *
      * @throws \Exception
      */
     public static function create()
     {
         try {
-            if (extension_loaded("imagick")) {
+            if (extension_loaded('imagick')) {
                 return new Adapter\Imagick();
             } else {
                 return new Adapter\GD();
             }
         } catch (\Exception $e) {
-            Logger::crit("Unable to load image extensions: " . $e->getMessage());
+            Logger::crit('Unable to load image extensions: ' . $e->getMessage());
             throw $e;
         }
     }

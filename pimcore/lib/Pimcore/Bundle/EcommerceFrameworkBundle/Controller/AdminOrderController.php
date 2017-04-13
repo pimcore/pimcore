@@ -37,6 +37,7 @@ use Zend\Paginator\Paginator;
 
 /**
  * Class AdminOrderController
+ *
  * @Route("/admin-order")
  */
 class AdminOrderController extends FrontendController
@@ -46,7 +47,6 @@ class AdminOrderController extends FrontendController
      */
     protected $orderManager;
 
-
     /**
      * @param FilterControllerEvent $event
      */
@@ -55,7 +55,7 @@ class AdminOrderController extends FrontendController
         // set language
         $user = $this->get('pimcore_admin.security.token_storage_user_resolver')->getUser();
         if ($user) {
-            $this->get("translator")->setLocale($user->getLanguage());
+            $this->get('translator')->setLocale($user->getLanguage());
             $event->getRequest()->setLocale($user->getLanguage());
         }
 
@@ -79,6 +79,7 @@ class AdminOrderController extends FrontendController
 
     /**
      * Bestellungen auflisten
+     *
      * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list")
      */
     public function listAction(Request $request)
@@ -92,7 +93,6 @@ class AdminOrderController extends FrontendController
         // set order state
         $list->setOrderState(AbstractOrder::ORDER_STATE_COMMITTED);
 
-
         // add select fields
         $list->addSelectField('order.OrderDate');
         $list->addSelectField(['OrderNumber' => 'order.orderNumber']);
@@ -102,7 +102,6 @@ class AdminOrderController extends FrontendController
             $list->addSelectField(['TotalPrice' => 'orderItem.totalPrice']);
         }
         $list->addSelectField(['Items' => 'count(orderItem.o_id)']);
-
 
         // Search
         if ($request->get('q')) {
@@ -123,7 +122,6 @@ class AdminOrderController extends FrontendController
                     break;
             }
         }
-
 
         // add Date Filter
         if ($request->query->has('from') === false && $request->query->has('till') === false) {
@@ -149,10 +147,8 @@ class AdminOrderController extends FrontendController
         }
         $list->addFilter($filterDate);
 
-
         // set default order
         $list->setOrder('order.orderDate desc');
-
 
         // create paging
         $paginator = new Paginator($list);
@@ -163,9 +159,9 @@ class AdminOrderController extends FrontendController
         $this->view->paginator = $paginator;
     }
 
-
     /**
      * details der bestellung anzeigen
+     *
      * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail")
      */
     public function detailAction(Request $request)
@@ -176,7 +172,6 @@ class AdminOrderController extends FrontendController
         $order = OnlineShopOrder::getById($request->get('id'));
         /* @var AbstractOrder $order */
         $orderAgent = $this->view->orderAgent = $this->orderManager->createOrderAgent($order);
-
 
         /**
          * @param array $address
@@ -197,13 +192,11 @@ class AdminOrderController extends FrontendController
             return $json->results[0]->geometry->location;
         };
 
-
         // get geo point
         $this->view->geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
             $this->view->geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
         }
-
 
         // get customer info
         if ($order->getCustomer()) {
@@ -211,17 +204,14 @@ class AdminOrderController extends FrontendController
             $arrCustomerAccount = [];
             $customer = $order->getCustomer();
 
-
             // register
             $register = new \DateTime($order->getCreationDate());
             $arrCustomerAccount['created'] = $dateFormatter->formatDateTime($register, IntlFormatterService::DATE_MEDIUM);
-
 
             // mail
             if (method_exists($customer, 'getEMail')) {
                 $arrCustomerAccount['email'] = $customer->getEMail();
             }
-
 
             // order count
             $addOrderCount = function () use ($customer, &$arrCustomerAccount) {
@@ -246,19 +236,13 @@ class AdminOrderController extends FrontendController
             $this->view->arrCustomerAccount = $arrCustomerAccount;
         }
 
-
-
         // create timeline
         $arrIcons = [
-            'itemChangeAmount' => 'glyphicon glyphicon-pencil'
-            , 'itemCancel' => 'glyphicon glyphicon-remove'
-            , 'itemComplaint' => 'glyphicon glyphicon-alert'
+            'itemChangeAmount' => 'glyphicon glyphicon-pencil', 'itemCancel' => 'glyphicon glyphicon-remove', 'itemComplaint' => 'glyphicon glyphicon-alert'
         ];
 
         $arrContext = [
-            'itemChangeAmount' => 'default'
-            , 'itemCancel' => 'danger'
-            , 'itemComplaint' => 'warning'
+            'itemChangeAmount' => 'default', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
         ];
 
         $arrTimeline = [];
@@ -271,11 +255,9 @@ class AdminOrderController extends FrontendController
             /* @var \Pimcore\Model\User $user */
             $avatar = $user ? sprintf('/admin/user/get-image?id=%d', $user->getId()) : null;
 
-
             // group events
             $date->setTimestamp($note->getDate());
             $group = $dateFormatter->formatDateTime($date, IntlFormatterService::DATE_MEDIUM);
-
 
             // load reference
             $reference = Concrete::getById($note->getCid());
@@ -284,25 +266,17 @@ class AdminOrderController extends FrontendController
                 : null
             ;
 
-
             // add
-            $arrTimeline[ $group ][] = [
-                'icon' => $arrIcons[ $note->getTitle() ]
-                , 'context' => $arrContext[ $note->getTitle() ] ?: 'default'
-                , 'type' => $note->getTitle()
-                , 'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatterService::DATETIME_MEDIUM)
-                , 'avatar' => $avatar
-                , 'user' => $user ? $user->getName() : null
-                , 'message' => $note->getData()['message']['data']
-                , 'title' => $title ?: $note->getTitle()
+            $arrTimeline[$group][] = [
+                'icon' => $arrIcons[$note->getTitle()], 'context' => $arrContext[$note->getTitle()] ?: 'default', 'type' => $note->getTitle(), 'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatterService::DATETIME_MEDIUM), 'avatar' => $avatar, 'user' => $user ? $user->getName() : null, 'message' => $note->getData()['message']['data'], 'title' => $title ?: $note->getTitle()
             ];
         }
         $this->view->timeLine = $arrTimeline;
     }
 
-
     /**
      * cancel order item
+     *
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel")
      */
     public function itemCancelAction(Request $request)
@@ -311,7 +285,6 @@ class AdminOrderController extends FrontendController
         $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
-
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
             // init
@@ -324,17 +297,16 @@ class AdminOrderController extends FrontendController
             $note->addData('message', 'text', $request->get('message'));
             $note->save();
 
-
             // redir
-            $url = $this->generateUrl("pimcore_ecommerce_backend_admin-order_detail", ['id' => $order->getId()]);
+            $url = $this->generateUrl('pimcore_ecommerce_backend_admin-order_detail', ['id' => $order->getId()]);
 
             return $this->redirect($url);
         }
     }
 
-
     /**
      * edit item
+     *
      * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit")
      */
     public function itemEditAction(Request $request)
@@ -343,7 +315,6 @@ class AdminOrderController extends FrontendController
         $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
-
 
         if ($request->get('confirmed')) {
             // change item
@@ -354,17 +325,16 @@ class AdminOrderController extends FrontendController
             $note->addData('message', 'text', $request->get('message')); // 'text','date','document','asset','object','bool'
             $note->save();
 
-
             // redir
-            $url = $this->generateUrl("pimcore_ecommerce_backend_admin-order_detail", ['id' => $order->getId()]);
+            $url = $this->generateUrl('pimcore_ecommerce_backend_admin-order_detail', ['id' => $order->getId()]);
 
             return $this->redirect($url);
         }
     }
 
-
     /**
      * complaint item
+     *
      * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint")
      */
     public function itemComplaintAction(Request $request)
@@ -373,7 +343,6 @@ class AdminOrderController extends FrontendController
         $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
-
 
         if ($request->get('confirmed')) {
             // change item
@@ -384,9 +353,8 @@ class AdminOrderController extends FrontendController
             $note->addData('message', 'text', $request->get('message'));
             $note->save();
 
-
             // redir
-            $url = $this->generateUrl("pimcore_ecommerce_backend_admin-order_detail", ['id' => $order->getId()]);
+            $url = $this->generateUrl('pimcore_ecommerce_backend_admin-order_detail', ['id' => $order->getId()]);
 
             return $this->redirect($url);
         }

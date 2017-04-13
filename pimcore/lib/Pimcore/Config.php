@@ -14,10 +14,6 @@
 
 namespace Pimcore;
 
-use Pimcore\Tool;
-use Pimcore\Cache;
-use Pimcore\Model;
-use Pimcore\Logger;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Config
@@ -36,6 +32,7 @@ class Config
 
     /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
+     *
      * @return mixed
      */
     public static function locateConfigFile($name)
@@ -51,9 +48,9 @@ class Config
             $env = self::getEnvironment();
             if ($env) {
                 $fileExt = File::getFileExtension($name);
-                $pureName = str_replace("." . $fileExt, "", $name);
+                $pureName = str_replace('.' . $fileExt, '', $name);
                 foreach ($pathsToCheck as $path) {
-                    $tmpFile = $path . "/" . $pureName . "_" . $env . "." . $fileExt;
+                    $tmpFile = $path . '/' . $pureName . '_' . $env . '.' . $fileExt;
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
                         break;
@@ -64,7 +61,7 @@ class Config
             //check for config file without environment configuration
             if (!$file) {
                 foreach ($pathsToCheck as $path) {
-                    $tmpFile = $path . "/" . $name;
+                    $tmpFile = $path . '/' . $name;
                     if (file_exists($tmpFile)) {
                         $file = $tmpFile;
                         break;
@@ -74,7 +71,7 @@ class Config
 
             //get default path in pimcore configuration directory
             if (!$file) {
-                $file = PIMCORE_CONFIGURATION_DIRECTORY . "/" . $name;
+                $file = PIMCORE_CONFIGURATION_DIRECTORY . '/' . $name;
             }
 
             self::$configFileCache[$name] = $file;
@@ -85,15 +82,17 @@ class Config
 
     /**
      * @param bool $forceReload
+     *
      * @return mixed|null|\Pimcore\Config\Config
+     *
      * @throws \Exception
      */
     public static function getSystemConfig($forceReload = false)
     {
         $config = null;
 
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_system") && !$forceReload) {
-            $config = \Pimcore\Cache\Runtime::get("pimcore_config_system");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
             $file = self::locateConfigFile('system.php');
 
@@ -111,10 +110,10 @@ class Config
 
                 self::setSystemConfig($config);
             } catch (\Exception $e) {
-                Logger::emergency("Cannot find system configuration, should be located at: " . $file);
+                Logger::emergency('Cannot find system configuration, should be located at: ' . $file);
 
                 if (is_file($file)) {
-                    $m = "Your system.php located at " . $file . " is invalid, please check and correct it manually!";
+                    $m = 'Your system.php located at ' . $file . ' is invalid, please check and correct it manually!';
                     Tool::exitWithError($m);
                 }
             }
@@ -125,23 +124,25 @@ class Config
 
     /**
      * @static
+     *
      * @param \Pimcore\Config\Config $config
      */
     public static function setSystemConfig(\Pimcore\Config\Config $config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_system", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_system', $config);
     }
 
     /**
      * @static
+     *
      * @return mixed|\Pimcore\Config\Config
      */
     public static function getWebsiteConfig()
     {
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_website")) {
-            $config = \Pimcore\Cache\Runtime::get("pimcore_config_website");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_website')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_website');
         } else {
-            $cacheKey = "website_config";
+            $cacheKey = 'website_config';
 
             $siteId = null;
             if (Model\Site::isSiteRequest()) {
@@ -149,7 +150,7 @@ class Config
             } elseif (Tool::isFrontentRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 // we cannot use the document resolver service here, because we need the document on the master request
-                $originDocument = \Pimcore::getContainer()->get("request_stack")->getMasterRequest()->get(DynamicRouter::CONTENT_KEY);
+                $originDocument = \Pimcore::getContainer()->get('request_stack')->getMasterRequest()->get(DynamicRouter::CONTENT_KEY);
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
                     if ($site) {
@@ -159,17 +160,15 @@ class Config
             }
 
             if ($siteId) {
-                $cacheKey = $cacheKey . "_site_" . $siteId;
+                $cacheKey = $cacheKey . '_site_' . $siteId;
             }
 
             if (!$config = Cache::load($cacheKey)) {
                 $settingsArray = [];
-                $cacheTags = ["website_config", "system", "config", "output"];
+                $cacheTags = ['website_config', 'system', 'config', 'output'];
 
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
-
-
 
                 foreach ($list as $item) {
                     $key = $item->getName();
@@ -182,15 +181,15 @@ class Config
                     $s = null;
 
                     switch ($item->getType()) {
-                        case "document":
-                        case "asset":
-                        case "object":
+                        case 'document':
+                        case 'asset':
+                        case 'object':
                             $s = Model\Element\Service::getElementById($item->getType(), $item->getData());
                             break;
-                        case "bool":
+                        case 'bool':
                             $s = (bool) $item->getData();
                             break;
-                        case "text":
+                        case 'text':
                             $s = (string) $item->getData();
                             break;
 
@@ -218,28 +217,30 @@ class Config
 
     /**
      * @static
+     *
      * @param \Pimcore\Config\Config $config
      */
     public static function setWebsiteConfig(\Pimcore\Config\Config $config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_website", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_website', $config);
     }
 
     /**
      * @static
+     *
      * @return \Pimcore\Config\Config
      */
     public static function getReportConfig()
     {
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_report")) {
-            $config = \Pimcore\Cache\Runtime::get("pimcore_config_report");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_report')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_report');
         } else {
             try {
-                $file = self::locateConfigFile("reports.php");
+                $file = self::locateConfigFile('reports.php');
                 if (file_exists($file)) {
                     $config = new \Pimcore\Config\Config(include($file));
                 } else {
-                    throw new \Exception("Config-file " . $file . " doesn't exist.");
+                    throw new \Exception('Config-file ' . $file . " doesn't exist.");
                 }
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
@@ -253,28 +254,30 @@ class Config
 
     /**
      * @static
+     *
      * @param \Pimcore\Config\Config $config
      */
     public static function setReportConfig(\Pimcore\Config\Config $config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_report", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_report', $config);
     }
 
     /**
      * @static
+     *
      * @return \Pimcore\Config\Config
      */
     public static function getWeb2PrintConfig()
     {
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_web2print")) {
-            $config = \Pimcore\Cache\Runtime::get("pimcore_config_web2print");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_web2print')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_web2print');
         } else {
             try {
-                $file = self::locateConfigFile("web2print.php");
+                $file = self::locateConfigFile('web2print.php');
                 if (file_exists($file)) {
                     $config = new \Pimcore\Config\Config(include($file));
                 } else {
-                    throw new \Exception("Config-file " . $file . " doesn't exist.");
+                    throw new \Exception('Config-file ' . $file . " doesn't exist.");
                 }
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
@@ -288,33 +291,36 @@ class Config
 
     /**
      * @static
+     *
      * @param \Pimcore\Config\Config $config
      */
     public static function setWeb2PrintConfig(\Pimcore\Config\Config $config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_web2print", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_web2print', $config);
     }
 
     /**
      * @static
+     *
      * @param \Pimcore\Config\Config $config
      */
     public static function setModelClassMappingConfig($config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_model_classmapping", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_model_classmapping', $config);
     }
 
     /**
      * @static
+     *
      * @return mixed|\Pimcore\Config\Config
      */
     public static function getPerspectivesConfig()
     {
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_perspectives")) {
-            $config = \Pimcore\Cache\Runtime::get("pimcore_config_perspectives");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_perspectives')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_perspectives');
         } else {
             try {
-                $file = self::locateConfigFile("perspectives.php");
+                $file = self::locateConfigFile('perspectives.php');
                 if (file_exists($file)) {
                     $config = new \Pimcore\Config\Config(include($file));
                 } else {
@@ -322,9 +328,9 @@ class Config
                 }
                 self::setPerspectivesConfig($config);
             } catch (\Exception $e) {
-                Logger::info("Cannot find perspectives configuration, should be located at: " . $file);
+                Logger::info('Cannot find perspectives configuration, should be located at: ' . $file);
                 if (is_file($file)) {
-                    $m = "Your perspectives.php located at " . $file . " is invalid, please check and correct it manually!";
+                    $m = 'Your perspectives.php located at ' . $file . ' is invalid, please check and correct it manually!';
                     Tool::exitWithError($m);
                 }
                 $config = new \Pimcore\Config\Config(self::getStandardPerspective());
@@ -342,73 +348,73 @@ class Config
     {
         $elementTree = [
             [
-                "type" => "documents",
-                "position" => "left",
-                "expanded" => false,
-                "hidden" => false,
-                "sort" => -3,
-                "treeContextMenu" => [
-                    "document" => [
-                        "items" => [
-                            "addPrintPage" => self::getWeb2PrintConfig()->enableInDefaultView ? true : false // hide add print documents by default
+                'type' => 'documents',
+                'position' => 'left',
+                'expanded' => false,
+                'hidden' => false,
+                'sort' => -3,
+                'treeContextMenu' => [
+                    'document' => [
+                        'items' => [
+                            'addPrintPage' => self::getWeb2PrintConfig()->enableInDefaultView ? true : false // hide add print documents by default
                         ]
                     ]
                 ]
             ],
             [
-                "type" => "assets",
-                "position" => "left",
-                "expanded" => false,
-                "hidden" => false,
-                "sort" => -2
+                'type' => 'assets',
+                'position' => 'left',
+                'expanded' => false,
+                'hidden' => false,
+                'sort' => -2
             ],
             [
-                "type" => "objects",
-                "position" => "left",
-                "expanded" => false,
-                "hidden" => false,
-                "sort" => -1
+                'type' => 'objects',
+                'position' => 'left',
+                'expanded' => false,
+                'hidden' => false,
+                'sort' => -1
             ],
         ];
 
         $cvConfigs = Tool::getCustomViewConfig();
         if ($cvConfigs) {
             foreach ($cvConfigs as $cvConfig) {
-                $cvConfig["type"] = "customview";
+                $cvConfig['type'] = 'customview';
                 $elementTree[] = $cvConfig;
             }
         }
 
         return [
-            "default" => [
-                "iconCls" => "pimcore_icon_perspective",
-                "elementTree" => $elementTree,
-                "dashboards" => [
-                    "predefined" => [
-                        "welcome" => [
-                            "positions" => [
+            'default' => [
+                'iconCls' => 'pimcore_icon_perspective',
+                'elementTree' => $elementTree,
+                'dashboards' => [
+                    'predefined' => [
+                        'welcome' => [
+                            'positions' => [
                                 [
                                     [
-                                        "id" => 1,
-                                        "type" => "pimcore.layout.portlets.modificationStatistic",
-                                        "config" => null
+                                        'id' => 1,
+                                        'type' => 'pimcore.layout.portlets.modificationStatistic',
+                                        'config' => null
                                     ],
                                     [
-                                        "id" => 2,
-                                        "type" => "pimcore.layout.portlets.modifiedAssets",
-                                        "config" => null
+                                        'id' => 2,
+                                        'type' => 'pimcore.layout.portlets.modifiedAssets',
+                                        'config' => null
                                     ]
                                 ],
                                 [
                                     [
-                                        "id" => 3,
-                                        "type" => "pimcore.layout.portlets.modifiedObjects",
-                                        "config" => null
+                                        'id' => 3,
+                                        'type' => 'pimcore.layout.portlets.modifiedObjects',
+                                        'config' => null
                                     ],
                                     [
-                                        "id" => 4,
-                                        "type" => "pimcore.layout.portlets.modifiedDocuments",
-                                        "config" => null
+                                        'id' => 4,
+                                        'type' => 'pimcore.layout.portlets.modifiedDocuments',
+                                        'config' => null
                                     ]
                                 ]
                             ]
@@ -421,6 +427,7 @@ class Config
 
     /** Gets the active perspective for the current user
      * @param Model\User $currentUser
+     *
      * @return array
      */
     public static function getRuntimePerspective(Model\User $currentUser = null)
@@ -440,7 +447,7 @@ class Config
             $availablePerspectives = self::getAvailablePerspectives($currentUser);
             if ($availablePerspectives) {
                 $currentPerspective = reset($availablePerspectives);
-                $currentConfigName = $currentPerspective["name"];
+                $currentConfigName = $currentPerspective['name'];
                 if ($currentConfigName && $config[$currentConfigName]) {
                     $result = $config[$currentConfigName];
                 }
@@ -452,15 +459,14 @@ class Config
             $currentUser->save();
         }
 
-
-        $result["elementTree"] = self::getRuntimeElementTreeConfig($currentConfigName);
+        $result['elementTree'] = self::getRuntimeElementTreeConfig($currentConfigName);
 
         return $result;
     }
 
-
     /** Returns the element tree config for the given config name
      * @param $name
+     *
      * @return array
      */
     protected static function getRuntimeElementTreeConfig($name)
@@ -472,7 +478,7 @@ class Config
             $config = [];
         }
 
-        $tmpResult = $config["elementTree"];
+        $tmpResult = $config['elementTree'];
         if (is_null($tmpResult)) {
             $tmpResult = [];
         }
@@ -485,48 +491,46 @@ class Config
         if ($cvConfigs) {
             foreach ($cvConfigs as $node) {
                 $tmpData = $node;
-                if (!isset($tmpData["id"])) {
-                    Logger::error("custom view ID is missing " . var_export($tmpData, true));
+                if (!isset($tmpData['id'])) {
+                    Logger::error('custom view ID is missing ' . var_export($tmpData, true));
                     continue;
                 }
 
-                if ($tmpData["hidden"]) {
+                if ($tmpData['hidden']) {
                     continue;
                 }
 
                 // backwards compatibility
-                $treeType = $tmpData["treetype"] ? $tmpData["treetype"] : "object";
-                $rootNode = Model\Element\Service::getElementByPath($treeType, $tmpData["rootfolder"]);
+                $treeType = $tmpData['treetype'] ? $tmpData['treetype'] : 'object';
+                $rootNode = Model\Element\Service::getElementByPath($treeType, $tmpData['rootfolder']);
 
                 if ($rootNode) {
-                    $tmpData["type"] = "customview";
-                    $tmpData["rootId"] = $rootNode->getId();
-                    $tmpData["allowedClasses"] = $tmpData["classes"] ? explode(",", $tmpData["classes"]) : null;
-                    $tmpData["showroot"] = (bool)$tmpData["showroot"];
-                    $customViewId = $tmpData["id"];
+                    $tmpData['type'] = 'customview';
+                    $tmpData['rootId'] = $rootNode->getId();
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['showroot'] = (bool)$tmpData['showroot'];
+                    $customViewId = $tmpData['id'];
                     $cfConfigMapping[$customViewId]= $tmpData;
                 }
             }
         }
 
-
         foreach ($tmpResult as $resultItem) {
-            if ($resultItem["hidden"]) {
+            if ($resultItem['hidden']) {
                 continue;
             }
 
-            if ($resultItem["type"] == "customview") {
-                $customViewId = $resultItem["id"];
+            if ($resultItem['type'] == 'customview') {
+                $customViewId = $resultItem['id'];
                 if (!$customViewId) {
-                    Logger::error("custom view id missing " . var_export($resultItem, true));
+                    Logger::error('custom view id missing ' . var_export($resultItem, true));
                     continue;
                 }
                 $customViewCfg = $cfConfigMapping[$customViewId];
                 if (!$customViewId) {
-                    Logger::error("no custom view config for id  " . $customViewId);
+                    Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
                 }
-
 
                 foreach ($resultItem as $specificConfigKey => $specificConfigValue) {
                     $customViewCfg[$specificConfigKey] = $specificConfigValue;
@@ -538,8 +542,8 @@ class Config
         }
 
         usort($result, function ($treeA, $treeB) {
-            $a = $treeA["sort"] ? $treeA["sort"] : 0;
-            $b = $treeB["sort"] ? $treeB["sort"] : 0;
+            $a = $treeA['sort'] ? $treeA['sort'] : 0;
+            $b = $treeB['sort'] ? $treeB['sort'] : 0;
 
             if ($a > $b) {
                 return 1;
@@ -553,19 +557,19 @@ class Config
         return $result;
     }
 
-
     /**
      * @static
+     *
      * @param \Pimcore\Config\Config $config
      */
     public static function setPerspectivesConfig(\Pimcore\Config\Config $config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_perspectives", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_perspectives', $config);
     }
-
 
     /** Returns a list of available perspectives for the given user
      * @param Model\User $user
+     *
      * @return array
      */
     public static function getAvailablePerspectives($user)
@@ -628,12 +632,12 @@ class Config
 
         foreach ($config as $configName => $configItem) {
             $item = [
-                "name" => $configName,
-                "icon" => isset($configItem["icon"]) ? $configItem["icon"] : null,
-                "iconCls" => isset($configItem["iconCls"]) ? $configItem["iconCls"] : null
+                'name' => $configName,
+                'icon' => isset($configItem['icon']) ? $configItem['icon'] : null,
+                'iconCls' => isset($configItem['iconCls']) ? $configItem['iconCls'] : null
             ];
             if ($user) {
-                $item["active"] = $configName == $currentConfigName;
+                $item['active'] = $configName == $currentConfigName;
             }
 
             $result[] = $item;
@@ -645,15 +649,16 @@ class Config
     /**
      * @param $runtimeConfig
      * @param $key
+     *
      * @return bool
      */
     public static function inPerspective($runtimeConfig, $key)
     {
-        if (!isset($runtimeConfig["toolbar"]) || !$runtimeConfig["toolbar"]) {
+        if (!isset($runtimeConfig['toolbar']) || !$runtimeConfig['toolbar']) {
             return true;
         }
-        $parts = explode(".", $key);
-        $menuItems = $runtimeConfig["toolbar"];
+        $parts = explode('.', $key);
+        $menuItems = $runtimeConfig['toolbar'];
 
         for ($i = 0; $i < count($parts); $i++) {
             $part = $parts[$i];
@@ -665,14 +670,14 @@ class Config
             $menuItem = $menuItems[$part];
 
             if (is_array($menuItem)) {
-                if ($menuItem["hidden"]) {
+                if ($menuItem['hidden']) {
                     return false;
                 }
 
-                if (!$menuItem["items"]) {
+                if (!$menuItem['items']) {
                     break;
                 }
-                $menuItems = $menuItem["items"];
+                $menuItems = $menuItem['items'];
             } else {
                 return $menuItem;
             }
@@ -691,20 +696,20 @@ class Config
 
             // check env vars - fall back to default (prod)
             if (!$environment) {
-                $environment = getenv("PIMCORE_ENVIRONMENT")
-                    ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT"))
+                $environment = getenv('PIMCORE_ENVIRONMENT')
+                    ?: (getenv('REDIRECT_PIMCORE_ENVIRONMENT'))
                         ?: false;
             }
 
             if (!$environment) {
-                $environment = getenv("SYMFONY_ENV")
-                    ?: (getenv("REDIRECT_SYMFONY_ENV"))
+                $environment = getenv('SYMFONY_ENV')
+                    ?: (getenv('REDIRECT_SYMFONY_ENV'))
                         ?: false;
             }
 
             if (!$environment && php_sapi_name() === 'cli') {
                 // check CLI option: --environment[=ENVIRONMENT]
-                foreach ($_SERVER["argv"] as $argument) {
+                foreach ($_SERVER['argv'] as $argument) {
                     if (preg_match("@\-\-environment=(.*)@", $argument, $matches)) {
                         $environment = $matches[1];
                         break;
@@ -714,7 +719,7 @@ class Config
 
             if (!$environment) {
                 if (\Pimcore::inDebugMode()) {
-                    $environment = "dev";
+                    $environment = 'dev';
                 } else {
                     $environment = static::DEFAULT_ENVIRONMENT;
                 }
@@ -739,10 +744,10 @@ class Config
      */
     public static function getFlag($key)
     {
-        $config = \Pimcore::getContainer()->getParameter("pimcore.config");
-        if (isset($config["flags"])) {
-            if (isset($config["flags"][$key])) {
-                return $config["flags"][$key];
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        if (isset($config['flags'])) {
+            if (isset($config['flags'][$key])) {
+                return $config['flags'][$key];
             }
         }
 

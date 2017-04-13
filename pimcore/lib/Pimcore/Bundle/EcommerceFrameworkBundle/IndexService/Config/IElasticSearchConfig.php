@@ -21,7 +21,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
  */
 interface IElasticSearchConfig extends IConfig
 {
-
     /**
      * returns elastic search client parameters defined in the tenant config
      *
@@ -29,14 +28,12 @@ interface IElasticSearchConfig extends IConfig
      */
     public function getElasticSearchClientParams();
 
-
     /**
      * returns condition for current subtenant
      *
      * @return array
      */
     public function getSubTenantCondition();
-
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration

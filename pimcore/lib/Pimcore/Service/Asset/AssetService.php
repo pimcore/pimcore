@@ -20,6 +20,7 @@ class AssetService
 {
     /**
      * @param $id
+     *
      * @return Asset
      */
     public function getById($id)

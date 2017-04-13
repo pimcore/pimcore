@@ -24,33 +24,30 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
  */
 class DefaultMysqlSubTenantConfig extends DefaultMysql
 {
-
     // NOTE: this works only with a single-column primary key
 
     public function getTablename()
     {
-        return "ecommerceframework_productindex2";
+        return 'ecommerceframework_productindex2';
     }
 
     public function getRelationTablename()
     {
-        return "ecommerceframework_productindex_relations2";
+        return 'ecommerceframework_productindex_relations2';
     }
 
     public function getTenantRelationTablename()
     {
-        return "ecommerceframework_productindex_tenant_relations";
+        return 'ecommerceframework_productindex_tenant_relations';
     }
-
-
 
     public function getJoins()
     {
         $currentSubTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
-            return " INNER JOIN " . $this->getTenantRelationTablename() . " b ON a.o_id = b.o_id ";
+            return ' INNER JOIN ' . $this->getTenantRelationTablename() . ' b ON a.o_id = b.o_id ';
         } else {
-            return "";
+            return '';
         }
     }
 
@@ -58,9 +55,9 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     {
         $currentSubTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
-            return "b.subtenant_id = " . $currentSubTenant;
+            return 'b.subtenant_id = ' . $currentSubTenant;
         } else {
-            return "";
+            return '';
         }
     }
 
@@ -76,6 +73,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @param IIndexable $object
      * @param null $subObjectId
+     *
      * @return mixed $subTenantData
      */
     public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
@@ -84,7 +82,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         if ($this->inIndex($object)) {
             //implementation specific tenant get logic
             foreach ($object->getTenants() as $tenant) {
-                $subTenantData[] = ["o_id" => $object->getId(), "subtenant_id" => $tenant->getId()];
+                $subTenantData[] = ['o_id' => $object->getId(), 'subtenant_id' => $tenant->getId()];
             }
         }
 
@@ -94,7 +92,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
     {
         $db = \Pimcore\Db::get();
-        $db->deleteWhere($this->getTenantRelationTablename(), "o_id = " . $db->quote($subObjectId ? $subObjectId : $objectId));
+        $db->deleteWhere($this->getTenantRelationTablename(), 'o_id = ' . $db->quote($subObjectId ? $subObjectId : $objectId));
 
         if ($subTenantData) {
             //implementation specific tenant get logic

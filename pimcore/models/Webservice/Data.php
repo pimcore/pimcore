@@ -10,30 +10,31 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Webservice;
 
-use Pimcore\Model\Webservice;
-use Pimcore\Model\Element;
 use Pimcore\Model;
+use Pimcore\Model\Element;
+use Pimcore\Model\Webservice;
 
 abstract class Data
 {
-
     /**
      * @param $object
      * @param null $options
+     *
      * @throws \Exception
      */
     public function map($object, $options = null)
     {
         $keys = get_object_vars($this);
-        $blockedKeys = ["childs", "fieldDefinitions"];
+        $blockedKeys = ['childs', 'fieldDefinitions'];
         foreach ($keys as $key => $value) {
-            $method = "get" . $key;
+            $method = 'get' . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
                 if ($object->$method()) {
                     $this->$key = $object->$method();
@@ -45,11 +46,11 @@ abstract class Data
 
                     // if the value is an object or array call the mapper again for the value
                     if (is_object($this->$key) || is_array($this->$key)) {
-                        $type = "out";
-                        if (strpos(get_class($this), "_In")!==false) {
-                            $type = "in";
+                        $type = 'out';
+                        if (strpos(get_class($this), '_In') !== false) {
+                            $type = 'in';
                         }
-                        $className = Webservice\Data\Mapper::findWebserviceClass($this->$key, "out");
+                        $className = Webservice\Data\Mapper::findWebserviceClass($this->$key, 'out');
                         $this->$key = Webservice\Data\Mapper::map($this->$key, $className, $type);
                     }
                 }
@@ -59,6 +60,7 @@ abstract class Data
 
     /**
      * @param $value
+     *
      * @return array
      */
     private function mapProperties($value)
@@ -88,15 +90,16 @@ abstract class Data
      * @param $object
      * @param bool $disableMappingExceptions
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
-            $method = "set" . $key;
+            $method = 'set' . $key;
             if (method_exists($object, $method)) {
-                if ($object instanceof Element\ElementInterface && $key == "properties") {
+                if ($object instanceof Element\ElementInterface && $key == 'properties') {
                     $value = $this->mapProperties($value);
                 }
                 $object->$method($value);
@@ -112,11 +115,11 @@ abstract class Data
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 
-                $dat = $propertyWs["data"];
-                $type = $propertyWs["type"];
-                if (in_array($type, ["object", "document", "asset"])) {
-                    $id = $propertyWs["data"];
-                    $type = $propertyWs["type"];
+                $dat = $propertyWs['data'];
+                $type = $propertyWs['type'];
+                if (in_array($type, ['object', 'document', 'asset'])) {
+                    $id = $propertyWs['data'];
+                    $type = $propertyWs['type'];
                     $dat = null;
                     if ($idMapper) {
                         $id = $idMapper->getMappedId($type, $id);
@@ -126,20 +129,20 @@ abstract class Data
                         $dat = Element\Service::getElementById($type, $id);
                     }
 
-                    if (is_numeric($propertyWs["data"]) and !$dat) {
+                    if (is_numeric($propertyWs['data']) and !$dat) {
                         if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                            throw new \Exception("cannot import property [ " . $type . " ] because it references unknown " . $propertyWs["data"]);
+                            throw new \Exception('cannot import property [ ' . $type . ' ] because it references unknown ' . $propertyWs['data']);
                         } else {
-                            $idMapper->recordMappingFailure("object", $object->getId(), $type, $propertyWs["data"]);
+                            $idMapper->recordMappingFailure('object', $object->getId(), $type, $propertyWs['data']);
                         }
                     }
-                } elseif ($type == "date") {
-                    $dat = new \Pimcore\Date(strtotime($propertyWs["data"]));
+                } elseif ($type == 'date') {
+                    $dat = new \Pimcore\Date(strtotime($propertyWs['data']));
                 } else {
-                    $dat = $propertyWs["data"];
+                    $dat = $propertyWs['data'];
                 }
 
-                $object->setProperty($propertyWs["name"], $propertyWs["type"], $dat, $propertyWs["inherited"], $propertyWs["inheritable"]);
+                $object->setProperty($propertyWs['name'], $propertyWs['type'], $dat, $propertyWs['inherited'], $propertyWs['inheritable']);
             }
         }
     }

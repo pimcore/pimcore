@@ -39,6 +39,7 @@ class AdminSessionHandler implements LoggerAwareInterface
      * this is the case in self::get(), so depending on how often self::get() is called the more
      * header will get added to the response, so we clean them up in Pimcore::outputBufferEnd()
      * to avoid problems with (reverse-)proxies such as Varnish who do not like too much Set-Cookie headers
+     *
      * @var bool
      */
     private $sessionCookieCleanupNeeded = false;

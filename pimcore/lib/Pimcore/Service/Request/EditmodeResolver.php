@@ -53,6 +53,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
 
     /**
      * @param Request $request
+     *
      * @return bool
      */
     public function isEditmode(Request $request = null)

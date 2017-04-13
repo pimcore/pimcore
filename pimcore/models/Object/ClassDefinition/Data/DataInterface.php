@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,12 +21,14 @@ use Pimcore\Model\Object\AbstractObject;
 
 interface DataInterface
 {
-
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param null|AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = []);
@@ -34,6 +37,7 @@ interface DataInterface
      * @param $importValue
      * @param null $object
      * @param array $params
+     *
      * @return mixed
      */
     public function getFromCsvImport($importValue, $object = null, $params = []);

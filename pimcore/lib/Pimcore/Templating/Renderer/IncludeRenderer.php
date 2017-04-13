@@ -64,17 +64,17 @@ class IncludeRenderer
             if ($cacheConfig = Frontend::isOutputCacheEnabled()) {
                 // cleanup params to avoid serializing Element\ElementInterface objects
                 $cacheParams = $params;
-                $cacheParams["~~include-document"] = $include;
+                $cacheParams['~~include-document'] = $include;
 
                 array_walk($cacheParams, function (&$value, $key) {
                     if ($value instanceof Element\ElementInterface) {
                         $value = $value->getId();
-                    } elseif (is_object($value) && method_exists($value, "__toString")) {
+                    } elseif (is_object($value) && method_exists($value, '__toString')) {
                         $value = (string)$value;
                     }
                 });
 
-                $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
+                $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
                 if ($content = Cache::load($cacheKey)) {
                     return $content;
                 }
@@ -84,15 +84,15 @@ class IncludeRenderer
         // TODO remove dependency on registry setting
         $editmodeBackup = false;
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_editmode')) {
-            $editmodeBackup = \Pimcore\Cache\Runtime::get("pimcore_editmode");
+            $editmodeBackup = \Pimcore\Cache\Runtime::get('pimcore_editmode');
         }
 
-        \Pimcore\Cache\Runtime::set("pimcore_editmode", false);
+        \Pimcore\Cache\Runtime::set('pimcore_editmode', false);
 
         $includeBak = $include;
 
         // this is if $this->inc is called eg. with $this->href() as argument
-        if (!$include instanceof PageSnippet && is_object($include) && method_exists($include, "__toString")) {
+        if (!$include instanceof PageSnippet && is_object($include) && method_exists($include, '__toString')) {
             $include = (string)$include;
         }
 
@@ -110,8 +110,8 @@ class IncludeRenderer
             }
         }
 
-        $params  = array_merge($params, ["document" => $include]);
-        $content = "";
+        $params  = array_merge($params, ['document' => $include]);
+        $content = '';
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
             // TODO move this to delegating structure and add Pimcore\View support from legacy bundle
@@ -126,11 +126,11 @@ class IncludeRenderer
             }
         }
 
-        \Pimcore\Cache\Runtime::set("pimcore_editmode", $editmodeBackup);
+        \Pimcore\Cache\Runtime::set('pimcore_editmode', $editmodeBackup);
 
         // write contents to the cache, if output-cache is enabled
         if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-            Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
+            Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
         }
 
         return $content;
@@ -139,6 +139,7 @@ class IncludeRenderer
     /**
      * @param PageSnippet $include
      * @param $params
+     *
      * @return string
      */
     protected function renderAction(PageSnippet $include, $params)
@@ -152,6 +153,7 @@ class IncludeRenderer
      * @param View $view
      * @param PageSnippet $include
      * @param $params
+     *
      * @return string
      */
     protected function renderLegacyAction(View $view, PageSnippet $include, $params)
@@ -166,7 +168,7 @@ class IncludeRenderer
                 $params
             );
         } elseif ($include->getTemplate()) {
-            $content = $view->action("default", "default", null, $params);
+            $content = $view->action('default', 'default', null, $params);
         }
 
         return $content;
@@ -179,18 +181,19 @@ class IncludeRenderer
      *
      * @param PageSnippet $include
      * @param $content
+     *
      * @return string
      */
     protected function modifyEditmodeContent(PageSnippet $include, $content)
     {
-        include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
+        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
 
-        $editmodeClass = " pimcore_editable pimcore_tag_inc ";
+        $editmodeClass = ' pimcore_editable pimcore_tag_inc ';
 
         // this is if the content that is included does already contain markup/html
         // this is needed by the editmode to highlight included documents
         if ($html = str_get_html($content)) {
-            $childs = $html->find("*");
+            $childs = $html->find('*');
             if (is_array($childs)) {
                 foreach ($childs as $child) {
                     $child->class        = $child->class . $editmodeClass;

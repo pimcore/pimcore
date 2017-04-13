@@ -16,11 +16,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 interface ICondition
 {
-
     /**
      * @param IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(IEnvironment $environment);
 

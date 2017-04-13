@@ -140,6 +140,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
 
     /**
      * @param Response $response
+     *
      * @return bool
      */
     protected function contentTypeMatches(Response $response)
@@ -176,27 +177,27 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
 
             $user = Authentication::authenticateSession();
 
-            $htmlElement = preg_match("/<html[^a-zA-Z]?( [^>]+)?>/", $html);
-            $headElement = preg_match("/<head[^a-zA-Z]?( [^>]+)?>/", $html);
-            $bodyElement = preg_match("/<body[^a-zA-Z]?( [^>]+)?>/", $html);
+            $htmlElement = preg_match('/<html[^a-zA-Z]?( [^>]+)?>/', $html);
+            $headElement = preg_match('/<head[^a-zA-Z]?( [^>]+)?>/', $html);
+            $bodyElement = preg_match('/<body[^a-zA-Z]?( [^>]+)?>/', $html);
 
             $skipCheck = false;
 
             // if there's no head and no body, create a wrapper including these elements
             // add html headers for snippets in editmode, so there is no problem with javascript
             if (!$headElement && !$bodyElement && !$htmlElement) {
-                $html      = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . "</body></html>";
+                $html      = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . '</body></html>';
                 $skipCheck = true;
             }
 
             if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
-                $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
+                $startupJavascript = '/pimcore/static6/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
                 $bodyHtml = "\n\n" . '<script type="text/javascript" src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
 
-                $html = preg_replace("@</head>@i", $headHtml . "\n\n</head>", $html, 1);
-                $html = preg_replace("@</body>@i", $bodyHtml . "\n\n</body>", $html, 1);
+                $html = preg_replace('@</head>@i', $headHtml . "\n\n</head>", $html, 1);
+                $html = preg_replace('@</body>@i', $bodyHtml . "\n\n</body>", $html, 1);
 
                 $response->setContent($html);
             } else {
@@ -209,6 +210,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
      * @param Document $document
      * @param User $user
      * @param string $language
+     *
      * @return string
      */
     protected function buildHeadHtml(Document $document, $language)

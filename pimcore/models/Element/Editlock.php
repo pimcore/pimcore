@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,14 +24,13 @@ use Pimcore\Model;
  */
 class Editlock extends Model\AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $cid;
 
@@ -40,7 +40,7 @@ class Editlock extends Model\AbstractModel
     public $ctype;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userId;
 
@@ -50,7 +50,7 @@ class Editlock extends Model\AbstractModel
     public $sessionId;
 
     /**
-     * @var integer
+     * @var int
      */
     public $date;
 
@@ -62,6 +62,7 @@ class Editlock extends Model\AbstractModel
     /**
      * @param $cid
      * @param $ctype
+     *
      * @return bool
      */
     public static function isLocked($cid, $ctype)
@@ -83,6 +84,7 @@ class Editlock extends Model\AbstractModel
     /**
      * @param $cid
      * @param $ctype
+     *
      * @return null|Editlock
      */
     public static function getByElement($cid, $ctype)
@@ -99,6 +101,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param $sessionId
+     *
      * @return bool|null
      */
     public static function clearSession($sessionId)
@@ -116,6 +119,7 @@ class Editlock extends Model\AbstractModel
     /**
      * @param $cid
      * @param $ctype
+     *
      * @return bool|Editlock
      */
     public static function lock($cid, $ctype)
@@ -140,6 +144,7 @@ class Editlock extends Model\AbstractModel
     /**
      * @param $cid
      * @param $ctype
+     *
      * @return bool
      */
     public static function unlock($cid, $ctype)
@@ -152,7 +157,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getCid()
     {
@@ -160,7 +165,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -168,7 +173,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getUserId()
     {
@@ -177,6 +182,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param int $cid
+     *
      * @return $this
      */
     public function setCid($cid)
@@ -187,7 +193,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -198,7 +205,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param integer $userId
+     * @param int $userId
+     *
      * @return $this
      */
     public function setUserId($userId)
@@ -223,6 +231,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param string $ctype
+     *
      * @return $this
      */
     public function setCtype($ctype)
@@ -242,6 +251,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param string $sessionId
+     *
      * @return $this
      */
     public function setSessionId($sessionId)
@@ -261,6 +271,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param Model\User $user
+     *
      * @return $this
      */
     public function setUser($user)
@@ -271,7 +282,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getDate()
     {
@@ -279,7 +290,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param integer $date
+     * @param int $date
+     *
      * @return $this
      */
     public function setDate($date)
@@ -291,6 +303,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param $cpath
+     *
      * @return $this
      */
     public function setCpath($cpath)

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,7 +19,6 @@ namespace Pimcore\Model\Object\Data;
 
 class Geobounds
 {
-
     /**
      * @var Geopoint
      */
@@ -53,6 +53,7 @@ class Geobounds
 
     /**
      * @param $nortEast
+     *
      * @return $this
      */
     public function setNorthEast($nortEast)
@@ -72,6 +73,7 @@ class Geobounds
 
     /**
      * @param $southWest
+     *
      * @return $this
      */
     public function setSouthWest($southWest)
@@ -86,12 +88,12 @@ class Geobounds
      */
     public function __toString()
     {
-        $string = "";
+        $string = '';
         if ($this->nortEast) {
             $string .= $this->nortEast;
         }
         if (!empty($string)) {
-            $string .= " - ";
+            $string .= ' - ';
         }
         if ($this->nortEast) {
             $string .= $this->nortWest;

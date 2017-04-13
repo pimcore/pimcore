@@ -45,9 +45,9 @@ class Token extends \Pimcore\Model\AbstractModel
      */
     public $timestamp;
 
-
     /**
      * @param string $code
+     *
      * @return bool|Token
      */
     public static function getByCode($code)
@@ -65,6 +65,7 @@ class Token extends \Pimcore\Model\AbstractModel
 
     /**
      * @param int $maxUsages
+     *
      * @return bool
      */
     public function isUsed($maxUsages = 1)
@@ -91,6 +92,7 @@ class Token extends \Pimcore\Model\AbstractModel
     /**
      * @param null|int $maxUsages
      * @param bool $isCheckout In the checkout there is one reservation more, the one of the current order.
+     *
      * @return bool
      */
     public function check($maxUsages = null, $isCheckout = false)
@@ -114,16 +116,16 @@ class Token extends \Pimcore\Model\AbstractModel
         return $this->getDao()->isReserved();
     }
 
-
     /**
      * @param $code
+     *
      * @return bool
      */
     public static function tokenExists($code)
     {
         $db = \Pimcore\Db::get();
 
-        $query = "SELECT EXISTS(SELECT id FROM " . self::TABLE_NAME . " WHERE token = ?)";
+        $query = 'SELECT EXISTS(SELECT id FROM ' . self::TABLE_NAME . ' WHERE token = ?)';
 
         $result = $db->fetchOne($query, $code);
 

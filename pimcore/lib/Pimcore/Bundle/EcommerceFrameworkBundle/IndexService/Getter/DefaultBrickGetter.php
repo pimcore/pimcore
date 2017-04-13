@@ -18,13 +18,13 @@ class DefaultBrickGetter implements IGetter
 {
     public static function get($object, $config = null)
     {
-        $brickContainerGetter = "get" . ucfirst($config->brickfield);
+        $brickContainerGetter = 'get' . ucfirst($config->brickfield);
         $brickContainer = $object->$brickContainerGetter();
 
-        $brickGetter = "get" . ucfirst($config->bricktype);
+        $brickGetter = 'get' . ucfirst($config->bricktype);
         $brick = $brickContainer->$brickGetter();
         if ($brick) {
-            $fieldGetter = "get" . ucfirst($config->fieldname);
+            $fieldGetter = 'get' . ucfirst($config->fieldname);
 
             return $brick->$fieldGetter();
         }

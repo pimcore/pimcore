@@ -49,7 +49,6 @@ class FreeShipping implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
         return $this;
     }
 
-
     /**
      * @return string
      */

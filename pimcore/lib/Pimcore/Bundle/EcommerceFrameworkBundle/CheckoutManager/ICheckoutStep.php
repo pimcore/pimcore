@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
  */
 interface ICheckoutStep
 {
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      */
@@ -41,6 +40,7 @@ interface ICheckoutStep
      * sets delivered data and commits step
      *
      * @param  $data
+     *
      * @return bool
      */
     public function commit($data);

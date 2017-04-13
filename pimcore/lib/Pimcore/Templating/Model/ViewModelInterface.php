@@ -28,6 +28,7 @@ interface ViewModelInterface extends \Countable, \IteratorAggregate, \ArrayAcces
      *
      * @param string $key
      * @param mixed|null $default
+     *
      * @return bool
      */
     public function get($key, $default = null);
@@ -36,6 +37,7 @@ interface ViewModelInterface extends \Countable, \IteratorAggregate, \ArrayAcces
      * Check if parameter is set
      *
      * @param string $key
+     *
      * @return bool
      */
     public function has($key);

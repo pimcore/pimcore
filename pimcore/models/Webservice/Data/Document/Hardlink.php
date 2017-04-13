@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,13 +21,12 @@ use Pimcore\Model;
 
 class Hardlink extends Model\Webservice\Data\Document
 {
-
     /**
      * static type of this object
      *
      * @var string
      */
-    public $type = "hardlink";
+    public $type = 'hardlink';
 
     /**
      * @var int

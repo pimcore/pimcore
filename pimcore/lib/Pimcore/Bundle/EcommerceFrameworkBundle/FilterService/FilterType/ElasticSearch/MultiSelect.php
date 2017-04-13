@@ -33,7 +33,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $value = $params[$field];
 
         if (empty($value) && !$params['is_reload']) {
-            $value = explode(",", $preSelect);
+            $value = explode(',', $preSelect);
         } elseif (!empty($value) && in_array(\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
@@ -53,7 +53,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                         $productList->addCondition($value, $field);
                     }
                 } else {
-                    $productList->addCondition(['terms' => ["attributes." . $field => $quotedValues]], "attributes." . $field);
+                    $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], 'attributes.' . $field);
                 }
             }
         }

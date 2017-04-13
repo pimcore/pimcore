@@ -14,13 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
-
     /**
      * @return array
      */
@@ -53,9 +52,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         ];
     }
 
-    /**
-     *
-     */
     public function boot()
     {
         parent::boot();

@@ -19,15 +19,15 @@ namespace Pimcore\Service;
  */
 class IntlFormatterService
 {
-    const DATE_SHORT = "date_short";
-    const DATE_MEDIUM = "date_medium";
-    const DATE_LONG = "date_long";
-    const DATETIME_SHORT = "datetime_short";
-    const DATETIME_MEDIUM = "datetime_medium";
-    const DATETIME_LONG = "datetime_long";
-    const TIME_SHORT = "time_short";
-    const TIME_MEDIUM = "time_medium";
-    const TIME_LONG = "time_long";
+    const DATE_SHORT = 'date_short';
+    const DATE_MEDIUM = 'date_medium';
+    const DATE_LONG = 'date_long';
+    const DATETIME_SHORT = 'datetime_short';
+    const DATETIME_MEDIUM = 'datetime_medium';
+    const DATETIME_LONG = 'datetime_long';
+    const TIME_SHORT = 'time_short';
+    const TIME_MEDIUM = 'time_medium';
+    const TIME_LONG = 'time_long';
 
     /**
      * @var string
@@ -58,6 +58,7 @@ class IntlFormatterService
 
     /**
      * IntlFormatterService constructor.
+     *
      * @param $locale
      */
     public function __construct(Locale $locale)
@@ -102,9 +103,9 @@ class IntlFormatterService
         $this->currencyFormats[$locale] = $currencyFormat;
     }
 
-
     /**
      * @param $format
+     *
      * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
      */
     protected function buildDateTimeFormatters($format)
@@ -174,6 +175,7 @@ class IntlFormatterService
      *
      * @param \DateTime $dateTime
      * @param string $format
+     *
      * @return bool|string
      */
     public function formatDateTime($dateTime, $format = self::DATETIME_MEDIUM)
@@ -190,6 +192,7 @@ class IntlFormatterService
      * formats given value as number based on current locale
      *
      * @param $value
+     *
      * @return bool|string
      */
     public function formatNumber($value)
@@ -207,6 +210,7 @@ class IntlFormatterService
      * @param $value
      * @param $currency
      * @param $pattern
+     *
      * @return string
      */
     public function formatCurrency($value, $currency, $pattern = 'default')

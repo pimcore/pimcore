@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,7 +22,6 @@ namespace Pimcore\Model\User\Workspace;
  */
 class Object extends AbstractWorkspace
 {
-
     /**
      * @var bool
      */
@@ -31,7 +31,6 @@ class Object extends AbstractWorkspace
      * @var bool
      */
     public $unpublish = false;
-
 
     /**
      * @var string
@@ -50,6 +49,7 @@ class Object extends AbstractWorkspace
 
     /**
      * @param $save
+     *
      * @return $this
      */
     public function setSave($save)
@@ -60,7 +60,7 @@ class Object extends AbstractWorkspace
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getSave()
     {
@@ -69,6 +69,7 @@ class Object extends AbstractWorkspace
 
     /**
      * @param $unpublish
+     *
      * @return $this
      */
     public function setUnpublish($unpublish)
@@ -79,7 +80,7 @@ class Object extends AbstractWorkspace
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUnpublish()
     {

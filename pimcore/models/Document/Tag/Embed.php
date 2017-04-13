@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Embed extends Model\Document\Tag
 {
-
     /**
      * @var string
      */
@@ -31,65 +31,65 @@ class Embed extends Model\Document\Tag
 
     /**
      * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "embed";
+        return 'embed';
     }
 
     /**
      * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
     {
         return [
-            "url" => $this->url
+            'url' => $this->url
         ];
     }
 
-    /**
-     *
-     */
     public function getDataForResource()
     {
         return [
-            "url" => $this->url
+            'url' => $this->url
         ];
     }
 
     /**
      * @see TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
     {
         if ($this->url) {
             $config = $this->getOptions();
-            if (!isset($config["params"])) {
-                $config["params"] = [];
+            if (!isset($config['params'])) {
+                $config['params'] = [];
             }
 
-            foreach (["width", "height"] as $property) {
+            foreach (['width', 'height'] as $property) {
                 if (isset($config[$property])) {
-                    $config["params"][$property] = $config[$property];
+                    $config['params'][$property] = $config[$property];
                 }
             }
 
-            $cacheKey = "doc_embed_" . crc32(serialize([$this->url, $config]));
+            $cacheKey = 'doc_embed_' . crc32(serialize([$this->url, $config]));
 
             if (!$html = \Pimcore\Cache::load($cacheKey)) {
                 $embera = new \Embera\Embera($config);
                 $html = $embera->autoEmbed($this->url);
 
-                \Pimcore\Cache::save($html, $cacheKey, ["embed"], 86400, 1, true);
+                \Pimcore\Cache::save($html, $cacheKey, ['embed'], 86400, 1, true);
             }
 
             return $html;
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -101,14 +101,16 @@ class Embed extends Model\Document\Tag
 
         // get frontendcode for preview
         // put the video code inside the generic code
-        $html = str_replace("</div>", $this->frontend() . "</div>", $html);
+        $html = str_replace('</div>', $this->frontend() . '</div>', $html);
 
         return $html;
     }
 
     /**
      * @see TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -117,27 +119,29 @@ class Embed extends Model\Document\Tag
             $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
 
-        $this->url = $data["url"];
+        $this->url = $data['url'];
 
         return $this;
     }
 
     /**
      * @see TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
     {
-        if ($data["url"]) {
-            $this->url = $data["url"];
+        if ($data['url']) {
+            $this->url = $data['url'];
         }
 
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -153,6 +157,7 @@ class Embed extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,19 +24,17 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("document-types");
+        $this->setFile('document-types');
     }
 
     /**
      * Get the data for the object from database for the given id
+     *
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -45,10 +44,10 @@ class Dao extends Model\Dao\PhpArrayTable
         }
 
         $data = $this->db->getById($this->model->getId());
-        if (isset($data["id"])) {
+        if (isset($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("Doc-type with id " . $this->model->getId() . " doesn't exist");
+            throw new \Exception('Doc-type with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 
@@ -66,8 +65,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id", "name", "module", "controller",
-                "action", "template", "type", "priority", "creationDate", "modificationDate", "legacy"];
+            $allowedProperties = ['id', 'name', 'module', 'controller',
+                'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'legacy'];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

@@ -29,6 +29,7 @@ abstract class AbstractData implements \JsonSerializable
 
     /**
      * @param string $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -43,6 +44,7 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @param array $data
      * @param bool|false $overwrite
+     *
      * @return $this
      */
     public function mergeValues(array $data, $overwrite = false)
@@ -67,6 +69,7 @@ abstract class AbstractData implements \JsonSerializable
      * Serialize all non-null properties
      *
      * @implements \JsonSerializable
+     *
      * @return array
      */
     public function jsonSerialize()

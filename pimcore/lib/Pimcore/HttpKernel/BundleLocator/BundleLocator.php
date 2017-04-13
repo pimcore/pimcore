@@ -119,6 +119,7 @@ class BundleLocator implements BundleLocatorInterface
 
     /**
      * @param string $path
+     *
      * @return string
      */
     protected function sanitizePath($path)

@@ -10,31 +10,30 @@
  *
  * @category   Pimcore
  * @package    Object\Objectbrick
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\Objectbrick\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Logger;
 
 /**
  * @property \Pimcore\Model\Object\Objectbrick\Data\AbstractData $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
-
     /**
      * @var Object\Concrete\Dao\InheritanceHelper
      */
     protected $inheritanceHelper = null;
 
-
     /**
      * @param Object\Concrete $object
+     *
      * @throws \Exception
      */
     public function save(Object\Concrete $object)
@@ -46,28 +45,27 @@ class Dao extends Model\Dao\AbstractDao
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-
-        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storetable, $querytable);
+        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable);
 
         Object\AbstractObject::setGetInheritedValues(false);
 
         $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
 
         $data = [];
-        $data["o_id"] = $object->getId();
-        $data["fieldname"] = $this->model->getFieldname();
+        $data['o_id'] = $object->getId();
+        $data['fieldname'] = $this->model->getFieldname();
 
         // remove all relations
         try {
-            $this->db->deleteWhere("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
+            $this->db->deleteWhere('object_relations_' . $object->getClassId(), 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
         } catch (\Exception $e) {
-            Logger::warning("Error during removing old relations: " . $e);
+            Logger::warning('Error during removing old relations: ' . $e);
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            $getter = "get" . ucfirst($fd->getName());
+            $getter = 'get' . ucfirst($fd->getName());
 
-            if (method_exists($fd, "save")) {
+            if (method_exists($fd, 'save')) {
                 // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                 $fd->save($this->model);
             } elseif ($fd->getColumnType()) {
@@ -87,17 +85,16 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insertOrUpdate($storetable, $data);
 
-
         // get data for query table
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
         $data = [];
-        $data["o_id"] = $object->getId();
-        $data["fieldname"] = $this->model->getFieldname();
+        $data['o_id'] = $object->getId();
+        $data['fieldname'] = $this->model->getFieldname();
 
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE o_id = ?", $object->getId());
+        $oldData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ?', $object->getId());
 
         $inheritanceEnabled = $object->getClass()->getAllowInherit();
         $parentData = null;
@@ -109,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
                 // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE o_id = ? FOR UPDATE", $parentForInheritance->getId());
+                $parentData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', $parentForInheritance->getId());
             }
         }
 
@@ -117,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
             if ($fd->getQueryColumnType()) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
 
-                $method = "get" . $key;
+                $method = 'get' . $key;
                 $fieldValue = $this->model->$method();
                 $insertData = $fd->getDataForQueryResource($fieldValue, $object);
                 $isEmpty = $fd->isEmpty($fieldValue);
@@ -211,23 +208,23 @@ class Dao extends Model\Dao\AbstractDao
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
-        $this->db->delete($storeTable, ["o_id" => $object->getId()]);
+        $this->db->delete($storeTable, ['o_id' => $object->getId()]);
 
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE o_id = ?", $object->getId());
-        $this->db->delete($queryTable, ["o_id" => $object->getId()]);
+        $oldData = $this->db->fetchRow('SELECT * FROM ' . $queryTable . ' WHERE o_id = ?', $object->getId());
+        $this->db->delete($queryTable, ['o_id' => $object->getId()]);
 
         //update data for relations table
-        $this->db->delete("object_relations_" . $object->getClassId(), [
-            "src_id" => $object->getId(),
-            "ownertype" => "objectbrick",
-            "ownername" => $this->model->getFieldname(),
-            "position" => $this->model->getType()
+        $this->db->delete('object_relations_' . $object->getClassId(), [
+            'src_id' => $object->getId(),
+            'ownertype' => 'objectbrick',
+            'ownername' => $this->model->getFieldname(),
+            'position' => $this->model->getType()
         ]);
 
-        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storeTable, $queryTable);
+        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storeTable, $queryTable);
         $this->inheritanceHelper->resetFieldsToCheck();
 
         $objectVars = get_object_vars($this->model);
@@ -253,24 +250,23 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if (method_exists($fd, "delete")) {
+                    if (method_exists($fd, 'delete')) {
                         $fd->delete($object);
                     }
                 }
             }
         }
 
-
         $this->inheritanceHelper->doDelete($object->getId());
 
         $this->inheritanceHelper->resetFieldsToCheck();
     }
 
-
     /**
      * @param string $field
      * @param $forOwner
      * @param $remoteClassId
+     *
      * @return array
      */
     public function getRelationData($field, $forOwner, $remoteClassId)
@@ -282,38 +278,37 @@ class Dao extends Model\Dao\AbstractDao
             $classId = $this->model->getObject()->getClassId();
         }
 
-
         $params = [$field, $id, $field, $id, $field, $id];
 
-        $dest = "dest_id";
-        $src = "src_id";
+        $dest = 'dest_id';
+        $src = 'src_id';
         if (!$forOwner) {
-            $dest = "src_id";
-            $src = "dest_id";
+            $dest = 'src_id';
+            $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAll("SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index
-            FROM objects o, object_relations_" . $classId . " r
+        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index
+            FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
-            AND r." . $src . " = ?
-            AND o.o_id = r." . $dest . "
+            AND r." . $src . ' = ?
+            AND o.o_id = r.' . $dest . "
             AND r.type='object'
 
-            UNION SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
-            FROM assets a, object_relations_" . $classId . " r
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
+            FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
-            AND r." . $src . " = ?
-            AND a.id = r." . $dest . "
+            AND r." . $src . ' = ?
+            AND a.id = r.' . $dest . "
             AND r.type='asset'
 
-            UNION SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
-            FROM documents d, object_relations_" . $classId . " r
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
+            FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
-            AND r." . $src . " = ?
-            AND d.id = r." . $dest . "
+            AND r." . $src . ' = ?
+            AND d.id = r.' . $dest . "
             AND r.type='document'
 
             ORDER BY `index` ASC", $params);

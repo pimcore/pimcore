@@ -94,6 +94,7 @@ class ObjectController extends AbstractElementController
      * @param int|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function getAction(Request $request, $id = null)
@@ -117,7 +118,7 @@ class ObjectController extends AbstractElementController
             $stopwatch->start('perm', $profileName);
         }
 
-        $this->checkElementPermission($object, "get");
+        $this->checkElementPermission($object, 'get');
 
         if ($profile) {
             $stopwatch->stop('perm');
@@ -361,6 +362,7 @@ class ObjectController extends AbstractElementController
      * @param int|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function deleteAction(Request $request, $id = null)
@@ -430,11 +432,12 @@ class ObjectController extends AbstractElementController
      * @param int $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function objectMetaAction($id)
     {
-        $this->checkPermission("classes");
+        $this->checkPermission('classes');
 
         $class = $this->service->getObjectMetadataById($id);
         if (!$class) {
@@ -526,6 +529,7 @@ class ObjectController extends AbstractElementController
 
     /**
      * @param int $id
+     *
      * @return Object\AbstractObject
      *
      * @throws ResponseException
@@ -555,12 +559,12 @@ class ObjectController extends AbstractElementController
      */
     protected function createObject($type, array $data)
     {
-        if ($type === "folder") {
+        if ($type === 'folder') {
             $class  = WebserviceFolderIn::class;
-            $method = "createObjectFolder";
+            $method = 'createObjectFolder';
         } else {
             $class  = WebserviceObjectIn::class;
-            $method = "createObjectConcrete";
+            $method = 'createObjectConcrete';
         }
 
         $wsData = $this->fillWebserviceData($class, $data);
@@ -597,7 +601,7 @@ class ObjectController extends AbstractElementController
         $data['id'] = $object->getId();
 
         $success = false;
-        if ($type === "folder") {
+        if ($type === 'folder') {
             $wsData  = $this->fillWebserviceData(WebserviceFolderIn::class, $data);
             $success = $this->service->updateObjectFolder($wsData);
         } else {

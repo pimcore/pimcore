@@ -25,14 +25,12 @@ interface IOrderManager
      */
     public function createOrderList();
 
-
     /**
      * @param AbstractOrder $order
      *
      * @return IOrderAgent
      */
     public function createOrderAgent(AbstractOrder $order);
-
 
     /**
      * @param int $id
@@ -62,6 +60,7 @@ interface IOrderManager
      * Looks if order object for given cart exists and returns it - it does not create it!
      *
      * @param ICart $cart
+     *
      * @return AbstractOrder
      */
     public function getOrderFromCart(ICart $cart);
@@ -70,6 +69,7 @@ interface IOrderManager
      * gets order based on given payment status
      *
      * @param IStatus $paymentStatus
+     *
      * @return AbstractOrder
      */
     public function getOrderByPaymentStatus(IStatus $paymentStatus);
@@ -78,6 +78,7 @@ interface IOrderManager
      * Build order listing
      *
      * @return \Pimcore\Model\Object\Listing\Concrete
+     *
      * @throws \Exception
      */
     public function buildOrderList();
@@ -86,6 +87,7 @@ interface IOrderManager
      * Build order item listing
      *
      * @return \Pimcore\Model\Object\Listing\Concrete
+     *
      * @throws \Exception
      */
     public function buildOrderItemList();

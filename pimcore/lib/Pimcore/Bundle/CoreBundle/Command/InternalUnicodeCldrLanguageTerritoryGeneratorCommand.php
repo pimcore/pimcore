@@ -15,10 +15,9 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\File;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Model\Asset;
-use Pimcore\File;
 
 class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractCommand
 {
@@ -35,7 +34,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $source = "http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml";
+        $source = 'http://unicode.org/repos/cldr/trunk/common/supplemental/supplementalData.xml';
         $data = file_get_contents($source);
         $xml = simplexml_load_string($data, null, LIBXML_NOCDATA);
 
@@ -43,18 +42,18 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
 
         foreach ($xml->territoryInfo->territory as $territory) {
             foreach ($territory->languagePopulation as $language) {
-                $languageCode = (string) $language["type"];
-                if (\Pimcore::getContainer()->get("pimcore.locale")->isLocale($languageCode)) {
-                    $populationAbsolute = $territory["population"] * $language["populationPercent"] / 100;
+                $languageCode = (string) $language['type'];
+                if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($languageCode)) {
+                    $populationAbsolute = $territory['population'] * $language['populationPercent'] / 100;
 
                     if (!isset($languageRawData[$languageCode])) {
                         $languageRawData[$languageCode] = [];
                     }
 
-                    if (\Pimcore::getContainer()->get("pimcore.locale")->isLocale($languageCode . "_" . $territory["type"])) {
+                    if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($languageCode . '_' . $territory['type'])) {
                         $languageRawData[$languageCode][] = [
-                            "country" => (string)$territory["type"],
-                            "population" => $populationAbsolute
+                            'country' => (string)$territory['type'],
+                            'population' => $populationAbsolute
                         ];
                     }
                 }
@@ -65,23 +64,23 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
 
         foreach ($languageRawData as $languageCode => $rawLanguage) {
             usort($rawLanguage, function ($a, $b) {
-                if ($a["population"] == $b["population"]) {
+                if ($a['population'] == $b['population']) {
                     return 0;
                 }
 
-                return ($a["population"] > $b["population"]) ? -1 : 1;
+                return ($a['population'] > $b['population']) ? -1 : 1;
             });
 
             $finalData[$languageCode] = [];
             foreach ($rawLanguage as $territory) {
-                $finalData[$languageCode][] = $territory["country"];
+                $finalData[$languageCode][] = $territory['country'];
             }
         }
 
         $contents = to_php_data_file_format($finalData);
-        $dataFile = PIMCORE_PATH . "/lib/Pimcore/Bundle/CoreBundle/Resources/misc/cldr-language-territory-mapping.php";
+        $dataFile = PIMCORE_PATH . '/lib/Pimcore/Bundle/CoreBundle/Resources/misc/cldr-language-territory-mapping.php';
         File::putPhpFile($dataFile, $contents);
 
-        $this->output->writeln("Updated mappings in " . $dataFile);
+        $this->output->writeln('Updated mappings in ' . $dataFile);
     }
 }

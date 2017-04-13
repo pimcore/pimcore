@@ -32,19 +32,19 @@ class GeneralTest extends ModelTestCase
 
         /** @var Inheritance $one */
         $one = new Inheritance();
-        $one->setKey("one");
+        $one->setKey('one');
         $one->setParentId(1);
         $one->setPublished(1);
 
-        $one->setNormalInput("parenttext");
+        $one->setNormalInput('parenttext');
         $one->save();
 
         /** @var Inheritance $two */
         $two = new Inheritance();
-        $two->setKey("two");
+        $two->setKey('two');
         $two->setParentId($one->getId());
         $two->setPublished(1);
-        $two->setNormalInput("childtext");
+        $two->setNormalInput('childtext');
         $two->save();
 
         $id1 = $one->getId();
@@ -53,38 +53,38 @@ class GeneralTest extends ModelTestCase
         $one = AbstractObject::getById($id1);
         $two = AbstractObject::getById($id2);
 
-        $this->assertEquals("parenttext", $one->getNormalInput());
+        $this->assertEquals('parenttext', $one->getNormalInput());
         // not inherited
-        $this->assertEquals("childtext", $two->getNormalInput());
+        $this->assertEquals('childtext', $two->getNormalInput());
 
         // null it out
         $two->setNormalInput(null);
         $two->save();
         $two = AbstractObject::getById($id2);
-        $this->assertEquals("parenttext", $two->getNormalInput());
+        $this->assertEquals('parenttext', $two->getNormalInput());
 
         $list = new Inheritance\Listing();
         $list->setCondition("normalinput LIKE '%parenttext%'");
-        $list->setLocale("de");
+        $list->setLocale('de');
         $listItems = $list->load();
-        $this->assertEquals(2, count($listItems), "Expected two list items");
+        $this->assertEquals(2, count($listItems), 'Expected two list items');
 
         // set it back
-        $two->setNormalInput("childtext");
+        $two->setNormalInput('childtext');
         $two->save();
         $two = AbstractObject::getById($id2);
 
         $list = new Inheritance\Listing();
         $list->setCondition("normalinput LIKE '%parenttext%'");
-        $list->setLocale("de");
+        $list->setLocale('de');
         $listItems = $list->load();
-        $this->assertEquals(1, count($listItems), "Expected one list item for de");
+        $this->assertEquals(1, count($listItems), 'Expected one list item for de');
 
         // null it out
         $two->setNormalInput(null);
         $two->save();
         $two = AbstractObject::getById($id2);
-        $this->assertEquals("parenttext", $two->getNormalInput());
+        $this->assertEquals('parenttext', $two->getNormalInput());
 
         // disable inheritance
         $getInheritedValues = AbstractObject::getGetInheritedValues();
@@ -96,7 +96,7 @@ class GeneralTest extends ModelTestCase
         // enable inheritance
         AbstractObject::setGetInheritedValues($getInheritedValues);
         $two = AbstractObject::getById($id2);
-        $this->assertEquals("parenttext", $two->getNormalInput());
+        $this->assertEquals('parenttext', $two->getNormalInput());
 
         // now move it out
 
@@ -111,15 +111,15 @@ class GeneralTest extends ModelTestCase
         $two->setParentId($id1);
         $two->save();
 
-        $this->assertEquals("parenttext", $two->getNormalInput());
+        $this->assertEquals('parenttext', $two->getNormalInput());
 
         // modify parent object
-        $one->setNormalInput("parenttext2");
+        $one->setNormalInput('parenttext2');
         $one->save();
 
         $two = AbstractObject::getById($id2);
         // check that child objects has been updated as well
-        $this->assertEquals("parenttext2", $two->getNormalInput());
+        $this->assertEquals('parenttext2', $two->getNormalInput());
 
         // TODO the following doesn't work as the catch catches the exception thrown in fail
         /*
@@ -136,7 +136,6 @@ class GeneralTest extends ModelTestCase
         */
     }
 
-
     /**
      * Tests the following scenario:
      *
@@ -152,11 +151,11 @@ class GeneralTest extends ModelTestCase
         // According to the bootstrap file en and de are valid website languages
 
         $one = new Inheritance();
-        $one->setKey("one");
+        $one->setKey('one');
         $one->setParentId(1);
         $one->setPublished(1);
 
-        $one->setNormalInput("parenttext");
+        $one->setNormalInput('parenttext');
         $one->save();
 
         $folder = new Folder();
@@ -165,11 +164,11 @@ class GeneralTest extends ModelTestCase
         $folder->save();
 
         $two = new Inheritance();
-        $two->setKey("two");
+        $two->setKey('two');
         $two->setParentId($folder->getId());
         $two->setPublished(1);
 
-        $two->setNormalInput("childtext");
+        $two->setNormalInput('childtext');
         $two->save();
 
         $one->setRelationobjects([$one]);

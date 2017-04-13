@@ -31,26 +31,26 @@ class LocalizedFieldTest extends ModelTestCase
 
         /** @var Inheritance $one */
         $one = new Inheritance();
-        $one->setKey("one");
+        $one->setKey('one');
         $one->setParentId(1);
         $one->setPublished(true);
 
-        $one->setInput("parenttextEN", "en");
-        $one->setInput("parenttextDE", "de");
+        $one->setInput('parenttextEN', 'en');
+        $one->setInput('parenttextDE', 'de');
         $one->save();
 
         /** @var Inheritance $two */
         $two = new Inheritance();
-        $two->setKey("two");
+        $two->setKey('two');
         $two->setParentId($one->getId());
         $two->setPublished(true);
 
-        $two->setInput("childtextDE", "de");
+        $two->setInput('childtextDE', 'de');
         $two->save();
 
         /** @var Inheritance $three */
         $three = new Inheritance();
-        $three->setKey("three");
+        $three->setKey('three');
         $three->setParentId($two->getId());
         $three->setPublished(true);
         $three->save();
@@ -65,54 +65,54 @@ class LocalizedFieldTest extends ModelTestCase
 
         $three->delete();
 
-        $this->assertEquals("parenttextEN", $one->getInput("en"));
-        $this->assertEquals("parenttextEN", $two->getInput("en"));
-        $this->assertEquals("parenttextEN", $three->getInput("en"));
+        $this->assertEquals('parenttextEN', $one->getInput('en'));
+        $this->assertEquals('parenttextEN', $two->getInput('en'));
+        $this->assertEquals('parenttextEN', $three->getInput('en'));
 
         $three->delete();
 
-        $this->assertEquals("parenttextDE", $one->getInput("de"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        $this->assertEquals('parenttextDE', $one->getInput('de'));
+        $this->assertEquals('childtextDE', $two->getInput('de'));
 
         // null it out
-        $two->setInput(null, "de");
+        $two->setInput(null, 'de');
         $two->save();
 
         $two = AbstractObject::getById($id2);
-        $this->assertEquals("parenttextDE", $two->getInput("de"));
+        $this->assertEquals('parenttextDE', $two->getInput('de'));
 
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("de");
+        $list->setLocale('de');
 
         $listItems = $list->load();
-        $this->assertEquals(2, count($listItems), "Expected two list items for de");
+        $this->assertEquals(2, count($listItems), 'Expected two list items for de');
 
         // set it back
-        $two->setInput("childtextDE", "de");
+        $two->setInput('childtextDE', 'de');
         $two->save();
         $two = AbstractObject::getById($id2);
 
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("en");
+        $list->setLocale('en');
 
         $listItems = $list->load();
-        $this->assertEquals(2, count($listItems), "Expected two list items for en");
+        $this->assertEquals(2, count($listItems), 'Expected two list items for en');
 
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("de");
+        $list->setLocale('de');
 
         $listItems = $list->load();
-        $this->assertEquals(1, count($listItems), "Expected one list item for de");
+        $this->assertEquals(1, count($listItems), 'Expected one list item for de');
 
         $getInheritedValues = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(false);
 
         $two = AbstractObject::getById($id2);
-        $this->assertEquals(null, $two->getInput("en"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        $this->assertEquals(null, $two->getInput('en'));
+        $this->assertEquals('childtextDE', $two->getInput('de'));
 
         AbstractObject::setGetInheritedValues($getInheritedValues);
 
@@ -121,23 +121,23 @@ class LocalizedFieldTest extends ModelTestCase
         $two->setParentId(1);
         $two->save();
 
-        $this->assertEquals(null, $two->getInput("en"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        $this->assertEquals(null, $two->getInput('en'));
+        $this->assertEquals('childtextDE', $two->getInput('de'));
 
         // and move it back in
 
         $two->setParentId($id1);
         $two->save();
 
-        $this->assertEquals("parenttextEN", $two->getInput("en"));
-        $this->assertEquals("childtextDE", $two->getInput("de"));
+        $this->assertEquals('parenttextEN', $two->getInput('en'));
+        $this->assertEquals('childtextDE', $two->getInput('de'));
 
         // modify parent object
-        $one->setInput("parenttextEN2", "en");
+        $one->setInput('parenttextEN2', 'en');
         $one->save();
 
         $two = AbstractObject::getById($id2);
-        $this->assertEquals("parenttextEN2", $two->getInput("en"));
+        $this->assertEquals('parenttextEN2', $two->getInput('en'));
 
         // now turn inheritance off
         $class = $one->getClass();
@@ -152,15 +152,14 @@ class LocalizedFieldTest extends ModelTestCase
         $two->save();
 
         $two = AbstractObject::getById($id2);
-        $this->assertEquals(null, $two->getInput("en"));
-
+        $this->assertEquals(null, $two->getInput('en'));
 
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("en");
+        $list->setLocale('en');
 
         $listItems = $list->load();
-        $this->assertEquals(1, count($listItems), "Expected one list item for en");
+        $this->assertEquals(1, count($listItems), 'Expected one list item for en');
 
         // turn it back on
         $class->setAllowInherit(true);
@@ -177,7 +176,7 @@ class LocalizedFieldTest extends ModelTestCase
         // invalid locale
         $list = new Inheritance\Listing();
         $list->setCondition("input LIKE '%parenttext%'");
-        $list->setLocale("xx");
+        $list->setLocale('xx');
 
         $listItems = $list->load();
     }

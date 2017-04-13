@@ -111,6 +111,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
      * Check if the current request needs double authentication
      *
      * @param Request $request
+     *
      * @return bool
      */
     protected function requestNeedsAuthentication(Request $request)

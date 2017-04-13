@@ -36,7 +36,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      */
     public function getAlias()
     {
-        return "pimcore";
+        return 'pimcore';
     }
 
     /**
@@ -56,7 +56,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
         $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
-        $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']["path"]);
+        $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
@@ -106,15 +106,15 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      */
     protected function configureModelFactory(ContainerBuilder $container, $config)
     {
-        $service = $container->getDefinition("pimcore.model.factory");
+        $service = $container->getDefinition('pimcore.model.factory');
 
         $classMapLoader = new Definition(ClassMapLoader::class, [$config['models']['class_overrides']]);
         $classMapLoader->setPublic(false);
 
-        $classMapLoaderId = "pimcore.model.factory.classmap_builder";
+        $classMapLoaderId = 'pimcore.model.factory.classmap_builder';
         $container->setDefinition($classMapLoaderId, $classMapLoader);
 
-        $service->addMethodCall("addLoader", [new Reference($classMapLoaderId)]);
+        $service->addMethodCall('addLoader', [new Reference($classMapLoaderId)]);
     }
 
     /**

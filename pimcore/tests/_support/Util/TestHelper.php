@@ -2,18 +2,16 @@
 
 namespace Pimcore\Tests\Util;
 
-use Pimcore\Cache\Runtime;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Object as ObjectModel;
 use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object as ObjectModel;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Unittest;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
-use Pimcore\Model\Webservice\Tool as WebserviceTool;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -43,6 +41,7 @@ class TestHelper
 
     /**
      * @param  array $properties
+     *
      * @return array
      *
      * @throws \Exception
@@ -55,29 +54,28 @@ class TestHelper
 
         if (is_array($properties)) {
             foreach ($properties as $key => $value) {
-                if ($value->type == "asset" || $value->type == "object" || $value->type == "document") {
+                if ($value->type == 'asset' || $value->type == 'object' || $value->type == 'document') {
                     if ($value->data instanceof ElementInterface) {
-                        $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data->getId();
+                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data->getId();
                     } else {
-                        $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ": null";
+                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ': null';
                     }
                 } elseif ($value->type == 'date') {
                     if ($value->data instanceof \DateTimeInterface) {
-                        $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data->getTimestamp();
+                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data->getTimestamp();
                     }
-                } elseif ($value->type == "bool") {
-                    $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . (bool)$value->data;
-                } elseif ($value->type == "text" || $value->type == "select") {
-                    $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data;
+                } elseif ($value->type == 'bool') {
+                    $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . (bool)$value->data;
+                } elseif ($value->type == 'text' || $value->type == 'select') {
+                    $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data;
                 } else {
-                    throw new \Exception("Unknown property of type [ " . $value->type . " ]");
+                    throw new \Exception('Unknown property of type [ ' . $value->type . ' ]');
                 }
             }
         }
 
         return $propertiesStringArray;
     }
-
 
     /**
      * @param Asset $asset
@@ -92,30 +90,30 @@ class TestHelper
 
             // custom settings
             if (is_array($asset->getCustomSettings())) {
-                $a["customSettings"] = serialize($asset->getCustomSettings());
+                $a['customSettings'] = serialize($asset->getCustomSettings());
             }
 
             if ($asset->getData()) {
-                $a["data"] = base64_encode($asset->getData());
+                $a['data'] = base64_encode($asset->getData());
             }
 
             if (!$ignoreCopyDifferences) {
-                $a["filename"]     = $asset->getFilename();
-                $a["id"]           = $asset->getId();
-                $a["modification"] = $asset->getModificationDate();
-                $a["creation"]     = $asset->getCreationDate();
-                $a["userModified"] = $asset->getUserModification();
-                $a["parentId"]     = $asset->getParentId();
-                $a["path"]         = $asset->getPath();
+                $a['filename']     = $asset->getFilename();
+                $a['id']           = $asset->getId();
+                $a['modification'] = $asset->getModificationDate();
+                $a['creation']     = $asset->getCreationDate();
+                $a['userModified'] = $asset->getUserModification();
+                $a['parentId']     = $asset->getParentId();
+                $a['path']         = $asset->getPath();
             }
 
-            $a["userOwner"] = $asset->getUserOwner();
+            $a['userOwner'] = $asset->getUserOwner();
 
             $properties = $asset->getProperties();
 
             $a = array_merge($a, self::createPropertiesComparisonString($properties));
 
-            return implode(",", $a);
+            return implode(',', $a);
         } else {
             return null;
         }
@@ -124,7 +122,6 @@ class TestHelper
     /**
      * @param  Asset $asset1
      * @param  Asset $asset2
-     *
      * @param bool $ignoreCopyDifferences
      * @param bool $id
      *
@@ -162,22 +159,22 @@ class TestHelper
                 foreach ($elements as $key => $value) {
                     if ($value instanceof Document\Tag\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d["element_" . $key] = $value->getName() . ":" . $value->type . "_" . $value->id;
+                        $d['element_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
                     } elseif (!$value instanceof Document\Tag\Block) {
-                        $d["element_" . $key] = $value->getName() . ":" . $value->frontend();
+                        $d['element_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
-                        $d["element_" . $key] = $value->getName();
+                        $d['element_' . $key] = $value->getName();
                     }
                 }
 
                 if ($document instanceof Document\Page) {
-                    $d["name"]        = $document->getName();
-                    $d["keywords"]    = $document->getKeywords();
-                    $d["title"]       = $document->getTitle();
-                    $d["description"] = $document->getDescription();
+                    $d['name']        = $document->getName();
+                    $d['keywords']    = $document->getKeywords();
+                    $d['title']       = $document->getTitle();
+                    $d['description'] = $document->getDescription();
                 }
 
-                $d["published"] = $document->isPublished();
+                $d['published'] = $document->isPublished();
             }
 
             if ($document instanceof Document\Link) {
@@ -185,22 +182,22 @@ class TestHelper
             }
 
             if (!$ignoreCopyDifferences) {
-                $d["key"]          = $document->getKey();
-                $d["id"]           = $document->getId();
-                $d["modification"] = $document->getModificationDate();
-                $d["creation"]     = $document->getCreationDate();
-                $d["userModified"] = $document->getUserModification();
-                $d["parentId"]     = $document->getParentId();
-                $d["path"]         = $document->getPath();
+                $d['key']          = $document->getKey();
+                $d['id']           = $document->getId();
+                $d['modification'] = $document->getModificationDate();
+                $d['creation']     = $document->getCreationDate();
+                $d['userModified'] = $document->getUserModification();
+                $d['parentId']     = $document->getParentId();
+                $d['path']         = $document->getPath();
             }
 
-            $d["userOwner"] = $document->getUserOwner();
+            $d['userOwner'] = $document->getUserOwner();
 
             $properties = $document->getProperties();
 
             $d = array_merge($d, self::createPropertiesComparisonString($properties));
 
-            return implode(",", $d);
+            return implode(',', $d);
         } else {
             return null;
         }
@@ -237,7 +234,7 @@ class TestHelper
         // omit password, this one we don't get through WS,
         // omit non owner objects, they don't get through WS,
         // plus omit fields which don't have get method
-        $getter = "get" . ucfirst($key);
+        $getter = 'get' . ucfirst($key);
 
         if (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Fieldcollections) {
             if ($object->$getter()) {
@@ -259,7 +256,7 @@ class TestHelper
                          * @var ObjectModel\ClassDefinition\Data $v
                          */
                         foreach ($def->getFieldDefinitions() as $k => $v) {
-                            $getter     = "get" . ucfirst($v->getName());
+                            $getter     = 'get' . ucfirst($v->getName());
                             $fieldValue = $item->$getter();
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
@@ -287,7 +284,7 @@ class TestHelper
                 return [];
             }
 
-            $localeService = \Pimcore::getContainer()->get("pimcore.locale");
+            $localeService = \Pimcore::getContainer()->get('pimcore.locale');
             $localeBackup = $localeService->getLocale();
 
             foreach ($data->getItems() as $language => $values) {
@@ -295,7 +292,6 @@ class TestHelper
                 foreach ($fd->getFieldDefinitions() as $nestedFd) {
                     $localeService->setLocale($language);
                     $lData[$language][$nestedFd->getName()] = self::getComparisonDataForField($nestedFd->getName(), $nestedFd, $object);
-                    ;
                 }
             }
 
@@ -325,25 +321,25 @@ class TestHelper
                     $o[$key] = self::getComparisonDataForField($key, $value, $object);
                 }
 
-                $o["published"] = $object->isPublished();
+                $o['published'] = $object->isPublished();
             }
             if (!$ignoreCopyDifferences) {
-                $o["id"]           = $object->getId();
-                $o["key"]          = $object->getKey();
-                $o["modification"] = $object->getModificationDate();
-                $o["creation"]     = $object->getCreationDate();
-                $o["userModified"] = $object->getUserModification();
-                $o["parentId"]     = $object->getParentId();
-                $o["path"]         = $object->getPath();
+                $o['id']           = $object->getId();
+                $o['key']          = $object->getKey();
+                $o['modification'] = $object->getModificationDate();
+                $o['creation']     = $object->getCreationDate();
+                $o['userModified'] = $object->getUserModification();
+                $o['parentId']     = $object->getParentId();
+                $o['path']         = $object->getPath();
             }
 
-            $o["userOwner"] = $object->getUserOwner();
+            $o['userOwner'] = $object->getUserOwner();
 
             $properties = $object->getProperties();
 
             $o = array_merge($o, self::createPropertiesComparisonString($properties));
 
-            return implode(",", $o);
+            return implode(',', $o);
         } else {
             return null;
         }
@@ -478,44 +474,44 @@ class TestHelper
             $object->setPublished(true);
         }
 
-        $testDataHelper->fillInput($object, "input", $seed);
-        $testDataHelper->fillNumber($object, "number", $seed);
-        $testDataHelper->fillTextarea($object, "textarea", $seed);
-        $testDataHelper->fillSlider($object, "slider", $seed);
-        $testDataHelper->fillHref($object, "href", $seed);
-        $testDataHelper->fillMultihref($object, "multihref", $seed);
-        $testDataHelper->fillImage($object, "image", $seed);
-        $testDataHelper->fillHotspotImage($object, "hotspotimage", $seed);
-        $testDataHelper->fillLanguage($object, "languagex", $seed);
-        $testDataHelper->fillCountry($object, "country", $seed);
-        $testDataHelper->fillDate($object, "date", $seed);
-        $testDataHelper->fillDate($object, "datetime", $seed);
-        $testDataHelper->fillTime($object, "time", $seed);
-        $testDataHelper->fillSelect($object, "select", $seed);
-        $testDataHelper->fillMultiSelect($object, "multiselect", $seed);
-        $testDataHelper->fillUser($object, "user", $seed);
-        $testDataHelper->fillCheckbox($object, "checkbox", $seed);
-        $testDataHelper->fillWysiwyg($object, "wysiwyg", $seed);
-        $testDataHelper->fillPassword($object, "password", $seed);
-        $testDataHelper->fillMultiSelect($object, "countries", $seed);
-        $testDataHelper->fillMultiSelect($object, "languages", $seed);
-        $testDataHelper->fillGeopoint($object, "point", $seed);
-        $testDataHelper->fillGeobounds($object, "bounds", $seed);
-        $testDataHelper->fillGeopolygon($object, "poly", $seed);
-        $testDataHelper->fillTable($object, "table", $seed);
-        $testDataHelper->fillLink($object, "link", $seed);
-        $testDataHelper->fillStructuredTable($object, "structuredtable", $seed);
-        $testDataHelper->fillObjects($object, "objects", $seed);
-        $testDataHelper->fillObjectsWithMetadata($object, "objectswithmetadata", $seed);
+        $testDataHelper->fillInput($object, 'input', $seed);
+        $testDataHelper->fillNumber($object, 'number', $seed);
+        $testDataHelper->fillTextarea($object, 'textarea', $seed);
+        $testDataHelper->fillSlider($object, 'slider', $seed);
+        $testDataHelper->fillHref($object, 'href', $seed);
+        $testDataHelper->fillMultihref($object, 'multihref', $seed);
+        $testDataHelper->fillImage($object, 'image', $seed);
+        $testDataHelper->fillHotspotImage($object, 'hotspotimage', $seed);
+        $testDataHelper->fillLanguage($object, 'languagex', $seed);
+        $testDataHelper->fillCountry($object, 'country', $seed);
+        $testDataHelper->fillDate($object, 'date', $seed);
+        $testDataHelper->fillDate($object, 'datetime', $seed);
+        $testDataHelper->fillTime($object, 'time', $seed);
+        $testDataHelper->fillSelect($object, 'select', $seed);
+        $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
+        $testDataHelper->fillUser($object, 'user', $seed);
+        $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
+        $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
+        $testDataHelper->fillPassword($object, 'password', $seed);
+        $testDataHelper->fillMultiSelect($object, 'countries', $seed);
+        $testDataHelper->fillMultiSelect($object, 'languages', $seed);
+        $testDataHelper->fillGeopoint($object, 'point', $seed);
+        $testDataHelper->fillGeobounds($object, 'bounds', $seed);
+        $testDataHelper->fillGeopolygon($object, 'poly', $seed);
+        $testDataHelper->fillTable($object, 'table', $seed);
+        $testDataHelper->fillLink($object, 'link', $seed);
+        $testDataHelper->fillStructuredTable($object, 'structuredtable', $seed);
+        $testDataHelper->fillObjects($object, 'objects', $seed);
+        $testDataHelper->fillObjectsWithMetadata($object, 'objectswithmetadata', $seed);
 
-        $testDataHelper->fillInput($object, "linput", $seed, "de");
-        $testDataHelper->fillInput($object, "linput", $seed, "en");
+        $testDataHelper->fillInput($object, 'linput', $seed, 'de');
+        $testDataHelper->fillInput($object, 'linput', $seed, 'en');
 
-        $testDataHelper->fillObjects($object, "lobjects", $seed, "de");
-        $testDataHelper->fillObjects($object, "lobjects", $seed, "en");
+        $testDataHelper->fillObjects($object, 'lobjects', $seed, 'de');
+        $testDataHelper->fillObjects($object, 'lobjects', $seed, 'en');
 
-        $testDataHelper->fillBricks($object, "mybricks", $seed);
-        $testDataHelper->fillFieldCollection($object, "myfieldcollection", $seed);
+        $testDataHelper->fillBricks($object, 'mybricks', $seed);
+        $testDataHelper->fillFieldCollection($object, 'myfieldcollection', $seed);
 
         if ($save) {
             $object->save();
@@ -538,7 +534,7 @@ class TestHelper
         }
 
         $document = new Document\Page();
-        $document->setType("page");
+        $document->setType('page');
         $document->setParentId(1);
         $document->setUserOwner(1);
         $document->setUserModification(1);
@@ -588,7 +584,7 @@ class TestHelper
      *
      * @return Asset\Image
      */
-    public static function createImageAsset($keyPrefix = "", $data, $save = true)
+    public static function createImageAsset($keyPrefix = '', $data, $save = true)
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -609,17 +605,17 @@ class TestHelper
         $asset->setUserModification(1);
         $asset->setCreationDate(time());
         $asset->setData($data);
-        $asset->setType("image");
+        $asset->setType('image');
 
         $property = new Property();
-        $property->setName("propname");
-        $property->setType("text");
-        $property->setData("bla");
+        $property->setName('propname');
+        $property->setType('text');
+        $property->setData('bla');
 
         $properties = [$property];
         $asset->setProperties($properties);
 
-        $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . ".jpg");
+        $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . '.jpg');
 
         if ($save) {
             $asset->save();
@@ -775,6 +771,7 @@ class TestHelper
      * Resolve path to resource path
      *
      * @param string $path
+     *
      * @return string
      */
     public static function resolveFilePath($path)

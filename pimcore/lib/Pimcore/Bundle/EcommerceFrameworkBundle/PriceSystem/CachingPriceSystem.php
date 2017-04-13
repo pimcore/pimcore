@@ -22,18 +22,17 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
  */
 abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachingPriceSystem
 {
-
-    /** @var IPriceInfo[] $priceInfos  */
+    /** @var IPriceInfo[] $priceInfos */
     protected $priceInfos = [];
 
     public function loadPriceInfos($productEntries, $options)
     {
-        throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
 
     public function clearPriceInfos($productEntries, $options)
     {
-        throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
 
     public function getPriceInfo(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null)
@@ -52,6 +51,6 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
 
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
     {
-        throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . " is not supported for " . get_class($this));
+        throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
 }

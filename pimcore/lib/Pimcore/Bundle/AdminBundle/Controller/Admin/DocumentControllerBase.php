@@ -30,7 +30,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @param Request $request
      * @param Model\Document $document
@@ -39,7 +38,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
 
         // properties
-        if ($request->get("properties")) {
+        if ($request->get('properties')) {
             $properties = [];
             // assign inherited properties
             foreach ($document->getProperties() as $p) {
@@ -48,27 +47,27 @@ abstract class DocumentControllerBase extends AdminController implements Evented
                 }
             }
 
-            $propertiesData = $this->decodeJson($request->get("properties"));
+            $propertiesData = $this->decodeJson($request->get('properties'));
 
             if (is_array($propertiesData)) {
                 foreach ($propertiesData as $propertyName => $propertyData) {
-                    $value = $propertyData["data"];
+                    $value = $propertyData['data'];
 
                     try {
                         $property = new Property();
-                        $property->setType($propertyData["type"]);
+                        $property->setType($propertyData['type']);
                         $property->setName($propertyName);
-                        $property->setCtype("document");
+                        $property->setCtype('document');
                         $property->setDataFromEditmode($value);
-                        $property->setInheritable($propertyData["inheritable"]);
+                        $property->setInheritable($propertyData['inheritable']);
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        Logger::warning("Can't add " . $propertyName . " to document " . $document->getRealFullPath());
+                        Logger::warning("Can't add " . $propertyName . ' to document ' . $document->getRealFullPath());
                     }
                 }
             }
-            if ($document->isAllowed("properties")) {
+            if ($document->isAllowed('properties')) {
                 $document->setProperties($properties);
             }
         }
@@ -85,20 +84,20 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
 
         // scheduled tasks
-        if ($request->get("scheduler")) {
+        if ($request->get('scheduler')) {
             $tasks = [];
-            $tasksData = $this->decodeJson($request->get("scheduler"));
+            $tasksData = $this->decodeJson($request->get('scheduler'));
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
-                    $taskData["date"] = strtotime($taskData["date"] . " " . $taskData["time"]);
+                    $taskData['date'] = strtotime($taskData['date'] . ' ' . $taskData['time']);
 
                     $task = new Schedule\Task($taskData);
                     $tasks[] = $task;
                 }
             }
 
-            if ($document->isAllowed("settings")) {
+            if ($document->isAllowed('settings')) {
                 $document->setScheduledTasks($tasks);
             }
         }
@@ -112,9 +111,9 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
 
         // settings
-        if ($request->get("settings")) {
-            if ($document->isAllowed("settings")) {
-                $settings = $this->decodeJson($request->get("settings"));
+        if ($request->get('settings')) {
+            if ($document->isAllowed('settings')) {
+                $settings = $this->decodeJson($request->get('settings'));
                 $document->setValues($settings);
             }
         }
@@ -128,11 +127,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
 
         // data
-        if ($request->get("data")) {
-            $data = $this->decodeJson($request->get("data"));
+        if ($request->get('data')) {
+            $data = $this->decodeJson($request->get('data'));
             foreach ($data as $name => $value) {
-                $data = $value["data"];
-                $type = $value["type"];
+                $data = $value['data'];
+                $type = $value['type'];
                 $document->setRawElement($name, $type, $data);
             }
         }
@@ -145,25 +144,27 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $service = new Model\Document\Service;
         $translations = $service->getTranslations($document);
-        $language = $document->getProperty("language");
+        $language = $document->getProperty('language');
         unset($translations[$language]);
         $document->translations = $translations;
     }
 
     /**
      * @Route("/save-to-session")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function saveToSessionAction(Request $request)
     {
-        if ($request->get("id")) {
-            $key = "document_" . $request->get("id");
+        if ($request->get('id')) {
+            $key = 'document_' . $request->get('id');
 
-            $session = Session::get("pimcore_documents");
+            $session = Session::get('pimcore_documents');
 
             if (!$document = $session->get($key)) {
-                $document = Model\Document::getById($request->get("id"));
+                $document = Model\Document::getById($request->get('id'));
                 $document = $this->getLatestVersion($document);
             }
 
@@ -176,7 +177,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             Session::writeClose();
         }
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
@@ -187,28 +188,30 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         // save to session
         Session::useSession(function (AttributeBagInterface $session) use ($doc, $useForSave) {
-            $session->set("document_" . $doc->getId(), $doc);
+            $session->set('document_' . $doc->getId(), $doc);
 
             if ($useForSave) {
-                $session->set("document_" . $doc->getId() . "_useForSave", true);
+                $session->set('document_' . $doc->getId() . '_useForSave', true);
             }
-        }, "pimcore_documents");
+        }, 'pimcore_documents');
     }
 
     /**
      * @Route("/remove-from-session")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function removeFromSessionAction(Request $request)
     {
-        $key = "document_" . $request->get("id");
+        $key = 'document_' . $request->get('id');
 
         Session::useSession(function (AttributeBagInterface $session) use ($key) {
             $session->remove($key);
-        }, "pimcore_documents");
+        }, 'pimcore_documents');
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
@@ -222,6 +225,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document $document
+     *
      * @return Model\Document
      */
     protected function getLatestVersion(Model\Document $document)
@@ -240,20 +244,23 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
+     *
      * @Route("/change-master-document")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function changeMasterDocumentAction(Request $request)
     {
-        $doc = Model\Document::getById($request->get("id"));
+        $doc = Model\Document::getById($request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
             $doc->setElements([]);
-            $doc->setContentMasterDocumentId($request->get("contentMasterDocumentPath"));
+            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));
             $doc->saveVersion();
         }
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
@@ -270,8 +277,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
         // check permissions
         $notRestrictedActions = [];
-        if (!in_array($request->get("action"), $notRestrictedActions)) {
-            $this->checkPermission("documents");
+        if (!in_array($request->get('action'), $notRestrictedActions)) {
+            $this->checkPermission('documents');
         }
     }
 

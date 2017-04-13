@@ -37,12 +37,10 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         return $availableRelationsArray;
     }
 
-
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
-
 
         $value = $params[$field];
 
@@ -60,7 +58,6 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         }
 
         $currentFilter[$field] = $value;
-
 
         if (!empty($value)) {
             $productList->addRelationCondition($field, $value);

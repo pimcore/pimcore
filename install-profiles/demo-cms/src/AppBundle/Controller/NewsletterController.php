@@ -10,17 +10,17 @@ class NewsletterController extends AbstractController
 {
     public function subscribeAction(Request $request)
     {
-        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter('person'); // replace "crm" with the class name you have used for your class above (mailing list)
         $params = $request->request->all();
 
         $this->view->success = false;
 
         if ($newsletter->checkParams($params)) {
             try {
-                $params["parentId"] = 1; // default folder (home) where we want to save our subscribers
-                $newsletterFolder = Model\Object\AbstractObject::getByPath("/crm/newsletter");
+                $params['parentId'] = 1; // default folder (home) where we want to save our subscribers
+                $newsletterFolder = Model\Object\AbstractObject::getByPath('/crm/newsletter');
                 if ($newsletterFolder) {
-                    $params["parentId"] = $newsletterFolder->getId();
+                    $params['parentId'] = $newsletterFolder->getId();
                 }
 
                 $user = $newsletter->subscribe($params);
@@ -28,7 +28,7 @@ class NewsletterController extends AbstractController
                 // user and email document
                 // parameters available in the email: gender, firstname, lastname, email, token, object
                 // ==> see mailing framework
-                $newsletter->sendConfirmationMail($user, Model\Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), ["additional" => "parameters"]);
+                $newsletter->sendConfirmationMail($user, Model\Document::getByPath('/en/advanced-examples/newsletter/confirmation-email'), ['additional' => 'parameters']);
 
                 // do some other stuff with the new user
                 $user->setDateRegister(new \DateTime());
@@ -45,28 +45,28 @@ class NewsletterController extends AbstractController
     {
         $this->view->success = false;
 
-        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter('person'); // replace "crm" with the class name you have used for your class above (mailing list)
 
-        if ($newsletter->confirm($request->get("token"))) {
+        if ($newsletter->confirm($request->get('token'))) {
             $this->view->success = true;
         }
     }
 
     public function unsubscribeAction(Request $request)
     {
-        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter('person'); // replace "crm" with the class name you have used for your class above (mailing list)
 
         $unsubscribeMethod = null;
         $success = false;
 
-        if ($request->get("email")) {
-            $unsubscribeMethod = "email";
-            $success = $newsletter->unsubscribeByEmail($request->get("email"));
+        if ($request->get('email')) {
+            $unsubscribeMethod = 'email';
+            $success = $newsletter->unsubscribeByEmail($request->get('email'));
         }
 
-        if ($request->get("token")) {
-            $unsubscribeMethod = "token";
-            $success = $newsletter->unsubscribeByToken($request->get("token"));
+        if ($request->get('token')) {
+            $unsubscribeMethod = 'token';
+            $success = $newsletter->unsubscribeByToken($request->get('token'));
         }
 
         $this->view->success = $success;

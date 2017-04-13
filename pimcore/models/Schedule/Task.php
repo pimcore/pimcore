@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Schedule
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,14 +24,13 @@ use Pimcore\Model;
  */
 class Task extends Model\AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $cid;
 
@@ -40,7 +40,7 @@ class Task extends Model\AbstractModel
     public $ctype;
 
     /**
-     * @var integer
+     * @var int
      */
     public $date;
 
@@ -60,17 +60,18 @@ class Task extends Model\AbstractModel
     public $active;
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Task
      */
     public static function getById($id)
     {
-        $cacheKey = "scheduled_task_" . $id;
+        $cacheKey = 'scheduled_task_' . $id;
 
         try {
             $task = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$task) {
-                throw new \Exception("Scheduled Task in Registry is not valid");
+                throw new \Exception('Scheduled Task in Registry is not valid');
             }
         } catch (\Exception $e) {
             $task = new self();
@@ -84,6 +85,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param array $data
+     *
      * @return Task
      */
     public static function create($data)
@@ -103,7 +105,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -111,7 +113,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getCid()
     {
@@ -127,7 +129,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getDate()
     {
@@ -143,7 +145,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getVersion()
     {
@@ -152,6 +154,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -163,6 +166,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $cid
+     *
      * @return $this
      */
     public function setCid($cid)
@@ -174,6 +178,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $ctype
+     *
      * @return $this
      */
     public function setCtype($ctype)
@@ -185,6 +190,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $date
+     *
      * @return $this
      */
     public function setDate($date)
@@ -196,6 +202,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -207,6 +214,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $version
+     *
      * @return $this
      */
     public function setVersion($version)
@@ -217,7 +225,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getActive()
     {
@@ -226,6 +234,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param $active
+     *
      * @return $this
      */
     public function setActive($active)

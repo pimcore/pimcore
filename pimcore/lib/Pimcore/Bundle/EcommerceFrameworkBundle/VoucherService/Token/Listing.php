@@ -23,11 +23,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
     /**
      * @param  $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
     {
-        if ($key == "id" || $key == "token" || $key == "series_id" || $key == "usages" || $key == "timestamp") {
+        if ($key == 'id' || $key == 'token' || $key == 'series_id' || $key == 'usages' || $key == 'timestamp') {
             return true;
         }
 
@@ -37,27 +38,28 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     /**
      * @param $seriesId
      * @param array $filter
+     *
      * @throws \Exception
      */
     public function setFilterConditions($seriesId, $filter = [])
     {
         if (isset($seriesId)) {
-            $this->addConditionParam("voucherSeriesId = ?", $seriesId);
+            $this->addConditionParam('voucherSeriesId = ?', $seriesId);
         } else {
             throw new \Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
         }
 
         if (sizeof($filter)) {
             if (!empty($filter['token'])) {
-                $this->addConditionParam("token LIKE ?", "%" . $filter['token'] . "%");
+                $this->addConditionParam('token LIKE ?', '%' . $filter['token'] . '%');
             }
 
             if (isset($filter['usages']) && $filter['usages'] !== '') {
-                $this->addConditionParam("usages = ?", (int) $filter['usages']);
+                $this->addConditionParam('usages = ?', (int) $filter['usages']);
             }
 
             if (!empty($filter['length'])) {
-                $this->addConditionParam("length = ?", $filter['length']);
+                $this->addConditionParam('length = ?', $filter['length']);
             }
 
             if ($filter['creation_to'] && $filter['creation_from']) {
@@ -75,13 +77,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             if ($this->isValidOrderKey($filter['sort_criteria'])) {
                 $this->setOrderKey($filter['sort_criteria']);
             } else {
-                $this->setOrderKey("timestamp");
+                $this->setOrderKey('timestamp');
             }
 
-            if ($filter['sort_order'] == "ASC") {
-                $this->setOrder("ASC");
+            if ($filter['sort_order'] == 'ASC') {
+                $this->setOrder('ASC');
             } else {
-                $this->setOrder("DESC");
+                $this->setOrder('DESC');
             }
         }
     }
@@ -115,47 +117,47 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     public static function getCodes($seriesId, $params)
     {
         $db = \Pimcore\Db::get();
-        $query = "SELECT * FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
+        $query = 'SELECT * FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
         $queryParams[] = $seriesId;
 
         if (!empty($params['token'])) {
-            $query .= " AND token LIKE ?";
-            $queryParams[] = "%" . $params['token'] . "%";
+            $query .= ' AND token LIKE ?';
+            $queryParams[] = '%' . $params['token'] . '%';
         }
         if (!empty($params['usages'])) {
-            $query .= " AND usages = ? ";
+            $query .= ' AND usages = ? ';
             $queryParams[] = $params['usages'];
         }
         if (!empty($params['length'])) {
-            $query .= " AND length = ? ";
+            $query .= ' AND length = ? ';
             $queryParams[] = $params['length'];
         }
         if (!empty($params['creation_to']) && isset($params['creation_from'])) {
             $from = $db->quote($params['creation_from']);
             $to = $db->quote($params['creation_to']);
-            $query .= " AND timestamp BETWEEN STR_TO_DATE(" . $from . ",'%Y-%m-%d') AND STR_TO_DATE(" . $to . ",'%Y-%m-%d')";
+            $query .= ' AND timestamp BETWEEN STR_TO_DATE(' . $from . ",'%Y-%m-%d') AND STR_TO_DATE(" . $to . ",'%Y-%m-%d')";
         } else {
             if (!empty($params['creation_from'])) {
                 $param = $db->quote($params['creation_from']);
-                $query .= " AND timestamp >= STR_TO_DATE(" . $param . ",'%Y-%m-%d')";
+                $query .= ' AND timestamp >= STR_TO_DATE(' . $param . ",'%Y-%m-%d')";
             }
             if (!empty($params['creation_to'])) {
                 $param = $db->quote($params['creation_to']);
-                $query .= " AND timestamp <= STR_TO_DATE(" . $param . ",'%Y-%m-%d') + INTERVAL 1 DAY";
+                $query .= ' AND timestamp <= STR_TO_DATE(' . $param . ",'%Y-%m-%d') + INTERVAL 1 DAY";
             }
         }
 
         $tmp = new self();
         if ($tmp->isValidOrderKey($params['sort_criteria'])) {
-            $query .= " ORDER BY " . $params['sort_criteria'];
+            $query .= ' ORDER BY ' . $params['sort_criteria'];
         } else {
-            $query .= " ORDER BY timestamp";
+            $query .= ' ORDER BY timestamp';
         }
 
-        if ($params['sort_order'] == "ASC") {
-            $query .= " ASC";
+        if ($params['sort_order'] == 'ASC') {
+            $query .= ' ASC';
         } else {
-            $query .= " DESC";
+            $query .= ' DESC';
         }
 
         try {
@@ -167,13 +169,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
         return $codes;
     }
 
-
     public static function getCountByUsages($usages = 1, $seriesId = null)
     {
-        $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE usages >= ? ";
+        $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE usages >= ? ';
         $params[] = $usages;
         if (isset($seriesId)) {
-            $query .= " AND voucherSeriesId = ?";
+            $query .= ' AND voucherSeriesId = ?';
             $params[] = $seriesId;
         }
 
@@ -200,10 +201,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
 
     public static function getCountByReservation($seriesId = null)
     {
-        $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " as t
-            INNER JOIN " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . " as r ON t.token = r.token";
+        $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' as t
+            INNER JOIN ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' as r ON t.token = r.token';
         if (isset($seriesId)) {
-            $query .= " WHERE voucherSeriesId = ?";
+            $query .= ' WHERE voucherSeriesId = ?';
             $params[] = $seriesId;
         }
 
@@ -218,6 +219,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     /**
      * @param $length
      * @param null|string $seriesId
+     *
      * @return null|string
      */
     public static function getCountByLength($length, $seriesId = null)
@@ -225,7 +227,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE length = ?';
         $params = [$length];
         if (isset($seriesId)) {
-            $query .= " AND voucherSeriesId = ?";
+            $query .= ' AND voucherSeriesId = ?';
             $params[] = $seriesId;
         }
 
@@ -245,6 +247,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
      * reservations.
      *
      * @param string $seriesId
+     *
      * @return bool
      */
     public static function cleanUpAllTokens($seriesId)
@@ -256,44 +259,44 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
      * @param string $seriesId
      * @param array $filter
      * @param int $maxUsages
+     *
      * @return bool
      */
     public static function cleanUpTokens($seriesId, $filter = [], $maxUsages = 1)
     {
         $db = \Pimcore\Db::get();
 
-        $reservationsQuery = "DELETE r FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " AS t
-                        JOIN " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . " AS r
+        $reservationsQuery = 'DELETE r FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' AS t
+                        JOIN ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' AS r
                         ON t.token = r.token
-                        WHERE t.voucherSeriesId = ?";
+                        WHERE t.voucherSeriesId = ?';
 
-
-        $tokensQuery = "DELETE t FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " AS t WHERE t.voucherSeriesId = ?";
+        $tokensQuery = 'DELETE t FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' AS t WHERE t.voucherSeriesId = ?';
         $params[] = $seriesId;
 
         $queryParts = [];
 
         if (isset($filter['usage'])) {
             if ($filter['usage'] == 'used') {
-                $queryParts[] = "t.usages >= " . $maxUsages;
+                $queryParts[] = 't.usages >= ' . $maxUsages;
             } elseif ($filter['usage'] == 'unused') {
-                $queryParts[] = "t.usages = 0";
+                $queryParts[] = 't.usages = 0';
             } elseif ($filter['usage'] == 'both') {
-                $queryParts[] = "t.usages >= 0";
+                $queryParts[] = 't.usages >= 0';
             }
         }
 
         if (isset($filter['olderThan'])) {
             $param = $db->quote($filter['olderThan']);
-            $queryParts[] = "t.timestamp < STR_TO_DATE(" . $param . ",'%Y-%m-%d')";
+            $queryParts[] = 't.timestamp < STR_TO_DATE(' . $param . ",'%Y-%m-%d')";
         }
 
         if (sizeof($queryParts) == 1) {
-            $reservationsQuery = $reservationsQuery . " AND " . $queryParts[0];
-            $tokensQuery = $tokensQuery . " AND " . $queryParts[0];
+            $reservationsQuery = $reservationsQuery . ' AND ' . $queryParts[0];
+            $tokensQuery = $tokensQuery . ' AND ' . $queryParts[0];
         } elseif (sizeof($queryParts) > 1) {
-            $reservationsQuery = $reservationsQuery . " AND (" . implode(' AND ', $queryParts) . ")";
-            $tokensQuery = $tokensQuery . " AND (" . implode(' AND ', $queryParts) . ")";
+            $reservationsQuery = $reservationsQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
+            $tokensQuery = $tokensQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
         }
 
         $db->beginTransaction();
@@ -310,9 +313,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
         }
     }
 
-
     /**
      * @param $codes
+     *
      * @return bool
      */
     public static function tokensExist($codes)
@@ -323,7 +326,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             $token = [$codes];
         }
 
-        $query = "SELECT EXISTS(SELECT id FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE token IN ('" . implode("', '", $codes) . "'))";
+        $query = 'SELECT EXISTS(SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . " WHERE token IN ('" . implode("', '", $codes) . "'))";
 
         $result = $db->fetchOne($query);
 
@@ -349,7 +352,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     {
         $this->tokens = $tokens;
     }
-
 
     /**
      * @return \Pimcore\Model\Object\Listing|AdapterInterface
@@ -406,7 +408,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Rewind the Iterator to the first element
+     *
      * @link http://php.net/manual/en/iterator.rewind.php
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind()
@@ -418,8 +422,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     /**
      * Returns an collection of items for a page.
      *
-     * @param  integer $offset Page offset
-     * @param  integer $itemCountPerPage Number of items per page
+     * @param  int $offset Page offset
+     * @param  int $itemCountPerPage Number of items per page
+     *
      * @return array
      */
     public function getItems($offset, $itemCountPerPage)
@@ -433,7 +438,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Count elements of an object
+     *
      * @link http://php.net/manual/en/countable.count.php
+     *
      * @return int The custom count as an integer.
      * </p>
      * <p>

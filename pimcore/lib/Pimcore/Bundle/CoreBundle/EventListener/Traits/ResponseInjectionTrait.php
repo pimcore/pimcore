@@ -21,6 +21,7 @@ trait ResponseInjectionTrait
 {
     /**
      * @param Response $response
+     *
      * @return bool
      */
     protected function isHtmlResponse(Response $response)
@@ -29,7 +30,7 @@ trait ResponseInjectionTrait
             return false;
         }
 
-        if (strpos($response->getContent(), "<html")) {
+        if (strpos($response->getContent(), '<html')) {
             return true;
         }
 

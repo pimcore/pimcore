@@ -15,8 +15,8 @@
 namespace Pimcore\Cache\Pool;
 
 use Cache\TagInterop\TaggableCacheItemInterface;
-use Psr\Log\LoggerInterface;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class CacheItem implements PimcoreCacheItemInterface
 {
@@ -180,6 +180,7 @@ class CacheItem implements PimcoreCacheItemInterface
      * Merge tags into currently set tags
      *
      * @param array $tags
+     *
      * @return TaggableCacheItemInterface
      */
     public function mergeTags(array $tags)
@@ -226,6 +227,7 @@ class CacheItem implements PimcoreCacheItemInterface
      * Internal logging helper.
      *
      * @internal
+     *
      * @param LoggerInterface $logger
      * @param $message
      * @param array $context

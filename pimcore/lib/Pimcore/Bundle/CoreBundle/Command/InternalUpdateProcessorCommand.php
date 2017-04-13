@@ -15,11 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Logger;
+use Pimcore\Update;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Model\Asset;
-use Pimcore\Update;
-use Pimcore\Logger;
 
 class InternalUpdateProcessorCommand extends AbstractCommand
 {
@@ -29,7 +28,7 @@ class InternalUpdateProcessorCommand extends AbstractCommand
             ->setHidden(true)
             ->setName('internal:update-processor')
             ->setDescription('For internal use only')
-            ->addArgument("config");
+            ->addArgument('config');
     }
 
     /**
@@ -37,31 +36,31 @@ class InternalUpdateProcessorCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $status = ["success" => true];
-        $config = $input->getArgument("config");
+        $status = ['success' => true];
+        $config = $input->getArgument('config');
 
         if ($config) {
             $job = json_decode($config, true);
 
             if (is_array($job)) {
-                if (isset($job["dry-run"])) {
+                if (isset($job['dry-run'])) {
                     // do not do anything here
-                    Logger::info("skipped update job because it is in dry-run mode", $job);
-                } elseif ($job["type"] == "files") {
-                    Update::installData($job["revision"], $job["updateScript"]);
-                } elseif ($job["type"] == "clearcache") {
+                    Logger::info('skipped update job because it is in dry-run mode', $job);
+                } elseif ($job['type'] == 'files') {
+                    Update::installData($job['revision'], $job['updateScript']);
+                } elseif ($job['type'] == 'clearcache') {
                     \Pimcore\Cache::clearAll();
-                } elseif ($job["type"] == "preupdate") {
-                    $status = Update::executeScript($job["revision"], "preupdate");
-                } elseif ($job["type"] == "postupdate") {
-                    $status = Update::executeScript($job["revision"], "postupdate");
-                } elseif ($job["type"] == "cleanup") {
+                } elseif ($job['type'] == 'preupdate') {
+                    $status = Update::executeScript($job['revision'], 'preupdate');
+                } elseif ($job['type'] == 'postupdate') {
+                    $status = Update::executeScript($job['revision'], 'postupdate');
+                } elseif ($job['type'] == 'cleanup') {
                     Update::cleanup();
-                } elseif ($job["type"] == "composer-dump-autoload") {
+                } elseif ($job['type'] == 'composer-dump-autoload') {
                     $status = Update::composerDumpAutoload();
-                } elseif ($job["type"] == "composer-update") {
+                } elseif ($job['type'] == 'composer-update') {
                     $status = Update::composerUpdate();
-                } elseif ($job["type"] == "composer-invalidate-classmaps") {
+                } elseif ($job['type'] == 'composer-invalidate-classmaps') {
                     $status = Update::invalidateComposerAutoloadClassmap();
                 }
             }

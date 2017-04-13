@@ -48,6 +48,7 @@ class TagRenderer implements LoggerAwareInterface
 
     /**
      * @param $type
+     *
      * @return bool
      */
     public function tagExists($type)
@@ -62,6 +63,7 @@ class TagRenderer implements LoggerAwareInterface
      * @param $type
      * @param $inputName
      * @param array $options
+     *
      * @return Tag|null
      *
      * @see \Pimcore\View::tag
@@ -114,6 +116,7 @@ class TagRenderer implements LoggerAwareInterface
      * @param $type
      * @param $inputName
      * @param array $options
+     *
      * @return Tag|string|null
      */
     public function render(PageSnippet $document, $type, $inputName, array $options = [])

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -26,15 +27,17 @@ class Area extends Model\Document\Tag
 {
     /**
      * @see Model\Document\Tag\TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "area";
+        return 'area';
     }
 
     /**
      * @see Model\Document\Tag\TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -48,26 +51,26 @@ class Area extends Model\Document\Tag
     public function admin()
     {
         // get configuration data for admin
-        if (method_exists($this, "getDataEditmode")) {
+        if (method_exists($this, 'getDataEditmode')) {
             $data = $this->getDataEditmode();
         } else {
             $data = $this->getData();
         }
 
         $options = [
-            "options" => $this->getOptions(),
-            "data" => $data,
-            "name" => $this->getName(),
-            "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType(),
-            "inherited" => $this->getInherited()
+            'options' => $this->getOptions(),
+            'data' => $data,
+            'name' => $this->getName(),
+            'id' => 'pimcore_editable_' . $this->getName(),
+            'type' => $this->getType(),
+            'inherited' => $this->getInherited()
         ];
         $options = $options = json_encode($options);
 
         if ($this->editmode) {
-            $class = "pimcore_editable pimcore_tag_" . $this->getType();
-            if (array_key_exists("class", $this->getOptions())) {
-                $class .= (" " . $this->getOptions()["class"]);
+            $class = 'pimcore_editable pimcore_tag_' . $this->getType();
+            if (array_key_exists('class', $this->getOptions())) {
+                $class .= (' ' . $this->getOptions()['class']);
             }
 
             echo '
@@ -77,7 +80,6 @@ class Area extends Model\Document\Tag
                 <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '">
             ';
         }
-
 
         $this->frontend();
 
@@ -105,10 +107,10 @@ class Area extends Model\Document\Tag
         $this->setupStaticEnvironment();
         $suffixes = [];
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
+            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
         }
         $suffixes[] = $this->getName();
-        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $suffixes);
+        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
 
         $this->current = $count;
 
@@ -123,14 +125,14 @@ class Area extends Model\Document\Tag
             $info = null;
         }
 
-        $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
+        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
         $suffixes[] = 1;
-        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $suffixes);
+        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
 
         $params = [];
-        if (is_array($options["params"]) && array_key_exists($options["type"], $options["params"])) {
-            if (is_array($options["params"][$options["type"]])) {
-                $params = $options["params"][$options["type"]];
+        if (is_array($options['params']) && array_key_exists($options['type'], $options['params'])) {
+            if (is_array($options['params'][$options['type']])) {
+                $params = $options['params'][$options['type']];
             }
         }
 
@@ -140,22 +142,24 @@ class Area extends Model\Document\Tag
 
         $suffixes = [];
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
+            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
             array_pop($suffixes);
         }
-        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $suffixes);
+        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
 
         $suffixes = [];
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
+            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
             array_pop($suffixes);
         }
-        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $suffixes);
+        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
     }
 
     /**
      * @see Model\Document\Tag\TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -165,7 +169,9 @@ class Area extends Model\Document\Tag
 
     /**
      * @see Model\Document\Tag\TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -180,8 +186,8 @@ class Area extends Model\Document\Tag
     {
 
         // setup static environment for blocks
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_current")) {
-            $current = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
+            $current = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
             if (!is_array($current)) {
                 $current = [];
             }
@@ -189,8 +195,8 @@ class Area extends Model\Document\Tag
             $current = [];
         }
 
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
+            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
             if (!is_array($numeration)) {
                 $numeration = [];
             }
@@ -198,8 +204,8 @@ class Area extends Model\Document\Tag
             $numeration = [];
         }
 
-        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $numeration);
-        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $current);
+        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $numeration);
+        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $current);
     }
 
     /**

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Table extends Model\Document\Tag
 {
-
     /**
      * Contains the text for this element
      *
@@ -31,18 +31,19 @@ class Table extends Model\Document\Tag
      */
     public $data;
 
-
     /**
      * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "table";
+        return 'table';
     }
 
     /**
      * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -52,11 +53,12 @@ class Table extends Model\Document\Tag
 
     /**
      * @see TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
     {
-        $html = "";
+        $html = '';
 
         if (is_array($this->data) && count($this->data) > 0) {
             $html .= '<table border="0" cellpadding="0" cellspacing="0">';
@@ -78,7 +80,9 @@ class Table extends Model\Document\Tag
 
     /**
      * @see DTagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -90,7 +94,9 @@ class Table extends Model\Document\Tag
 
     /**
      * @see TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -101,7 +107,7 @@ class Table extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -113,6 +119,7 @@ class Table extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
@@ -121,7 +128,7 @@ class Table extends Model\Document\Tag
         if ($data->data === null or is_array($data->data)) {
             $this->data = $data->data;
         } else {
-            throw new \Exception("cannot get values from web service import - invalid data");
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 }

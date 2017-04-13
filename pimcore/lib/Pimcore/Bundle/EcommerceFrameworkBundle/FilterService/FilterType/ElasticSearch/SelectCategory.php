@@ -43,16 +43,16 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         }
 
         foreach ($rawValues as $v) {
-            $values[$v['value']] = ['value' => $v['value'], "count" => $v['count']];
+            $values[$v['value']] = ['value' => $v['value'], 'count' => $v['count']];
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$filterDefinition->getField()],
-            "values" => array_values($values),
-            "fieldname" => $filterDefinition->getField(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$filterDefinition->getField()],
+            'values' => array_values($values),
+            'fieldname' => $filterDefinition->getField(),
+            'resultCount' => $productList->count()
         ]);
     }
 

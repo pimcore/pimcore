@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,22 +22,18 @@ use Pimcore\Tool;
 
 class Language extends Model\Object\ClassDefinition\Data\Select
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "language";
+    public $fieldtype = 'language';
 
     /**
      * @var bool
      */
     public $onlySystemLanguages = false;
 
-    /**
-     *
-     */
     public function configureOptions()
     {
         $validLanguages = (array) Tool::getValidLanguages();
@@ -51,8 +48,8 @@ class Language extends Model\Object\ClassDefinition\Data\Select
             }
 
             $options[] = [
-                "key" => $translation,
-                "value" => $short
+                'key' => $translation,
+                'value' => $short
             ];
         }
 
@@ -69,6 +66,7 @@ class Language extends Model\Object\ClassDefinition\Data\Select
 
     /**
      * @param $value
+     *
      * @return $this
      */
     public function setOnlySystemLanguages($value)
@@ -80,6 +78,7 @@ class Language extends Model\Object\ClassDefinition\Data\Select
 
     /**
      * @param $data
+     *
      * @return static
      */
     public static function __set_state($data)

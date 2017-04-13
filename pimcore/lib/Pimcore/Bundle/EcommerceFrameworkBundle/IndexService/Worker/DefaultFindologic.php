@@ -19,34 +19,28 @@ use Pimcore\Logger;
 
 /**
  * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic
+ *
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig getTenantConfig()
  */
 class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
-    const STORE_TABLE_NAME = "ecommerceframework_productindex_store_findologic";
-    const EXPORT_TABLE_NAME = "ecommerceframework_productindex_export_findologic";
-    const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_findologic";
-
+    const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_findologic';
+    const EXPORT_TABLE_NAME = 'ecommerceframework_productindex_export_findologic';
+    const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_findologic';
 
     /**
      * findologic supported fields
+     *
      * @var array
      */
     protected $supportedFields = [
-        'id'
-        , 'ordernumber'
-        , 'name'
-        , 'summary'
-        , 'description'
-        , 'price'
+        'id', 'ordernumber', 'name', 'summary', 'description', 'price'
     ];
-
 
     /**
      * @var \SimpleXMLElement
      */
     protected $batchData;
-
 
     /**
      * creates or updates necessary index structures (like database tables and so on)
@@ -70,7 +64,6 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         $this->doDeleteFromIndex($object->getId(), $object);
     }
 
-
     /**
      * updates given element in index
      *
@@ -90,7 +83,6 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         $this->fillupPreparationQueue($object);
     }
 
-
     /**
      * @param      $objectId
      * @param null $data
@@ -109,10 +101,8 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         $xml->addChild('allAttributes')
             ->addChild('attributes');
 
-
         $attributes = $xml->allAttributes->attributes;
         /* @var \SimpleXMLElement $attributes */
-
 
         // add optional fields
         if (array_key_exists('salesFrequency', $data['data'])) {
@@ -126,9 +116,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
             ;
         }
 
-
         /**
          * Adds a child with $value inside CDATA
+         *
          * @param \SimpleXMLElement $parent
          * @param string           $name
          * @param null             $value
@@ -147,7 +137,6 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
             return $new_child;
         };
 
-
         // add default data
         foreach ($data['data'] as $field => $value) {
             // skip empty values
@@ -155,7 +144,6 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
                 continue;
             }
             $value = is_string($value) ? htmlspecialchars($value) : $value;
-
 
             if (in_array($field, $this->supportedFields)) {
                 // supported field
@@ -228,11 +216,10 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
             }
         }
 
-
         // add relations
         $groups = [];
         foreach ($data['relations'] as $relation) {
-            $groups[ $relation['fieldname'] ][] = $relation['dest'];
+            $groups[$relation['fieldname']][] = $relation['dest'];
         }
         foreach ($groups as $name => $values) {
             $attribute = $attributes->addChild('attribute');
@@ -244,15 +231,12 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
             }
         }
 
-
         // update export item
         $this->updateExportItem($objectId, $xml);
-
 
         // create / update mockup cache
         $this->saveToMockupCache($objectId, $data);
     }
-
 
     /**
      * @param int $objectId
@@ -262,7 +246,6 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
         $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getStoreTableName(), $objectId));
     }
-
 
     /**
      * @param int              $objectId
@@ -277,12 +260,9 @@ VALUES (:id, :shop_key, :data, now())
 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `last_update` = VALUES(`last_update`)
 SQL;
         $this->db->query($query, [
-            'id' => $objectId
-            , 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey')
-            , 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML())
+            'id' => $objectId, 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey'), 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML())
         ]);
     }
-
 
     /**
      * @return string
@@ -308,7 +288,6 @@ SQL;
         return self::EXPORT_TABLE_NAME;
     }
 
-
     /**
      * @return \SimpleXMLElement
      */
@@ -316,7 +295,6 @@ SQL;
     {
         return new \SimpleXMLElement('<?xml version="1.0"?><item />');
     }
-
 
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic

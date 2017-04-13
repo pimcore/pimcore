@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -47,7 +48,6 @@ class Item
         $this->suffixes = $suffixes;
     }
 
-
     /**
      * @param $name
      *
@@ -72,7 +72,6 @@ class Item
         return $element;
     }
 
-
     /**
      * @param $func
      * @param $args
@@ -82,7 +81,7 @@ class Item
     public function __call($func, $args)
     {
         $element = $this->getElement($args[0]);
-        $class = "Pimcore\\Model\\Document\\Tag\\" . str_replace('get', '', $func);
+        $class = 'Pimcore\\Model\\Document\\Tag\\' . str_replace('get', '', $func);
 
         if (!strcasecmp(get_class($element), $class)) {
             return $element;

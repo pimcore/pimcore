@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,9 +26,6 @@ class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'uuids';
 
-    /**
-     *
-     */
     public function save()
     {
         $data = get_object_vars($this->model);
@@ -50,16 +48,17 @@ class Dao extends Model\Dao\AbstractDao
         if (!$uuid) {
             throw new \Exception("Couldn't delete UUID - no UUID specified.");
         }
-        $this->db->delete(self::TABLE_NAME, ["uuid" => $uuid]);
+        $this->db->delete(self::TABLE_NAME, ['uuid' => $uuid]);
     }
 
     /**
      * @param $uuid
+     *
      * @return Model\Tool\UUID
      */
     public function getByUuid($uuid)
     {
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME ." where uuid='" . $uuid . "'");
+        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME ." where uuid='" . $uuid . "'");
         $model = new Model\Tool\UUID();
         $model->setValues($data);
 

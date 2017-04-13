@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -43,6 +44,7 @@ abstract class AbstractArea
 
     /**
      * @param ViewModelInterface|View $view
+     *
      * @return $this
      */
     public function setView($view)
@@ -62,6 +64,7 @@ abstract class AbstractArea
 
     /**
      * @param $config
+     *
      * @return $this
      */
     public function setConfig($config)
@@ -81,6 +84,7 @@ abstract class AbstractArea
 
     /**
      * @param $key
+     *
      * @return mixed
      */
     public function getParam($key)
@@ -100,7 +104,9 @@ abstract class AbstractArea
 
     /**
      * @deprecated
+     *
      * @param $key
+     *
      * @return mixed
      */
     public function _getParam($key)
@@ -110,6 +116,7 @@ abstract class AbstractArea
 
     /**
      * @deprecated
+     *
      * @return array
      */
     public function _getAllParams()
@@ -128,6 +135,7 @@ abstract class AbstractArea
 
     /**
      * @param $params
+     *
      * @return $this
      */
     public function setParams($params)
@@ -139,6 +147,7 @@ abstract class AbstractArea
 
     /**
      * @param Info $brick
+     *
      * @return $this
      */
     public function setBrick($brick)

@@ -23,14 +23,14 @@ use Pimcore\Logger;
 
 class Rule extends \Pimcore\Model\AbstractModel implements IRule
 {
-
     /**
      * @param int $id
+     *
      * @return IRule
      */
     public static function getById($id)
     {
-        $cacheKey = Dao::TABLE_NAME . "_" . $id;
+        $cacheKey = Dao::TABLE_NAME . '_' . $id;
         try {
             $rule = Runtime::get($cacheKey);
         } catch (\Exception $e) {
@@ -49,7 +49,6 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
 
         return $rule;
     }
-
 
     /**
      * @var int
@@ -87,7 +86,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     protected $behavior;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $active;
 
@@ -96,16 +95,17 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     protected $prio;
 
-
     /**
      * load model with serializes data from db
+     *
      * @param  $key
      * @param  $value
+     *
      * @return \Pimcore\Model\AbstractModel
      */
     public function setValue($key, $value)
     {
-        $method = "set" . $key;
+        $method = 'set' . $key;
         if (method_exists($this, $method)) {
             switch ($method) {
                 // localized fields
@@ -162,7 +162,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function setLabel($label, $locale = null)
     {
-        $this->label[ $this->getLanguage($locale) ] = $label;
+        $this->label[$this->getLanguage($locale)] = $label;
 
         return $this;
     }
@@ -174,7 +174,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function getLabel($locale = null)
     {
-        return $this->label[ $this->getLanguage($locale) ];
+        return $this->label[$this->getLanguage($locale)];
     }
 
     /**
@@ -206,7 +206,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function setDescription($description, $locale = null)
     {
-        $this->description[ $this->getLanguage($locale) ] = $description;
+        $this->description[$this->getLanguage($locale)] = $description;
 
         return $this;
     }
@@ -218,11 +218,12 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      */
     public function getDescription($locale = null)
     {
-        return $this->description[ $this->getLanguage($locale) ];
+        return $this->description[$this->getLanguage($locale)];
     }
 
     /**
      * @param string $behavior
+     *
      * @return IRule
      */
     public function setBehavior($behavior)
@@ -241,7 +242,8 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     }
 
     /**
-     * @param boolean $active
+     * @param bool $active
+     *
      * @return IRule
      */
     public function setActive($active)
@@ -252,7 +254,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getActive()
     {
@@ -261,6 +263,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
 
     /**
      * @param ICondition $condition
+     *
      * @return IRule
      */
     public function setCondition(ICondition $condition)
@@ -298,6 +301,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
 
     /**
      * @param int $prio
+     *
      * @return IRule
      */
     public function setPrio($prio)
@@ -335,9 +339,10 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
 
     /**
      * test all conditions if this rule is valid
+     *
      * @param IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(IEnvironment $environment)
     {
@@ -395,11 +400,11 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
         return $this;
     }
 
-
     /**
      * gets current language
      *
      * @param $language
+     *
      * @return string
      */
     protected function getLanguage($language = null)

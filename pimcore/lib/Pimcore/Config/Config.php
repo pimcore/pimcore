@@ -20,6 +20,7 @@
 
 /**
  * @see       https://github.com/zendframework/zend-config for the canonical source repository
+ *
  * @copyright Copyright (c) 2005-2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-config/blob/master/LICENSE.md New BSD License
  */
@@ -28,8 +29,8 @@ namespace Pimcore\Config;
 
 use ArrayAccess;
 use Countable;
-use Iterator;
 use Exception;
+use Iterator;
 
 /**
  * Provides a property based interface to an array.
@@ -90,6 +91,7 @@ class Config implements Countable, Iterator, ArrayAccess
      *
      * @param  string $name
      * @param  mixed  $default
+     *
      * @return mixed
      */
     public function get($name, $default = null)
@@ -105,6 +107,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * Magic function so that $obj->value will work.
      *
      * @param  string $name
+     *
      * @return mixed
      */
     public function __get($name)
@@ -120,7 +123,9 @@ class Config implements Countable, Iterator, ArrayAccess
      *
      * @param  string $name
      * @param  mixed  $value
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function __set($name, $value)
@@ -187,6 +192,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * isset() overloading
      *
      * @param  string $name
+     *
      * @return bool
      */
     public function __isset($name)
@@ -198,7 +204,9 @@ class Config implements Countable, Iterator, ArrayAccess
      * unset() overloading
      *
      * @param  string $name
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function __unset($name)
@@ -215,6 +223,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * count(): defined by Countable interface.
      *
      * @see    Countable::count()
+     *
      * @return int
      */
     public function count()
@@ -226,6 +235,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * current(): defined by Iterator interface.
      *
      * @see    Iterator::current()
+     *
      * @return mixed
      */
     public function current()
@@ -239,6 +249,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * key(): defined by Iterator interface.
      *
      * @see    Iterator::key()
+     *
      * @return mixed
      */
     public function key()
@@ -250,6 +261,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * next(): defined by Iterator interface.
      *
      * @see    Iterator::next()
+     *
      * @return void
      */
     public function next()
@@ -267,6 +279,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * rewind(): defined by Iterator interface.
      *
      * @see    Iterator::rewind()
+     *
      * @return void
      */
     public function rewind()
@@ -279,18 +292,21 @@ class Config implements Countable, Iterator, ArrayAccess
      * valid(): defined by Iterator interface.
      *
      * @see    Iterator::valid()
+     *
      * @return bool
      */
     public function valid()
     {
-        return ($this->key() !== null);
+        return $this->key() !== null;
     }
 
     /**
      * offsetExists(): defined by ArrayAccess interface.
      *
      * @see    ArrayAccess::offsetExists()
+     *
      * @param  mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -302,7 +318,9 @@ class Config implements Countable, Iterator, ArrayAccess
      * offsetGet(): defined by ArrayAccess interface.
      *
      * @see    ArrayAccess::offsetGet()
+     *
      * @param  mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -314,8 +332,10 @@ class Config implements Countable, Iterator, ArrayAccess
      * offsetSet(): defined by ArrayAccess interface.
      *
      * @see    ArrayAccess::offsetSet()
+     *
      * @param  mixed $offset
      * @param  mixed $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -327,7 +347,9 @@ class Config implements Countable, Iterator, ArrayAccess
      * offsetUnset(): defined by ArrayAccess interface.
      *
      * @see    ArrayAccess::offsetUnset()
+     *
      * @param  mixed $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)
@@ -344,6 +366,7 @@ class Config implements Countable, Iterator, ArrayAccess
      * - Items in $merge with STRING keys will overwrite current values.
      *
      * @param  Config $merge
+     *
      * @return self
      */
     public function merge(Config $merge)

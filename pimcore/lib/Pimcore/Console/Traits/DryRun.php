@@ -24,6 +24,7 @@ trait DryRun
      * Configure --dry-run
      *
      * @param null $description
+     *
      * @return $this
      */
     protected function configureDryRunOption($description = null)
@@ -59,6 +60,7 @@ trait DryRun
      *
      * @param $message
      * @param string $prefix
+     *
      * @return string
      */
     protected function prefixDryRun($message, $prefix = 'DRY-RUN')
@@ -75,6 +77,7 @@ trait DryRun
      *
      * @param $message
      * @param string $prefix
+     *
      * @return string
      */
     protected function dryRunMessage($message, $prefix = 'DRY-RUN')

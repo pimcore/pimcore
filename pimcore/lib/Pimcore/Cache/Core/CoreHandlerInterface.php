@@ -51,6 +51,7 @@ interface CoreHandlerInterface
 
     /**
      * @param bool $handleCli
+     *
      * @return $this
      */
     public function setHandleCli($handleCli);
@@ -62,6 +63,7 @@ interface CoreHandlerInterface
 
     /**
      * @param bool $forceImmediateWrite
+     *
      * @return $this
      */
     public function setForceImmediateWrite($forceImmediateWrite);
@@ -70,6 +72,7 @@ interface CoreHandlerInterface
      * Load data from cache (retrieves data from cache item)
      *
      * @param $key
+     *
      * @return bool|mixed
      */
     public function load($key);
@@ -78,6 +81,7 @@ interface CoreHandlerInterface
      * Get PSR-6 cache item
      *
      * @param $key
+     *
      * @return PimcoreCacheItemInterface
      */
     public function getItem($key);
@@ -91,6 +95,7 @@ interface CoreHandlerInterface
      * @param int|\DateInterval|null $lifetime
      * @param int|null $priority
      * @param bool $force
+     *
      * @return bool
      */
     public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false);
@@ -99,6 +104,7 @@ interface CoreHandlerInterface
      * Remove a cache item
      *
      * @param $key
+     *
      * @return bool
      */
     public function remove($key);
@@ -112,12 +118,14 @@ interface CoreHandlerInterface
 
     /**
      * @param string $tag
+     *
      * @return bool
      */
     public function clearTag($tag);
 
     /**
      * @param string[] $tags
+     *
      * @return bool
      */
     public function clearTags(array $tags);
@@ -133,30 +141,35 @@ interface CoreHandlerInterface
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
      *
      * @param string $tag
+     *
      * @return $this
      */
     public function addTagClearedOnShutdown($tag);
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function addTagIgnoredOnSave($tag);
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function removeTagIgnoredOnSave($tag);
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function addTagIgnoredOnClear($tag);
 
     /**
      * @param string $tag
+     *
      * @return $this
      */
     public function removeTagIgnoredOnClear($tag);
@@ -172,6 +185,7 @@ interface CoreHandlerInterface
      * Shut down pimcore - write cache entries and clean up
      *
      * @param bool $forceWrite
+     *
      * @return $this
      */
     public function shutdown($forceWrite = false);

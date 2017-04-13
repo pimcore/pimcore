@@ -16,17 +16,15 @@ namespace Pimcore;
 
 class Version
 {
-
     /**
      * @var string
      */
-    public static $version = "5.0.0-alpha.1";
+    public static $version = '5.0.0-alpha.1';
 
     /**
      * @var int
      */
     public static $revision = 39;
-
 
     /**
      * @return string

@@ -95,14 +95,14 @@ interface IRule
     public function getActions();
 
     /**
-     * @param boolean $active
+     * @param bool $active
      *
      * @return IRule
      */
     public function setActive($active);
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getActive();
 
@@ -120,9 +120,10 @@ interface IRule
 
     /**
      * test all conditions if this rule is valid
+     *
      * @param IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(IEnvironment $environment);
 
@@ -135,6 +136,7 @@ interface IRule
 
     /**
      * execute rule actions based on current product
+     *
      * @param IEnvironment $environment
      *
      * @return IRule
@@ -143,6 +145,7 @@ interface IRule
 
     /**
      * execute rule actions based on current cart
+     *
      * @param IEnvironment $environment
      *
      * @return IRule

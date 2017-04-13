@@ -93,7 +93,7 @@ class ResponseExceptionListener implements EventSubscriberInterface, PimcoreCont
         }
 
         if (empty($errorPath)) {
-            $errorPath = "/";
+            $errorPath = '/';
         }
 
         $document = Document::getByPath($errorPath);
@@ -109,7 +109,7 @@ class ResponseExceptionListener implements EventSubscriberInterface, PimcoreCont
             $response = $this->actionRenderer->render($controller);
         } catch (\Exception $e) {
             // we are even not able to render the error page, so we send the client a unicorn
-            $response = "Page not found. 🦄";
+            $response = 'Page not found. 🦄';
         }
 
         $event->setResponse(new Response($response));

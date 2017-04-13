@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
  */
 abstract class AbstractStep implements ICheckoutStep
 {
-
     /**
      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
      */

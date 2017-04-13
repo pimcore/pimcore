@@ -14,19 +14,21 @@
 
 namespace Pimcore\WorkflowManagement\Workflow\Manager;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\User;
 use Pimcore\WorkflowManagement\Workflow;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
 
 class Factory
 {
     /**
      * @static
+     *
      * @param AbstractElement|Asset|Document|ConcreteObject $element
      * @param User $user
+     *
      * @return \Pimcore\WorkflowManagement\Workflow\Manager
      */
     public static function getManager(AbstractElement $element, User $user = null)

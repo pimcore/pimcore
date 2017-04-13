@@ -73,6 +73,7 @@ class DocumentController extends AbstractElementController
      * @param int|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function getAction(Request $request, $id = null)
@@ -91,7 +92,7 @@ class DocumentController extends AbstractElementController
             $object = $this->service->$getter($id);
         } else {
             // check if the getter is implemented by a plugin
-            $class = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . ucfirst($type) . "\\Out";
+            $class = '\\Pimcore\\Model\\Webservice\\Data\\Document\\' . ucfirst($type) . '\\Out';
 
             if (Tool::classExists($class)) {
                 Document\Service::loadAllDocumentFields($document);
@@ -217,6 +218,7 @@ class DocumentController extends AbstractElementController
      * @param int|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function deleteAction(Request $request, $id = null)
@@ -423,12 +425,13 @@ class DocumentController extends AbstractElementController
      * @param string $type
      *
      * @return string
+     *
      * @throws ResponseException
      */
     protected function getWebserviceInClassName($type)
     {
         $typeUpper = ucfirst($type);
-        $className = "\\Pimcore\\Model\\Webservice\\Data\\Document\\" . $typeUpper . "\\In";
+        $className = '\\Pimcore\\Model\\Webservice\\Data\\Document\\' . $typeUpper . '\\In';
 
         if (!Tool::classExists($className)) {
             throw new ResponseException(

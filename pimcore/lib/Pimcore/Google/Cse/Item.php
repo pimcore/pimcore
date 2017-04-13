@@ -16,7 +16,6 @@ namespace Pimcore\Google\Cse;
 
 class Item
 {
-
     /**
      * @var array
      */
@@ -77,7 +76,6 @@ class Item
      */
     public $type;
 
-
     /**
      * @param array $data
      */
@@ -89,6 +87,7 @@ class Item
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function setValues($data = [])
@@ -105,11 +104,12 @@ class Item
     /**
      * @param  $key
      * @param  $value
+     *
      * @return $this
      */
     public function setValue($key, $value)
     {
-        $method = "set" . $key;
+        $method = 'set' . $key;
         if (method_exists($this, $method)) {
             $this->$method($value);
         }
@@ -119,6 +119,7 @@ class Item
 
     /**
      * @param $displayLink
+     *
      * @return $this
      */
     public function setDisplayLink($displayLink)
@@ -138,6 +139,7 @@ class Item
 
     /**
      * @param $document
+     *
      * @return $this
      */
     public function setDocument($document)
@@ -157,6 +159,7 @@ class Item
 
     /**
      * @param $formattedUrl
+     *
      * @return $this
      */
     public function setFormattedUrl($formattedUrl)
@@ -176,6 +179,7 @@ class Item
 
     /**
      * @param $htmlFormattedUrl
+     *
      * @return $this
      */
     public function setHtmlFormattedUrl($htmlFormattedUrl)
@@ -195,6 +199,7 @@ class Item
 
     /**
      * @param $htmlSnippet
+     *
      * @return $this
      */
     public function setHtmlSnippet($htmlSnippet)
@@ -214,6 +219,7 @@ class Item
 
     /**
      * @param $htmlTitle
+     *
      * @return $this
      */
     public function setHtmlTitle($htmlTitle)
@@ -233,6 +239,7 @@ class Item
 
     /**
      * @param $image
+     *
      * @return $this
      */
     public function setImage($image)
@@ -252,6 +259,7 @@ class Item
 
     /**
      * @param $link
+     *
      * @return $this
      */
     public function setLink($link)
@@ -271,6 +279,7 @@ class Item
 
     /**
      * @param $raw
+     *
      * @return $this
      */
     public function setRaw($raw)
@@ -290,6 +299,7 @@ class Item
 
     /**
      * @param $snippet
+     *
      * @return $this
      */
     public function setSnippet($snippet)
@@ -309,6 +319,7 @@ class Item
 
     /**
      * @param $title
+     *
      * @return $this
      */
     public function setTitle($title)
@@ -328,6 +339,7 @@ class Item
 
     /**
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)

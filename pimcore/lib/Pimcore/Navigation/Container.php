@@ -18,7 +18,6 @@
  * ----------------------------------------------------------------------------------
  */
 
-
 /**
  * Zend Framework
  *
@@ -109,7 +108,9 @@ class Container implements \RecursiveIterator, \Countable
      * calling {@link Page::setParent()}.
      *
      * @param  Page|array $page  page to add
+     *
      * @return Container fluent interface, returns self
+     *
      * @throws \Exception if page is invalid
      */
     public function addPage($page)
@@ -146,12 +147,14 @@ class Container implements \RecursiveIterator, \Countable
      * Adds several pages at once
      *
      * @param  Page[]|Container  $pages  pages to add
+     *
      * @return Container fluent interface, returns self
+     *
      * @throws \Exception if $pages is not array or Container
      */
     public function addPages($pages)
     {
-        if ($pages instanceof Container) {
+        if ($pages instanceof self) {
             $pages = iterator_to_array($pages);
         }
 
@@ -170,6 +173,7 @@ class Container implements \RecursiveIterator, \Countable
      * Sets pages this container should have, removing existing pages
      *
      * @param  Page[] $pages pages to set
+     *
      * @return Container  fluent interface, returns self
      */
     public function setPages(array $pages)
@@ -194,6 +198,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  Page|int $page page to remove, either a page instance or a specific page order
      * @param  bool $recursive [optional] whether to remove recursively
+     *
      * @return bool whether the removal was successful
      */
     public function removePage($page, $recursive = false)
@@ -249,6 +254,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  Page $page  page to look for
      * @param  bool $recursive  [optional] whether to search recursively. Default is false.
+     *
      * @return bool whether page is in container
      */
     public function hasPage(Page $page, $recursive = false)
@@ -284,6 +290,7 @@ class Container implements \RecursiveIterator, \Countable
      * @param  mixed   $value             value to match property against
      * @param  bool    $useRegex          [optional] if true PHP's preg_match
      *                                    is used. Default is false.
+     *
      * @return Page|null  matching page or null
      */
     public function findOneBy($property, $value, $useRegex = false)
@@ -349,6 +356,7 @@ class Container implements \RecursiveIterator, \Countable
      * @param  mixed  $value     value to match property against
      * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
+     *
      * @return Page[] array containing only Page instances
      */
     public function findAllBy($property, $value, $useRegex = false)
@@ -422,6 +430,7 @@ class Container implements \RecursiveIterator, \Countable
      *                           Default is false.
      * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
      *                           Default is false.
+     *
      * @return Page|null  matching page or null
      */
     public function findBy($property, $value, $all = false, $useRegex = false)
@@ -447,8 +456,10 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @param  string $method                       method name
      * @param  array  $arguments                    method arguments
+     *
      * @return mixed  Pimcore\Navigation|array|null    matching page, array of pages
      *                                              or null
+     *
      * @throws \Exception            if method does not exist
      */
     public function __call($method, $arguments)
@@ -485,6 +496,7 @@ class Container implements \RecursiveIterator, \Countable
      * Implements RecursiveIterator interface.
      *
      * @return Page       current page or null
+     *
      * @throws \Exception  if the index is invalid
      */
     public function current()

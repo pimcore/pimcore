@@ -56,7 +56,9 @@ interface ITokenManager
      *
      * @param string $code
      * @param ICart $cart
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
+     *
      * @return bool
      */
     public function checkToken($code, ICart $cart);
@@ -92,6 +94,7 @@ interface ITokenManager
      *
      * @param string $code
      * @param ICart $cart
+     *
      * @return bool
      */
     public function releaseToken($code, ICart $cart);
@@ -101,6 +104,7 @@ interface ITokenManager
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
      * @param AbstractOrder $order
+     *
      * @return bool
      */
     public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
@@ -109,12 +113,14 @@ interface ITokenManager
      * Get the codes of a voucher series, optionally a filter array can be passed.
      *
      * @param array|null $filter
+     *
      * @return array|bool
      */
     public function getCodes($filter = null);
 
     /**
      * @param null|int $usagePeriod
+     *
      * @return bool|array
      */
     public function getStatistics($usagePeriod = null);
@@ -131,6 +137,7 @@ interface ITokenManager
 
     /**
      * @param int $duration
+     *
      * @return bool
      */
     public function cleanUpReservations($duration = 0);
@@ -142,10 +149,10 @@ interface ITokenManager
      *
      * @param $viewParamsBag
      * @param array $params All params, especially for filtering and ordering token codes.
+     *
      * @return string The path of the template to display.
      */
     public function prepareConfigurationView(&$viewParamsBag, $params);
-
 
     /**
      * @return AbstractVoucherTokenType

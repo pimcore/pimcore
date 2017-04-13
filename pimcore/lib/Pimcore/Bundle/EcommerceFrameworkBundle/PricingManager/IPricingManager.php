@@ -32,21 +32,25 @@ interface IPricingManager
 
     /**
      * Factory
+     *
      * @return IRule
      */
     public function getRule();
 
     /**
      * Factory
+     *
      * @param string $type
      *
      * @return ICondition
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getCondition($type);
 
     /**
      * Factory
+     *
      * @param $type
      *
      * @return IAction

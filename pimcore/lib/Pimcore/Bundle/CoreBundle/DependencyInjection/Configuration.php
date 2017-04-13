@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Cache\Pool\Redis;
 use Pimcore\Cache\Pool\Redis\ConnectionFactory;
-use Pimcore\Session\Attribute\LockableAttributeBag;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;

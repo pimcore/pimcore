@@ -260,6 +260,7 @@ SQL;
      *
      * @param $id
      * @param array $tags
+     *
      * @return bool
      */
     protected function removeNotMatchingTags($id, array $tags)

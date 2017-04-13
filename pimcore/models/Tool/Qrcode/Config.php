@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,31 +24,30 @@ use Pimcore\Model;
  */
 class Config extends Model\AbstractModel
 {
+    /**
+     * @var string
+     */
+    public $name = '';
 
     /**
      * @var string
      */
-    public $name = "";
+    public $description = '';
 
     /**
      * @var string
      */
-    public $description = "";
-
-    /**
-     * @var string
-     */
-    public $url = "";
+    public $url = '';
 
     /**
      * @var
      */
-    public $foreColor = "";
+    public $foreColor = '';
 
     /**
      * @var string
      */
-    public $backgroundColor = "";
+    public $backgroundColor = '';
 
     /**
      * @var bool
@@ -66,7 +66,9 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return Config
+     *
      * @throws \Exception
      */
     public static function getByName($name)
@@ -83,6 +85,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $description
+     *
      * @return $this
      */
     public function setDescription($description)
@@ -102,6 +105,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -121,6 +125,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $url
+     *
      * @return $this
      */
     public function setUrl($url)
@@ -140,6 +145,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $backgroundColor
+     *
      * @return $this
      */
     public function setBackgroundColor($backgroundColor)
@@ -159,6 +165,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $foreColor
+     *
      * @return $this
      */
     public function setForeColor($foreColor)
@@ -178,6 +185,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $googleAnalytics
+     *
      * @return $this
      */
     public function setGoogleAnalytics($googleAnalytics)
@@ -188,7 +196,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getGoogleAnalytics()
     {

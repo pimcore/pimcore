@@ -24,7 +24,6 @@ namespace Pimcore\Tool\Text;
 
 class HtmlCutString
 {
-
     /**
      * @param $string
      * @param $limit
@@ -69,6 +68,7 @@ class HtmlCutString
     /**
      * @param $parseDiv
      * @param $newParent
+     *
      * @return bool
      */
     public function searchEnd($parseDiv, $newParent)
@@ -111,6 +111,7 @@ class HtmlCutString
 /**
  * @param $string
  * @param $limit
+ *
  * @return string
  */
 function cut_html_string($string, $limit)

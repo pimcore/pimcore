@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
-use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Templating\Model\ViewModel;
 
 /**
  * Class \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper
@@ -41,28 +41,27 @@ class Helper
                                             $loadFullPage, $excludeLimitOfFirstpage = false)
     {
         $orderByOptions = [];
-        $orderKeysAsc = explode(",", $filterDefinition->getOrderByAsc());
+        $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
         if (!empty($orderKeysAsc)) {
             foreach ($orderKeysAsc as $orderByEntry) {
                 if (!empty($orderByEntry)) {
-                    $orderByOptions[$orderByEntry]["asc"] = true;
+                    $orderByOptions[$orderByEntry]['asc'] = true;
                 }
             }
         }
 
-        $orderKeysDesc = explode(",", $filterDefinition->getOrderByDesc());
+        $orderKeysDesc = explode(',', $filterDefinition->getOrderByDesc());
         if (!empty($orderKeysDesc)) {
             foreach ($orderKeysDesc as $orderByEntry) {
                 if (!empty($orderByEntry)) {
-                    $orderByOptions[$orderByEntry]["desc"] = true;
+                    $orderByOptions[$orderByEntry]['desc'] = true;
                 }
             }
         }
 
-
         $offset = 0;
 
-        $pageLimit = intval($params["perPage"]);
+        $pageLimit = intval($params['perPage']);
         if (!$pageLimit) {
             $pageLimit = $filterDefinition->getPageLimit();
         }
@@ -74,9 +73,9 @@ class Helper
             $limitOnFirstLoad = 6;
         }
 
-        if ($params["page"]) {
-            $viewModel->currentPage = intval($params["page"]);
-            $offset = $pageLimit * ($params["page"]-1);
+        if ($params['page']) {
+            $viewModel->currentPage = intval($params['page']);
+            $offset = $pageLimit * ($params['page'] - 1);
         }
         if ($filterDefinition->getAjaxReload()) {
             if ($loadFullPage && !$excludeLimitOfFirstpage) {
@@ -94,15 +93,13 @@ class Helper
 
         $viewModel->pageLimit = $pageLimit;
 
-
-
-        $orderBy = $params["orderBy"];
-        $orderBy = explode("#", $orderBy);
+        $orderBy = $params['orderBy'];
+        $orderBy = explode('#', $orderBy);
         $orderByField = $orderBy[0];
         $orderByDirection = $orderBy[1];
 
         if (array_key_exists($orderByField, $orderByOptions)) {
-            $viewModel->currentOrderBy = htmlentities($params["orderBy"]);
+            $viewModel->currentOrderBy = htmlentities($params['orderBy']);
 
             $productList->setOrderKey($orderByField);
             $productList->setOrder($orderByDirection);
@@ -116,22 +113,22 @@ class Helper
                     }
                 }
 
-                $viewModel->currentOrderBy = implode("#", reset($orderByList));
+                $viewModel->currentOrderBy = implode('#', reset($orderByList));
             }
             $productList->setOrderKey($orderByList);
-            $productList->setOrder("ASC");
+            $productList->setOrder('ASC');
         }
 
         if ($filterService) {
             $viewModel->currentFilter = $filterService->initFilterService($filterDefinition, $productList, $params);
         }
 
-
         $viewModel->orderByOptions = $orderByOptions;
     }
 
     /**
      * @param $page
+     *
      * @return string
      */
     public static function createPagingQuerystring($page)
@@ -140,23 +137,23 @@ class Helper
         $params['page'] = $page;
         unset($params['fullpage']);
 
-        $string = "?";
+        $string = '?';
         foreach ($params as $k => $p) {
             if (is_array($p)) {
                 foreach ($p as $subKey => $subValue) {
-                    $string .= $k . "[" . $subKey . "]" . "=" . urlencode($subValue) . "&";
+                    $string .= $k . '[' . $subKey . ']' . '=' . urlencode($subValue) . '&';
                 }
             } else {
-                $string .= $k . "=" . urlencode($p) . "&";
+                $string .= $k . '=' . urlencode($p) . '&';
             }
         }
 
         return $string;
     }
 
-
     /**
      * @param $conditions
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
      */
     public static function getFirstFilteredCategory($conditions)

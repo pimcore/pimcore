@@ -21,11 +21,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
  */
 interface IEnvironment extends IComponent
 {
-
     /**
      * returns current user id
      *
      * @abstract
+     *
      * @return int
      */
     public function getCurrentUserId();
@@ -34,6 +34,7 @@ interface IEnvironment extends IComponent
      * sets current user id
      *
      * @param int $userId
+     *
      * @return void
      */
     public function setCurrentUserId($userId);
@@ -50,8 +51,10 @@ interface IEnvironment extends IComponent
      * save()-call is needed to save the custom items
      *
      * @abstract
+     *
      * @param $key
      * @param $value
+     *
      * @return void
      */
     public function setCustomItem($key, $value);
@@ -61,7 +64,9 @@ interface IEnvironment extends IComponent
      * save()-call is needed to save the custom items
      *
      * @abstract
+     *
      * @param $key
+     *
      * @return mixed
      */
     public function removeCustomItem($key);
@@ -70,7 +75,9 @@ interface IEnvironment extends IComponent
      * returns custom saved item from environment
      *
      * @abstract
+     *
      * @param $key
+     *
      * @return mixed
      */
     public function getCustomItem($key);
@@ -79,6 +86,7 @@ interface IEnvironment extends IComponent
      * returns all custom items from environment
      *
      * @abstract
+     *
      * @return mixed[]
      */
     public function getAllCustomItems();
@@ -88,6 +96,7 @@ interface IEnvironment extends IComponent
      * save()-call is needed to save changes
      *
      * @abstract
+     *
      * @return mixed
      */
     public function clearEnvironment();
@@ -96,6 +105,7 @@ interface IEnvironment extends IComponent
      * sets current assortment tenant which is used for indexing and product lists
      *
      * @param $tenant string
+     *
      * @return mixed
      */
     public function setCurrentAssortmentTenant($tenant);
@@ -111,6 +121,7 @@ interface IEnvironment extends IComponent
      * sets current assortment sub tenant which is used for indexing and product lists
      *
      * @param $subTenant mixed
+     *
      * @return mixed
      */
     public function setCurrentAssortmentSubTenant($subTenant);
@@ -127,6 +138,7 @@ interface IEnvironment extends IComponent
      *
      * @param $tenant string
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
+     *
      * @return mixed
      */
     public function setCurrentCheckoutTenant($tenant, $persistent = true);
@@ -146,17 +158,14 @@ interface IEnvironment extends IComponent
     public function getDefaultCurrency();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUseGuestCart();
 
     /**
-     * @param boolean $useGuestCart
+     * @param bool $useGuestCart
      */
     public function setUseGuestCart($useGuestCart);
-
-
-
 
     /** ===========================================
      *
@@ -171,6 +180,7 @@ interface IEnvironment extends IComponent
      * use setCurrentAssortmentTenant instead
      *
      * @param $tenant string
+     *
      * @return mixed
      */
     public function setCurrentTenant($tenant);
@@ -190,6 +200,7 @@ interface IEnvironment extends IComponent
      * use setCurrentAssortmentSubTenant instead
      *
      * @param $tenant mixed
+     *
      * @return mixed
      */
     public function setCurrentSubTenant($tenant);
@@ -202,7 +213,6 @@ interface IEnvironment extends IComponent
      * @return mixed
      */
     public function getCurrentSubTenant();
-
 
     /**
      * gets current system locale

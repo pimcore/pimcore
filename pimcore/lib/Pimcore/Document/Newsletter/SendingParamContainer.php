@@ -16,7 +16,6 @@ namespace Pimcore\Document\Newsletter;
 
 class SendingParamContainer
 {
-
     /**
      * @var string
      */
@@ -29,6 +28,7 @@ class SendingParamContainer
 
     /**
      * SendingParamContainer constructor.
+     *
      * @param string $email
      * @param array $params
      */

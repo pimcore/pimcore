@@ -23,8 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
  */
 class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements ICheckoutable
 {
-
-// =============================================
+    // =============================================
 //     ICheckoutable Methods
 //  =============================================
 
@@ -32,37 +31,38 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getOSName()
     {
-        throw new UnsupportedException("getOSName is not supported for " . get_class($this));
+        throw new UnsupportedException('getOSName is not supported for ' . get_class($this));
     }
 
     /**
      * should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getOSProductNumber()
     {
-        throw new UnsupportedException("getOSProductNumber is not supported for " . get_class($this));
+        throw new UnsupportedException('getOSProductNumber is not supported for ' . get_class($this));
     }
-
 
     /**
      * defines the name of the availability system for this product.
      * for offline tool there are no availability systems implemented
      *
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getAvailabilitySystemName()
     {
-        return "none";
+        return 'none';
     }
-
 
     /**
      * checks if product is bookable
@@ -75,7 +75,6 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
         return true;
     }
 
-
     /**
      * defines the name of the price system for this product.
      * there should either be a attribute in pro product object or
@@ -85,7 +84,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      */
     public function getPriceSystemName()
     {
-        return "defaultOfferToolPriceSystem";
+        return 'defaultOfferToolPriceSystem';
     }
 
     /**
@@ -112,6 +111,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * returns price for given quantity scale
      *
      * @param int $quantityScale
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = 1)
@@ -124,6 +124,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
@@ -135,6 +136,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      * returns availability info based on given quantity
      *
      * @param int $quantity
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = null)
@@ -144,27 +146,29 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
 
     /**
      * @static
+     *
      * @param int $id
+     *
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id)
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof AbstractOfferToolProduct) {
+        if ($object instanceof self) {
             return $object;
         }
 
         return null;
     }
 
-
     /**
      * @throws UnsupportedException
+     *
      * @return string
      */
     public function getProductGroup()
     {
-        throw new UnsupportedException("getProductGroup is not implemented for " . get_class($this));
+        throw new UnsupportedException('getProductGroup is not implemented for ' . get_class($this));
     }
 }

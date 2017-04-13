@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -31,7 +32,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
     public $lng = 0.0;
 
     /**
-     * @var integer
+     * @var int
      */
     public $zoom = 1;
 
@@ -50,6 +51,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $lat
+     *
      * @return $this
      */
     public function setLat($lat)
@@ -69,6 +71,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $lng
+     *
      * @return $this
      */
     public function setLng($lng)
@@ -88,6 +91,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $zoom
+     *
      * @return $this
      */
     public function setZoom($zoom)
@@ -107,6 +111,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $mapType
+     *
      * @return $this
      */
     public function setMapType($mapType)

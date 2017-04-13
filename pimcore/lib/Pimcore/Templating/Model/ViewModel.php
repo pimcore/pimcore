@@ -77,6 +77,7 @@ class ViewModel implements ViewModelInterface
 
     /**
      * @param $name
+     *
      * @return mixed
      */
     public function __get($name)
@@ -95,6 +96,7 @@ class ViewModel implements ViewModelInterface
 
     /**
      * @param $name
+     *
      * @return bool
      */
     public function __isset($name)
@@ -120,6 +122,7 @@ class ViewModel implements ViewModelInterface
 
     /**
      * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -129,6 +132,7 @@ class ViewModel implements ViewModelInterface
 
     /**
      * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)

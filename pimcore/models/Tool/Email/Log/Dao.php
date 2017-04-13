@@ -10,31 +10,32 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Email\Log;
 
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @property \Pimcore\Model\Tool\Email\Log $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * Name of the db table
+     *
      * @var string
      */
     protected static $dbTable = 'email_log';
 
-     /**
+    /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param integer $id
+     * @param int $id
      */
     public function getById($id = null)
     {
@@ -42,11 +43,11 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM email_log WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM email_log WHERE id = ?', $this->model->getId());
         $this->assignVariablesToModel($data);
     }
 
-     /**
+    /**
      * Save document to database
      */
     public function save()
@@ -59,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
             if (in_array($key, $this->getValidTableColumns(self::$dbTable))) {
 
                 // check if the getter exists
-                $getter = "get" . ucfirst($key);
+                $getter = 'get' . ucfirst($key);
                 if (!method_exists($this->model, $getter)) {
                     continue;
                 }
@@ -80,19 +81,18 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         try {
-            $this->db->update(self::$dbTable, $data, ["id" => $this->model->getId()]);
+            $this->db->update(self::$dbTable, $data, ['id' => $this->model->getId()]);
         } catch (\Exception $e) {
             Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }
-
 
     /**
      * Deletes object from database
      */
     public function delete()
     {
-        $this->db->delete(self::$dbTable, ["id" => $this->model->getId()]);
+        $this->db->delete(self::$dbTable, ['id' => $this->model->getId()]);
     }
 
     /**
@@ -122,6 +122,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $data
+     *
      * @return array|string
      */
     protected function createJsonLoggingObject($data)
@@ -144,6 +145,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param $key
      * @param $value
+     *
      * @return \stdClass
      */
     protected function prepareLoggingData($key, $value)
@@ -156,7 +158,7 @@ class Dao extends Model\Dao\AbstractDao
                 'value' => $value];
         } elseif ($value instanceof \DateTimeInterface) {
             $class->data = ['type' => 'simple',
-                'value' => $value->format("Y-m-d H:i")];
+                'value' => $value->format('Y-m-d H:i')];
         } elseif (is_object($value) && method_exists($value, 'getId')) {
             $class->data = ['type' => 'object',
                 'objectId' => $value->getId(),

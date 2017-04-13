@@ -26,6 +26,7 @@ abstract class AbstractSearch implements IOrderListFilter
 {
     /**
      * Search value
+     *
      * @var string
      */
     protected $value;
@@ -57,6 +58,7 @@ abstract class AbstractSearch implements IOrderListFilter
 
     /**
      * @param IOrderList $orderList
+     *
      * @return IOrderListFilter
      */
     public function apply(IOrderList $orderList)

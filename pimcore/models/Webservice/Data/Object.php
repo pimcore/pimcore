@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,20 +21,18 @@ use Pimcore\Model;
 
 class Object extends Model\Webservice\Data
 {
-
-
     /** If set to true then null values will not be exported.
      * @var
      */
     protected static $dropNullValues;
 
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $parentId;
 
@@ -53,10 +52,9 @@ class Object extends Model\Webservice\Data
     public $type;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userOwner;
-
 
     /**
      * @var Property[]
@@ -72,7 +70,7 @@ class Object extends Model\Webservice\Data
         parent::map($object);
 
         $keys = get_object_vars($this);
-        if (array_key_exists("childs", $keys)) {
+        if (array_key_exists('childs', $keys)) {
             if ($object->hasChilds()) {
                 $this->childs = [];
                 foreach ($object->getChilds() as $child) {

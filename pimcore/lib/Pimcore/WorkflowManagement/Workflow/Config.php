@@ -14,32 +14,31 @@
 
 namespace Pimcore\WorkflowManagement\Workflow;
 
+use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Object;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
-use Pimcore\Logger;
 use Pimcore\WorkflowManagement\Workflow;
 
 class Config
 {
-
-
     /**
      * @param bool $forceReload
+     *
      * @return array|null
      */
     public static function getWorkflowManagementConfig($forceReload = false)
     {
         $config = null;
 
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_workflowmanagement") && !$forceReload) {
-            $config = \Pimcore\Cache\Runtime::get("pimcore_config_workflowmanagement");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_workflowmanagement') && !$forceReload) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_workflowmanagement');
         } else {
             try {
-                $file = \Pimcore\Config::locateConfigFile("workflowmanagement.php");
+                $file = \Pimcore\Config::locateConfigFile('workflowmanagement.php');
 
                 if (is_file($file)) {
                     $config = include($file);
@@ -51,8 +50,8 @@ class Config
                     }
                 }
             } catch (\Exception $e) {
-                $file = \Pimcore\Config::locateConfigFile("workflowmanagement.php");
-                Logger::emergency("Cannot find workflow configuration, should be located at: " . $file);
+                $file = \Pimcore\Config::locateConfigFile('workflowmanagement.php');
+                Logger::emergency('Cannot find workflow configuration, should be located at: ' . $file);
             }
         }
 
@@ -61,18 +60,19 @@ class Config
 
     /**
      * @static
+     *
      * @param array $config
      */
     public static function setWorkflowManagementConfig($config)
     {
-        \Pimcore\Cache\Runtime::set("pimcore_config_workflowmanagement", $config);
+        \Pimcore\Cache\Runtime::set('pimcore_config_workflowmanagement', $config);
     }
-
 
     /**
      * gets workflow config for element. always returns first valid workflow config
      *
      * @param AbstractElement $element
+     *
      * @return array
      */
     public static function getElementWorkflowConfig(AbstractElement $element)
@@ -142,7 +142,6 @@ class Config
 
         return null;
     }
-
 
 //    /**
 //     * @param $classId

@@ -38,9 +38,8 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
 
         $counts = [];
         foreach ($ranges->getData() as $row) {
-            $counts[$row['from'] . "_" . $row['to']] = 0;
+            $counts[$row['from'] . '_' . $row['to']] = 0;
         }
-
 
         foreach ($groupByValues as $groupByValue) {
             if ($groupByValue['label']) {
@@ -51,7 +50,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
                 }
                 foreach ($ranges->getData() as $row) {
                     if ((empty($row['from']) || ($row['from'] <= $value)) && (empty($row['to']) || $row['to'] >= $value)) {
-                        $counts[$row['from'] . "_" . $row['to']] += $groupByValue['count'];
+                        $counts[$row['from'] . '_' . $row['to']] += $groupByValue['count'];
                         break;
                     }
                 }
@@ -59,27 +58,26 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         }
         $values = [];
         foreach ($ranges->getData() as $row) {
-            if ($counts[$row['from'] . "_" . $row['to']]) {
-                $values[] = ["from" => $row['from'], "to" => $row['to'], "label" => $this->createLabel($row), "count" => $counts[$row['from'] . "_" . $row['to']], "unit" => $filterDefinition->getUnit()];
+            if ($counts[$row['from'] . '_' . $row['to']]) {
+                $values[] = ['from' => $row['from'], 'to' => $row['to'], 'label' => $this->createLabel($row), 'count' => $counts[$row['from'] . '_' . $row['to']], 'unit' => $filterDefinition->getUnit()];
             }
         }
 
-        $currentValue = "";
+        $currentValue = '';
         if ($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
-            $currentValue = implode($currentFilter[$filterDefinition->getField()], "-");
+            $currentValue = implode($currentFilter[$filterDefinition->getField()], '-');
         }
 
-
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentValue,
-            "currentNiceValue" => $this->createLabel($currentFilter[$filterDefinition->getField()]),
-            "unit" => $filterDefinition->getUnit(),
-            "values" => $values,
-            "definition" => $filterDefinition,
-            "fieldname" => $filterDefinition->getField(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentValue,
+            'currentNiceValue' => $this->createLabel($currentFilter[$filterDefinition->getField()]),
+            'unit' => $filterDefinition->getUnit(),
+            'values' => $values,
+            'definition' => $filterDefinition,
+            'fieldname' => $filterDefinition->getField(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -89,7 +87,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         $rawValue = $params[$field];
 
         if (!empty($rawValue) && $rawValue != \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
-            $values = explode("-", $rawValue);
+            $values = explode('-', $rawValue);
             $value['from'] = trim($values[0]);
             $value['to'] = trim($values[1]);
         } elseif ($rawValue == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
@@ -100,7 +98,6 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         }
 
         $currentFilter[$field] = $value;
-
 
         if ($value['from'] || $value['to']) {
             $v = [];
@@ -126,15 +123,15 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         if (is_array($data)) {
             if (!empty($data['from'])) {
                 if (!empty($data['to'])) {
-                    return $data['from'] . " - " . $data['to'];
+                    return $data['from'] . ' - ' . $data['to'];
                 } else {
-                    return $this->translator->trans("more than") . " " . $data['from'];
+                    return $this->translator->trans('more than') . ' ' . $data['from'];
                 }
             } elseif (!empty($data['to'])) {
-                return $this->translator->trans("less than") . " " . $data['to'];
+                return $this->translator->trans('less than') . ' ' . $data['to'];
             }
         } else {
-            return "";
+            return '';
         }
     }
 }

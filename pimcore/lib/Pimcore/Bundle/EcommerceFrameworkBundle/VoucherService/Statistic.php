@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 class Statistic extends \Pimcore\Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -32,6 +31,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
     /**
      * @param int $id
+     *
      * @return bool|Statistic
      */
     public function getById($id)
@@ -49,6 +49,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
     /**
      * @param $seriesId
+     *
      * @throws \Exception
      *
      * @return bool
@@ -57,14 +58,14 @@ class Statistic extends \Pimcore\Model\AbstractModel
     {
         $db = \Pimcore\Db::get();
 
-        $query = "SELECT date, COUNT(*) as count FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . " WHERE voucherSeriesId = ?";
+        $query = 'SELECT date, COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
         $params[] = $seriesId;
         if ($usagePeriod) {
-            $query .= " AND (TO_DAYS(NOW()) - TO_DAYS(date)) < ?";
+            $query .= ' AND (TO_DAYS(NOW()) - TO_DAYS(date)) < ?';
             $params[] = $usagePeriod;
         }
 
-        $query .= " GROUP BY date";
+        $query .= ' GROUP BY date';
 
         try {
             $result = $db->fetchPairs($query, $params);
@@ -78,32 +79,33 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
     /**
      * @param $seriesId
+     *
      * @return bool
      */
     public static function increaseUsageStatistic($seriesId)
     {
         $db = $db = \Pimcore\Db::get();
         try {
-            $db->query("INSERT INTO " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . " (voucherSeriesId,date) VALUES (?,NOW())", $seriesId);
+            $db->query('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', $seriesId);
         } catch (\Exception $e) {
             //            \Pimcore\Log\Simple::log('VoucherService',$e);
             return false;
         }
     }
 
-
     /**
      * @param int $duration days
      * @param string|null $seriesId
+     *
      * @return bool
      */
     public static function cleanUpStatistics($duration, $seriesId = null)
     {
-        $query = "DELETE FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . " WHERE DAY(DATEDIFF(date, NOW())) >= ?";
+        $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' WHERE DAY(DATEDIFF(date, NOW())) >= ?';
         $params[] = $duration;
 
         if (isset($seriesId)) {
-            $query .= " AND voucherSeriesId = ?";
+            $query .= ' AND voucherSeriesId = ?';
             $params[] = $seriesId;
         }
 

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,11 +21,10 @@ use Pimcore\Model;
 
 class Lastname extends Model\Object\ClassDefinition\Data\Input
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "lastname";
+    public $fieldtype = 'lastname';
 }

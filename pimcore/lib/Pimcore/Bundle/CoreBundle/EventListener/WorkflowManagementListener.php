@@ -19,16 +19,16 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\ObjectEvents;
-use Pimcore\Model\Element\AbstractElement;
-use Pimcore\WorkflowManagement\Workflow;
-use Pimcore\Tool\Admin;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Object;
 use Pimcore\Model\Object\ClassDefinition;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use Pimcore\Model\Object\Concrete as ConcreteObject;
+use Pimcore\Tool\Admin;
+use Pimcore\WorkflowManagement\Workflow;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class WorkflowManagementListener implements EventSubscriberInterface
 {
@@ -59,6 +59,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
     /**
      * Ensures that any elements which support workflows are given the correct default state / status
+     *
      * @param ElementEventInterface $e
      */
     public function onElementPostAdd(ElementEventInterface $e)
@@ -96,16 +97,17 @@ class WorkflowManagementListener implements EventSubscriberInterface
         }
     }
 
-
     /**
      * Fired before information is sent back to the admin UI about an element
+     *
      * @param GenericEvent $e
+     *
      * @throws \Exception
      */
     public function onAdminElementGetPreSendData(GenericEvent $e)
     {
         $element = self::extractElementFromEvent($e);
-        $data = $e->getArgument("data");
+        $data = $e->getArgument('data');
 
         //create a new namespace for WorkflowManagement
         //set some defaults
@@ -128,7 +130,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
             $status = $manager->getElementStatus();
             $data['workflowManagement']['status'] = $manager->getWorkflow()->getStatusConfig($status);
 
-
             if ($element instanceof ConcreteObject) {
                 $workflowLayoutId = $manager->getObjectLayout();
 
@@ -146,49 +147,45 @@ class WorkflowManagementListener implements EventSubscriberInterface
                             $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                             Object\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getParam('object'));
-                            $data["layout"] = $customLayoutDefinition;
+                            $data['layout'] = $customLayoutDefinition;
                         }
                     }
                 }
             }
         }
 
-        $e->setArgument("data", $data);
+        $e->setArgument('data', $data);
     }
 
     /**
      * @param GenericEvent $e
+     *
      * @return AbstractElement
+     *
      * @throws \Exception
      */
     private static function extractElementFromEvent(GenericEvent $e)
     {
         $element = null;
 
-        foreach (["object", "asset", "document"] as $type) {
+        foreach (['object', 'asset', 'document'] as $type) {
             if ($e->hasArgument($type)) {
                 $element = $e->getArgument($type);
             }
         }
 
         if (empty($element)) {
-            throw new \Exception("No element found in event");
+            throw new \Exception('No element found in event');
         }
 
         return $element;
     }
 
-    /**
-     *
-     */
     public function enable()
     {
         $this->enabled = true;
     }
 
-    /**
-     *
-     */
     public function disable()
     {
         $this->enabled = false;

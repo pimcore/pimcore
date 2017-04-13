@@ -47,6 +47,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param string $transactionId
+     *
      * @return $this
      */
     public function setTransactionId($transactionId)
@@ -66,6 +67,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -85,6 +87,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param string $brand
+     *
      * @return $this
      */
     public function setBrand($brand)
@@ -116,6 +119,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param array $categories
+     *
      * @return $this
      */
     public function setCategories(array $categories)
@@ -135,6 +139,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param string $variant
+     *
      * @return $this
      */
     public function setVariant($variant)
@@ -154,6 +159,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param int $position
+     *
      * @return $this
      */
     public function setPosition($position)
@@ -173,6 +179,7 @@ abstract class AbstractProductData extends AbstractData
 
     /**
      * @param float $price
+     *
      * @return $this
      */
     public function setPrice($price)

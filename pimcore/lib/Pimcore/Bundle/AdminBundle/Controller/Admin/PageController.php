@@ -35,21 +35,23 @@ class PageController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
 
         // check for lock
-        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
             return $this->json([
-                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
+                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
-        Element\Editlock::lock($request->get("id"), "document");
+        Element\Editlock::lock($request->get('id'), 'document');
 
-        $page = Document\Page::getById($request->get("id"));
+        $page = Document\Page::getById($request->get('id'));
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
@@ -67,7 +69,7 @@ class PageController extends DocumentControllerBase
 
         // get depending redirects
         $redirectList = new Redirect\Listing();
-        $redirectList->setCondition("target = ?", $page->getId());
+        $redirectList->setCondition('target = ?', $page->getId());
         $page->redirects = $redirectList->load();
 
         // unset useless data
@@ -81,13 +83,13 @@ class PageController extends DocumentControllerBase
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = object2array($page);
         $event = new GenericEvent($this, [
-            "data" => $data,
-            "document" => $page
+            'data' => $data,
+            'document' => $page
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument("data");
+        $data = $event->getArgument('data');
 
-        if ($page->isAllowed("view")) {
+        if ($page->isAllowed('view')) {
             return $this->json($data);
         }
 
@@ -96,22 +98,25 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function saveAction(Request $request)
     {
         try {
-            if ($request->get("id")) {
-                $page = Document\Page::getById($request->get("id"));
+            if ($request->get('id')) {
+                $page = Document\Page::getById($request->get('id'));
 
                 // check if there's a document in session which should be used as data-source
                 // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
                 // outdated and unused data elements in this document (eg. entries of area-blocks)
                 $pageSession = Session::useSession(function (AttributeBagInterface $session) use ($page) {
-                    $documentKey   = "document_" . $page->getId();
-                    $useForSaveKey = "document_" . $page->getId() . "_useForSave";
+                    $documentKey   = 'document_' . $page->getId();
+                    $useForSaveKey = 'document_' . $page->getId() . '_useForSave';
 
                     if ($session->has($documentKey) && $session->has($useForSaveKey)) {
                         if ($session->get($useForSaveKey)) {
@@ -123,7 +128,7 @@ class PageController extends DocumentControllerBase
                     }
 
                     return null;
-                }, "pimcore_documents");
+                }, 'pimcore_documents');
 
                 if ($pageSession) {
                     $page = $pageSession;
@@ -133,42 +138,42 @@ class PageController extends DocumentControllerBase
 
                 $page->setUserModification($this->getUser()->getId());
 
-                if ($request->get("task") == "unpublish") {
+                if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);
                 }
-                if ($request->get("task") == "publish") {
+                if ($request->get('task') == 'publish') {
                     $page->setPublished(true);
                 }
 
                 $settings = [];
-                if ($request->get("settings")) {
-                    $settings = $this->decodeJson($request->get("settings"));
+                if ($request->get('settings')) {
+                    $settings = $this->decodeJson($request->get('settings'));
                 }
 
                 // check for redirects
-                if ($this->getUser()->isAllowed("redirects") && $request->get("settings")) {
+                if ($this->getUser()->isAllowed('redirects') && $request->get('settings')) {
                     if (is_array($settings)) {
                         $redirectList = new Redirect\Listing();
-                        $redirectList->setCondition("target = ?", $page->getId());
+                        $redirectList->setCondition('target = ?', $page->getId());
                         $existingRedirects = $redirectList->load();
                         $existingRedirectIds = [];
                         foreach ($existingRedirects as $existingRedirect) {
                             $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
                         }
 
-                        for ($i=1; $i<100; $i++) {
-                            if (array_key_exists("redirect_url_".$i, $settings)) {
+                        for ($i=1; $i < 100; $i++) {
+                            if (array_key_exists('redirect_url_'.$i, $settings)) {
 
                                 // check for existing
-                                if ($settings["redirect_id_".$i]) {
-                                    $redirect = Redirect::getById($settings["redirect_id_".$i]);
+                                if ($settings['redirect_id_'.$i]) {
+                                    $redirect = Redirect::getById($settings['redirect_id_'.$i]);
                                     unset($existingRedirectIds[$redirect->getId()]);
                                 } else {
                                     // create new one
                                     $redirect = new Redirect();
                                 }
 
-                                $redirect->setSource($settings["redirect_url_".$i]);
+                                $redirect->setSource($settings['redirect_url_'.$i]);
                                 $redirect->setTarget($page->getId());
                                 $redirect->setStatusCode(301);
                                 $redirect->save();
@@ -184,47 +189,46 @@ class PageController extends DocumentControllerBase
                 }
 
                 // check if settings exist, before saving meta data
-                if ($request->get("settings") && is_array($settings)) {
+                if ($request->get('settings') && is_array($settings)) {
                     $metaData = [];
-                    for ($i=1; $i<30; $i++) {
-                        if (array_key_exists("metadata_" . $i, $settings)) {
-                            $metaData[] = $settings["metadata_" . $i];
+                    for ($i=1; $i < 30; $i++) {
+                        if (array_key_exists('metadata_' . $i, $settings)) {
+                            $metaData[] = $settings['metadata_' . $i];
                         }
                     }
                     $page->setMetaData($metaData);
                 }
 
                 // only save when publish or unpublish
-                if (($request->get("task") == "publish" && $page->isAllowed("publish")) or ($request->get("task") == "unpublish" && $page->isAllowed("unpublish"))) {
+                if (($request->get('task') == 'publish' && $page->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
                     $this->setValuesToDocument($request, $page);
-
 
                     try {
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->json(["success" => true]);
+                        return $this->json(['success' => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         Logger::err($e);
 
-                        return $this->json(["success" => false, "message"=>$e->getMessage()]);
+                        return $this->json(['success' => false, 'message'=>$e->getMessage()]);
                     }
                 } else {
-                    if ($page->isAllowed("save")) {
+                    if ($page->isAllowed('save')) {
                         $this->setValuesToDocument($request, $page);
 
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
 
-                            return $this->json(["success" => true]);
+                            return $this->json(['success' => true]);
                         } catch (\Exception $e) {
                             Logger::err($e);
 
-                            return $this->json(["success" => false, "message"=>$e->getMessage()]);
+                            return $this->json(['success' => false, 'message'=>$e->getMessage()]);
                         }
                     }
                 }
@@ -232,7 +236,7 @@ class PageController extends DocumentControllerBase
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
@@ -242,33 +246,37 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/get-list")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getListAction(Request $request)
     {
         $list = new Document\Listing();
-        $list->setCondition("type = ?", ["page"]);
+        $list->setCondition('type = ?', ['page']);
         $data = $list->loadIdPathList();
 
         return $this->json([
-            "success" => true,
-            "data" => $data
+            'success' => true,
+            'data' => $data
         ]);
     }
 
     /**
      * @Route("/upload-screenshot")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function uploadScreenshotAction(Request $request)
     {
-        if ($request->get("data") && $request->get("id")) {
-            $data = substr($request->get("data"), strpos($request->get("data"), ",")+1);
+        if ($request->get('data') && $request->get('id')) {
+            $data = substr($request->get('data'), strpos($request->get('data'), ',') + 1);
             $data = base64_decode($data);
 
-            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $request->get("id") . ".jpg";
+            $file = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $request->get('id') . '.jpg';
             $dir = dirname($file);
             if (!is_dir($dir)) {
                 File::mkdir($dir);
@@ -277,19 +285,21 @@ class PageController extends DocumentControllerBase
             File::put($file, $data);
         }
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/generate-screenshot")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function generateScreenshotAction(Request $request)
     {
         $success = false;
-        if ($request->get("id")) {
-            $doc = Document::getById($request->get("id"));
+        if ($request->get('id')) {
+            $doc = Document::getById($request->get('id'));
             $url = Tool::getHostUrl() . $doc->getRealFullPath();
 
             $config = \Pimcore\Config::getSystemConfig();
@@ -297,12 +307,12 @@ class PageController extends DocumentControllerBase
                 $username = $config->general->http_auth->username;
                 $password = $config->general->http_auth->password;
                 if ($username && $password) {
-                    $url = str_replace("://", "://" . $username .":". $password . "@", $url);
+                    $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
                 }
             }
 
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
-            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $doc->getId() . ".jpg";
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
+            $file = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $doc->getId() . '.jpg';
 
             $dir = dirname($file);
             if (!is_dir($dir)) {
@@ -314,7 +324,7 @@ class PageController extends DocumentControllerBase
                     $im = \Pimcore\Image::getInstance();
                     $im->load($tmpFile);
                     $im->scaleByWidth(400);
-                    $im->save($file, "jpeg", 85);
+                    $im->save($file, 'jpeg', 85);
 
                     unlink($tmpFile);
 
@@ -325,24 +335,26 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        return $this->json(["success" => $success]);
+        return $this->json(['success' => $success]);
     }
 
     /**
      * @Route("/check-pretty-url")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function checkPrettyUrlAction(Request $request)
     {
-        $docId = $request->get("id");
-        $path = trim($request->get("path"));
-        $path = rtrim($path, "/");
+        $docId = $request->get('id');
+        $path = trim($request->get('path'));
+        $path = rtrim($path, '/');
 
         $success = true;
 
         // must start with /
-        if (strpos($path, "/") !== 0) {
+        if (strpos($path, '/') !== 0) {
             $success = false;
         }
 
@@ -355,8 +367,8 @@ class PageController extends DocumentControllerBase
         }
 
         $list = new Document\Listing();
-        $list->setCondition("(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
-            AND id != ?", [
+        $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+            AND id != ?', [
             $path, $path, $docId
         ]);
 
@@ -365,25 +377,27 @@ class PageController extends DocumentControllerBase
         }
 
         return $this->json([
-            "success" => $success
+            'success' => $success
         ]);
     }
 
     /**
      * @Route("/clear-editable-data")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function clearEditableDataAction(Request $request)
     {
-        $personaId = $request->get("persona");
-        $docId = $request->get("id");
+        $personaId = $request->get('persona');
+        $docId = $request->get('id');
 
         $doc = Document::getById($docId);
 
         foreach ($doc->getElements() as $element) {
             if ($personaId && $doc instanceof Document\Page) {
-                if (preg_match("/^" . preg_quote($doc->getPersonaElementPrefix($personaId), "/") . "/", $element->getName())) {
+                if (preg_match('/^' . preg_quote($doc->getPersonaElementPrefix($personaId), '/') . '/', $element->getName())) {
                     $doc->removeElement($element->getName());
                 }
             } else {
@@ -397,7 +411,7 @@ class PageController extends DocumentControllerBase
         $this->saveToSession($doc, true);
 
         return $this->json([
-            "success" => true
+            'success' => true
         ]);
     }
 

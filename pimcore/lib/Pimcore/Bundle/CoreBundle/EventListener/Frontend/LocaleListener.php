@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -49,19 +48,19 @@ class LocaleListener extends AbstractFrontendListener implements EventSubscriber
             $this->lastLocale = $locale;
 
             // now we prepare everything for setlocale()
-            $localeList = [$locale . ".utf8"];
+            $localeList = [$locale . '.utf8'];
             $primaryLanguage = \Locale::getPrimaryLanguage($locale);
 
             if (\Locale::getRegion($locale)) {
                 // add only the language to the list as a fallback
-                $localeList[] = $primaryLanguage . ".utf8";
+                $localeList[] = $primaryLanguage . '.utf8';
             } else {
                 // try to get a list of territories for this language
                 // usually OS have no "language only" locale, only the combination language-territory (eg. Debian)
-                $languageRegionMapping = include PIMCORE_PATH . "/lib/Pimcore/Bundle/CoreBundle/Resources/misc/cldr-language-territory-mapping.php";
+                $languageRegionMapping = include PIMCORE_PATH . '/lib/Pimcore/Bundle/CoreBundle/Resources/misc/cldr-language-territory-mapping.php';
                 if (isset($languageRegionMapping[$primaryLanguage])) {
                     foreach ($languageRegionMapping[$primaryLanguage] as $territory) {
-                        $localeList[] = $primaryLanguage . "_" . $territory . ".utf8";
+                        $localeList[] = $primaryLanguage . '_' . $territory . '.utf8';
                     }
                 }
             }
@@ -77,7 +76,7 @@ class LocaleListener extends AbstractFrontendListener implements EventSubscriber
     {
         if ($this->lastLocale && $event->isMasterRequest()) {
             $response = $event->getResponse();
-            $response->headers->set("Content-Language", strtolower(str_replace("_", "-", $this->lastLocale)), true);
+            $response->headers->set('Content-Language', strtolower(str_replace('_', '-', $this->lastLocale)), true);
         }
     }
 }

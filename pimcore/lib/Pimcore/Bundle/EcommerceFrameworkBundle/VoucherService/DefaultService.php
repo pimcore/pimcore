@@ -29,7 +29,9 @@ class DefaultService implements IVoucherService
     /**
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return bool
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      */
     public function checkToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart)
@@ -43,6 +45,7 @@ class DefaultService implements IVoucherService
     /**
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return bool
      */
     public function reserveToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart)
@@ -57,6 +60,7 @@ class DefaultService implements IVoucherService
     /**
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return bool
      */
     public function releaseToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart)
@@ -72,6 +76,7 @@ class DefaultService implements IVoucherService
      * @param string $code
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
      * @return bool
      */
     public function applyToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
@@ -97,6 +102,7 @@ class DefaultService implements IVoucherService
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
      * @return bool
      */
     public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
@@ -123,6 +129,7 @@ class DefaultService implements IVoucherService
 
     /**
      * @param null $seriesId
+     *
      * @return bool
      */
     public function cleanUpReservations($seriesId = null)
@@ -136,6 +143,7 @@ class DefaultService implements IVoucherService
 
     /**
      * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     *
      * @return bool
      */
     public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series)
@@ -145,6 +153,7 @@ class DefaultService implements IVoucherService
 
     /**
      * @param null|string $seriesId
+     *
      * @return bool
      */
     public function cleanUpStatistics($seriesId = null)
@@ -158,6 +167,7 @@ class DefaultService implements IVoucherService
 
     /**
      * @param $code
+     *
      * @return bool|\Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
      */
     public function getTokenManager($code)

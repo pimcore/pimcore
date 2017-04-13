@@ -16,11 +16,12 @@ namespace Pimcore\Tool;
 
 class Transliteration
 {
-
     /**
      * @static
+     *
      * @param $value
      * @param null $language
+     *
      * @return string
      */
     public static function toASCII($value, $language = null)
@@ -29,25 +30,25 @@ class Transliteration
         // the transliteration is based on the locale
         // äüö is in EN auo in DE  aeueoe
         if (!$language) {
-            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
             if ($locale) {
                 $language = \Locale::getPrimaryLanguage($locale);
             }
 
             if (!$language) {
-                $language = "en"; // default is "en"
+                $language = 'en'; // default is "en"
             }
         }
 
-        $value = self::_transliterationProcess($value, "~", $language);
+        $value = self::_transliterationProcess($value, '~', $language);
 
         $value = trim($value);
 
         // then use iconv
-        $result = iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value);
+        $result = iconv('utf-8', 'ASCII//IGNORE//TRANSLIT', $value);
         if (empty($result)) {
             // TRANSLIT doesn't work in musl's iconv, see #859.
-            $result = iconv("utf-8", "ASCII//IGNORE", $value);
+            $result = iconv('utf-8', 'ASCII//IGNORE', $value);
         }
         $value = $result;
 
@@ -64,12 +65,13 @@ class Transliteration
      * http://search.cpan.org/~sburke/Text-Unidecode-0.04/lib/Text/Unidecode.pm
      */
 
-
     /**
      * @static
+     *
      * @param $string
      * @param string $unknown
      * @param null $source_langcode
+     *
      * @return string
      */
     private static function _transliterationProcess($string, $unknown = '?', $source_langcode = null)
@@ -194,12 +196,13 @@ class Transliteration
         return $result;
     }
 
-
     /**
      * @static
+     *
      * @param $ord
      * @param string $unknown
      * @param null $langcode
+     *
      * @return string
      */
     private static function _transliterationReplace($ord, $unknown = '?', $langcode = null)
@@ -207,7 +210,7 @@ class Transliteration
         $map = [];
 
         if (!isset($langcode)) {
-            $langcode = "en";
+            $langcode = 'en';
         }
 
         $bank = $ord >> 8;

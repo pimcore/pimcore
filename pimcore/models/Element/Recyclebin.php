@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -29,8 +30,8 @@ class Recyclebin extends Model\AbstractModel
 
         $files = scandir(PIMCORE_RECYCLEBIN_DIRECTORY);
         foreach ($files as $file) {
-            if (is_file(PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $file)) {
-                unlink(PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $file);
+            if (is_file(PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $file)) {
+                unlink(PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $file);
             }
         }
     }

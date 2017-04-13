@@ -26,11 +26,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class ConfigController
+ *
  * @Route("/pricing")
  */
 class PricingController extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @param FilterControllerEvent $event
      */
@@ -43,7 +43,6 @@ class PricingController extends AdminController implements EventedControllerInte
             throw new \Exception('this function requires "bundle_ecommerce_pricing_rules" permission!');
         }
     }
-
 
     /**
      * @Route("/list")
@@ -82,9 +81,9 @@ class PricingController extends AdminController implements EventedControllerInte
         return $this->json($json);
     }
 
-
     /**
      * @Route("/get")
+     *
      * @param Request $request
      * preisregel details als json ausgeben
      */
@@ -98,8 +97,8 @@ class PricingController extends AdminController implements EventedControllerInte
             $localizedDescription = [];
 
             foreach (\Pimcore\Tool::getValidLanguages() as $lang) {
-                $localizedLabel[ $lang ] = $rule->getLabel($lang);
-                $localizedDescription[ $lang ] = $rule->getDescription($lang);
+                $localizedLabel[$lang] = $rule->getLabel($lang);
+                $localizedDescription[$lang] = $rule->getDescription($lang);
             }
 
             // create json config
@@ -122,9 +121,9 @@ class PricingController extends AdminController implements EventedControllerInte
         }
     }
 
-
     /**
      * @Route("/add")
+     *
      * @param Request $request
      * add new rule
      */
@@ -152,9 +151,9 @@ class PricingController extends AdminController implements EventedControllerInte
         return $this->json($return);
     }
 
-
     /**
      * @Route("/delete")
+     *
      * @param Request $request
      * delete exiting rule
      */
@@ -179,9 +178,9 @@ class PricingController extends AdminController implements EventedControllerInte
         return $this->json($return);
     }
 
-
     /**
      * @Route("/save")
+     *
      * @param Request $request
      * save rule config
      */
@@ -207,7 +206,6 @@ class PricingController extends AdminController implements EventedControllerInte
                 $rule->setLabel($data->settings->{'label.' . $lang}, $lang);
                 $rule->setDescription($data->settings->{'description.' . $lang}, $lang);
             }
-
 
             // create root condition
             $rootContainer = new \stdClass();
@@ -248,7 +246,6 @@ class PricingController extends AdminController implements EventedControllerInte
             $condition->fromJSON(json_encode($rootContainer));
             $rule->setCondition($condition);
 
-
             // save action
             $arrActions = [];
             foreach ($data->actions as $setting) {
@@ -272,9 +269,9 @@ class PricingController extends AdminController implements EventedControllerInte
         return $this->json($return);
     }
 
-
     /**
      * @Route("/save-order")
+     *
      * @param Request $request
      */
     public function saveOrderAction(Request $request)
@@ -299,9 +296,9 @@ class PricingController extends AdminController implements EventedControllerInte
         return $this->json($return);
     }
 
-
     /**
      * @Route("/get-config")
+     *
      * @param Request $request
      */
     public function getConfigAction(Request $request)
@@ -329,7 +326,6 @@ class PricingController extends AdminController implements EventedControllerInte
         // print
         return $this->json($json);
     }
-
 
     /**
      * @param FilterResponseEvent $event

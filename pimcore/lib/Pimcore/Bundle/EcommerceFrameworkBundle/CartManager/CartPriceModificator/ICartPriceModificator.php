@@ -23,7 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
  */
 interface ICartPriceModificator
 {
-
     /**
      * @return string
      */
@@ -34,6 +33,7 @@ interface ICartPriceModificator
      *
      * @param IPrice $currentSubTotal - current sub total which is modified and returned
      * @param ICart $cart - cart
+     *
      * @return IModificatedPrice
      */
     public function modify(IPrice $currentSubTotal, ICart $cart);

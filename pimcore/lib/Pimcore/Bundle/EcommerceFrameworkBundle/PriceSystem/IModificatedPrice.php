@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
  */
 interface IModificatedPrice extends IPrice
 {
-
     /**
      * @return string
      */

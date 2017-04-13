@@ -126,6 +126,7 @@ abstract class AbstractHelper implements HelperInterface
      * Sets the minimum depth a page must have to be included when rendering
      *
      * @param  int $minDepth
+     *
      * @return self  fluent interface
      */
     public function setMinDepth($minDepth = null)
@@ -153,6 +154,7 @@ abstract class AbstractHelper implements HelperInterface
 
     /**
      * @param null $maxDepth
+     *
      * @return $this
      */
     public function setMaxDepth($maxDepth = null)
@@ -176,6 +178,7 @@ abstract class AbstractHelper implements HelperInterface
 
     /**
      * @param $indent
+     *
      * @return $this
      */
     public function setIndent($indent)
@@ -203,6 +206,7 @@ abstract class AbstractHelper implements HelperInterface
 
     /**
      * @param $prefix
+     *
      * @return $this
      */
     public function setPrefixForId($prefix)
@@ -231,6 +235,7 @@ abstract class AbstractHelper implements HelperInterface
 
     /**
      * @param bool $flag
+     *
      * @return $this
      */
     public function skipPrefixForId($flag = true)
@@ -250,6 +255,7 @@ abstract class AbstractHelper implements HelperInterface
 
     /**
      * @param bool $renderInvisible
+     *
      * @return $this
      */
     public function setRenderInvisible($renderInvisible = true)
@@ -266,7 +272,9 @@ abstract class AbstractHelper implements HelperInterface
      *
      * @param  string $method             method name in container
      * @param  array  $arguments          [optional] arguments to pass
+     *
      * @return mixed                      returns what the container returns
+     *
      * @throws \Exception  if method does not exist in container
      */
     public function __call($method, array $arguments = [])
@@ -302,6 +310,7 @@ abstract class AbstractHelper implements HelperInterface
      * @param Container $container
      * @param null $minDepth
      * @param int $maxDepth
+     *
      * @return array
      */
     public function findActive(Container $container, $minDepth = null, $maxDepth = -1)
@@ -366,6 +375,7 @@ abstract class AbstractHelper implements HelperInterface
      * Returns an HTML string containing an 'a' element for the given page
      *
      * @param  Page $page  page to generate HTML for
+     *
      * @return string  HTML string for the given page
      */
     public function htmlify(Page $page)
@@ -386,7 +396,7 @@ abstract class AbstractHelper implements HelperInterface
         );
 
         return '<a' . $this->_htmlAttribs($attribs) . '>'
-             . htmlspecialchars($label, ENT_COMPAT, "UTF-8")
+             . htmlspecialchars($label, ENT_COMPAT, 'UTF-8')
              . '</a>';
     }
 
@@ -403,6 +413,7 @@ abstract class AbstractHelper implements HelperInterface
      *
      * @param  Page $page
      * @param  bool $recursive
+     *
      * @return bool
      */
     public function accept(Page $page, $recursive = true)
@@ -431,6 +442,7 @@ abstract class AbstractHelper implements HelperInterface
      * Retrieve whitespace representation of $indent
      *
      * @param  int|string $indent
+     *
      * @return string
      */
     protected function _getWhitespace($indent)
@@ -446,6 +458,7 @@ abstract class AbstractHelper implements HelperInterface
      * Converts an associative array to a string of tag attributes.
      *
      * @param  array $attribs
+     *
      * @return string
      */
     protected function _htmlAttribs($attribs)
@@ -459,7 +472,7 @@ abstract class AbstractHelper implements HelperInterface
 
         $xhtml = '';
         foreach ((array) $attribs as $key => $val) {
-            $key = htmlspecialchars($key, ENT_COMPAT, "UTF-8");
+            $key = htmlspecialchars($key, ENT_COMPAT, 'UTF-8');
 
             if (('on' == substr($key, 0, 2)) || ('constraints' == $key)) {
                 // Don't escape event attributes; _do_ substitute double quotes with singles
@@ -476,7 +489,7 @@ abstract class AbstractHelper implements HelperInterface
                 if (is_array($val)) {
                     $val = implode(' ', $val);
                 }
-                $val = htmlspecialchars($val, ENT_COMPAT, "UTF-8");
+                $val = htmlspecialchars($val, ENT_COMPAT, 'UTF-8');
             }
 
             if ('id' == $key) {
@@ -497,6 +510,7 @@ abstract class AbstractHelper implements HelperInterface
      * Normalize an ID
      *
      * @param  string $value    ID
+     *
      * @return string           Normalized ID
      */
     protected function _normalizeId($value)

@@ -15,26 +15,24 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 /**
- * Abstract base class price info
- */
+  * Abstract base class price info
+  */
  class AbstractPriceInfo implements IPriceInfo
  {
-
      /**
-      * @static
-      * @return AbstractPriceInfo
-      */
+     * @static
+     *
+     * @return AbstractPriceInfo
+     */
     public static function getInstance()
     {
         return new static(func_get_args());
     }
 
-
-     /**
+    /**
      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
      */
     private $priceSystem;
-
 
      /** @var int */
      protected $quantity;
@@ -66,14 +64,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
         return $this->quantity;
     }
 
-
-
     /**
      * @return bool
      */
     public function isMinPrice()
     {
-        return $this->getQuantity()===self::MIN_PRICE;
+        return $this->getQuantity() === self::MIN_PRICE;
     }
 
     /**
@@ -94,20 +90,22 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
      /**
       * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+      *
       * @return IPrice
       */
      public function getPrice()
      {
-         throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+         throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
      }
 
      /**
       * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+      *
       * @return IPrice
       */
      public function getTotalPrice()
      {
-         throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+         throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
      }
 
      public function setProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product)

@@ -53,7 +53,6 @@ class Environment implements IEnvironment
      */
     protected $session;
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      *
@@ -193,7 +192,6 @@ class Environment implements IEnvironment
 
         return $this;
     }
-
 
     /**
      * returns hash of environment based on its content

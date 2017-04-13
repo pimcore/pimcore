@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -17,30 +18,28 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Redirect;
-use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
  */
 class Page extends Model\Document\PageSnippet
 {
-
-
     /**
      * Contains the title of the page (meta-title)
      *
      * @var string
      */
-    public $title = "";
+    public $title = '';
 
     /**
      * Contains the description of the page (meta-description)
      *
      * @var string
      */
-    public $description = "";
+    public $description = '';
 
     /**
      * @var array
@@ -52,7 +51,7 @@ class Page extends Model\Document\PageSnippet
      *
      * @var string
      */
-    public $type = "page";
+    public $type = 'page';
 
     /**
      * @var string
@@ -61,9 +60,10 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * comma separated IDs of personas
+     *
      * @var string
      */
-    public $personas = "";
+    public $personas = '';
 
     /**
      * @var int
@@ -76,12 +76,12 @@ class Page extends Model\Document\PageSnippet
     public function delete()
     {
         if ($this->getId() == 1) {
-            throw new \Exception("root-node cannot be deleted");
+            throw new \Exception('root-node cannot be deleted');
         }
 
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
-        $redirects->setCondition("target = ?", $this->getId());
+        $redirects->setCondition('target = ?', $this->getId());
         $redirects->load();
 
         foreach ($redirects->getRedirects() as $redirect) {
@@ -91,9 +91,6 @@ class Page extends Model\Document\PageSnippet
         parent::delete();
     }
 
-    /**
-     *
-     */
     protected function update()
     {
         $oldPath = $this->getDao()->getCurrentFullPath();
@@ -117,7 +114,7 @@ class Page extends Model\Document\PageSnippet
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());
-            $redirect->setSource("@" . $oldPath . "/?@");
+            $redirect->setSource('@' . $oldPath . '/?@');
             $redirect->setStatusCode(301);
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
 
@@ -133,23 +130,26 @@ class Page extends Model\Document\PageSnippet
      * getProperty method should be used instead
      *
      * @deprecated
+     *
      * @return string
      */
     public function getName()
     {
-        return $this->getProperty("navigation_name");
+        return $this->getProperty('navigation_name');
     }
 
     /**
      * setProperty method should be used instead
      *
      * @deprecated
+     *
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
     {
-        $this->setProperty("navigation_name", "text", $name, false);
+        $this->setProperty('navigation_name', 'text', $name, false);
 
         return $this;
     }
@@ -164,14 +164,15 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getKeywords()
     {
         // keywords are not supported anymore
-        Logger::info("getKeywords() is deprecated and will be removed in the future!");
+        Logger::info('getKeywords() is deprecated and will be removed in the future!');
 
-        return "";
+        return '';
     }
 
     /**
@@ -184,30 +185,34 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param string $description
+     *
      * @return $this
      */
     public function setDescription($description)
     {
-        $this->description = str_replace("\n", " ", $description);
+        $this->description = str_replace("\n", ' ', $description);
 
         return $this;
     }
 
     /**
      * @deprecated
+     *
      * @param string $keywords
+     *
      * @return $this
      */
     public function setKeywords($keywords)
     {
         // keywords are not supported anymore
-        Logger::info("setKeywords() is deprecated and will be removed in the future!");
+        Logger::info('setKeywords() is deprecated and will be removed in the future!');
 
         return $this;
     }
 
     /**
      * @param string $title
+     *
      * @return $this
      */
     public function setTitle($title)
@@ -219,6 +224,7 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param $metaData
+     *
      * @return $this
      */
     public function setMetaData($metaData)
@@ -236,9 +242,6 @@ class Page extends Model\Document\PageSnippet
         return $this->metaData;
     }
 
-    /**
-     *
-     */
     public function getFullPath()
     {
         $path = parent::getFullPath();
@@ -257,11 +260,12 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param $prettyUrl
+     *
      * @return $this
      */
     public function setPrettyUrl($prettyUrl)
     {
-        $this->prettyUrl = "/" . trim($prettyUrl, " /");
+        $this->prettyUrl = '/' . trim($prettyUrl, ' /');
         if (strlen($this->prettyUrl) < 2) {
             $this->prettyUrl = null;
         }
@@ -283,11 +287,11 @@ class Page extends Model\Document\PageSnippet
     public function setPersonas($personas)
     {
         if (is_array($personas)) {
-            $personas = implode(",", $personas);
+            $personas = implode(',', $personas);
         }
-        $personas = trim($personas, " ,");
+        $personas = trim($personas, ' ,');
         if (!empty($personas)) {
-            $personas = "," . $personas . ",";
+            $personas = ',' . $personas . ',';
         }
         $this->personas = $personas;
     }
@@ -302,6 +306,7 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param null $personaId
+     *
      * @return null|string
      */
     public function getPersonaElementPrefix($personaId = null)
@@ -313,7 +318,7 @@ class Page extends Model\Document\PageSnippet
         }
 
         if ($personaId) {
-            $prefix = "persona_-" . $personaId . "-_";
+            $prefix = 'persona_-' . $personaId . '-_';
         }
 
         return $prefix;
@@ -321,11 +326,12 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param $name
+     *
      * @return string
      */
     public function getPersonaElementName($name)
     {
-        if ($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(), "/") . "/", $name)) {
+        if ($this->getUsePersona() && !preg_match('/^' . preg_quote($this->getPersonaElementPrefix(), '/') . '/', $name)) {
             $name = $this->getPersonaElementPrefix() . $name;
         }
 
@@ -348,6 +354,7 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param string $name
+     *
      * @return Model\Document\Tag
      */
     public function getElement($name)
@@ -363,7 +370,7 @@ class Page extends Model\Document\PageSnippet
                 // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
                 // and mark it as inherited so it is clear in the ui that the content is not specific to the selected persona
                 // replace all occurrences of the persona prefix, this is needed because of block-prefixes
-                $inheritedName = str_replace($this->getPersonaElementPrefix(), "", $name);
+                $inheritedName = str_replace($this->getPersonaElementPrefix(), '', $name);
                 $inheritedElement = parent::getElement($inheritedName);
                 if ($inheritedElement) {
                     $inheritedElement = clone $inheritedElement;
@@ -397,15 +404,12 @@ class Page extends Model\Document\PageSnippet
         return $this->usePersona;
     }
 
-    /**
-     *
-     */
     public function __sleep()
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ["usePersona"];
+        $blockedVars = ['usePersona'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

@@ -20,12 +20,13 @@ class Logger
      * @param $message
      * @param string $level
      * @param array $context
+     *
      * @internal param string $code
      */
-    public static function log($message, $level = "info", $context = [])
+    public static function log($message, $level = 'info', $context = [])
     {
         if (\Pimcore::hasContainer()) {
-            $logger = \Pimcore::getContainer()->get("monolog.logger.pimcore");
+            $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore');
             $logger->$level($message, $context);
         }
     }
@@ -40,7 +41,7 @@ class Logger
      */
     public static function emergency($m, $context = [])
     {
-        self::log($m, "emergency", $context);
+        self::log($m, 'emergency', $context);
     }
 
     /**
@@ -49,7 +50,7 @@ class Logger
      */
     public static function emerg($m, $context = [])
     {
-        self::log($m, "emergency", $context);
+        self::log($m, 'emergency', $context);
     }
 
     /**
@@ -58,7 +59,7 @@ class Logger
      */
     public static function alert($m, $context = [])
     {
-        self::log($m, "alert", $context);
+        self::log($m, 'alert', $context);
     }
 
     /**
@@ -67,7 +68,7 @@ class Logger
      */
     public static function critical($m, $context = [])
     {
-        self::log($m, "critical", $context);
+        self::log($m, 'critical', $context);
     }
 
     /**
@@ -76,7 +77,7 @@ class Logger
      */
     public static function crit($m, $context = [])
     {
-        self::log($m, "critical", $context);
+        self::log($m, 'critical', $context);
     }
 
     /**
@@ -85,7 +86,7 @@ class Logger
      */
     public static function error($m, $context = [])
     {
-        self::log($m, "error", $context);
+        self::log($m, 'error', $context);
     }
 
     /**
@@ -94,7 +95,7 @@ class Logger
      */
     public static function err($m, $context = [])
     {
-        self::log($m, "error", $context);
+        self::log($m, 'error', $context);
     }
 
     /**
@@ -103,7 +104,7 @@ class Logger
      */
     public static function warning($m, $context = [])
     {
-        self::log($m, "warning", $context);
+        self::log($m, 'warning', $context);
     }
 
     /**
@@ -112,7 +113,7 @@ class Logger
      */
     public static function warn($m, $context = [])
     {
-        self::log($m, "warning", $context);
+        self::log($m, 'warning', $context);
     }
 
     /**
@@ -121,7 +122,7 @@ class Logger
      */
     public static function notice($m, $context = [])
     {
-        self::log($m, "notice", $context);
+        self::log($m, 'notice', $context);
     }
 
     /**
@@ -130,7 +131,7 @@ class Logger
      */
     public static function info($m, $context = [])
     {
-        self::log($m, "info", $context);
+        self::log($m, 'info', $context);
     }
 
     /**
@@ -139,6 +140,6 @@ class Logger
      */
     public static function debug($m, $context = [])
     {
-        self::log($m, "debug", $context);
+        self::log($m, 'debug', $context);
     }
 }

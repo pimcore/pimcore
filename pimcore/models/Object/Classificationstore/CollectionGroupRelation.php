@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,17 +24,15 @@ use Pimcore\Model;
  */
 class CollectionGroupRelation extends Model\AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $colId;
 
     /**
-     * @var integer
+     * @var int
      */
     public $groupId;
-
 
     /** The key
      * @var string
@@ -47,7 +46,6 @@ class CollectionGroupRelation extends Model\AbstractModel
 
     /** @var int */
     public $sorter;
-
 
     /**
      * @return Model\Object\Classificationstore\CollectionGroupRelation
@@ -75,7 +73,6 @@ class CollectionGroupRelation extends Model\AbstractModel
     {
         $this->groupId = $groupId;
     }
-
 
     /**
      * @return string

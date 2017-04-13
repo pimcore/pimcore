@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Translation
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,6 +21,7 @@ interface TranslationInterface
 {
     /**
      * @param $id
+     *
      * @return mixed
      */
     public static function getByKey($id);

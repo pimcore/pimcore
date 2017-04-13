@@ -21,29 +21,29 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
  */
 class AbstractSetProduct extends AbstractProduct
 {
-
     /**
      * returns mandatory products for a set product
      *
      * @throws UnsupportedException
+     *
      * @return AbstractSetProductEntry[]
      */
     public function getMandatoryProductEntries()
     {
-        throw new UnsupportedException("getMandatoryProductEntries is not supported for " . get_class($this));
+        throw new UnsupportedException('getMandatoryProductEntries is not supported for ' . get_class($this));
     }
 
     /**
      * returns optional products for a set product
      *
      * @throws UnsupportedException
+     *
      * @return AbstractSetProductEntry[]
      */
     public function getOptionalProductEntries()
     {
-        throw new UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
+        throw new UnsupportedException('getOptionalProductEntries is not supported for ' . get_class($this));
     }
-
 
     /**
      * checks if product is bookable
@@ -52,6 +52,7 @@ class AbstractSetProduct extends AbstractProduct
      *
      * @param int $quantityScale
      * @param AbstractSetProductEntry[] $products
+     *
      * @return bool
      */
     public function getOSIsBookable($quantityScale = 1, $products = null)
@@ -72,7 +73,7 @@ class AbstractSetProduct extends AbstractProduct
             //set is only bookable when price is valid!!! //
             $priceInfo =$this->getOSPriceInfo($quantityScale, $products);
 
-            return $priceInfo!=null&&$priceInfo->isPriceValid();
+            return $priceInfo != null && $priceInfo->isPriceValid();
         } else {
             return false;
         }
@@ -82,9 +83,12 @@ class AbstractSetProduct extends AbstractProduct
      * Delivers price of set product with given products
      *
      * @throws UnsupportedException
+     *
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     *
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
     public function getCalculatedPrice($products, $quantityScale = 1)
@@ -96,9 +100,12 @@ class AbstractSetProduct extends AbstractProduct
      * Delivers priceInfo of setproduct with given products
      *
      * @throws UnsupportedException
+     *
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
+     *
      * @return stdClass
+     *
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
     public function getCalculatedPriceInfo($products, $quantityScale = 1)
@@ -107,13 +114,14 @@ class AbstractSetProduct extends AbstractProduct
         //return $this->getPriceSystemImplementation()->getPriceInfo($this, $products);
     }
 
-
     /**
-    * Delivers min price for given products or with default mandatory products of set product
+     * Delivers min price for given products or with default mandatory products of set product
      *
      * @throws UnsupportedException
+     *
      * @param null $quantityScale
      * @param null $products
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
      */
     public function getOSPrice($quantityScale = null, $products = null)
@@ -129,8 +137,10 @@ class AbstractSetProduct extends AbstractProduct
      * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
      * @throws UnsupportedException
+     *
      * @param int $quantityScale
      * @param null $products
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = null, $products = null)
@@ -145,6 +155,7 @@ class AbstractSetProduct extends AbstractProduct
     /**
      * @param int $quantity
      * @param $products AbstractSetProductEntry[]
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
      */
     public function getOSAvailabilityInfo($quantity = 1, $products = null)
@@ -156,12 +167,13 @@ class AbstractSetProduct extends AbstractProduct
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity, $products);
     }
 
-
     /**
      * checks if all mandatory of set products are set in given product list
      *
      * @throws UnsupportedException
+     *
      * @param  AbstractSetProductEntry[] $products
+     *
      * @return void
      */
     protected function checkMandatoryProducts($products)
@@ -182,7 +194,7 @@ class AbstractSetProduct extends AbstractProduct
         }
 
         if (count($mandatoryProductIds) > 0) {
-            throw new UnsupportedException("Not all mandatory Products in product list.");
+            throw new UnsupportedException('Not all mandatory Products in product list.');
         }
     }
 }

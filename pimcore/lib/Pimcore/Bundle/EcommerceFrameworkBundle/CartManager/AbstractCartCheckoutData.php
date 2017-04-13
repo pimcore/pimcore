@@ -42,12 +42,12 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 
     public static function getByKeyCartId($key, $cartId)
     {
-        throw new \Exception("Not implemented.");
+        throw new \Exception('Not implemented.');
     }
 
     public static function removeAllFromCart($cartId)
     {
-        throw new \Exception("Not implemented.");
+        throw new \Exception('Not implemented.');
     }
 
     public function setKey($key)

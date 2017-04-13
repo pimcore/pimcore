@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class GroupConfigEvent extends Event
 {
-
     /**
      * @var GroupConfig
      */
@@ -27,6 +26,7 @@ class GroupConfigEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param GroupConfig $groupConfig
      */
     public function __construct(GroupConfig $groupConfig)

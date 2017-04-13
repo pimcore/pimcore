@@ -94,8 +94,8 @@ class HardlinkCanonicalListener extends AbstractFrontendListener implements Even
             $sourceSite = Frontend::getSiteForDocument($hardlinkCanonicalSourceDocument);
             if ($sourceSite) {
                 if ($sourceSite->getMainDomain()) {
-                    $sourceSiteRelPath = preg_replace("@^" . preg_quote($sourceSite->getRootPath(), "@") . "@", "", $hardlinkCanonicalSourceDocument->getRealFullPath());
-                    $canonical         = $request->getScheme() . "://" . $sourceSite->getMainDomain() . $sourceSiteRelPath;
+                    $sourceSiteRelPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $hardlinkCanonicalSourceDocument->getRealFullPath());
+                    $canonical         = $request->getScheme() . '://' . $sourceSite->getMainDomain() . $sourceSiteRelPath;
                 }
             }
         }

@@ -10,15 +10,16 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\ClassDefinition;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Logger;
 
 /**
  * @property \Pimcore\Model\Object\ClassDefinition $model
@@ -44,31 +45,32 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param null $id
+     *
      * @return string
      */
     public function getNameById($id = null)
     {
-        $name = $this->db->fetchOne("SELECT name FROM classes WHERE id = ?", $id);
+        $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
 
         return $name;
     }
 
     /**
      * @param null $name
+     *
      * @return string
      */
     public function getIdByName($name = null)
     {
-        $id = $this->db->fetchOne("SELECT id FROM classes WHERE name = ?", $name);
+        $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
 
         return $id;
     }
 
-
     /**
      * Save object to database
      *
-     * @return boolean
+     * @return bool
      *
      * @todo: update() or create() don't return anything
      */
@@ -91,24 +93,24 @@ class Dao extends Model\Dao\AbstractDao
         $data = [];
 
         foreach ($class as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns("classes"))) {
+            if (in_array($key, $this->getValidTableColumns('classes'))) {
                 $data[$key] = $value;
             }
         }
 
-        $this->db->update("classes", $data, ["id" => $this->model->getId()]);
+        $this->db->update('classes', $data, ['id' => $this->model->getId()]);
 
-        $objectTable = "object_query_" . $this->model->getId();
-        $objectDatastoreTable = "object_store_" . $this->model->getId();
-        $objectDatastoreTableRelation = "object_relations_" . $this->model->getId();
+        $objectTable = 'object_query_' . $this->model->getId();
+        $objectDatastoreTable = 'object_store_' . $this->model->getId();
+        $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
 
-        $objectView = "object_" . $this->model->getId();
+        $objectView = 'object_' . $this->model->getId();
 
         // create object table if not exists
-        $protectedColums = ["oo_id", "oo_classId", "oo_className"];
-        $protectedDatastoreColumns = ["oo_id"];
+        $protectedColums = ['oo_id', 'oo_classId', 'oo_className'];
+        $protectedDatastoreColumns = ['oo_id'];
 
-        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectTable . "` (
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  `oo_classId` int(11) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
@@ -118,12 +120,12 @@ class Dao extends Model\Dao\AbstractDao
         // update default value of classname columns
         $this->db->query('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
 
-        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTable . "` (
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`)
 			) DEFAULT CHARSET=utf8mb4;");
 
-        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
           `src_id` int(11) NOT NULL DEFAULT '0',
           `dest_id` int(11) NOT NULL DEFAULT '0',
           `type` varchar(50) NOT NULL DEFAULT '',
@@ -143,8 +145,6 @@ class Dao extends Model\Dao\AbstractDao
           KEY `ownername` (`ownername`)
         ) DEFAULT CHARSET=utf8mb4;");
 
-
-
         $existingColumns = $this->getValidTableColumns($objectTable, false); // no caching of table definition
         $existingDatastoreColumns = $this->getValidTableColumns($objectDatastoreTable, false); // no caching of table definition
 
@@ -157,39 +157,37 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
 
-
-
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectTable, $key . "__" . $fkey, $fvalue, "", "NULL");
-                        $protectedColums[] = $key . "__" . $fkey;
+                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $protectedColums[] = $key . '__' . $fkey;
                     }
                 }
 
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType() && is_array($value->getColumnType())) {
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectDatastoreTable, $key . "__" . $fkey, $fvalue, "", "NULL");
-                        $protectedDatastoreColumns[] = $key . "__" . $fkey;
+                        $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                        $protectedDatastoreColumns[] = $key . '__' . $fkey;
                     }
                 }
 
                 // everything else
 //                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
                 if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
-                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), "", "NULL");
+                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
                     $protectedColums[] = $key;
                 }
                 if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
-                    $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), "", "NULL");
+                    $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
                     $protectedDatastoreColumns[] = $key;
                 }
 //                }
 
                 // add indices
-                $this->addIndexToField($value, $objectTable, "getQueryColumnType");
-                $this->addIndexToField($value, $objectDatastoreTable, "getColumnType");
+                $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
+                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType');
             }
         }
 
@@ -201,8 +199,8 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($datastoreColumnsToRemove)) {
             foreach ($datastoreColumnsToRemove as $value) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedDatastoreColumns))) {
-                    $tableRelation = "object_relations_" . $this->model->getId();
-                    $this->db->delete($tableRelation, ["fieldname" => $value, "ownertype" => "object"]);
+                    $tableRelation = 'object_relations_' . $this->model->getId();
+                    $this->db->delete($tableRelation, ['fieldname' => $value, 'ownertype' => 'object']);
                     // @TODO: remove localized fields and fieldcollections
                 }
             }
@@ -222,11 +220,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return boolean
+     * @return bool
      */
     public function create()
     {
-        $this->db->insert("classes", ["name" => $this->model->getName()]);
+        $this->db->insert('classes', ['name' => $this->model->getName()]);
         $this->model->setId($this->db->lastInsertId());
         $this->save();
     }
@@ -236,13 +234,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("classes", ["id" => $this->model->getId()]);
+        $this->db->delete('classes', ['id' => $this->model->getId()]);
 
-        $objectTable = "object_query_" . $this->model->getId();
-        $objectDatastoreTable = "object_store_" . $this->model->getId();
-        $objectDatastoreTableRelation = "object_relations_" . $this->model->getId();
-        $objectMetadataTable = "object_metadata_" . $this->model->getId();
-
+        $objectTable = 'object_query_' . $this->model->getId();
+        $objectDatastoreTable = 'object_store_' . $this->model->getId();
+        $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
+        $objectMetadataTable = 'object_metadata_' . $this->model->getId();
 
         $this->db->query('DROP TABLE `' . $objectTable . '`');
         $this->db->query('DROP TABLE `' . $objectDatastoreTable . '`');
@@ -252,35 +249,35 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query('DROP VIEW `object_' . $this->model->getId() . '`');
 
         // delete data
-        $this->db->delete("objects", ["o_classId" => $this->model->getId()]);
+        $this->db->delete('objects', ['o_classId' => $this->model->getId()]);
 
         // remove fieldcollection tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_collection\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $collectionTable = current($table);
-            $this->db->query("DROP TABLE IF EXISTS `".$collectionTable."`");
+            $this->db->query('DROP TABLE IF EXISTS `'.$collectionTable.'`');
         }
 
         // remove localized fields tables and views
         $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_" . $this->model->getId() . "\_%'");
         foreach ($allViews as $view) {
             $localizedView = current($view);
-            $this->db->query("DROP VIEW IF EXISTS `".$localizedView."`");
+            $this->db->query('DROP VIEW IF EXISTS `'.$localizedView.'`');
         }
 
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_query\_" . $this->model->getId() . "\_%'");
         foreach ($allTables as $table) {
             $queryTable = current($table);
-            $this->db->query("DROP TABLE IF EXISTS `".$queryTable."`");
+            $this->db->query('DROP TABLE IF EXISTS `'.$queryTable.'`');
         }
 
-        $this->db->query("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
+        $this->db->query('DROP TABLE IF EXISTS object_localized_data_' . $this->model->getId());
 
         // objectbrick tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
-            $this->db->query("DROP TABLE `".$brickTable."`");
+            $this->db->query('DROP TABLE `'.$brickTable.'`');
         }
     }
 
@@ -291,10 +288,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function updateClassNameInObjects($newName)
     {
-        $this->db->update("objects", ["o_className" => $newName], ["o_classId" => $this->model->getId()]);
+        $this->db->update('objects', ['o_className' => $newName], ['o_classId' => $this->model->getId()]);
 
-        $this->db->updateWhere("object_query_" . $this->model->getId(), [
-            "oo_className" => $newName
+        $this->db->updateWhere('object_query_' . $this->model->getId(), [
+            'oo_className' => $newName
         ]);
     }
 }

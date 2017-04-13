@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data\Extension;
  * Class Relation
  *
  * @package Pimcore\Model\Object\ClassDefinition\Data\Extension
+ *
  * @method bool getDocumentsAllowed()
  * @method bool getAssetsAllowed()
  * @method bool getObjectsAllowed()
@@ -38,7 +39,6 @@ trait Relation
         $class = [];
         $strArray = $asArray ? '[]' : '';
 
-
         // add documents
         if (method_exists($this, 'getDocumentsAllowed') && $this->getDocumentsAllowed()) {
             $documentTypes = $this->getDocumentTypes();
@@ -53,7 +53,6 @@ trait Relation
             }
         }
 
-
         // add asset
         if (method_exists($this, 'getAssetsAllowed') && $this->getAssetsAllowed()) {
             $assetTypes = $this->getAssetTypes();
@@ -65,7 +64,6 @@ trait Relation
                 }
             }
         }
-
 
         // add objects
         if ($this->getObjectsAllowed()) {

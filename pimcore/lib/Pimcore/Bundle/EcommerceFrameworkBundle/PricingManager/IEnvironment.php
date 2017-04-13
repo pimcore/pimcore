@@ -102,7 +102,6 @@ interface IEnvironment
      */
     public function getSession();
 
-
     /**
      * returns hash of environment based on its content
      *

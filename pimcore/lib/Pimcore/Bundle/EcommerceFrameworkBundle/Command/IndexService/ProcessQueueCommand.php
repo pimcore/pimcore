@@ -50,7 +50,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
         $processUpdateIndexQueue = in_array('update-index', $queues);
 
         if (!$processPreparationQueue && !$processUpdateIndexQueue) {
-            throw new \Exception("No queue to process");
+            throw new \Exception('No queue to process');
         }
 
         if ($processPreparationQueue) {

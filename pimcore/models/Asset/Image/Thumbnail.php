@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Thumbnail
 {
-
     /**
      * @var \Pimcore\Model\Asset\Image
      */
@@ -93,26 +93,28 @@ class Thumbnail
 
     /**
      * @param bool $deferredAllowed
+     *
      * @return mixed|string
      */
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_WEB_ROOT, "", $fsPath);
+        $path = str_replace(PIMCORE_WEB_ROOT, '', $fsPath);
         $path = urlencode_ignore_slash($path);
 
         $event = new GenericEvent($this, [
-            "filesystemPath" => $fsPath,
-            "frontendPath" => $path
+            'filesystemPath' => $fsPath,
+            'frontendPath' => $path
         ]);
         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
-        $path = $event->getArgument("frontendPath");
+        $path = $event->getArgument('frontendPath');
 
         return $path;
     }
 
     /**
      * @param bool $deferredAllowed
+     *
      * @return mixed|string
      */
     public function getFileSystemPath($deferredAllowed = false)
@@ -152,14 +154,11 @@ class Thumbnail
         }
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
-            "deferred" => $deferred,
-            "generated" => $generated
+            'deferred' => $deferred,
+            'generated' => $generated
         ]));
     }
 
-    /**
-     *
-     */
     public function reset()
     {
         $this->filesystemPath = null;
@@ -173,8 +172,9 @@ class Thumbnail
      * Get the public path to the thumbnail image.
      * This method is here for backwards compatility.
      * Up to Pimcore 1.4.8 a thumbnail was returned as a path to an image.
+     *
      * @return string Public path to thumbnail image.
-    */
+     */
     public function __toString()
     {
         return $this->getPath(true);
@@ -182,7 +182,7 @@ class Thumbnail
 
     /**
      * @return int Width of the generated thumbnail image.
-    */
+     */
     public function getWidth()
     {
         if (!$this->width) {
@@ -194,8 +194,9 @@ class Thumbnail
 
     /**
      * Get the width of the generated thumbnail image in pixels.
+     *
      * @return int Height of the generated thumbnail image.
-    */
+     */
     public function getHeight()
     {
         if (!$this->height) {
@@ -207,7 +208,7 @@ class Thumbnail
 
     /**
      * @return int real Width of the generated thumbnail image. (when using high resolution option)
-    */
+     */
     public function getRealWidth()
     {
         if (!$this->realWidth) {
@@ -219,8 +220,9 @@ class Thumbnail
 
     /**
      * Get the real width of the generated thumbnail image in pixels. (when using high resolution option)
+     *
      * @return int Height of the generated thumbnail image.
-    */
+     */
     public function getRealHeight()
     {
         if (!$this->realHeight) {
@@ -251,14 +253,14 @@ class Thumbnail
                 $info = @getimagesize($this->getFileSystemPath());
                 if ($info) {
                     $dimensions = [
-                        "width" => $info[0],
-                        "height" => $info[1]
+                        'width' => $info[0],
+                        'height' => $info[1]
                     ];
                 }
             }
 
-            $this->width = isset($dimensions["width"]) ? $dimensions["width"] : null;
-            $this->height = isset($dimensions["height"]) ? $dimensions["height"] : null;
+            $this->width = isset($dimensions['width']) ? $dimensions['width'] : null;
+            $this->height = isset($dimensions['height']) ? $dimensions['height'] : null;
 
             // the following is only relevant if using high-res option (retina, ...)
             $this->realHeight = $this->height;
@@ -271,40 +273,41 @@ class Thumbnail
         }
 
         return [
-            "width" => $this->width,
-            "height" => $this->height
+            'width' => $this->width,
+            'height' => $this->height
         ];
     }
 
     /**
      * Get the height of the generated thumbnail image in pixels.
+     *
      * @return string HTTP Mime Type of the generated thumbnail image.
-    */
+     */
     public function getMimeType()
     {
         if (!$this->mimetype) {
             // get target mime type without actually generating the thumbnail (deferred)
             $mapping = [
-                "png" => "image/png",
-                "jpg" => "image/jpeg",
-                "jpeg" => "image/jpeg",
-                "pjpeg" => "image/jpeg",
-                "gif" => "image/gif",
-                "tiff" => "image/tiff",
-                "svg" => "image/svg+xml",
+                'png' => 'image/png',
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'pjpeg' => 'image/jpeg',
+                'gif' => 'image/gif',
+                'tiff' => 'image/tiff',
+                'svg' => 'image/svg+xml',
             ];
 
             $targetFormat = strtolower($this->getConfig()->getFormat());
             $format = $targetFormat;
             $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
 
-            if ($targetFormat == "source" || empty($targetFormat)) {
-                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ["jpeg", "gif", "png"], "png");
-            } elseif ($targetFormat == "print") {
-                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ["svg", "jpeg", "png", "tiff"], "png");
-                if (($format == "tiff" || $format == "svg") && \Pimcore\Tool::isFrontentRequestByAdmin()) {
+            if ($targetFormat == 'source' || empty($targetFormat)) {
+                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
+            } elseif ($targetFormat == 'print') {
+                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
+                if (($format == 'tiff' || $format == 'svg') && \Pimcore\Tool::isFrontentRequestByAdmin()) {
                     // return a webformat in admin -> tiff cannot be displayed in browser
-                    $format = "png";
+                    $format = 'png';
                 }
             }
 
@@ -312,7 +315,7 @@ class Thumbnail
                 $this->mimetype = $mapping[$format];
             } else {
                 // unknown
-                $this->mimetype = "application/octet-stream";
+                $this->mimetype = 'application/octet-stream';
             }
         }
 
@@ -325,11 +328,11 @@ class Thumbnail
     public function getFileExtension()
     {
         $mapping = [
-            "image/png" => "png",
-            "image/jpeg" => "jpg",
-            "image/gif" => "gif",
-            "image/tiff" => "tif",
-            "image/svg+xml" => "svg",
+            'image/png' => 'png',
+            'image/jpeg' => 'jpg',
+            'image/gif' => 'gif',
+            'image/tiff' => 'tif',
+            'image/svg+xml' => 'svg',
         ];
 
         $mimeType = $this->getMimeType();
@@ -342,18 +345,20 @@ class Thumbnail
             return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
         }
 
-        return "";
+        return '';
     }
 
     /**
-    * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
-    * Attributes can be added as a parameter. Attributes containing illigal characters are ignored.
-    * Width and Height attribute can be overridden. SRC-attribute not.
-    * Values of attributes are escaped.
-    * @param array $options Custom configurations and HTML attributes.
-    * @param array $removeAttributes Listof key-value pairs of HTML attributes that should be removed
-    * @return string IMG-element with at least the attributes src, width, height, alt.
-    */
+     * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
+     * Attributes can be added as a parameter. Attributes containing illigal characters are ignored.
+     * Width and Height attribute can be overridden. SRC-attribute not.
+     * Values of attributes are escaped.
+     *
+     * @param array $options Custom configurations and HTML attributes.
+     * @param array $removeAttributes Listof key-value pairs of HTML attributes that should be removed
+     *
+     * @return string IMG-element with at least the attributes src, width, height, alt.
+     */
     public function getHTML($options = [], $removeAttributes = [])
     {
         $image = $this->getAsset();
@@ -374,54 +379,54 @@ class Thumbnail
             }
         }
 
-        $w3cImgAttributes = ["alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
-            "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
-            "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup",
-            "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype"];
+        $w3cImgAttributes = ['alt', 'align', 'border', 'height', 'hspace', 'ismap', 'longdesc', 'usemap',
+            'vspace', 'width', 'class', 'dir', 'id', 'lang', 'style', 'title', 'xml:lang', 'onmouseover',
+            'onabort', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseup',
+            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype'];
 
         $customAttributes = [];
-        if (array_key_exists("attributes", $options) && is_array($options["attributes"])) {
-            $customAttributes = $options["attributes"];
+        if (array_key_exists('attributes', $options) && is_array($options['attributes'])) {
+            $customAttributes = $options['attributes'];
         }
 
-        $altText = "";
-        $titleText = "";
-        if (isset($options["alt"])) {
-            $altText = $options["alt"];
+        $altText = '';
+        $titleText = '';
+        if (isset($options['alt'])) {
+            $altText = $options['alt'];
         }
-        if (isset($options["title"])) {
-            $titleText = $options["title"];
+        if (isset($options['title'])) {
+            $titleText = $options['title'];
         }
 
-        if (empty($titleText) && (!isset($options["disableAutoTitle"]) || !$options["disableAutoTitle"])) {
-            if ($image->getMetadata("title")) {
-                $titleText = $image->getMetadata("title");
+        if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
+            if ($image->getMetadata('title')) {
+                $titleText = $image->getMetadata('title');
             }
         }
 
-        if (empty($altText) && (!isset($options["disableAutoAlt"]) || !$options["disableAutoAlt"])) {
-            if ($image->getMetadata("alt")) {
-                $altText = $image->getMetadata("alt");
+        if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
+            if ($image->getMetadata('alt')) {
+                $altText = $image->getMetadata('alt');
             } else {
                 $altText = $titleText;
             }
         }
 
         // get copyright from asset
-        if ($image->getMetadata("copyright") && (!isset($options["disableAutoCopyright"]) || !$options["disableAutoCopyright"])) {
+        if ($image->getMetadata('copyright') && (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright'])) {
             if (!empty($altText)) {
-                $altText .= " | ";
+                $altText .= ' | ';
             }
             if (!empty($titleText)) {
-                $titleText .= " | ";
+                $titleText .= ' | ';
             }
-            $altText .= ("© " . $image->getMetadata("copyright"));
-            $titleText .= ("© " . $image->getMetadata("copyright"));
+            $altText .= ('© ' . $image->getMetadata('copyright'));
+            $titleText .= ('© ' . $image->getMetadata('copyright'));
         }
 
-        $options["alt"] = $altText;
+        $options['alt'] = $altText;
         if (!empty($titleText)) {
-            $options["title"] = $titleText;
+            $options['title'] = $titleText;
         }
 
         $attributesRaw = array_merge($options, $customAttributes);
@@ -431,22 +436,22 @@ class Thumbnail
                 continue;
             }
 
-            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, "data-") === 0)) {
+            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, 'data-') === 0)) {
                 continue;
             }
 
             //only include attributes with characters a-z and dashes in their name.
-            if (preg_match("/^[a-z-]+$/i", $key)) {
+            if (preg_match('/^[a-z-]+$/i', $key)) {
                 $attributes[$key] = $key . '="' . htmlspecialchars($value) . '"';
 
                 // do not include all attributes
-                if (!in_array($key, ["width", "height", "alt"])) {
+                if (!in_array($key, ['width', 'height', 'alt'])) {
                     $pictureAttribs[$key] = $key . '="' . htmlspecialchars($value) . '"';
                 }
 
                 // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
-                if (in_array($key, ["alt"])) {
-                    $pictureAttribs["data-" . $key] = "data-" . $key . '="' . htmlspecialchars($value) . '"';
+                if (in_array($key, ['alt'])) {
+                    $pictureAttribs['data-' . $key] = 'data-' . $key . '="' . htmlspecialchars($value) . '"';
                 }
             }
         }
@@ -462,10 +467,10 @@ class Thumbnail
             foreach ([1, 2] as $highRes) {
                 $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setHighResolution($highRes);
-                $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . " " . $highRes . "x";
+                $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
                 $srcSetValues[] = $srcsetEntry;
             }
-            $attributes['srcset'] = 'srcset="'. implode(", ", $srcSetValues) .'"';
+            $attributes['srcset'] = 'srcset="'. implode(', ', $srcSetValues) .'"';
         }
 
         foreach ($removeAttributes as $attribute) {
@@ -489,7 +494,7 @@ class Thumbnail
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
 
-            $html = '<picture ' . implode(" ", $pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            $html = '<picture ' . implode(' ', $pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
@@ -503,17 +508,17 @@ class Thumbnail
                         $thumbConfigRes->selectMedia($mediaQuery);
                         $thumbConfigRes->setHighResolution($highRes);
                         $thumb = $image->getThumbnail($thumbConfigRes, true);
-                        $srcSetValues[] = $thumb . " " . $highRes . "x";
+                        $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
 
                         if (!$fallBackImageThumb) {
                             $fallBackImageThumb = $thumb;
                         }
                     }
 
-                    $html .= "\t" . '<source srcset="' . implode(", ", $srcSetValues) .'"';
+                    $html .= "\t" . '<source srcset="' . implode(', ', $srcSetValues) .'"';
                     if ($mediaQuery) {
                         // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                        $maxWidth = str_replace("w", "", $mediaQuery);
+                        $maxWidth = str_replace('w', '', $mediaQuery);
                         $html .= ' media="(max-width: ' . $maxWidth . 'px)"';
                         $thumb->reset();
                     }
@@ -523,9 +528,9 @@ class Thumbnail
                 //$html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
 
                 $attrCleanedForPicture = $attributes;
-            unset($attrCleanedForPicture["width"]);
-            unset($attrCleanedForPicture["height"]);
-            $attrCleanedForPicture["src"] = 'src="' . (string) $fallBackImageThumb . '"';
+            unset($attrCleanedForPicture['width']);
+            unset($attrCleanedForPicture['height']);
+            $attrCleanedForPicture['src'] = 'src="' . (string) $fallBackImageThumb . '"';
             $htmlImgTagForpicture = '<img '.implode(' ', $attrCleanedForPicture).' />';
 
             $html .= $htmlImgTagForpicture . "\n";
@@ -539,7 +544,9 @@ class Thumbnail
     /**
      * @param string $name
      * @param int $highRes
+     *
      * @return Thumbnail
+     *
      * @throws \Exception
      */
     public function getMedia($name, $highRes = 1)
@@ -562,7 +569,7 @@ class Thumbnail
 
     /**
      * @return \Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
-    */
+     */
     public function getAsset()
     {
         return $this->asset;
@@ -570,6 +577,7 @@ class Thumbnail
 
     /**
      * Get thumbnail image configuration.
+     *
      * @return Thumbnail\Config
      */
     public function getConfig()
@@ -579,16 +587,18 @@ class Thumbnail
 
     /**
      * @param string $type
+     *
      * @return null|string
+     *
      * @throws \Exception
      */
-    public function getChecksum($type = "md5")
+    public function getChecksum($type = 'md5')
     {
         $file = $this->getFileSystemPath();
         if (is_file($file)) {
-            if ($type == "md5") {
+            if ($type == 'md5') {
                 return md5_file($file);
-            } elseif ($type = "sha1") {
+            } elseif ($type = 'sha1') {
                 return sha1_file($file);
             } else {
                 throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
@@ -600,9 +610,11 @@ class Thumbnail
 
     /**
      * Get a thumbnail image configuration.
+     *
      * @param mixed $selector Name, array or object describing a thumbnail configuration.
+     *
      * @return Thumbnail\Config
-    */
+     */
     protected function createConfig($selector)
     {
         return Thumbnail\Config::getByAutoDetect($selector);
@@ -618,6 +630,7 @@ class Thumbnail
 
     /**
      * Enables, when set to true, dispatchLoopShutdown of Pimcore_Controller_Plugin_Thumbnail
+     *
      * @param bool $flag
      */
     public static function setPictureElementInUse($flag)
@@ -626,7 +639,7 @@ class Thumbnail
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public static function getEmbedPicturePolyfill()
     {
@@ -634,7 +647,7 @@ class Thumbnail
     }
 
     /**
-     * @param boolean $embedPicturePolyfill
+     * @param bool $embedPicturePolyfill
      */
     public static function setEmbedPicturePolyfill($embedPicturePolyfill)
     {

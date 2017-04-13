@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Metadata
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,9 +25,8 @@ use Pimcore\Model\Element;
  */
 class Predefined extends Model\AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -55,7 +55,6 @@ class Predefined extends Model\AbstractModel
      */
     public $targetSubtype;
 
-
     /**
      * @var string
      */
@@ -77,19 +76,18 @@ class Predefined extends Model\AbstractModel
     public $language;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
-
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return self
      */
     public static function getById($id)
@@ -108,9 +106,10 @@ class Predefined extends Model\AbstractModel
     /**
      * @param string $name
      * @param string $language
+     *
      * @return self
      */
-    public static function getByName($name, $language = "")
+    public static function getByName($name, $language = '')
     {
         try {
             $metadata = new self();
@@ -133,7 +132,6 @@ class Predefined extends Model\AbstractModel
 
         return $type;
     }
-
 
     /**
      * @return string
@@ -159,9 +157,9 @@ class Predefined extends Model\AbstractModel
         return $this->data;
     }
 
-
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -173,6 +171,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -184,6 +183,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $data
+     *
      * @return $this
      */
     public function setData($data)
@@ -194,7 +194,7 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -202,7 +202,8 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -214,6 +215,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $description
+     *
      * @return $this
      */
     public function setDescription($description)
@@ -233,6 +235,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)
@@ -252,6 +255,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -317,26 +321,22 @@ class Predefined extends Model\AbstractModel
         $this->config = $config;
     }
 
-
-    /**
-     *
-     */
     public function minimize()
     {
         switch ($this->type) {
-            case "document":
-            case "asset":
-            case "object":
+            case 'document':
+            case 'asset':
+            case 'object':
                 {
                     $element = Element\Service::getElementByPath($this->type, $this->data);
                     if ($element) {
                         $this->data = $element->getId();
                     } else {
-                        $this->data = "";
+                        $this->data = '';
                     }
                 }
                 break;
-            case "date":
+            case 'date':
             {
                 if ($this->data && !is_numeric($this->data)) {
                     $this->data = strtotime($this->data);
@@ -347,15 +347,12 @@ class Predefined extends Model\AbstractModel
         }
     }
 
-    /**
-     *
-     */
     public function expand()
     {
         switch ($this->type) {
-            case "document":
-            case "asset":
-            case "object":
+            case 'document':
+            case 'asset':
+            case 'object':
                 {
                 if (is_numeric($this->data)) {
                     $element = Element\Service::getElementById($this->type, $this->data);
@@ -363,7 +360,7 @@ class Predefined extends Model\AbstractModel
                 if ($element) {
                     $this->data = $element->getRealFullPath();
                 } else {
-                    $this->data = "";
+                    $this->data = '';
                 }
             }
 

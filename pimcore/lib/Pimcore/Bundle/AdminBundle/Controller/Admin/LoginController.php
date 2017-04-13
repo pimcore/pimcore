@@ -38,7 +38,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     public function onKernelController(FilterControllerEvent $event)
     {
         // use browser language for login page if possible
-        $locale = "en";
+        $locale = 'en';
 
         $availableLocales = Tool\Admin::getLanguages();
         foreach ($event->getRequest()->getLanguages() as $userLocale) {
@@ -48,7 +48,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $this->get("translator")->setLocale($locale);
+        $this->get('translator')->setLocale($locale);
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
@@ -61,10 +61,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function loginAction(Request $request)
     {
-        if (!is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-            return $this->redirect("/install.php");
+        if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
+            return $this->redirect('/install.php');
         }
-
 
         $user = $this->getUser();
         if ($user instanceof UserInterface) {
@@ -114,11 +113,11 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $view->success = false;
 
         // TODO is the error on the view used somewhere?
-        if ($request->getMethod() === 'POST' && $username = $request->get("username")) {
+        if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
             $user = User::getByName($username);
 
             if (!$user instanceof User) {
-                $view->error = "user unknown";
+                $view->error = 'user unknown';
             } else {
                 if ($user->isActive()) {
                     if ($user->getEmail()) {
@@ -136,7 +135,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                             // only send mail if it wasn't prevented in event
                             if ($event->getSendMail()) {
-                                $mail = Tool::getMail([$user->getEmail()], "Pimcore lost password service");
+                                $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
                                 $mail->setIgnoreDebugMode(true);
                                 $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
                                 $mail->send();
@@ -149,13 +148,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                             $view->success = true;
                         } catch (\Exception $e) {
-                            $view->error = "could not send email";
+                            $view->error = 'could not send email';
                         }
                     } else {
-                        $view->error = "user has no email address";
+                        $view->error = 'user has no email address';
                     }
                 } else {
-                    $view->error = "user inactive";
+                    $view->error = 'user inactive';
                 }
             }
         }
@@ -170,10 +169,10 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     public function deeplinkAction()
     {
         // check for deeplink
-        $queryString = $_SERVER["QUERY_STRING"];
+        $queryString = $_SERVER['QUERY_STRING'];
 
-        if (preg_match("/(document|asset|object)_([0-9]+)_([a-z]+)/", $queryString, $deeplink)) {
-            if (strpos($queryString, "token")) {
+        if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
+            if (strpos($queryString, 'token')) {
                 $deeplink = $deeplink[0];
                 $url = $this->generateUrl('pimcore_admin_login', [
                     'deeplink' => $deeplink

@@ -28,12 +28,10 @@ interface IOrderAgent
      */
     public function __construct(Factory $factory, Order $order);
 
-
     /**
      * @return Order
      */
     public function getOrder();
-
 
     /**
      * cancel order item and refund payment
@@ -43,7 +41,6 @@ interface IOrderAgent
      * @return Note
      */
     public function itemCancel(OrderItem $item);
-
 
     /**
      * start item complaint
@@ -55,7 +52,6 @@ interface IOrderAgent
      */
     public function itemComplaint(OrderItem $item, $quantity);
 
-
     /**
      * change order item
      *
@@ -65,7 +61,6 @@ interface IOrderAgent
      * @return Note
      */
     public function itemChangeAmount(OrderItem $item, $amount);
-
 
     /**
      * set a item state
@@ -77,25 +72,20 @@ interface IOrderAgent
      */
     public function itemSetState(OrderItem $item, $state);
 
-
-
     /**
      * @return Currency
      */
     public function getCurrency();
-
 
     /**
      * @return bool
      */
     public function hasPayment();
 
-
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment
      */
     public function getPaymentProvider();
-
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
@@ -103,7 +93,6 @@ interface IOrderAgent
      * @return Order
      */
     public function setPaymentProvider(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
-
 
     /**
      * Starts payment:
@@ -131,10 +120,10 @@ interface IOrderAgent
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
     public function cancelStartedOrderPayment();
-
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status
@@ -142,7 +131,6 @@ interface IOrderAgent
      * @return IOrderAgent
      */
     public function updatePayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status);
-
 
     /**
      * @return Note[]

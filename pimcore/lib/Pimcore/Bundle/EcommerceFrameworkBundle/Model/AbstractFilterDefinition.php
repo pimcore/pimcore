@@ -19,17 +19,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
 {
-
     /**
      * @static
+     *
      * @param int $id
+     *
      * @return null|\Pimcore\Model\Object\AbstractObject
      */
     public static function getById($id)
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof AbstractFilterDefinition) {
+        if ($object instanceof self) {
             return $object;
         }
 
@@ -40,47 +41,52 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
      * returns page limit for product list
      *
      * @abstract
+     *
      * @return float
      */
     abstract public function getPageLimit();
 
    /**
-     * returns list of available fields for sorting ascending
-     *
-     * @abstract
-     * @return string
-     */
+    * returns list of available fields for sorting ascending
+    *
+    * @abstract
+    *
+    * @return string
+    */
    abstract public function getOrderByAsc();
 
     /**
      * returns list of available fields for sorting descending
      *
      * @abstract
+     *
      * @return string
-    */
+     */
     abstract public function getOrderByDesc();
 
    /**
     * return array of field collections for preconditions
     *
     * @abstract
+    *
     * @return \Pimcore\Model\Object\Fieldcollection
     */
    abstract public function getConditions();
 
-    /**
-     * return array of field collections for filters
-     *
-     * @abstract
-     * @return \Pimcore\Model\Object\Fieldcollection
-     */
+   /**
+    * return array of field collections for filters
+    *
+    * @abstract
+    *
+    * @return \Pimcore\Model\Object\Fieldcollection
+    */
    abstract public function getFilters();
-
 
     /**
      * enables inheritance for field collections, if xxxInheritance field is available and set to string 'true'
      *
      * @param string $key
+     *
      * @return mixed|\Pimcore\Model\Object\Fieldcollection
      */
     public function preGetValue($key)
@@ -89,16 +95,15 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
             && \Pimcore\Model\Object\AbstractObject::doGetInheritedValues()
             && $this->getClass()->getFieldDefinition($key) instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections
         ) {
-            $checkInheritanceKey = $key . "Inheritance";
+            $checkInheritanceKey = $key . 'Inheritance';
             if ($this->{
                 'get' . $checkInheritanceKey
-                }() == "true"
+                }() == 'true'
             ) {
                 $parentValue = $this->getValueFromParent($key);
                 $data = $this->$key;
                 if (!$data) {
                     $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);
-                    ;
                 }
                 if (!$data) {
                     return $parentValue;

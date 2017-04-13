@@ -44,7 +44,7 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
     /**
      * @var string
      */
-    protected $defaultRenderer = "menu";
+    protected $defaultRenderer = 'menu';
 
     /**
      * @var array
@@ -77,6 +77,7 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
      * @param null $htmlMenuIdPrefix
      * @param null $pageCallback
      * @param bool $cache
+     *
      * @return $this
      */
     public function __invoke($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
@@ -90,6 +91,7 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
 
     /**
      * @param $name
+     *
      * @return mixed
      */
     public function getRenderer($name)
@@ -109,6 +111,7 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
 
     /**
      * @param Container|null $container
+     *
      * @return mixed
      */
     public function render(Container $container = null)
@@ -145,6 +148,7 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
     /**
      * @param $method
      * @param array $arguments
+     *
      * @return mixed
      */
     public function __call($method, array $arguments = [])

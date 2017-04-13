@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
-use Pimcore\Cache\Runtime;
 use Pimcore\Service\Locale;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -24,12 +23,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Environment implements IEnvironment
 {
-    const SESSION_KEY_CUSTOM_ITEMS = "customitems";
-    const SESSION_KEY_USERID = "userid";
-    const SESSION_KEY_USE_GUEST_CART = "useguestcart";
-    const SESSION_KEY_ASSORTMENT_TENANT = "currentassortmenttenant";
-    const SESSION_KEY_ASSORTMENT_SUB_TENANT = "currentassortmentsubtenant";
-    const SESSION_KEY_CHECKOUT_TENANT = "currentcheckouttenant";
+    const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
+    const SESSION_KEY_USERID = 'userid';
+    const SESSION_KEY_USE_GUEST_CART = 'useguestcart';
+    const SESSION_KEY_ASSORTMENT_TENANT = 'currentassortmenttenant';
+    const SESSION_KEY_ASSORTMENT_SUB_TENANT = 'currentassortmentsubtenant';
+    const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
     const USER_ID_NOT_SET = -1;
 
     /**
@@ -48,7 +47,6 @@ class Environment implements IEnvironment
      * @var bool
      */
     protected $useGuestCart = false;
-
 
     protected $currentAssortmentTenant = null;
     protected $currentAssortmentSubTenant = null;
@@ -87,17 +85,16 @@ class Environment implements IEnvironment
 
         $this->loadFromSession();
 
-
         $this->defaultCurrency = new Currency((string)$config->defaultCurrency);
     }
 
     protected function loadFromSession()
     {
-        if (php_sapi_name() != "cli") {
+        if (php_sapi_name() != 'cli') {
             $this->session = $this->buildSession();
 
             $this->customItems = $this->session->get(self::SESSION_KEY_CUSTOM_ITEMS);
-            if ($this->customItems==null) {
+            if ($this->customItems == null) {
                 $this->customItems=[];
             }
 
@@ -116,7 +113,7 @@ class Environment implements IEnvironment
 
     public function save()
     {
-        if (php_sapi_name() != "cli") {
+        if (php_sapi_name() != 'cli') {
             $this->session->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
 
             $this->session->set(self::SESSION_KEY_USERID, $this->userId);
@@ -166,7 +163,6 @@ class Environment implements IEnvironment
         return $this;
     }
 
-
     /**
      * @return bool
      */
@@ -175,12 +171,10 @@ class Environment implements IEnvironment
         return $this->getCurrentUserId() !== self::USER_ID_NOT_SET;
     }
 
-
     public function removeCustomItem($key)
     {
         unset($this->customItems[$key]);
     }
-
 
     public function clearEnvironment()
     {
@@ -216,6 +210,7 @@ class Environment implements IEnvironment
      * use setCurrentAssortmentTenant instead
      *
      * @param string $currentTenant
+     *
      * @return mixed|void
      */
     public function setCurrentTenant($currentTenant)
@@ -241,13 +236,13 @@ class Environment implements IEnvironment
      * use setCurrentAssortmentSubTenant instead
      *
      * @param mixed $currentSubTenant
+     *
      * @return mixed|void
      */
     public function setCurrentSubTenant($currentSubTenant)
     {
         $this->setCurrentAssortmentSubTenant($currentSubTenant);
     }
-
 
     /**
      * @deprecated
@@ -270,7 +265,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUseGuestCart()
     {
@@ -278,7 +273,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param boolean $useGuestCart
+     * @param bool $useGuestCart
      */
     public function setUseGuestCart($useGuestCart)
     {
@@ -289,6 +284,7 @@ class Environment implements IEnvironment
      * sets current assortment tenant which is used for indexing and product lists
      *
      * @param $tenant string
+     *
      * @return mixed
      */
     public function setCurrentAssortmentTenant($tenant)
@@ -310,6 +306,7 @@ class Environment implements IEnvironment
      * sets current assortment sub tenant which is used for indexing and product lists
      *
      * @param $subTenant mixed
+     *
      * @return mixed
      */
     public function setCurrentAssortmentSubTenant($subTenant)
@@ -379,7 +376,7 @@ class Environment implements IEnvironment
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
             }
-            throw new \Exception("Not supported language");
+            throw new \Exception('Not supported language');
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();
         }

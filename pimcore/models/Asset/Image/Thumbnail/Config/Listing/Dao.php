@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Property
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,14 +25,10 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("image-thumbnails");
+        $this->setFile('image-thumbnails');
     }
 
     /**
@@ -45,7 +42,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($propertiesData as $propertyData) {
-            $properties[] = Config::getByName($propertyData["id"]);
+            $properties[] = Config::getByName($propertyData['id']);
         }
 
         $this->model->setThumbnails($properties);

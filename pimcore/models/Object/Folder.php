@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,14 +22,14 @@ namespace Pimcore\Model\Object;
  */
 class Folder extends AbstractObject
 {
-
     /**
      * @var string
      */
-    public $o_type = "folder";
+    public $o_type = 'folder';
 
     /**
      * @param array $values
+     *
      * @return Folder
      */
     public static function create($values)
@@ -53,7 +54,7 @@ class Folder extends AbstractObject
     public function delete()
     {
         if ($this->getId() == 1) {
-            throw new \Exception("root-node cannot be deleted");
+            throw new \Exception('root-node cannot be deleted');
         }
 
         parent::delete();

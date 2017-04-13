@@ -16,7 +16,6 @@ namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
 class Analytics extends AbstractAdapter
 {
-
     /**
      * @param $filters
      * @param $sort
@@ -26,7 +25,9 @@ class Analytics extends AbstractAdapter
      * @param null $fields
      * @param null $drillDownFilters
      * @param null $fullConfig
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null, $fullConfig = null)
@@ -46,16 +47,17 @@ class Analytics extends AbstractAdapter
             $this->config->maxResults = $limit;
         }
 
-
         $results = $this->getDataHelper($fields, $drillDownFilters);
         $data = $this->extractData($results);
 
-        return [ "data" => $data, "total" => $results['totalResults'] ];
+        return [ 'data' => $data, 'total' => $results['totalResults'] ];
     }
 
     /**
      * @param $configuration
+     *
      * @return array|mixed
+     *
      * @throws \Exception
      */
     public function getColumns($configuration)
@@ -82,17 +84,17 @@ class Analytics extends AbstractAdapter
                 if ($filter['type'] == 'string') {
                     $value = str_replace(';', '', addslashes($filter['value']));
                     $gaFilters[] = "{$filter['field']}=~{$value}";
-                } elseif ($filter["type"] == "numeric") {
+                } elseif ($filter['type'] == 'numeric') {
                     $value = floatval($filter['value']);
                     $compMapping = [
-                        "lt" => "<",
-                        "gt" => ">",
-                        "eq" => "=="
+                        'lt' => '<',
+                        'gt' => '>',
+                        'eq' => '=='
                     ];
-                    if ($compMapping[$filter["comparison"]]) {
-                        $gaFilters[] = "{$filter['field']}{$compMapping[$filter["comparison"]]}{$value}";
+                    if ($compMapping[$filter['comparison']]) {
+                        $gaFilters[] = "{$filter['field']}{$compMapping[$filter['comparison']]}{$value}";
                     }
-                } elseif ($filter["type"] == "boolean") {
+                } elseif ($filter['type'] == 'boolean') {
                     $value = $filter['value'] ? 'Yes' : 'No';
                     $gaFilters[] = "{$filter['field']}=={$value}";
                 }
@@ -118,7 +120,9 @@ class Analytics extends AbstractAdapter
      * @param null $fields
      * @param null $drillDownFilters
      * @param bool $useDimensionHandling
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     protected function getDataHelper($fields = null, $drillDownFilters = null, $useDimensionHandling = true)
@@ -135,17 +139,17 @@ class Analytics extends AbstractAdapter
 
         $client = \Pimcore\Google\Api::getServiceClient();
         if (!$client) {
-            throw new \Exception("Google Analytics is not configured");
+            throw new \Exception('Google Analytics is not configured');
         }
 
         $service = new \Google_Service_Analytics($client);
 
         if (!$configuration->profileId) {
-            throw new \Exception("no profileId given");
+            throw new \Exception('no profileId given');
         }
 
         if (!$configuration->metric) {
-            throw new \Exception("no metric given");
+            throw new \Exception('no metric given');
         }
 
         $options = [];
@@ -172,13 +176,12 @@ class Analytics extends AbstractAdapter
         $configuration->startDate = $this->calcDate($configuration->startDate, $configuration->relativeStartDate);
         $configuration->endDate = $this->calcDate($configuration->endDate, $configuration->relativeEndDate);
 
-
         if (!$configuration->startDate) {
-            throw new \Exception("no start date given");
+            throw new \Exception('no start date given');
         }
 
         if (!$configuration->endDate) {
-            throw new \Exception("no end date given");
+            throw new \Exception('no end date given');
         }
 
         return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate), date('Y-m-d', $configuration->endDate), (is_array($configuration->metric) ? implode(',', $configuration->metric) : $configuration->metric), $options);
@@ -186,6 +189,7 @@ class Analytics extends AbstractAdapter
 
     /**
      * @param $results
+     *
      * @return array
      */
     protected function extractData($results)
@@ -208,6 +212,7 @@ class Analytics extends AbstractAdapter
     /**
      * @param $configuration
      * @param $fields
+     *
      * @return mixed
      */
     protected function handleFields($configuration, $fields)
@@ -219,7 +224,6 @@ class Analytics extends AbstractAdapter
             }
         }
         $configuration->metric = implode(',', $metrics);
-
 
         $dimensions = $configuration->dimension;
         foreach ($dimensions as $key => $dimension) {
@@ -234,6 +238,7 @@ class Analytics extends AbstractAdapter
 
     /**
      * @param $configuration
+     *
      * @return mixed
      */
     protected function handleDimensions($configuration)
@@ -258,6 +263,7 @@ class Analytics extends AbstractAdapter
     /**
      * @param $date
      * @param $relativeDate
+     *
      * @return float|int|string
      */
     protected function calcDate($date, $relativeDate)
@@ -283,9 +289,9 @@ class Analytics extends AbstractAdapter
 
                 foreach ($applyModifiers as $modifier) {
                     if ($modifier['sign'] == '-') {
-                        $date->sub(new \DateInterval("P" . $modifier['number'] . strtoupper($modifier['type'])));
+                        $date->sub(new \DateInterval('P' . $modifier['number'] . strtoupper($modifier['type'])));
                     } else {
-                        $date->add(new \DateInterval("P" . $modifier['number'] . strtoupper($modifier['type'])));
+                        $date->add(new \DateInterval('P' . $modifier['number'] . strtoupper($modifier['type'])));
                     }
                 }
 
@@ -293,14 +299,16 @@ class Analytics extends AbstractAdapter
             }
         }
 
-        return $date/1000;
+        return $date / 1000;
     }
 
     /**
      * @param $filters
      * @param $field
      * @param $drillDownFilters
+     *
      * @return array|mixed
+     *
      * @throws \Exception
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)

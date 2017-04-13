@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,20 +22,20 @@ use Pimcore\Model\Tool;
 
 class Persona extends Model\Object\ClassDefinition\Data\Select
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "persona";
-
+    public $fieldtype = 'persona';
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -54,6 +55,7 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
      * @param string $data
      * @param null $object
      * @param mixed $params
+     *
      * @return null|string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -69,52 +71,49 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
         return $data;
     }
 
-
-    /**
-     *
-     */
     public function configureOptions()
     {
         $list = new Tool\Targeting\Persona\Listing();
-        $list->setOrder("asc");
-        $list->setOrderKey("name");
+        $list->setOrder('asc');
+        $list->setOrderKey('name');
         $personas = $list->load();
 
         $options = [];
         foreach ($personas as $persona) {
             $options[] = [
-                "value" => $persona->getId(),
-                "key" => $persona->getName()
+                'value' => $persona->getId(),
+                'key' => $persona->getName()
             ];
         }
 
         $this->setOptions($options);
     }
 
-
     /**
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!empty($data)) {
             $persona = Tool\Targeting\Persona::getById($data);
             if (!$persona instanceof Tool\Targeting\Persona) {
-                throw new Model\Element\ValidationException("Invalid persona reference");
+                throw new Model\Element\ValidationException('Invalid persona reference');
             }
         }
     }
 
     /**
      * @param $data
+     *
      * @return static
      */
     public static function __set_state($data)

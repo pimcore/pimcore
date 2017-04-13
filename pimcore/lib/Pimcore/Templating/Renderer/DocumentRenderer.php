@@ -20,7 +20,6 @@ use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer
 {
-
     /**
      * @var ActionRenderer
      */
@@ -31,9 +30,9 @@ class DocumentRenderer
      */
     protected $fragmentRenderer;
 
-
     /**
      * DocumentRenderer constructor.
+     *
      * @param ActionRenderer $actionRenderer
      * @param FragmentRendererInterface $fragmentRenderer
      */
@@ -49,6 +48,7 @@ class DocumentRenderer
      * @param Document $document
      * @param array $params
      * @param bool $useLayout
+     *
      * @return string
      */
     public function render(Document $document, $params = [], $useLayout = false)
@@ -64,7 +64,7 @@ class DocumentRenderer
 
         // set locale of the document to sub request
         $request = new Request($params);
-        $request->setLocale($document->getProperty("language"));
+        $request->setLocale($document->getProperty('language'));
 
         $content = $this->fragmentRenderer->render($uri, $request);
 

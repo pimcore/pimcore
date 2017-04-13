@@ -52,7 +52,9 @@ class Url extends Page
      * Sets page URI
      *
      * @param  string $uri                page URI, must a string or null
+     *
      * @return Url   fluent interface, returns self
+     *
      * @throws \Exception  if $uri is invalid
      */
     public function setUri($uri)

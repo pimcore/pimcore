@@ -21,11 +21,10 @@ class ClientIp implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManage
      */
     protected $ip;
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
@@ -41,8 +40,7 @@ class ClientIp implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManage
     {
         // basic
         $json = [
-            'type' => 'ClientIp'
-            , 'ip' => $this->getIp()
+            'type' => 'ClientIp', 'ip' => $this->getIp()
         ];
 
         return json_encode($json);

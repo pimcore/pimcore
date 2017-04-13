@@ -14,17 +14,14 @@
 
 namespace Pimcore;
 
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Pimcore\Logger;
 
 class Update
 {
-
     /**
      * @var string
      */
-    public static $updateHost = "liveupdate.pimcore.org";
+    public static $updateHost = 'liveupdate.pimcore.org';
 
     /**
      * @var bool
@@ -34,7 +31,7 @@ class Update
     /**
      * @var string
      */
-    public static $tmpTable = "_tmp_update";
+    public static $tmpTable = '_tmp_update';
 
     /**
      * @return bool
@@ -46,7 +43,7 @@ class Update
         }
 
         // check permissions
-        $files = rscandir(PIMCORE_PATH . "/");
+        $files = rscandir(PIMCORE_PATH . '/');
 
         foreach ($files as $file) {
             if (!is_writable($file)) {
@@ -59,7 +56,9 @@ class Update
 
     /**
      * @param null $currentRev
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public static function getAvailableUpdates($currentRev = null)
@@ -71,9 +70,9 @@ class Update
         self::cleanup();
 
         if (PIMCORE_DEVMODE) {
-            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData('https://' . self::$updateHost . '/getUpdateInfo.php?devmode=1&revision=' . $currentRev);
         } else {
-            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/getUpdateInfo.php?revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData('https://' . self::$updateHost . '/getUpdateInfo.php?revision=' . $currentRev);
         }
 
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
@@ -88,33 +87,34 @@ class Update
 
                     if (strlen(strval($r->version)) > 0) {
                         $releases[] = [
-                            "id" => strval($r->id),
-                            "date" => strval($r->date),
-                            "version" => strval($r->version),
-                            "text" => strval($r->id) . " - " . $date->format("Y-m-d H:i")
+                            'id' => strval($r->id),
+                            'date' => strval($r->date),
+                            'version' => strval($r->version),
+                            'text' => strval($r->id) . ' - ' . $date->format('Y-m-d H:i')
                         ];
                     } else {
                         $revisions[] = [
-                            "id" => strval($r->id),
-                            "date" => strval($r->date),
-                            "text" => strval($r->id) . " - " . $date->format("Y-m-d H:i")
+                            'id' => strval($r->id),
+                            'date' => strval($r->date),
+                            'text' => strval($r->id) . ' - ' . $date->format('Y-m-d H:i')
                         ];
                     }
                 }
             }
         } else {
-            throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to " . self::$updateHost . ":443");
+            throw new \Exception('Unable to retrieve response from update server. Please ensure that your server is allowed to connect to ' . self::$updateHost . ':443');
         }
 
         return [
-            "revisions" => $revisions,
-            "releases" => $releases
+            'revisions' => $revisions,
+            'releases' => $releases
         ];
     }
 
     /**
      * @param $toRevision
      * @param null $currentRev
+     *
      * @return array
      */
     public static function getJobs($toRevision, $currentRev = null)
@@ -123,7 +123,7 @@ class Update
             $currentRev = Version::$revision;
         }
 
-        $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
+        $xmlRaw = Tool::getHttpData('https://' . self::$updateHost . '/getDownloads.php?from=' . $currentRev . '&to=' . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
         $jobs = [];
@@ -133,28 +133,27 @@ class Update
 
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
-                if ($download->type == "script") {
-                    $updateScripts[(string) $download->revision]["preupdate"] = [
-                        "type" => "preupdate",
-                        "revision" => (string) $download->revision
+                if ($download->type == 'script') {
+                    $updateScripts[(string) $download->revision]['preupdate'] = [
+                        'type' => 'preupdate',
+                        'revision' => (string) $download->revision
                     ];
-                    $updateScripts[(string) $download->revision]["postupdate"] = [
-                        "type" => "postupdate",
-                        "revision" => (string) $download->revision
+                    $updateScripts[(string) $download->revision]['postupdate'] = [
+                        'type' => 'postupdate',
+                        'revision' => (string) $download->revision
                     ];
-                } elseif ((string) $download->composer === "true") {
+                } elseif ((string) $download->composer === 'true') {
                     $composerUpdateRevisions[(string) $download->revision] = (string) $download->revision;
                 }
             }
         }
 
-
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
-                $jobs["parallel"][] = [
-                    "type" => "download",
-                    "revision" => (string) $download->revision,
-                    "url" => (string) $download->url
+                $jobs['parallel'][] = [
+                    'type' => 'download',
+                    'revision' => (string) $download->revision,
+                    'url' => (string) $download->url
                 ];
 
                 $revisions[] = (int) $download->revision;
@@ -163,45 +162,45 @@ class Update
 
         $revisions = array_unique($revisions);
 
-        $jobs["procedural"][] = [
-            "type" => "composer-invalidate-classmaps"
+        $jobs['procedural'][] = [
+            'type' => 'composer-invalidate-classmaps'
         ];
 
         foreach ($revisions as $revision) {
-            if ($updateScripts[$revision]["preupdate"]) {
-                $jobs["procedural"][] = $updateScripts[$revision]["preupdate"];
+            if ($updateScripts[$revision]['preupdate']) {
+                $jobs['procedural'][] = $updateScripts[$revision]['preupdate'];
             }
 
-            $jobs["procedural"][] = [
-                "type" => "files",
-                "revision" => $revision,
-                "updateScript" => json_encode(isset($updateScripts[$revision]["update"]))
+            $jobs['procedural'][] = [
+                'type' => 'files',
+                'revision' => $revision,
+                'updateScript' => json_encode(isset($updateScripts[$revision]['update']))
             ];
 
             if (in_array($revision, $composerUpdateRevisions)) {
-                $jobs["procedural"][] = [
-                    "type" => "composer-update"
+                $jobs['procedural'][] = [
+                    'type' => 'composer-update'
                 ];
-                $jobs["procedural"][] = [
-                    "type" => "composer-invalidate-classmaps"
+                $jobs['procedural'][] = [
+                    'type' => 'composer-invalidate-classmaps'
                 ];
             }
 
-            if ($updateScripts[$revision]["postupdate"]) {
-                $jobs["procedural"][] = $updateScripts[$revision]["postupdate"];
+            if ($updateScripts[$revision]['postupdate']) {
+                $jobs['procedural'][] = $updateScripts[$revision]['postupdate'];
             }
         }
 
-        $jobs["procedural"][] = [
-            "type" => "clearcache"
+        $jobs['procedural'][] = [
+            'type' => 'clearcache'
         ];
 
-        $jobs["procedural"][] = [
-            "type" => "cleanup"
+        $jobs['procedural'][] = [
+            'type' => 'cleanup'
         ];
 
-        $jobs["procedural"][] = [
-            "type" => "composer-dump-autoload"
+        $jobs['procedural'][] = [
+            'type' => 'composer-dump-autoload'
         ];
 
         return $jobs;
@@ -210,30 +209,31 @@ class Update
     /**
      * @param $revision
      * @param $url
+     *
      * @throws \Exception
      */
     public static function downloadData($revision, $url)
     {
         $db = Db::get();
 
-        $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
+        $db->query('CREATE TABLE IF NOT EXISTS `' . self::$tmpTable . '` (
           `id` int(11) NULL DEFAULT NULL,
           `revision` int(11) NULL DEFAULT NULL,
           `path` varchar(255) NULL DEFAULT NULL,
           `action` varchar(50) NULL DEFAULT NULL
-        );");
+        );');
 
-        $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
+        $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update/'.$revision;
         if (!is_dir($downloadDir)) {
             File::mkdir($downloadDir);
         }
 
-        $filesDir = $downloadDir . "/files";
+        $filesDir = $downloadDir . '/files';
         if (!is_dir($filesDir)) {
             File::mkdir($filesDir);
         }
 
-        $scriptsDir = $downloadDir . "/scripts";
+        $scriptsDir = $downloadDir . '/scripts';
         if (!is_dir($scriptsDir)) {
             File::mkdir($scriptsDir);
         }
@@ -241,26 +241,26 @@ class Update
         $xml = Tool::getHttpData($url);
         if ($xml) {
             $parserOptions = LIBXML_NOCDATA;
-            if (defined("LIBXML_PARSEHUGE")) {
+            if (defined('LIBXML_PARSEHUGE')) {
                 $parserOptions = LIBXML_NOCDATA | LIBXML_PARSEHUGE;
             }
 
             $updateFiles = simplexml_load_string($xml, null, $parserOptions);
 
             foreach ($updateFiles->file as $file) {
-                if ($file->type == "file") {
-                    if ($file->action == "update" || $file->action == "add") {
-                        $newFile = $filesDir . "/" . $file->id . "-" . $file->revision;
+                if ($file->type == 'file') {
+                    if ($file->action == 'update' || $file->action == 'add') {
+                        $newFile = $filesDir . '/' . $file->id . '-' . $file->revision;
                         File::put($newFile, base64_decode((string) $file->content));
                     }
 
                     $db->insert(self::$tmpTable, [
-                        "id" => $file->id,
-                        "revision" => $revision,
-                        "path" => (string) $file->path,
-                        "action" => (string)$file->action
+                        'id' => $file->id,
+                        'revision' => $revision,
+                        'path' => (string) $file->path,
+                        'action' => (string)$file->action
                     ]);
-                } elseif ($file->type == "script") {
+                } elseif ($file->type == 'script') {
                     $newScript = $scriptsDir. $file->path;
                     File::put($newScript, base64_decode((string) $file->content));
                 }
@@ -274,56 +274,55 @@ class Update
     public static function installData($revision, $updateScript)
     {
         $db = Db::get();
-        $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", [$revision]);
+        $files = $db->fetchAll('SELECT * FROM `' . self::$tmpTable . '` WHERE revision = ?', [$revision]);
 
         foreach ($files as $file) {
-            if ($file["action"] == "update" || $file["action"] == "add") {
-                if (!is_dir(dirname(PIMCORE_PROJECT_ROOT . $file["path"]))) {
+            if ($file['action'] == 'update' || $file['action'] == 'add') {
+                if (!is_dir(dirname(PIMCORE_PROJECT_ROOT . $file['path']))) {
                     if (!self::$dryRun) {
-                        File::mkdir(dirname(PIMCORE_PROJECT_ROOT . $file["path"]));
+                        File::mkdir(dirname(PIMCORE_PROJECT_ROOT . $file['path']));
                     }
                 }
 
-                if (array_key_exists("id", $file) && $file["id"]) {
+                if (array_key_exists('id', $file) && $file['id']) {
                     // this is the new style, see https://www.pimcore.org/issues/browse/PIMCORE-2722
-                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . $file["id"] . "-" . $file["revision"];
+                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update/'.$revision.'/files/' . $file['id'] . '-' . $file['revision'];
                 } else {
                     // this is the old style, which we still have to support here, otherwise there's the risk that the
                     // running update cannot be finished
-                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/", "~~~", $file["path"]);
+                    $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update/'.$revision.'/files/' . str_replace('/', '~~~', $file['path']);
                 }
 
-                $destFile = PIMCORE_PROJECT_ROOT . $file["path"];
+                $destFile = PIMCORE_PROJECT_ROOT . $file['path'];
 
                 if (!self::$dryRun) {
-                    if ($file["path"] == "/composer.json") {
+                    if ($file['path'] == '/composer.json') {
                         // composer.json needs some special processing
                         self::installComposerJson($srcFile, $destFile);
                     } else {
                         copy($srcFile, $destFile);
                     }
                 }
-            } elseif ($file["action"] == "delete") {
+            } elseif ($file['action'] == 'delete') {
                 if (!self::$dryRun) {
-                    if (file_exists(PIMCORE_PROJECT_ROOT . $file["path"])) {
-                        unlink(PIMCORE_PROJECT_ROOT . $file["path"]);
+                    if (file_exists(PIMCORE_PROJECT_ROOT . $file['path'])) {
+                        unlink(PIMCORE_PROJECT_ROOT . $file['path']);
                     }
 
                     clearstatcache();
 
                     // remove also directory if its empty
-                    if (count(glob(dirname(PIMCORE_PROJECT_ROOT . $file["path"]) . "/*")) === 0) {
-                        recursiveDelete(dirname(PIMCORE_PROJECT_ROOT . $file["path"]), true);
+                    if (count(glob(dirname(PIMCORE_PROJECT_ROOT . $file['path']) . '/*')) === 0) {
+                        recursiveDelete(dirname(PIMCORE_PROJECT_ROOT . $file['path']), true);
                     }
                 }
             }
         }
 
         // run update script
-        if ($updateScript == "true") {
-            self::executeScript($revision, "update");
+        if ($updateScript == 'true') {
+            self::executeScript($revision, 'update');
         }
-
 
         self::clearOPCaches();
     }
@@ -331,19 +330,20 @@ class Update
     /**
      * @param $revision
      * @param $type
+     *
      * @return array
      */
     public static function executeScript($revision, $type)
     {
-        $script = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision . "/scripts/" . $type . ".php";
+        $script = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update/'.$revision . '/scripts/' . $type . '.php';
 
         $maxExecutionTime = 900;
-        @ini_set("max_execution_time", $maxExecutionTime);
+        @ini_set('max_execution_time', $maxExecutionTime);
         set_time_limit($maxExecutionTime);
 
         Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
-        $outputMessage = "";
+        $outputMessage = '';
         if (is_file($script)) {
             ob_start();
             try {
@@ -352,8 +352,8 @@ class Update
                 }
             } catch (\Exception $e) {
                 Logger::error($e);
-                $outputMessage .= "EXCEPTION: " . $e->getMessage();
-                $outputMessage .= "<br>For details please have a look into debug.log<br>";
+                $outputMessage .= 'EXCEPTION: ' . $e->getMessage();
+                $outputMessage .= '<br>For details please have a look into debug.log<br>';
             }
             $outputMessage .= ob_get_clean();
         }
@@ -361,8 +361,8 @@ class Update
         self::clearOPCaches();
 
         return [
-            "message" => $outputMessage,
-            "success" => true
+            'message' => $outputMessage,
+            'success' => true
         ];
     }
 
@@ -386,28 +386,22 @@ class Update
         }
     }
 
-    /**
-     *
-     */
     public static function clearOPCaches()
     {
-        if (function_exists("opcache_reset")) {
+        if (function_exists('opcache_reset')) {
             opcache_reset();
         }
     }
 
-    /**
-     *
-     */
     public static function cleanup()
     {
 
         // remove database tmp table
         $db = Db::get();
-        $db->query("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
+        $db->query('DROP TABLE IF EXISTS `' . self::$tmpTable . '`');
 
         //delete tmp data
-        recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update", true);
+        recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update', true);
     }
 
     /**
@@ -415,10 +409,10 @@ class Update
      */
     public static function composerDumpAutoload()
     {
-        $outputMessage = "";
+        $outputMessage = '';
 
         try {
-            $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
+            $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
             $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_PROJECT_ROOT);
             $process->setTimeout(300);
             $process->mustRun();
@@ -428,8 +422,8 @@ class Update
         }
 
         return [
-            "message" => $outputMessage,
-            "success" => true
+            'message' => $outputMessage,
+            'success' => true
         ];
     }
 
@@ -438,15 +432,15 @@ class Update
      */
     public static function composerUpdate()
     {
-        $composerLock = PIMCORE_PROJECT_ROOT . "/composer.lock";
+        $composerLock = PIMCORE_PROJECT_ROOT . '/composer.lock';
         if (file_exists($composerLock)) {
             @unlink($composerLock);
         }
 
-        $outputMessage = "";
+        $outputMessage = '';
 
         try {
-            $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
+            $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
             $process = new Process($composerPath . ' update -d ' . PIMCORE_PROJECT_ROOT);
             $process->setTimeout(900);
             $process->mustRun();
@@ -456,24 +450,21 @@ class Update
         }
 
         return [
-            "message" => $outputMessage,
-            "success" => true
+            'message' => $outputMessage,
+            'success' => true
         ];
     }
 
-    /**
-     *
-     */
     public static function invalidateComposerAutoloadClassmap()
     {
 
         // unfortunately \Composer\Autoload\ClassLoader has no method setClassMap()
         // so we need to invalidate the existing classmap by replacing all mappings beginning with 'Pimcore'
 
-        $prefix = PIMCORE_COMPOSER_PATH . "/composer/";
+        $prefix = PIMCORE_COMPOSER_PATH . '/composer/';
         $files = [
-            $prefix . "autoload_classmap.php",
-            $prefix . "autoload_static.php",
+            $prefix . 'autoload_classmap.php',
+            $prefix . 'autoload_static.php',
         ];
 
         foreach ($files as $file) {
@@ -483,7 +474,7 @@ class Update
         }
 
         return [
-            "success" => true
+            'success' => true
         ];
     }
 
@@ -492,34 +483,31 @@ class Update
      */
     public static function isComposerAvailable()
     {
-        return (bool) \Pimcore\Tool\Console::getExecutable("composer");
+        return (bool) \Pimcore\Tool\Console::getExecutable('composer');
     }
 
-    /**
-     *
-     */
     public static function updateMaxmindDb()
     {
-        $downloadUrl = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz";
-        $geoDbFile = PIMCORE_CONFIGURATION_DIRECTORY . "/GeoLite2-City.mmdb";
-        $geoDbFileGz = $geoDbFile . ".gz";
+        $downloadUrl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz';
+        $geoDbFile = PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb';
+        $geoDbFileGz = $geoDbFile . '.gz';
 
-        $firstTuesdayOfMonth = strtotime(date("F") . " 2013 tuesday");
+        $firstTuesdayOfMonth = strtotime(date('F') . ' 2013 tuesday');
         $filemtime = 0;
         if (file_exists($geoDbFile)) {
             $filemtime = filemtime($geoDbFile);
         }
 
         // update if file is older than 30 days, or if it is the first tuesday of the month
-        if ($filemtime < (time()-30*86400) || (date("m/d/Y") == date("m/d/Y", $firstTuesdayOfMonth) && $filemtime < time()-86400)) {
+        if ($filemtime < (time() - 30 * 86400) || (date('m/d/Y') == date('m/d/Y', $firstTuesdayOfMonth) && $filemtime < time() - 86400)) {
             $data = Tool::getHttpData($downloadUrl);
             if (strlen($data) > 1000000) {
                 File::put($geoDbFileGz, $data);
 
                 @unlink($geoDbFile);
 
-                $sfp = gzopen($geoDbFileGz, "rb");
-                $fp = fopen($geoDbFile, "w");
+                $sfp = gzopen($geoDbFileGz, 'rb');
+                $fp = fopen($geoDbFile, 'w');
 
                 while ($string = gzread($sfp, 4096)) {
                     fwrite($fp, $string, strlen($string));
@@ -529,12 +517,12 @@ class Update
 
                 unlink($geoDbFileGz);
 
-                Logger::info("Updated MaxMind GeoIP2 Database in: " . $geoDbFile);
+                Logger::info('Updated MaxMind GeoIP2 Database in: ' . $geoDbFile);
             } else {
-                Logger::err("Failed to update MaxMind GeoIP2, size is under about 1M");
+                Logger::err('Failed to update MaxMind GeoIP2, size is under about 1M');
             }
         } else {
-            Logger::debug("MayMind GeoIP2 Download skipped, everything up to date, last update: " . date("m/d/Y H:i", $filemtime));
+            Logger::debug('MayMind GeoIP2 Download skipped, everything up to date, last update: ' . date('m/d/Y H:i', $filemtime));
         }
     }
 }

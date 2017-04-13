@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Dependency
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,11 +22,10 @@ namespace Pimcore\Model;
  */
 class Dependency extends AbstractModel
 {
-
     /**
      * The ID of the object to get dependencies for
      *
-     * @var integer
+     * @var int
      */
     public $sourceId;
 
@@ -39,23 +39,23 @@ class Dependency extends AbstractModel
     /**
      * Contains the ID/type of objects which are required for the given source object (sourceId/sourceType)
      *
-     * @var integer
+     * @var int
      */
     public $requires = [];
 
     /**
      * Contains the ID/type of objects that need the given source object (sourceId/sourceType)
      *
-     * @var integer
+     * @var int
      */
     public $requiredBy = [];
-
 
     /**
      * Static helper to get the dependencies for the given sourceId & type
      *
-     * @param integer $id
+     * @param int $id
      * @param string $type
+     *
      * @return Dependency
      */
     public static function getBySourceId($id, $type)
@@ -71,14 +71,14 @@ class Dependency extends AbstractModel
     /**
      * Add a requirement to the source object
      *
-     * @param integer $id
+     * @param int $id
      * @param string $type
      */
     public function addRequirement($id, $type)
     {
         $this->requires[] = [
-            "type" => $type,
-            "id" => $id
+            'type' => $type,
+            'id' => $id
         ];
     }
 
@@ -100,7 +100,7 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getSourceId()
     {
@@ -124,7 +124,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * @param integer $sourceId
+     * @param int $sourceId
+     *
      * @return $this
      */
     public function setSourceId($sourceId)
@@ -136,6 +137,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param array $requires
+     *
      * @return $this
      */
     public function setRequires($requires)
@@ -147,6 +149,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param array $requiredBy
+     *
      * @return $this
      */
     public function setRequiredBy($requiredBy)
@@ -166,6 +169,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param string $sourceType
+     *
      * @return $this
      */
     public function setSourceType($sourceType)
@@ -178,7 +182,7 @@ class Dependency extends AbstractModel
     /**
      * Check if the source object is required by an other object (an other object depends on this object)
      *
-     * @return boolean
+     * @return bool
      */
     public function isRequired()
     {

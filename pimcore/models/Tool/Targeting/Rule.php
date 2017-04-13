@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,7 +25,6 @@ use Pimcore\Model\Tool;
  */
 class Rule extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -38,12 +38,12 @@ class Rule extends Model\AbstractModel
     /**
      * @var string
      */
-    public $description = "";
+    public $description = '';
 
     /**
      * @var string
      */
-    public $scope = "hit";
+    public $scope = 'hit';
 
     /**
      * @var bool
@@ -62,6 +62,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $target
+     *
      * @return bool
      */
     public static function inTarget($target)
@@ -79,7 +80,7 @@ class Rule extends Model\AbstractModel
             $targetId = (int) $target;
         }
 
-        if (array_key_exists("_ptc", $_GET) && intval($targetId) == intval($_GET["_ptc"])) {
+        if (array_key_exists('_ptc', $_GET) && intval($targetId) == intval($_GET['_ptc'])) {
             return true;
         }
 
@@ -96,14 +97,15 @@ class Rule extends Model\AbstractModel
             $value = true;
         }
 
-        $targetingService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.targeting");
+        $targetingService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.targeting');
         $targetingService->addEvent($key, $value);
     }
 
     /**
      * Static helper to retrieve an instance of Tool\Targeting\Rule by the given ID
      *
-     * @param integer $id
+     * @param int $id
+     *
      * @return Tool\Targeting\Rule
      */
     public static function getById($id)
@@ -121,6 +123,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return null|Rule
      */
     public static function getByName($name)
@@ -138,6 +141,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $description
+     *
      * @return $this
      */
     public function setDescription($description)
@@ -157,6 +161,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -176,6 +181,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -195,6 +201,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $actions
+     *
      * @return $this
      */
     public function setActions($actions)
@@ -222,6 +229,7 @@ class Rule extends Model\AbstractModel
 
     /**
      * @param $conditions
+     *
      * @return $this
      */
     public function setConditions($conditions)
@@ -261,7 +269,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $active
+     * @param bool $active
      */
     public function setActive($active)
     {
@@ -269,7 +277,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getActive()
     {

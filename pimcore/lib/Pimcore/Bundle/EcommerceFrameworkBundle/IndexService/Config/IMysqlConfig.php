@@ -21,7 +21,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
  */
 interface IMysqlConfig extends IConfig
 {
-
     /**
      * returns table name of product index
      *
@@ -57,11 +56,11 @@ interface IMysqlConfig extends IConfig
      */
     public function getCondition();
 
-
     /**
      * returns column type for id
      *
      * @param $isPrimary
+     *
      * @return string
      */
     public function getIdColumnType($isPrimary);

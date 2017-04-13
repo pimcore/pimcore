@@ -23,6 +23,7 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
 {
     /**
      * @param Request $request
+     *
      * @return null|Document|Document\PageSnippet
      */
     public function getDocument(Request $request = null)
@@ -41,8 +42,8 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
     public function setDocument(Request $request, Document $document)
     {
         $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);
-        if ($document->getProperty("language")) {
-            $request->setLocale($document->getProperty("language"));
+        if ($document->getProperty('language')) {
+            $request->setLocale($document->getProperty('language'));
         }
     }
 

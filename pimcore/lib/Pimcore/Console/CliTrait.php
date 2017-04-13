@@ -21,6 +21,6 @@ trait CliTrait
      */
     public static function isCli()
     {
-        return (php_sapi_name() === 'cli');
+        return php_sapi_name() === 'cli';
     }
 }

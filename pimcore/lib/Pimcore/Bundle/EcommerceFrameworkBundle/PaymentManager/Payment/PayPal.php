@@ -48,7 +48,6 @@ class PayPal implements IPayment
      */
     protected $authorizedData;
 
-
     /**
      * @param Config $config
      */
@@ -57,9 +56,9 @@ class PayPal implements IPayment
         // init
         $credentials = $config->config->{$config->mode};
         if ($config->mode == 'live') {
-            $this->endpointUrlPart = "paypal";
+            $this->endpointUrlPart = 'paypal';
         } else {
-            $this->endpointUrlPart = "sandbox.paypal";
+            $this->endpointUrlPart = 'sandbox.paypal';
         }
 
         // create paypal interface
@@ -79,7 +78,6 @@ class PayPal implements IPayment
         $this->client->__setSoapHeaders($header);
     }
 
-
     /**
      * @return string
      */
@@ -88,30 +86,28 @@ class PayPal implements IPayment
         return 'PayPal';
     }
 
-
     /**
      * start payment
+     *
      * @param IPrice $price
      * @param array                       $config
      *
      * @return string
+     *
      * @throws \Exception
+     *
      * @link https://devtools-paypal.com/apiexplorer/PayPalAPIs
      */
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [  'ReturnURL' => null
-                       , 'CancelURL' => null
-                       , 'OrderDescription' => null
-                       , 'InvoiceID' => null
+        $required = [  'ReturnURL' => null, 'CancelURL' => null, 'OrderDescription' => null, 'InvoiceID' => null
         ];
         $config = array_intersect_key($config, $required);
 
         if (count($required) != count($config)) {
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
-
 
         // create request
         $x = new \stdClass;
@@ -120,22 +116,19 @@ class PayPal implements IPayment
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails = new \stdClass();
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->ReturnURL = $config['ReturnURL'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->CancelURL = $config['CancelURL'];
-        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->NoShipping = "1";
-        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->AllowNote = "0";
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->NoShipping = '1';
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->AllowNote = '0';
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->PaymentDetails = $this->createPaymentDetails($price);
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->OrderDescription = $config['OrderDescription'];
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->InvoiceID = $config['InvoiceID'];
-
 
         // add optional config
         foreach ($config as $name => $value) {
             $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->{$name} = $value;
         }
 
-
         // execute request
         $ret = $this->client->SetExpressCheckout($x);
-
 
         // check Ack
         if ($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning') {
@@ -153,28 +146,23 @@ class PayPal implements IPayment
         }
     }
 
-
     /**
      * execute payment
+     *
      * @param mixed $response
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus
+     *
      * @throws \Exception
      */
     public function handleResponse($response)
     {
         // check required fields
-        $required = [   'token' => null
-                      , 'PayerID' => null
-                      , 'InvoiceID' => null
-                      , 'amount' => null
-                      , 'currency' => null
+        $required = [   'token' => null, 'PayerID' => null, 'InvoiceID' => null, 'amount' => null, 'currency' => null
         ];
         $authorizedData = [
-              'token' => null
-            , 'PayerID' => null
+              'token' => null, 'PayerID' => null
         ];
-
 
         // check fields
         $response = array_intersect_key($response, $required);
@@ -182,15 +170,12 @@ class PayPal implements IPayment
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $response)))));
         }
 
-
         // handle
         $authorizedData = array_intersect_key($response, $authorizedData);
         $this->setAuthorizedData($authorizedData);
 
-
         // restore price object for payment status
         $price = new Price($response['amount'], new Currency($response['currency']));
-
 
         // execute
         //TODO do not call this in handle response, but call it in the controller!
@@ -198,7 +183,6 @@ class PayPal implements IPayment
         // see https://github.com/pimcore-partner/ecommerce-framework/issues/118
         return $this->executeDebit($price, $response['InvoiceID']);
     }
-
 
     /**
      * return the authorized data from payment provider
@@ -210,7 +194,6 @@ class PayPal implements IPayment
         return $this->authorizedData;
     }
 
-
     /**
      * set authorized data from payment provider
      *
@@ -220,7 +203,6 @@ class PayPal implements IPayment
     {
         $this->authorizedData = $authorizedData;
     }
-
 
     /**
      * execute payment
@@ -241,10 +223,8 @@ class PayPal implements IPayment
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PayerID = $this->authorizedData['PayerID'];
         $x->DoExpressCheckoutPaymentRequest->DoExpressCheckoutPaymentRequestDetails->PaymentDetails = $this->createPaymentDetails($price);
 
-
         // execute
         $ret = $this->client->DoExpressCheckoutPayment($x);
-
 
         // check Ack
         if ($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning') {
@@ -254,9 +234,7 @@ class PayPal implements IPayment
 
             return new Status(
                 $reference, $paymentInfo->TransactionID, null, AbstractOrder::ORDER_STATE_COMMITTED, [
-                    'paypal_TransactionType' => $paymentInfo->TransactionType
-                    , 'paypal_PaymentType' => $paymentInfo->PaymentType
-                    , 'paypal_amount' => (string)$price
+                    'paypal_TransactionType' => $paymentInfo->TransactionType, 'paypal_PaymentType' => $paymentInfo->PaymentType, 'paypal_amount' => (string)$price
                 ]
             );
         } else {
@@ -269,7 +247,6 @@ class PayPal implements IPayment
             foreach ($errors as $error) {
                 $message .= $error->LongMessage . "\n";
             }
-
 
             return new Status(
                 $reference, $ret->CorrelationID, $message, AbstractOrder::ORDER_STATE_ABORTED
@@ -291,7 +268,6 @@ class PayPal implements IPayment
         // TODO: Implement executeCredit() method.
     }
 
-
     /**
      * @param IPrice $price
      *
@@ -304,7 +280,6 @@ class PayPal implements IPayment
         $paymentDetails->OrderTotal = new \stdClass();
         $paymentDetails->OrderTotal->_ = $price->getAmount();
         $paymentDetails->OrderTotal->currencyID = $price->getCurrency()->getShortName();
-
 
 //        // add article
 //        $itemTotal = 0;
@@ -356,7 +331,6 @@ class PayPal implements IPayment
 //        $paymentDetails->ItemTotal = new stdClass();
 //        $paymentDetails->ItemTotal->_ = $itemTotal;
 //        $paymentDetails->ItemTotal->currencyID = $currency;
-
 
         return $paymentDetails;
     }

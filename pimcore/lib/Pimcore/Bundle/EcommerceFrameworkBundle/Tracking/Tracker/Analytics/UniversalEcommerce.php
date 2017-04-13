@@ -52,6 +52,7 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
     /**
      * @param Transaction $transaction
      * @param ProductAction[] $items
+     *
      * @return mixed
      */
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
@@ -74,6 +75,7 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
      * Transform transaction into universal data object
      *
      * @param Transaction $transaction
+     *
      * @return array
      */
     protected function transformTransaction(Transaction $transaction)
@@ -91,6 +93,7 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
      * Transform product action into universal data object
      *
      * @param ProductAction $item
+     *
      * @return array
      */
     protected function transformProductAction(ProductAction $item)

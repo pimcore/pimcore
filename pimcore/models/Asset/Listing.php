@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Asset
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -44,21 +45,22 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @var array
      */
     public $validOrderKeys = [
-        "creationDate",
-        "modificationDate",
-        "id",
-        "filename",
-        "type",
-        "parentId",
-        "path",
-        "mimetype"
+        'creationDate',
+        'modificationDate',
+        'id',
+        'filename',
+        'type',
+        'parentId',
+        'path',
+        'mimetype'
     ];
 
     /**
      * Test if the passed key is valid
      *
      * @param string $key
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -79,6 +81,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param string $assets
+     *
      * @return $this
      */
     public function setAssets($assets)
@@ -104,6 +107,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param int $offset
      * @param int $itemCountPerPage
+     *
      * @return Model\Asset[]
      */
     public function getItems($offset, $itemCountPerPage)
@@ -125,7 +129,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * Methods for Iterator
      */
-
     public function rewind()
     {
         $this->getAssets();

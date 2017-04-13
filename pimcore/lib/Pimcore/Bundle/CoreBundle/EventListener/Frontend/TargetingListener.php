@@ -48,6 +48,7 @@ class TargetingListener extends AbstractFrontendListener
 
     /**
      * Targeting constructor.
+     *
      * @param DocumentResolver $documentResolver
      */
     public function __construct(DocumentResolver $documentResolver)
@@ -61,7 +62,7 @@ class TargetingListener extends AbstractFrontendListener
      */
     public function addEvent($key, $value)
     {
-        $this->events[] = ["key" => $key, "value" => $value];
+        $this->events[] = ['key' => $key, 'value' => $value];
     }
 
     /**
@@ -119,41 +120,41 @@ class TargetingListener extends AbstractFrontendListener
 
         if ($this->isEnabled() && Tool::useFrontendOutputFilters() && $this->isHtmlResponse($response)) {
             $db = \Pimcore\Db::get();
-            $personasAvailable = $db->fetchOne("SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1");
+            $personasAvailable = $db->fetchOne('SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1');
             if ($personasAvailable) {
                 $targets = [];
                 $personas = [];
                 $dataPush = [
-                    "personas" => $this->personas,
-                    "method" => strtolower($request->getMethod())
+                    'personas' => $this->personas,
+                    'method' => strtolower($request->getMethod())
                 ];
 
                 $document = $this->documentResolver->getDocument();
 
                 if (count($this->events) > 0) {
-                    $dataPush["events"] = $this->events;
+                    $dataPush['events'] = $this->events;
                 }
 
                 if ($document instanceof Document\Page && !Model\Staticroute::getCurrentRoute()) {
-                    $dataPush["document"] = $document->getId();
+                    $dataPush['document'] = $document->getId();
                     if ($document->getPersonas()) {
-                        if ($_GET["_ptp"]) { // if a special version is requested only return this id as target group for this page
-                            $dataPush["personas"][] = (int) $_GET["_ptp"];
+                        if ($_GET['_ptp']) { // if a special version is requested only return this id as target group for this page
+                            $dataPush['personas'][] = (int) $_GET['_ptp'];
                         } else {
-                            $docPersonas = explode(",", trim($document->getPersonas(), " ,"));
+                            $docPersonas = explode(',', trim($document->getPersonas(), ' ,'));
 
                             //  cast the values to int
                             array_walk($docPersonas, function (&$value) {
                                 $value = (int) trim($value);
                             });
-                            $dataPush["personas"] = array_merge($dataPush["personas"], $docPersonas);
+                            $dataPush['personas'] = array_merge($dataPush['personas'], $docPersonas);
                         }
                     }
 
                     // check for persona specific variants of this page
                     $personaVariants = [];
                     foreach ($document->getElements() as $key => $tag) {
-                        if (preg_match("/^persona_-([0-9]+)-_/", $key, $matches)) {
+                        if (preg_match('/^persona_-([0-9]+)-_/', $key, $matches)) {
                             $id = (int) $matches[1];
                             if (Model\Tool\Targeting\Persona::isIdActive($id)) {
                                 $personaVariants[] = $id;
@@ -163,25 +164,24 @@ class TargetingListener extends AbstractFrontendListener
 
                     if (!empty($personaVariants)) {
                         $personaVariants = array_values(array_unique($personaVariants));
-                        $dataPush["personaPageVariants"] = $personaVariants;
+                        $dataPush['personaPageVariants'] = $personaVariants;
                     }
                 }
 
                 // no duplicates
-                $dataPush["personas"] = array_unique($dataPush["personas"]);
+                $dataPush['personas'] = array_unique($dataPush['personas']);
                 $activePersonas = [];
-                foreach ($dataPush["personas"] as $id) {
+                foreach ($dataPush['personas'] as $id) {
                     if (Model\Tool\Targeting\Persona::isIdActive($id)) {
                         $activePersonas[] = $id;
                     }
                 }
-                $dataPush["personas"] = $activePersonas;
-
+                $dataPush['personas'] = $activePersonas;
 
                 if ($document) {
                     // @TODO: cache this
                     $list = new Model\Tool\Targeting\Rule\Listing();
-                    $list->setCondition("active = 1");
+                    $list->setCondition('active = 1');
 
                     foreach ($list->load() as $target) {
                         $redirectUrl = $target->getActions()->getRedirectUrl();
@@ -196,7 +196,7 @@ class TargetingListener extends AbstractFrontendListener
                     }
 
                     $list = new Model\Tool\Targeting\Persona\Listing();
-                    $list->setCondition("active = 1");
+                    $list->setCondition('active = 1');
                     foreach ($list->load() as $persona) {
                         $personas[] = $persona;
                     }
@@ -221,7 +221,7 @@ class TargetingListener extends AbstractFrontendListener
 
                 // search for the end <head> tag, and insert the google analytics code before
                 // this method is much faster than using simple_html_dom and uses less memory
-                $headEndPosition = stripos($content, "<head>");
+                $headEndPosition = stripos($content, '<head>');
                 if ($headEndPosition !== false) {
                     $content = substr_replace($content, "<head>\n".$code, $headEndPosition, 7);
                 }
@@ -233,22 +233,24 @@ class TargetingListener extends AbstractFrontendListener
 
     /**
      * Checks if the passed List of Personas and List of Targets use geopoints as condition
+     *
      * @param $personas
      * @param $targets
+     *
      * @return bool
      */
     private function checkPersonasAndTargetGroupForGeoIPRequirement($personas, $targets)
     {
         foreach ($personas as $persona) {
             foreach ($persona->getConditions() as $condition) {
-                if ($condition['type'] == "geopoint" || $condition['type'] == "country") {
+                if ($condition['type'] == 'geopoint' || $condition['type'] == 'country') {
                     return true;
                 }
             }
         }
         foreach ($targets as $target) {
             foreach ($target->getConditions() as $condition) {
-                if ($condition['type'] == "geopoint" || $condition['type'] == "country") {
+                if ($condition['type'] == 'geopoint' || $condition['type'] == 'country') {
                     return true;
                 }
             }

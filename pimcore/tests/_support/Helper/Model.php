@@ -72,6 +72,7 @@ class Model extends Module
      *
      * @param string $name
      * @param string $file
+     *
      * @return ClassDefinition
      */
     public function setupUnittestClass($name = 'unittest', $file = 'class-import.json')

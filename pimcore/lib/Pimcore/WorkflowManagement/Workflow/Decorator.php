@@ -18,7 +18,6 @@ use Pimcore\WorkflowManagement\Workflow;
 
 class Decorator
 {
-
     /**
      * @var Workflow $workflow
      */
@@ -34,6 +33,7 @@ class Decorator
 
     /**
      * @param $key
+     *
      * @return string
      */
     private function translateLabel($key)
@@ -47,6 +47,7 @@ class Decorator
 
     /**
      * @param $actionConfigs
+     *
      * @return array
      */
     public function getAvailableActionsForForm($actionConfigs)
@@ -64,6 +65,7 @@ class Decorator
 
     /**
      * @param $stateConfigs
+     *
      * @return array
      */
     public function getAvailableStatesForForm($stateConfigs)
@@ -82,6 +84,7 @@ class Decorator
 
     /**
      * @param $statusConfigs
+     *
      * @return array
      */
     public function getAvailableStatusesForForm($statusConfigs)
@@ -99,7 +102,9 @@ class Decorator
 
     /**
      * @param $statusName
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getStatusLabel($statusName)
@@ -115,7 +120,9 @@ class Decorator
 
     /**
      * @param $actionName
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getActionLabel($actionName)
@@ -131,8 +138,10 @@ class Decorator
 
     /**
      * Returns the note type title
+     *
      * @param $actionName
      * @param $formData
+     *
      * @return string
      */
     public function getNoteType($actionName, $formData)
@@ -152,6 +161,7 @@ class Decorator
     /**
      * @param $actionName
      * @param $formData
+     *
      * @return string
      */
     public function getNoteTitle($actionName, $formData)

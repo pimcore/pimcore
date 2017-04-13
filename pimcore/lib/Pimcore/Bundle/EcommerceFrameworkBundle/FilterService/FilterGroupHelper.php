@@ -33,13 +33,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
  */
 class FilterGroupHelper
 {
-
     /**
      * its possible to combine more different column groups to one column type (which has one logic for retrieving data)
      *
      * might be overwritten, if new column groups are necessary
      *
      * @param $columnGroup
+     *
      * @return string
      */
     protected static function getColumnTypeForColumnGroup($columnGroup)
@@ -53,6 +53,7 @@ class FilterGroupHelper
      * @param $columnGroup
      * @param IProductList $productList
      * @param string $field
+     *
      * @return array
      */
     public static function getGroupByValuesForFilterGroup($columnGroup, IProductList $productList, $field)
@@ -61,7 +62,7 @@ class FilterGroupHelper
 
         $data = [];
 
-        if ($columnType == "relation") {
+        if ($columnType == 'relation') {
             $productList->prepareGroupByRelationValues($field);
             $values = $productList->getGroupByRelationValues($field);
 
@@ -69,13 +70,13 @@ class FilterGroupHelper
                 $obj = \Pimcore\Model\Object\AbstractObject::getById($v);
                 if ($obj) {
                     $name = $obj->getKey();
-                    if (method_exists($obj, "getName")) {
+                    if (method_exists($obj, 'getName')) {
                         $name = $obj->getName();
                     }
-                    $data[$v] = ["key" => $v, "value" => $name . " (" . $obj->getId() . ")"];
+                    $data[$v] = ['key' => $v, 'value' => $name . ' (' . $obj->getId() . ')'];
                 }
             }
-        } elseif ($columnType == "multiselect") {
+        } elseif ($columnType == 'multiselect') {
             $values = $productList->getGroupByValues($field);
 
             sort($values);
@@ -83,22 +84,22 @@ class FilterGroupHelper
             foreach ($values as $v) {
                 $helper = explode(IWorker::MULTISELECT_DELIMITER, $v);
                 foreach ($helper as $h) {
-                    $data[$h] = ["key" => $h, "value" => $h];
+                    $data[$h] = ['key' => $h, 'value' => $h];
                 }
             }
-        } elseif ($columnType == "category") {
+        } elseif ($columnType == 'category') {
             $values = $productList->getGroupByValues($field);
 
             foreach ($values as $v) {
-                $helper = explode(",", $v);
+                $helper = explode(',', $v);
                 foreach ($helper as $h) {
                     $obj = \Pimcore\Model\Object\AbstractObject::getById($h);
                     if ($obj) {
                         $name = $obj->getKey();
-                        if (method_exists($obj, "getName")) {
+                        if (method_exists($obj, 'getName')) {
                             $name = $obj->getName();
                         }
-                        $data[$h] = ["key" => $h, "value" => $name . " (" . $obj->getId() . ")"];
+                        $data[$h] = ['key' => $h, 'value' => $name . ' (' . $obj->getId() . ')'];
                     }
                 }
             }
@@ -109,7 +110,7 @@ class FilterGroupHelper
             sort($values);
 
             foreach ($values as $v) {
-                $data[] = ["key" => $v, "value" => $v];
+                $data[] = ['key' => $v, 'value' => $v];
             }
         }
 

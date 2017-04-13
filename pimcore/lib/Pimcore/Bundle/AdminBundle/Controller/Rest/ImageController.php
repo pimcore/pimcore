@@ -32,6 +32,7 @@ class ImageController extends AbstractRestController
      * @param string|null $id
      *
      * @return JsonResponse
+     *
      * @throws ResponseException
      */
     public function imageThumbnailAction(Request $request, $id = null)

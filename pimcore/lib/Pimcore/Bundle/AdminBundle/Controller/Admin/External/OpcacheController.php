@@ -24,10 +24,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class OpcacheController extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @Route("/external_opcache")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function indexAction(Request $request)
@@ -35,7 +36,7 @@ class OpcacheController extends AdminController implements EventedControllerInte
         $path = PIMCORE_PROJECT_ROOT . '/vendor/amnuts/opcache-gui';
 
         ob_start();
-        include($path . "/index.php");
+        include($path . '/index.php');
         $content = ob_get_clean();
 
         return new Response($content);
@@ -52,7 +53,7 @@ class OpcacheController extends AdminController implements EventedControllerInte
         }
 
         // only for admins
-        $this->checkPermission("opcache");
+        $this->checkPermission('opcache');
     }
 
     /**

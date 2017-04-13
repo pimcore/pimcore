@@ -31,13 +31,13 @@ class MultiSelect extends AbstractFilterType
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition()),
-            "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData(),
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition()),
+            'fieldname' => $field,
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -56,7 +56,7 @@ class MultiSelect extends AbstractFilterType
 
         if (empty($value) && !$params['is_reload']) {
             if (!empty($preSelect) || $preSelect == '0') {
-                $value = explode(",", $preSelect);
+                $value = explode(',', $preSelect);
             }
         } elseif (!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
@@ -75,16 +75,16 @@ class MultiSelect extends AbstractFilterType
                 if ($filterDefinition->getUseAndCondition()) {
                     foreach ($quotedValues as $value) {
                         if ($isPrecondition) {
-                            $productList->addCondition($field . " = " . $value, "PRECONDITION_" . $field);
+                            $productList->addCondition($field . ' = ' . $value, 'PRECONDITION_' . $field);
                         } else {
-                            $productList->addCondition($field . " = " . $value, $field);
+                            $productList->addCondition($field . ' = ' . $value, $field);
                         }
                     }
                 } else {
                     if ($isPrecondition) {
-                        $productList->addCondition($field . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $field);
+                        $productList->addCondition($field . ' IN (' . implode(',', $quotedValues) . ')', 'PRECONDITION_' . $field);
                     } else {
-                        $productList->addCondition($field . " IN (" . implode(",", $quotedValues) . ")", $field);
+                        $productList->addCondition($field . ' IN (' . implode(',', $quotedValues) . ')', $field);
                     }
                 }
             }

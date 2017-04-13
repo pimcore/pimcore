@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,12 +24,13 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME_COLLECTIONS = "classificationstore_collections";
+    const TABLE_NAME_COLLECTIONS = 'classificationstore_collections';
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param integer $id
+     * @param int $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -37,17 +39,18 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_COLLECTIONS . " WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_COLLECTIONS . ' WHERE id = ?', $this->model->getId());
 
         if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("CollectionConfig with id: " . $this->model->getId() . " does not exist");
+            throw new \Exception('CollectionConfig with id: ' . $this->model->getId() . ' does not exist');
         }
     }
 
     /**
      * @param null $name
+     *
      * @throws \Exception
      */
     public function getByName($name = null)
@@ -59,19 +62,19 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_COLLECTIONS . " WHERE name = ? and storeId = ?", [$name, $storeId]);
+        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_COLLECTIONS . ' WHERE name = ? and storeId = ?', [$name, $storeId]);
 
-        if ($data["id"]) {
+        if ($data['id']) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("Config with name: " . $this->model->getName() . " does not exist");
+            throw new \Exception('Config with name: ' . $this->model->getName() . ' does not exist');
         }
     }
 
     /**
      * Save object to database
      *
-     * @return boolean
+     * @return bool
      *
      * @todo: update() and create() don't return anything
      */
@@ -89,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete(self::TABLE_NAME_COLLECTIONS, ["id" => $this->model->getId()]);
+        $this->db->delete(self::TABLE_NAME_COLLECTIONS, ['id' => $this->model->getId()]);
     }
 
     /**
@@ -117,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, ["id" => $this->model->getId()]);
+            $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, ['id' => $this->model->getId()]);
 
             return $this->model;
         } catch (\Exception $e) {
@@ -128,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return boolean
+     * @return bool
      */
     public function create()
     {

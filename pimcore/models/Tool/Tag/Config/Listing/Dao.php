@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Property
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,14 +25,10 @@ use Pimcore\Model\Tool\Tag\Config;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("tag-manager");
+        $this->setFile('tag-manager');
     }
 
     /**
@@ -43,7 +40,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($propertiesData as $propertyData) {
-            $properties[] = Config::getByName($propertyData["id"]);
+            $properties[] = Config::getByName($propertyData['id']);
         }
 
         $this->model->setTags($properties);

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,7 +25,6 @@ use Pimcore\Model\Object;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
     /**
      * Loads a list of Classificationstore key configs for the specified parameters, returns an array of config elements
      *
@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $sql = "SELECT id FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $sql = 'SELECT id FROM ' . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $configsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
         $configData = [];
@@ -50,7 +50,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAll('SELECT * FROM ' . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
@@ -61,7 +61,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . " ". $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ' '. $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 
@@ -73,17 +73,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     protected function getCondition()
     {
-        $condition = $this->model->getIncludeDisabled() ? "enabled is null or enabled is 0" : "enabled = 1";
+        $condition = $this->model->getIncludeDisabled() ? 'enabled is null or enabled is 0' : 'enabled = 1';
 
         $cond = $this->model->getCondition();
         if ($cond) {
-            $condition = $condition . " AND (" . $cond . ")";
+            $condition = $condition . ' AND (' . $cond . ')';
         }
 
         if ($condition) {
-            return " WHERE " . $condition . " ";
+            return ' WHERE ' . $condition . ' ';
         }
 
-        return "";
+        return '';
     }
 }

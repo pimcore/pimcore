@@ -10,29 +10,26 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\User\Permission\Definition;
 
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @property \Pimcore\Model\User\Permission\Definition $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
-    /**
-     *
-     */
     public function save()
     {
         try {
-            $this->db->insert("users_permission_definitions", [
-                "key" => $this->model->getKey()
+            $this->db->insert('users_permission_definitions', [
+                'key' => $this->model->getKey()
             ]);
         } catch (\Exception $e) {
             Logger::warn($e);

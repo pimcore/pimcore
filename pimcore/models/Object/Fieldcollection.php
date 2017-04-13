@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object\Fieldcollection
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator
 {
-
     /**
      * @var array
      */
@@ -58,6 +58,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $items
+     *
      * @return $this
      */
     public function setItems($items)
@@ -77,6 +78,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $fieldname
+     *
      * @return $this
      */
     public function setFieldname($fieldname)
@@ -101,6 +103,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @throws \Exception
+     *
      * @param $object
      */
     public function save($object)
@@ -121,7 +124,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
                         $collection->setObject($object);
                         $collection->save($object);
                     } else {
-                        throw new \Exception("Fieldcollection of type " . $collection->getType() . " is not allowed in field: " . $this->getFieldname());
+                        throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
                     }
                 }
             }
@@ -160,6 +163,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $index
+     *
      * @return
      *
      * @todo: no return type definied here
@@ -179,11 +183,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
         return count($this->getItems());
     }
 
-
     /**
      * Methods for Iterator
      */
-
 
     /*
      *

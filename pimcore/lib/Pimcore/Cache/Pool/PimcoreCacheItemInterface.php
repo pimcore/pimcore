@@ -22,6 +22,7 @@ interface PimcoreCacheItemInterface extends TaggableCacheItemInterface
      * Merge tags into currently set tags
      *
      * @param array $tags
+     *
      * @return TaggableCacheItemInterface
      */
     public function mergeTags(array $tags);

@@ -16,19 +16,18 @@ namespace Pimcore\WorkflowManagement\Workflow;
 
 use Pimcore\Event\Model\WorkflowEvent;
 use Pimcore\Event\WorkflowEvents;
+use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
 use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
-use Pimcore\Logger;
 
 class Manager
 {
-
     /**
      * The element for this workflow
      *
@@ -39,6 +38,7 @@ class Manager
     /**
      * The user using the workflow
      * All actions will be recorded against this user
+     *
      * @var \Pimcore\Model\User
      */
     protected $user = null;
@@ -50,22 +50,23 @@ class Manager
 
     /**
      * Any errors within the workflow will be stored here
+     *
      * @var mixed
      */
     protected $error = null;
 
-
     /**
      * The loaded workflow
+     *
      * @var Workflow
      */
     protected $workflow;
-
 
     /**
      * An array of the different pimcore user ids that the current user is related to
      * - first in array is the users id,
      * - any additional are the role ids that have been assigned to the user
+     *
      * @var array $userIds
      */
     protected $userIds = [];
@@ -74,6 +75,7 @@ class Manager
      *
      * @param      $element
      * @param null $user - optional parameter so that importers can use some functions of manager too.
+     *
      * @throws \Exception
      */
     public function __construct($element, $user=null)
@@ -88,9 +90,9 @@ class Manager
         }
     }
 
-
     /**
      * Loads the workflow into the manager
+     *
      * @throws \Exception
      */
     private function initWorkflow()
@@ -143,7 +145,9 @@ class Manager
 
     /**
      * Return the element state
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function getElementState()
@@ -183,6 +187,7 @@ class Manager
 
     /**
      * @param $newState
+     *
      * @throws \Exception
      */
     public function setElementState($newState)
@@ -198,6 +203,7 @@ class Manager
 
     /**
      * @param $newStatus
+     *
      * @throws \Exception
      */
     public function setElementStatus($newStatus)
@@ -210,7 +216,6 @@ class Manager
             throw new \Exception('Cannot set element status.');
         }
     }
-
 
     /**
      * @return Workflow
@@ -240,6 +245,7 @@ class Manager
      * Get the available actions that can be performed on an element
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getAvailableActions()
@@ -265,7 +271,7 @@ class Manager
             'actions' => $allowedActions
         ]);
         \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::PRE_RETURN_AVAILABLE_ACTIONS, $event);
-        $allowedActions = $event->getArgument("actions");
+        $allowedActions = $event->getArgument('actions');
 
         return $allowedActions;
     }
@@ -273,8 +279,11 @@ class Manager
     /**
      * Returns the available state configurations given an action
      * NOTE: ASSUMES THE ACTION EXISTS
+     *
      * @see self::isValidAction
+     *
      * @param $actionName
+     *
      * @return array
      */
     public function getAvailableStates($actionName)
@@ -304,7 +313,9 @@ class Manager
      *
      * @param $actionName
      * @param $stateName
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public function getAvailableStatuses($actionName, $stateName)
@@ -335,12 +346,14 @@ class Manager
         return $availableStatuses;
     }
 
-
     /**
      * Returns whether or not notes are required for a given action on the current object
      * Assumes the action is valid at that point in time
+     *
      * @param string $actionName
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     public function getNotesRequiredForAction($actionName)
@@ -352,8 +365,11 @@ class Manager
 
     /**
      * Shortcut method - probably should clean this up a bit more
+     *
      * @param $actionName
+     *
      * @return array|mixed
+     *
      * @throws \Exception
      */
     public function getAdditionalFieldsForAction($actionName)
@@ -373,13 +389,15 @@ class Manager
         return $additionalFields;
     }
 
-
     /**
      * Returns whether or not a user can perform an action
      * if a status is given then it will be taken into consideration
+     *
      * @param      $actionName
      * @param null $statusName
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     public function userCanPerformAction($actionName, $statusName=null)
@@ -408,6 +426,7 @@ class Manager
 
     /**
      * @param $actionConfig
+     *
      * @return bool
      */
     public function actionHasTransition($actionConfig)
@@ -418,9 +437,11 @@ class Manager
     /**
      * Validates that a transition between requested states can be done on an element
      * NOTE: DOES NOT VALIDATE FIELDS @see performAction
+     *
      * @param $actionName
      * @param $newStatus
      * @param $newState
+     *
      * @return bool
      */
     public function validateAction($actionName, $newState, $newStatus)
@@ -478,6 +499,7 @@ class Manager
      *
      * @param mixed $actionName
      * @param array $formData
+     *
      * @throws \Exception
      */
     public function performAction($actionName, $formData=[])
@@ -508,14 +530,13 @@ class Manager
                 /**
                  * Additional Field example
                  * [
-                'name' => 'dateLastContacted',
-                'fieldType' => 'date',
-                'label' => 'Date of Conversation',
-                'required' => true,
-                'setterFn' => ''
-                ]
+                 'name' => 'dateLastContacted',
+                 'fieldType' => 'date',
+                 'label' => 'Date of Conversation',
+                 'required' => true,
+                 'setterFn' => ''
+                 ]
                  */
-
                 $fieldName = $additionalFieldConfig['name'];
 
                 //check required
@@ -570,9 +591,8 @@ class Manager
             }
         } else {
             //all other elements do not support published or unpublished
-            $task = "publish";
+            $task = 'publish';
         }
-
 
         try {
             \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::ACTION_BEFORE, new WorkflowEvent($this, [
@@ -583,12 +603,12 @@ class Manager
             //todo add some support to stop the action given the result from the event
 
             $this->element->setUserModification($this->user->getId());
-            if (($task === "publish" && $this->element->isAllowed("publish")) || ($task === "unpublish" && $this->element->isAllowed("unpublish"))) {
+            if (($task === 'publish' && $this->element->isAllowed('publish')) || ($task === 'unpublish' && $this->element->isAllowed('unpublish'))) {
                 $this->element->save();
             } elseif ($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
                 $this->element->saveVersion();
             } else {
-                throw new \Exception("Operation not allowed for this element");
+                throw new \Exception('Operation not allowed for this element');
             }
 
             //transition the element
@@ -638,6 +658,7 @@ class Manager
     /**
      * Returns the objects layout configuration given the current place in the workflow
      * If no layout is specified then null will be returned
+     *
      * @return string|null
      */
     public function getObjectLayout()
@@ -651,9 +672,9 @@ class Manager
         return null;
     }
 
-
     /**
      * Used by performAction to initialise events
+     *
      * @param $actionConfig
      */
     private function registerActionEvents($actionConfig)
@@ -673,6 +694,7 @@ class Manager
 
     /**
      * Unregisters events (before, success, failure)
+     *
      * @param $actionConfig
      */
     private function unregisterActionEvents($actionConfig)
@@ -690,11 +712,11 @@ class Manager
         }
     }
 
-
-
     /**
      * Returns whether or not an element has a workflow
+     *
      * @param AbstractElement|Asset|ConcreteObject|Document $element
+     *
      * @return bool
      */
     public static function elementHasWorkflow(AbstractElement $element)
@@ -709,7 +731,9 @@ class Manager
 
     /**
      * Returns whether or not an element can be actioned
+     *
      * @param $element
+     *
      * @return bool
      */
     public static function elementCanAction($element)

@@ -10,31 +10,32 @@
  *
  * @category   Pimcore
  * @package    Version
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Version;
 
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @property \Pimcore\Model\Version $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param $id
+     *
      * @throws \Exception
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT * FROM versions WHERE id = ?", $id);
+        $data = $this->db->fetchRow('SELECT * FROM versions WHERE id = ?', $id);
 
-        if (!$data["id"]) {
-            throw new \Exception("version with id " . $id . " not found");
+        if (!$data['id']) {
+            throw new \Exception('version with id ' . $id . ' not found');
         }
 
         $this->assignVariablesToModel($data);
@@ -52,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
         $version = get_object_vars($this->model);
 
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns("versions"))) {
+            if (in_array($key, $this->getValidTableColumns('versions'))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
@@ -61,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate("versions", $data);
+        $this->db->insertOrUpdate('versions', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
@@ -76,12 +77,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("versions", ["id" => $this->model->getId()]);
+        $this->db->delete('versions', ['id' => $this->model->getId()]);
     }
 
     /**
      * @deprecated
-     * @param integer $days
+     *
+     * @param int $days
+     *
      * @return array
      */
     public function getOutdatedVersionsDays($days)
@@ -89,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
         $deadline = time() - (intval($days) * 86400);
 
         $this->disableSlowQueryLog();
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", [$this->model->getCid(), $this->model->getCtype(), $deadline]);
+        $versionIds = $this->db->fetchCol('SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?', [$this->model->getCid(), $this->model->getCtype(), $deadline]);
         $this->enableSlowQueryLog();
 
         return $versionIds;
@@ -97,36 +100,31 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $steps
+     *
      * @return array
      */
     public function getOutdatedVersionsSteps($steps)
     {
         $this->disableSlowQueryLog();
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", [$this->model->getCid(), $this->model->getCtype()]);
+        $versionIds = $this->db->fetchCol('SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT ' . intval($steps) . ',1000000', [$this->model->getCid(), $this->model->getCtype()]);
         $this->enableSlowQueryLog();
 
         return $versionIds;
     }
 
-    /**
-     *
-     */
     protected function disableSlowQueryLog()
     {
         try {
-            $this->db->query("SET @@session.long_query_time = 300000;");
+            $this->db->query('SET @@session.long_query_time = 300000;');
         } catch (\Exception $e) {
             Logger::err($e);
         }
     }
 
-    /**
-     *
-     */
     protected function enableSlowQueryLog()
     {
         try {
-            $this->db->query("SET @@session.long_query_time=@@global.long_query_time;");
+            $this->db->query('SET @@session.long_query_time=@@global.long_query_time;');
         } catch (\Exception $e) {
             Logger::err($e);
         }
@@ -135,13 +133,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param $elementTypes
      * @param array $ignoreIds
+     *
      * @return array
      */
     public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = [])
     {
-        $ignoreIdsList = implode(",", $ignoreIds);
+        $ignoreIdsList = implode(',', $ignoreIds);
         if (!$ignoreIdsList) {
-            $ignoreIdsList = "0"; // set a default to avoid SQL errors (there's no version with ID 0)
+            $ignoreIdsList = '0'; // set a default to avoid SQL errors (there's no version with ID 0)
         }
         $versionIds = [];
 
@@ -151,18 +150,18 @@ class Dao extends Model\Dao\AbstractDao
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-                if ($elementType["days"] > 0) {
+                if ($elementType['days'] > 0) {
                     // by days
-                    $deadline = time() - ($elementType["days"] * 86400);
-                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (" . $ignoreIdsList . ")", [$elementType["elementType"], $deadline]);
+                    $deadline = time() - ($elementType['days'] * 86400);
+                    $tmpVersionIds = $this->db->fetchCol('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (" . $ignoreIdsList . ") GROUP BY cid HAVING amount > ?", [$elementType["elementType"], $elementType["steps"]]);
+                    $elementIds = $this->db->fetchCol('SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING amount > ?', [$elementType['elementType'], $elementType['steps']]);
                     foreach ($elementIds as $elementId) {
                         $count++;
-                        Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
-                        $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", [$elementId, $elementType["elementType"]]);
+                        Logger::info($elementId . '(object ' . $count . ') Vcount ' . count($versionIds));
+                        $elementVersions = $this->db->fetchCol('SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT ' . $elementType['steps'] . ',1000000', [$elementId, $elementType['elementType']]);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
 
@@ -188,7 +187,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-        Logger::info("return " .  count($versionIds) . " ids\n");
+        Logger::info('return ' .  count($versionIds) . " ids\n");
 
         return $versionIds;
     }

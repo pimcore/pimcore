@@ -51,18 +51,21 @@ class HeadStyle extends AbstractHelper
 {
     /**
      * Registry key for placeholder
+     *
      * @var string
      */
     protected $_regKey = 'HeadStyle';
 
     /**
      * Allowed optional attributes
+     *
      * @var array
      */
     protected $_optionalAttributes = ['lang', 'title', 'media', 'dir'];
 
     /**
      * Allowed media types
+     *
      * @var array
      */
     protected $_mediaTypes = [
@@ -72,18 +75,21 @@ class HeadStyle extends AbstractHelper
 
     /**
      * Capture type and/or attributes (used for hinting during capture)
+     *
      * @var string
      */
     protected $_captureAttrs = null;
 
     /**
      * Capture lock
+     *
      * @var bool
      */
     protected $_captureLock;
 
     /**
      * Capture type (append, prepend, set)
+     *
      * @var string
      */
     protected $_captureType;
@@ -109,7 +115,6 @@ class HeadStyle extends AbstractHelper
         return 'headStyle';
     }
 
-
     /**
      * Return headStyle object
      *
@@ -118,6 +123,7 @@ class HeadStyle extends AbstractHelper
      * @param  string $content Stylesheet contents
      * @param  string $placement Append, prepend, or set
      * @param  string|array $attributes Optional attributes to utilize
+     *
      * @return HeadStyle
      */
     public function __invoke($content = null, $placement = 'APPEND', $attributes = [])
@@ -152,7 +158,9 @@ class HeadStyle extends AbstractHelper
      *
      * @param  string $method
      * @param  array $args
+     *
      * @return void
+     *
      * @throws Exception When no $content provided or invalid method
      */
     public function __call($method, $args)
@@ -198,7 +206,8 @@ class HeadStyle extends AbstractHelper
      *
      * @param  mixed $value
      * @param  string $method
-     * @return boolean
+     *
+     * @return bool
      */
     protected function _isValid($value)
     {
@@ -215,6 +224,7 @@ class HeadStyle extends AbstractHelper
      * Override append to enforce style creation
      *
      * @param  mixed $value
+     *
      * @return void
      */
     public function append($value)
@@ -231,6 +241,7 @@ class HeadStyle extends AbstractHelper
      *
      * @param  string|int $index
      * @param  mixed $value
+     *
      * @return void
      */
     public function offsetSet($index, $value)
@@ -246,6 +257,7 @@ class HeadStyle extends AbstractHelper
      * Override prepend to enforce style creation
      *
      * @param  mixed $value
+     *
      * @return void
      */
     public function prepend($value)
@@ -261,6 +273,7 @@ class HeadStyle extends AbstractHelper
      * Override set to enforce style creation
      *
      * @param  mixed $value
+     *
      * @return void
      */
     public function set($value)
@@ -277,6 +290,7 @@ class HeadStyle extends AbstractHelper
      *
      * @param  mixed $captureType
      * @param  string $typeOrAttrs
+     *
      * @return void
      */
     public function captureStart($type = Container::APPEND, $attrs = null)
@@ -322,6 +336,7 @@ class HeadStyle extends AbstractHelper
      *
      * @param  \stdClass $item Item to render
      * @param  string $indent Indentation to use
+     *
      * @return string
      */
     public function itemToString(\stdClass $item, $indent)
@@ -382,6 +397,7 @@ class HeadStyle extends AbstractHelper
      * Create string representation of placeholder
      *
      * @param  string|int $indent
+     *
      * @return string
      */
     public function toString($indent = null)
@@ -410,6 +426,7 @@ class HeadStyle extends AbstractHelper
      *
      * @param  string $content
      * @param  array $attributes
+     *
      * @return \stdClass
      */
     public function createData($content, array $attributes)

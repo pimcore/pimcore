@@ -77,6 +77,7 @@ class LostPasswordEvent extends Event
      * Sets flag whether to send lost password mail or not
      *
      * @param bool $sendMail
+     *
      * @return $this
      */
     public function setSendMail($sendMail)

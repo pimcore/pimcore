@@ -32,10 +32,10 @@ class DefaultRelations implements IRelationInterpreter
                     $v = $v->getObject();
                 }
 
-                $result[] = ["dest" => $v->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($v)];
+                $result[] = ['dest' => $v->getId(), 'type' => \Pimcore\Model\Element\Service::getElementType($v)];
             }
         } elseif ($value instanceof \Pimcore\Model\Element\AbstractElement) {
-            $result[] = ["dest" => $value->getId(), "type" => \Pimcore\Model\Element\Service::getElementType($value)];
+            $result[] = ['dest' => $value->getId(), 'type' => \Pimcore\Model\Element\Service::getElementType($value)];
         }
 
         return $result;

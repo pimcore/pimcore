@@ -14,11 +14,8 @@
 
 namespace Pimcore;
 
-use Pimcore\Model;
-
 class Placeholder
 {
-
     /**
      * Prefix for the Placeholders
      *
@@ -38,7 +35,7 @@ class Placeholder
      *
      * @var string
      */
-    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', "\\Pimcore\\Placeholder\\", "\\Website\\Placeholder\\"];
+    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', '\\Pimcore\\Placeholder\\', '\\Website\\Placeholder\\'];
 
     /**
      * Contains the document object
@@ -49,6 +46,7 @@ class Placeholder
 
     /**
      * @param $classPrefix
+     *
      * @throws \Exception
      */
     public static function addPlaceholderClassPrefix($classPrefix)
@@ -62,7 +60,9 @@ class Placeholder
 
     /**
      * @param $classPrefix
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     public static function removePlaceholderClassPrefix($classPrefix)
@@ -84,7 +84,9 @@ class Placeholder
 
     /**
      * Returns the Placeholder class prefixes
+     *
      * @static
+     *
      * @return array
      */
     public static function getPlaceholderClassPrefixes()
@@ -96,7 +98,9 @@ class Placeholder
      * Sets a custom website class prefix for the Placeholder Classes
      *
      * @static
+     *
      * @param $string
+     *
      * @deprecated deprecated since version 1.4.6
      */
     public static function setWebsiteClassPrefix($string)
@@ -108,7 +112,9 @@ class Placeholder
      * Returns the website class prefix for the Placeholder Classes
      *
      * @static
+     *
      * @return string
+     *
      * @deprecated deprecated since version 1.4.6
      */
     public static function getWebsiteClassPrefix()
@@ -120,7 +126,9 @@ class Placeholder
      * Set a custom Placeholder prefix
      *
      * @throws \Exception
+     *
      * @param string $prefix
+     *
      * @deprecated deprecated since version 1.4.6
      */
     public static function setPlaceholderPrefix($prefix)
@@ -150,6 +158,7 @@ class Placeholder
 
     /**
      * @param $suffix
+     *
      * @throws \Exception
      */
     public function setPlaceholderSuffix($suffix)
@@ -160,20 +169,20 @@ class Placeholder
         self::$placeholderSuffix = $suffix;
     }
 
-
     /**
      * Detects the Placeholders in a string and returns an array with the placeholder information
      *
      * @param string $contentString
      * @param null | array $params
      * @param null | Model\Document $document
+     *
      * @return array
      */
     public function detectPlaceholders($contentString, $params, $document = null)
     {
         $placeholderStack = [];
 
-        $regex = "/" . self::$placeholderPrefix . "([a-z_]+)\(([a-z_0-9]+)[\s,]*(.*?)\)" . self::$placeholderSuffix . "/is";
+        $regex = '/' . self::$placeholderPrefix . "([a-z_]+)\(([a-z_0-9]+)[\s,]*(.*?)\)" . self::$placeholderSuffix . '/is';
         preg_match_all($regex, $contentString, $matches);
 
         if (is_array($matches[1])) {
@@ -186,7 +195,7 @@ class Placeholder
                 if ($placeholderConfigString) {
                     //try to create the json config object
                     try {
-                        $configJsonString = str_replace(["&quot;", "'"], '"', $placeholderConfigString);
+                        $configJsonString = str_replace(['&quot;', "'"], '"', $placeholderConfigString);
                         $placeholderConfig = new \Pimcore\Config\Config(json_decode($configJsonString, true), null, ['ignoreconstants' => true]);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
@@ -217,6 +226,7 @@ class Placeholder
      * @param array $params
      * @param null | Model\Document $document
      * @param bool $enableLayoutOnPlaceholderReplacement
+     *
      * @return string
      */
     public function replacePlaceholders($mixed, $params = [], $document = null, $enableLayoutOnPlaceholderReplacement = true)
@@ -248,6 +258,7 @@ class Placeholder
      * with the rendered content of the placeholder object
      *
      * @param array $placeholderStack
+     *
      * @return string
      */
     protected function replacePlaceholdersFromStack($placeholderStack = [])

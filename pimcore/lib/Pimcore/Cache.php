@@ -28,9 +28,6 @@ class Cache
      */
     protected static $handler;
 
-    /**
-     *
-     */
     public static function getInstance()
     {
         throw new \RuntimeException('getInstance() is not supported anymore');
@@ -66,6 +63,7 @@ class Cache
      * Returns the content of the requested cache entry
      *
      * @param string $key
+     *
      * @return mixed
      */
     public static function load($key)
@@ -82,6 +80,7 @@ class Cache
      * @param int|\DateInterval|null $lifetime
      * @param int $priority
      * @param bool $force
+     *
      * @return bool
      */
     public static function save($data, $key, $tags = [], $lifetime = null, $priority = 0, $force = false)
@@ -93,6 +92,7 @@ class Cache
      * Remove an item from the cache
      *
      * @param $key
+     *
      * @return bool
      */
     public static function remove($key)
@@ -114,6 +114,7 @@ class Cache
      * Removes entries from the cache matching the given tag
      *
      * @param string $tag
+     *
      * @return bool
      */
     public static function clearTag($tag)
@@ -125,6 +126,7 @@ class Cache
      * Removes entries from the cache matching the given tags
      *
      * @param array $tags
+     *
      * @return bool
      */
     public static function clearTags($tags = [])
@@ -188,6 +190,7 @@ class Cache
 
     /**
      * @deprecated Use addIgnoredTagOnSave() instead
+     *
      * @param string $tag
      */
     public static function addClearedTag($tag)

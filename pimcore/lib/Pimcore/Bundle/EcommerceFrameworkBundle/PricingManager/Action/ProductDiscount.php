@@ -52,7 +52,6 @@ class ProductDiscount implements IProductDiscount
         return $this;
     }
 
-
     /**
      * @return string
      */

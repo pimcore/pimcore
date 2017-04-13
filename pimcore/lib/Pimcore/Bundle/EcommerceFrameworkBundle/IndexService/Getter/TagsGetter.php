@@ -31,7 +31,6 @@ class TagsGetter implements IGetter
 
         $tags = Tag::getTagsForElement($type, $element->getId());
 
-
         if (!$config || !$config->includeParentTags) {
             return $tags;
         }

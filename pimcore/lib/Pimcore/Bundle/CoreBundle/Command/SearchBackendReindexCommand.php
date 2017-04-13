@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Logger;
+use Pimcore\Model\Search;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Model\Search;
-use Pimcore\Logger;
 
 class SearchBackendReindexCommand extends AbstractCommand
 {
@@ -27,7 +27,7 @@ class SearchBackendReindexCommand extends AbstractCommand
         $this
             ->setName('pimcore:search-backend-reindex')
             ->setAliases(['search-backend-reindex'])
-            ->setDescription("Re-indexes the backend search of pimcore");
+            ->setDescription('Re-indexes the backend search of pimcore');
     }
 
     /**
@@ -37,25 +37,25 @@ class SearchBackendReindexCommand extends AbstractCommand
     {
         // clear all data
         $db = \Pimcore\Db::get();
-        $db->query("TRUNCATE `search_backend_data`;");
+        $db->query('TRUNCATE `search_backend_data`;');
 
         $elementsPerLoop = 100;
-        $types = ["asset", "document", "object"];
+        $types = ['asset', 'document', 'object'];
 
         foreach ($types as $type) {
-            $listClassName = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";
+            $listClassName = '\\Pimcore\\Model\\' . ucfirst($type) . '\\Listing';
             $list = new $listClassName();
-            if (method_exists($list, "setUnpublished")) {
+            if (method_exists($list, 'setUnpublished')) {
                 $list->setUnpublished(true);
             }
 
             $elementsTotal = $list->getTotalCount();
 
-            for ($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
+            for ($i=0; $i < (ceil($elementsTotal / $elementsPerLoop)); $i++) {
                 $list->setLimit($elementsPerLoop);
-                $list->setOffset($i*$elementsPerLoop);
+                $list->setOffset($i * $elementsPerLoop);
 
-                $this->output->writeln("Processing " .$type . ": " . ($list->getOffset()+$elementsPerLoop) . "/" . $elementsTotal);
+                $this->output->writeln('Processing ' .$type . ': ' . ($list->getOffset() + $elementsPerLoop) . '/' . $elementsTotal);
 
                 $elements = $list->load();
                 foreach ($elements as $element) {
@@ -76,6 +76,6 @@ class SearchBackendReindexCommand extends AbstractCommand
             }
         }
 
-        $db->query("OPTIMIZE TABLE search_backend_data;");
+        $db->query('OPTIMIZE TABLE search_backend_data;');
     }
 }

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Translation
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,11 +24,10 @@ use Pimcore\Model;
  */
 class Dao extends Model\Translation\AbstractTranslation\Dao
 {
-
     /**
      * @var string
      */
-    public static $_tableName = "translations_admin";
+    public static $_tableName = 'translations_admin';
 
     /**
      * @return string

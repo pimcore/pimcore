@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 interface IIndexable
 {
-
     /**
      * @return int
      */
@@ -41,17 +40,16 @@ interface IIndexable
      */
     public function getPriceSystemName();
 
-
     /**
      * returns if product is active.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
      *
      * @param bool $inProductList
+     *
      * @return bool
      */
     public function isActive($inProductList = false);
-
 
     /**
      * returns product type for product index (either object or variant).
@@ -61,7 +59,6 @@ interface IIndexable
      */
     public function getOSIndexType();
 
-
     /**
      * returns parent id for product index.
      * by default it returns id of parent object, but it may be overwritten if necessary.
@@ -69,7 +66,6 @@ interface IIndexable
      * @return int
      */
     public function getOSParentId();
-
 
     /**
      * returns array of categories.

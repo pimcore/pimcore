@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
-use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -34,7 +33,6 @@ class SystemEventsListener implements EventSubscriberInterface
             return [];
         }
     }
-
 
     public function onMaintenance()
     {

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -17,31 +18,30 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Tool\Serialize;
 use Pimcore\Model\Object;
+use Pimcore\Tool\Serialize;
 
 class Table extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "table";
+    public $fieldtype = 'table';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
-     * @var integer
+     * @var int
      */
     public $height;
 
     /**
-     * @var integer
+     * @var int
      */
     public $cols;
 
@@ -51,7 +51,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public $colsFixed;
 
     /**
-     * @var integer
+     * @var int
      */
     public $rows;
 
@@ -62,34 +62,34 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * Default data
-     * @var integer
+     *
+     * @var int
      */
     public $data;
-
 
     /**
      * Type for the column to query
      *
      * @var string
      */
-    public $queryColumnType = "longtext";
+    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "longtext";
+    public $columnType = 'longtext';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "array";
+    public $phpdocType = 'array';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -97,7 +97,8 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -108,7 +109,7 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -116,7 +117,8 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -127,7 +129,7 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getCols()
     {
@@ -135,7 +137,8 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $cols
+     * @param int $cols
+     *
      * @return $this
      */
     public function setCols($cols)
@@ -146,7 +149,7 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getRows()
     {
@@ -154,7 +157,8 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $rows
+     * @param int $rows
+     *
      * @return $this
      */
     public function setRows($rows)
@@ -205,7 +209,7 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getData()
     {
@@ -213,7 +217,8 @@ class Table extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $data
+     * @param int $data
+     *
      * @return $this
      */
     public function setData($data)
@@ -223,12 +228,13 @@ class Table extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
-
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -238,9 +244,11 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -250,9 +258,11 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -262,7 +272,7 @@ class Table extends Model\Object\ClassDefinition\Data
             if (is_array($data)) {
                 foreach ($data as $row) {
                     if (is_array($row)) {
-                        $tmpLine[] = implode("|", $row);
+                        $tmpLine[] = implode('|', $row);
                     }
                 }
             }
@@ -270,14 +280,16 @@ class Table extends Model\Object\ClassDefinition\Data
             return implode("\n", $tmpLine);
         }
 
-        return "";
+        return '';
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -287,24 +299,26 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
 
         // check for empty data
-        $checkData = "";
+        $checkData = '';
         if (is_array($data)) {
             foreach ($data as $row) {
                 if (is_array($row)) {
-                    $checkData .= implode("", $row);
+                    $checkData .= implode('', $row);
                 }
             }
         }
-        $checkData = str_replace(" ", "", $checkData);
+        $checkData = str_replace(' ', '', $checkData);
 
         if (empty($checkData)) {
             return null;
@@ -315,9 +329,11 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param string $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -329,25 +345,29 @@ class Table extends Model\Object\ClassDefinition\Data
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!empty($data) and !is_array($data)) {
-            throw new Model\Element\ValidationException("Invalid table data");
+            throw new Model\Element\ValidationException('Invalid table data');
         }
     }
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
@@ -364,6 +384,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed|null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -379,6 +400,7 @@ class Table extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
@@ -390,7 +412,7 @@ class Table extends Model\Object\ClassDefinition\Data
             if (is_array($data)) {
                 foreach ($data as $row) {
                     if (is_array($row)) {
-                        $tmpLine[] = implode(" ", $row);
+                        $tmpLine[] = implode(' ', $row);
                     }
                 }
             }
@@ -398,12 +420,13 @@ class Table extends Model\Object\ClassDefinition\Data
             return implode("\n", $tmpLine);
         }
 
-        return "";
+        return '';
     }
 
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -411,49 +434,50 @@ class Table extends Model\Object\ClassDefinition\Data
         return true;
     }
 
-
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
-            $html = "<table>";
+            $html = '<table>';
 
             foreach ($data as $row) {
-                $html .= "<tr>";
+                $html .= '<tr>';
 
                 if (is_array($row)) {
                     foreach ($row as $cell) {
-                        $html .= "<td>";
+                        $html .= '<td>';
                         $html .= $cell;
-                        $html .= "</th>";
+                        $html .= '</th>';
                     }
                 }
-                $html .= "</tr>";
+                $html .= '</tr>';
             }
-            $html .= "</table>";
+            $html .= '</table>';
 
             $value = [];
-            $value["html"] = $html;
-            $value["type"] = "html";
+            $value['html'] = $html;
+            $value['type'] = 'html';
 
             return $value;
         } else {
-            return "";
+            return '';
         }
     }
-
 
     /** converts data to be imported via webservices
      * @param mixed $value
      * @param null $object
      * @param mixed $params
      * @param $idMapper
+     *
      * @return array|mixed
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)

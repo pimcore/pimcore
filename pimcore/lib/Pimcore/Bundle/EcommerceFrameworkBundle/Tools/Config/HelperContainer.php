@@ -27,7 +27,6 @@ use Pimcore\Config\Config;
  */
 class HelperContainer
 {
-
     /**
      * @var Config
      */
@@ -62,8 +61,6 @@ class HelperContainer
             }
         }
     }
-
-
 
     public function __get($name)
     {

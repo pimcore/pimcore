@@ -11,14 +11,13 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 use Pimcore\Config;
 use Symfony\Component\Debug\Debug;
 
 $debug = Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
 if ($debug) {
     Debug::enable();
-    @ini_set("display_errors", "On");
+    @ini_set('display_errors', 'On');
 }
 
 $kernel = new AppKernel(Config::getEnvironment(), $debug);

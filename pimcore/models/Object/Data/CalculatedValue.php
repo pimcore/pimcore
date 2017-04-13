@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,19 +19,19 @@ namespace Pimcore\Model\Object\Data;
 
 class CalculatedValue
 {
-    /** @var  string */
+    /** @var string */
     public $fieldname;
 
-    /** @var  string */
-    public $ownerType = "object";
+    /** @var string */
+    public $ownerType = 'object';
 
-    /** @var  string */
+    /** @var string */
     public $ownerName;
 
     /** @var int */
     public $index;
 
-    /** @var  string */
+    /** @var string */
     public $position;
 
     /** @var int */

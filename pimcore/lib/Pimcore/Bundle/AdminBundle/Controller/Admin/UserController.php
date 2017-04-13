@@ -32,24 +32,25 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @Route("/user/tree-get-childs-by-id")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeGetChildsByIdAction(Request $request)
     {
         $list = new User\Listing();
-        $list->setCondition("parentId = ?", intval($request->get("node")));
-        $list->setOrder("ASC");
-        $list->setOrderKey("name");
+        $list->setCondition('parentId = ?', intval($request->get('node')));
+        $list->setOrder('ASC');
+        $list->setOrderKey('name');
         $list->load();
 
         $users = [];
         if (is_array($list->getUsers())) {
             foreach ($list->getUsers() as $user) {
-                if ($user->getId() && $user->getName() != "system") {
+                if ($user->getId() && $user->getName() != 'system') {
                     $users[] = $this->getTreeNodeConfig($user);
                 }
             }
@@ -60,40 +61,41 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param $user
+     *
      * @return array
      */
     protected function getTreeNodeConfig($user)
     {
         $tmpUser = [
-            "id" => $user->getId(),
-            "text" => $user->getName(),
-            "elementType" => "user",
-            "type" => $user->getType(),
-            "qtipCfg" => [
-                "title" => "ID: " . $user->getId()
+            'id' => $user->getId(),
+            'text' => $user->getName(),
+            'elementType' => 'user',
+            'type' => $user->getType(),
+            'qtipCfg' => [
+                'title' => 'ID: ' . $user->getId()
             ]
         ];
 
         // set type specific settings
         if ($user instanceof User\Folder) {
-            $tmpUser["leaf"] = false;
-            $tmpUser["iconCls"] = "pimcore_icon_folder";
-            $tmpUser["expanded"] = true;
-            $tmpUser["allowChildren"] = true;
+            $tmpUser['leaf'] = false;
+            $tmpUser['iconCls'] = 'pimcore_icon_folder';
+            $tmpUser['expanded'] = true;
+            $tmpUser['allowChildren'] = true;
 
             if ($user->hasChildren()) {
-                $tmpUser["expanded"] = false;
+                $tmpUser['expanded'] = false;
             } else {
-                $tmpUser["loaded"] = true;
+                $tmpUser['loaded'] = true;
             }
         } else {
-            $tmpUser["leaf"] = true;
-            $tmpUser["iconCls"] = "pimcore_icon_user";
+            $tmpUser['leaf'] = true;
+            $tmpUser['iconCls'] = 'pimcore_icon_user';
             if (!$user->getActive()) {
-                $tmpUser["cls"] = " pimcore_unpublished";
+                $tmpUser['cls'] = ' pimcore_unpublished';
             }
-            $tmpUser["allowChildren"] = false;
-            $tmpUser["admin"] = $user->isAdmin();
+            $tmpUser['allowChildren'] = false;
+            $tmpUser['admin'] = $user->isAdmin();
         }
 
         return $tmpUser;
@@ -101,7 +103,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/add")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addAction(Request $request)
@@ -109,21 +113,21 @@ class UserController extends AdminController implements EventedControllerInterfa
         $this->protectCsrf($request);
 
         try {
-            $type = $request->get("type");
-            ;
+            $type = $request->get('type');
+
             $className = User\Service::getClassNameForType($type);
             $user = $className::create([
-                "parentId" => intval($request->get("parentId")),
-                "name" => trim($request->get("name")),
-                "password" => "",
-                "active" => $request->get("active")
+                'parentId' => intval($request->get('parentId')),
+                'name' => trim($request->get('name')),
+                'password' => '',
+                'active' => $request->get('active')
             ]);
 
-            if ($request->get("rid")) {
-                $rid = $request->get("rid");
+            if ($request->get('rid')) {
+                $rid = $request->get('rid');
                 $rObject = $className::getById($rid);
                 if ($rObject) {
-                    if ($type == "user" || $type == "role") {
+                    if ($type == 'user' || $type == 'role') {
                         $user->setParentId($rObject->getParentId());
                         if ($rObject->getClasses()) {
                             $user->setClasses(implode(',', $rObject->getClasses()));
@@ -132,16 +136,16 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->setDocTypes(implode(',', $rObject->getDocTypes()));
                         }
 
-                        $keys = ["asset", "document", "object"];
+                        $keys = ['asset', 'document', 'object'];
                         foreach ($keys as $key) {
-                            $getter = "getWorkspaces" . ucfirst($key);
-                            $setter = "setWorkspaces" . ucfirst($key);
+                            $getter = 'getWorkspaces' . ucfirst($key);
+                            $setter = 'setWorkspaces' . ucfirst($key);
                             $workspaces = $rObject->$getter();
                             $clonedWorkspaces = [];
                             if (is_array($workspaces)) {
                                 foreach ($workspaces as $workspace) {
                                     $vars = get_object_vars($workspace);
-                                    $workspaceClass = "\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($key);
+                                    $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($key);
                                     $newWorkspace = new $workspaceClass();
                                     foreach ($vars as $varKey => $varValue) {
                                         $newWorkspace->$varKey = $varValue;
@@ -156,7 +160,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
                         $user->setPermissions($rObject->getPermissions());
 
-                        if ($type == "user") {
+                        if ($type == 'user') {
                             $user->setAdmin(false);
                             if ($this->getUser()->isAdmin()) {
                                 $user->setAdmin($rObject->getAdmin());
@@ -174,11 +178,11 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
 
             return $this->json([
-                "success" => true,
-                "id" => $user->getId()
+                'success' => true,
+                'id' => $user->getId()
             ]);
         } catch (\Exception $e) {
-            return $this->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -186,7 +190,9 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @param $node
      * @param $currentList
      * @param $roleMode
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected function populateChildNodes($node, &$currentList, $roleMode)
@@ -194,18 +200,18 @@ class UserController extends AdminController implements EventedControllerInterfa
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
 
         $list = $roleMode ? new User\Role\Listing() : new User\Listing();
-        $list->setCondition("parentId = ?", $node->getId());
-        $list->setOrder("ASC");
-        $list->setOrderKey("name");
+        $list->setCondition('parentId = ?', $node->getId());
+        $list->setOrder('ASC');
+        $list->setOrderKey('name');
         $list->load();
 
         $childList = $roleMode ? $list->getRoles() : $list->getUsers();
         if (is_array($childList)) {
             foreach ($childList as $user) {
                 if ($user->getId() == $currentUser->getId()) {
-                    throw new \Exception("Cannot delete current user");
+                    throw new \Exception('Cannot delete current user');
                 }
-                if ($user->getId() && $currentUser->getId() && $user->getName() != "system") {
+                if ($user->getId() && $currentUser->getId() && $user->getName() != 'system') {
                     $currentList[] = $user;
                     $this->populateChildNodes($user, $currentList, $roleMode);
                 }
@@ -217,18 +223,21 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/delete")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function deleteAction(Request $request)
     {
-        $user = User\AbstractUser::getById(intval($request->get("id")));
+        $user = User\AbstractUser::getById(intval($request->get('id')));
 
         // only admins are allowed to delete admins and folders
         // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
         if (($user instanceof User\Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
-            throw new \Exception("You are not allowed to delete this user");
+            throw new \Exception('You are not allowed to delete this user');
         } else {
             if ($user instanceof User\Role\Folder) {
                 $list = [$user];
@@ -246,36 +255,39 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
         }
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/user/update")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function updateAction(Request $request)
     {
         $this->protectCsrf($request);
 
-        $user = User\AbstractUser::getById(intval($request->get("id")));
+        $user = User\AbstractUser::getById(intval($request->get('id')));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin()) {
-            throw new \Exception("Only admin users are allowed to modify admin users");
+            throw new \Exception('Only admin users are allowed to modify admin users');
         }
 
-        if ($request->get("data")) {
-            $values = $this->decodeJson($request->get("data"), true);
+        if ($request->get('data')) {
+            $values = $this->decodeJson($request->get('data'), true);
 
-            if (!empty($values["password"])) {
-                $values["password"] = Tool\Authentication::getPasswordHash($user->getName(), $values["password"]);
+            if (!empty($values['password'])) {
+                $values['password'] = Tool\Authentication::getPasswordHash($user->getName(), $values['password']);
             }
 
             // check if there are permissions transmitted, if so reset them all to false (they will be set later)
             foreach ($values as $key => $value) {
-                if (strpos($key, "permission_") === 0) {
-                    if (method_exists($user, "setAllAclToFalse")) {
+                if (strpos($key, 'permission_') === 0) {
+                    if (method_exists($user, 'setAllAclToFalse')) {
                         $user->setAllAclToFalse();
                     }
                     break;
@@ -297,20 +309,20 @@ class UserController extends AdminController implements EventedControllerInterfa
             $availableUserPermissions = $availableUserPermissionsList->load();
 
             foreach ($availableUserPermissions as $permission) {
-                if (isset($values["permission_" . $permission->getKey()])) {
-                    $user->setPermission($permission->getKey(), (bool) $values["permission_" . $permission->getKey()]);
+                if (isset($values['permission_' . $permission->getKey()])) {
+                    $user->setPermission($permission->getKey(), (bool) $values['permission_' . $permission->getKey()]);
                 }
             }
 
             // check for workspaces
-            if ($request->get("workspaces")) {
-                $workspaces = $this->decodeJson($request->get("workspaces"), true);
+            if ($request->get('workspaces')) {
+                $workspaces = $this->decodeJson($request->get('workspaces'), true);
                 foreach ($workspaces as $type => $spaces) {
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
-                        $element = Element\Service::getElementByPath($type, $space["path"]);
+                        $element = Element\Service::getElementByPath($type, $space['path']);
                         if ($element) {
-                            $className = "\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($type);
+                            $className = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($type);
                             $workspace = new $className();
                             $workspace->setValues($space);
 
@@ -321,38 +333,41 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $newWorkspaces[] = $workspace;
                         }
                     }
-                    $user->{"setWorkspaces" . ucfirst($type)}($newWorkspaces);
+                    $user->{'setWorkspaces' . ucfirst($type)}($newWorkspaces);
                 }
             }
         }
 
         $user->save();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/user/get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function getAction(Request $request)
     {
-        if (intval($request->get("id")) < 1) {
-            return $this->json(["success" => false]);
+        if (intval($request->get('id')) < 1) {
+            return $this->json(['success' => false]);
         }
 
-        $user = User::getById(intval($request->get("id")));
+        $user = User::getById(intval($request->get('id')));
 
         if ($user->isAdmin() && !$this->getUser()->isAdmin()) {
-            throw new \Exception("Only admin users are allowed to modify admin users");
+            throw new \Exception('Only admin users are allowed to modify admin users');
         }
 
         // workspaces
-        $types = ["asset", "document", "object"];
+        $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
-            $workspaces = $user->{"getWorkspaces" . ucfirst($type)}();
+            $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
@@ -368,11 +383,11 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         foreach ($userObjects as $o) {
             $hasHidden = false;
-            if ($o->isAllowed("list")) {
+            if ($o->isAllowed('list')) {
                 $userObjectData[] = [
-                    "path" => $o->getRealFullPath(),
-                    "id" => $o->getId(),
-                    "subtype" => $o->getClass()->getName()
+                    'path' => $o->getRealFullPath(),
+                    'id' => $o->getId(),
+                    'subtype' => $o->getClass()->getName()
                 ];
             } else {
                 $hasHidden = true;
@@ -385,7 +400,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // get available roles
         $list = new User\Role\Listing();
-        $list->setCondition("`type` = ?", ["role"]);
+        $list->setCondition('`type` = ?', ['role']);
         $list->load();
 
         $roles = [];
@@ -398,62 +413,66 @@ class UserController extends AdminController implements EventedControllerInterfa
         // unset confidential informations
         $userData = object2array($user);
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
-        $userData["contentLanguages"] = $contentLanguages;
-        unset($userData["password"]);
+        $userData['contentLanguages'] = $contentLanguages;
+        unset($userData['password']);
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         $conf = \Pimcore\Config::getSystemConfig();
 
         return $this->json([
-            "success" => true,
-            "wsenabled" => $conf->webservice->enabled,
-            "user" => $userData,
-            "roles" => $roles,
-            "permissions" => $user->generatePermissionList(),
-            "availablePermissions" => $availableUserPermissions,
-            "availablePerspectives" => $availablePerspectives,
-            "validLanguages" => Tool::getValidLanguages(),
-            "objectDependencies" => [
-                "hasHidden" => $hasHidden,
-                "dependencies" => $userObjectData
+            'success' => true,
+            'wsenabled' => $conf->webservice->enabled,
+            'user' => $userData,
+            'roles' => $roles,
+            'permissions' => $user->generatePermissionList(),
+            'availablePermissions' => $availableUserPermissions,
+            'availablePerspectives' => $availablePerspectives,
+            'validLanguages' => Tool::getValidLanguages(),
+            'objectDependencies' => [
+                'hasHidden' => $hasHidden,
+                'dependencies' => $userObjectData
             ]
         ]);
     }
 
     /**
      * @Route("/user/get-minimal")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getMinimalAction(Request $request)
     {
-        $user = User::getById(intval($request->get("id")));
+        $user = User::getById(intval($request->get('id')));
         $user->setPassword(null);
 
         $minimalUserData['id'] = $user->getId();
         $minimalUserData['admin'] = $user->isAdmin();
         $minimalUserData['active'] = $user->isActive();
-        $minimalUserData['permissionInfo']['assets'] = $user->isAllowed("assets");
-        $minimalUserData['permissionInfo']['documents'] = $user->isAllowed("documents");
-        $minimalUserData['permissionInfo']['objects'] = $user->isAllowed("objects");
+        $minimalUserData['permissionInfo']['assets'] = $user->isAllowed('assets');
+        $minimalUserData['permissionInfo']['documents'] = $user->isAllowed('documents');
+        $minimalUserData['permissionInfo']['objects'] = $user->isAllowed('objects');
 
         return $this->json($minimalUserData);
     }
 
     /**
      * @Route("/user/upload-current-user-image")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function uploadCurrentUserImageAction(Request $request)
     {
         $user = $this->getUser();
         if ($user != null) {
-            if ($user->getId() == $request->get("id")) {
+            if ($user->getId() == $request->get('id')) {
                 $this->uploadImageAction();
             } else {
-                Logger::warn("prevented save current user, because ids do not match. ");
+                Logger::warn('prevented save current user, because ids do not match. ');
 
                 return $this->json(false);
             }
@@ -462,10 +481,11 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
     }
 
-
     /**
      * @Route("/user/update-current-user")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function updateCurrentUserAction(Request $request)
@@ -474,21 +494,20 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $user = $this->getUser();
         if ($user != null) {
-            if ($user->getId() == $request->get("id")) {
-                $values = $this->decodeJson($request->get("data"), true);
+            if ($user->getId() == $request->get('id')) {
+                $values = $this->decodeJson($request->get('data'), true);
 
-                unset($values["name"]);
-                unset($values["id"]);
-                unset($values["admin"]);
-                unset($values["permissions"]);
-                unset($values["roles"]);
-                unset($values["active"]);
+                unset($values['name']);
+                unset($values['id']);
+                unset($values['admin']);
+                unset($values['permissions']);
+                unset($values['roles']);
+                unset($values['active']);
 
-                if (!empty($values["new_password"])) {
+                if (!empty($values['new_password'])) {
                     $oldPasswordCheck = false;
 
-
-                    if (empty($values["old_password"])) {
+                    if (empty($values['old_password'])) {
                         // if the user want to reset the password, the old password isn't required
                         $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($oldPasswordCheck) {
                             if ($adminSession->get('password_reset')) {
@@ -499,25 +518,25 @@ class UserController extends AdminController implements EventedControllerInterfa
                         });
                     } else {
                         // the password has to match
-                        $checkUser = Tool\Authentication::authenticatePlaintext($user->getName(), $values["old_password"]);
+                        $checkUser = Tool\Authentication::authenticatePlaintext($user->getName(), $values['old_password']);
                         if ($checkUser) {
                             $oldPasswordCheck = true;
                         }
                     }
 
-                    if ($oldPasswordCheck && $values["new_password"] == $values["retype_password"]) {
-                        $values["password"] = Tool\Authentication::getPasswordHash($user->getName(), $values["new_password"]);
+                    if ($oldPasswordCheck && $values['new_password'] == $values['retype_password']) {
+                        $values['password'] = Tool\Authentication::getPasswordHash($user->getName(), $values['new_password']);
                     } else {
-                        return $this->json(["success" => false, "message" => "password_cannot_be_changed"]);
+                        return $this->json(['success' => false, 'message' => 'password_cannot_be_changed']);
                     }
                 }
 
                 $user->setValues($values);
                 $user->save();
 
-                return $this->json(["success" => true]);
+                return $this->json(['success' => true]);
             } else {
-                Logger::warn("prevented save current user, because ids do not match. ");
+                Logger::warn('prevented save current user, because ids do not match. ');
 
                 return $this->json(false);
             }
@@ -528,7 +547,9 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/get-current-user")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function getCurrentUserAction(Request $request)
@@ -545,27 +566,28 @@ class UserController extends AdminController implements EventedControllerInterfa
         // unset confidential informations
         $userData = object2array($user);
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
-        $userData["contentLanguages"] = $contentLanguages;
-        unset($userData["password"]);
+        $userData['contentLanguages'] = $contentLanguages;
+        unset($userData['password']);
 
-        $response = new Response("pimcore.currentuser = " . $this->encodeJson($userData));
-        $response->headers->set("Content-Type", "text/javascript");
+        $response = new Response('pimcore.currentuser = ' . $this->encodeJson($userData));
+        $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;
     }
-
 
     /* ROLES */
 
     /**
      * @Route("/user/role-tree-get-childs-by-id")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function roleTreeGetChildsByIdAction(Request $request)
     {
         $list = new User\Role\Listing();
-        $list->setCondition("parentId = ?", intval($request->get("node")));
+        $list->setCondition('parentId = ?', intval($request->get('node')));
         $list->load();
 
         $roles = [];
@@ -580,35 +602,36 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param $role
+     *
      * @return array
      */
     protected function getRoleTreeNodeConfig($role)
     {
         $tmpUser = [
-            "id" => $role->getId(),
-            "text" => $role->getName(),
-            "elementType" => "role",
-            "qtipCfg" => [
-                "title" => "ID: " . $role->getId()
+            'id' => $role->getId(),
+            'text' => $role->getName(),
+            'elementType' => 'role',
+            'qtipCfg' => [
+                'title' => 'ID: ' . $role->getId()
             ]
         ];
 
         // set type specific settings
         if ($role instanceof User\Role\Folder) {
-            $tmpUser["leaf"] = false;
-            $tmpUser["iconCls"] = "pimcore_icon_folder";
-            $tmpUser["expanded"] = true;
-            $tmpUser["allowChildren"] = true;
+            $tmpUser['leaf'] = false;
+            $tmpUser['iconCls'] = 'pimcore_icon_folder';
+            $tmpUser['expanded'] = true;
+            $tmpUser['allowChildren'] = true;
 
             if ($role->hasChildren()) {
-                $tmpUser["expanded"] = false;
+                $tmpUser['expanded'] = false;
             } else {
-                $tmpUser["loaded"] = true;
+                $tmpUser['loaded'] = true;
             }
         } else {
-            $tmpUser["leaf"] = true;
-            $tmpUser["iconCls"] = "pimcore_icon_roles";
-            $tmpUser["allowChildren"] = false;
+            $tmpUser['leaf'] = true;
+            $tmpUser['iconCls'] = 'pimcore_icon_roles';
+            $tmpUser['allowChildren'] = false;
         }
 
         return $tmpUser;
@@ -616,17 +639,19 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/role-get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function roleGetAction(Request $request)
     {
-        $role = User\Role::getById(intval($request->get("id")));
+        $role = User\Role::getById(intval($request->get('id')));
 
         // workspaces
-        $types = ["asset", "document", "object"];
+        $types = ['asset', 'document', 'object'];
         foreach ($types as $type) {
-            $workspaces = $role->{"getWorkspaces" . ucfirst($type)}();
+            $workspaces = $role->{'getWorkspaces' . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
@@ -643,30 +668,33 @@ class UserController extends AdminController implements EventedControllerInterfa
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         return $this->json([
-            "success" => true,
-            "role" => $role,
-            "permissions" => $role->generatePermissionList(),
-            "classes" => $role->getClasses(),
-            "docTypes" => $role->getDocTypes(),
-            "availablePermissions" => $availableUserPermissions,
-            "availablePerspectives" => $availablePerspectives,
-            "validLanguages" => Tool::getValidLanguages()
+            'success' => true,
+            'role' => $role,
+            'permissions' => $role->generatePermissionList(),
+            'classes' => $role->getClasses(),
+            'docTypes' => $role->getDocTypes(),
+            'availablePermissions' => $availableUserPermissions,
+            'availablePerspectives' => $availablePerspectives,
+            'validLanguages' => Tool::getValidLanguages()
         ]);
     }
 
     /**
      * @Route("/user/upload-image")
+     *
      * @param Request $request
+     *
      * @throws \Exception
+     *
      * @return JsonResponse
      */
     public function uploadImageAction(Request $request)
     {
-        if ($request->get("id")) {
-            if ($this->getUser()->getId() != $request->get("id")) {
-                $this->checkPermission("users");
+        if ($request->get('id')) {
+            if ($this->getUser()->getId() != $request->get('id')) {
+                $this->checkPermission('users');
             }
-            $id = $request->get("id");
+            $id = $request->get('id');
         } else {
             $id = $this->getUser()->getId();
         }
@@ -674,32 +702,34 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userObj = User::getById($id);
 
         if ($userObj->isAdmin() && !$this->getUser()->isAdmin()) {
-            throw new \Exception("Only admin users are allowed to modify admin users");
+            throw new \Exception('Only admin users are allowed to modify admin users');
         }
 
-        $userObj->setImage($_FILES["Filedata"]["tmp_name"]);
+        $userObj->setImage($_FILES['Filedata']['tmp_name']);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
 
-        $response = $this->json(["success" => true]);
-        $response->headers->set("Content-Type", "text/html");
+        $response = $this->json(['success' => true]);
+        $response->headers->set('Content-Type', 'text/html');
 
         return $response;
     }
 
     /**
      * @Route("/user/get-image")
+     *
      * @param Request $request
+     *
      * @return BinaryFileResponse
      */
     public function getImageAction(Request $request)
     {
-        if ($request->get("id")) {
-            if ($this->getUser()->getId() != $request->get("id")) {
-                $this->checkPermission("users");
+        if ($request->get('id')) {
+            if ($this->getUser()->getId() != $request->get('id')) {
+                $this->checkPermission('users');
             }
-            $id = $request->get("id");
+            $id = $request->get('id');
         } else {
             $id = $this->getUser()->getId();
         }
@@ -716,62 +746,67 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/get-token-login-link")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function getTokenLoginLinkAction(Request $request)
     {
-        $user = User::getById($request->get("id"));
+        $user = User::getById($request->get('id'));
 
         if ($user->isAdmin() && !$this->getUser()->isAdmin()) {
-            throw new \Exception("Only admin users are allowed to login as an admin user");
+            throw new \Exception('Only admin users are allowed to login as an admin user');
         }
 
         if ($user) {
             $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
 
-            $link = $request->getScheme() . "://" . $request->getHttpHost() . "/admin/login/login?username=" . $user->getName() . "&token=" . $token;
+            $link = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
 
             return $this->json([
-                "link" => $link
+                'link' => $link
             ]);
         }
     }
 
     /**
      * @Route("/user/search")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function searchAction(Request $request)
     {
-        $q = "%" . $request->get("query") . "%";
+        $q = '%' . $request->get('query') . '%';
 
         $list = new User\Listing();
-        $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, intval($request->get("query"))]);
-        $list->setOrder("ASC");
-        $list->setOrderKey("name");
+        $list->setCondition('name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?', [$q, $q, $q, $q, intval($request->get('query'))]);
+        $list->setOrder('ASC');
+        $list->setOrderKey('name');
         $list->load();
 
         $users = [];
         if (is_array($list->getUsers())) {
             foreach ($list->getUsers() as $user) {
-                if ($user instanceof User && $user->getId() && $user->getName() != "system") {
+                if ($user instanceof User && $user->getId() && $user->getName() != 'system') {
                     $users[] = [
-                        "id" => $user->getId(),
-                        "name" => $user->getName(),
-                        "email" => $user->getEmail(),
-                        "firstname" => $user->getFirstname(),
-                        "lastname" => $user->getLastname(),
+                        'id' => $user->getId(),
+                        'name' => $user->getName(),
+                        'email' => $user->getEmail(),
+                        'firstname' => $user->getFirstname(),
+                        'lastname' => $user->getLastname(),
                     ];
                 }
             }
         }
 
         return $this->json([
-            "success" => true,
-            "users" => $users
+            'success' => true,
+            'users' => $users
         ]);
     }
 
@@ -788,9 +823,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         $request = $event->getRequest();
 
         // check permissions
-        $notRestrictedActions = ["get-current-user", "update-current-user", "get-available-permissions", "get-minimal", "get-image", "upload-current-user-image"];
-        if (!in_array($request->get("action"), $notRestrictedActions)) {
-            $this->checkPermission("users");
+        $notRestrictedActions = ['get-current-user', 'update-current-user', 'get-available-permissions', 'get-minimal', 'get-image', 'upload-current-user-image'];
+        if (!in_array($request->get('action'), $notRestrictedActions)) {
+            $this->checkPermission('users');
         }
     }
 

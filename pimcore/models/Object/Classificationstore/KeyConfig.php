@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,7 +26,6 @@ use Pimcore\Model;
  */
 class KeyConfig extends Model\AbstractModel
 {
-
     /**
      * @var array
      */
@@ -37,13 +37,14 @@ class KeyConfig extends Model\AbstractModel
     public static $cacheEnabled = false;
 
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
      * Store ID
-     * @var integer
+     *
+     * @var int
      */
     public $storeId = 1;
 
@@ -57,7 +58,6 @@ class KeyConfig extends Model\AbstractModel
      */
     public $title;
 
-
     /** The key description.
      * @var
      */
@@ -68,14 +68,13 @@ class KeyConfig extends Model\AbstractModel
      */
     public $type;
 
-
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
@@ -84,12 +83,12 @@ class KeyConfig extends Model\AbstractModel
      */
     public $definition;
 
-    /** @var  boolean */
+    /** @var bool */
     public $enabled;
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Model\Object\Classificationstore\KeyConfig
      */
     public static function getById($id)
@@ -112,7 +111,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $cacheEnabled
+     * @param bool $cacheEnabled
      */
     public static function setCacheEnabled($cacheEnabled)
     {
@@ -123,7 +122,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public static function getCacheEnabled()
     {
@@ -133,7 +132,9 @@ class KeyConfig extends Model\AbstractModel
     /**
      * @param $name
      * @param int $storeId
+     *
      * @return KeyConfig
+     *
      * @internal param null $groupId
      */
     public static function getByName($name, $storeId = 1)
@@ -160,9 +161,9 @@ class KeyConfig extends Model\AbstractModel
         return $config;
     }
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -173,7 +174,7 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -182,6 +183,7 @@ class KeyConfig extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -209,6 +211,7 @@ class KeyConfig extends Model\AbstractModel
 
     /** Sets the key description
      * @param $description
+     *
      * @return Model\Object\Classificationstore\KeyConfig
      */
     public function setDescription($description)
@@ -217,8 +220,6 @@ class KeyConfig extends Model\AbstractModel
 
         return $this;
     }
-
-
 
     /**
      * Deletes the key value key configuration
@@ -245,8 +246,8 @@ class KeyConfig extends Model\AbstractModel
         $isUpdate = false;
 
         $def = json_decode($this->definition, true);
-        if ($def && isset($def["title"])) {
-            $this->title = $def["title"];
+        if ($def && isset($def['title'])) {
+            $this->title = $def['title'];
         } else {
             $this->title = null;
         }

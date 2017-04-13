@@ -52,6 +52,7 @@ class DocumentTagExtension extends \Twig_Extension
      * @param string $name
      * @param string $inputName
      * @param array $options
+     *
      * @return \Pimcore\Model\Document\Tag|string
      */
     public function renderTag($context, $name, $inputName, array $options = [])

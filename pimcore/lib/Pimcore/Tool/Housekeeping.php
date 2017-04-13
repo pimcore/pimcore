@@ -30,7 +30,7 @@ class Housekeeping
             }
 
             if ($current->isFile()) {
-                if ($current->getATime() < (time()-($lastAccessGreaterThanDays * 86400))) {
+                if ($current->getATime() < (time() - ($lastAccessGreaterThanDays * 86400))) {
                     return true;
                 }
             } else {

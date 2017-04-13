@@ -19,7 +19,6 @@ namespace Pimcore\Model\Search\Backend\Data;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-
     /**
      * @var array
      */
@@ -29,16 +28,16 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      * @var array
      */
     public $validOrderKeys = [
-        "id",
-        "fullpath",
-        "maintype",
-        "type",
-        "subtype",
-        "published",
-        "creationDate",
-        "modificationDate",
-        "userOwner",
-        "userModification"
+        'id',
+        'fullpath',
+        'maintype',
+        'type',
+        'subtype',
+        'published',
+        'creationDate',
+        'modificationDate',
+        'userOwner',
+        'userModification'
     ];
 
     /**
@@ -51,6 +50,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @param $entries
+     *
      * @return $this
      */
     public function setEntries($entries)
@@ -65,12 +65,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function __construct()
     {
-        $this->initDao("\\Pimcore\\Model\\Search\\Backend\\Data\\Listing");
+        $this->initDao('\\Pimcore\\Model\\Search\\Backend\\Data\\Listing');
     }
 
     /**
      * @param string $key
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {

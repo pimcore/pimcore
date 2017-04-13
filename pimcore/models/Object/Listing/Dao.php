@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -26,13 +27,14 @@ use Pimcore\Model\Object;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /** @var  Callback function */
+    /** @var Callback function */
     protected $onCreateQueryCallback;
 
     /**
      * get select query
      *
      * @return QueryBuilder
+     *
      * @throws \Exception
      */
     public function getQuery()
@@ -66,7 +68,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $select;
     }
 
-
     /**
      * Loads a list of objects for the specicifies parameters, returns an array of Object\AbstractObject elements
      *
@@ -77,7 +78,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         // load id's
         $list = $this->loadIdList();
-
 
         $objects = [];
         foreach ($list as $o_id) {
@@ -90,7 +90,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         return $objects;
     }
-
 
     /**
      * @return int
@@ -132,7 +131,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $objectIds;
     }
 
-
     /**
      * @param QueryBuilder $select
      *
@@ -142,7 +140,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         return $this;
     }
-
 
     /**
      * @param QueryBuilder $select
@@ -154,23 +151,22 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
 
-        $tableName = method_exists($this, "getTableName") ? $this->getTableName() : "objects";
+        $tableName = method_exists($this, 'getTableName') ? $this->getTableName() : 'objects';
 
         if (!empty($objectTypes)) {
             if (!empty($condition)) {
-                $condition .= " AND ";
+                $condition .= ' AND ';
             }
-            $condition .= " " . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
+            $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
         }
 
         if ($condition) {
             if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = "(" . $condition . ") AND " . $tableName . ".o_published = 1";
+                $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
             }
         } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-            $condition = $tableName . ".o_published = 1";
+            $condition = $tableName . '.o_published = 1';
         }
-
 
         if ($condition) {
             $select->where($condition);

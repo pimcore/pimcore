@@ -55,6 +55,7 @@ class ContentController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return Response
      */
     public function galleryRenderletAction(Request $request)

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,20 +19,22 @@ namespace Pimcore\Model\User;
 
 class Service
 {
-
     /**
      * Mapping between database types and pimcore class names
+     *
      * @static
+     *
      * @param $type
+     *
      * @return string
      */
     public static function getClassNameForType($type)
     {
         switch ($type) {
-            case "user": return "\\Pimcore\\Model\\User";
-            case "userfolder": return "\\Pimcore\\Model\\User\\Folder";
-            case "role": return "\\Pimcore\\Model\\User\\Role";
-            case "rolefolder": return "\\Pimcore\\Model\\User\\Role\\Folder";
+            case 'user': return '\\Pimcore\\Model\\User';
+            case 'userfolder': return '\\Pimcore\\Model\\User\\Folder';
+            case 'role': return '\\Pimcore\\Model\\User\\Role';
+            case 'rolefolder': return '\\Pimcore\\Model\\User\\Role\\Folder';
         }
     }
 }

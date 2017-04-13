@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "ecommerceframework_vouchertoolkit_tokens";
+    const TABLE_NAME = 'ecommerceframework_vouchertoolkit_tokens';
 
     public function __construct()
     {
@@ -27,14 +27,15 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param $code
+     *
      * @return bool
      */
     public function getByCode($code)
     {
         try {
-            $result = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME . " WHERE token = ?", $code);
+            $result = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
             if (empty($result)) {
-                throw new \Exception("Token " . $code . " not found.");
+                throw new \Exception('Token ' . $code . ' not found.');
             }
             $this->assignVariablesToModel($result);
             $this->model->setValue('id', $result['id']);
@@ -62,25 +63,24 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function getTokenUsages($code)
     {
         try {
-            return $this->db->fetchOne("SELECT usages FROM " . self::TABLE_NAME . " WHERE token = ?", $code);
+            return $this->db->fetchOne('SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
         } catch (\Exception $e) {
             return false;
         }
     }
 
-
     /**
      * @param string $token
      * @param int $usages
+     *
      * @return bool
      */
     public static function isUsedToken($token, $usages = 1)
     {
         $db = \Pimcore\Db::get();
 
-        $query = "SELECT usages, seriesId FROM " . self::TABLE_NAME . " WHERE token = ? ";
+        $query = 'SELECT usages, seriesId FROM ' . self::TABLE_NAME . ' WHERE token = ? ';
         $params[] = $token;
-
 
         try {
             $usages['usages'] = $db->fetchOne($query, $params);
@@ -101,7 +101,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function apply()
     {
         try {
-            $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages+1 WHERE token = ?", [$this->model->getToken()]);
+            $this->db->query('UPDATE ' . self::TABLE_NAME . ' SET usages=usages+1 WHERE token = ?', [$this->model->getToken()]);
 
             return true;
         } catch (\Exception $e) {
@@ -115,7 +115,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function unuse()
     {
         try {
-            $this->db->query("UPDATE " . self::TABLE_NAME . " SET usages=usages-1 WHERE token = ?", [$this->model->getToken()]);
+            $this->db->query('UPDATE ' . self::TABLE_NAME . ' SET usages=usages-1 WHERE token = ?', [$this->model->getToken()]);
 
             return true;
         } catch (\Exception $e) {

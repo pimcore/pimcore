@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -19,14 +20,13 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Tool\Text;
 
-include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
+include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
 class Wysiwyg extends Model\Document\Tag
 {
-
     /**
      * Contains the text
      *
@@ -34,18 +34,19 @@ class Wysiwyg extends Model\Document\Tag
      */
     public $text;
 
-
     /**
      * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "wysiwyg";
+        return 'wysiwyg';
     }
 
     /**
      * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -65,6 +66,7 @@ class Wysiwyg extends Model\Document\Tag
 
     /**
      * @see TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
@@ -74,7 +76,9 @@ class Wysiwyg extends Model\Document\Tag
 
     /**
      * @see TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -84,10 +88,11 @@ class Wysiwyg extends Model\Document\Tag
         return $this;
     }
 
-
     /**
      * @see TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -98,19 +103,19 @@ class Wysiwyg extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
         return empty($this->text);
     }
 
-
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
@@ -119,7 +124,7 @@ class Wysiwyg extends Model\Document\Tag
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
-            throw new \Exception("cannot get values from web service import - invalid data");
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 
@@ -131,17 +136,16 @@ class Wysiwyg extends Model\Document\Tag
         return Text::getDependenciesOfWysiwygText($this->text);
     }
 
-
     /**
      * @param $ownerDocument
      * @param array $blockedTags
+     *
      * @return array
      */
     public function getCacheTags($ownerDocument, $blockedTags = [])
     {
         return Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
     }
-
 
     /**
      * Rewrites id from source to target, $idMapping contains
@@ -153,7 +157,9 @@ class Wysiwyg extends Model\Document\Tag
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param array $idMapping
+     *
      * @return string|null
      *
      * @todo: no rewriteIds method ever returns anything, why this one?
@@ -165,7 +171,7 @@ class Wysiwyg extends Model\Document\Tag
             return $this->text;
         }
 
-        $s = $html->find("a[pimcore_id],img[pimcore_id]");
+        $s = $html->find('a[pimcore_id],img[pimcore_id]');
 
         if ($s) {
             foreach ($s as $el) {

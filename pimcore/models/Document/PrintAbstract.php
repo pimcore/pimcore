@@ -10,13 +10,14 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
 
-use \Pimcore\Model\Document;
+use Pimcore\Model\Document;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Web2Print\Processor;
 
@@ -38,7 +39,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     /**
      * @var string
      */
-    public $controller = "web2print";
+    public $controller = 'web2print';
 
     /**
      * @param \DateTime $lastGenerated
@@ -103,7 +104,6 @@ abstract class PrintAbstract extends Document\PageSnippet
         return $this->lastGenerateMessage;
     }
 
-
     /**
      * @param $config
      */
@@ -114,6 +114,7 @@ abstract class PrintAbstract extends Document\PageSnippet
 
     /**
      * @param $params
+     *
      * @return string
      */
     public function renderDocument($params)
@@ -128,7 +129,7 @@ abstract class PrintAbstract extends Document\PageSnippet
      */
     public function getPdfFileName()
     {
-        return PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-document-" . $this->getId() . ".pdf";
+        return PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-document-' . $this->getId() . '.pdf';
     }
 
     /**
@@ -144,6 +145,6 @@ abstract class PrintAbstract extends Document\PageSnippet
      */
     public function getLockKey()
     {
-        return "web2print_pdf_generation_" . $this->getId();
+        return 'web2print_pdf_generation_' . $this->getId();
     }
 }

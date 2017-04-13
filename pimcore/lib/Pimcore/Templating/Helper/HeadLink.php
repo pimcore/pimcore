@@ -47,6 +47,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * HeadLink
  *
  * @see        http://www.w3.org/TR/xhtml1/dtds.html
+ *
  * @method $this appendAlternate($href, $type, $title, $extras)
  * @method $this appendStylesheet($href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
  * @method $this offsetSetAlternate($index, $href, $type, $title, $extras)
@@ -94,7 +95,6 @@ class HeadLink extends CacheBusterAware
         parent::__construct($containerService);
         $this->setSeparator(PHP_EOL);
     }
-
 
     /**
      * @inheritDoc
@@ -148,6 +148,7 @@ class HeadLink extends CacheBusterAware
      *
      * @param mixed $method
      * @param mixed $args
+     *
      * @return void|HeadLink
      */
     public function __call($method, $args)
@@ -194,7 +195,8 @@ class HeadLink extends CacheBusterAware
      * Check if value is valid
      *
      * @param  mixed $value
-     * @return boolean
+     *
+     * @return bool
      */
     protected function _isValid($value)
     {
@@ -216,6 +218,7 @@ class HeadLink extends CacheBusterAware
      * append()
      *
      * @param  array $value
+     *
      * @return void
      */
     public function append($value)
@@ -232,6 +235,7 @@ class HeadLink extends CacheBusterAware
      *
      * @param  string|int $index
      * @param  array $value
+     *
      * @return void
      */
     public function offsetSet($index, $value)
@@ -247,6 +251,7 @@ class HeadLink extends CacheBusterAware
      * prepend()
      *
      * @param  array $value
+     *
      * @return HeadLink
      */
     public function prepend($value)
@@ -262,6 +267,7 @@ class HeadLink extends CacheBusterAware
      * set()
      *
      * @param  array $value
+     *
      * @return HeadLink
      */
     public function set($value)
@@ -273,11 +279,11 @@ class HeadLink extends CacheBusterAware
         return $this->getContainer()->set($value);
     }
 
-
     /**
      * Create HTML link element from data item
      *
      * @param  \stdClass $item
+     *
      * @return string
      */
     public function itemToString(\stdClass $item)
@@ -319,6 +325,7 @@ class HeadLink extends CacheBusterAware
      * Render link elements as string
      *
      * @param  string|int $indent
+     *
      * @return string
      */
     public function toString($indent = null)
@@ -349,13 +356,13 @@ class HeadLink extends CacheBusterAware
                 if (isset($item->href)) {
                     $realFile = PIMCORE_WEB_ROOT . $item->href;
                     if (file_exists($realFile)) {
-                        $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
+                        $item->href = '/cache-buster-' . filemtime($realFile) . $item->href;
                     }
                 }
             }
 
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_LINK, new GenericEvent($this, [
-                "item" => $item
+                'item' => $item
             ]));
         }
     }
@@ -364,6 +371,7 @@ class HeadLink extends CacheBusterAware
      * Create data item for stack
      *
      * @param  array $attributes
+     *
      * @return \stdClass
      */
     public function createData(array $attributes)
@@ -377,6 +385,7 @@ class HeadLink extends CacheBusterAware
      * Create item for stylesheet link item
      *
      * @param  array $args
+     *
      * @return \stdClass|false Returns fals if stylesheet is a duplicate
      */
     public function createDataStylesheet(array $args)
@@ -422,6 +431,7 @@ class HeadLink extends CacheBusterAware
      * Is the linked stylesheet a duplicate?
      *
      * @param  string $uri
+     *
      * @return bool
      */
     protected function _isDuplicateStylesheet($uri)
@@ -439,6 +449,7 @@ class HeadLink extends CacheBusterAware
      * Create item for alternate link item
      *
      * @param  array $args
+     *
      * @return \stdClass
      */
     public function createDataAlternate(array $args)
@@ -472,7 +483,9 @@ class HeadLink extends CacheBusterAware
 
     /**
      * Apply any overrides specified in the 'extras' array
+     *
      * @param array $attributes
+     *
      * @return array
      */
     protected function _applyExtras($attributes)

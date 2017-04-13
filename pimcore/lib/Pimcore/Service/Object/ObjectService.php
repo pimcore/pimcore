@@ -20,6 +20,7 @@ class ObjectService
 {
     /**
      * @param $id
+     *
      * @return Object\Concrete
      */
     public function getById($id)

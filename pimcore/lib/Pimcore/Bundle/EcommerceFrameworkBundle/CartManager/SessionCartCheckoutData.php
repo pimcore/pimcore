@@ -20,12 +20,12 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
 
     public function save()
     {
-        throw new \Exception("Not implemented, should not be needed for this cart type.");
+        throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
     public static function getByKeyCartId($key, $cartId)
     {
-        throw new \Exception("Not implemented, should not be needed for this cart type.");
+        throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
     public static function removeAllFromCart($cartId)
@@ -33,7 +33,6 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         $checkoutDataItem = new self();
         $checkoutDataItem->getCart()->checkoutData = [];
     }
-
 
     public function setCart(ICart $cart)
     {
@@ -60,7 +59,6 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         $this->cartId = $cartId;
     }
 
-
     /**
      * @return array
      */
@@ -68,7 +66,7 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
     {
         $vars = parent::__sleep();
 
-        $blockedVars = ["cart", "product"];
+        $blockedVars = ['cart', 'product'];
 
         $finalVars = [];
         foreach ($vars as $key) {

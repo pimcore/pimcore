@@ -49,6 +49,7 @@ class EnhancedEcommerce extends Tracker implements
 
     /**
      * Array of google dependencies to include before any tracking actions.
+     *
      * @var array
      */
     protected $dependencies = ['ec'];
@@ -129,7 +130,7 @@ class EnhancedEcommerce extends Tracker implements
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = $this->buildCheckoutCalls($items);
 
-        $parameterBag['actionData'] = ["step" => 1];
+        $parameterBag['actionData'] = ['step' => 1];
 
         $result = $this->renderer->render($this->getViewScript('checkout'), $parameterBag);
 
@@ -149,15 +150,14 @@ class EnhancedEcommerce extends Tracker implements
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = [];
         if (!is_null($stepNumber) || !is_null($checkoutOption)) {
-            $actionData = ["step" => $stepNumber];
+            $actionData = ['step' => $stepNumber];
 
             if (!is_null($checkoutOption)) {
-                $actionData["option"] = $checkoutOption;
+                $actionData['option'] = $checkoutOption;
             }
 
             $parameterBag['actionData'] = $actionData;
         }
-
 
         $result = $this->renderer->render($this->getViewScript('checkout'), $parameterBag);
 
@@ -178,7 +178,6 @@ class EnhancedEcommerce extends Tracker implements
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
 
-
         $result = $this->renderer->render($this->getViewScript('checkout_complete'), $parameterBag);
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -186,6 +185,7 @@ class EnhancedEcommerce extends Tracker implements
     /**
      * @param Transaction $transaction
      * @param ProductAction[] $items
+     *
      * @return mixed
      */
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
@@ -202,7 +202,9 @@ class EnhancedEcommerce extends Tracker implements
      * Transform transaction into classic analytics data array
      *
      * @note city, state, country were dropped as they were optional and never used
+     *
      * @param Transaction $transaction
+     *
      * @return array
      */
     protected function transformTransaction(Transaction $transaction)
@@ -215,7 +217,6 @@ class EnhancedEcommerce extends Tracker implements
             'shipping' => round($transaction->getShipping(), 2),   // shipping
         ];
     }
-
 
     protected function buildCheckoutCalls(array $items)
     {
@@ -232,6 +233,7 @@ class EnhancedEcommerce extends Tracker implements
      * Transform product action into enhanced data object
      *
      * @param ProductAction $item
+     *
      * @return array
      */
     protected function transformProductAction(ProductAction $item)
@@ -253,6 +255,7 @@ class EnhancedEcommerce extends Tracker implements
      * Transform product action into enhanced data object
      *
      * @param ProductAction $item
+     *
      * @return array
      */
     protected function transformProductImpression(ProductImpression $item)

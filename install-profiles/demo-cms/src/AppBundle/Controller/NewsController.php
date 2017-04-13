@@ -12,8 +12,8 @@ class NewsController extends AbstractController
     {
         // get a list of news objects and order them by date
         $newsList = new News\Listing();
-        $newsList->setOrderKey("date");
-        $newsList->setOrder("DESC");
+        $newsList->setOrderKey('date');
+        $newsList->setOrder('DESC');
 
         $paginator = new Paginator($newsList);
         $paginator->setCurrentPageNumber($request->get('page'));

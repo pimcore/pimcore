@@ -16,15 +16,13 @@ namespace Pimcore\Console;
 
 use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
+use Pimcore\Tool\Admin;
 use Pimcore\Version;
+use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Console\Event\ConsoleTerminateEvent;
-use Symfony\Component\Console\ConsoleEvents;
-use Pimcore\Tool\Admin;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -36,6 +34,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
      * Constructor.
      *
      * @param KernelInterface $kernel
+     *
      * @internal param string $name The name of the application
      * @internal param string $version The version of the application
      *
@@ -56,7 +55,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
-            if ($event->getInput()->getOption("maintenance-mode")) {
+            if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
 
@@ -67,7 +66,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         });
 
         $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
-            if ($event->getInput()->getOption("maintenance-mode")) {
+            if ($event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
                 Admin::deactivateMaintenanceMode();
             }

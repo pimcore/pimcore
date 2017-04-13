@@ -38,7 +38,6 @@ interface ICartPriceCalculator
      */
     public function reset();
 
-
     /**
      * returns sub total of cart
      *

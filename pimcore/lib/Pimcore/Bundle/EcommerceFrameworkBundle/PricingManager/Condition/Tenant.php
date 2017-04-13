@@ -23,11 +23,10 @@ class Tenant implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
      */
     protected $tenant;
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
@@ -43,8 +42,7 @@ class Tenant implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
     {
         // basic
         $json = [
-            'type' => 'Tenant'
-            , 'tenant' => implode(',', $this->getTenant())
+            'type' => 'Tenant', 'tenant' => implode(',', $this->getTenant())
         ];
 
         return json_encode($json);

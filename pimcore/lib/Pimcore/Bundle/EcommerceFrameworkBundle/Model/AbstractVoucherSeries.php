@@ -18,15 +18,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
 abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
 {
-
     /**
      * @return \Pimcore\Model\Object\Fieldcollection
      */
     abstract public function getTokenSettings();
 
-
     /**
      * @return bool|\Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function getTokenManager()
@@ -50,10 +49,10 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
     {
         $db = \Pimcore\Db::get();
 
-        $query = "
-            SELECT length, COUNT(*) AS count FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . "
+        $query = '
+            SELECT length, COUNT(*) AS count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . '
             WHERE voucherSeriesId = ?
-            GROUP BY length";
+            GROUP BY length';
 
         try {
             $lengths = $db->fetchAll($query, [$this->getId()]);

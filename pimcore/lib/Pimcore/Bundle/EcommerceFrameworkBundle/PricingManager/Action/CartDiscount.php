@@ -70,7 +70,6 @@ class CartDiscount implements IDiscount
         return $this;
     }
 
-
     /**
      * @return string
      */

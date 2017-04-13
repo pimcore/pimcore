@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
-use Pimcore\Model\Object\OnlineShopOrderItem;
+use Pimcore\Db;
 use Pimcore\Model\Object\OnlineShopOrder;
-use \Pimcore\Db;
+use Pimcore\Model\Object\OnlineShopOrderItem;
 
 class Listing extends AbstractOrderList implements IOrderList
 {
@@ -38,7 +38,6 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     protected $useSubItems = false;
 
-
     /**
      * @param string $type
      *
@@ -54,9 +53,9 @@ class Listing extends AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * get select query
+     *
      * @return Db\ZendCompatibility\QueryBuilder
      */
     public function getQuery()
@@ -65,19 +64,15 @@ class Listing extends AbstractOrderList implements IOrderList
             // init
             $select = Db::getConnection()->select();
 
-
             // base order
             $select->from(
                 [ 'order' => 'object_query_' . OnlineShopOrder::classId() ], [
-                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1')
-                    , 'OrderId' => 'order.oo_id'
+                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id'
                 ]
             );
 
-
             // join ordered products
             $this->joinItemsAndSubItems($select);
-
 
             // group by list type
             if ($this->getListType() == self::LIST_TYPE_ORDER_ITEM) {
@@ -87,7 +82,6 @@ class Listing extends AbstractOrderList implements IOrderList
                 $select->columns(['Id' => 'order.oo_id']);
                 $select->group('OrderId');
             }
-
 
             // filter order state
             if (!is_null($this->getOrderState())) {
@@ -99,13 +93,11 @@ class Listing extends AbstractOrderList implements IOrderList
                 $select->where('`order`.orderState IN('. implode(',', $orderStates) .')');
             }
 
-
             $this->query = $select;
         }
 
         return $this->query;
     }
-
 
     /**
      * @param int $limit
@@ -121,7 +113,6 @@ class Listing extends AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * @param array|string $order
      *
@@ -136,7 +127,6 @@ class Listing extends AbstractOrderList implements IOrderList
 
         return $this;
     }
-
 
     /**
      * @return $this
@@ -168,8 +158,7 @@ class Listing extends AbstractOrderList implements IOrderList
             $paymentQuery
                 ->from(
                     ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()], [
-                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")'
-                        , 'o_id' => '_order.o_id'
+                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id'
                     ]
                 )
                 ->join(
@@ -183,10 +172,8 @@ class Listing extends AbstractOrderList implements IOrderList
             );
         }
 
-
         return $this;
     }
-
 
     /**
      * @return $this
@@ -222,7 +209,6 @@ class Listing extends AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * @param int $classId
      *
@@ -241,9 +227,9 @@ class Listing extends AbstractOrderList implements IOrderList
         return $this;
     }
 
-
     /**
      * join for item / sub items
+     *
      * @param Db\ZendCompatibility\QueryBuilder $select
      *
      * @return $this
@@ -298,7 +284,6 @@ SUBQUERY
             );
         }
 
-
         // join related order item
         $select->join(
             [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ], 'orderItem.o_id = _orderItems.dest_id', ['OrderItemId' => 'orderItem.oo_id']
@@ -306,7 +291,6 @@ SUBQUERY
 
         return $this;
     }
-
 
     /**
      * @param $field
@@ -329,7 +313,6 @@ SUBQUERY
         $filter->apply($this);
     }
 
-
     /**
      * @param string $condition
      * @param string $value
@@ -343,13 +326,13 @@ SUBQUERY
         return $this;
     }
 
-
-
     /**
      * get all available values that can bee used for filter
+     *
      * @param string $field
      *
      * @return array
+     *
      * @deprecated refactoring
      */
     protected function getAvailableFilterValues($field)
@@ -364,15 +347,13 @@ SUBQUERY
             ', $query);
             $query = str_replace('GROUP BY orderItem', '', $query);
 
-
             $conn = \Pimcore\Db::getConnection();
             $conn->query('SET SESSION group_concat_max_len = 1000000');
             $this->availableFilterValues = $conn->fetchRow($query);
         }
 
-        return explode('|', $this->availableFilterValues[ 'available_' . $field ]);
+        return explode('|', $this->availableFilterValues['available_' . $field]);
     }
-
 
     /**
      * When an object is cloned, PHP 5 will perform a shallow copy of all of the object's properties.
@@ -382,6 +363,7 @@ SUBQUERY
      * NOT CALLABLE DIRECTLY.
      *
      * @return mixed
+     *
      * @link http://php.net/manual/en/language.oop5.cloning.php
      */
     public function __clone()
@@ -390,7 +372,7 @@ SUBQUERY
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function useSubItems()
     {
@@ -398,7 +380,7 @@ SUBQUERY
     }
 
     /**
-     * @param boolean $useSubItems
+     * @param bool $useSubItems
      *
      * @return $this
      */

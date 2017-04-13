@@ -39,7 +39,6 @@ class PaymentManager implements IPaymentManager
         $this->config = $config;
     }
 
-
     /**
      * @param $name
      *
@@ -48,7 +47,6 @@ class PaymentManager implements IPaymentManager
     public function getProvider($name)
     {
         $arrProvider = $this->config->provider->class ? [$this->config->provider] : $this->config->provider;
-
 
         foreach ($arrProvider as $provider) {
             if ($provider->name == $name) {

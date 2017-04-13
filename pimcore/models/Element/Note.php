@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Note extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -71,7 +71,9 @@ class Note extends Model\AbstractModel
 
     /**
      * @static
+     *
      * @param $id
+     *
      * @return Note
      */
     public static function getById($id)
@@ -86,7 +88,6 @@ class Note extends Model\AbstractModel
         }
     }
 
-
     /**
      * @param string $name
      * @param string $type
@@ -95,13 +96,14 @@ class Note extends Model\AbstractModel
     public function addData($name, $type, $data)
     {
         $this->data[$name] = [
-            "type" => $type,
-            "data" => $data
+            'type' => $type,
+            'data' => $data
         ];
     }
 
     /**
      * @param ElementInterface $element
+     *
      * @return $this
      */
     public function setElement(ElementInterface $element)
@@ -130,6 +132,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $cid
+     *
      * @return $this
      */
     public function setCid($cid)
@@ -149,6 +152,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $ctype
+     *
      * @return $this
      */
     public function setCtype($ctype)
@@ -168,6 +172,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $data
+     *
      * @return $this
      */
     public function setData($data)
@@ -187,6 +192,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $date
+     *
      * @return $this
      */
     public function setDate($date)
@@ -206,6 +212,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $description
+     *
      * @return $this
      */
     public function setDescription($description)
@@ -225,6 +232,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -244,6 +252,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $title
+     *
      * @return $this
      */
     public function setTitle($title)
@@ -263,6 +272,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -282,6 +292,7 @@ class Note extends Model\AbstractModel
 
     /**
      * @param $user
+     *
      * @return $this
      */
     public function setUser($user)

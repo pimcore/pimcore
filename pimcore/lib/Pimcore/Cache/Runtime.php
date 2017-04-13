@@ -20,12 +20,13 @@ class Runtime extends \ArrayObject
 
     /**
      * Retrieves the default registry instance.
+     *
      * @return self
      */
     public static function getInstance()
     {
         if (\Pimcore::hasContainer()) {
-            $instance = \Pimcore::getContainer()->get("pimcore.cache.runtime");
+            $instance = \Pimcore::getContainer()->get('pimcore.cache.runtime');
             if (self::$tempInstance) {
                 // copy values from static temp. instance to the service instance
                 foreach (self::$tempInstance as $key => $value) {
@@ -55,7 +56,9 @@ class Runtime extends \ArrayObject
      * static instance stored in the class.
      *
      * @param string $index - get the value associated with $index
+     *
      * @return mixed
+     *
      * @throws \Exception if no entry is registered for $index.
      */
     public static function get($index)
@@ -80,6 +83,7 @@ class Runtime extends \ArrayObject
      * @param string $index The location in the ArrayObject in which to store
      *   the value.
      * @param mixed $value The object to store in the ArrayObject.
+     *
      * @return void
      */
     public static function set($index, $value)
@@ -93,7 +97,8 @@ class Runtime extends \ArrayObject
      * or FALSE if $index was not found in the registry.
      *
      * @param  string $index
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isRegistered($index)
     {
@@ -107,7 +112,7 @@ class Runtime extends \ArrayObject
      * ARRAY_AS_PROPS to allow access as an object
      *
      * @param array $array data array
-     * @param integer $flags ArrayObject flags
+     * @param int $flags ArrayObject flags
      */
     public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
     {
@@ -127,8 +132,10 @@ class Runtime extends \ArrayObject
 
     /**
      * Alias of self::set() to be compatible with Pimcore\Cache
+     *
      * @param $data
      * @param $id
+     *
      * @return mixed
      */
     public static function save($data, $id)
@@ -138,7 +145,9 @@ class Runtime extends \ArrayObject
 
     /**
      * Alias of self::get() to be compatible with Pimcore\Cache
+     *
      * @param $id
+     *
      * @return mixed
      */
     public static function load($id)
@@ -160,6 +169,6 @@ class Runtime extends \ArrayObject
             }
         }
 
-        \Pimcore::getContainer()->set("pimcore.cache.runtime", $newInstance);
+        \Pimcore::getContainer()->set('pimcore.cache.runtime', $newInstance);
     }
 }

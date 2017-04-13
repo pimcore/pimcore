@@ -35,10 +35,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ClassController extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @Route("/get-document-types")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getDocumentTypesAction(Request $request)
@@ -47,7 +48,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $typeItems = [];
         foreach ($documentTypes as $documentType) {
             $typeItems[] = [
-                "text" => $documentType
+                'text' => $documentType
             ];
         }
 
@@ -56,7 +57,9 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-asset-types")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAssetTypesAction(Request $request)
@@ -65,7 +68,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $typeItems = [];
         foreach ($assetTypes as $assetType) {
             $typeItems[] = [
-                "text" => $assetType
+                'text' => $assetType
             ];
         }
 
@@ -74,23 +77,25 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-tree")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getTreeAction(Request $request)
     {
-        $defaultIcon = "/pimcore/static6/img/flat-color-icons/timeline.svg";
+        $defaultIcon = '/pimcore/static6/img/flat-color-icons/timeline.svg';
 
         $classesList = new Object\ClassDefinition\Listing();
-        $classesList->setOrderKey("name");
-        $classesList->setOrder("asc");
+        $classesList->setOrderKey('name');
+        $classesList->setOrder('asc');
         $classes = $classesList->load();
 
         // filter classes
-        if ($request->get("createAllowed")) {
+        if ($request->get('createAllowed')) {
             $tmpClasses = [];
             foreach ($classes as $class) {
-                if ($this->getUser()->isAllowed($class->getId(), "class")) {
+                if ($this->getUser()->isAllowed($class->getId(), 'class')) {
                     $tmpClasses[] = $class;
                 }
             }
@@ -99,13 +104,13 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $getClassConfig = function ($class) use ($defaultIcon) {
             return [
-                "id" => $class->getId(),
-                "text" => $class->getName(),
-                "leaf" => true,
-                "icon" => $class->getIcon() ? $class->getIcon() : $defaultIcon,
-                "propertyVisibility" => $class->getPropertyVisibility(),
-                "qtipCfg" => [
-                    "title" => "ID: " . $class->getId()
+                'id' => $class->getId(),
+                'text' => $class->getName(),
+                'leaf' => true,
+                'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
+                'propertyVisibility' => $class->getPropertyVisibility(),
+                'qtipCfg' => [
+                    'title' => 'ID: ' . $class->getId()
                 ]
             ];
         };
@@ -114,11 +119,11 @@ class ClassController extends AdminController implements EventedControllerInterf
         $groups = [];
         foreach ($classes as $class) {
             if ($class->getGroup()) {
-                $type = "manual";
+                $type = 'manual';
                 $groupName = $class->getGroup();
             } else {
-                $type = "auto";
-                preg_match("@^([A-Za-z])([^A-Z]+)@", $class->getName(), $matches);
+                $type = 'auto';
+                preg_match('@^([A-Za-z])([^A-Z]+)@', $class->getName(), $matches);
                 $groupName = $matches[0];
             }
 
@@ -126,11 +131,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             if (!isset($groups[$groupName])) {
                 $groups[$groupName] = [
-                    "classes" => [],
-                    "type" => $type
+                    'classes' => [],
+                    'type' => $type
                 ];
             }
-            $groups[$groupName]["classes"][] = $class;
+            $groups[$groupName]['classes'][] = $class;
         }
 
         $treeNodes = [];
@@ -138,10 +143,10 @@ class ClassController extends AdminController implements EventedControllerInterf
         if (!$request->get('grouped')) {
             // list output
             foreach ($groups as $groupName => $groupData) {
-                foreach ($groupData["classes"] as $class) {
+                foreach ($groupData['classes'] as $class) {
                     $node = $getClassConfig($class);
-                    if (count($groupData["classes"]) > 1 || $groupData["type"] == "manual") {
-                        $node["group"] = $groupName;
+                    if (count($groupData['classes']) > 1 || $groupData['type'] == 'manual') {
+                        $node['group'] = $groupName;
                     }
                     $treeNodes[] = $node;
                 }
@@ -149,22 +154,22 @@ class ClassController extends AdminController implements EventedControllerInterf
         } else {
             // create json output
             foreach ($groups as $groupName => $groupData) {
-                if (count($groupData["classes"]) === 1 && $groupData["type"] == "auto") {
+                if (count($groupData['classes']) === 1 && $groupData['type'] == 'auto') {
                     // no group, only one child
-                    $node = $getClassConfig($groupData["classes"][0]);
+                    $node = $getClassConfig($groupData['classes'][0]);
                 } else {
                     // group classes
                     $node = [
-                        "id" => "folder_" . $groupName,
-                        "text" => $groupName,
-                        "leaf" => false,
+                        'id' => 'folder_' . $groupName,
+                        'text' => $groupName,
+                        'leaf' => false,
                         'expandable' => true,
                         'allowChildren' => true,
                         'iconCls' => 'pimcore_icon_folder',
-                        "children" => []
+                        'children' => []
                     ];
 
-                    foreach ($groupData["classes"] as $class) {
+                    foreach ($groupData['classes'] as $class) {
                         $node['children'][] = $getClassConfig($class);
                     }
                 }
@@ -178,12 +183,14 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($request->get("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get('id')));
         $class->setFieldDefinitions(null);
 
         return $this->json($class);
@@ -191,58 +198,66 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-custom-layout")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($request->get("id")));
+        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($request->get('id')));
 
-        return $this->json(["success" => true, "data" => $customLayout]);
+        return $this->json(['success' => true, 'data' => $customLayout]);
     }
 
     /**
      * @Route("/add")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addAction(Request $request)
     {
-        $class = Object\ClassDefinition::create(['name' => $this->correctClassname($request->get("name")),
+        $class = Object\ClassDefinition::create(['name' => $this->correctClassname($request->get('name')),
                 'userOwner' => $this->getUser()->getId()]
         );
 
         $class->save();
 
-        return $this->json(["success" => true, "id" => $class->getId()]);
+        return $this->json(['success' => true, 'id' => $class->getId()]);
     }
 
     /**
      * @Route("/add-custom-layout")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function addCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::create(['name' => $request->get("name"),
+        $customLayout = Object\ClassDefinition\CustomLayout::create(['name' => $request->get('name'),
                 'userOwner' => $this->getUser()->getId(),
-                "classId" => $request->get("classId")]
+                'classId' => $request->get('classId')]
         );
 
         $customLayout->save();
 
-        return $this->json(["success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName(),
-            "data" => $customLayout]);
+        return $this->json(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
+            'data' => $customLayout]);
     }
 
     /**
      * @Route("/delete")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function deleteAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($request->get("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get('id')));
         $class->delete();
 
         return new Response();
@@ -250,91 +265,95 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/delete-custom-layout")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($request->get("id")));
+        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($request->get('id')));
         if ($customLayout) {
             $customLayout->delete();
         }
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
-
 
     /**
      * @Route("/save-custom-layout")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function saveCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById($request->get("id"));
+        $customLayout = Object\ClassDefinition\CustomLayout::getById($request->get('id'));
         $class = Object\ClassDefinition::getById($customLayout->getClassId());
 
-        $configuration = $this->decodeJson($request->get("configuration"));
-        $values = $this->decodeJson($request->get("values"));
+        $configuration = $this->decodeJson($request->get('configuration'));
+        $values = $this->decodeJson($request->get('values'));
 
-        $modificationDate = intval($values["modificationDate"]);
+        $modificationDate = intval($values['modificationDate']);
         if ($modificationDate < $customLayout->getModificationDate()) {
-            return $this->json(["success" => false, "msg" => "custom_layout_changed"]);
+            return $this->json(['success' => false, 'msg' => 'custom_layout_changed']);
         }
 
-
-        $configuration["datatype"] = "layout";
-        $configuration["fieldtype"] = "panel";
-        $configuration["name"] = "pimcore_root";
+        $configuration['datatype'] = 'layout';
+        $configuration['fieldtype'] = 'panel';
+        $configuration['name'] = 'pimcore_root';
 
         try {
             $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
             $customLayout->setLayoutDefinitions($layout);
-            $customLayout->setName($values["name"]);
-            $customLayout->setDescription($values["description"]);
-            $customLayout->setDefault($values["default"]);
+            $customLayout->setName($values['name']);
+            $customLayout->setDescription($values['description']);
+            $customLayout->setDefault($values['default']);
             $customLayout->save();
 
-            return $this->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
+            return $this->json(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
     /**
      * @Route("/save")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function saveAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($request->get("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get('id')));
 
-        $configuration = $this->decodeJson($request->get("configuration"));
-        $values = $this->decodeJson($request->get("values"));
+        $configuration = $this->decodeJson($request->get('configuration'));
+        $values = $this->decodeJson($request->get('values'));
 
         // check if the class was changed during editing in the frontend
-        if ($class->getModificationDate() != $values["modificationDate"]) {
-            throw new \Exception("The class was modified during editing, please reload the class and make your changes again");
+        if ($class->getModificationDate() != $values['modificationDate']) {
+            throw new \Exception('The class was modified during editing, please reload the class and make your changes again');
         }
 
-        if ($values["name"] != $class->getName()) {
-            $values["name"] = $this->correctClassname($values["name"]);
-            $class->rename($values["name"]);
+        if ($values['name'] != $class->getName()) {
+            $values['name'] = $this->correctClassname($values['name']);
+            $class->rename($values['name']);
         }
 
-        unset($values["creationDate"]);
-        unset($values["userOwner"]);
-        unset($values["layoutDefinitions"]);
-        unset($values["fieldDefinitions"]);
+        unset($values['creationDate']);
+        unset($values['userOwner']);
+        unset($values['layoutDefinitions']);
+        unset($values['fieldDefinitions']);
 
-
-        $configuration["datatype"] = "layout";
-        $configuration["fieldtype"] = "panel";
-        $configuration["name"] = "pimcore_root";
+        $configuration['datatype'] = 'layout';
+        $configuration['fieldtype'] = 'panel';
+        $configuration['name'] = 'pimcore_root';
 
         $class->setValues($values);
 
@@ -348,11 +367,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $propertyVisibility = [];
             foreach ($values as $key => $value) {
-                if (preg_match("/propertyVisibility/i", $key)) {
+                if (preg_match('/propertyVisibility/i', $key)) {
                     if (preg_match("/\.grid\./i", $key)) {
-                        $propertyVisibility["grid"][preg_replace("/propertyVisibility\.grid\./i", "", $key)] = (bool) $value;
+                        $propertyVisibility['grid'][preg_replace("/propertyVisibility\.grid\./i", '', $key)] = (bool) $value;
                     } elseif (preg_match("/\.search\./i", $key)) {
-                        $propertyVisibility["search"][preg_replace("/propertyVisibility\.search\./i", "", $key)] = (bool) $value;
+                        $propertyVisibility['search'][preg_replace("/propertyVisibility\.search\./i", '', $key)] = (bool) $value;
                     }
                 }
             }
@@ -365,67 +384,71 @@ class ClassController extends AdminController implements EventedControllerInterf
             // set the fielddefinitions to null because we don't need them in the response
             $class->setFieldDefinitions(null);
 
-            return $this->json(["success" => true, "class" => $class]);
+            return $this->json(['success' => true, 'class' => $class]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
     /**
      * @param $name
+     *
      * @return mixed
      */
     protected function correctClassname($name)
     {
         $name = preg_replace('/[^a-zA-Z0-9]+/', '', $name);
-        $name = preg_replace("/^[0-9]+/", "", $name);
+        $name = preg_replace('/^[0-9]+/', '', $name);
 
         return $name;
     }
 
     /**
      * @Route("/import-class")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function importClassAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($request->get("id")));
-        $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $class = Object\ClassDefinition::getById(intval($request->get('id')));
+        $json = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
 
         $response = $this->json([
-            "success" => $success
+            'success' => $success
         ]);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $response->headers->set("Content-Type", "text/html");
+        $response->headers->set('Content-Type', 'text/html');
 
         return $response;
     }
 
     /**
      * @Route("/import-custom-layout")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function importCustomLayoutDefinitionAction(Request $request)
     {
         $success = false;
-        $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $json = file_get_contents($_FILES['Filedata']['tmp_name']);
         $importData = $this->decodeJson($json);
 
-
-        $customLayoutId = $request->get("id");
+        $customLayoutId = $request->get('id');
         $customLayout = Object\ClassDefinition\CustomLayout::getById($customLayoutId);
         if ($customLayout) {
             try {
-                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"], true);
+                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
                 $customLayout->setLayoutDefinitions($layout);
-                $customLayout->setDescription($importData["description"]);
+                $customLayout->setDescription($importData['description']);
                 $customLayout->save();
                 $success = true;
             } catch (\Exception $e) {
@@ -434,44 +457,48 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
 
         $response = $this->json([
-            "success" => $success
+            'success' => $success
         ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $response->headers->set("Content-Type", "text/html");
+        $response->headers->set('Content-Type', 'text/html');
 
         return $response;
     }
 
     /**
      * @Route("/get-custom-layout-definitions")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getCustomLayoutDefinitionsAction(Request $request)
     {
-        $classId = $request->get("classId");
+        $classId = $request->get('classId');
         $list = new Object\ClassDefinition\CustomLayout\Listing();
 
-        $list->setCondition("classId = " . $list->quote($classId));
+        $list->setCondition('classId = ' . $list->quote($classId));
         $list = $list->load();
         $result = [];
         /** @var $item Object\ClassDefinition\CustomLayout */
         foreach ($list as $item) {
             $result[] = [
-                "id" => $item->getId(),
-                "name" => $item->getName() . " (ID: " . $item->getId() . ")",
-                "default" => $item->getDefault() ?: 0,
+                'id' => $item->getId(),
+                'name' => $item->getName() . ' (ID: ' . $item->getId() . ')',
+                'default' => $item->getDefault() ?: 0,
             ];
         }
 
-        return $this->json(["success" => true, "data" => $result]);
+        return $this->json(['success' => true, 'data' => $result]);
     }
 
     /**
      * @Route("/get-all-layouts")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getAllLayoutsAction(Request $request)
@@ -481,60 +508,62 @@ class ClassController extends AdminController implements EventedControllerInterf
         $mapping = [];
 
         $customLayouts = new Object\ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setOrder("ASC");
-        $customLayouts->setOrderKey("name");
+        $customLayouts->setOrder('ASC');
+        $customLayouts->setOrderKey('name');
         $customLayouts = $customLayouts->load();
         foreach ($customLayouts as $layout) {
             $mapping[$layout->getClassId()][] = $layout;
         }
 
         $classList = new Object\ClassDefinition\Listing();
-        $classList->setOrder("ASC");
-        $classList->setOrderKey("name");
+        $classList->setOrder('ASC');
+        $classList->setOrderKey('name');
         $classList = $classList->load();
 
         foreach ($classList as $class) {
             $classMapping = $mapping[$class->getId()];
             if ($classMapping) {
                 $resultList[] = [
-                    "type" => "master",
-                    "id" => $class->getId() . "_" . 0,
-                    "name" => $class->getName()
+                    'type' => 'master',
+                    'id' => $class->getId() . '_' . 0,
+                    'name' => $class->getName()
                 ];
 
                 foreach ($classMapping as $layout) {
                     $resultList[] = [
-                        "type" => "custom",
-                        "id" => $class->getId() . "_" . $layout->getId(),
-                        "name" => $class->getName() . " - " . $layout->getName()
+                        'type' => 'custom',
+                        'id' => $class->getId() . '_' . $layout->getId(),
+                        'name' => $class->getName() . ' - ' . $layout->getName()
                     ];
                 }
             }
         }
 
-        return $this->json(["data" => $resultList]);
+        return $this->json(['data' => $resultList]);
     }
 
     /**
      * @Route("/export-class")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function exportClassAction(Request $request)
     {
-        $id = intval($request->get("id"));
+        $id = intval($request->get('id'));
         $class = Object\ClassDefinition::getById($id);
 
         if (!$class instanceof Object\ClassDefinition) {
-            $errorMessage = ": Class with id [ " . $id . " not found. ]";
+            $errorMessage = ': Class with id [ ' . $id . ' not found. ]';
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $json = Object\ClassDefinition\Service::generateClassDefinitionJson($class);
 
             $response = new Response($json);
-            $response->headers->set("Content-type", "application/json");
-            $response->headers->set("Content-Disposition", "attachment; filename=\"class_" . $class->getName() . "_export.json\"");
+            $response->headers->set('Content-type', 'application/json');
+            $response->headers->set('Content-Disposition', 'attachment; filename="class_' . $class->getName() . '_export.json"');
 
             return $response;
         }
@@ -542,12 +571,14 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-custom-layout-definitions")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function exportCustomLayoutDefinitionAction(Request $request)
     {
-        $id = intval($request->get("id"));
+        $id = intval($request->get('id'));
 
         if ($id) {
             $customLayout = Object\ClassDefinition\CustomLayout::getById($id);
@@ -565,19 +596,17 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $json = json_encode($customLayout, JSON_PRETTY_PRINT);
 
                 $response = new Response($json);
-                $response->headers->set("Content-type", "application/json");
-                $response->headers->set("Content-Disposition", "attachment; filename=\"custom_definition_" . $name . "_export.json\"");
+                $response->headers->set('Content-type', 'application/json');
+                $response->headers->set('Content-Disposition', 'attachment; filename="custom_definition_' . $name . '_export.json"');
 
                 return $response;
             }
         }
 
-        $errorMessage = ": Custom Layout with id [ " . $id . " not found. ]";
+        $errorMessage = ': Custom Layout with id [ ' . $id . ' not found. ]';
         Logger::error($errorMessage);
         echo $errorMessage;
     }
-
-
 
     /**
      * FIELDCOLLECTIONS
@@ -585,34 +614,38 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function fieldcollectionGetAction(Request $request)
     {
-        $fc = Object\Fieldcollection\Definition::getByKey($request->get("id"));
+        $fc = Object\Fieldcollection\Definition::getByKey($request->get('id'));
 
         return $this->json($fc);
     }
 
     /**
      * @Route("/fieldcollection-update")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function fieldcollectionUpdateAction(Request $request)
     {
         try {
-            $key = $request->get("key");
+            $key = $request->get('key');
 
-            if ($request->get("task") == "add") {
+            if ($request->get('task') == 'add') {
                 // check for existing fieldcollection with same name with different lower/upper cases
                 $list = new Object\Fieldcollection\Definition\Listing();
                 $list = $list->load();
 
                 foreach ($list as $item) {
                     if (strtolower($key) === strtolower($item->getKey())) {
-                        throw new \Exception("FieldCollection with the same name already exists (lower/upper cases may be different)");
+                        throw new \Exception('FieldCollection with the same name already exists (lower/upper cases may be different)');
                     }
                 }
             }
@@ -620,16 +653,16 @@ class ClassController extends AdminController implements EventedControllerInterf
             $fc = new Object\Fieldcollection\Definition();
             $fc->setKey($key);
 
-            if ($request->get("values")) {
-                $values = $this->decodeJson($request->get("values"));
-                $fc->setParentClass($values["parentClass"]);
+            if ($request->get('values')) {
+                $values = $this->decodeJson($request->get('values'));
+                $fc->setParentClass($values['parentClass']);
             }
 
-            if ($request->get("configuration")) {
-                $configuration = $this->decodeJson($request->get("configuration"));
+            if ($request->get('configuration')) {
+                $configuration = $this->decodeJson($request->get('configuration'));
 
-                $configuration["datatype"] = "layout";
-                $configuration["fieldtype"] = "panel";
+                $configuration['datatype'] = 'layout';
+                $configuration['fieldtype'] = 'panel';
 
                 $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
                 $fc->setLayoutDefinitions($layout);
@@ -637,56 +670,60 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $fc->save();
 
-            return $this->json(["success" => true, "id" => $fc->getKey()]);
+            return $this->json(['success' => true, 'id' => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
     /**
      * @Route("/import-fieldcollection")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function importFieldcollectionAction(Request $request)
     {
-        $fieldCollection = Object\Fieldcollection\Definition::getByKey($request->get("id"));
+        $fieldCollection = Object\Fieldcollection\Definition::getByKey($request->get('id'));
 
-        $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $data = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
 
         $response = $this->json([
-            "success" => $success
+            'success' => $success
         ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $response->headers->set("Content-Type", "text/html");
+        $response->headers->set('Content-Type', 'text/html');
 
         return $response;
     }
 
     /**
      * @Route("/export-fieldcollection")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function exportFieldcollectionAction(Request $request)
     {
-        $fieldCollection = Object\Fieldcollection\Definition::getByKey($request->get("id"));
+        $fieldCollection = Object\Fieldcollection\Definition::getByKey($request->get('id'));
         $key = $fieldCollection->getKey();
         if (!$fieldCollection instanceof Object\Fieldcollection\Definition) {
-            $errorMessage = ": Field-Collection with id [ " . $request->get("id") . " not found. ]";
+            $errorMessage = ': Field-Collection with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $json = Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
             $response = new Response($json);
-            $response->headers->set("Content-type", "application/json");
-            $response->headers->set("Content-Disposition", "attachment; filename=\"fieldcollection_" . $key . "_export.json\"");
+            $response->headers->set('Content-type', 'application/json');
+            $response->headers->set('Content-Disposition', 'attachment; filename="fieldcollection_' . $key . '_export.json"');
 
             return $response;
         }
@@ -694,20 +731,24 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-delete")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function fieldcollectionDeleteAction(Request $request)
     {
-        $fc = Object\Fieldcollection\Definition::getByKey($request->get("id"));
+        $fc = Object\Fieldcollection\Definition::getByKey($request->get('id'));
         $fc->delete();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/fieldcollection-tree")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function fieldcollectionTreeAction(Request $request)
@@ -719,8 +760,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         foreach ($list as $fc) {
             $items[] = [
-                "id" => $fc->getKey(),
-                "text" => $fc->getKey()
+                'id' => $fc->getKey(),
+                'text' => $fc->getKey()
             ];
         }
 
@@ -729,20 +770,22 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-list")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function fieldcollectionListAction(Request $request)
     {
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $currentLayoutId = $request->get("layoutId");
+        $currentLayoutId = $request->get('layoutId');
 
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
-        if ($request->query->has("allowedTypes")) {
+        if ($request->query->has('allowedTypes')) {
             $filteredList = [];
-            $allowedTypes = explode(",", $request->get("allowedTypes"));
+            $allowedTypes = explode(',', $request->get('allowedTypes'));
             /** @var $type Object\Fieldcollection\Definition */
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
@@ -751,11 +794,11 @@ class ClassController extends AdminController implements EventedControllerInterf
                     // mainly for objects-meta data-type
                     $layoutDefinitions = $type->getLayoutDefinitions();
                     $context = [
-                        "containerType" => "fieldcollection",
-                        "containerKey" => $type->getKey()
+                        'containerType' => 'fieldcollection',
+                        'containerKey' => $type->getKey()
                     ];
 
-                    $object = Object\AbstractObject::getById($request->get("object_id"));
+                    $object = Object\AbstractObject::getById($request->get('object_id'));
 
                     Object\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
@@ -768,44 +811,43 @@ class ClassController extends AdminController implements EventedControllerInterf
             $list = $filteredList;
         }
 
-
-        return $this->json(["fieldcollections" => $list]);
+        return $this->json(['fieldcollections' => $list]);
     }
-
 
     /**
      * @Route("/get-class-definition-for-column-config")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function getClassDefinitionForColumnConfigAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($request->get("id")));
-        $objectId = intval($request->get("oid"));
+        $class = Object\ClassDefinition::getById(intval($request->get('id')));
+        $objectId = intval($request->get('oid'));
 
         $filteredDefinitions = Object\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
 
-        $layoutDefinitions = isset($filteredDefinitions["layoutDefinition"]) ? $filteredDefinitions["layoutDefinition"] : false;
-        $filteredFieldDefinition = isset($filteredDefinitions["fieldDefinition"]) ? $filteredDefinitions["fieldDefinition"] : false;
+        $layoutDefinitions = isset($filteredDefinitions['layoutDefinition']) ? $filteredDefinitions['layoutDefinition'] : false;
+        $filteredFieldDefinition = isset($filteredDefinitions['fieldDefinition']) ? $filteredDefinitions['fieldDefinition'] : false;
 
         $class->setFieldDefinitions(null);
 
         $result = [];
 
         $result['objectColumns']['childs'] = $layoutDefinitions->getChilds();
-        $result['objectColumns']['nodeLabel'] = "object_columns";
-        $result['objectColumns']['nodeType'] = "object";
+        $result['objectColumns']['nodeLabel'] = 'object_columns';
+        $result['objectColumns']['nodeType'] = 'object';
 
         // array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
         $systemColumnNames = Object\Concrete::$systemColumnNames;
         $systemColumns = [];
         foreach ($systemColumnNames as $systemColumn) {
-            $systemColumns[] = ["title" => $systemColumn, "name" => $systemColumn, "datatype" => "data", "fieldtype" => "system"];
+            $systemColumns[] = ['title' => $systemColumn, 'name' => $systemColumn, 'datatype' => 'data', 'fieldtype' => 'system'];
         }
-        $result['systemColumns']['nodeLabel'] = "system_columns";
-        $result['systemColumns']['nodeType'] = "system";
+        $result['systemColumns']['nodeLabel'] = 'system_columns';
+        $result['systemColumns']['nodeType'] = 'system';
         $result['systemColumns']['childs'] = $systemColumns;
-
 
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
@@ -815,14 +857,14 @@ class ClassController extends AdminController implements EventedControllerInterf
             if (!empty($classDefs)) {
                 foreach ($classDefs as $classDef) {
                     if ($classDef['classname'] == $class->getId()) {
-                        $fieldName = $classDef["fieldname"];
+                        $fieldName = $classDef['fieldname'];
                         if ($filteredFieldDefinition && !$filteredFieldDefinition[$fieldName]) {
                             continue;
                         }
 
                         $key = $brickDefinition->getKey();
                         $result[$key]['nodeLabel'] = $key;
-                        $result[$key]['nodeType'] = "objectbricks";
+                        $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
                         break;
                     }
@@ -833,41 +875,44 @@ class ClassController extends AdminController implements EventedControllerInterf
         return $this->json($result);
     }
 
-
     /**
      * OBJECT BRICKS
      */
 
     /**
      * @Route("/objectbrick-get")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function objectbrickGetAction(Request $request)
     {
-        $fc = Object\Objectbrick\Definition::getByKey($request->get("id"));
+        $fc = Object\Objectbrick\Definition::getByKey($request->get('id'));
 
         return $this->json($fc);
     }
 
     /**
      * @Route("/objectbrick-update")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function objectbrickUpdateAction(Request $request)
     {
         try {
-            $key = $request->get("key");
+            $key = $request->get('key');
 
-            if ($request->get("task") == "add") {
+            if ($request->get('task') == 'add') {
                 // check for existing brick with same name with different lower/upper cases
                 $list = new Object\Objectbrick\Definition\Listing();
                 $list = $list->load();
 
                 foreach ($list as $item) {
                     if (strtolower($key) === strtolower($item->getKey())) {
-                        throw new \Exception("Brick with the same name already exists (lower/upper cases may be different)");
+                        throw new \Exception('Brick with the same name already exists (lower/upper cases may be different)');
                     }
                 }
             }
@@ -876,18 +921,18 @@ class ClassController extends AdminController implements EventedControllerInterf
             $fc = new Object\Objectbrick\Definition();
             $fc->setKey($key);
 
-            if ($request->get("values")) {
-                $values = $this->decodeJson($request->get("values"));
+            if ($request->get('values')) {
+                $values = $this->decodeJson($request->get('values'));
 
-                $fc->setParentClass($values["parentClass"]);
-                $fc->setClassDefinitions($values["classDefinitions"]);
+                $fc->setParentClass($values['parentClass']);
+                $fc->setClassDefinitions($values['classDefinitions']);
             }
 
-            if ($request->get("configuration")) {
-                $configuration = $this->decodeJson($request->get("configuration"));
+            if ($request->get('configuration')) {
+                $configuration = $this->decodeJson($request->get('configuration'));
 
-                $configuration["datatype"] = "layout";
-                $configuration["fieldtype"] = "panel";
+                $configuration['datatype'] = 'layout';
+                $configuration['fieldtype'] = 'panel';
 
                 $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
                 $fc->setLayoutDefinitions($layout);
@@ -895,55 +940,59 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $fc->save();
 
-            return $this->json(["success" => true, "id" => $fc->getKey()]);
+            return $this->json(['success' => true, 'id' => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
     /**
      * @Route("/import-objectbrick")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function importObjectbrickAction(Request $request)
     {
-        $objectBrick = Object\Objectbrick\Definition::getByKey($request->get("id"));
+        $objectBrick = Object\Objectbrick\Definition::getByKey($request->get('id'));
 
-        $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $data = file_get_contents($_FILES['Filedata']['tmp_name']);
         $success = Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $data);
 
         $response = $this->json([
-            "success" => $success
+            'success' => $success
         ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $response->headers->set("Content-Type", "text/html");
+        $response->headers->set('Content-Type', 'text/html');
 
         return $response;
     }
 
     /**
      * @Route("/export-objectbrick")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function exportObjectbrickAction(Request $request)
     {
-        $objectBrick = Object\Objectbrick\Definition::getByKey($request->get("id"));
+        $objectBrick = Object\Objectbrick\Definition::getByKey($request->get('id'));
         $key = $objectBrick->getKey();
         if (!$objectBrick instanceof Object\Objectbrick\Definition) {
-            $errorMessage = ": Object-Brick with id [ " . $request->get("id") . " not found. ]";
+            $errorMessage = ': Object-Brick with id [ ' . $request->get('id') . ' not found. ]';
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $xml = Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
             $response = new Response($xml);
-            $response->headers->set("Content-type", "application/json");
-            $response->headers->set("Content-Disposition", "attachment; filename=\"objectbrick_" . $key . "_export.json\"");
+            $response->headers->set('Content-type', 'application/json');
+            $response->headers->set('Content-Disposition', 'attachment; filename="objectbrick_' . $key . '_export.json"');
 
             return $response;
         }
@@ -951,20 +1000,24 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-delete")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function objectbrickDeleteAction(Request $request)
     {
-        $fc = Object\Objectbrick\Definition::getByKey($request->get("id"));
+        $fc = Object\Objectbrick\Definition::getByKey($request->get('id'));
         $fc->delete();
 
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
      * @Route("/objectbrick-tree")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function objectbrickTreeAction(Request $request)
@@ -976,8 +1029,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         foreach ($list as $fc) {
             $items[] = [
-                "id" => $fc->getKey(),
-                "text" => $fc->getKey()
+                'id' => $fc->getKey(),
+                'text' => $fc->getKey()
             ];
         }
 
@@ -986,7 +1039,9 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-list")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function objectbrickListAction(Request $request)
@@ -994,16 +1049,16 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
 
-        if ($request->query->has("class_id") && $request->query->has("field_name")) {
+        if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $filteredList = [];
-            $classId = $request->get("class_id");
-            $fieldname = $request->get("field_name");
+            $classId = $request->get('class_id');
+            $fieldname = $request->get('field_name');
             foreach ($list as $type) {
-                /** @var  $type Object\Objectbrick\Definition */
+                /** @var $type Object\Objectbrick\Definition */
                 $clsDefs = $type->getClassDefinitions();
                 if (!empty($clsDefs)) {
                     foreach ($clsDefs as $cd) {
-                        if ($cd["classname"] == $classId && $cd["fieldname"] == $fieldname) {
+                        if ($cd['classname'] == $classId && $cd['fieldname'] == $fieldname) {
                             $filteredList[] = $type;
                             continue;
                         }
@@ -1013,11 +1068,11 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $layout = $type->getLayoutDefinitions();
 
                 $context = [
-                    "containerType" => "objectbrick",
-                    "containerKey" => $type->getKey()
+                    'containerType' => 'objectbrick',
+                    'containerKey' => $type->getKey()
                 ];
 
-                $object = Object\AbstractObject::getById($request->get("object_id"));
+                $object = Object\AbstractObject::getById($request->get('object_id'));
 
                 Object\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);
@@ -1027,13 +1082,13 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
 
         $event = new GenericEvent($this, [
-            "list" => $list,
-            "objectId"=>$request->get('object_id')
+            'list' => $list,
+            'objectId'=>$request->get('object_id')
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
-        $list = $event->getArgument("list");
+        $list = $event->getArgument('list');
 
-        return $this->json(["objectbricks" => $list]);
+        return $this->json(['objectbricks' => $list]);
     }
 
     /**
@@ -1043,17 +1098,19 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-import")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function bulkImportAction(Request $request)
     {
         $result = [];
 
-        $tmpName = $_FILES["Filedata"]["tmp_name"];
+        $tmpName = $_FILES['Filedata']['tmp_name'];
         $json = file_get_contents($tmpName);
 
-        $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/bulk-import.tmp";
+        $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/bulk-import.tmp';
         file_put_contents($tmpName, $json);
 
         $json = json_decode($json, true);
@@ -1062,34 +1119,34 @@ class ClassController extends AdminController implements EventedControllerInterf
             foreach ($group as $groupItem) {
                 $displayName = null;
 
-                if ($groupName == "class") {
-                    $name = $groupItem["name"];
-                    $icon = "class";
-                } elseif ($groupName == "customlayout") {
-                    $className = $groupItem["className"];
+                if ($groupName == 'class') {
+                    $name = $groupItem['name'];
+                    $icon = 'class';
+                } elseif ($groupName == 'customlayout') {
+                    $className = $groupItem['className'];
 
-                    $layoutData = ["className" => $className, "name" => $groupItem["name"]];
+                    $layoutData = ['className' => $className, 'name' => $groupItem['name']];
                     $name = serialize($layoutData);
-                    $displayName = $className . " / " . $groupItem["name"];
-                    $icon = "database_lightning";
+                    $displayName = $className . ' / ' . $groupItem['name'];
+                    $icon = 'database_lightning';
                 } else {
-                    if ($groupName == "objectbrick") {
-                        $icon = "objectbricks";
-                    } elseif ($groupName == "fieldcollection") {
-                        $icon = "fieldcollection";
+                    if ($groupName == 'objectbrick') {
+                        $icon = 'objectbricks';
+                    } elseif ($groupName == 'fieldcollection') {
+                        $icon = 'fieldcollection';
                     }
-                    $name = $groupItem["key"];
+                    $name = $groupItem['key'];
                 }
 
                 if (!$displayName) {
                     $displayName = $name;
                 }
-                $result[] = ["icon" => $icon, "checked" => true, "type" => $groupName, "name" => $name, "displayName" => $displayName];
+                $result[] = ['icon' => $icon, 'checked' => true, 'type' => $groupName, 'name' => $name, 'displayName' => $displayName];
             }
         }
 
-        $response = $this->json(["success" => true, "filename" => $tmpName, "data" => $result]);
-        $response->headers->set("Content-Type", "text/html");
+        $response = $this->json(['success' => true, 'filename' => $tmpName, 'data' => $result]);
+        $response->headers->set('Content-Type', 'text/html');
 
         return $response;
     }
@@ -1101,32 +1158,34 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-commit")
+     *
      * @param Request $request
+     *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function bulkCommitAction(Request $request)
     {
-        $filename = $request->get("filename");
-        $data = json_decode($request->get("data"), true);
+        $filename = $request->get('filename');
+        $data = json_decode($request->get('data'), true);
 
         $json = @file_get_contents($filename);
         $json = json_decode($json, true);
 
-        $type = $data["type"];
-        $name = $data["name"];
+        $type = $data['type'];
+        $name = $data['name'];
         $list = $json[$type];
 
         foreach ($list as $item) {
-            unset($item["creationDate"]);
-            unset($item["modificationDate"]);
-            unset($item["userOwner"]);
-            unset($item["userModification"]);
+            unset($item['creationDate']);
+            unset($item['modificationDate']);
+            unset($item['userOwner']);
+            unset($item['userModification']);
 
+            unset($item['id']);
 
-            unset($item["id"]);
-
-            if ($type == "class" && $item["name"] == $name) {
+            if ($type == 'class' && $item['name'] == $name) {
                 $class = Object\ClassDefinition::getByName($name);
                 if (!$class) {
                     $class = new Object\ClassDefinition();
@@ -1134,8 +1193,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
                 $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
 
-                return $this->json(["success" => $success !== false]);
-            } elseif ($type == "objectbrick" && $item["key"] == $name) {
+                return $this->json(['success' => $success !== false]);
+            } elseif ($type == 'objectbrick' && $item['key'] == $name) {
                 try {
                     $brick = Object\Objectbrick\Definition::getByKey($name);
                 } catch (\Exception $e) {
@@ -1145,8 +1204,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 $success = Object\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
 
-                return $this->json(["success" => $success !== false]);
-            } elseif ($type == "fieldcollection" && $item["key"] == $name) {
+                return $this->json(['success' => $success !== false]);
+            } elseif ($type == 'fieldcollection' && $item['key'] == $name) {
                 try {
                     $fieldCollection = Object\Fieldcollection\Definition::getByKey($name);
                 } catch (\Exception $e) {
@@ -1155,24 +1214,23 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
                 $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
 
-                return $this->json(["success" => $success !== false]);
-            } elseif ($type == "customlayout") {
-                $layoutData = unserialize($data["name"]);
-                $className = $layoutData["className"];
-                $layoutName = $layoutData["name"];
+                return $this->json(['success' => $success !== false]);
+            } elseif ($type == 'customlayout') {
+                $layoutData = unserialize($data['name']);
+                $className = $layoutData['className'];
+                $layoutName = $layoutData['name'];
 
-                if ($item["name"] == $layoutName && $item["className"] == $className) {
+                if ($item['name'] == $layoutName && $item['className'] == $className) {
                     $class = Object\ClassDefinition::getByName($className);
                     if (!$class) {
-                        throw new \Exception("Class does not exist");
+                        throw new \Exception('Class does not exist');
                     }
 
                     $classId = $class->getId();
 
-
                     $layoutList = new Object\ClassDefinition\CustomLayout\Listing();
                     $db = \Pimcore\Db::get();
-                    $layoutList->setCondition("name = " . $db->quote($layoutName) . " AND classId = " . $classId);
+                    $layoutList->setCondition('name = ' . $db->quote($layoutName) . ' AND classId = ' . $classId);
                     $layoutList = $layoutList->load();
 
                     $layoutDefinition = null;
@@ -1187,21 +1245,20 @@ class ClassController extends AdminController implements EventedControllerInterf
                     }
 
                     try {
-                        $layoutDefinition->setDescription($item["description"]);
-                        $layoutDef = Object\ClassDefinition\Service::generateLayoutTreeFromArray($item["layoutDefinitions"], true);
+                        $layoutDefinition->setDescription($item['description']);
+                        $layoutDef = Object\ClassDefinition\Service::generateLayoutTreeFromArray($item['layoutDefinitions'], true);
                         $layoutDefinition->setLayoutDefinitions($layoutDef);
                         $layoutDefinition->save();
                     } catch (\Exception $e) {
                         Logger::error($e->getMessage());
 
-                        return $this->json(["success" => false, "message" => $e->getMessage()]);
+                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
                     }
                 }
             }
         }
 
-
-        return $this->json(["success" => true]);
+        return $this->json(['success' => true]);
     }
 
     /**
@@ -1211,7 +1268,9 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-export")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function bulkExportAction(Request $request)
@@ -1225,19 +1284,18 @@ class ClassController extends AdminController implements EventedControllerInterf
             $key = $fieldCollection->key;
             $fieldCollectionJson = json_decode(Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
             $fieldCollectionJson->key = $key;
-            $result["fieldcollection"][] = $fieldCollectionJson;
+            $result['fieldcollection'][] = $fieldCollectionJson;
         }
 
-
         $classes = new Object\ClassDefinition\Listing();
-        $classes->setOrder("ASC");
-        $classes->setOrderKey("id");
+        $classes->setOrder('ASC');
+        $classes->setOrderKey('id');
         $classes = $classes->load();
 
         foreach ($classes as $class) {
-            $data = Model\Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
+            $data = Model\Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
             unset($data->fieldDefinitions);
-            $result["class"][] = $data;
+            $result['class'][] = $data;
         }
 
         $objectBricks = new Object\Objectbrick\Definition\Listing();
@@ -1247,23 +1305,23 @@ class ClassController extends AdminController implements EventedControllerInterf
             $key = $objectBrick->key;
             $objectBrickJson = json_decode(Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
             $objectBrickJson->key = $key;
-            $result["objectbrick"][] = $objectBrickJson;
+            $result['objectbrick'][] = $objectBrickJson;
         }
 
         $customLayouts = new Object\ClassDefinition\CustomLayout\Listing();
         $customLayouts = $customLayouts->load();
         foreach ($customLayouts as $customLayout) {
-            /** @var  $customLayout Object\ClassDefinition\CustomLayout */
+            /** @var $customLayout Object\ClassDefinition\CustomLayout */
             $classId = $customLayout->getClassId();
             $class = Object\ClassDefinition::getById($classId);
             $customLayout->className = $class->getName();
-            $result["customlayout"][] = $customLayout;
+            $result['customlayout'][] = $customLayout;
         }
 
         $result = json_encode($result);
         $response = new Response($result);
-        $response->headers->set("Content-type", "application/json");
-        $response->headers->set("Content-Disposition", "attachment; filename=\"bulk_export.json\"");
+        $response->headers->set('Content-type', 'application/json');
+        $response->headers->set('Content-Disposition', 'attachment; filename="bulk_export.json"');
 
         return $response;
     }
@@ -1281,9 +1339,9 @@ class ClassController extends AdminController implements EventedControllerInterf
         $request = $event->getRequest();
 
         // check permissions
-        $notRestrictedActions = ["get-tree", "fieldcollection-list", "fieldcollection-tree", "fieldcollection-get", "get-class-definition-for-column-config", "objectbrick-list", "objectbrick-tree", "objectbrick-get"];
-        if (!in_array($request->get("action"), $notRestrictedActions)) {
-            $this->checkPermission("classes");
+        $notRestrictedActions = ['get-tree', 'fieldcollection-list', 'fieldcollection-tree', 'fieldcollection-get', 'get-class-definition-for-column-config', 'objectbrick-list', 'objectbrick-tree', 'objectbrick-get'];
+        if (!in_array($request->get('action'), $notRestrictedActions)) {
+            $this->checkPermission('classes');
         }
     }
 

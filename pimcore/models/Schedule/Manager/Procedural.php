@@ -10,18 +10,18 @@
  *
  * @category   Pimcore
  * @package    Schedule
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Schedule\Manager;
 
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 class Procedural
 {
-
     /**
      * @var array
      */
@@ -52,6 +52,7 @@ class Procedural
 
     /**
      * @param $validJobs
+     *
      * @return $this
      */
     public function setValidJobs($validJobs)
@@ -66,12 +67,13 @@ class Procedural
     /**
      * @param Model\Schedule\Maintenance\Job $job
      * @param bool $force
+     *
      * @return bool
      */
     public function registerJob(Model\Schedule\Maintenance\Job $job, $force = false)
     {
         if (!empty($this->validJobs) and !in_array($job->getId(), $this->validJobs)) {
-            Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+            Logger::info('Skipped job with ID: ' . $job->getId() . ' because it is not in the valid jobs.');
 
             return false;
         }
@@ -79,40 +81,34 @@ class Procedural
         if (!$job->isLocked() || $force || $this->getForce()) {
             $this->jobs[] = $job;
 
-            Logger::info("Registered job with ID: " . $job->getId());
+            Logger::info('Registered job with ID: ' . $job->getId());
 
             return true;
         } else {
-            Logger::info("Skipped job with ID: " . $job->getId() . " because it is still locked.");
+            Logger::info('Skipped job with ID: ' . $job->getId() . ' because it is still locked.');
         }
 
         return false;
     }
 
-    /**
-     *
-     */
     public function run()
     {
         $this->setLastExecution();
 
         foreach ($this->jobs as $job) {
             $job->lock();
-            Logger::info("Executing job with ID: " . $job->getId());
+            Logger::info('Executing job with ID: ' . $job->getId());
             try {
                 $job->execute();
-                Logger::info("Finished job with ID: " . $job->getId());
+                Logger::info('Finished job with ID: ' . $job->getId());
             } catch (\Exception $e) {
-                Logger::error("Failed to execute job with id: " . $job->getId());
+                Logger::error('Failed to execute job with id: ' . $job->getId());
                 Logger::error($e);
             }
             $job->unlock();
         }
     }
 
-    /**
-     *
-     */
     public function setLastExecution()
     {
         Model\Tool\Lock::lock($this->_pidFileName);
@@ -132,7 +128,7 @@ class Procedural
     }
 
     /**
-     * @param boolean $force
+     * @param bool $force
      */
     public function setForce($force)
     {
@@ -140,7 +136,7 @@ class Procedural
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getForce()
     {

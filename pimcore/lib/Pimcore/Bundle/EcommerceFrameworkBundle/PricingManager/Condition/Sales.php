@@ -26,11 +26,10 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkB
      */
     protected $currentSalesAmount = [];
 
-
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
@@ -49,8 +48,7 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkB
     {
         // basic
         $json = [
-            'type' => 'Sales'
-            , 'amount' => $this->getAmount()
+            'type' => 'Sales', 'amount' => $this->getAmount()
         ];
 
         return json_encode($json);
@@ -85,9 +83,6 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkB
     {
         $this->amount = (int)$amount;
     }
-
-
-
 
     protected function getCurrentAmount(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule)
     {
@@ -138,10 +133,9 @@ SQL;
 
             $conn = \Pimcore\Db::getConnection();
 
-            $this->currentSalesAmount[ $rule->getId() ] = (int)$conn->fetchRow($query)['amount'];
+            $this->currentSalesAmount[$rule->getId()] = (int)$conn->fetchRow($query)['amount'];
         }
 
-
-        return $this->currentSalesAmount[ $rule->getId() ];
+        return $this->currentSalesAmount[$rule->getId()];
     }
 }

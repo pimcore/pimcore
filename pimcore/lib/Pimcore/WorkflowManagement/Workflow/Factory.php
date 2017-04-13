@@ -18,11 +18,12 @@ use Pimcore\Model\Workflow;
 
 class Factory
 {
-
     /**
      *
      * @param $config
+     *
      * @return Workflow
+     *
      * @throws \Exception
      */
     public static function getWorkflowFromConfig($config)

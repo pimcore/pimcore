@@ -27,7 +27,6 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 
         $values = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
 
-
         // add current filter. workaround for findologic behavior
         if (array_key_exists($field, $currentFilter) && $currentFilter[$field] != null) {
             foreach ($currentFilter[$field] as $id) {
@@ -41,18 +40,14 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 
                 if ($add) {
                     array_unshift($values, [
-                        'value' => $id
-                        , 'label' => $id
-                        , 'count' => null
-                        , 'parameter' => null
+                        'value' => $id, 'label' => $id, 'count' => null, 'parameter' => null
                     ]);
                 }
             }
         }
 
-
         $objects = [];
-        Logger::info("Load Objects...");
+        Logger::info('Load Objects...');
         $availableRelations = [];
         if ($filterDefinition->getAvailableRelations()) {
             $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
@@ -67,7 +62,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
         // sort result
         $values = $this->sortResult($filterDefinition, $values);
 
-        Logger::info("done.");
+        Logger::info('done.');
 
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
@@ -76,22 +71,20 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
         }
 
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $values,
-            "objects" => $objects,
-            "fieldname" => $field,
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $values,
+            'objects' => $objects,
+            'fieldname' => $field,
+            'resultCount' => $productList->count()
         ]);
     }
-
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
-
 
         $value = $params[$field];
 
@@ -100,7 +93,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
             $value = [];
 
             if (!is_array($objects)) {
-                $objects = explode(",", $objects);
+                $objects = explode(',', $objects);
             }
 
             if (is_array($objects)) {

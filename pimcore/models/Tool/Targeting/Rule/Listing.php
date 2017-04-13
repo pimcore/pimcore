@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-
     /**
      * Contains the results of the list. They are all an instance of Tool\Targeting\Rule
      *
@@ -35,6 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      * Tests if the given key is an valid order key to sort the results
      *
      * @param $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
@@ -44,6 +45,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param $targets
+     *
      * @return $this
      */
     public function setTargets($targets)

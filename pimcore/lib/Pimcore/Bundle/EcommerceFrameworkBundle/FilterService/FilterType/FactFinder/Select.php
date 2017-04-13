@@ -27,7 +27,6 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
     {
     }
 
-
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param IProductList                 $productList
@@ -44,7 +43,6 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
         $preSelect = $this->getPreSelect($filterDefinition);
         $value = $params[$field];
 
-
         // set defaults
         if ($value == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
             $value = null;
@@ -52,10 +50,8 @@ class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filt
             $value = $preSelect;
         }
 
-
         $value = trim($value);
         $currentFilter[$field] = $value;
-
 
         // add condition
         if (!empty($value)) {

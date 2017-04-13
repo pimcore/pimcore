@@ -92,7 +92,9 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
 
     /**
      * @param string $apiKey
+     *
      * @return User|null
+     *
      * @throws \Exception
      */
     protected function loadUserForApiKey($apiKey)

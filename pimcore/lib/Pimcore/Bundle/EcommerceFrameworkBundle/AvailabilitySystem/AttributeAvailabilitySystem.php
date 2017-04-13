@@ -25,6 +25,7 @@ class AttributeAvailabilitySystem implements IAvailabilitySystem
      * @param ICheckoutable $abstractProduct
      * @param int $quantityScale
      * @param null $products
+     *
      * @return IAvailability
      */
     public function getAvailabilityInfo(ICheckoutable $abstractProduct, $quantityScale = 1, $products = null)

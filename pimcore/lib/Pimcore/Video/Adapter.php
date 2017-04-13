@@ -16,7 +16,6 @@ namespace Pimcore\Video;
 
 abstract class Adapter
 {
-
     /**
      * @var int
      */
@@ -44,13 +43,14 @@ abstract class Adapter
 
     /**
      * length in seconds
+     *
      * @var int
      */
     public $length;
 
-
     /**
      * @param $audioBitrate
+     *
      * @return $this
      */
     public function setAudioBitrate($audioBitrate)
@@ -70,6 +70,7 @@ abstract class Adapter
 
     /**
      * @param $videoBitrate
+     *
      * @return $this
      */
     public function setVideoBitrate($videoBitrate)
@@ -89,6 +90,7 @@ abstract class Adapter
 
     /**
      * @param $file
+     *
      * @return mixed
      */
     abstract public function load($file);
@@ -100,6 +102,7 @@ abstract class Adapter
 
     /**
      * @abstract
+     *
      * @param $file
      * @param $timeOffset
      */
@@ -112,6 +115,7 @@ abstract class Adapter
 
     /**
      * @param $format
+     *
      * @return $this
      */
     public function setFormat($format)
@@ -131,6 +135,7 @@ abstract class Adapter
 
     /**
      * @param $destinationFile
+     *
      * @return $this
      */
     public function setDestinationFile($destinationFile)
@@ -150,6 +155,7 @@ abstract class Adapter
 
     /**
      * @param $length
+     *
      * @return $this
      */
     public function setLength($length)

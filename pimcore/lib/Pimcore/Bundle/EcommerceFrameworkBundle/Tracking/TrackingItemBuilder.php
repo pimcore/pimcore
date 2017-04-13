@@ -33,6 +33,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Build a product impression object
      *
      * @param IProduct|ElementInterface $product
+     *
      * @return ProductImpression
      */
     public function buildProductImpressionItem(IProduct $product)
@@ -55,6 +56,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Build a product view object
      *
      * @param IProduct|ElementInterface $product
+     *
      * @return ProductAction
      */
     public function buildProductViewItem(IProduct $product)
@@ -62,12 +64,12 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         return $this->buildProductActionItem($product);
     }
 
-
     /**
      * Build a product action item
      *
      * @param IProduct $product
      * @param int $quantity
+     *
      * @return ProductAction
      */
     public function buildProductActionItem(IProduct $product, $quantity = 1)
@@ -91,6 +93,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Build a checkout transaction object
      *
      * @param AbstractOrder $order
+     *
      * @return Transaction
      */
     public function buildCheckoutTransaction(AbstractOrder $order)
@@ -109,6 +112,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Build checkout items
      *
      * @param AbstractOrder $order
+     *
      * @return ProductAction[]
      */
     public function buildCheckoutItems(AbstractOrder $order)
@@ -127,6 +131,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Build checkout items
      *
      * @param ICart $cart
+     *
      * @return ProductAction[]
      */
     public function buildCheckoutItemsByCart(ICart $cart)
@@ -149,6 +154,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      *
      * @param AbstractOrder $order
      * @param AbstractOrderItem $orderItem
+     *
      * @return ProductAction
      */
     public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem)
@@ -169,6 +175,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Build a checkout item object by cart Item
      *
      * @param AbstractCartItem $cartItem
+     *
      * @return ProductAction
      */
     public function buildCheckoutItemByCartItem(AbstractCartItem $cartItem)
@@ -190,6 +197,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      *
      * @param IProduct $product
      * @param bool|false $first
+     *
      * @return array
      */
     protected function getProductCategories(IProduct $product, $first = false)
@@ -216,6 +224,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Get order shipping
      *
      * @param AbstractOrder $order
+     *
      * @return float
      */
     protected function getOrderShipping(AbstractOrder $order)
@@ -239,6 +248,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Get order tax
      *
      * @param AbstractOrder $order
+     *
      * @return float
      */
     protected function getOrderTax(AbstractOrder $order)
@@ -250,6 +260,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Normalize name for tracking JS
      *
      * @param $name
+     *
      * @return mixed
      */
     protected function normalizeName($name)

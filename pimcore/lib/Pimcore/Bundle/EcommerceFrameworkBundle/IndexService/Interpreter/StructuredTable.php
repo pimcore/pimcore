@@ -19,17 +19,17 @@ class StructuredTable implements IInterpreter
     public static function interpret($value, $config = null)
     {
         if (empty($config->tablerow)) {
-            throw new \Exception("Table row config missing.");
+            throw new \Exception('Table row config missing.');
         }
         if (empty($config->tablecolumn)) {
-            throw new \Exception("Table column config missing.");
+            throw new \Exception('Table column config missing.');
         }
 
-        $getter = "get" . ucfirst($config->tablerow) . "__" . ucfirst($config->tablecolumn);
+        $getter = 'get' . ucfirst($config->tablerow) . '__' . ucfirst($config->tablecolumn);
 
         if ($value && $value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             if (!empty($config->defaultUnit)) {
-                return $value->$getter() . " " . $config->defaultUnit;
+                return $value->$getter() . ' ' . $config->defaultUnit;
             } else {
                 return $value->$getter();
             }

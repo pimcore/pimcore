@@ -16,16 +16,15 @@ namespace Pimcore\Tool;
 
 class DeviceDetector
 {
-
     /**
      * @var array
      */
-    protected $validDeviceTypes = ["phone", "tablet", "desktop"];
+    protected $validDeviceTypes = ['phone', 'tablet', 'desktop'];
 
     /**
      * @var null|string
      */
-    protected $default = "desktop";
+    protected $default = 'desktop';
 
     /**
      * @var bool
@@ -59,6 +58,7 @@ class DeviceDetector
 
     /**
      * @param null $default
+     *
      * @return DeviceDetector
      */
     public static function getInstance($default = null)
@@ -75,7 +75,7 @@ class DeviceDetector
      */
     public function __construct($default = null)
     {
-        if ($default && in_array($default, ["desktop", "mobile", "tablet"])) {
+        if ($default && in_array($default, ['desktop', 'mobile', 'tablet'])) {
             $this->default = $default;
         }
     }
@@ -132,7 +132,7 @@ class DeviceDetector
     public function getDevice()
     {
         foreach ($this->validDeviceTypes as $deviceType) {
-            if ($this->{"is".ucfirst($deviceType)}()) {
+            if ($this->{'is'.ucfirst($deviceType)}()) {
                 return $deviceType;
             }
         }
@@ -148,9 +148,6 @@ class DeviceDetector
         return $this->getDevice();
     }
 
-    /**
-     *
-     */
     protected function determineDeviceType()
     {
         $this->setWasUsed(true);
@@ -164,26 +161,26 @@ class DeviceDetector
         $type = null;
 
         // android devices
-        if (stripos($userAgent, "android") !== false) {
+        if (stripos($userAgent, 'android') !== false) {
             // unfortunately there are still android tablet that contain "Mobile" in user-agent, damn!
-            if (stripos($userAgent, "mobile") !== false) {
-                $type = "phone";
+            if (stripos($userAgent, 'mobile') !== false) {
+                $type = 'phone';
             } else {
-                $type = "tablet";
+                $type = 'tablet';
             }
         }
 
         // ios devices
-        if (stripos($userAgent, "ipad") !== false) {
-            $type = "tablet";
+        if (stripos($userAgent, 'ipad') !== false) {
+            $type = 'tablet';
         }
-        if (stripos($userAgent, "iphone") !== false) {
-            $type = "phone";
+        if (stripos($userAgent, 'iphone') !== false) {
+            $type = 'phone';
         }
 
         // all other vendors, like blackberry, ...
-        if (!$type && stripos($userAgent, "mobile") !== false) {
-            $type = "phone";
+        if (!$type && stripos($userAgent, 'mobile') !== false) {
+            $type = 'phone';
         }
 
         // default is desktop
@@ -193,25 +190,25 @@ class DeviceDetector
 
         // check for a forced type
         $typeForced = null;
-        if (isset($_REQUEST["forceDeviceType"]) && $_REQUEST["forceDeviceType"]) {
-            $typeForced = $_REQUEST["forceDeviceType"];
+        if (isset($_REQUEST['forceDeviceType']) && $_REQUEST['forceDeviceType']) {
+            $typeForced = $_REQUEST['forceDeviceType'];
         }
 
-        if (isset($_COOKIE["forceDeviceType"]) && $_COOKIE["forceDeviceType"]) {
-            $typeForced = $_COOKIE["forceDeviceType"];
+        if (isset($_COOKIE['forceDeviceType']) && $_COOKIE['forceDeviceType']) {
+            $typeForced = $_COOKIE['forceDeviceType'];
         }
 
         if ($typeForced) {
             if (in_array($typeForced, $this->validDeviceTypes)) {
                 $type = $typeForced;
 
-                if (!isset($_COOKIE["forceDeviceType"])) {
-                    setcookie("forceDeviceType", $type);
+                if (!isset($_COOKIE['forceDeviceType'])) {
+                    setcookie('forceDeviceType', $type);
                 }
             }
         }
 
-        $this->{"is".ucfirst($type)} = true;
+        $this->{'is'.ucfirst($type)} = true;
         $this->determinedDeviceType = true;
     }
 }

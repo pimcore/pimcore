@@ -108,6 +108,7 @@ interface AreabrickInterface
      * Returns the brick HTML open tag.
      *
      * @param Info $info
+     *
      * @return string
      */
     public function getHtmlTagOpen(Info $info);
@@ -116,6 +117,7 @@ interface AreabrickInterface
      * Returns the brick HTML close tag.
      *
      * @param Info $info
+     *
      * @return string
      */
     public function getHtmlTagClose(Info $info);

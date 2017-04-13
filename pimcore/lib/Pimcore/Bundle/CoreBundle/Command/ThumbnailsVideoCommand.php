@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Version;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Version;
-use Pimcore\Logger;
 
 class ThumbnailsVideoCommand extends AbstractCommand
 {
@@ -32,16 +32,16 @@ class ThumbnailsVideoCommand extends AbstractCommand
             ->addOption(
                 'parent', 'p',
                 InputOption::VALUE_OPTIONAL,
-                "only create thumbnails of images in this folder (ID)"
+                'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
                 'thumbnails', 't',
                 InputOption::VALUE_OPTIONAL,
-                "only create specified thumbnails (comma separated eg.: thumb1,thumb2)"
+                'only create specified thumbnails (comma separated eg.: thumb1,thumb2)'
             )->addOption(
                 'system', 's',
                 InputOption::VALUE_NONE,
-                "create system thumbnails (used for tree-preview, ...)"
+                'create system thumbnails (used for tree-preview, ...)'
             );
     }
 
@@ -64,45 +64,44 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
 
         $allowedThumbs = [];
-        if ($input->getOption("thumbnails")) {
-            $allowedThumbs = explode(",", $input->getOption("thumbnails"));
+        if ($input->getOption('thumbnails')) {
+            $allowedThumbs = explode(',', $input->getOption('thumbnails'));
         }
-
 
         // get only images
         $conditions = ["type = 'video'"];
 
-        if ($input->getOption("parent")) {
-            $parent = Asset::getById($input->getOption("parent"));
+        if ($input->getOption('parent')) {
+            $parent = Asset::getById($input->getOption('parent'));
             if ($parent instanceof Asset\Folder) {
                 $conditions[] = "path LIKE '" . $parent->getRealFullPath() . "/%'";
             } else {
-                $this->writeError($input->getOption("parent") . " is not a valid asset folder ID!");
+                $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
                 exit;
             }
         }
 
         $list = new Asset\Listing();
-        $list->setCondition(implode(" AND ", $conditions));
+        $list->setCondition(implode(' AND ', $conditions));
         $total = $list->getTotalCount();
         $perLoop = 10;
 
-        for ($i=0; $i<(ceil($total/$perLoop)); $i++) {
+        for ($i=0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
-            $list->setOffset($i*$perLoop);
+            $list->setOffset($i * $perLoop);
 
             $videos = $list->load();
             foreach ($videos as $video) {
                 foreach ($thumbnails as $thumbnail) {
-                    if ((empty($allowedThumbs) && !$input->getOption("system")) || in_array($thumbnail, $allowedThumbs)) {
-                        $this->output->writeln("generating thumbnail for video: " . $video->getRealFullPath() . " | " . $video->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()));
+                    if ((empty($allowedThumbs) && !$input->getOption('system')) || in_array($thumbnail, $allowedThumbs)) {
+                        $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnail . ' : ' . formatBytes(memory_get_usage()));
                         $video->getThumbnail($thumbnail);
                         $this->waitTillFinished($video->getId(), $thumbnail);
                     }
                 }
 
-                if ($input->getOption("system")) {
-                    $this->output->writeln("generating thumbnail for video: " . $video->getRealFullPath() . " | " . $video->getId() . " | Thumbnail: System Preview : " . formatBytes(memory_get_usage()));
+                if ($input->getOption('system')) {
+                    $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . formatBytes(memory_get_usage()));
                     $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
                     $video->getThumbnail($thumbnail);
                     $this->waitTillFinished($video->getId(), $thumbnail);
@@ -122,7 +121,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         // initial delay
         $video = Asset::getById($videoId);
         $thumb = $video->getThumbnail($thumbnail);
-        if ($thumb["status"] != "finished") {
+        if ($thumb['status'] != 'finished') {
             sleep(20);
         }
 
@@ -131,15 +130,15 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
             $video = Asset::getById($videoId);
             $thumb = $video->getThumbnail($thumbnail);
-            if ($thumb["status"] == "finished") {
+            if ($thumb['status'] == 'finished') {
                 $finished = true;
-                Logger::debug("video [" . $video->getId() . "] FINISHED");
-            } elseif ($thumb["status"] == "inprogress") {
-                Logger::debug("video [" . $video->getId() . "] in progress ...");
+                Logger::debug('video [' . $video->getId() . '] FINISHED');
+            } elseif ($thumb['status'] == 'inprogress') {
+                Logger::debug('video [' . $video->getId() . '] in progress ...');
                 sleep(5);
             } else {
                 // error
-                Logger::debug("video [" . $video->getId() . "] has status: '" . $thumb["status"] . "' -> skipping");
+                Logger::debug('video [' . $video->getId() . "] has status: '" . $thumb['status'] . "' -> skipping");
                 break;
             }
         }

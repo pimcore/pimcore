@@ -51,6 +51,7 @@ class Placeholder extends AbstractHelper
 {
     /**
      * Registry key under which container registers itself
+     *
      * @var string
      */
     protected $_regKey = 'Placeholder';
@@ -65,7 +66,6 @@ class Placeholder extends AbstractHelper
      */
     protected $containers = [];
 
-
     public function getName()
     {
         return 'placeholder';
@@ -73,7 +73,9 @@ class Placeholder extends AbstractHelper
 
     /**
      * AbstractHelper constructor.
+     *
      * @param ContainerService $containerService
+     *
      * @internal param Container $container
      */
     public function __construct(ContainerService $containerService)
@@ -89,13 +91,14 @@ class Placeholder extends AbstractHelper
      * @param  string $keyType
      * @param  array $modifiers
      * @param  string $placement
+     *
      * @return Container
      */
     public function __invoke($containerName = null)
     {
         $containerName = (string) $containerName;
         if (empty($this->containers[$containerName])) {
-            $this->containers[$containerName] = $this->containerService->getContainer($this->_regKey . "_" . $containerName);
+            $this->containers[$containerName] = $this->containerService->getContainer($this->_regKey . '_' . $containerName);
         }
 
         return $this->containers[$containerName];

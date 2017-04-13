@@ -20,6 +20,5 @@ class ExampleController extends AbstractController
          * Name of static route: "category-example"
          * Path of document: /en/advanced-examples/sub-modules
          */
-
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
 use Codeception\Util\Autoload;
-use Symfony\Component\Filesystem\Filesystem;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 

@@ -10,29 +10,29 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
-use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
 class Href extends Model\Document\Tag
 {
-
     /**
      * ID of the source object
      *
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -59,25 +59,27 @@ class Href extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
 
         //TODO: getType != $type ... that might be dangerous
-        return "href";
+        return 'href';
     }
 
     /**
      * @see Document\Tag\TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
     {
         return [
-            "id" => $this->id,
-            "type" => $this->type,
-            "subtype" => $this->subtype
+            'id' => $this->id,
+            'type' => $this->type,
+            'subtype' => $this->subtype
         ];
     }
 
@@ -92,10 +94,10 @@ class Href extends Model\Document\Tag
 
         if ($this->element instanceof Element\ElementInterface) {
             return [
-                "id" => $this->id,
-                "path" => $this->element->getRealFullPath(),
-                "elementType" => $this->type,
-                "subtype" => $this->subtype
+                'id' => $this->id,
+                'path' => $this->element->getRealFullPath(),
+                'elementType' => $this->type,
+                'subtype' => $this->subtype
             ];
         }
 
@@ -104,6 +106,7 @@ class Href extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
@@ -112,19 +115,21 @@ class Href extends Model\Document\Tag
 
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
-            return "";
+            return '';
         }
 
         if ($this->element instanceof Element\ElementInterface) {
             return $this->element->getFullPath();
         }
 
-        return "";
+        return '';
     }
 
     /**
      * @see Document\Tag\TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -133,9 +138,9 @@ class Href extends Model\Document\Tag
             $data = \Pimcore\Tool\Serialize::unserialize($data);
         }
 
-        $this->id = $data["id"];
-        $this->type = $data["type"];
-        $this->subtype = $data["subtype"];
+        $this->id = $data['id'];
+        $this->type = $data['type'];
+        $this->subtype = $data['subtype'];
 
         $this->setElement();
 
@@ -144,14 +149,16 @@ class Href extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
     {
-        $this->id = $data["id"];
-        $this->type = $data["type"];
-        $this->subtype = $data["subtype"];
+        $this->id = $data['id'];
+        $this->type = $data['type'];
+        $this->subtype = $data['subtype'];
 
         $this->setElement();
 
@@ -210,7 +217,7 @@ class Href extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -233,10 +240,10 @@ class Href extends Model\Document\Tag
 
         if ($this->element instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($this->element);
-            $key = $elementType . "_" . $this->element->getId();
+            $key = $elementType . '_' . $this->element->getId();
             $dependencies[$key] = [
-                "id" => $this->element->getId(),
-                "type" => $elementType
+                'id' => $this->element->getId(),
+                'type' => $elementType
             ];
         }
 
@@ -248,62 +255,61 @@ class Href extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
-        if ($data->id !==null) {
+        if ($data->id !== null) {
             $this->type = $data->type;
             $this->subtype = $data->subtype;
             $this->id = $data->id;
 
             if (!is_numeric($this->id)) {
-                throw new \Exception("cannot get values from web service import - id is not valid");
+                throw new \Exception('cannot get values from web service import - id is not valid');
             }
 
             if ($idMapper) {
                 $this->id = $idMapper->getMappedId($this->type, $data->id);
             }
 
-
-            if ($this->type == "asset") {
+            if ($this->type == 'asset') {
                 $this->element = Asset::getById($this->id);
                 if (!$this->element instanceof Asset) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
+                        $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
                     } else {
-                        throw new \Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
+                        throw new \Exception('cannot get values from web service import - referenced asset with id [ '.$data->id.' ] is unknown');
                     }
                 }
-            } elseif ($this->type == "document") {
+            } elseif ($this->type == 'document') {
                 $this->element = Document::getById($this->id);
                 if (!$this->element instanceof Document) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
+                        $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
                     } else {
-                        throw new \Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
+                        throw new \Exception('cannot get values from web service import - referenced document with id [ '.$data->id.' ] is unknown');
                     }
                 }
-            } elseif ($this->type == "object") {
+            } elseif ($this->type == 'object') {
                 $this->element = Object\AbstractObject::getById($this->id);
                 if (!$this->element instanceof Object\AbstractObject) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
+                        $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
                     } else {
-                        throw new \Exception("cannot get values from web service import - referenced object with id [ ".$data->id." ] is unknown");
+                        throw new \Exception('cannot get values from web service import - referenced object with id [ '.$data->id.' ] is unknown');
                     }
                 }
             } else {
                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                    $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
+                    $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
                 } else {
-                    throw new \Exception("cannot get values from web service import - type is not valid");
+                    throw new \Exception('cannot get values from web service import - type is not valid');
                 }
             }
         }
     }
-
 
     /**
      * @return bool
@@ -315,7 +321,7 @@ class Href extends Model\Document\Tag
             $el = Element\Service::getElementById($this->type, $this->id);
             if (!$el instanceof Element\ElementInterface) {
                 $sane = false;
-                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                Logger::notice('Detected insane relation, removing reference to non existent '.$this->type.' with id ['.$this->id.']');
                 $this->id = null;
                 $this->type = null;
                 $this->subtype=null;
@@ -333,7 +339,7 @@ class Href extends Model\Document\Tag
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ["element"];
+        $blockedVars = ['element'];
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
@@ -355,6 +361,7 @@ class Href extends Model\Document\Tag
 
     /**
      * @param int $id
+     *
      * @return Document\Tag\Href
      */
     public function setId($id)
@@ -374,6 +381,7 @@ class Href extends Model\Document\Tag
 
     /**
      * @param string $subtype
+     *
      * @return Document\Tag\Href
      */
     public function setSubtype($subtype)
@@ -401,6 +409,7 @@ class Href extends Model\Document\Tag
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param array $idMapping
      */
     public function rewriteIds($idMapping)

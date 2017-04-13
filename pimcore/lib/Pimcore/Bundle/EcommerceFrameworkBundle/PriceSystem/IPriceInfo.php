@@ -19,12 +19,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
  */
 interface IPriceInfo
 {
-    const MIN_PRICE = "min";
+    const MIN_PRICE = 'min';
 
     /**
      * returns single price
      *
      * @abstract
+     *
      * @return IPrice
      */
     public function getPrice();
@@ -33,6 +34,7 @@ interface IPriceInfo
      * returns total price (single price * quantity)
      *
      * @abstract
+     *
      * @return IPrice
      */
     public function getTotalPrice();
@@ -41,6 +43,7 @@ interface IPriceInfo
      * returns if price is a minimal price (e.g. when having many product variants they might have a from price)
      *
      * @abstract
+     *
      * @return bool
      */
     public function isMinPrice();
@@ -49,6 +52,7 @@ interface IPriceInfo
      * returns quantity
      *
      * @abstract
+     *
      * @return int
      */
     public function getQuantity();
@@ -63,7 +67,9 @@ interface IPriceInfo
      * relation to price system
      *
      * @abstract
+     *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem $priceSystem
+     *
      * @return IPriceInfo
      */
     public function setPriceSystem($priceSystem);

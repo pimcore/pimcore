@@ -30,6 +30,7 @@ class Locale
 
     /**
      * Locale constructor.
+     *
      * @param RequestStack|null $requestStack
      */
     public function __construct(RequestStack $requestStack = null)
@@ -39,6 +40,7 @@ class Locale
 
     /**
      * @param $locale
+     *
      * @return bool
      */
     public function isLocale($locale)
@@ -63,7 +65,7 @@ class Locale
             return $defaultLocale;
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -94,6 +96,7 @@ class Locale
 
     /**
      * @param null $locale
+     *
      * @return array
      */
     public function getDisplayRegions($locale = null)

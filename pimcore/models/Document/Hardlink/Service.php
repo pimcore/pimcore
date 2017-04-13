@@ -10,21 +10,23 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Hardlink;
 
-use Pimcore\Tool\Serialize;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Serialize;
 
 class Service
 {
-
     /**
      * @param Document $doc
+     *
      * @return Document
+     *
      * @throws \Exception
      */
     public static function wrap(Document $doc)
@@ -52,15 +54,17 @@ class Service
 
     /**
      * @static
+     *
      * @param Document $doc
+     *
      * @return Document
      */
     public static function upperCastDocument(Document $doc)
     {
-        $to_class = "Pimcore\\Model\\Document\\Hardlink\\Wrapper\\" . ucfirst($doc->getType());
+        $to_class = 'Pimcore\\Model\\Document\\Hardlink\\Wrapper\\' . ucfirst($doc->getType());
 
-        $old_serialized_prefix  = "O:".strlen(get_class($doc));
-        $old_serialized_prefix .= ":\"".get_class($doc)."\":";
+        $old_serialized_prefix  = 'O:'.strlen(get_class($doc));
+        $old_serialized_prefix .= ':"'.get_class($doc).'":';
 
         // unset eventually existing children, because of performance reasons when serializing the document
         $doc->setChildren(null);
@@ -81,20 +85,21 @@ class Service
      *
      * @param Document\Hardlink $hardlink
      * @param string $path
+     *
      * @return Document
      */
     public static function getChildByPath(Document\Hardlink $hardlink, $path)
     {
         if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
-            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
+            $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath()) . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $hardLinkedDocument = Document::getByPath($hardlinkRealPath);
             if ($hardLinkedDocument instanceof Document) {
                 $hardLinkedDocument = self::wrap($hardLinkedDocument);
                 $hardLinkedDocument->setHardLinkSource($hardlink);
 
-                $_path = $path != "/" ? $_path = dirname($path) : $path;
-                $_path = str_replace("\\", "/", $_path); // windows patch
-                $_path .= $_path != "/" ? "/" : "";
+                $_path = $path != '/' ? $_path = dirname($path) : $path;
+                $_path = str_replace('\\', '/', $_path); // windows patch
+                $_path .= $_path != '/' ? '/' : '';
 
                 $hardLinkedDocument->setPath($_path);
 
@@ -108,20 +113,21 @@ class Service
     /**
      * @param Document\Hardlink $hardlink
      * @param $path
+     *
      * @return Document
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
     {
         if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
-            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
+            $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath()) . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $pathes = [];
 
-            $pathes[] = "/";
-            $pathParts = explode("/", $hardlinkRealPath);
+            $pathes[] = '/';
+            $pathParts = explode('/', $hardlinkRealPath);
             $tmpPathes = [];
             foreach ($pathParts as $pathPart) {
                 $tmpPathes[] = $pathPart;
-                $t = implode("/", $tmpPathes);
+                $t = implode('/', $tmpPathes);
                 if (!empty($t)) {
                     $pathes[] = $t;
                 }
@@ -135,11 +141,11 @@ class Service
                     $hardLinkedDocument = self::wrap($hardLinkedDocument);
                     $hardLinkedDocument->setHardLinkSource($hardlink);
 
-                    $_path = $path != "/" ? $_path = dirname($p) : $p;
-                    $_path = str_replace("\\", "/", $_path); // windows patch
-                    $_path .= $_path != "/" ? "/" : "";
+                    $_path = $path != '/' ? $_path = dirname($p) : $p;
+                    $_path = str_replace('\\', '/', $_path); // windows patch
+                    $_path .= $_path != '/' ? '/' : '';
 
-                    $_path = preg_replace("@^" . preg_quote($hardlink->getSourceDocument()->getRealPath()) . "@", $hardlink->getRealPath(), $_path);
+                    $_path = preg_replace('@^' . preg_quote($hardlink->getSourceDocument()->getRealPath()) . '@', $hardlink->getRealPath(), $_path);
 
                     $hardLinkedDocument->setPath($_path);
 

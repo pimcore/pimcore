@@ -23,7 +23,9 @@ class Serialize
 
     /**
      * @static
+     *
      * @param mixed $data
+     *
      * @return string
      */
     public static function serialize($data)
@@ -33,7 +35,9 @@ class Serialize
 
     /**
      * @static
+     *
      * @param $data
+     *
      * @return mixed
      */
     public static function unserialize($data)
@@ -58,7 +62,9 @@ class Serialize
     /**
      * this is a special json encoder that avoids recursion errors
      * especially for pimcore models that contain massive self referencing objects
+     *
      * @param $data
+     *
      * @return string
      */
     public static function removeReferenceLoops($data)
@@ -69,6 +75,7 @@ class Serialize
 
     /**
      * @param $element
+     *
      * @return mixed
      */
     protected static function loopFilterCycles($element)

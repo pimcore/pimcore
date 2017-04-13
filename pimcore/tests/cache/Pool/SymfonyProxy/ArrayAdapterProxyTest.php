@@ -4,11 +4,11 @@ namespace Pimcore\Tests\Cache\Adapter\SymfonyProxy;
 
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
 use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
 
 /**
  * @group cache.core.array

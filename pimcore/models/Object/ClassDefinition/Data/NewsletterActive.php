@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,11 +21,10 @@ use Pimcore\Model;
 
 class NewsletterActive extends Model\Object\ClassDefinition\Data\Checkbox
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "newsletterActive";
+    public $fieldtype = 'newsletterActive';
 }

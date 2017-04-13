@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
+use ArrayAccess;
+use Countable;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use SeekableIterator;
-use Countable;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
-use ArrayAccess;
 
 /**
  * Interface IOrderList
@@ -77,6 +77,7 @@ interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapte
      * @return string
      */
     public function getOrderState();
+
     /**
      * @param string $type
      *
@@ -89,7 +90,6 @@ interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapte
      */
     public function getListType();
 
-
     /**
      * @return string
      */
@@ -101,7 +101,6 @@ interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapte
      * @return $this
      */
     public function setItemClassName($className);
-
 
     /**
      * enable payment info query
@@ -170,12 +169,12 @@ interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapte
     public function addFilter(IOrderListFilter $filter);
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function useSubItems();
 
     /**
-     * @param boolean $useSubItems
+     * @param bool $useSubItems
      *
      * @return $this
      */

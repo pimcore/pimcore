@@ -58,7 +58,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             // just update index
             IndexUpdater::updateIndex($objectListClass, $listCondition, false, self::LOGGER_NAME);
         } else {
-            throw new \Exception("At least one option (--create-or-update-index-structure or --update-index) needs to be given");
+            throw new \Exception('At least one option (--create-or-update-index-structure or --update-index) needs to be given');
         }
     }
 }

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,7 +22,6 @@ use Pimcore\Model\Document;
 
 class Link
 {
-
     /**
      * @var string
      */
@@ -102,6 +102,7 @@ class Link
 
     /**
      * @param $text
+     *
      * @return $this
      */
     public function setText($text)
@@ -121,6 +122,7 @@ class Link
 
     /**
      * @param $internalType
+     *
      * @return $this
      */
     public function setInternalType($internalType)
@@ -140,6 +142,7 @@ class Link
 
     /**
      * @param $internal
+     *
      * @return $this
      */
     public function setInternal($internal)
@@ -162,6 +165,7 @@ class Link
 
     /**
      * @param $direct
+     *
      * @return $this
      */
     public function setDirect($direct)
@@ -181,6 +185,7 @@ class Link
 
     /**
      * @param $linktype
+     *
      * @return $this
      */
     public function setLinktype($linktype)
@@ -200,6 +205,7 @@ class Link
 
     /**
      * @param $target
+     *
      * @return $this
      */
     public function setTarget($target)
@@ -219,6 +225,7 @@ class Link
 
     /**
      * @param $parameters
+     *
      * @return $this
      */
     public function setParameters($parameters)
@@ -238,6 +245,7 @@ class Link
 
     /**
      * @param $anchor
+     *
      * @return $this
      */
     public function setAnchor($anchor)
@@ -257,6 +265,7 @@ class Link
 
     /**
      * @param $title
+     *
      * @return $this
      */
     public function setTitle($title)
@@ -276,6 +285,7 @@ class Link
 
     /**
      * @param $accesskey
+     *
      * @return $this
      */
     public function setAccesskey($accesskey)
@@ -295,6 +305,7 @@ class Link
 
     /**
      * @param $rel
+     *
      * @return $this
      */
     public function setRel($rel)
@@ -314,6 +325,7 @@ class Link
 
     /**
      * @param $tabindex
+     *
      * @return $this
      */
     public function setTabindex($tabindex)
@@ -357,21 +369,22 @@ class Link
 
     /**
      * @param $path
+     *
      * @return $this
      */
     public function setPath($path)
     {
         if (!empty($path)) {
             if ($document = Document::getByPath($path)) {
-                $this->linktype = "internal";
-                $this->internalType = "document";
+                $this->linktype = 'internal';
+                $this->internalType = 'document';
                 $this->internal = $document->getId();
             } elseif ($asset = Asset::getByPath($path)) {
-                $this->linktype = "internal";
-                $this->internalType = "asset";
+                $this->linktype = 'internal';
+                $this->internalType = 'asset';
                 $this->internal = $asset->getId();
             } else {
-                $this->linktype = "direct";
+                $this->linktype = 'direct';
                 $this->direct = $path;
             }
         }
@@ -384,8 +397,8 @@ class Link
      */
     public function getPath()
     {
-        $path = "";
-        if ($this->getLinktype() == "internal") {
+        $path = '';
+        if ($this->getLinktype() == 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
             }
@@ -403,8 +416,8 @@ class Link
      */
     public function getHref()
     {
-        $path = "";
-        if ($this->getLinktype() == "internal") {
+        $path = '';
+        if ($this->getLinktype() == 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
             }
@@ -413,10 +426,10 @@ class Link
         }
 
         if (strlen($this->getParameters()) > 0) {
-            $path .= "?" . str_replace("?", "", $this->getParameters());
+            $path .= '?' . str_replace('?', '', $this->getParameters());
         }
         if (strlen($this->getAnchor()) > 0) {
-            $path .= "#" . str_replace("#", "", $this->getAnchor());
+            $path .= '#' . str_replace('#', '', $this->getAnchor());
         }
 
         $this->href = $path;
@@ -425,7 +438,7 @@ class Link
     }
 
     /**
-     * @return Document|Asset|boolean
+     * @return Document|Asset|bool
      *
      * @todo: $this->object not found in class
      */
@@ -444,6 +457,7 @@ class Link
 
     /**
      * @param $object
+     *
      * @return $this
      */
     public function setObject($object)
@@ -460,9 +474,9 @@ class Link
      */
     public function setObjectFromId()
     {
-        if ($this->internalType == "document") {
+        if ($this->internalType == 'document') {
             $this->object = Document::getById($this->internal);
-        } elseif ($this->internalType == "asset") {
+        } elseif ($this->internalType == 'asset') {
             $this->object = Asset::getById($this->internal);
         }
 
@@ -474,7 +488,7 @@ class Link
      */
     public function getHtml()
     {
-        $attributes = ["rel", "tabindex", "accesskey", "title", "target", "class"];
+        $attributes = ['rel', 'tabindex', 'accesskey', 'title', 'target', 'class'];
         $attribs = [];
         foreach ($attributes as $a) {
             if ($this->$a) {
@@ -487,10 +501,10 @@ class Link
         }
 
         if (empty($this->text)) {
-            return "";
+            return '';
         }
 
-        return '<a href="' . $this->getHref() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getText()) . '</a>';
+        return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getText()) . '</a>';
     }
 
     /**
@@ -510,13 +524,14 @@ class Link
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function setValues($data = [])
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
-                $method = "set" . $key;
+                $method = 'set' . $key;
                 if (method_exists($this, $method)) {
                     $this->$method($value);
                 }

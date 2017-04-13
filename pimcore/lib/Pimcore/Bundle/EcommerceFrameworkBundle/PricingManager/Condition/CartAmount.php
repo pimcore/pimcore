@@ -24,14 +24,13 @@ class CartAmount implements ICartAmount
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
      *
-     * @return boolean
+     * @return bool
      */
     public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         if (!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
         }
-
 
         return $environment->getCart()->getPriceCalculator()->getSubTotal()->getAmount() >= $this->getLimit();
     }

@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
  */
 interface IWorker
 {
-    const MULTISELECT_DELIMITER = "#;#";
+    const MULTISELECT_DELIMITER = '#;#';
 
     /**
      * returns all attributes marked as general search attributes for full text search
@@ -44,6 +44,7 @@ interface IWorker
      * deletes given element from index
      *
      * @param IIndexable $object
+     *
      * @return void
      */
     public function deleteFromIndex(IIndexable $object);
@@ -52,6 +53,7 @@ interface IWorker
      * updates given element in index
      *
      * @param IIndexable $object
+     *
      * @return void
      */
     public function updateIndex(IIndexable $object);
@@ -60,6 +62,7 @@ interface IWorker
      * returns all index attributes
      *
      * @param bool $considerHideInFieldList
+     *
      * @return array
      */
     public function getIndexAttributes($considerHideInFieldList = false);
@@ -75,6 +78,7 @@ interface IWorker
      * retruns all index attributes for a given filter group
      *
      * @param string $filterGroup
+     *
      * @return array
      */
     public function getIndexAttributesByFilterGroup($filterGroup);
@@ -85,7 +89,6 @@ interface IWorker
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
      */
     public function getTenantConfig();
-
 
     /**
      * returns product list implementation valid and configured for this worker/tenant

@@ -35,6 +35,7 @@ class IndexController extends AdminController
     /**
      * @Route("/", name="pimcore_admin_index")
      * @TemplatePhp()
+     *
      * @return ViewModel
      */
     public function indexAction(Request $request)
@@ -58,6 +59,7 @@ class IndexController extends AdminController
     /**
      * @param ViewModel $view
      * @param User $user
+     *
      * @return $this
      */
     protected function addRuntimePerspective(ViewModel $view, User $user)
@@ -65,13 +67,14 @@ class IndexController extends AdminController
         $runtimePerspective = Config::getRuntimePerspective($user);
 
         $view->runtimePerspective = $runtimePerspective;
-        $view->extjsDev           = isset($runtimePerspective["extjsDev"]) ? $runtimePerspective["extjsDev"] : false;
+        $view->extjsDev           = isset($runtimePerspective['extjsDev']) ? $runtimePerspective['extjsDev'] : false;
 
         return $this;
     }
 
     /**
      * @param ViewModel $view
+     *
      * @return $this
      */
     protected function addReportConfig(ViewModel $view)
@@ -84,6 +87,7 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $view
+     *
      * @return $this
      */
     protected function addPluginAssets(ViewModel $view)
@@ -115,7 +119,7 @@ class IndexController extends AdminController
             'debug'     => \Pimcore::inDebugMode(),
             'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
             'sessionId' => htmlentities(Session::getSessionIdFromRequest($request), ENT_QUOTES, 'UTF-8'),
-            "isLegacyModeAvailable" => \Pimcore::isLegacyModeAvailable()
+            'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 
         // languages
@@ -167,19 +171,20 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
+     *
      * @return $this
      */
     protected function addSystemVarSettings(ViewModel $settings)
     {
         // upload limit
-        $max_upload = filesize2bytes(ini_get("upload_max_filesize") . "B");
-        $max_post   = filesize2bytes(ini_get("post_max_size") . "B");
+        $max_upload = filesize2bytes(ini_get('upload_max_filesize') . 'B');
+        $max_post   = filesize2bytes(ini_get('post_max_size') . 'B');
         $upload_mb  = min($max_upload, $max_post);
 
         $settings->upload_max_filesize = (int)$upload_mb;
 
         // session lifetime (gc)
-        $session_gc_maxlifetime = ini_get("session.gc_maxlifetime");
+        $session_gc_maxlifetime = ini_get('session.gc_maxlifetime');
         if (empty($session_gc_maxlifetime)) {
             $session_gc_maxlifetime = 120;
         }
@@ -192,6 +197,7 @@ class IndexController extends AdminController
     /**
      * @param ViewModel $settings
      * @param User $user
+     *
      * @return $this
      */
     protected function addCsrfToken(ViewModel $settings, User $user)
@@ -211,6 +217,7 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
+     *
      * @return $this
      */
     protected function addMaintenanceSettings(ViewModel $settings)
@@ -218,7 +225,7 @@ class IndexController extends AdminController
         // check maintenance
         $maintenance_enabled = false;
 
-        $manager = Model\Schedule\Manager\Factory::getManager("maintenance.pid");
+        $manager = Model\Schedule\Manager\Factory::getManager('maintenance.pid');
 
         $lastExecution = $manager->getLastExecution();
         if ($lastExecution) {
@@ -236,6 +243,7 @@ class IndexController extends AdminController
     /**
      * @param ViewModel $settings
      * @param \stdClass $config
+     *
      * @return $this
      */
     protected function addMailSettings(ViewModel $settings, $config)
@@ -249,7 +257,7 @@ class IndexController extends AdminController
             if (!$config->email->sender->email) {
                 $mailIncomplete = true;
             }
-            if ($config->email->method == "smtp" && !$config->email->smtp->host) {
+            if ($config->email->method == 'smtp' && !$config->email->smtp->host) {
                 $mailIncomplete = true;
             }
         }
@@ -261,6 +269,7 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
+     *
      * @return $this
      */
     protected function addCustomViewSettings(ViewModel $settings)
@@ -274,16 +283,16 @@ class IndexController extends AdminController
             foreach ($cvConfig as $node) {
                 $tmpData = $node;
                 // backwards compatibility
-                $treeType = $tmpData["treetype"] ? $tmpData["treetype"] : "object";
-                $rootNode = Service::getElementByPath($treeType, $tmpData["rootfolder"]);
+                $treeType = $tmpData['treetype'] ? $tmpData['treetype'] : 'object';
+                $rootNode = Service::getElementByPath($treeType, $tmpData['rootfolder']);
 
                 if ($rootNode) {
-                    $tmpData["rootId"]         = $rootNode->getId();
-                    $tmpData["allowedClasses"] = $tmpData["classes"] ? explode(",", $tmpData["classes"]) : null;
-                    $tmpData["showroot"]       = (bool)$tmpData["showroot"];
+                    $tmpData['rootId']         = $rootNode->getId();
+                    $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
+                    $tmpData['showroot']       = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
-                    if ($rootNode->isAllowed("list")) {
+                    if ($rootNode->isAllowed('list')) {
                         $cvData[] = $tmpData;
                     }
                 }

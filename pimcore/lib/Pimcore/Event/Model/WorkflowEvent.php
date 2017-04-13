@@ -29,6 +29,7 @@ class WorkflowEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param Manager $workflowManager
      * @param array $arguments
      */

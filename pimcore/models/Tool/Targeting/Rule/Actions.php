@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Tool
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,7 +21,6 @@ use Pimcore\Model;
 
 class Actions
 {
-
     /**
      * @var bool
      */
@@ -88,6 +88,7 @@ class Actions
 
     /**
      * @param $programmaticallyEnabled
+     *
      * @return $this
      */
     public function setProgrammaticallyEnabled($programmaticallyEnabled)
@@ -98,7 +99,7 @@ class Actions
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getProgrammaticallyEnabled()
     {
@@ -107,6 +108,7 @@ class Actions
 
     /**
      * @param $codesnippetCode
+     *
      * @return $this
      */
     public function setCodesnippetCode($codesnippetCode)
@@ -126,6 +128,7 @@ class Actions
 
     /**
      * @param $codesnippetPosition
+     *
      * @return $this
      */
     public function setCodesnippetPosition($codesnippetPosition)
@@ -145,6 +148,7 @@ class Actions
 
     /**
      * @param $codesnippetSelector
+     *
      * @return $this
      */
     public function setCodesnippetSelector($codesnippetSelector)
@@ -164,6 +168,7 @@ class Actions
 
     /**
      * @param $eventKey
+     *
      * @return $this
      */
     public function setEventKey($eventKey)
@@ -183,6 +188,7 @@ class Actions
 
     /**
      * @param $eventValue
+     *
      * @return $this
      */
     public function setEventValue($eventValue)
@@ -202,6 +208,7 @@ class Actions
 
     /**
      * @param $redirectCode
+     *
      * @return $this
      */
     public function setRedirectCode($redirectCode)
@@ -221,6 +228,7 @@ class Actions
 
     /**
      * @param $redirectUrl
+     *
      * @return $this
      */
     public function setRedirectUrl($redirectUrl)
@@ -245,6 +253,7 @@ class Actions
 
     /**
      * @param $codesnippetEnabled
+     *
      * @return $this
      */
     public function setCodesnippetEnabled($codesnippetEnabled)
@@ -255,7 +264,7 @@ class Actions
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getCodesnippetEnabled()
     {
@@ -264,6 +273,7 @@ class Actions
 
     /**
      * @param $eventEnabled
+     *
      * @return $this
      */
     public function setEventEnabled($eventEnabled)
@@ -274,7 +284,7 @@ class Actions
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getEventEnabled()
     {
@@ -283,6 +293,7 @@ class Actions
 
     /**
      * @param $redirectEnabled
+     *
      * @return $this
      */
     public function setRedirectEnabled($redirectEnabled)
@@ -293,7 +304,7 @@ class Actions
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getRedirectEnabled()
     {
@@ -301,7 +312,7 @@ class Actions
     }
 
     /**
-     * @param boolean $personaEnabled
+     * @param bool $personaEnabled
      */
     public function setPersonaEnabled($personaEnabled)
     {
@@ -309,7 +320,7 @@ class Actions
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getPersonaEnabled()
     {

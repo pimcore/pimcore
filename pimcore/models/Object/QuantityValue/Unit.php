@@ -10,14 +10,15 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\QuantityValue;
 
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Object\QuantityValue\Unit\Dao getDao()
@@ -55,17 +56,18 @@ class Unit extends Model\AbstractModel
     public $reference;
 
     /**
-     * @var double
+     * @var float
      */
     public $factor;
 
     /**
-     * @var double
+     * @var float
      */
     public $conversionOffset;
 
     /**
      * @param string $abbreviation
+     *
      * @return Unit
      */
     public static function getByAbbreviation($abbreviation)
@@ -78,6 +80,7 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $reference
+     *
      * @return Unit
      */
     public static function getByReference($reference)
@@ -90,11 +93,12 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $id
+     *
      * @return Unit
      */
     public static function getById($id)
     {
-        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $id;
+        $cacheKey = Unit\Dao::TABLE_NAME . '_' . $id;
 
         try {
             $unit = \Pimcore\Cache\Runtime::get($cacheKey);
@@ -115,6 +119,7 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param array $values
+     *
      * @return Unit
      */
     public static function create($values = [])
@@ -132,7 +137,7 @@ class Unit extends Model\AbstractModel
 
     public function delete()
     {
-        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
+        $cacheKey = Unit\Dao::TABLE_NAME . '_' . $this->getId();
         \Pimcore\Cache\Runtime::set($cacheKey, null);
 
         $this->getDao()->delete();
@@ -143,7 +148,7 @@ class Unit extends Model\AbstractModel
      */
     public function __toString()
     {
-        return ucfirst($this->getAbbreviation() . " (" . $this->getId() . ")");
+        return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
     }
 
     public function setAbbreviation($abbreviation)

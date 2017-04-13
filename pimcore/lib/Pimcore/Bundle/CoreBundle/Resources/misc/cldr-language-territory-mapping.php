@@ -1,919 +1,919 @@
 <?php 
 
 return [
-    "en" => [
-        "US",
-        "IN",
-        "PK",
-        "NG",
-        "PH",
-        "GB",
-        "TZ",
-        "CA",
-        "SD",
-        "AU",
-        "ZA",
-        "MW",
-        "CM",
-        "KE",
-        "BE",
-        "ZW",
-        "GH",
-        "SG",
-        "IE",
-        "NZ",
-        "MG",
-        "ER",
-        "HK",
-        "LR",
-        "PG",
-        "SS",
-        "JM",
-        "ZM",
-        "SL",
-        "RW",
-        "BW",
-        "PR",
-        "SZ",
-        "UG",
-        "TT",
-        "MU",
-        "FJ",
-        "GM",
-        "GY",
-        "SB",
-        "LS",
-        "MT",
-        "BZ",
-        "BS",
-        "BB",
-        "VU",
-        "NA",
-        "LC",
-        "GU",
-        "GD",
-        "KI",
-        "VC",
-        "JE",
-        "IM",
-        "AG",
-        "VI",
-        "DM",
-        "MH",
-        "GG",
-        "BM",
-        "FM",
-        "KY",
-        "AS",
-        "KN",
-        "MP",
-        "TC",
-        "SC",
-        "VG",
-        "TO",
-        "SX",
-        "GI",
-        "AI",
-        "MO",
-        "CK",
-        "NR",
-        "SH",
-        "WS",
-        "MS",
-        "IO",
-        "FK",
-        "PW",
-        "NF",
-        "CX",
-        "TK",
-        "NU",
-        "TV",
-        "DG",
-        "UM",
-        "CC",
-        "PN"
+    'en' => [
+        'US',
+        'IN',
+        'PK',
+        'NG',
+        'PH',
+        'GB',
+        'TZ',
+        'CA',
+        'SD',
+        'AU',
+        'ZA',
+        'MW',
+        'CM',
+        'KE',
+        'BE',
+        'ZW',
+        'GH',
+        'SG',
+        'IE',
+        'NZ',
+        'MG',
+        'ER',
+        'HK',
+        'LR',
+        'PG',
+        'SS',
+        'JM',
+        'ZM',
+        'SL',
+        'RW',
+        'BW',
+        'PR',
+        'SZ',
+        'UG',
+        'TT',
+        'MU',
+        'FJ',
+        'GM',
+        'GY',
+        'SB',
+        'LS',
+        'MT',
+        'BZ',
+        'BS',
+        'BB',
+        'VU',
+        'NA',
+        'LC',
+        'GU',
+        'GD',
+        'KI',
+        'VC',
+        'JE',
+        'IM',
+        'AG',
+        'VI',
+        'DM',
+        'MH',
+        'GG',
+        'BM',
+        'FM',
+        'KY',
+        'AS',
+        'KN',
+        'MP',
+        'TC',
+        'SC',
+        'VG',
+        'TO',
+        'SX',
+        'GI',
+        'AI',
+        'MO',
+        'CK',
+        'NR',
+        'SH',
+        'WS',
+        'MS',
+        'IO',
+        'FK',
+        'PW',
+        'NF',
+        'CX',
+        'TK',
+        'NU',
+        'TV',
+        'DG',
+        'UM',
+        'CC',
+        'PN'
     ],
-    "ca" => [
-        "ES",
-        "AD",
-        "FR",
-        "IT"
+    'ca' => [
+        'ES',
+        'AD',
+        'FR',
+        'IT'
     ],
-    "es" => [
-        "MX",
-        "ES",
-        "CO",
-        "AR",
-        "PH",
-        "US",
-        "VE",
-        "PE",
-        "CL",
-        "EC",
-        "GT",
-        "CU",
-        "DO",
-        "HN",
-        "BO",
-        "SV",
-        "NI",
-        "CR",
-        "PR",
-        "UY",
-        "PA",
-        "IC",
-        "GQ",
-        "PY",
-        "EA"
+    'es' => [
+        'MX',
+        'ES',
+        'CO',
+        'AR',
+        'PH',
+        'US',
+        'VE',
+        'PE',
+        'CL',
+        'EC',
+        'GT',
+        'CU',
+        'DO',
+        'HN',
+        'BO',
+        'SV',
+        'NI',
+        'CR',
+        'PR',
+        'UY',
+        'PA',
+        'IC',
+        'GQ',
+        'PY',
+        'EA'
     ],
-    "fr" => [
-        "FR",
-        "MG",
-        "CM",
-        "CI",
-        "TN",
-        "DZ",
-        "ML",
-        "CA",
-        "MA",
-        "BI",
-        "SN",
-        "NE",
-        "TG",
-        "BE",
-        "BF",
-        "CG",
-        "BJ",
-        "GN",
-        "TD",
-        "CF",
-        "CD",
-        "CH",
-        "GA",
-        "SY",
-        "RE",
-        "MR",
-        "LU",
-        "KM",
-        "MQ",
-        "GP",
-        "HT",
-        "NC",
-        "PF",
-        "GF",
-        "VU",
-        "YT",
-        "GQ",
-        "SC",
-        "MU",
-        "MF",
-        "MC",
-        "DJ",
-        "WF",
-        "BL",
-        "PM",
-        "RW"
+    'fr' => [
+        'FR',
+        'MG',
+        'CM',
+        'CI',
+        'TN',
+        'DZ',
+        'ML',
+        'CA',
+        'MA',
+        'BI',
+        'SN',
+        'NE',
+        'TG',
+        'BE',
+        'BF',
+        'CG',
+        'BJ',
+        'GN',
+        'TD',
+        'CF',
+        'CD',
+        'CH',
+        'GA',
+        'SY',
+        'RE',
+        'MR',
+        'LU',
+        'KM',
+        'MQ',
+        'GP',
+        'HT',
+        'NC',
+        'PF',
+        'GF',
+        'VU',
+        'YT',
+        'GQ',
+        'SC',
+        'MU',
+        'MF',
+        'MC',
+        'DJ',
+        'WF',
+        'BL',
+        'PM',
+        'RW'
     ],
-    "ar" => [
-        "EG",
-        "DZ",
-        "SA",
-        "IQ",
-        "SD",
-        "MA",
-        "YE",
-        "SY",
-        "TN",
-        "JO",
-        "LB",
-        "LY",
-        "PS",
-        "AE",
-        "SO",
-        "SS",
-        "MR",
-        "KW",
-        "OM",
-        "TD",
-        "QA",
-        "IL",
-        "BH",
-        "EH",
-        "KM",
-        "ER",
-        "DJ"
+    'ar' => [
+        'EG',
+        'DZ',
+        'SA',
+        'IQ',
+        'SD',
+        'MA',
+        'YE',
+        'SY',
+        'TN',
+        'JO',
+        'LB',
+        'LY',
+        'PS',
+        'AE',
+        'SO',
+        'SS',
+        'MR',
+        'KW',
+        'OM',
+        'TD',
+        'QA',
+        'IL',
+        'BH',
+        'EH',
+        'KM',
+        'ER',
+        'DJ'
     ],
-    "ml" => [
-        "IN"
+    'ml' => [
+        'IN'
     ],
-    "ps" => [
-        "AF"
+    'ps' => [
+        'AF'
     ],
-    "fa" => [
-        "IR",
-        "AF"
+    'fa' => [
+        'IR',
+        'AF'
     ],
-    "uz_Arab" => [
-        "AF"
+    'uz_Arab' => [
+        'AF'
     ],
-    "ug_Arab" => [
-        "CN"
+    'ug_Arab' => [
+        'CN'
     ],
-    "kk_Arab" => [
+    'kk_Arab' => [
 
     ],
-    "pt" => [
-        "BR",
-        "AO",
-        "PT",
-        "MZ",
-        "GW",
-        "TL",
-        "CV",
-        "ST",
-        "MO"
+    'pt' => [
+        'BR',
+        'AO',
+        'PT',
+        'MZ',
+        'GW',
+        'TL',
+        'CV',
+        'ST',
+        'MO'
     ],
-    "sq" => [
-        "AL",
-        "XK",
-        "MK"
+    'sq' => [
+        'AL',
+        'XK',
+        'MK'
     ],
-    "el" => [
-        "GR",
-        "CY"
+    'el' => [
+        'GR',
+        'CY'
     ],
-    "mk" => [
-        "MK"
+    'mk' => [
+        'MK'
     ],
-    "hy" => [
-        "AM"
+    'hy' => [
+        'AM'
     ],
-    "az_Latn" => [
-        "AZ"
+    'az_Latn' => [
+        'AZ'
     ],
-    "ln" => [
-        "CD",
-        "CG",
-        "AO",
-        "CF"
+    'ln' => [
+        'CD',
+        'CG',
+        'AO',
+        'CF'
     ],
-    "cy" => [
-        "GB"
+    'cy' => [
+        'GB'
     ],
-    "de" => [
-        "DE",
-        "AT",
-        "CH",
-        "LU",
-        "BE",
-        "LI"
+    'de' => [
+        'DE',
+        'AT',
+        'CH',
+        'LU',
+        'BE',
+        'LI'
     ],
-    "hr" => [
-        "HR",
-        "BA"
+    'hr' => [
+        'HR',
+        'BA'
     ],
-    "sl" => [
-        "SI"
+    'sl' => [
+        'SI'
     ],
-    "hu" => [
-        "HU"
+    'hu' => [
+        'HU'
     ],
-    "zh_Hant" => [
-        "TW",
-        "HK",
-        "MO"
+    'zh_Hant' => [
+        'TW',
+        'HK',
+        'MO'
     ],
-    "it" => [
-        "IT",
-        "CH",
-        "SM"
+    'it' => [
+        'IT',
+        'CH',
+        'SM'
     ],
-    "nl" => [
-        "NL",
-        "BE",
-        "SR",
-        "AW",
-        "CW",
-        "BQ",
-        "SX"
+    'nl' => [
+        'NL',
+        'BE',
+        'SR',
+        'AW',
+        'CW',
+        'BQ',
+        'SX'
     ],
-    "sv" => [
-        "SE",
-        "FI",
-        "AX"
+    'sv' => [
+        'SE',
+        'FI',
+        'AX'
     ],
-    "az_Cyrl" => [
-        "AZ"
+    'az_Cyrl' => [
+        'AZ'
     ],
-    "bs_Cyrl" => [
-        "BA"
+    'bs_Cyrl' => [
+        'BA'
     ],
-    "bs_Latn" => [
-        "BA"
+    'bs_Latn' => [
+        'BA'
     ],
-    "sr_Cyrl" => [
-        "RS",
-        "BA",
-        "XK",
-        "ME"
+    'sr_Cyrl' => [
+        'RS',
+        'BA',
+        'XK',
+        'ME'
     ],
-    "sr_Latn" => [
-        "RS",
-        "ME",
-        "BA",
-        "XK"
+    'sr_Latn' => [
+        'RS',
+        'ME',
+        'BA',
+        'XK'
     ],
-    "bn" => [
-        "BD",
-        "IN"
+    'bn' => [
+        'BD',
+        'IN'
     ],
-    "my" => [
-        "MM"
+    'my' => [
+        'MM'
     ],
-    "bg" => [
-        "BG"
+    'bg' => [
+        'BG'
     ],
-    "tr" => [
-        "TR",
-        "CY"
+    'tr' => [
+        'TR',
+        'CY'
     ],
-    "rn" => [
-        "BI"
+    'rn' => [
+        'BI'
     ],
-    "sw" => [
-        "TZ",
-        "KE",
-        "UG"
+    'sw' => [
+        'TZ',
+        'KE',
+        'UG'
     ],
-    "yo" => [
-        "NG",
-        "BJ"
+    'yo' => [
+        'NG',
+        'BJ'
     ],
-    "ms_Latn" => [
-        "MY",
-        "SG",
-        "BN"
+    'ms_Latn' => [
+        'MY',
+        'SG',
+        'BN'
     ],
-    "ms_Arab" => [
+    'ms_Arab' => [
 
     ],
-    "ja" => [
-        "JP"
+    'ja' => [
+        'JP'
     ],
-    "ko" => [
-        "KR",
-        "KP"
+    'ko' => [
+        'KR',
+        'KP'
     ],
-    "dz" => [
-        "BT"
+    'dz' => [
+        'BT'
     ],
-    "ne" => [
-        "NP",
-        "IN"
+    'ne' => [
+        'NP',
+        'IN'
     ],
-    "tn" => [
-        "ZA",
-        "BW"
+    'tn' => [
+        'ZA',
+        'BW'
     ],
-    "af" => [
-        "ZA",
-        "NA"
+    'af' => [
+        'ZA',
+        'NA'
     ],
-    "be" => [
-        "BY"
+    'be' => [
+        'BY'
     ],
-    "ru" => [
-        "RU",
-        "UA",
-        "KZ",
-        "KG",
-        "BY",
-        "MD"
+    'ru' => [
+        'RU',
+        'UA',
+        'KZ',
+        'KG',
+        'BY',
+        'MD'
     ],
-    "lu" => [
-        "CD"
+    'lu' => [
+        'CD'
     ],
-    "rw" => [
-        "RW"
+    'rw' => [
+        'RW'
     ],
-    "sg" => [
-        "CF"
+    'sg' => [
+        'CF'
     ],
-    "gsw" => [
-        "CH",
-        "LI"
+    'gsw' => [
+        'CH',
+        'LI'
     ],
-    "rm" => [
-        "CH"
+    'rm' => [
+        'CH'
     ],
-    "wae" => [
-        "CH"
+    'wae' => [
+        'CH'
     ],
-    "ff" => [
-        "GN",
-        "SN",
-        "CM",
-        "MR"
+    'ff' => [
+        'GN',
+        'SN',
+        'CM',
+        'MR'
     ],
-    "ewo" => [
-        "CM"
+    'ewo' => [
+        'CM'
     ],
-    "nnh" => [
-        "CM"
+    'nnh' => [
+        'CM'
     ],
-    "bas" => [
-        "CM"
+    'bas' => [
+        'CM'
     ],
-    "mua" => [
-        "CM"
+    'mua' => [
+        'CM'
     ],
-    "kkj" => [
-        "CM"
+    'kkj' => [
+        'CM'
     ],
-    "dua" => [
-        "CM"
+    'dua' => [
+        'CM'
     ],
-    "mgo" => [
-        "CM"
+    'mgo' => [
+        'CM'
     ],
-    "jgo" => [
-        "CM"
+    'jgo' => [
+        'CM'
     ],
-    "ksf" => [
-        "CM"
+    'ksf' => [
+        'CM'
     ],
-    "agq" => [
-        "CM"
+    'agq' => [
+        'CM'
     ],
-    "ha_Arab" => [
+    'ha_Arab' => [
 
     ],
-    "nmg" => [
-        "CM"
+    'nmg' => [
+        'CM'
     ],
-    "yav" => [
-        "CM"
+    'yav' => [
+        'CM'
     ],
-    "zh_Hans" => [
-        "CN",
-        "SG",
-        "HK",
-        "MO"
+    'zh_Hans' => [
+        'CN',
+        'SG',
+        'HK',
+        'MO'
     ],
-    "ii" => [
-        "CN"
+    'ii' => [
+        'CN'
     ],
-    "mn_Mong" => [
+    'mn_Mong' => [
 
     ],
-    "bo" => [
-        "CN",
-        "IN"
+    'bo' => [
+        'CN',
+        'IN'
     ],
-    "ky_Arab" => [
+    'ky_Arab' => [
 
     ],
-    "vi" => [
-        "VN"
+    'vi' => [
+        'VN'
     ],
-    "uz_Cyrl" => [
-        "UZ"
+    'uz_Cyrl' => [
+        'UZ'
     ],
-    "kea" => [
-        "CV"
+    'kea' => [
+        'CV'
     ],
-    "cs" => [
-        "CZ"
+    'cs' => [
+        'CZ'
     ],
-    "pl" => [
-        "PL"
+    'pl' => [
+        'PL'
     ],
-    "da" => [
-        "DK",
-        "GL"
+    'da' => [
+        'DK',
+        'GL'
     ],
-    "ksh" => [
-        "DE"
+    'ksh' => [
+        'DE'
     ],
-    "aa" => [
-        "ET",
-        "DJ",
-        "ER"
+    'aa' => [
+        'ET',
+        'DJ',
+        'ER'
     ],
-    "so" => [
-        "SO",
-        "ET",
-        "KE",
-        "DJ"
+    'so' => [
+        'SO',
+        'ET',
+        'KE',
+        'DJ'
     ],
-    "fo" => [
-        "FO"
+    'fo' => [
+        'FO'
     ],
-    "kl" => [
-        "GL"
+    'kl' => [
+        'GL'
     ],
-    "kab" => [
-        "DZ"
+    'kab' => [
+        'DZ'
     ],
-    "et" => [
-        "EE"
+    'et' => [
+        'EE'
     ],
-    "ti" => [
-        "ET",
-        "ER"
+    'ti' => [
+        'ET',
+        'ER'
     ],
-    "tig" => [
-        "ER"
+    'tig' => [
+        'ER'
     ],
-    "ssy" => [
-        "ER"
+    'ssy' => [
+        'ER'
     ],
-    "byn" => [
-        "ER"
+    'byn' => [
+        'ER'
     ],
-    "gl" => [
-        "ES"
+    'gl' => [
+        'ES'
     ],
-    "eu" => [
-        "ES"
+    'eu' => [
+        'ES'
     ],
-    "ast" => [
-        "ES"
+    'ast' => [
+        'ES'
     ],
-    "am" => [
-        "ET"
+    'am' => [
+        'ET'
     ],
-    "om" => [
-        "ET",
-        "KE"
+    'om' => [
+        'ET',
+        'KE'
     ],
-    "wal" => [
-        "ET"
+    'wal' => [
+        'ET'
     ],
-    "fi" => [
-        "FI"
+    'fi' => [
+        'FI'
     ],
-    "se" => [
-        "NO",
-        "FI"
+    'se' => [
+        'NO',
+        'FI'
     ],
-    "hi" => [
-        "IN"
+    'hi' => [
+        'IN'
     ],
-    "br" => [
-        "FR"
+    'br' => [
+        'FR'
     ],
-    "ia" => [
-        "FR"
+    'ia' => [
+        'FR'
     ],
-    "pa_Guru" => [
-        "IN"
+    'pa_Guru' => [
+        'IN'
     ],
-    "ks_Arab" => [
-        "IN"
+    'ks_Arab' => [
+        'IN'
     ],
-    "gd" => [
-        "GB"
+    'gd' => [
+        'GB'
     ],
-    "ga" => [
-        "IE"
+    'ga' => [
+        'IE'
     ],
-    "kw" => [
-        "GB"
+    'kw' => [
+        'GB'
     ],
-    "ka" => [
-        "GE"
+    'ka' => [
+        'GE'
     ],
-    "os" => [
-        "GE",
-        "RU"
+    'os' => [
+        'GE',
+        'RU'
     ],
-    "ak" => [
-        "GH"
+    'ak' => [
+        'GH'
     ],
-    "ee" => [
-        "GH",
-        "TG"
+    'ee' => [
+        'GH',
+        'TG'
     ],
-    "ha_Latn" => [
-        "NG",
-        "NE",
-        "GH"
+    'ha_Latn' => [
+        'NG',
+        'NE',
+        'GH'
     ],
-    "ro" => [
-        "RO",
-        "MD"
+    'ro' => [
+        'RO',
+        'MD'
     ],
-    "sk" => [
-        "SK"
+    'sk' => [
+        'SK'
     ],
-    "id" => [
-        "ID"
+    'id' => [
+        'ID'
     ],
-    "he" => [
-        "IL"
+    'he' => [
+        'IL'
     ],
-    "gv" => [
-        "IM"
+    'gv' => [
+        'IM'
     ],
-    "te" => [
-        "IN"
+    'te' => [
+        'IN'
     ],
-    "mr" => [
-        "IN"
+    'mr' => [
+        'IN'
     ],
-    "ta" => [
-        "IN",
-        "LK",
-        "MY",
-        "SG"
+    'ta' => [
+        'IN',
+        'LK',
+        'MY',
+        'SG'
     ],
-    "ur" => [
-        "PK",
-        "IN"
+    'ur' => [
+        'PK',
+        'IN'
     ],
-    "gu" => [
-        "IN"
+    'gu' => [
+        'IN'
     ],
-    "kn" => [
-        "IN"
+    'kn' => [
+        'IN'
     ],
-    "or" => [
-        "IN"
+    'or' => [
+        'IN'
     ],
-    "as" => [
-        "IN"
+    'as' => [
+        'IN'
     ],
-    "kok" => [
-        "IN"
+    'kok' => [
+        'IN'
     ],
-    "brx" => [
-        "IN"
+    'brx' => [
+        'IN'
     ],
-    "az_Arab" => [
+    'az_Arab' => [
 
     ],
-    "is" => [
-        "IS"
+    'is' => [
+        'IS'
     ],
-    "fur" => [
-        "IT"
+    'fur' => [
+        'IT'
     ],
-    "ki" => [
-        "KE"
+    'ki' => [
+        'KE'
     ],
-    "luy" => [
-        "KE"
+    'luy' => [
+        'KE'
     ],
-    "luo" => [
-        "KE"
+    'luo' => [
+        'KE'
     ],
-    "kam" => [
-        "KE"
+    'kam' => [
+        'KE'
     ],
-    "kln" => [
-        "KE"
+    'kln' => [
+        'KE'
     ],
-    "guz" => [
-        "KE"
+    'guz' => [
+        'KE'
     ],
-    "mer" => [
-        "KE"
+    'mer' => [
+        'KE'
     ],
-    "mas" => [
-        "TZ",
-        "KE"
+    'mas' => [
+        'TZ',
+        'KE'
     ],
-    "ebu" => [
-        "KE"
+    'ebu' => [
+        'KE'
     ],
-    "dav" => [
-        "KE"
+    'dav' => [
+        'KE'
     ],
-    "teo" => [
-        "UG",
-        "KE"
+    'teo' => [
+        'UG',
+        'KE'
     ],
-    "saq" => [
-        "KE"
+    'saq' => [
+        'KE'
     ],
-    "ky_Cyrl" => [
-        "KG"
+    'ky_Cyrl' => [
+        'KG'
     ],
-    "km" => [
-        "KH"
+    'km' => [
+        'KH'
     ],
-    "kk_Cyrl" => [
-        "KZ"
+    'kk_Cyrl' => [
+        'KZ'
     ],
-    "ug_Cyrl" => [
+    'ug_Cyrl' => [
 
     ],
-    "lo" => [
-        "LA"
+    'lo' => [
+        'LA'
     ],
-    "si" => [
-        "LK"
+    'si' => [
+        'LK'
     ],
-    "vai_Vaii" => [
-        "LR"
+    'vai_Vaii' => [
+        'LR'
     ],
-    "vai_Latn" => [
-        "LR"
+    'vai_Latn' => [
+        'LR'
     ],
-    "st" => [
-        "ZA",
-        "LS"
+    'st' => [
+        'ZA',
+        'LS'
     ],
-    "zu" => [
-        "ZA"
+    'zu' => [
+        'ZA'
     ],
-    "ss" => [
-        "ZA",
-        "SZ"
+    'ss' => [
+        'ZA',
+        'SZ'
     ],
-    "xh" => [
-        "ZA"
+    'xh' => [
+        'ZA'
     ],
-    "lt" => [
-        "LT"
+    'lt' => [
+        'LT'
     ],
-    "lv" => [
-        "LV"
+    'lv' => [
+        'LV'
     ],
-    "zgh" => [
-        "MA"
+    'zgh' => [
+        'MA'
     ],
-    "tzm_Latn" => [
-        "MA"
+    'tzm_Latn' => [
+        'MA'
     ],
-    "shi_Latn" => [
-        "MA"
+    'shi_Latn' => [
+        'MA'
     ],
-    "shi_Tfng" => [
-        "MA"
+    'shi_Tfng' => [
+        'MA'
     ],
-    "uk" => [
-        "UA"
+    'uk' => [
+        'UA'
     ],
-    "mg" => [
-        "MG"
+    'mg' => [
+        'MG'
     ],
-    "bm_Latn" => [
-        "ML"
+    'bm_Latn' => [
+        'ML'
     ],
-    "ses" => [
-        "ML"
+    'ses' => [
+        'ML'
     ],
-    "bm_Nkoo" => [
-        "ML"
+    'bm_Nkoo' => [
+        'ML'
     ],
-    "khq" => [
-        "ML"
+    'khq' => [
+        'ML'
     ],
-    "mn_Cyrl" => [
-        "MN"
+    'mn_Cyrl' => [
+        'MN'
     ],
-    "mt" => [
-        "MT"
+    'mt' => [
+        'MT'
     ],
-    "mfe" => [
-        "MU"
+    'mfe' => [
+        'MU'
     ],
-    "ts" => [
-        "ZA"
+    'ts' => [
+        'ZA'
     ],
-    "seh" => [
-        "MZ"
+    'seh' => [
+        'MZ'
     ],
-    "mgh" => [
-        "MZ"
+    'mgh' => [
+        'MZ'
     ],
-    "naq" => [
-        "NA"
+    'naq' => [
+        'NA'
     ],
-    "dje" => [
-        "NE"
+    'dje' => [
+        'NE'
     ],
-    "twq" => [
-        "NE"
+    'twq' => [
+        'NE'
     ],
-    "ig" => [
-        "NG"
+    'ig' => [
+        'NG'
     ],
-    "fy" => [
-        "NL"
+    'fy' => [
+        'NL'
     ],
-    "nb" => [
-        "NO",
-        "SJ"
+    'nb' => [
+        'NO',
+        'SJ'
     ],
-    "nn" => [
-        "NO"
+    'nn' => [
+        'NO'
     ],
-    "fil" => [
-        "PH"
+    'fil' => [
+        'PH'
     ],
-    "pa_Arab" => [
-        "PK"
+    'pa_Arab' => [
+        'PK'
     ],
-    "tg_Arab" => [
+    'tg_Arab' => [
 
     ],
-    "sah" => [
-        "RU"
+    'sah' => [
+        'RU'
     ],
-    "eo" => [
+    'eo' => [
 
     ],
-    "dyo" => [
-        "SN"
+    'dyo' => [
+        'SN'
     ],
-    "nus" => [
+    'nus' => [
 
     ],
-    "th" => [
-        "TH"
+    'th' => [
+        'TH'
     ],
-    "tg_Cyrl" => [
-        "TJ"
+    'tg_Cyrl' => [
+        'TJ'
     ],
-    "uz_Latn" => [
-        "UZ"
+    'uz_Latn' => [
+        'UZ'
     ],
-    "to" => [
-        "TO"
+    'to' => [
+        'TO'
     ],
-    "ky_Latn" => [
+    'ky_Latn' => [
 
     ],
-    "kde" => [
-        "TZ"
+    'kde' => [
+        'TZ'
     ],
-    "bez" => [
-        "TZ"
+    'bez' => [
+        'TZ'
     ],
-    "ksb" => [
-        "TZ"
+    'ksb' => [
+        'TZ'
     ],
-    "asa" => [
-        "TZ"
+    'asa' => [
+        'TZ'
     ],
-    "lag" => [
-        "TZ"
+    'lag' => [
+        'TZ'
     ],
-    "jmc" => [
-        "TZ"
+    'jmc' => [
+        'TZ'
     ],
-    "rof" => [
-        "TZ"
+    'rof' => [
+        'TZ'
     ],
-    "vun" => [
-        "TZ"
+    'vun' => [
+        'TZ'
     ],
-    "rwk" => [
-        "TZ"
+    'rwk' => [
+        'TZ'
     ],
-    "sbp" => [
-        "TZ"
+    'sbp' => [
+        'TZ'
     ],
-    "lg" => [
-        "UG"
+    'lg' => [
+        'UG'
     ],
-    "nyn" => [
-        "UG"
+    'nyn' => [
+        'UG'
     ],
-    "cgg" => [
-        "UG"
+    'cgg' => [
+        'UG'
     ],
-    "xog" => [
-        "UG"
+    'xog' => [
+        'UG'
     ],
-    "haw" => [
-        "US"
+    'haw' => [
+        'US'
     ],
-    "chr" => [
-        "US"
+    'chr' => [
+        'US'
     ],
-    "lkt" => [
-        "US"
+    'lkt' => [
+        'US'
     ],
-    "nso" => [
-        "ZA"
+    'nso' => [
+        'ZA'
     ],
-    "ve" => [
-        "ZA"
+    've' => [
+        'ZA'
     ],
-    "nr" => [
-        "ZA"
+    'nr' => [
+        'ZA'
     ],
-    "bem" => [
-        "ZM"
+    'bem' => [
+        'ZM'
     ],
-    "sn" => [
-        "ZW"
+    'sn' => [
+        'ZW'
     ],
-    "nd" => [
-        "ZW"
+    'nd' => [
+        'ZW'
     ]
 ];

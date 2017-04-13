@@ -6,7 +6,6 @@ use Pimcore\Event\Model\ObjectEvent;
 
 class TestListener
 {
-
     /**
      * @param ObjectEvent $event
      */

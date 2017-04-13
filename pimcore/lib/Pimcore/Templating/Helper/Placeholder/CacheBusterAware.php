@@ -32,7 +32,7 @@ abstract class CacheBusterAware extends AbstractHelper
     abstract protected function prepareEntries();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCacheBuster()
     {
@@ -40,7 +40,7 @@ abstract class CacheBusterAware extends AbstractHelper
     }
 
     /**
-     * @param boolean $cacheBuster
+     * @param bool $cacheBuster
      */
     public function setCacheBuster($cacheBuster)
     {

@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class SearchBackendEvent extends Event
 {
-
     /**
      * @var Data
      */
@@ -27,6 +26,7 @@ class SearchBackendEvent extends Event
 
     /**
      * Data constructor.
+     *
      * @param Data $data
      */
     public function __construct(Data $data)

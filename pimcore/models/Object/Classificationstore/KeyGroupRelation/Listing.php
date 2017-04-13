@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-
     /**
      * Contains the results of the list.
      *
@@ -31,14 +31,16 @@ class Listing extends Model\Listing\AbstractListing
      */
     public $list = [];
 
-    /** @var  boolean */
+    /** @var bool */
     public $resolveGroupName;
 
     /**
      * Tests if the given key is an valid order key to sort the results
      *
      * @todo remove the dummy-always-true rule
+     *
      * @param $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
@@ -56,6 +58,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array
+     *
      * @return $this
      */
     public function setList($theList)
@@ -66,7 +69,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getResolveGroupName()
     {
@@ -74,7 +77,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param boolean $resolveGroupName
+     * @param bool $resolveGroupName
      */
     public function setResolveGroupName($resolveGroupName)
     {

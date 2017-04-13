@@ -125,6 +125,7 @@ class Menu extends AbstractHelper
      *
      * @param  Container $container  [optional] container to
      *                                               operate on
+     *
      * @return self      fluent interface,
      *                                               returns self
      */
@@ -143,6 +144,7 @@ class Menu extends AbstractHelper
      * Sets CSS class to use for the first 'ul' element when rendering
      *
      * @param  string $ulClass                   CSS class to set
+     *
      * @return self  fluent interface, returns self
      */
     public function setUlClass($ulClass)
@@ -169,6 +171,7 @@ class Menu extends AbstractHelper
      * rendering
      *
      * @param  string|null  $ulId                Unique identifier (id) to set
+     *
      * @return self  fluent interface, returns self
      */
     public function setUlId($ulId)
@@ -195,6 +198,7 @@ class Menu extends AbstractHelper
      * Sets CSS class to use for the active elements when rendering
      *
      * @param string $activeClass               CSS class to set
+     *
      * @return self fluent interface, returns self
      */
     public function setActiveClass($activeClass)
@@ -220,6 +224,7 @@ class Menu extends AbstractHelper
      * Sets CSS class to use for the parent li elements when rendering
      *
      * @param  string $parentClass              CSS class to set to parents
+     *
      * @return self fluent interface, returns self
      */
     public function setParentClass($parentClass)
@@ -246,6 +251,7 @@ class Menu extends AbstractHelper
      *
      * @param bool $flag                        [optional] render with parent
      *                                          class. Default is true.
+     *
      * @return self fluent interface, returns self
      */
     public function setRenderParentClass($flag = true)
@@ -271,6 +277,7 @@ class Menu extends AbstractHelper
      *
      * @param  bool $flag                        [optional] render only active
      *                                           branch. Default is true.
+     *
      * @return self  fluent interface, returns self
      */
     public function setOnlyActiveBranch($flag = true)
@@ -298,6 +305,7 @@ class Menu extends AbstractHelper
      *
      * @param  bool $flag                        [optional] expand all siblings of
      *                                           nodes in the active branch. Default is true.
+     *
      * @return self  fluent interface, returns self
      */
     public function setExpandSiblingNodesOfActiveBranch($flag = true)
@@ -328,6 +336,7 @@ class Menu extends AbstractHelper
      * @param  bool $flag                        [optional] render parents when
      *                                           rendering active branch.
      *                                           Default is true.
+     *
      * @return self  fluent interface, returns self
      */
     public function setRenderParents($flag = true)
@@ -368,7 +377,9 @@ class Menu extends AbstractHelper
 
     /**
      * Alias of setTemplate()
+     *
      * @param $partial
+     *
      * @return $this
      */
     public function setPartial($partial)
@@ -380,6 +391,7 @@ class Menu extends AbstractHelper
 
     /**
      * Alias of getTemplate()
+     *
      * @return array|string
      */
     public function getPartial()
@@ -433,6 +445,7 @@ class Menu extends AbstractHelper
      *
      * @param  string|int $indent                          indentation string or
      *                                                     number of spaces
+     *
      * @return AbstractHelper  fluent interface,
      *                                                     returns self
      */
@@ -445,6 +458,7 @@ class Menu extends AbstractHelper
 
     /**
      * Returns inner indentation (format output is respected)
+     *
      * @return string       indentation string or an empty string
      */
     public function getInnerIndent()
@@ -459,6 +473,7 @@ class Menu extends AbstractHelper
      * the page's href is not empty, and a 'span' element if it is empty
      *
      * @param  Page $page  page to generate HTML for
+     *
      * @return string                      HTML string for the given page
      */
     public function htmlify(Page $page)
@@ -490,7 +505,7 @@ class Menu extends AbstractHelper
         $attribs = array_merge($attribs, $page->getCustomHtmlAttribs());
 
         return '<' . $element . $this->_htmlAttribs($attribs) . '>'
-             . htmlspecialchars($label, ENT_COMPAT, "UTF-8")
+             . htmlspecialchars($label, ENT_COMPAT, 'UTF-8')
              . '</' . $element . '>';
     }
 
@@ -498,6 +513,7 @@ class Menu extends AbstractHelper
      * Normalizes given render options
      *
      * @param  array $options  [optional] options to normalize
+     *
      * @return array           normalized options
      */
     protected function _normalizeOptions(array $options = [])
@@ -617,6 +633,7 @@ class Menu extends AbstractHelper
      * @param  string                    $parentClass       CSS class for parent
      *                                                      li's
      * @param  bool                      $renderParentClass Render parent class?
+     *
      * @return string                                       rendered menu (HTML)
      */
     protected function _renderDeepestMenu(Container $container,
@@ -714,6 +731,7 @@ class Menu extends AbstractHelper
      * @param  string                    $parentClass       CSS class for parent
      *                                                      li's
      * @param  bool                      $renderParentClass Render parent class?
+     *
      * @return string                                       rendered menu (HTML)
      */
     protected function _renderMenu(Container $container,
@@ -794,7 +812,7 @@ class Menu extends AbstractHelper
             }
 
             // make sure indentation is correct
-            $depth   -= $minDepth;
+            $depth -= $minDepth;
             $myIndent = $indent . str_repeat($innerIndent, $depth * 2);
 
             if ($depth > $prevDepth) {
@@ -866,9 +884,9 @@ class Menu extends AbstractHelper
 
         if ($html) {
             // done iterating container; close open ul/li tags
-            for ($i = $prevDepth+1; $i > 0; $i--) {
+            for ($i = $prevDepth + 1; $i > 0; $i--) {
                 $myIndent = $indent . str_repeat($innerIndent . $innerIndent, $i - 1);
-                $html    .= $myIndent . $innerIndent . '</li>' . $this->getEOL()
+                $html .= $myIndent . $innerIndent . '</li>' . $this->getEOL()
                          . $myIndent . '</ul>' . $this->getEOL();
             }
             $html = rtrim($html, $this->getEOL());
@@ -893,6 +911,7 @@ class Menu extends AbstractHelper
      *                                               {@link getContainer()}.
      * @param  array                     $options    [optional] options for
      *                                               controlling rendering
+     *
      * @return string                                rendered menu
      */
     public function renderMenu(Container $container = null,
@@ -976,6 +995,7 @@ class Menu extends AbstractHelper
      *                                                  or number of spaces.
      *                                                  Default is to use the
      *                                                  {@link getInnerIndent()}.
+     *
      * @return string                                   rendered content
      */
     public function renderSubMenu(Container $container = null,
@@ -1018,6 +1038,7 @@ class Menu extends AbstractHelper
      *                                               partial view script to use,
      *                                               and the module where the
      *                                               script can be found.
+     *
      * @return string                                helper output
      *
      * @throws \Exception   When no partial script is set
@@ -1046,8 +1067,10 @@ class Menu extends AbstractHelper
 
     /**
      * Alias of renderTemplate()
+     *
      * @param Container|null $container
      * @param null $partial
+     *
      * @return string
      */
     public function renderPartial(Container $container = null, $partial = null)
@@ -1073,6 +1096,7 @@ class Menu extends AbstractHelper
      *                                               render. Default is to
      *                                               render the container
      *                                               registered in the helper.
+     *
      * @return string                                helper output
      */
     public function render(Container $container = null)

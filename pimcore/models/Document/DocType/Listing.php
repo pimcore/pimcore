@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Document
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\JsonListing
 {
-
     /**
      * Contains the results of the list. They are all an instance of Document\Doctype
      *
@@ -41,6 +41,7 @@ class Listing extends Model\Listing\JsonListing
 
     /**
      * @param array $docTypes
+     *
      * @return $this
      */
     public function setDocTypes($docTypes)

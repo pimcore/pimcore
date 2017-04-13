@@ -38,6 +38,7 @@ class ViewModelValueResolver implements ArgumentValueResolverInterface
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
+     *
      * @return bool
      */
     public function supports(Request $request, ArgumentMetadata $argument)
@@ -48,6 +49,7 @@ class ViewModelValueResolver implements ArgumentValueResolverInterface
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
+     *
      * @return \Generator|ViewModel
      */
     public function resolve(Request $request, ArgumentMetadata $argument)

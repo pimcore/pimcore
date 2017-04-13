@@ -23,6 +23,7 @@ trait ControllerTypeTrait
      *
      * @param FilterControllerEvent $event
      * @param $type
+     *
      * @return mixed
      */
     protected function getControllerType(FilterControllerEvent $event, $type)
@@ -44,6 +45,7 @@ trait ControllerTypeTrait
      *
      * @param FilterControllerEvent $event
      * @param $type
+     *
      * @return bool
      */
     protected function isControllerType(FilterControllerEvent $event, $type)

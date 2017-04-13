@@ -11,7 +11,6 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;

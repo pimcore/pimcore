@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,16 +21,15 @@ use Pimcore\Model;
 
 class MarkerHotspotItem implements \ArrayAccess
 {
+    /**
+     * @var string
+     */
+    public $name = '';
 
     /**
      * @var string
      */
-    public $name = "";
-
-    /**
-     * @var string
-     */
-    public $type = "";
+    public $type = '';
 
     /**
      * @var
@@ -42,7 +42,7 @@ class MarkerHotspotItem implements \ArrayAccess
     public function __construct($data)
     {
         foreach ($data as $key => $value) {
-            $setter = "set" . $key;
+            $setter = 'set' . $key;
             if (method_exists($this, $setter)) {
                 $this->$setter($value);
             }
@@ -100,11 +100,14 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Whether a offset exists
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     *
      * @param mixed $offset <p>
      * An offset to check for.
      * </p>
-     * @return boolean true on success or false on failure.
+     *
+     * @return bool true on success or false on failure.
      * </p>
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
@@ -117,16 +120,19 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to retrieve
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     *
      * @param mixed $offset <p>
      * The offset to retrieve.
      * </p>
+     *
      * @return mixed Can return all value types.
      */
     public function offsetGet($offset)
     {
         if ($this->offsetExists($offset)) {
-            if ($offset == "value" && in_array($this->type, ["object", "asset", "document"])) {
+            if ($offset == 'value' && in_array($this->type, ['object', 'asset', 'document'])) {
                 return Model\Element\Service::getElementById($this->type, $this->value);
             } else {
                 return $this->$offset;
@@ -139,7 +145,9 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to set
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     *
      * @param mixed $offset <p>
      * The offset to assign the value to.
      * </p>
@@ -161,7 +169,9 @@ class MarkerHotspotItem implements \ArrayAccess
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Offset to unset
+     *
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     *
      * @param mixed $offset <p>
      * The offset to unset.
      * </p>

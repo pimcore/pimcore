@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-
     /**
      * @var array
      */
@@ -34,7 +33,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @var array
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -59,6 +59,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $cartItems
+     *
      * @return void
      */
     public function setCartItems($cartItems)

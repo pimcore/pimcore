@@ -19,7 +19,6 @@ use Pimcore\Model\Site;
 
 class Webmastertools
 {
-
     /**
      * @var array
      */
@@ -27,6 +26,7 @@ class Webmastertools
 
     /**
      * @param Site $site
+     *
      * @return bool
      */
     public static function isConfigured(Site $site = null)
@@ -40,6 +40,7 @@ class Webmastertools
 
     /**
      * @param null $site
+     *
      * @return bool
      */
     public static function getSiteConfig($site = null)

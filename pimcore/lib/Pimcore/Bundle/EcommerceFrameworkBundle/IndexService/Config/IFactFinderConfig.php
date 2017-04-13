@@ -37,7 +37,6 @@ interface IFactFinderConfig extends IConfig
      */
     public function getSubTenantCondition();
 
-
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *

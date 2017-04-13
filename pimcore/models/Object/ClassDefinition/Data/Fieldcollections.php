@@ -10,34 +10,34 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
-use Pimcore\Logger;
 
 class Fieldcollections extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "fieldcollections";
+    public $fieldtype = 'fieldcollections';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Fieldcollection";
+    public $phpdocType = '\\Pimcore\\Model\\Object\\Fieldcollection';
 
     /**
      * @var string
@@ -45,7 +45,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public $allowedTypes = [];
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $lazyLoading;
 
@@ -55,27 +55,27 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public $maxItems;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $disallowAddRemove;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $disallowReorder;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $collapsed;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $collapsible;
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getLazyLoading()
     {
@@ -84,6 +84,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param  $lazyLoading
+     *
      * @return $this
      */
     public function setLazyLoading($lazyLoading)
@@ -95,9 +96,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -133,17 +136,16 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 if ($calculatedChilds) {
                     foreach ($calculatedChilds as $fd) {
                         $data = new Object\Data\CalculatedValue($fd->getName());
-                        $data->setContextualData("fieldcollection", $this->getName(), $idx, null, null, null, $fd);
+                        $data->setContextualData('fieldcollection', $this->getName(), $idx, null, null, null, $fd);
                         $data = $fd->getDataForEditmode($data, $object, $params);
                         $collectionData[$fd->getName()] = $data;
                     }
                 }
 
-
                 $editmodeData[] = [
-                    "data" => $collectionData,
-                    "type" => $item->getType(),
-                    "oIndex" => $idx
+                    'data' => $collectionData,
+                    'type' => $item->getType(),
+                    'oIndex' => $idx
                 ];
             }
         }
@@ -153,9 +155,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -166,30 +170,30 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
                 $collectionData = [];
-                $collectionKey = $collectionRaw["type"];
+                $collectionKey = $collectionRaw['type'];
 
-                $oIndex = $collectionRaw["oIndex"];
+                $oIndex = $collectionRaw['oIndex'];
 
                 $collectionDef = Object\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (array_key_exists($fd->getName(), $collectionRaw["data"])) {
-                        $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()], $object,
+                    if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+                        $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw['data'][$fd->getName()], $object,
                             [
-                                "context" => [
-                                    "containerType" => "fieldcollection",
-                                    "containerKey" => $collectionKey,
-                                    "fieldname" => $fieldname,
-                                    "index" => $count,
-                                    "oIndex" => $oIndex
+                                'context' => [
+                                    'containerType' => 'fieldcollection',
+                                    'containerKey' => $collectionKey,
+                                    'fieldname' => $fieldname,
+                                    'index' => $count,
+                                    'oIndex' => $oIndex
                                 ]
                             ]
                         );
                     }
                 }
 
-                $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($collectionRaw["type"]);
+                $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
                 $collection = new $collectionClass;
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
@@ -208,32 +212,38 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param string $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return "FIELDCOLLECTIONS";
+        return 'FIELDCOLLECTIONS';
     }
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        return "NOT SUPPORTED";
+        return 'NOT SUPPORTED';
     }
 
     /**
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -244,11 +254,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
     {
-        $dataString = "";
+        $dataString = '';
         $fcData = $this->getDataFromObjectParam($object);
         if ($fcData instanceof Object\Fieldcollection) {
             foreach ($fcData as $item) {
@@ -263,7 +274,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $dataString .= $fd->getDataForSearchIndex($item, $params) . " ";
+                    $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
                 }
             }
         }
@@ -274,6 +285,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     *
      * @throws \Exception
      */
     public function save($object, $params = [])
@@ -287,26 +299,27 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
         if ($container instanceof Object\Fieldcollection) {
             $params = [
-                "context" => [
-                    "containerType" => "fieldcollection",
-                    "fieldname" => $this->getName()
+                'context' => [
+                    'containerType' => 'fieldcollection',
+                    'fieldname' => $this->getName()
                 ]
             ];
 
             $container->save($object, $params);
         } else {
-            throw new \Exception("Invalid value for field \"" . $this->getName()."\" provided. You have to pass a Object\\Fieldcollection or 'null'");
+            throw new \Exception('Invalid value for field "' . $this->getName()."\" provided. You have to pass a Object\\Fieldcollection or 'null'");
         }
     }
 
     /**
      * @param $object
      * @param array $params
+     *
      * @return null|Object\Fieldcollection
      */
     public function load($object, $params = [])
     {
-        if (!$this->getLazyLoading() || (isset($params["force"]) && $params["force"])) {
+        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
             $container = new Object\Fieldcollection(null, $this->getName());
             $container->load($object);
 
@@ -339,12 +352,13 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $allowedTypes
+     *
      * @return $this
      */
     public function setAllowedTypes($allowedTypes)
     {
         if (is_string($allowedTypes)) {
-            $allowedTypes = explode(",", $allowedTypes);
+            $allowedTypes = explode(',', $allowedTypes);
         }
 
         if (is_array($allowedTypes)) {
@@ -367,6 +381,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -395,7 +410,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
                     $el->value = $fd->getForWebserviceExport($item, $params);
-                    if ($el->value ==  null && self::$dropNullValues) {
+                    if ($el->value == null && self::$dropNullValues) {
                         continue;
                     }
 
@@ -413,8 +428,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed|Object\Fieldcollection
+     *
      * @param $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($data, $object = null, $params = [], $idMapper = null)
@@ -425,10 +443,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
                 if ($collectionRaw instanceof \stdClass) {
-                    $collectionRaw = Cast::castToClass("\\Pimcore\\Model\\Webservice\\Data\\Object\\Element", $collectionRaw);
+                    $collectionRaw = Cast::castToClass('\\Pimcore\\Model\\Webservice\\Data\\Object\\Element', $collectionRaw);
                 }
                 if (!$collectionRaw instanceof Webservice\Data\Object\Element) {
-                    throw new \Exception("invalid data in fieldcollections [" . $this->getName() . "]");
+                    throw new \Exception('invalid data in fieldcollections [' . $this->getName() . ']');
                 }
 
                 $fieldcollection = $collectionRaw->type;
@@ -436,19 +454,19 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $collectionDef = Object\Fieldcollection\Definition::getByKey($fieldcollection);
 
                 if (!$collectionDef) {
-                    throw new \Exception("Unknown fieldcollection in webservice import [" . $fieldcollection . "]");
+                    throw new \Exception('Unknown fieldcollection in webservice import [' . $fieldcollection . ']');
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     foreach ($collectionRaw->value as $field) {
                         if ($field instanceof \stdClass) {
-                            $field = Cast::castToClass("\\Pimcore\\Model\\Webservice\\Data\\Object\\Element", $field);
+                            $field = Cast::castToClass('\\Pimcore\\Model\\Webservice\\Data\\Object\\Element', $field);
                         }
                         if (!$field instanceof Webservice\Data\Object\Element) {
-                            throw new \Exception("invalid data in fieldcollections [" . $this->getName() . "]");
+                            throw new \Exception('invalid data in fieldcollections [' . $this->getName() . ']');
                         } elseif ($field->name == $fd->getName()) {
                             if ($field->type != $fd->getFieldType()) {
-                                throw new \Exception("Type mismatch for fieldcollection field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                                throw new \Exception('Type mismatch for fieldcollection field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
                             }
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, [], $idMapper);
                             break;
@@ -456,7 +474,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     }
                 }
 
-                $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($fieldcollection);
+                $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($fieldcollection);
                 $collection = new $collectionClass;
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
@@ -475,6 +493,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param mixed $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -494,7 +513,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $getter = "get" . ucfirst($fd->getName());
+                    $getter = 'get' . ucfirst($fd->getName());
                     $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                 }
             }
@@ -508,6 +527,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -527,7 +547,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $getter = "get" . ucfirst($fd->getName());
+                    $getter = 'get' . ucfirst($fd->getName());
                     $tags = $fd->getCacheTags($item->$getter(), $tags);
                 }
             }
@@ -536,12 +556,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         return $tags;
     }
 
-
     /**
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
@@ -560,7 +580,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     }
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $getter = "get" . ucfirst($fd->getName());
+                        $getter = 'get' . ucfirst($fd->getName());
                         $fd->checkValidity($item->$getter());
                     }
                 }
@@ -571,20 +591,22 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     *
      * @return null|Object\Fieldcollection
+     *
      * @throws \Exception
      */
     public function preGetData($object, $params = [])
     {
         if (!$object instanceof Object\Concrete) {
-            throw new \Exception("Field Collections are only valid in Objects");
+            throw new \Exception('Field Collections are only valid in Objects');
         }
 
         $data = $object->{$this->getName()};
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-            $data = $this->load($object, ["force" => true]);
+            $data = $this->load($object, ['force' => true]);
 
-            $setter = "set" . ucfirst($this->getName());
+            $setter = 'set' . ucfirst($this->getName());
             if (method_exists($object, $setter)) {
                 $object->$setter($data);
             }
@@ -597,6 +619,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param $object
      * @param $data
      * @param array $params
+     *
      * @return array
      */
     public function preSetData($object, $data, $params = [])
@@ -612,20 +635,21 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         return $data;
     }
 
-
     /**
      * @param $data
      * @param Object\Concrete $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        return "NOT SUPPORTED";
+        return 'NOT SUPPORTED';
     }
 
     /**
      * @param $class
+     *
      * @return string
      */
     public function getGetterCode($class)
@@ -633,18 +657,18 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         // getter, no inheritance here, that's the only difference
 
         $key = $this->getName();
-        $code = "";
+        $code = '';
 
         $code .= '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . " () {\n";
 
         // adds a hook preGetValue which can be defined in an extended class
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
         $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}' . "\n";
 
-        if (method_exists($this, "preGetData")) {
+        if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -658,6 +682,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $maxItems
+     *
      * @return $this
      */
     public function setMaxItems($maxItems)
@@ -678,6 +703,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -685,26 +711,27 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         return true;
     }
 
-
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        $html = "";
+        $html = '';
         if ($data instanceof Object\Fieldcollection) {
-            $html = "<table>";
+            $html = '<table>';
             foreach ($data as $item) {
                 if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
                 $type = $item->getType();
-                $html .= "<tr><th><b>" . $type . "</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>";
+                $html .= '<tr><th><b>' . $type . '</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>';
 
                 try {
                     $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
@@ -714,18 +741,18 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $title = !empty($fd->title) ? $fd->title : $fd->getName();
-                    $html .= "<tr><td>&nbsp;</td><td>" . $title . "</td><td>";
+                    $html .= '<tr><td>&nbsp;</td><td>' . $title . '</td><td>';
                     $html .= $fd->getVersionPreview($item->{$fd->getName()}, $object, $params);
-                    $html .= "</td></tr>";
+                    $html .= '</td></tr>';
                 }
             }
 
-            $html .= "</table>";
+            $html .= '</table>';
         }
 
         $value = [];
-        $value["html"] = $html;
-        $value["type"] = "html";
+        $value['html'] = $html;
+        $value['type'] = 'html';
 
         return $value;
     }
@@ -734,12 +761,13 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param array $params
+     *
      * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $result = parent::getDiffDataFromEditmode($data, $object, $params);
-        Logger::debug("bla");
+        Logger::debug('bla');
 
         return $result;
     }
@@ -754,9 +782,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
+     *
      * @return Model\Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
@@ -776,9 +806,9 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (method_exists($fd, "rewriteIds")) {
+                    if (method_exists($fd, 'rewriteIds')) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
-                        $setter = "set" . ucfirst($fd->getName());
+                        $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
                     }
                 }
@@ -800,6 +830,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
+     *
      * @param $class
      * @param array $params
      */
@@ -812,7 +843,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        if (method_exists($fd, "classSaved")) {
+                        if (method_exists($fd, 'classSaved')) {
                             if (!$fd instanceof Localizedfields) {
                                 // defer creation
                                 $fd->classSaved($class);
@@ -825,7 +856,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param boolean $disallowAddRemove
+     * @param bool $disallowAddRemove
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
@@ -833,7 +864,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDisallowAddRemove()
     {
@@ -841,7 +872,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param boolean $disallowReorder
+     * @param bool $disallowReorder
      */
     public function setDisallowReorder($disallowReorder)
     {
@@ -849,7 +880,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDisallowReorder()
     {
@@ -857,7 +888,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCollapsed()
     {
@@ -865,7 +896,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param boolean $collapsed
+     * @param bool $collapsed
      */
     public function setCollapsed($collapsed)
     {
@@ -873,7 +904,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCollapsible()
     {
@@ -881,7 +912,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param boolean $collapsible
+     * @param bool $collapsible
      */
     public function setCollapsible($collapsible)
     {
@@ -895,12 +926,12 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var  $childDef Object\ClassDefinition\Data */
+            /** @var $childDef Object\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
                 } else {
-                    if (method_exists($childDef, "getFieldDefinitions")) {
+                    if (method_exists($childDef, 'getFieldDefinitions')) {
                         self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
                     }
                 }

@@ -54,7 +54,6 @@ class TimedPhpEngine extends PhpEngine
         $e = $this->stopwatch->start(sprintf('template.php (%s)', $name), 'template');
 
         /** @var TemplateReference $name */
-
         $ret = parent::render($name, $parameters);
 
         $e->stop();

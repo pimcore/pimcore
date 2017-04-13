@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,17 +21,16 @@ use Pimcore\Model;
 
 class Panel extends Model\Object\ClassDefinition\Layout
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "panel";
-
+    public $fieldtype = 'panel';
 
     /**
      * Width of input field labels
+     *
      * @var int
      */
     public $labelWidth = 100;
@@ -40,9 +40,9 @@ class Panel extends Model\Object\ClassDefinition\Layout
      */
     public $layout;
 
-
     /**
      * @param $labelWidth
+     *
      * @return $this
      */
     public function setLabelWidth($labelWidth)
@@ -64,6 +64,7 @@ class Panel extends Model\Object\ClassDefinition\Layout
 
     /**
      * @param $layout
+     *
      * @return $this
      */
     public function setLayout($layout)

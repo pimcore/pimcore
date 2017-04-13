@@ -10,13 +10,13 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object;
 
-use Pimcore\Cache\Runtime;
 use Pimcore\Model;
 use Pimcore\Tool;
 
@@ -49,7 +49,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public $class;
 
-    /** @var mixed  */
+    /** @var mixed */
     public $context;
 
     /**
@@ -58,7 +58,7 @@ class Localizedfield extends Model\AbstractModel
     private static $strictMode;
 
     /**
-     * @param boolean $getFallbackValues
+     * @param bool $getFallbackValues
      */
     public static function setGetFallbackValues($getFallbackValues)
     {
@@ -66,7 +66,7 @@ class Localizedfield extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public static function getGetFallbackValues()
     {
@@ -74,7 +74,7 @@ class Localizedfield extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public static function isStrictMode()
     {
@@ -82,16 +82,15 @@ class Localizedfield extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $strictMode
+     * @param bool $strictMode
      */
     public static function setStrictMode($strictMode)
     {
         self::$strictMode = $strictMode;
     }
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public static function doGetFallbackValues()
     {
@@ -118,6 +117,7 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param  array $items
+     *
      * @return $this
      */
     public function setItems($items)
@@ -137,13 +137,15 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param Concrete $object
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function setObject($object)
     {
         if ($object && !$object instanceof Concrete) {
-            throw new \Exception("must be instance of object concrete");
+            throw new \Exception('must be instance of object concrete');
         }
         $this->object = $object;
         //$this->setClass($this->getObject()->getClass());
@@ -160,6 +162,7 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param Model\Object\ClassDefinition $class
+     *
      * @return $this
      */
     public function setClass(ClassDefinition $class)
@@ -183,7 +186,9 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @throws \Exception
+     *
      * @param null $language
+     *
      * @return string
      */
     public function getLanguage($language = null)
@@ -194,12 +199,12 @@ class Localizedfield extends Model\AbstractModel
 
         // try to get the language from the service container
         try {
-            $locale = \Pimcore::getContainer()->get("pimcore.locale")->getLocale();
+            $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
 
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
             }
-            throw new \Exception("Not supported language");
+            throw new \Exception('Not supported language');
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();
         }
@@ -207,6 +212,7 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param $language
+     *
      * @return bool
      */
     public function languageExists($language)
@@ -218,6 +224,7 @@ class Localizedfield extends Model\AbstractModel
      * @param $name
      * @param null $language
      * @param bool $ignoreFallbackLanguage
+     *
      * @return mixed
      */
     public function getLocalizedValue($name, $language = null, $ignoreFallbackLanguage = false)
@@ -226,18 +233,18 @@ class Localizedfield extends Model\AbstractModel
         $language = $this->getLanguage($language);
 
         $context = $this->getContext();
-        if ($context && $context["containerType"] == "fieldcollection") {
-            $containerKey = $context["containerKey"];
+        if ($context && $context['containerType'] == 'fieldcollection') {
+            $containerKey = $context['containerKey'];
             $container = Model\Object\Fieldcollection\Definition::getByKey($containerKey);
         } else {
             $object = $this->getObject();
             $container = $object->getClass();
         }
-        $fieldDefinition = $container->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+        $fieldDefinition = $container->getFieldDefinition('localizedfields')->getFieldDefinition($name);
 
         if ($fieldDefinition instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\Object\Data\CalculatedValue($fieldDefinition->getName());
-            $valueData->setContextualData("localizedfield", "localizedfields", null, $language);
+            $valueData->setContextualData('localizedfield', 'localizedfields', null, $language);
             $data = Service::getCalculatedFieldValue($this->getObject(), $valueData);
 
             return $data;
@@ -249,7 +256,6 @@ class Localizedfield extends Model\AbstractModel
             }
         }
 
-
         // check for inherited value
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
         if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
@@ -260,16 +266,16 @@ class Localizedfield extends Model\AbstractModel
             if ($allowInherit) {
                 if ($object->getParent() instanceof AbstractObject) {
                     $parent = $object->getParent();
-                    while ($parent && $parent->getType() == "folder") {
+                    while ($parent && $parent->getType() == 'folder') {
                         $parent = $parent->getParent();
                     }
 
-                    if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
+                    if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
                         if ($parent->getClassId() == $object->getClassId()) {
-                            $method = "getLocalizedfields";
+                            $method = 'getLocalizedfields';
                             if (method_exists($parent, $method)) {
                                 $localizedFields = $parent->getLocalizedFields();
-                                if ($localizedFields instanceof Localizedfield) {
+                                if ($localizedFields instanceof self) {
                                     if ($localizedFields->object->getId() != $this->object->getId()) {
                                         $data = $localizedFields->getLocalizedValue($name, $language, true);
                                     }
@@ -294,11 +300,11 @@ class Localizedfield extends Model\AbstractModel
             }
         }
 
-        if ($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
+        if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
             $data =  $fieldDefinition->preGetData($this, [
-                "data" => $data,
-                "language" => $language,
-                "name" => $name
+                'data' => $data,
+                'language' => $language,
+                'name' => $name
             ]);
         }
 
@@ -309,14 +315,16 @@ class Localizedfield extends Model\AbstractModel
      * @param $name
      * @param $value
      * @param null $language
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function setLocalizedValue($name, $value, $language = null)
     {
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
-                throw new \Exception("Language " . $language . " not accepted in strict mode");
+                throw new \Exception('Language ' . $language . ' not accepted in strict mode');
             }
         }
 
@@ -326,31 +334,28 @@ class Localizedfield extends Model\AbstractModel
         }
 
         $contextInfo = $this->getContext();
-        if ($contextInfo && $contextInfo["containerType"] == "block") {
-            $classId = $contextInfo["classId"];
+        if ($contextInfo && $contextInfo['containerType'] == 'block') {
+            $classId = $contextInfo['classId'];
             $containerDefinition = ClassDefinition::getById($classId);
-            $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo["fieldname"]);
+            $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
-            $fieldDefinition = $blockDefinition->getFieldDefinition("localizedfields");
+            $fieldDefinition = $blockDefinition->getFieldDefinition('localizedfields');
         } else {
-            if ($contextInfo && $contextInfo["containerType"] == "fieldcollection") {
-                $containerKey = $contextInfo["containerKey"];
+            if ($contextInfo && $contextInfo['containerType'] == 'fieldcollection') {
+                $containerKey = $contextInfo['containerKey'];
                 $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
             } else {
                 $containerDefinition = $this->getObject()->getClass();
             }
 
-            $localizedFieldDefinition = $containerDefinition->getFieldDefinition("localizedfields");
+            $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
             $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name);
         }
 
-
-
-
-        if (method_exists($fieldDefinition, "preSetData")) {
+        if (method_exists($fieldDefinition, 'preSetData')) {
             $value =  $fieldDefinition->preSetData($this, $value, [
-                "language" => $language,
-                "name" => $name
+                'language' => $language,
+                'name' => $name
             ]);
         }
 
@@ -364,10 +369,10 @@ class Localizedfield extends Model\AbstractModel
      */
     public function __sleep()
     {
-        return ["items", "context"];
+        return ['items', 'context'];
     }
 
-        /**
+    /**
      * @return mixed
      */
     public function getContext()

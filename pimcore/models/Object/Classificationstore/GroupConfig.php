@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -28,13 +29,14 @@ class GroupConfig extends Model\AbstractModel
     use Model\Element\ChildsCompatibilityTrait;
 
     /** Group id.
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
      * Store ID
-     * @var integer
+     *
+     * @var int
      */
     public $storeId = 1;
 
@@ -54,18 +56,18 @@ class GroupConfig extends Model\AbstractModel
     public $description;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Model\Object\Classificationstore\GroupConfig
      */
     public static function getById($id)
@@ -83,6 +85,7 @@ class GroupConfig extends Model\AbstractModel
     /**
      * @param $name
      * @param int $storeId
+     *
      * @return GroupConfig
      */
     public static function getByName($name, $storeId = 1)
@@ -120,7 +123,8 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -131,7 +135,7 @@ class GroupConfig extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -153,7 +157,6 @@ class GroupConfig extends Model\AbstractModel
     {
         $this->parentId = $parentId;
     }
-
 
     /**
      * @param string $name
@@ -183,6 +186,7 @@ class GroupConfig extends Model\AbstractModel
 
     /** Sets the description.
      * @param $description
+     *
      * @return Model\Object\Classificationstore\GroupConfig
      */
     public function setDescription($description)
@@ -229,6 +233,7 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -248,6 +253,7 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)
@@ -271,7 +277,7 @@ class GroupConfig extends Model\AbstractModel
     public function getRelations()
     {
         $list = new KeyGroupRelation\Listing();
-        $list->setCondition("groupId = " . $this->id);
+        $list->setCondition('groupId = ' . $this->id);
         $list = $list->load();
 
         return $list;

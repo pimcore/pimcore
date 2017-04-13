@@ -29,6 +29,7 @@ class DocumentEvent extends Event implements ElementEventInterface
 
     /**
      * DocumentEvent constructor.
+     *
      * @param Document $document
      * @param array $arguments
      */

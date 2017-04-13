@@ -20,7 +20,7 @@ class Soundex implements IInterpreter
     {
         if (is_array($value)) {
             sort($value);
-            $string = implode(" ", $value);
+            $string = implode(' ', $value);
         } else {
             $string = (string)$value;
         }

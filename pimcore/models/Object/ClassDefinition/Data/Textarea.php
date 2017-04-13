@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -27,15 +28,15 @@ class Textarea extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $fieldtype = "textarea";
+    public $fieldtype = 'textarea';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
-     * @var integer
+     * @var int
      */
     public $height;
 
@@ -44,24 +45,24 @@ class Textarea extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "longtext";
+    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "longtext";
+    public $columnType = 'longtext';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "string";
+    public $phpdocType = 'string';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -69,7 +70,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -77,7 +78,8 @@ class Textarea extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -88,7 +90,8 @@ class Textarea extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -98,12 +101,13 @@ class Textarea extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
-
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -113,9 +117,11 @@ class Textarea extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -125,9 +131,11 @@ class Textarea extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -135,12 +143,13 @@ class Textarea extends Model\Object\ClassDefinition\Data
         return $data;
     }
 
-
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -150,9 +159,11 @@ class Textarea extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -162,25 +173,27 @@ class Textarea extends Model\Object\ClassDefinition\Data
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
             $value = [];
-            $data = str_replace("\r\n", "<br>", $data);
-            $data = str_replace("\n", "<br>", $data);
-            $data = str_replace("\r", "<br>", $data);
+            $data = str_replace("\r\n", '<br>', $data);
+            $data = str_replace("\n", '<br>', $data);
+            $data = str_replace("\r", '<br>', $data);
 
-            $value["html"] = $data;
-            $value["type"] = "html";
+            $value['html'] = $data;
+            $value['type'] = 'html';
 
             return $value;
         } else {
-            return "";
+            return '';
         }
     }
 }

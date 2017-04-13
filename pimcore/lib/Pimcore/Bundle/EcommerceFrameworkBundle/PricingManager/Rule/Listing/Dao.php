@@ -29,7 +29,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         $rules = [];
 
         // load objects
-        $ruleIds = $this->db->fetchCol("SELECT id FROM " . \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao::TABLE_NAME .
+        $ruleIds = $this->db->fetchCol('SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao::TABLE_NAME .
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($ruleIds as $id) {

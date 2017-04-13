@@ -11,12 +11,9 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
-
 $workingDirectory = getcwd();
 chdir(__DIR__);
-include_once("../../../pimcore/cli/startup.php");
+include_once('../../../pimcore/cli/startup.php');
 chdir($workingDirectory);
 
-
-\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
+\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater::updateIndex('Object_Product_List');

@@ -16,12 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 interface IService
 {
-    const DISCOUNT_TYPE_PERCENT = "percent";
-    const DISCOUNT_TYPE_AMOUNT = "amount";
+    const DISCOUNT_TYPE_PERCENT = 'percent';
+    const DISCOUNT_TYPE_AMOUNT = 'amount';
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $excludeItems
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
     public function createNewOfferFromCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = []);
@@ -30,18 +31,21 @@ interface IService
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      * @param array $excludeItems
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
     public function updateOfferFromCart(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = []);
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
      */
     public function updateTotalPriceOfOffer(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer);
 
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer[]
      */
     public function getOffersForCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);

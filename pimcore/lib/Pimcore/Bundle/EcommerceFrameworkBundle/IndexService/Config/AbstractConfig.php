@@ -40,7 +40,7 @@ abstract class AbstractConfig implements IConfig
 
         /* include column file configs and replace placeholders */
         foreach ($tenantConfig->columns->toArray() as $columnConfig) {
-            if (!array_key_exists("file", $columnConfig)) {
+            if (!array_key_exists('file', $columnConfig)) {
                 $attributeConfigArray[] = $columnConfig;
                 continue;
             }
@@ -48,7 +48,7 @@ abstract class AbstractConfig implements IConfig
             $includeColumnConfig = include PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . (string)$columnConfig['file'];
 
             /* if placeholders are defined, check for them in the included config */
-            if (array_key_exists("placeholders", $columnConfig)) {
+            if (array_key_exists('placeholders', $columnConfig)) {
                 $placeholders = $columnConfig['placeholders'];
                 foreach ($includeColumnConfig as $incIndex => $replaceConfig) {
                     foreach ($replaceConfig as $key => $value) {
@@ -113,7 +113,6 @@ abstract class AbstractConfig implements IConfig
         return $this->filterTypeConfig;
     }
 
-
     /**
      * @return bool
      */
@@ -137,6 +136,7 @@ abstract class AbstractConfig implements IConfig
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
      * @param IIndexable $object
+     *
      * @return IIndexable[]
      */
     public function createSubIdsForObject(IIndexable $object)
@@ -149,6 +149,7 @@ abstract class AbstractConfig implements IConfig
      *
      * @param IIndexable $object
      * @param array $subIds
+     *
      * @return mixed
      */
     public function getSubIdsToCleanup(IIndexable $object, array $subIds)
@@ -162,6 +163,7 @@ abstract class AbstractConfig implements IConfig
      *
      * @param IIndexable $object
      * @param $subId
+     *
      * @return mixed
      */
     public function createVirtualParentIdForSubId(IIndexable $object, $subId)
@@ -175,6 +177,7 @@ abstract class AbstractConfig implements IConfig
      *
      * @param $objectId
      * @param $onlyMainObject - only returns main object
+     *
      * @return mixed
      */
     public function getObjectById($objectId, $onlyMainObject = false)
@@ -182,13 +185,12 @@ abstract class AbstractConfig implements IConfig
         return \Pimcore\Model\Object\AbstractObject::getById($objectId);
     }
 
-
-
     /**
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
      * @param $objectId
+     *
      * @return IIndexable | array
      */
     public function getObjectMockupById($objectId)
@@ -196,11 +198,11 @@ abstract class AbstractConfig implements IConfig
         return $this->getObjectById($objectId);
     }
 
-
     /**
      * returns column type for id
      *
      * @param $isPrimary
+     *
      * @return string
      */
     public function getIdColumnType($isPrimary)
@@ -208,7 +210,7 @@ abstract class AbstractConfig implements IConfig
         if ($isPrimary) {
             return "int(11) NOT NULL default '0'";
         } else {
-            return "int(11) NOT NULL";
+            return 'int(11) NOT NULL';
         }
     }
 }

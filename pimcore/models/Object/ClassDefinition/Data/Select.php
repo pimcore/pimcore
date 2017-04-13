@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,13 +22,12 @@ use Pimcore\Model\Object;
 
 class Select extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "select";
+    public $fieldtype = 'select';
 
     /**
      * Available options to select
@@ -37,7 +37,7 @@ class Select extends Model\Object\ClassDefinition\Data
     public $options;
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
@@ -51,21 +51,21 @@ class Select extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "varchar(190)";
+    public $queryColumnType = 'varchar(190)';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(190)";
+    public $columnType = 'varchar(190)';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "string";
+    public $phpdocType = 'string';
 
     /**
      * @return array
@@ -77,6 +77,7 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setOptions($options)
@@ -87,7 +88,7 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -96,6 +97,7 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -107,9 +109,11 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -119,9 +123,11 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -131,9 +137,11 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -141,12 +149,13 @@ class Select extends Model\Object\ClassDefinition\Data
         return $data;
     }
 
-
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -156,9 +165,11 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -168,9 +179,11 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param string $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -181,6 +194,7 @@ class Select extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -192,6 +206,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|null
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [])
@@ -199,13 +214,13 @@ class Select extends Model\Object\ClassDefinition\Data
         $result = [];
 
         $diffdata = [];
-        $diffdata["data"] = $data;
-        $diffdata["disabled"] = false;
-        $diffdata["field"] = $this->getName();
-        $diffdata["key"] = $this->getName();
-        $diffdata["type"] = $this->fieldtype;
+        $diffdata['data'] = $data;
+        $diffdata['disabled'] = false;
+        $diffdata['field'] = $this->getName();
+        $diffdata['key'] = $this->getName();
+        $diffdata['type'] = $this->fieldtype;
 
-        $value = "";
+        $value = '';
         foreach ($this->options as $option) {
             if ($option->value == $data) {
                 $value = $option->key;
@@ -213,8 +228,8 @@ class Select extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $diffdata["value"] = $value;
-        $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
+        $diffdata['value'] = $value;
+        $diffdata['title'] = !empty($this->title) ? $this->title : $this->name;
 
         $result[] = $diffdata;
 
@@ -225,23 +240,25 @@ class Select extends Model\Object\ClassDefinition\Data
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
-            throw new Model\Element\ValidationException("Empty mandatory field [ " . $this->getName() . " ]");
+            throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
     }
 
     /**
      * @param $data
+     *
      * @return bool
      */
     public function isEmpty($data)
     {
-        return (strlen($data) < 1);
+        return strlen($data) < 1;
     }
 
     /**

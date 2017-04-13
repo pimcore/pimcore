@@ -10,18 +10,19 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Logger;
+use Pimcore\Model\Object;
 
 class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {
@@ -32,10 +33,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      *
      * @var string
      */
-    public $fieldtype = "href";
+    public $fieldtype = 'href';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
@@ -55,8 +56,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @var array
      */
     public $queryColumnType = [
-        "id" => "int(11)",
-        "type" => "enum('document','asset','object')"
+        'id' => 'int(11)',
+        'type' => "enum('document','asset','object')"
     ];
 
     /**
@@ -64,17 +65,17 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject";
+    public $phpdocType = '\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject';
 
     /**
      *
-     * @var boolean
+     * @var bool
      */
     public $objectsAllowed;
 
-     /**
+    /**
      *
-     * @var boolean
+     * @var bool
      */
     public $assetsAllowed;
 
@@ -85,9 +86,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public $assetTypes;
 
-     /**
+    /**
      *
-     * @var boolean
+     * @var bool
      */
     public $documentsAllowed;
 
@@ -99,7 +100,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public $documentTypes;
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getObjectsAllowed()
     {
@@ -107,7 +108,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @param boolean $objectsAllowed
+     * @param bool $objectsAllowed
+     *
      * @return $this
      */
     public function setObjectsAllowed($objectsAllowed)
@@ -118,7 +120,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getDocumentsAllowed()
     {
@@ -126,7 +128,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @param boolean $documentsAllowed
+     * @param bool $documentsAllowed
+     *
      * @return $this
      */
     public function setDocumentsAllowed($documentsAllowed)
@@ -135,7 +138,6 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
         return $this;
     }
-
 
     /**
      * @return array
@@ -147,18 +149,19 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param array $documentTypes
+     *
      * @return $this
      */
     public function setDocumentTypes($documentTypes)
     {
-        $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, "documentTypes");
+        $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
 
         return $this;
     }
 
     /**
      *
-     * @return boolean
+     * @return bool
      */
     public function getAssetsAllowed()
     {
@@ -167,7 +170,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      *
-     * @param boolean $assetsAllowed
+     * @param bool $assetsAllowed
+     *
      * @return $this
      */
     public function setAssetsAllowed($assetsAllowed)
@@ -187,20 +191,23 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param array $assetTypes
+     *
      * @return $this
      */
     public function setAssetTypes($assetTypes)
     {
-        $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, "assetTypes");
+        $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
 
         return $this;
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param Asset | Document | Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -210,9 +217,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             $id = $data->getId();
 
             return [[
-                "dest_id" => $id,
-                "type" => $type,
-                "fieldname" => $this->getName()
+                'dest_id' => $id,
+                'type' => $type,
+                'fieldname' => $this->getName()
             ]];
         } else {
             return null;
@@ -221,10 +228,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param bool $notRelationTable
+     *
      * @return Asset|Document|Object\AbstractObject
      */
     public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
@@ -233,8 +242,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         $data = is_array($data) ? $data : [];
         $data = current($data);
 
-        if ($data["dest_id"] && $data["type"]) {
-            return Element\Service::getElementById($data["type"], $data["dest_id"]);
+        if ($data['dest_id'] && $data['type']) {
+            return Element\Service::getElementById($data['type'], $data['dest_id']);
         }
 
         return null;
@@ -242,9 +251,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param Asset|Document|Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
@@ -252,27 +263,29 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         $rData = $this->getDataForResource($data, $object, $params);
 
         $return = [];
-        $return[$this->getName() . "__id"] = $rData[0]["dest_id"];
-        $return[$this->getName() . "__type"] = $rData[0]["type"];
+        $return[$this->getName() . '__id'] = $rData[0]['dest_id'];
+        $return[$this->getName() . '__type'] = $rData[0]['type'];
 
         return $return;
     }
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param Asset|Document|Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $r = [
-                "id" => $data->getId(),
-                "path" => $data->getRealFullPath(),
-                "subtype" => $data->getType(),
-                "type" => Element\Service::getElementType($data)
+                'id' => $data->getId(),
+                'path' => $data->getRealFullPath(),
+                'subtype' => $data->getType(),
+                'type' => Element\Service::getElementType($data)
             ];
 
             return $r;
@@ -283,15 +296,17 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return Asset|Document|Object\AbstractObject
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data["id"] && $data["type"]) {
-            return Element\Service::getElementById($data["type"], $data["id"]);
+        if ($data['id'] && $data['type']) {
+            return Element\Service::getElementById($data['type'], $data['id']);
         }
 
         return null;
@@ -301,6 +316,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param $data
      * @param null $object
      * @param array $params
+     *
      * @return string
      */
     public function getDataForGrid($data, $object = null, $params = [])
@@ -312,9 +328,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param Document | Asset | Object\AbstractObject $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
@@ -325,7 +343,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -333,7 +351,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -347,15 +366,15 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
-
 
         if ($data instanceof Document) {
             $allow = $this->allowDocumentRelation($data);
@@ -366,27 +385,30 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         } elseif (empty($data)) {
             $allow = true;
         } else {
-            Logger::error("invalid data in href");
+            Logger::error('invalid data in href');
             $allow = false;
         }
 
         if (!$allow) {
-            throw new \Exception("Invalid href relation", null, null);
+            throw new \Exception('Invalid href relation', null, null);
         }
     }
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return Element\Service::getType($data).":".$data->getRealFullPath();
+            return Element\Service::getType($data).':'.$data->getRealFullPath();
         } else {
             return null;
         }
@@ -396,14 +418,15 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed|null|Asset|Document|Element\ElementInterface
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = null;
 
-        $values = explode(":", $importValue);
-        if (count($values)==2) {
+        $values = explode(':', $importValue);
+        if (count($values) == 2) {
             $type = $values[0];
             $path = $values[1];
             $value = Element\Service::getElementByPath($type, $path);
@@ -426,6 +449,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -447,6 +471,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -455,9 +480,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
         if ($data instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($data);
-            $dependencies[$elementType . "_" . $data->getId()] = [
-                "id" => $data->getId(),
-                "type" => $elementType
+            $dependencies[$elementType . '_' . $data->getId()] = [
+                'id' => $data->getId(),
+                'type' => $elementType
             ];
         }
 
@@ -466,8 +491,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * converts data to be exposed via webservices
+     *
      * @param string $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -475,9 +502,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
             return [
-                "type" => Element\Service::getType($data),
-                "subtype" => $data->getType(),
-                "id" => $data->getId()
+                'type' => Element\Service::getType($data),
+                'subtype' => $data->getType(),
+                'id' => $data->getId()
             ];
         } else {
             return null;
@@ -489,7 +516,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
+     *
      * @return mixed|void
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
@@ -498,9 +527,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             return null;
         } else {
             $value = (array) $value;
-            if (array_key_exists("id", $value) and array_key_exists("type", $value)) {
-                $type = $value["type"];
-                $id = $value["id"];
+            if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
+                $type = $value['type'];
+                $id = $value['id'];
 
                 if ($idMapper) {
                     $id = $idMapper->getMappedId($type, $id);
@@ -514,13 +543,13 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                     return $el;
                 } else {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure("object", $relatedObject->getId(), $type, $value["id"]);
+                        $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
                     } else {
-                        throw new \Exception("cannot get values from web service import - invalid href relation");
+                        throw new \Exception('cannot get values from web service import - invalid href relation');
                     }
                 }
             } else {
-                throw new \Exception("cannot get values from web service import - invalid data");
+                throw new \Exception('cannot get values from web service import - invalid data');
             }
         }
     }
@@ -528,6 +557,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @param $object
      * @param array $params
+     *
      * @return null|Object\Fieldcollection\Data\AbstractData|Object\Concrete|Object\Objectbrick\Data\
      */
     public function preGetData($object, $params = [])
@@ -537,15 +567,15 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             $data = $object->{$this->getName()};
 
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $data = $this->load($object, ["force" => true]);
+                $data = $this->load($object, ['force' => true]);
 
-                $setter = "set" . ucfirst($this->getName());
+                $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->$setter($data);
                 }
             }
         } elseif ($object instanceof Object\Localizedfield) {
-            $data = $params["data"];
+            $data = $params['data'];
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
@@ -565,6 +595,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param $object
      * @param $data
      * @param array $params
+     *
      * @return mixed
      */
     public function preSetData($object, $data, $params = [])
@@ -580,6 +611,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param $assetUploadPath
+     *
      * @return $this
      */
     public function setAssetUploadPath($assetUploadPath)
@@ -600,6 +632,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -617,9 +650,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
+     *
      * @return Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
@@ -642,7 +677,6 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         $this->relationType = $masterDefinition->relationType;
     }
 
-
     /**
      * @return string
      */
@@ -655,6 +689,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function marshal($value, $object = null, $params = [])
@@ -664,8 +699,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             $id = $value->getId();
 
             return [
-                "type" => $type,
-                "id" => $id
+                'type' => $type,
+                'id' => $id
             ];
         }
     }
@@ -674,13 +709,14 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $type = $value["type"];
-            $id = $value["id"];
+            $type = $value['type'];
+            $id = $value['id'];
 
             return Element\Service::getElementById($type, $id);
         }

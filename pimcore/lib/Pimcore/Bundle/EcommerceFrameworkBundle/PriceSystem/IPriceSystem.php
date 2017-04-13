@@ -23,13 +23,13 @@ use Pimcore\Model\Object\OnlineShopTaxClass;
  */
 interface IPriceSystem
 {
-
     /**
      * creates price info object for given product and quantity scale
      *
      * @param ICheckoutable $abstractProduct
      * @param null|int|string $quantityScale - numeric or string (allowed values: \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo::MIN_PRICE)
      * @param ICheckoutable[] $products
+     *
      * @return IPriceInfo
      */
     public function getPriceInfo(ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
@@ -43,6 +43,7 @@ interface IPriceSystem
      * @param $order
      * @param $offset
      * @param $limit
+     *
      * @return mixed
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
@@ -53,6 +54,7 @@ interface IPriceSystem
      * Should be overwritten in custom price systems with suitable implementation.
      *
      * @param ICheckoutable $product
+     *
      * @return OnlineShopTaxClass
      */
     public function getTaxClassForProduct(ICheckoutable $product);
@@ -64,6 +66,7 @@ interface IPriceSystem
      *
      * @param ICartPriceModificator $modificator
      * @param $environment
+     *
      * @return OnlineShopTaxClass
      */
     public function getTaxClassForPriceModification(ICartPriceModificator $modificator);

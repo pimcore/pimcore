@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,7 +22,6 @@ namespace Pimcore\Model\User;
  */
 class UserRole extends AbstractUser
 {
-
     /**
      * @var array
      */
@@ -67,9 +67,6 @@ class UserRole extends AbstractUser
      */
     public $websiteTranslationLanguagesEdit = [];
 
-    /**
-     *
-     */
     public function update()
     {
         $this->getDao()->update();
@@ -88,9 +85,6 @@ class UserRole extends AbstractUser
         }
     }
 
-    /**
-     *
-     */
     public function setAllAclToFalse()
     {
         $this->permissions = [];
@@ -101,6 +95,7 @@ class UserRole extends AbstractUser
     /**
      * @param $permissionName
      * @param null $value
+     *
      * @return $this
      */
     public function setPermission($permissionName, $value = null)
@@ -125,6 +120,7 @@ class UserRole extends AbstractUser
 
     /**
      * @param $permissionName
+     *
      * @return bool
      */
     public function getPermission($permissionName)
@@ -159,12 +155,13 @@ class UserRole extends AbstractUser
 
     /**
      * @param $permissions
+     *
      * @return $this
      */
     public function setPermissions($permissions)
     {
         if (is_string($permissions)) {
-            $this->permissions = explode(",", $permissions);
+            $this->permissions = explode(',', $permissions);
         } elseif (is_array($permissions)) {
             $this->permissions = $permissions;
         }
@@ -174,6 +171,7 @@ class UserRole extends AbstractUser
 
     /**
      * @param $workspacesAsset
+     *
      * @return $this
      */
     public function setWorkspacesAsset($workspacesAsset)
@@ -193,6 +191,7 @@ class UserRole extends AbstractUser
 
     /**
      * @param $workspacesDocument
+     *
      * @return $this
      */
     public function setWorkspacesDocument($workspacesDocument)
@@ -212,6 +211,7 @@ class UserRole extends AbstractUser
 
     /**
      * @param $workspacesObject
+     *
      * @return $this
      */
     public function setWorkspacesObject($workspacesObject)
@@ -319,19 +319,19 @@ class UserRole extends AbstractUser
         $this->websiteTranslationLanguagesEdit = $websiteTranslationLanguagesEdit;
     }
 
-
     /**
      * checks if given parameter is string and if so splits it creates array
      * returns empty array if empty parameter is given
      *
      * @param $array
+     *
      * @return array|string
      */
     protected function prepareArray($array)
     {
         if (is_string($array)) {
             if (strlen($array)) {
-                $array = explode(",", $array);
+                $array = explode(',', $array);
             }
         }
 

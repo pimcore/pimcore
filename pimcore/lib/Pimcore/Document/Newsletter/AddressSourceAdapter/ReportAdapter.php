@@ -16,12 +16,10 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
-use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Listing;
 
 class ReportAdapter implements AddressSourceAdapterInterface
 {
-
     /**
      * @var int
      */
@@ -49,6 +47,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
 
     /**
      * IAddressSourceAdapter constructor.
+     *
      * @param $params
      */
     public function __construct($params)
@@ -68,7 +67,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
         $result = $adapter->getData(null, $this->emailFieldName, 'ASC', null, null);
 
         $this->list = $result['data'];
-        $this->elementsTotal = intval($result["total"]);
+        $this->elementsTotal = intval($result['total']);
 
         $this->emailAddresses = [];
         foreach ($this->list as $row) {
@@ -103,6 +102,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
      * returns params to be set on mail for test sending
      *
      * @param string $emailAddress
+     *
      * @return SendingParamContainer
      */
     public function getParamsForTestSending($emailAddress)
@@ -133,6 +133,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
      *
      * @param $limit
      * @param $offset
+     *
      * @return SendingParamContainer[]
      */
     public function getParamsForSingleSending($limit, $offset)

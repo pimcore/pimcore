@@ -18,7 +18,6 @@ use Pimcore\Model;
 
 class Object extends AbstractPlaceholder
 {
-
     /**
      * Returns a value for test replacement
      *
@@ -33,6 +32,7 @@ class Object extends AbstractPlaceholder
      * Gets a object by it's id and replaces the placeholder width the value form the called "method"
      *
      * example: %Object(object_id,{"method" : "getId"});
+     *
      * @return string
      */
     public function getReplacement()

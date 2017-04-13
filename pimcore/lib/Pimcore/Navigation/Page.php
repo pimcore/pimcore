@@ -18,7 +18,6 @@
  * ----------------------------------------------------------------------------------
  */
 
-
 /**
  * Zend Framework
  *
@@ -186,7 +185,9 @@ abstract class Page extends Container
      *   will be created.
      *
      * @param  array $options  options used for creating page
+     *
      * @return Page        a page instance
+     *
      * @throws \Exception
      */
     public static function factory($options)
@@ -197,7 +198,7 @@ abstract class Page extends Container
 
         if (isset($options['type'])) {
             $type = $options['type'];
-        } elseif (self::getDefaultPageType()!= null) {
+        } elseif (self::getDefaultPageType() != null) {
             $type = self::getDefaultPageType();
         }
 
@@ -210,7 +211,7 @@ abstract class Page extends Container
                 }
 
                 $page = new $type($options);
-                if (!$page instanceof Page) {
+                if (!$page instanceof self) {
                     throw new \Exception(sprintf(
                             'Invalid argument: Detected type "%s", which is not an instance of Page', $type));
                 }
@@ -237,6 +238,7 @@ abstract class Page extends Container
      * Page constructor
      *
      * @param  array $options   [optional] page options. Default is null, which should set defaults.
+     *
      * @throws \Exception    if invalid options are given
      */
     public function __construct($options = null)
@@ -267,7 +269,9 @@ abstract class Page extends Container
      * the method setResetParams().
      *
      * @param  array $options             associative array of options to set
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if invalid options are given
      */
     public function setOptions(array $options)
@@ -285,7 +289,9 @@ abstract class Page extends Container
      * Sets page label
      *
      * @param  string $label              new page label
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if empty/no string is given
      */
     public function setLabel($label)
@@ -313,7 +319,9 @@ abstract class Page extends Container
      * Sets a fragment identifier
      *
      * @param  string $fragment   new fragment identifier
+     *
      * @return Page         fluent interface, returns self
+     *
      * @throws \Exception    if empty/no string is given
      */
     public function setFragment($fragment)
@@ -327,7 +335,7 @@ abstract class Page extends Container
         return $this;
     }
 
-     /**
+    /**
      * Returns fragment identifier
      *
      * @return string|null  fragment identifier
@@ -342,7 +350,9 @@ abstract class Page extends Container
      *
      * @param  string|null $id            [optional] id to set. Default is null,
      *                                    which sets no id.
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if not given string or null
      */
     public function setId($id = null)
@@ -371,7 +381,9 @@ abstract class Page extends Container
      *
      * @param  string|null $class         [optional] CSS class to set. Default
      *                                    is null, which sets no CSS class.
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if not given string or null
      */
     public function setClass($class = null)
@@ -400,7 +412,9 @@ abstract class Page extends Container
      *
      * @param  string $title              [optional] page title. Default is
      *                                    null, which sets no title.
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if not given string or null
      */
     public function setTitle($title = null)
@@ -429,7 +443,9 @@ abstract class Page extends Container
      *
      * @param  string|null $target        [optional] target to set. Default is
      *                                    null, which sets no target.
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if target is not string or null
      */
     public function setTarget($target = null)
@@ -458,7 +474,9 @@ abstract class Page extends Container
      *
      * @param  string|null $character     [optional] access key to set. Default
      *                                    is null, which sets no access key.
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if access key is not string or null or
      *                                    if the string length not equal to one
      */
@@ -474,7 +492,7 @@ abstract class Page extends Container
         return $this;
     }
 
-     /**
+    /**
      * Returns page access key
      *
      * @return string|null  page access key or null
@@ -494,7 +512,9 @@ abstract class Page extends Container
      *
      * @param  array $relations  [optional] an associative array of
      *                                       forward links to other pages
+     *
      * @return Page          fluent interface, returns self
+     *
      * @throws \Exception
      */
     public function setRel($relations = null)
@@ -526,6 +546,7 @@ abstract class Page extends Container
      *
      * @param  string $relation  [optional] name of relation to return. If not
      *                           given, all relations will be returned.
+     *
      * @return array             an array of relations. If $relation is not
      *                           specified, all relations will be returned in
      *                           an associative array.
@@ -551,7 +572,9 @@ abstract class Page extends Container
      *
      * @param  array $relations  [optional] an associative array of
      *                                       reverse links to other pages
+     *
      * @return Page          fluent interface, returns self
+     *
      * @throws \Exception
      */
     public function setRev($relations = null)
@@ -583,6 +606,7 @@ abstract class Page extends Container
      *
      * @param  string $relation  [optional] name of relation to return. If not
      *                           given, all relations will be returned.
+     *
      * @return array             an array of relations. If $relation is not
      *                           specified, all relations will be returned in
      *                           an associative array.
@@ -603,7 +627,9 @@ abstract class Page extends Container
      *
      * @param  string      $name            name of the HTML attribute
      * @param  string|null $value           value for the HTML attribute
+     *
      * @return Page         fluent interface, returns self
+     *
      * @throws \Exception    if name is not string or value is
      *                                      not null or a string
      */
@@ -630,7 +656,9 @@ abstract class Page extends Container
      * Returns a single custom HTML attributes by name
      *
      * @param  string $name                 name of the HTML attribute
+     *
      * @return string|null                  value for the HTML attribute or null
+     *
      * @throws \Exception    if name is not string
      */
     public function getCustomHtmlAttrib($name)
@@ -650,6 +678,7 @@ abstract class Page extends Container
      * Sets multiple custom HTML attributes at once
      *
      * @param array $attribs        an associative array of html attributes
+     *
      * @return Page fluent interface, returns self
      */
     public function setCustomHtmlAttribs(array $attribs)
@@ -675,7 +704,9 @@ abstract class Page extends Container
      * Removes a custom HTML attribute from the page
      *
      * @param  string $name          name of the custom HTML attribute
+     *
      * @return Page  fluent interface, returns self
+     *
      * @throws \Exception
      */
     public function removeCustomHtmlAttrib($name)
@@ -707,7 +738,9 @@ abstract class Page extends Container
      * @param  int $order                 [optional] page order in container.
      *                                    Default is null, which sets no
      *                                    specific order.
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if order is not integer or null
      */
     public function setOrder($order = null)
@@ -749,6 +782,7 @@ abstract class Page extends Container
      *
      * @param  bool $active          [optional] whether page should be
      *                               considered active or not. Default is true.
+     *
      * @return Page  fluent interface, returns self
      */
     public function setActive($active = true)
@@ -764,6 +798,7 @@ abstract class Page extends Container
      * @param  bool $recursive  [optional] whether page should be considered
      *                          active if any child pages are active. Default is
      *                          false.
+     *
      * @return bool             whether page should be considered active
      */
     public function isActive($recursive = false)
@@ -787,6 +822,7 @@ abstract class Page extends Container
      * @param  bool $recursive  [optional] whether page should be considered
      *                          active if any child pages are active. Default
      *                          is false.
+     *
      * @return bool             whether page should be considered active
      */
     public function getActive($recursive = false)
@@ -799,6 +835,7 @@ abstract class Page extends Container
      *
      * @param  bool $visible         [optional] whether page should be
      *                               considered visible or not. Default is true.
+     *
      * @return Page  fluent interface, returns self
      */
     public function setVisible($visible = true)
@@ -817,12 +854,13 @@ abstract class Page extends Container
      * @param  bool $recursive  [optional] whether page should be considered
      *                          invisible if parent is invisible. Default is
      *                          false.
+     *
      * @return bool             whether page should be considered visible
      */
     public function isVisible($recursive = false)
     {
         if ($recursive && isset($this->_parent) &&
-            $this->_parent instanceof Page) {
+            $this->_parent instanceof self) {
             if (!$this->_parent->isVisible(true)) {
                 return false;
             }
@@ -839,6 +877,7 @@ abstract class Page extends Container
      * @param  bool $recursive  [optional] whether page should be considered
      *                          invisible if parent is invisible. Default is
      *                          false.
+     *
      * @return bool             whether page should be considered visible
      */
     public function getVisible($recursive = false)
@@ -852,7 +891,9 @@ abstract class Page extends Container
      * @param  Container $parent  [optional] new parent to set.
      *                                            Default is null which will set
      *                                            no parent.
+     *
      * @return Page               fluent interface, returns self
+     *
      * @throws \Exception
      */
     public function setParent(Container $parent = null)
@@ -900,7 +941,9 @@ abstract class Page extends Container
      *
      * @param  string $property           property name
      * @param  mixed  $value              value to set
+     *
      * @return Page       fluent interface, returns self
+     *
      * @throws \Exception  if property name is invalid
      */
     public function set($property, $value)
@@ -929,7 +972,9 @@ abstract class Page extends Container
      * property, or null if not found.
      *
      * @param  string $property           property name
+     *
      * @return mixed                      the property's value or null
+     *
      * @throws \Exception  if property name is invalid
      */
     public function get($property)
@@ -958,7 +1003,9 @@ abstract class Page extends Container
      *
      * @param  string $name               property name
      * @param  mixed  $value              value to set
+     *
      * @return void
+     *
      * @throws \Exception  if property name is invalid
      */
     public function __set($name, $value)
@@ -972,7 +1019,9 @@ abstract class Page extends Container
      * Magic overload for enabling <code>$page->propname</code>.
      *
      * @param  string $name               property name
+     *
      * @return mixed                      property value or null
+     *
      * @throws \Exception  if property name is invalid
      */
     public function __get($name)
@@ -990,6 +1039,7 @@ abstract class Page extends Container
      * property actually is set).
      *
      * @param  string $name  property name
+     *
      * @return bool          whether the given property exists
      */
     public function __isset($name)
@@ -1008,7 +1058,9 @@ abstract class Page extends Container
      * Magic overload for enabling <code>unset($page->propname)</code>.
      *
      * @param  string $name               property name
+     *
      * @return void
+     *
      * @throws \Exception  if the property is native
      */
     public function __unset($name)
@@ -1043,6 +1095,7 @@ abstract class Page extends Container
      * @param  string $relation      relation name (e.g. alternate, glossary,
      *                               canonical, etc)
      * @param  mixed  $value         value to set for relation
+     *
      * @return Page  fluent interface, returns self
      */
     public function addRel($relation, $value)
@@ -1060,6 +1113,7 @@ abstract class Page extends Container
      * @param  string $relation      relation name (e.g. alternate, glossary,
      *                               canonical, etc)
      * @param  mixed  $value         value to set for relation
+     *
      * @return Page  fluent interface, returns self
      */
     public function addRev($relation, $value)
@@ -1075,6 +1129,7 @@ abstract class Page extends Container
      * Removes a forward relation from the page
      *
      * @param  string $relation      name of relation to remove
+     *
      * @return Page  fluent interface, returns self
      */
     public function removeRel($relation)
@@ -1090,6 +1145,7 @@ abstract class Page extends Container
      * Removes a reverse relation from the page
      *
      * @param  string $relation      name of relation to remove
+     *
      * @return Page  fluent interface, returns self
      */
     public function removeRev($relation)
@@ -1177,6 +1233,7 @@ abstract class Page extends Container
      * Normalizes a property name
      *
      * @param  string $property  property name to normalize
+     *
      * @return string            normalized property name
      */
     protected static function _normalizePropertyName($property)

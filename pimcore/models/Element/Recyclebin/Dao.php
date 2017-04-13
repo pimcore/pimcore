@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -25,6 +26,6 @@ class Dao extends Model\Dao\AbstractDao
 {
     public function flush()
     {
-        $this->db->deleteWhere("recyclebin");
+        $this->db->deleteWhere('recyclebin');
     }
 }

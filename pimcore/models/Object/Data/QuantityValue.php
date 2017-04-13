@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,7 +22,7 @@ use Pimcore\Model\Object\QuantityValue\Unit;
 class QuantityValue
 {
     /**
-     * @var double | string
+     * @var float | string
      */
     public $value;
 
@@ -37,6 +38,7 @@ class QuantityValue
 
     /**
      * QuantityValue constructor.
+     *
      * @param null $value
      * @param null $unitId
      */
@@ -44,13 +46,12 @@ class QuantityValue
     {
         $this->value = $value;
         $this->unitId = $unitId;
-        $this->unit = "";
+        $this->unit = '';
 
         if ($unitId) {
             $this->unit = Unit::getById($this->unitId);
         }
     }
-
 
     /**
      * @param  $unitId
@@ -90,7 +91,7 @@ class QuantityValue
     }
 
     /**
-     * @return double
+     * @return float
      */
     public function getValue()
     {
@@ -99,13 +100,14 @@ class QuantityValue
 
     /**
      * @return string
+     *
      * @throws \Exception
      */
     public function __toString()
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
-            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
 
             if ($locale) {
                 $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
@@ -114,7 +116,7 @@ class QuantityValue
         }
 
         if ($this->getUnit() instanceof Unit) {
-            $value .= " " . $this->getUnit()->getAbbreviation();
+            $value .= ' ' . $this->getUnit()->getAbbreviation();
         }
 
         return $value;

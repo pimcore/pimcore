@@ -12,21 +12,21 @@ class BlogController extends AbstractController
     {
         // get a list of news objects and order them by date
         $blogList = new Object\BlogArticle\Listing();
-        $blogList->setOrderKey("date");
-        $blogList->setOrder("DESC");
+        $blogList->setOrderKey('date');
+        $blogList->setOrder('DESC');
 
         $conditions = [];
 
-        if ($request->get("category")) {
-            $conditions[] = "categories LIKE " . $blogList->quote("%," . (int) $request->get("category") . ",%");
+        if ($request->get('category')) {
+            $conditions[] = 'categories LIKE ' . $blogList->quote('%,' . (int) $request->get('category') . ',%');
         }
 
-        if ($request->get("archive")) {
-            $conditions[] = "DATE_FORMAT(FROM_UNIXTIME(date), '%Y-%c') = " . $blogList->quote($request->get("archive"));
+        if ($request->get('archive')) {
+            $conditions[] = "DATE_FORMAT(FROM_UNIXTIME(date), '%Y-%c') = " . $blogList->quote($request->get('archive'));
         }
 
         if (!empty($conditions)) {
-            $blogList->setCondition(implode(" AND ", $conditions));
+            $blogList->setCondition(implode(' AND ', $conditions));
         }
 
         $paginator = new Paginator($blogList);
@@ -48,10 +48,10 @@ class BlogController extends AbstractController
     public function detailAction(Request $request)
     {
         // "id" is the named parameters in "Static Routes"
-        $article = Object\BlogArticle::getById($request->get("id"));
+        $article = Object\BlogArticle::getById($request->get('id'));
 
         if (!$article instanceof Object\BlogArticle || !$article->isPublished()) {
-            throw $this->createNotFoundException("Invalid request - no such blog article");
+            throw $this->createNotFoundException('Invalid request - no such blog article');
         }
 
         $this->view->article = $article;
@@ -59,16 +59,16 @@ class BlogController extends AbstractController
 
     public function sidebarBoxAction(Request $request)
     {
-        $items = (int) $request->get("items");
+        $items = (int) $request->get('items');
         if (!$items) {
             $items = 3;
         }
 
         // this is the alternative way of getting a list of objects
         $blogList = Object\BlogArticle::getList([
-            "limit" => $items,
-            "order" => "DESC",
-            "orderKey" => "date"
+            'limit' => $items,
+            'order' => 'DESC',
+            'orderKey' => 'date'
         ]);
 
         $this->view->articles = $blogList;

@@ -26,7 +26,7 @@ class CartCheckoutData extends AbstractCartCheckoutData
 
     public static function getByKeyCartId($key, $cartId)
     {
-        $cacheKey = CartCheckoutData\Dao::TABLE_NAME . "_" . $key . "_" . $cartId;
+        $cacheKey = CartCheckoutData\Dao::TABLE_NAME . '_' . $key . '_' . $cartId;
 
         try {
             $checkoutDataItem = Runtime::get($cacheKey);

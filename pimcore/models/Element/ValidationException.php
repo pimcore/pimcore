@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,8 +19,7 @@ namespace Pimcore\Model\Element;
 
 class ValidationException extends \Exception
 {
-
-    /** @var  array */
+    /** @var array */
     protected $subItems;
 
     /**

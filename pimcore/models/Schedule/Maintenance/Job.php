@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Schedule
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -60,6 +61,7 @@ class Job
 
     /**
      * execute job
+     *
      * @return mixed
      */
     public function execute()
@@ -80,7 +82,7 @@ class Job
      */
     public function getLockKey()
     {
-        return "maintenance-job-" . $this->getId();
+        return 'maintenance-job-' . $this->getId();
     }
 
     /**
@@ -109,6 +111,7 @@ class Job
 
     /**
      * @param  string $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -128,6 +131,7 @@ class Job
 
     /**
      * @param $object
+     *
      * @return $this
      */
     public function setObject($object)
@@ -147,6 +151,7 @@ class Job
 
     /**
      * @param $method
+     *
      * @return $this
      */
     public function setMethod($method)
@@ -174,6 +179,7 @@ class Job
 
     /**
      * @param $args
+     *
      * @return $this
      */
     public function setArguments($args)

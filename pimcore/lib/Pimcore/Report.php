@@ -16,10 +16,10 @@ namespace Pimcore;
 
 class Report
 {
-
     /**
      * @static
      * @depricated
+     *
      * @return \Pimcore\Config\Config
      */
     public static function getConfig()

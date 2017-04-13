@@ -106,28 +106,28 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('input');
 
-        $this->testDataHelper->assertInput($this->testObject, "input", $this->seed);
+        $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
     }
 
     public function testNumber()
     {
         $this->createTestObject('number');
 
-        $this->testDataHelper->assertNumber($this->testObject, "number", $this->seed);
+        $this->testDataHelper->assertNumber($this->testObject, 'number', $this->seed);
     }
 
     public function testTextarea()
     {
         $this->createTestObject('textarea');
 
-        $this->testDataHelper->assertTextarea($this->testObject, "textarea", $this->seed);
+        $this->testDataHelper->assertTextarea($this->testObject, 'textarea', $this->seed);
     }
 
     public function testSlider()
     {
         $this->createTestObject('slider');
 
-        $this->testDataHelper->assertSlider($this->testObject, "slider", $this->seed);
+        $this->testDataHelper->assertSlider($this->testObject, 'slider', $this->seed);
     }
 
     public function testHref()
@@ -135,7 +135,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         TestHelper::createEmptyObjects();
         $this->createTestObject('href');
 
-        $this->testDataHelper->assertHref($this->testObject, "href", $this->seed);
+        $this->testDataHelper->assertHref($this->testObject, 'href', $this->seed);
     }
 
     public function testMultiHref()
@@ -143,7 +143,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         TestHelper::createEmptyObjects();
         $this->createTestObject('multihref');
 
-        $this->testDataHelper->assertMultihref($this->testObject, "multihref", $this->seed);
+        $this->testDataHelper->assertMultihref($this->testObject, 'multihref', $this->seed);
     }
 
     public function testImage()
@@ -156,7 +156,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             $this->assertNotNull($this->comparisonObject->getImage());
         }
 
-        $this->testDataHelper->assertImage($this->testObject, "image", $this->seed);
+        $this->testDataHelper->assertImage($this->testObject, 'image', $this->seed);
     }
 
     public function testHotspotImage()
@@ -186,21 +186,21 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertLanguage($this->testObject, "languagex", $this->seed);
+        $this->testDataHelper->assertLanguage($this->testObject, 'languagex', $this->seed);
     }
 
     public function testCountry()
     {
         $this->createTestObject('country');
 
-        $this->testDataHelper->assertCountry($this->testObject, "country", $this->seed);
+        $this->testDataHelper->assertCountry($this->testObject, 'country', $this->seed);
     }
 
     public function testDate()
     {
         $this->createTestObject('date');
 
-        $this->testDataHelper->assertDate($this->testObject, "date", $this->seed);
+        $this->testDataHelper->assertDate($this->testObject, 'date', $this->seed);
     }
 
     public function testDateTime()
@@ -212,21 +212,21 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertDate($this->testObject, "datetime", $this->seed);
+        $this->testDataHelper->assertDate($this->testObject, 'datetime', $this->seed);
     }
 
     public function testTime()
     {
         $this->createTestObject('time');
 
-        $this->testDataHelper->assertTime($this->testObject, "time", $this->seed);
+        $this->testDataHelper->assertTime($this->testObject, 'time', $this->seed);
     }
 
     public function testSelect()
     {
         $this->createTestObject('select');
 
-        $this->testDataHelper->assertSelect($this->testObject, "select", $this->seed);
+        $this->testDataHelper->assertSelect($this->testObject, 'select', $this->seed);
     }
 
     public function testMultiSelect()
@@ -238,35 +238,35 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertMultiSelect($this->testObject, "multiselect", $this->seed);
+        $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
     }
 
     public function testUser()
     {
         $this->createTestObject('user');
 
-        $this->testDataHelper->assertUser($this->testObject, "user", $this->seed);
+        $this->testDataHelper->assertUser($this->testObject, 'user', $this->seed);
     }
 
     public function testCheckbox()
     {
         $this->createTestObject('checkbox');
 
-        $this->testDataHelper->assertCheckbox($this->testObject, "checkbox", $this->seed);
+        $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
     }
 
     public function testWysiwyg()
     {
         $this->createTestObject('wysiwyg');
 
-        $this->testDataHelper->assertWysiwyg($this->testObject, "wysiwyg", $this->seed);
+        $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
 
     public function testPassword()
     {
         $this->createTestObject('password');
 
-        $this->testDataHelper->assertPassword($this->testObject, "password", $this->seed);
+        $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
     }
 
     public function testCountryMultiSelect()
@@ -278,7 +278,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, "countries", $this->seed);
+        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'countries', $this->seed);
     }
 
     public function testLanguageMultiSelect()
@@ -290,7 +290,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, "languages", $this->seed);
+        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
     }
 
     public function testGeopoint()
@@ -302,7 +302,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertGeopoint($this->testObject, "point", $this->seed);
+        $this->testDataHelper->assertGeopoint($this->testObject, 'point', $this->seed);
     }
 
     public function testGeobounds()
@@ -314,7 +314,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertGeobounds($this->testObject, "bounds", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertGeobounds($this->testObject, 'bounds', $this->comparisonObject, $this->seed);
     }
 
     public function testGeopolygon()
@@ -326,21 +326,21 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertGeopolygon($this->testObject, "poly", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->comparisonObject, $this->seed);
     }
 
     public function testTable()
     {
         $this->createTestObject('table');
 
-        $this->testDataHelper->assertTable($this->testObject, "table", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertTable($this->testObject, 'table', $this->comparisonObject, $this->seed);
     }
 
     public function testLink()
     {
         $this->createTestObject('link');
 
-        $this->testDataHelper->assertLink($this->testObject, "link", $this->seed);
+        $this->testDataHelper->assertLink($this->testObject, 'link', $this->seed);
     }
 
     public function testStructuredTable()
@@ -352,7 +352,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertStructuredTable($this->testObject, "structuredtable", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->comparisonObject, $this->seed);
     }
 
     public function testObjects()
@@ -362,7 +362,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->createTestObject('objects');
 
-        $this->testDataHelper->assertObjects($this->testObject, "objects", $this->seed);
+        $this->testDataHelper->assertObjects($this->testObject, 'objects', $this->seed);
     }
 
     public function testObjectsWithMetadata()
@@ -376,7 +376,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, "objectswithmetadata", $this->comparisonObject, $this->seed);
+        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->comparisonObject, $this->seed);
     }
 
     public function testLocalizedInput()
@@ -394,8 +394,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertInput($this->testObject, "linput", $this->seed, "en");
-        $this->testDataHelper->assertInput($this->testObject, "linput", $this->seed, "de");
+        $this->testDataHelper->assertInput($this->testObject, 'linput', $this->seed, 'en');
+        $this->testDataHelper->assertInput($this->testObject, 'linput', $this->seed, 'de');
     }
 
     public function testLocalizedObjects()
@@ -415,8 +415,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->seed, "en");
-        $this->testDataHelper->assertObjects($this->testObject, "lobjects", $this->seed, "de");
+        $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'en');
+        $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'de');
     }
 
     public function testBricks()
@@ -428,7 +428,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertBricks($this->testObject, "mybricks", $this->seed);
+        $this->testDataHelper->assertBricks($this->testObject, 'mybricks', $this->seed);
     }
 
     public function testFieldCollection()
@@ -440,6 +440,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ]
         ]);
 
-        $this->testDataHelper->assertFieldCollection($this->testObject, "myfieldcollection", $this->seed);
+        $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
     }
 }

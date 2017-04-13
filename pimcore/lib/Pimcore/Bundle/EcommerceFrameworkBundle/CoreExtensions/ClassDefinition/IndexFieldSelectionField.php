@@ -18,14 +18,12 @@ use Pimcore\Model\Object\ClassDefinition\Data\Textarea;
 
 class IndexFieldSelectionField extends Textarea
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "indexFieldSelectionField";
-
+    public $fieldtype = 'indexFieldSelectionField';
 
     public $specificPriceField = false;
     public $showAllFields = false;
@@ -61,15 +59,15 @@ class IndexFieldSelectionField extends Textarea
         return $this->considerTenants;
     }
 
-
     /**
      * @param $data
+     *
      * @return bool
      */
     public function isEmpty($data)
     {
         if (is_string($data)) {
-            return (strlen($data) < 1);
+            return strlen($data) < 1;
         } elseif (is_array($data)) {
             return empty($data);
         }
@@ -81,12 +79,13 @@ class IndexFieldSelectionField extends Textarea
      * @param string $data
      * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            $data = implode(",", $data);
+            $data = implode(',', $data);
         }
 
         return $data;

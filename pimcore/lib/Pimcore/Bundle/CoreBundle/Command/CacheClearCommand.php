@@ -30,17 +30,17 @@ class CacheClearCommand extends AbstractCommand
             ->addOption(
                 'tags', 't',
                 InputOption::VALUE_OPTIONAL,
-                "only specific tags (csv list of tags)"
+                'only specific tags (csv list of tags)'
             )
             ->addOption(
                 'output', 'o',
                 InputOption::VALUE_OPTIONAL,
-                "only output cache"
+                'only output cache'
             )
             ->addOption(
                 'all', 'a',
                 InputOption::VALUE_OPTIONAL,
-                "clear all"
+                'clear all'
             )
         ;
     }
@@ -50,11 +50,11 @@ class CacheClearCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getOption("tags")) {
-            $tags = explode(",", $input->getOption("tags"));
+        if ($input->getOption('tags')) {
+            $tags = explode(',', $input->getOption('tags'));
             Cache::clearTags($tags);
-        } elseif ($input->getOption("output")) {
-            Cache::clearTag("output");
+        } elseif ($input->getOption('output')) {
+            Cache::clearTag('output');
         } else {
             Cache::clearAll();
         }

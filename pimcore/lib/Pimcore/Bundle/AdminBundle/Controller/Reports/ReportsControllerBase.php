@@ -19,7 +19,6 @@ use Pimcore\Config;
 
 class ReportsControllerBase extends AdminController
 {
-
     /**
      * @var
      */

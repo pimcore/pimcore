@@ -24,14 +24,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
  */
 interface IConfig
 {
-
     /**
      * returns tenant name
      *
      * @return string
      */
     public function getTenantName();
-
 
     /**
      * returns attribute configuration for product index
@@ -40,14 +38,12 @@ interface IConfig
      */
     public function getAttributeConfig();
 
-
     /**
      * return full text search index attribute names for product index
      *
      * @return array
      */
     public function getSearchAttributeConfig();
-
 
     /**
      * return all supported filter types for product index
@@ -56,7 +52,6 @@ interface IConfig
      */
     public function getFilterTypeConfig();
 
-
     /**
      * returns if given product is active for this tenant
      *
@@ -64,15 +59,14 @@ interface IConfig
      */
     public function isActive(IIndexable $object);
 
-
     /**
      * checks, if product should be in index for current tenant
      *
      * @param IIndexable $object
+     *
      * @return bool
      */
     public function inIndex(IIndexable $object);
-
 
     /**
      * Returns categories for given object in context of the current tenant.
@@ -84,16 +78,15 @@ interface IConfig
      */
     public function getCategories(IIndexable $object);
 
-
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IIndexable $object
      * @param null $subObjectId
+     *
      * @return mixed $subTenantData
      */
     public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
-
 
     /**
      * populates index for tenant relations based on gived data
@@ -101,10 +94,10 @@ interface IConfig
      * @param mixed $objectId
      * @param mixed $subTenantData
      * @param mixed $subObjectId
+     *
      * @return void
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null);
-
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
@@ -113,26 +106,25 @@ interface IConfig
      */
     public function getTenantWorker();
 
-
     /**
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
      * @param IIndexable $object
+     *
      * @return IIndexable[]
      */
     public function createSubIdsForObject(IIndexable $object);
-
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
      * @param IIndexable $object
      * @param array $subIds
+     *
      * @return mixed
      */
     public function getSubIdsToCleanup(IIndexable $object, array $subIds);
-
 
     /**
      * creates virtual parent id for given sub id
@@ -140,10 +132,10 @@ interface IConfig
      *
      * @param IIndexable $object
      * @param $subId
+     *
      * @return mixed
      */
     public function createVirtualParentIdForSubId(IIndexable $object, $subId);
-
 
     /**
      * Gets object by id, can consider subIds and therefore return e.g. an array of values
@@ -151,16 +143,17 @@ interface IConfig
      *
      * @param $objectId
      * @param $onlyMainObject - only returns main object
+     *
      * @return mixed
      */
     public function getObjectById($objectId, $onlyMainObject = false);
-
 
     /**
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
      * @param $objectId
+     *
      * @return IIndexable | array
      */
     public function getObjectMockupById($objectId);

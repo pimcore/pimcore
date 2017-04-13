@@ -22,9 +22,9 @@ class AwesomeCommand extends AbstractCommand
         $this->dump("Isn't that awesome?");
 
         // add newlines through flags
-        $this->dump("Dump #2", Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
+        $this->dump('Dump #2', Dumper::NEWLINE_BEFORE | Dumper::NEWLINE_AFTER);
 
         // only dump in verbose mode
-        $this->dumpVerbose("Dump verbose", Dumper::NEWLINE_BEFORE);
+        $this->dumpVerbose('Dump verbose', Dumper::NEWLINE_BEFORE);
     }
 }

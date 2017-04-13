@@ -41,6 +41,7 @@ class StopWatch
 
     /**
      * @static
+     *
      * @param $label
      * @param string $component
      */
@@ -51,26 +52,28 @@ class StopWatch
 
     /**
      * @static
+     *
      * @param bool $html
      * @param string $component
+     *
      * @return string
      */
     public static function getTime($html = false, $component = 'default')
     {
-        $text = "";
+        $text = '';
 
         $lastLap = self::$startTime[$component];
         foreach (self::$laps[$component] as $label => $time) {
-            $text .= "Lap " . $label . "\tAccum: " . ($time - self::$startTime[$component]) . "\t Self: " . ($time - $lastLap)
+            $text .= 'Lap ' . $label . "\tAccum: " . ($time - self::$startTime[$component]) . "\t Self: " . ($time - $lastLap)
                 . "\n";
 
             $lastLap = $time;
         }
 
-        $text .= "Total Time (" . $component . "): " . (microtime(true) - self::$startTime[$component]) . "\n";
+        $text .= 'Total Time (' . $component . '): ' . (microtime(true) - self::$startTime[$component]) . "\n";
 
         if ($html) {
-            $text = "<pre>" . $text . "</pre>";
+            $text = '<pre>' . $text . '</pre>';
         }
 
         return $text;
@@ -78,6 +81,7 @@ class StopWatch
 
     /**
      * @static
+     *
      * @param string $component
      * @param bool $html
      */
@@ -89,6 +93,7 @@ class StopWatch
     /**
      * @deprecated
      * @static
+     *
      * @return float
      */
     public static function microtime_float()

@@ -5,7 +5,6 @@ namespace Pimcore\Tests\Helper;
 use Codeception\Exception\ModuleException;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Codeception\Util\Autoload;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Cache;
@@ -183,6 +182,7 @@ class Pimcore extends Module\Symfony
      * @param Connection $connection
      *
      * @return bool
+     *
      * @throws ModuleException
      */
     protected function initializeDb(Connection $connection)

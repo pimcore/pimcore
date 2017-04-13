@@ -148,6 +148,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      * @param string $type
      * @param string $inputName
      * @param array $options
+     *
      * @return Tag|null
      */
     protected function getDocumentTag(PageSnippet $document, $type, $inputName, array $options = [])

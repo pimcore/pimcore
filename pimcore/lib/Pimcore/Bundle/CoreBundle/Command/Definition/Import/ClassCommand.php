@@ -34,6 +34,7 @@ class ClassCommand extends AbstractStructureImportCommand
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
      * @param string $filename
+     *
      * @return string
      */
     protected function getDefinitionName($filename)
@@ -48,6 +49,7 @@ class ClassCommand extends AbstractStructureImportCommand
      * Try to load definition by name
      *
      * @param $name
+     *
      * @return AbstractModel|null
      */
     protected function loadDefinition($name)
@@ -59,6 +61,7 @@ class ClassCommand extends AbstractStructureImportCommand
      * Create a new definition
      *
      * @param $name
+     *
      * @return AbstractModel
      */
     protected function createDefinition($name)
@@ -74,6 +77,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      * @param AbstractModel $definition
      * @param string $json
+     *
      * @return bool
      */
     protected function import(AbstractModel $definition, $json)

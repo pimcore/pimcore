@@ -25,7 +25,6 @@ use Pimcore\Config\Config;
 
 class IndexService
 {
-
     /**
      * @var IWorker
      */
@@ -39,7 +38,7 @@ class IndexService
     public function __construct($config)
     {
         if (!(string)$config->disableDefaultTenant) {
-            $this->defaultWorker = new DefaultMysql(new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql("default", $config));
+            $this->defaultWorker = new DefaultMysql(new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql('default', $config));
         }
 
         $this->tenantWorkers = [];
@@ -78,7 +77,9 @@ class IndexService
      * @deprecated
      *
      * @param null $tenant
+     *
      * @return array
+     *
      * @throws InvalidConfigException
      */
     public function getGeneralSearchColumns($tenant = null)
@@ -90,7 +91,9 @@ class IndexService
      * returns all attributes marked as general search attributes for full text search
      *
      * @param string $tenant
+     *
      * @return array
+     *
      * @throws InvalidConfigException
      */
     public function getGeneralSearchAttributes($tenant = null)
@@ -171,7 +174,9 @@ class IndexService
      *
      * @param bool $considerHideInFieldList
      * @param string $tenant
+     *
      * @return array
+     *
      * @throws InvalidConfigException
      */
     public function getIndexAttributes($considerHideInFieldList = false, $tenant = null)
@@ -200,7 +205,9 @@ class IndexService
      *
      * @param bool $considerHideInFieldList
      * @param null $tenant
+     *
      * @return mixed
+     *
      * @throws InvalidConfigException
      */
     public function getIndexColumns($considerHideInFieldList = false, $tenant = null)
@@ -212,7 +219,9 @@ class IndexService
      * returns all filter groups
      *
      * @param string $tenant
+     *
      * @return array
+     *
      * @throws InvalidConfigException
      */
     public function getAllFilterGroups($tenant = null)
@@ -236,13 +245,14 @@ class IndexService
         }
     }
 
-
     /**
      * retruns all index attributes for a given filter group
      *
      * @param $filterType
      * @param string $tenant
+     *
      * @return array
+     *
      * @throws InvalidConfigException
      */
     public function getIndexAttributesByFilterGroup($filterType, $tenant = null)
@@ -271,7 +281,9 @@ class IndexService
      *
      * @param $filterType
      * @param null $tenant
+     *
      * @return mixed
+     *
      * @throws InvalidConfigException
      */
     public function getIndexColumnsByFilterGroup($filterType, $tenant = null)
@@ -279,11 +291,11 @@ class IndexService
         return $this->getIndexAttributesByFilterGroup($filterType, $tenant);
     }
 
-
     /**
      * returns current tenant configuration
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
+     *
      * @throws InvalidConfigException
      */
     public function getCurrentTenantConfig()
@@ -293,6 +305,7 @@ class IndexService
 
     /**
      * @return IWorker
+     *
      * @throws InvalidConfigException
      */
     public function getCurrentTenantWorker()
@@ -312,6 +325,7 @@ class IndexService
 
     /**
      * @return IProductList
+     *
      * @throws InvalidConfigException
      */
     public function getProductListForCurrentTenant()
@@ -319,9 +333,9 @@ class IndexService
         return $this->getCurrentTenantWorker()->getProductList();
     }
 
-
     /**
      * @return IProductList
+     *
      * @throws InvalidConfigException
      */
     public function getProductListForTenant($tenant)

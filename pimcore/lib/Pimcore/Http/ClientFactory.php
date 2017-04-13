@@ -29,11 +29,11 @@ class ClientFactory
         ];
 
         if ($systemConfig['httpclient']['adapter'] == 'Proxy') {
-            $authorization = "";
+            $authorization = '';
             if ($systemConfig['httpclient']['proxy_user']) {
-                $authorization = $systemConfig['httpclient']['proxy_user'] . ":" . $systemConfig['httpclient']['proxy_pass'] . "@";
+                $authorization = $systemConfig['httpclient']['proxy_user'] . ':' . $systemConfig['httpclient']['proxy_pass'] . '@';
             }
-            $proxyUri = "tcp://" . $authorization . $systemConfig['httpclient']['proxy_host'] . ":" . $systemConfig['httpclient']['proxy_port'];
+            $proxyUri = 'tcp://' . $authorization . $systemConfig['httpclient']['proxy_host'] . ':' . $systemConfig['httpclient']['proxy_port'];
 
             $guzzleConfig[RequestOptions::PROXY] = $proxyUri;
         }

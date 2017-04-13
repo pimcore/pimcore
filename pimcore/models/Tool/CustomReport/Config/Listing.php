@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Property
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\JsonListing
 {
-
     /**
      * @var array
      */
@@ -39,6 +39,7 @@ class Listing extends Model\Listing\JsonListing
 
     /**
      * @param $reports
+     *
      * @return $this
      */
     public function setReports($reports)

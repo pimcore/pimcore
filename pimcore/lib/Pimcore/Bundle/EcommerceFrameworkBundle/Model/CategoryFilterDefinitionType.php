@@ -19,16 +19,15 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType
 {
-
     /**
      * @return string
      */
     public function getField()
     {
         if ($this->getIncludeParentCategories()) {
-            return "parentCategoryIds";
+            return 'parentCategoryIds';
         } else {
-            return "categoryIds";
+            return 'categoryIds';
         }
     }
 

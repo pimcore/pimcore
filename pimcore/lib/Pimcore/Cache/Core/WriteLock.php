@@ -114,6 +114,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
      * Set a write lock (prevents items being written to cache)
      *
      * @param bool $force
+     *
      * @return bool
      */
     public function lock($force = false)
@@ -178,6 +179,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
 
     /**
      * @param int $lockTime
+     *
      * @return bool
      */
     protected function isLockValid($lockTime)

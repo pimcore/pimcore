@@ -53,6 +53,7 @@ interface HelperInterface
 
     /**
      * @param  bool
+     *
      * @return AbstractHelper
      */
     public function setRenderInvisible($renderInvisible = true);
@@ -69,7 +70,9 @@ interface HelperInterface
 
     /**
      * @param  Container $container
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public function render(Container $container = null);

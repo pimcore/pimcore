@@ -20,12 +20,10 @@ use Pimcore\Model;
 
 abstract class AbstractDao extends Model\Dao\AbstractDao
 {
-
     /**
      * @var Model\Object\Listing
      */
     protected $model;
-
 
     /**
      * @return string
@@ -46,18 +44,18 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                         $lastOrder = $order[$c];
                     }
 
-                    $parts[] = $key . " " . $lastOrder;
+                    $parts[] = $key . ' ' . $lastOrder;
 
                     $c++;
                 }
             }
 
             if (!empty($parts)) {
-                return " ORDER BY " . implode(", ", $parts);
+                return ' ORDER BY ' . implode(', ', $parts);
             }
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -66,10 +64,10 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     protected function getGroupBy()
     {
         if ($this->model->getGroupBy()) {
-            return " GROUP BY " . $this->model->getGroupBy();
+            return ' GROUP BY ' . $this->model->getGroupBy();
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -78,14 +76,14 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     protected function getOffsetLimit()
     {
         if ($limit = $this->model->getLimit() and $offset = $this->model->getOffset()) {
-            return " LIMIT " . $offset . "," . $limit;
+            return ' LIMIT ' . $offset . ',' . $limit;
         }
 
         if ($limit = $this->model->getLimit()) {
-            return " LIMIT " . $limit;
+            return ' LIMIT ' . $limit;
         }
 
-        return "";
+        return '';
     }
 
     /**
@@ -94,12 +92,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     protected function getCondition()
     {
         if ($cond = $this->model->getCondition()) {
-            return " WHERE " . $cond . " ";
+            return ' WHERE ' . $cond . ' ';
         }
 
-        return "";
+        return '';
     }
-
 
     /**
      * @param QueryBuilder $select
@@ -122,22 +119,23 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                         $lastOrder = $order[$c];
                     }
 
-                    $parts[] = $key . " " . $lastOrder;
+                    $parts[] = $key . ' ' . $lastOrder;
 
                     $c++;
                 }
             }
 
             if (!empty($parts)) {
-                $select->order(new Expression(implode(", ", $parts)));
+                $select->order(new Expression(implode(', ', $parts)));
             }
         }
     }
 
-
     /**
      * @param QueryBuilder $select
+     *
      * @return $this
+     *
      * @internal param $QueryBuilder
      *
      */
@@ -151,7 +149,6 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         return $this;
     }
 
-
     /**
      * @param QueryBuilder $select
      *
@@ -163,7 +160,6 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
 
         return $this;
     }
-
 
     /**
      * @param QueryBuilder $select

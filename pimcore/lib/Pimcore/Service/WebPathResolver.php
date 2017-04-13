@@ -29,6 +29,7 @@ class WebPathResolver
      * @param BundleInterface $bundle Bundle to fetch in
      *
      * @throws \InvalidArgumentException
+     *
      * @return string Prefix
      */
     public function getPrefix(BundleInterface $bundle)

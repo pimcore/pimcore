@@ -28,14 +28,14 @@ class NumberRange extends AbstractFilterType
         }
 
         return $this->render($script, [
-              "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-              "label" => $filterDefinition->getLabel(),
-              "currentValue" => $currentFilter[$this->getField($filterDefinition)],
-              "values" => $productList->getGroupByValues($this->getField($filterDefinition), true),
-              "definition" => $filterDefinition,
-              "fieldname" => $this->getField($filterDefinition),
-              "metaData" => $filterDefinition->getMetaData(),
-              "resultCount" => $productList->count()
+              'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+              'label' => $filterDefinition->getLabel(),
+              'currentValue' => $currentFilter[$this->getField($filterDefinition)],
+              'values' => $productList->getGroupByValues($this->getField($filterDefinition), true),
+              'definition' => $filterDefinition,
+              'fieldname' => $this->getField($filterDefinition),
+              'metaData' => $filterDefinition->getMetaData(),
+              'resultCount' => $productList->count()
          ]);
     }
 
@@ -54,16 +54,16 @@ class NumberRange extends AbstractFilterType
         if (!empty($value)) {
             if (!empty($value['from'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . " >= " . $productList->quote($value['from']), "PRECONDITION_" . $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $productList->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
                 } else {
-                    $productList->addCondition($this->getField($filterDefinition) . " >= " . $productList->quote($value['from']), $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $productList->quote($value['from']), $this->getField($filterDefinition));
                 }
             }
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . " <= " . $productList->quote($value['to']), "PRECONDITION_" . $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
                 } else {
-                    $productList->addCondition($this->getField($filterDefinition) . " <= " . $productList->quote($value['to']), $this->getField($filterDefinition));
+                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), $this->getField($filterDefinition));
                 }
             }
         }

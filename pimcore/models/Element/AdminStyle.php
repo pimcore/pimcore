@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Element
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -42,31 +43,33 @@ class AdminStyle
 
     /**
      * AdminStyle constructor.
+     *
      * @param Model\Object\Concrete $element
      */
     public function __construct($element)
     {
-        if ($element->getType() == "folder") {
-            $this->elementIconClass = "pimcore_icon_folder";
+        if ($element->getType() == 'folder') {
+            $this->elementIconClass = 'pimcore_icon_folder';
             $this->elementQtipConfig = [
-                "title" => "ID: " . $element->getId()
+                'title' => 'ID: ' . $element->getId()
             ];
         } else {
             if ($element->getClass()->getIcon()) {
                 $this->elementIcon = $element->getClass()->getIcon();
             } else {
-                $this->elementIconClass = $element->getType() == "variant" ? "pimcore_icon_variant" : "pimcore_icon_object";
+                $this->elementIconClass = $element->getType() == 'variant' ? 'pimcore_icon_variant' : 'pimcore_icon_object';
             }
 
             $this->elementQtipConfig = [
-                "title" => "ID: " . $element->getId(),
-                "text" => 'Type: ' . $element->getClass()->getName()
+                'title' => 'ID: ' . $element->getId(),
+                'text' => 'Type: ' . $element->getClass()->getName()
             ];
         }
     }
 
     /**
      * @param $elementCssClass
+     *
      * @return $this
      */
     public function setElementCssClass($elementCssClass)
@@ -86,6 +89,7 @@ class AdminStyle
 
     /**
      * @param $elementIcon
+     *
      * @return $this
      */
     public function setElementIcon($elementIcon)
@@ -105,6 +109,7 @@ class AdminStyle
 
     /**
      * @param $elementIconClass
+     *
      * @return $this
      */
     public function setElementIconClass($elementIconClass)

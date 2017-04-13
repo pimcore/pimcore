@@ -52,12 +52,13 @@ class Shipping implements IShipping
      */
     public function getName()
     {
-        return "shipping";
+        return 'shipping';
     }
 
     /**
      * @param IPrice $currentSubTotal
      * @param ICart $cart
+     *
      * @return IModificatedPrice
      */
     public function modify(IPrice $currentSubTotal, ICart $cart)
@@ -101,7 +102,7 @@ class Shipping implements IShipping
     public function getTaxClass()
     {
         if (empty($this->taxClass)) {
-            $this->taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
+            $this->taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
         }
 
         return $this->taxClass;

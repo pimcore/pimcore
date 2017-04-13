@@ -19,7 +19,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ClassDefinitionEvent extends Event
 {
-
     /**
      * @var ClassDefinition
      */
@@ -27,6 +26,7 @@ class ClassDefinitionEvent extends Event
 
     /**
      * DocumentEvent constructor.
+     *
      * @param ClassDefinition $classDefinition
      */
     public function __construct(ClassDefinition $classDefinition)

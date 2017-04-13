@@ -89,6 +89,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * returns the full field name
      *
      * @param $fieldName
+     *
      * @return string
      */
     public function getFieldNameMapped($fieldName)
@@ -125,11 +126,11 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         return $this->elasticSearchClientParams;
     }
 
-
     /**
      * checks, if product should be in index for current tenant
      *
      * @param IIndexable $object
+     *
      * @return bool
      */
     public function inIndex(IIndexable $object)
@@ -142,6 +143,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      *
      * @param IIndexable $object
      * @param null $subObjectId
+     *
      * @return mixed $subTenantData
      */
     public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
@@ -155,6 +157,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param mixed $objectId
      * @param mixed $subTenantData
      * @param mixed $subObjectId
+     *
      * @return void
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
@@ -172,7 +175,6 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     {
         return;
     }
-
 
     /**
      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
@@ -199,6 +201,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * @param $objectId
      * @param $data
      * @param $relations
+     *
      * @return mixed
      */
     public function createMockupObject($objectId, $data, $relations)
@@ -211,6 +214,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      * always returns a object mockup if available
      *
      * @param $objectId
+     *
      * @return IIndexable | array
      */
     public function getObjectMockupById($objectId)

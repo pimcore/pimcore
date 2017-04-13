@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -20,24 +21,23 @@ use Pimcore\Model;
 
 class Fieldset extends Model\Object\ClassDefinition\Layout
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "fieldset";
-
+    public $fieldtype = 'fieldset';
 
     /**
      * Width of input field labels
+     *
      * @var int
      */
     public $labelWidth = 100;
 
-
     /**
      * @param $labelWidth
+     *
      * @return $this
      */
     public function setLabelWidth($labelWidth)

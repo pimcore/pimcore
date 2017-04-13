@@ -23,6 +23,7 @@ interface HelperBrokerInterface
      *
      * @param PhpEngine $engine
      * @param string $method
+     *
      * @return bool
      */
     public function supports(PhpEngine $engine, $method);
@@ -33,6 +34,7 @@ interface HelperBrokerInterface
      * @param PhpEngine $engine
      * @param string $method
      * @param array $arguments
+     *
      * @return mixed
      */
     public function helper(PhpEngine $engine, $method, array $arguments);

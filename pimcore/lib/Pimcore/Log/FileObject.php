@@ -47,7 +47,7 @@ class FileObject
             if (!is_dir($folderpath)) {
                 mkdir($folderpath, 0775, true);
             }
-            $this->filename = $folderpath."/".uniqid("fileobject_", true);
+            $this->filename = $folderpath.'/'.uniqid('fileobject_', true);
         }
 
         File::put($this->filename, $this->data);
@@ -66,7 +66,7 @@ class FileObject
      */
     public function getFilename()
     {
-        return str_replace(PIMCORE_PROJECT_ROOT."/", "", $this->filename);
+        return str_replace(PIMCORE_PROJECT_ROOT.'/', '', $this->filename);
     }
 
     /**

@@ -44,6 +44,7 @@ class ViewModelResolver extends AbstractRequestResolver
      *
      * @param Request|null $request
      * @param bool $create
+     *
      * @return ViewModel|ViewModelInterface|null
      */
     public function getViewModel(Request $request = null, $create = true)
@@ -70,6 +71,7 @@ class ViewModelResolver extends AbstractRequestResolver
      * Create a view model
      *
      * @param Request|null $request
+     *
      * @return ViewModel
      */
     public function createViewModel(Request $request = null)

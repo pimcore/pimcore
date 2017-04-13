@@ -32,42 +32,49 @@ class Workflow extends AbstractModel
 
     /**
      * The name of the workflow
+     *
      * @var string
      */
     public $name;
 
     /**
      * Cache of valid states in this workflow
+     *
      * @var array
      */
     public $states;
 
     /**
      * Cache of valid statuses in this workflow
+     *
      * @var array
      */
     public $statuses;
 
     /**
      * Cache of valid actions in this workflow
+     *
      * @var array
      */
     public $actions;
 
     /**
      * The actual workflow
+     *
      * @var array
      */
     public $transitionDefinitions;
 
     /**
      * The default state of the element
+     *
      * @var string
      */
     public $defaultState;
 
     /**
      * The default status of the element
+     *
      * @var
      */
     public $defaultStatus;
@@ -75,6 +82,7 @@ class Workflow extends AbstractModel
     /**
      * Determines whether or not to allow unpublished elements to
      * have actions
+     *
      * @var bool
      */
     public $allowUnpublished;
@@ -85,7 +93,7 @@ class Workflow extends AbstractModel
     public $workflowSubject;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $enabled;
 
@@ -100,17 +108,18 @@ class Workflow extends AbstractModel
     public $modificationDate;
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Workflow
      */
     public static function getById($id)
     {
-        $cacheKey = "workflow_" . $id;
+        $cacheKey = 'workflow_' . $id;
 
         try {
             $workflow = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$workflow) {
-                throw new \Exception("Workflow in registry is null");
+                throw new \Exception('Workflow in registry is null');
             }
         } catch (\Exception $e) {
             try {
@@ -205,6 +214,7 @@ class Workflow extends AbstractModel
 
     /**
      * Return an array of valid workflow action names
+     *
      * @return array
      */
     public function getValidActions()
@@ -235,6 +245,7 @@ class Workflow extends AbstractModel
 
     /**
      * Returns an array of valid workflow state names
+     *
      * @return array
      */
     public function getValidStates()
@@ -342,6 +353,7 @@ class Workflow extends AbstractModel
 
     /**
      * @param $stateName
+     *
      * @return bool|mixed
      */
     public function getStateConfig($stateName)
@@ -357,6 +369,7 @@ class Workflow extends AbstractModel
 
     /**
      * @param $statusName
+     *
      * @return bool|mixed
      */
     public function getStatusConfig($statusName)
@@ -388,6 +401,7 @@ class Workflow extends AbstractModel
 
     /**
      * @param $statusName
+     *
      * @return array
      */
     public function getValidActionsForStatus($statusName)
@@ -397,6 +411,7 @@ class Workflow extends AbstractModel
 
     /**
      * Returns the statuses where an element should be published
+     *
      * @return array
      */
     public function getPublishedStatuses()
@@ -501,7 +516,6 @@ class Workflow extends AbstractModel
         return null;
     }
 
-
     /**
      * Returns additional fields for an action.
      *
@@ -571,8 +585,6 @@ class Workflow extends AbstractModel
     {
         $this->enabled = $enabled;
     }
-
-
 
     /**
      * @return int

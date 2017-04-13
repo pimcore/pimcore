@@ -11,7 +11,6 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 use Pimcore\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -27,7 +26,7 @@ class AppKernel extends Kernel
         // pimcore bundles
         $bundles = parent::registerBundles();
 
-        if (class_exists("\\AppBundle\\AppBundle")) {
+        if (class_exists('\\AppBundle\\AppBundle')) {
             $bundles[] = new \AppBundle\AppBundle;
         }
 

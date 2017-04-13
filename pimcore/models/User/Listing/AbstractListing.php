@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,8 +24,6 @@ use Pimcore\Model;
  */
 class AbstractListing extends Model\Listing\AbstractListing
 {
-
-
     /**
      * @var string
      */
@@ -39,9 +38,12 @@ class AbstractListing extends Model\Listing\AbstractListing
 
     /**
      * Tests if the given key is an valid order key to sort the results
+     *
      * @todo remove the dummy-always-true rule
+     *
      * @param string $key
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -58,6 +60,7 @@ class AbstractListing extends Model\Listing\AbstractListing
 
     /**
      * @param array $items
+     *
      * @return $this
      */
     public function setItems($items)

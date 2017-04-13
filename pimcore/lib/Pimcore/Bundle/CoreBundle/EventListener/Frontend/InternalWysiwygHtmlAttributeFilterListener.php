@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\CoreBundle\EventListener\AbstractResponseInjectionListener;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
@@ -82,7 +81,7 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
         }
 
         $content = $response->getContent();
-        $content = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $content);
+        $content = preg_replace('/ pimcore_(id|type|disable_thumbnail)=\\"([0-9a-z]+)\\"/', '', $content);
 
         $response->setContent($content);
     }

@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    User
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -23,9 +24,8 @@ use Pimcore\Model;
  */
 class Folder extends Model\User\UserRole\Folder
 {
-
     /**
      * @var string
      */
-    public $type = "rolefolder";
+    public $type = 'rolefolder';
 }

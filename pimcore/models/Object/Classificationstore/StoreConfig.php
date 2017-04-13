@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -45,7 +46,8 @@ class StoreConfig extends Model\AbstractModel
     public $description;
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Model\Object\Classificationstore\StoreConfig
      */
     public static function getById($id)
@@ -62,6 +64,7 @@ class StoreConfig extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return StoreConfig
      */
     public static function getByName($name)
@@ -87,10 +90,9 @@ class StoreConfig extends Model\AbstractModel
         return $config;
     }
 
-
-
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -118,6 +120,7 @@ class StoreConfig extends Model\AbstractModel
 
     /** Sets the description.
      * @param $description
+     *
      * @return Model\Object\Classificationstore\StoreConfig
      */
     public function setDescription($description)

@@ -15,12 +15,11 @@
 namespace Pimcore\Google;
 
 use Pimcore\Config;
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 class Analytics
 {
-
     /**
      * @var array
      */
@@ -35,13 +34,14 @@ class Analytics
      * @var array
      */
     protected static $additionalCodes = [
-        "beforeInit" => [],
-        "beforePageview" => [],
-        "beforeEnd" => []
+        'beforeInit' => [],
+        'beforePageview' => [],
+        'beforeEnd' => []
     ];
 
     /**
      * @param Model\Site $site
+     *
      * @return bool
      */
     public static function isConfigured(Model\Site $site = null)
@@ -55,6 +55,7 @@ class Analytics
 
     /**
      * @param null $site
+     *
      * @return bool
      */
     public static function getSiteConfig($site = null)
@@ -75,6 +76,7 @@ class Analytics
 
     /**
      * @param null $config
+     *
      * @return string
      */
     public static function getCode($config = null)
@@ -85,27 +87,26 @@ class Analytics
 
         // do nothing if not configured
         if (!$config || !$config->trackid) {
-            return "";
+            return '';
         }
 
         $codeBeforeInit = $config->additionalcodebeforeinit;
         $codeBeforePageview = $config->additionalcodebeforepageview;
         $codeBeforeEnd = $config->additionalcode;
 
-        if (!empty(self::$additionalCodes["beforeInit"])) {
-            $codeBeforeInit .= "\n" . implode("\n", self::$additionalCodes["beforeInit"]);
+        if (!empty(self::$additionalCodes['beforeInit'])) {
+            $codeBeforeInit .= "\n" . implode("\n", self::$additionalCodes['beforeInit']);
         }
 
-        if (!empty(self::$additionalCodes["beforePageview"])) {
-            $codeBeforePageview .= "\n" . implode("\n", self::$additionalCodes["beforePageview"]);
+        if (!empty(self::$additionalCodes['beforePageview'])) {
+            $codeBeforePageview .= "\n" . implode("\n", self::$additionalCodes['beforePageview']);
         }
 
-        if (!empty(self::$additionalCodes["beforeEnd"])) {
-            $codeBeforeEnd .= "\n" . implode("\n", self::$additionalCodes["beforeEnd"]);
+        if (!empty(self::$additionalCodes['beforeEnd'])) {
+            $codeBeforeEnd .= "\n" . implode("\n", self::$additionalCodes['beforeEnd']);
         }
 
-
-        $code = "";
+        $code = '';
 
         if ($config->asynchronouscode || $config->retargetingcode) {
             $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';";
@@ -113,10 +114,10 @@ class Analytics
                 $typeSrc = "ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';";
             }
 
-            $code .= "
-            <script type=\"text/javascript\">
+            $code .= '
+            <script type="text/javascript">
 
-              " . $codeBeforeInit . "
+              ' . $codeBeforeInit . "
               var _gaq = _gaq || [];
               _gaq.push(['_setAccount', '" . $config->trackid . "']);
               _gaq.push (['_gat._anonymizeIp']);
@@ -124,10 +125,10 @@ class Analytics
               if (typeof _gaqPageView != \"undefined\"){
                 _gaq.push(['_trackPageview',_gaqPageView]);
               } else {
-                _gaq.push(['_trackPageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : "") . "]);
+                _gaq.push(['_trackPageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : '') . ']);
               }
 
-              " . $codeBeforeEnd . "
+              ' . $codeBeforeEnd . "
 
               (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
@@ -145,19 +146,18 @@ class Analytics
 
               " . $codeBeforeInit . "
 
-              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? ("," . $config->universal_configuration) : "") . ");
+              ga('create', '" . $config->trackid . "'" . ($config->universal_configuration ? (',' . $config->universal_configuration) : '') . ");
               ga('set', 'anonymizeIp', true);
               " . $codeBeforePageview . "
               if (typeof _gaqPageView != \"undefined\"){
                 ga('send', 'pageview', _gaqPageView);
               } else {
-                ga('send', 'pageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : "") . ");
+                ga('send', 'pageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : '') . ');
               }
 
-              " . $codeBeforeEnd . "
-            </script>";
+              ' . $codeBeforeEnd . '
+            </script>';
         }
-
 
         return $code;
     }
@@ -166,7 +166,7 @@ class Analytics
      * @param string $code
      * @param string $where
      */
-    public static function addAdditionalCode($code, $where = "beforeEnd")
+    public static function addAdditionalCode($code, $where = 'beforeEnd')
     {
         self::$additionalCodes[$where][] = $code;
     }
@@ -176,7 +176,7 @@ class Analytics
      */
     public static function trackElement(Model\Element\ElementInterface $element)
     {
-        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
+        Logger::error('Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1');
     }
 
     /**
@@ -184,7 +184,7 @@ class Analytics
      */
     public static function trackPageView($path)
     {
-        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
+        Logger::error('Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1');
     }
 
     /**

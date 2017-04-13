@@ -10,13 +10,14 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Webservice\Data\Document\Printcontainer;
 
-use \Pimcore\Model\Webservice\Data\Document;
+use Pimcore\Model\Webservice\Data\Document;
 
 class In extends Document\Printcontainer
 {

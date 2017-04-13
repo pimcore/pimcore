@@ -44,6 +44,7 @@ class Gift implements IGift
 
     /**
      * set gift product
+     *
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct $product
      *
      * @return IGift
@@ -62,7 +63,6 @@ class Gift implements IGift
     {
         return $this->product;
     }
-
 
     /**
      * @return string
@@ -94,6 +94,7 @@ class Gift implements IGift
 
     /**
      * dont cache the entire product object
+     *
      * @return array
      */
     public function __sleep()

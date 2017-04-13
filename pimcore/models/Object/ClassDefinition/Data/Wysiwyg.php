@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -17,8 +18,8 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
+use Pimcore\Model\Object;
 use Pimcore\Tool\Text;
 
 class Wysiwyg extends Model\Object\ClassDefinition\Data
@@ -30,15 +31,15 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $fieldtype = "wysiwyg";
+    public $fieldtype = 'wysiwyg';
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
-     * @var integer
+     * @var int
      */
     public $height;
 
@@ -47,29 +48,29 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "longtext";
+    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "longtext";
+    public $columnType = 'longtext';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "string";
+    public $phpdocType = 'string';
 
     /**
      * @var string
      */
-    public $toolbarConfig = "";
+    public $toolbarConfig = '';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -77,7 +78,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -85,7 +86,8 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -96,7 +98,8 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -114,7 +117,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
         if (is_string($toolbarConfig)) {
             $this->toolbarConfig = $toolbarConfig;
         } else {
-            $this->toolbarConfig = "";
+            $this->toolbarConfig = '';
         }
     }
 
@@ -128,9 +131,11 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
@@ -140,9 +145,11 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -152,31 +159,34 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForQueryResource
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
         $data = $this->getDataForResource($data, $object, $params);
 
-        $data = strip_tags($data, "<a><img>");
-        $data = str_replace("\r\n", " ", $data);
-        $data = str_replace("\n", " ", $data);
-        $data = str_replace("\r", " ", $data);
-        $data = str_replace("\t", "", $data);
+        $data = strip_tags($data, '<a><img>');
+        $data = str_replace("\r\n", ' ', $data);
+        $data = str_replace("\n", ' ', $data);
+        $data = str_replace("\r", ' ', $data);
+        $data = str_replace("\t", '', $data);
         $data = preg_replace('#[ ]+#', ' ', $data);
 
         return $data;
     }
 
-
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
@@ -186,9 +196,11 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -209,6 +221,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -216,25 +229,25 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 
-
     /**
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
         $dependencies = Text::getDependenciesOfWysiwygText($data);
         if (is_array($dependencies)) {
             foreach ($dependencies as $key => $value) {
                 $el = Element\Service::getElementById($value['type'], $value['id']);
                 if (!$el) {
-                    throw new Element\ValidationException("Invalid dependency in wysiwyg text");
+                    throw new Element\ValidationException('Invalid dependency in wysiwyg text');
                 }
             }
         }
@@ -243,15 +256,16 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\Concrete $object
      * @param array $params
+     *
      * @return string
      */
     public function preGetData($object, $params = [])
     {
-        $data = "";
+        $data = '';
         if ($object instanceof Object\Concrete) {
             $data = $object->{$this->getName()};
         } elseif ($object instanceof Object\Localizedfield || $object instanceof Object\Classificationstore) {
-            $data = $params["data"];
+            $data = $params['data'];
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
@@ -263,24 +277,25 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
+     *
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return array|string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
             $value = [];
-            $value["html"] = $data;
-            $value["type"] = "html";
+            $value['html'] = $data;
+            $value['type'] = 'html';
 
             return $value;
         } else {
-            return "";
+            return '';
         }
     }
-
 
     /**
      * Rewrites id from source to target, $idMapping contains
@@ -292,19 +307,21 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
+     *
      * @return Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
-        include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
+        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
 
         $data = $this->getDataFromObjectParam($object, $params);
         $html = str_get_html($data);
         if ($html) {
-            $s = $html->find("a[pimcore_id],img[pimcore_id]");
+            $s = $html->find('a[pimcore_id],img[pimcore_id]');
 
             if ($s) {
                 foreach ($s as $el) {

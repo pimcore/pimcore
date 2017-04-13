@@ -86,12 +86,13 @@ class UsageStatisticsListener implements EventSubscriberInterface
 
     /**
      * @param Request $request
+     *
      * @return array
      */
     protected function getParams(Request $request)
     {
         $params = [];
-        $disallowedKeys = ["_dc", "module", "controller", "action", "password"];
+        $disallowedKeys = ['_dc', 'module', 'controller', 'action', 'password'];
 
         // TODO is this enough?
         $requestParams = array_merge(
@@ -104,8 +105,8 @@ class UsageStatisticsListener implements EventSubscriberInterface
                 $value = json_decode($value);
                 if (is_array($value)) {
                     array_walk_recursive($value, function (&$item, $key) {
-                        if (strpos($key, "pass") !== false) {
-                            $item = "*************";
+                        if (strpos($key, 'pass') !== false) {
+                            $item = '*************';
                         }
                     });
                 }
@@ -114,7 +115,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
             }
 
             if (!in_array($key, $disallowedKeys) && is_string($value)) {
-                $params[$key] = (strlen($value) > 40) ? substr($value, 0, 40) . "..." : $value;
+                $params[$key] = (strlen($value) > 40) ? substr($value, 0, 40) . '...' : $value;
             }
         }
 

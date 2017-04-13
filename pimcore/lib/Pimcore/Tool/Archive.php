@@ -18,13 +18,14 @@ use Pimcore\File;
 
 class Archive
 {
-
     /**
      * @param $sourceDir
      * @param $destinationFile
      * @param array $excludeFilePattern
      * @param array $options
+     *
      * @return \ZipArchive
+     *
      * @throws \Exception
      */
     public static function createZip($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
@@ -91,7 +92,9 @@ class Archive
      * @param $destinationFile
      * @param array $excludeFilePattern
      * @param array $options
+     *
      * @return \Phar
+     *
      * @throws \Exception
      */
     public static function createPhar($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
@@ -132,7 +135,9 @@ class Archive
     /**
      * @param $sourceDir
      * @param $destinationFile
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected static function prepareArchive($sourceDir, $destinationFile)

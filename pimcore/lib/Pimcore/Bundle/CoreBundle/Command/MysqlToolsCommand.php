@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Logger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Logger;
 
 class MysqlToolsCommand extends AbstractCommand
 {
@@ -31,7 +31,7 @@ class MysqlToolsCommand extends AbstractCommand
             ->addOption(
                 'mode', 'm',
                 InputOption::VALUE_REQUIRED,
-                "optimize or warmup"
+                'optimize or warmup'
             );
     }
 
@@ -41,34 +41,34 @@ class MysqlToolsCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // display error message
-        if (!$input->getOption("mode")) {
-            $this->writeError("Please specify the mode!");
+        if (!$input->getOption('mode')) {
+            $this->writeError('Please specify the mode!');
             exit;
         }
 
         $db = \Pimcore\Db::get();
 
-        if ($input->getOption("mode") == "optimize") {
-            $tables = $db->fetchAll("SHOW TABLES");
+        if ($input->getOption('mode') == 'optimize') {
+            $tables = $db->fetchAll('SHOW TABLES');
 
             foreach ($tables as $table) {
                 $t = current($table);
                 try {
-                    Logger::debug("Running: OPTIMIZE TABLE " . $t);
-                    $db->query("OPTIMIZE TABLE " . $t);
+                    Logger::debug('Running: OPTIMIZE TABLE ' . $t);
+                    $db->query('OPTIMIZE TABLE ' . $t);
                 } catch (\Exception $e) {
                     Logger::error($e);
                 }
             }
-        } elseif ($input->getOption("mode") == "warmup") {
-            $tables = $db->fetchAll("SHOW TABLES");
+        } elseif ($input->getOption('mode') == 'warmup') {
+            $tables = $db->fetchAll('SHOW TABLES');
 
             foreach ($tables as $table) {
                 $t = current($table);
                 try {
                     Logger::debug("Running: SELECT COUNT(*) FROM $t");
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
-                    Logger::debug("Result: " . $res);
+                    Logger::debug('Result: ' . $res);
                 } catch (\Exception $e) {
                     Logger::error($e);
                 }

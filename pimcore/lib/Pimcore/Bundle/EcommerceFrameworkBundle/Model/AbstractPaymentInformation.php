@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
 {
-
     /**
      * @return \DateTime
      */
@@ -27,6 +26,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
 
     /**
      * @param \DateTime $paymentStart
+     *
      * @return void
      */
     abstract public function setPaymentStart($paymentStart);
@@ -38,6 +38,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
 
     /**
      * @param \DateTime $paymentStart
+     *
      * @return void
      */
     abstract public function setPaymentFinish($paymentFinish);
@@ -49,6 +50,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
 
     /**
      * @param string $paymentReference
+     *
      * @return void
      */
     abstract public function setPaymentReference($paymentReference);
@@ -60,6 +62,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
 
     /**
      * @param string $paymentState
+     *
      * @return void
      */
     abstract public function setPaymentState($paymentState);
@@ -76,6 +79,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
 
     /**
      * @param string $message
+     *
      * @return void
      */
     abstract public function setMessage($message);
@@ -87,6 +91,7 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
 
     /**
      * @param string $internalPaymentId
+     *
      * @return void
      */
     abstract public function setInternalPaymentId($internalPaymentId);

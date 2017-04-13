@@ -56,6 +56,7 @@ class Transaction extends AbstractData
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -75,6 +76,7 @@ class Transaction extends AbstractData
 
     /**
      * @param string $affiliation
+     *
      * @return $this
      */
     public function setAffiliation($affiliation)
@@ -94,6 +96,7 @@ class Transaction extends AbstractData
 
     /**
      * @param float $total
+     *
      * @return $this
      */
     public function setTotal($total)
@@ -113,6 +116,7 @@ class Transaction extends AbstractData
 
     /**
      * @param float $subTotal
+     *
      * @return $this
      */
     public function setSubTotal($subTotal)
@@ -132,6 +136,7 @@ class Transaction extends AbstractData
 
     /**
      * @param float $tax
+     *
      * @return $this
      */
     public function setTax($tax)
@@ -151,6 +156,7 @@ class Transaction extends AbstractData
 
     /**
      * @param float $shipping
+     *
      * @return $this
      */
     public function setShipping($shipping)
@@ -170,6 +176,7 @@ class Transaction extends AbstractData
 
     /**
      * @param string $coupon
+     *
      * @return $this
      */
     public function setCoupon($coupon)
@@ -189,6 +196,7 @@ class Transaction extends AbstractData
 
     /**
      * @param string $list
+     *
      * @return $this
      */
     public function setList($list)
@@ -208,6 +216,7 @@ class Transaction extends AbstractData
 
     /**
      * @param string $step
+     *
      * @return $this
      */
     public function setStep($step)
@@ -227,6 +236,7 @@ class Transaction extends AbstractData
 
     /**
      * @param string $option
+     *
      * @return $this
      */
     public function setOption($option)

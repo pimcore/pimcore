@@ -11,6 +11,7 @@ class ClassManager extends Module
 {
     /**
      * @param string $name
+     *
      * @return ClassDefinition|null
      */
     public function getClass($name)
@@ -22,6 +23,7 @@ class ClassManager extends Module
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasClass($name)
@@ -65,17 +67,18 @@ class ClassManager extends Module
         $this->assertNotNull($class, sprintf('Test class %s does not exist and could not be created', $name));
         $this->assertInstanceOf(ClassDefinition::class, $class);
 
-        $classFile = PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($class->getName()) . ".php";
+        $classFile = PIMCORE_CLASS_DIRECTORY . '/Object/' . ucfirst($class->getName()) . '.php';
         $this->assertFileExists($classFile, sprintf('Test class file %s does not exist', $classFile));
 
-        $fullClassName = "Pimcore\\Model\\Object\\" . ucfirst($class->getName());
-        $this->assertTrue(class_exists($fullClassName), sprintf("Class %s cannot be found/loaded", $fullClassName));
+        $fullClassName = 'Pimcore\\Model\\Object\\' . ucfirst($class->getName());
+        $this->assertTrue(class_exists($fullClassName), sprintf('Class %s cannot be found/loaded', $fullClassName));
 
         return $class;
     }
 
     /**
      * @param string $name
+     *
      * @return FieldcollectionDefinition
      */
     public function getFieldcollection($name)
@@ -90,6 +93,7 @@ class ClassManager extends Module
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasFieldCollection($name)
@@ -128,6 +132,7 @@ class ClassManager extends Module
 
     /**
      * @param $name
+     *
      * @return ObjectbrickDefinition|null
      */
     public function getObjectbrick($name)
@@ -142,6 +147,7 @@ class ClassManager extends Module
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasObjectbrick($name)
@@ -213,6 +219,7 @@ class ClassManager extends Module
      * Load JSON for file
      *
      * @param string $filename
+     *
      * @return string
      */
     protected function loadJson($filename)
@@ -229,6 +236,7 @@ class ClassManager extends Module
      * Resolve filename to reource path
      *
      * @param string $filename
+     *
      * @return string
      */
     protected function resolveFilePath($filename)

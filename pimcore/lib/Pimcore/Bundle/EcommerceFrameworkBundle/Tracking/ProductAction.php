@@ -32,6 +32,7 @@ class ProductAction extends AbstractProductData
 
     /**
      * @param int $quantity
+     *
      * @return ProductAction
      */
     public function setQuantity($quantity)
@@ -51,6 +52,7 @@ class ProductAction extends AbstractProductData
 
     /**
      * @param string $coupon
+     *
      * @return ProductAction
      */
     public function setCoupon($coupon)

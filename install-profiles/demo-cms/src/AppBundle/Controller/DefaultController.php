@@ -2,8 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends AbstractController
@@ -13,6 +11,5 @@ class DefaultController extends AbstractController
      */
     public function defaultAction(Request $request)
     {
-
     }
 }

@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
  */
 interface ICartManager extends IComponent
 {
-
     /**
      * returns cart class name configured in the ecommerce framework config
      *
@@ -55,6 +54,7 @@ interface ICartManager extends IComponent
      *
      * @param string      $itemKey
      * @param null|string $key     - optional identification of cart in case of multi cart
+     *
      * @return void
      */
     public function removeFromCart($itemKey, $key = null);
@@ -63,6 +63,7 @@ interface ICartManager extends IComponent
      * returns cart
      *
      * @param null|string  $key - optional identification of cart in case of multi cart
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
      */
     public function getCart($key = null);
@@ -71,6 +72,7 @@ interface ICartManager extends IComponent
      * returns cart by name
      *
      * @param string $name
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
      */
     public function getCartByName($name);
@@ -86,6 +88,7 @@ interface ICartManager extends IComponent
      * clears given cart
      *
      * @param null|string  $key - optional identification of cart in case of multi cart
+     *
      * @return void
      */
     public function clearCart($key = null);
@@ -94,6 +97,7 @@ interface ICartManager extends IComponent
      * creates new cart
      *
      * @param  array   $param - array of cart information
+     *
      * @return string  key of new created cart
      */
     public function createCart($param);
@@ -102,10 +106,10 @@ interface ICartManager extends IComponent
      * deletes cart
      *
      * @param null|string  $key - optional identification of cart in case of multi cart
+     *
      * @return void
      */
     public function deleteCart($key = null);
-
 
     /**
      * creates price calculator for given cart
@@ -120,10 +124,10 @@ interface ICartManager extends IComponent
      * use getCartPriceCalculator instead
      *
      * @abstract
+     *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator
      */
     public function getCartPriceCalcuator(ICart $cart);
-
 
     /**
      * resets cart manager - carts need to be reloaded after reset() is called

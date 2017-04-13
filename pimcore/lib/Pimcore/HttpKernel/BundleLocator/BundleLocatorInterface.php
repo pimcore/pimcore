@@ -22,6 +22,7 @@ interface BundleLocatorInterface
      * Loads bundle for a class name. Returns the AppBundle for AppBundle\Controller\FooController
      *
      * @param string $className
+     *
      * @return BundleInterface
      */
     public function getBundle($className);
@@ -31,6 +32,7 @@ interface BundleLocatorInterface
      * AppBundle\Controller\FooController returns src/AppBundle
      *
      * @param string $className
+     *
      * @return string
      */
     public function resolveBundlePath($className);

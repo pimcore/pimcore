@@ -38,6 +38,7 @@ trait PimcoreContextAwareTrait
      *
      * @param Request $request
      * @param string|array $context
+     *
      * @return bool
      */
     protected function matchesPimcoreContext(Request $request, $context)

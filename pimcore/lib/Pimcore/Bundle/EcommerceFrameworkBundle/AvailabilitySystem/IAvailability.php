@@ -18,7 +18,8 @@ interface IAvailability
 {
     /**
      * @abstract
-     * @return boolean
+     *
+     * @return bool
      */
     public function getAvailable();
 }

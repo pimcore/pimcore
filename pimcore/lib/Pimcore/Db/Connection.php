@@ -39,7 +39,7 @@ class Connection extends \Doctrine\DBAL\Connection
         $returnValue = parent::connect();
 
         if ($returnValue) {
-            $this->_conn->query("SET default_storage_engine=InnoDB;");
+            $this->_conn->query('SET default_storage_engine=InnoDB;');
             $this->_conn->query("SET sql_mode = '';");
         }
 
@@ -65,7 +65,7 @@ class Connection extends \Doctrine\DBAL\Connection
             $args[0] = $this->normalizeQuery($args[0], [], true);
         }
 
-        return call_user_func_array([$this, "parent::query"], $args);
+        return call_user_func_array([$this, 'parent::query'], $args);
     }
 
     /**
@@ -142,6 +142,7 @@ class Connection extends \Doctrine\DBAL\Connection
      *
      * @param  mixed        $table The table to update.
      * @param  mixed        $where DELETE WHERE clause(s).
+     *
      * @return int          The number of affected rows.
      */
     public function deleteWhere($table, $where = '')
@@ -160,6 +161,7 @@ class Connection extends \Doctrine\DBAL\Connection
      * @param  mixed        $table The table to update.
      * @param  array        $data  Column-value pairs.
      * @param  mixed        $where UPDATE WHERE clause(s).
+     *
      * @return int          The number of affected rows.
      */
     public function updateWhere($table, array $data, $where = '')
@@ -187,6 +189,7 @@ class Connection extends \Doctrine\DBAL\Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return mixed
      */
     public function fetchRow($sql, $params = [], $types = [])
@@ -202,6 +205,7 @@ class Connection extends \Doctrine\DBAL\Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return mixed
      */
     public function fetchCol($sql, $params = [], $types = [])
@@ -226,6 +230,7 @@ class Connection extends \Doctrine\DBAL\Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return mixed
      */
     public function fetchOne($sql, $params = [], $types = [])
@@ -244,6 +249,7 @@ class Connection extends \Doctrine\DBAL\Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return array
      */
     public function fetchPairs($sql, array $params = [], $types = [])
@@ -261,7 +267,9 @@ class Connection extends \Doctrine\DBAL\Connection
     /**
      * @param $table
      * @param array $data
+     *
      * @return int
+     *
      * @throws \Exception
      */
     public function insertOrUpdate($table, array $data)
@@ -330,7 +338,8 @@ class Connection extends \Doctrine\DBAL\Connection
      * @param string  $text  The text with a placeholder.
      * @param mixed   $value The value to quote.
      * @param string  $type  OPTIONAL SQL datatype
-     * @param integer $count OPTIONAL count of placeholders to replace
+     * @param int $count OPTIONAL count of placeholders to replace
+     *
      * @return string An SQL-safe quoted value placed into the original text.
      */
     public function quoteInto($text, $value, $type = null, $count = null)
@@ -347,6 +356,7 @@ class Connection extends \Doctrine\DBAL\Connection
      *
      * @param string|array $ident The identifier or expression.
      * @param string $alias An alias for the column.
+     *
      * @return string The quoted identifier and alias.
      */
     public function quoteColumnAs($ident, $alias)
@@ -359,6 +369,7 @@ class Connection extends \Doctrine\DBAL\Connection
      *
      * @param string|array $ident The identifier or expression.
      * @param string $alias An alias for the table.
+     *
      * @return string The quoted identifier and alias.
      */
     public function quoteTableAs($ident, $alias = null)
@@ -371,8 +382,9 @@ class Connection extends \Doctrine\DBAL\Connection
      *
      * @param string|array|Expression $ident The identifier or expression.
      * @param string $alias An optional alias.
-     * @param boolean $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
+     * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      * @param string $as The string to add between the identifier/expression and the alias.
+     *
      * @return string The quoted identifier and alias.
      */
     protected function _quoteIdentifierAs($ident, $alias = null, $auto = false, $as = ' AS ')
@@ -413,15 +425,16 @@ class Connection extends \Doctrine\DBAL\Connection
      * Quote an identifier.
      *
      * @param  string $value The identifier or expression.
-     * @param boolean $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
+     * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
+     *
      * @return string        The quoted identifier and alias.
      */
     protected function _quoteIdentifier($value, $auto=false)
     {
         if ($auto === false) {
-            $q = "`";
+            $q = '`';
 
-            return ($q . str_replace("$q", "$q$q", $value) . $q);
+            return $q . str_replace("$q", "$q$q", $value) . $q;
         }
 
         return $value;
@@ -430,6 +443,7 @@ class Connection extends \Doctrine\DBAL\Connection
     /**
      * Returns a ZF1 compatible query builder
      * To use the standard Doctrine QueryBuilder, please use $dbal->createQueryBuilder() instead
+     *
      * @return ZendDbCompatibleQueryBuilder
      */
     public function select()
@@ -441,9 +455,11 @@ class Connection extends \Doctrine\DBAL\Connection
      * Adds an adapter-specific LIMIT clause to the SELECT statement.
      *
      * @param  string $sql
-     * @param  integer $count
-     * @param  integer $offset OPTIONAL
+     * @param  int $count
+     * @param  int $offset OPTIONAL
+     *
      * @throws \Exception
+     *
      * @return string
      */
     public function limit($sql, $count, $offset = 0)
@@ -469,6 +485,7 @@ class Connection extends \Doctrine\DBAL\Connection
     /**
      * @param $sql
      * @param array $bind
+     *
      * @return mixed|null
      */
     public function queryIgnoreError($sql, $bind = [])
@@ -486,6 +503,7 @@ class Connection extends \Doctrine\DBAL\Connection
 
     /**
      * @param $params
+     *
      * @return array
      */
     protected function prepareParams($params)
@@ -499,6 +517,7 @@ class Connection extends \Doctrine\DBAL\Connection
 
     /**
      * @param $data
+     *
      * @return array
      */
     protected function quoteDataIdentifiers($data)

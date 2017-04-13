@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -44,17 +45,17 @@ class Layout
     public $title;
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 
     /**
-     * @var integer
+     * @var int
      */
     public $height;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $collapsible;
 
@@ -71,7 +72,7 @@ class Layout
     /**
      * @var string
      */
-    public $datatype = "layout";
+    public $datatype = 'layout';
 
     /**
      * @var array
@@ -84,7 +85,7 @@ class Layout
     public $childs = [];
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $locked;
 
@@ -121,7 +122,7 @@ class Layout
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getWidth()
     {
@@ -129,7 +130,7 @@ class Layout
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getHeight()
     {
@@ -137,7 +138,7 @@ class Layout
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getCollapsible()
     {
@@ -154,6 +155,7 @@ class Layout
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -165,6 +167,7 @@ class Layout
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -176,6 +179,7 @@ class Layout
 
     /**
      * @param string $region
+     *
      * @return $this
      */
     public function setRegion($region)
@@ -187,6 +191,7 @@ class Layout
 
     /**
      * @param string $title
+     *
      * @return $this
      */
     public function setTitle($title)
@@ -197,7 +202,8 @@ class Layout
     }
 
     /**
-     * @param integer $width
+     * @param int $width
+     *
      * @return $this
      */
     public function setWidth($width)
@@ -212,7 +218,8 @@ class Layout
     }
 
     /**
-     * @param integer $height
+     * @param int $height
+     *
      * @return $this
      */
     public function setHeight($height)
@@ -227,7 +234,8 @@ class Layout
     }
 
     /**
-     * @param boolean $collapsible
+     * @param bool $collapsible
+     *
      * @return $this
      */
     public function setCollapsible($collapsible)
@@ -241,6 +249,7 @@ class Layout
 
     /**
      * @param array $permissions
+     *
      * @return $this
      */
     public function setPermissions($permissions)
@@ -260,6 +269,7 @@ class Layout
 
     /**
      * @param array $children
+     *
      * @return $this
      */
     public function setChildren($children)
@@ -270,7 +280,7 @@ class Layout
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function hasChildren()
     {
@@ -292,13 +302,14 @@ class Layout
     /**
      * @param mixed $data
      * @param array $blockedKeys
+     *
      * @return $this
      */
     public function setValues($data = [], $blockedKeys = [])
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {
-                $method = "set" . $key;
+                $method = 'set' . $key;
                 if (method_exists($this, $method)) {
                     $this->$method($value);
                 }
@@ -318,6 +329,7 @@ class Layout
 
     /**
      * @param mixed $datatype
+     *
      * @return $this
      */
     public function setDatatype($datatype)
@@ -329,7 +341,7 @@ class Layout
 
     /**
      *
-     * @return boolean
+     * @return bool
      */
     public function getLocked()
     {
@@ -338,6 +350,7 @@ class Layout
 
     /**
      * @param $locked
+     *
      * @return $this
      */
     public function setLocked($locked)
@@ -349,6 +362,7 @@ class Layout
 
     /**
      * @param $collapsed
+     *
      * @return $this
      */
     public function setCollapsed($collapsed)
@@ -361,7 +375,7 @@ class Layout
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getCollapsed()
     {
@@ -370,6 +384,7 @@ class Layout
 
     /**
      * @param $bodyStyle
+     *
      * @return $this
      */
     public function setBodyStyle($bodyStyle)

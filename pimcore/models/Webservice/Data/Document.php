@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,14 +22,13 @@ use Pimcore\Model\Webservice;
 
 abstract class Document extends Model\Webservice\Data
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $parentId;
 
@@ -43,7 +43,7 @@ abstract class Document extends Model\Webservice\Data
     public $key;
 
     /**
-     * @var integer
+     * @var int
      */
     public $index;
 
@@ -53,7 +53,7 @@ abstract class Document extends Model\Webservice\Data
     public $published;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userOwner;
 
@@ -71,7 +71,7 @@ abstract class Document extends Model\Webservice\Data
         parent::map($object);
 
         $keys = get_object_vars($this);
-        if (array_key_exists("childs", $keys)) {
+        if (array_key_exists('childs', $keys)) {
             if ($object->hasChilds()) {
                 $this->childs = [];
                 foreach ($object->getChilds() as $child) {

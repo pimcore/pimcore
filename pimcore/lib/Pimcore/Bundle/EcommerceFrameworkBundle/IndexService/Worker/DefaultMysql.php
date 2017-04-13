@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Cache;
 use Pimcore\Logger;
 
 class DefaultMysql extends AbstractWorker implements IWorker
@@ -38,7 +37,6 @@ class DefaultMysql extends AbstractWorker implements IWorker
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig);
     }
-
 
     public function createOrUpdateIndexStructures()
     {
@@ -65,10 +63,10 @@ class DefaultMysql extends AbstractWorker implements IWorker
 
     protected function doDeleteFromIndex($subObjectId, IIndexable $object = null)
     {
-        $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
-        $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+        $this->db->deleteWhere($this->tenantConfig->getTablename(), 'o_id = ' . $this->db->quote($subObjectId));
+        $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
         if ($this->tenantConfig->getTenantRelationTablename()) {
-            $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+            $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId));
         }
     }
 
@@ -116,27 +114,27 @@ class DefaultMysql extends AbstractWorker implements IWorker
 
                 $virtualProductId = $subObjectId;
                 $virtualProductActive = $object->isActive();
-                if ($object->getOSIndexType() == "variant") {
+                if ($object->getOSIndexType() == 'variant') {
                     $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
                 }
 
                 $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
-                if ($virtualProduct && method_exists($virtualProduct, "isActive")) {
+                if ($virtualProduct && method_exists($virtualProduct, 'isActive')) {
                     $virtualProductActive = $virtualProduct->isActive();
                 }
 
                 $data = [
-                    "o_id" => $subObjectId,
-                    "o_classId" => $object->getClassId(),
-                    "o_virtualProductId" => $virtualProductId,
-                    "o_virtualProductActive" => $virtualProductActive,
-                    "o_parentId" => $object->getOSParentId(),
-                    "o_type" => $object->getOSIndexType(),
-                    "categoryIds" => ',' . implode(",", $categoryIds) . ",",
-                    "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
-                    "priceSystemName" => $object->getPriceSystemName(),
-                    "active" => $object->isActive(),
-                    "inProductList" => $object->isActive(true)
+                    'o_id' => $subObjectId,
+                    'o_classId' => $object->getClassId(),
+                    'o_virtualProductId' => $virtualProductId,
+                    'o_virtualProductActive' => $virtualProductActive,
+                    'o_parentId' => $object->getOSParentId(),
+                    'o_type' => $object->getOSIndexType(),
+                    'categoryIds' => ',' . implode(',', $categoryIds) . ',',
+                    'parentCategoryIds' => ',' . implode(',', $parentCategoryIds) . ',',
+                    'priceSystemName' => $object->getPriceSystemName(),
+                    'active' => $object->isActive(),
+                    'inProductList' => $object->isActive(true)
                 ];
 
                 $relationData = [];
@@ -155,9 +153,9 @@ class DefaultMysql extends AbstractWorker implements IWorker
                             $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
                         } else {
                             if (!empty($column->fieldname)) {
-                                $getter = "get" . ucfirst($column->fieldname);
+                                $getter = 'get' . ucfirst($column->fieldname);
                             } else {
-                                $getter = "get" . ucfirst($column->name);
+                                $getter = 'get' . ucfirst($column->name);
                             }
 
                             if (method_exists($object, $getter)) {
@@ -190,7 +188,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
                             $data[$column->name] = $this->convertArray($data[$column->name]);
                         }
                     } catch (\Exception $e) {
-                        Logger::err("Exception in IndexService: " . $e);
+                        Logger::err('Exception in IndexService: ' . $e);
                     }
                 }
                 if ($a) {
@@ -202,38 +200,38 @@ class DefaultMysql extends AbstractWorker implements IWorker
                 try {
                     $this->mySqlHelper->doInsertData($data);
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index table: " . $e);
+                    Logger::warn('Error during updating index table: ' . $e);
                 }
 
                 try {
-                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
                     foreach ($relationData as $rd) {
                         $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
                     }
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index relation table: " . $e);
+                    Logger::warn('Error during updating index relation table: ' . $e);
                 }
             } else {
-                Logger::info("Don't adding product " . $subObjectId . " to index.");
+                Logger::info("Don't adding product " . $subObjectId . ' to index.');
 
                 try {
-                    $this->db->deleteWhere($this->tenantConfig->getTablename(), "o_id = " . $this->db->quote($subObjectId));
+                    $this->db->deleteWhere($this->tenantConfig->getTablename(), 'o_id = ' . $this->db->quote($subObjectId));
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index table: " . $e);
+                    Logger::warn('Error during updating index table: ' . $e);
                 }
 
                 try {
-                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($subObjectId));
+                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index relation table: " . $e);
+                    Logger::warn('Error during updating index relation table: ' . $e);
                 }
 
                 try {
                     if ($this->tenantConfig->getTenantRelationTablename()) {
-                        $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), "o_id = " . $this->db->quote($subObjectId));
+                        $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId));
                     }
                 } catch (\Exception $e) {
-                    Logger::warn("Error during updating index tenant relation table: " . $e);
+                    Logger::warn('Error during updating index tenant relation table: ' . $e);
                 }
             }
             $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);

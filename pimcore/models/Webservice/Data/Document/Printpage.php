@@ -10,13 +10,14 @@
  *
  * @category   Pimcore
  * @package    Webservice
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Webservice\Data\Document;
 
-use \Pimcore\Model\Webservice\Data\Document;
+use Pimcore\Model\Webservice\Data\Document;
 
 class Printpage extends Document\PageSnippet
 {
@@ -26,7 +27,7 @@ class Printpage extends Document\PageSnippet
     public $lastGenerated;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $inProgress;
 

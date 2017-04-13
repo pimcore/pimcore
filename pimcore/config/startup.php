@@ -11,16 +11,15 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 require_once __DIR__ . '/constants.php';
 require_once __DIR__ . '/autoload.php';
 
-$phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
+$phpLog = PIMCORE_LOG_DIRECTORY . '/php.log';
 if (is_writable(PIMCORE_LOG_DIRECTORY)) {
-    ini_set("error_log", $phpLog);
-    ini_set("log_errors", "1");
+    ini_set('error_log', $phpLog);
+    ini_set('log_errors', '1');
 }
 
 $kernel = require_once  __DIR__ . '/kernel.php';

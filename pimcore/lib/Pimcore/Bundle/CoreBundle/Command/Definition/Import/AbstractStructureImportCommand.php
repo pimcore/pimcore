@@ -28,9 +28,6 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 {
     use DryRun;
 
-    /**
-     *
-     */
     protected function configure()
     {
         $type = $this->getType();
@@ -127,6 +124,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      * Load JSON data from file
      *
      * @param $path
+     *
      * @return mixed
      */
     protected function getJson($path)
@@ -148,6 +146,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      * Ask for confirmation before overwriting
      *
      * @param $name
+     *
      * @return bool
      */
     protected function askConfirmation($name)
@@ -177,6 +176,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
      *
      * @param string $filename
+     *
      * @return string
      */
     abstract protected function getDefinitionName($filename);
@@ -185,6 +185,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      * Try to load definition by name
      *
      * @param $name
+     *
      * @return AbstractModel|null
      */
     abstract protected function loadDefinition($name);
@@ -193,6 +194,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      * Create a new definition
      *
      * @param $name
+     *
      * @return AbstractModel
      */
     abstract protected function createDefinition($name);
@@ -202,6 +204,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @param AbstractModel $definition
      * @param string $json
+     *
      * @return bool
      */
     abstract protected function import(AbstractModel $definition, $json);

@@ -36,7 +36,6 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 'count' => $value['count']];
         }
 
-
         // add current filter. workaround for findologic behavior
         if (array_key_exists($field, $currentFilter) && $currentFilter[$field] != null) {
             foreach ($currentFilter[$field] as $value) {
@@ -50,24 +49,19 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
                 if ($add) {
                     array_unshift($values, [
-                        'value' => $value
-                        , 'label' => $value
-                        , 'count' => null
-                        , 'parameter' => null
+                        'value' => $value, 'label' => $value, 'count' => null, 'parameter' => null
                     ]);
                 }
             }
         }
 
-
-
         return $this->render($script, [
-            "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
-            "label" => $filterDefinition->getLabel(),
-            "currentValue" => $currentFilter[$field],
-            "values" => $values,
-            "fieldname" => $field,
-            "resultCount" => $productList->count()
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $values,
+            'fieldname' => $field,
+            'resultCount' => $productList->count()
         ]);
     }
 
@@ -86,12 +80,10 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $field = $this->getField($filterDefinition);
         $value = $params[$field];
 
-
         // set defaults
         if (empty($value) && !$params['is_reload'] && ($preSelect = $this->getPreSelect($filterDefinition))) {
-            $value = explode(",", $preSelect);
+            $value = explode(',', $preSelect);
         }
-
 
         if (!empty($value) && in_array(\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = [];

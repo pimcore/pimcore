@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 class AbstractSetProductEntry
 {
-
     /**
      * @var int
      */
@@ -36,9 +35,9 @@ class AbstractSetProductEntry
         $this->quantity = $quantity;
     }
 
-
     /**
      * @param ICheckoutable $product
+     *
      * @return void
      */
     public function setProduct(ICheckoutable $product)
@@ -56,6 +55,7 @@ class AbstractSetProductEntry
 
     /**
      * @param  int $quantity
+     *
      * @return void
      */
     public function setQuantity($quantity)

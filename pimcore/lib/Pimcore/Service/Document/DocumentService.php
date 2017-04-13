@@ -20,6 +20,7 @@ class DocumentService
 {
     /**
      * @param $id
+     *
      * @return Document
      */
     public function getById($id)

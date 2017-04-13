@@ -47,6 +47,7 @@ class MvcConfigNormalizer
      * @param string|null $parent Bundle or (legacy) module
      * @param string|null $controller
      * @param string|null $action
+     *
      * @return string
      */
     public function formatController($parent = null, $controller = null, $action = null)
@@ -67,6 +68,7 @@ class MvcConfigNormalizer
      * @param string|null $parent Bundle or (legacy) module
      * @param string|null $controller
      * @param string|null $action
+     *
      * @return array
      */
     public function normalizeController($parent = null, $controller = null, $action = null)
@@ -87,12 +89,12 @@ class MvcConfigNormalizer
 
         if ($controller) {
             //split submodules with _ and uppercase first character
-            $controllerParts = explode("_", $controller);
+            $controllerParts = explode('_', $controller);
             foreach ($controllerParts as &$part) {
                 $part = ucfirst($part);
             }
 
-            $controller = implode("/", $controllerParts);
+            $controller = implode('/', $controllerParts);
 
             $result['controller'] = $controller;
         }
@@ -109,6 +111,7 @@ class MvcConfigNormalizer
      * Normalize bundle string into a valid bundle name
      *
      * @param string $bundle
+     *
      * @return string
      */
     public function normalizeBundle($bundle)
@@ -140,6 +143,7 @@ class MvcConfigNormalizer
      * Normalize template from .php to .html.php and remove leading slash
      *
      * @param string|null $template
+     *
      * @return string|null
      */
     public function normalizeTemplate($template = null)

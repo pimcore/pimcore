@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -18,14 +19,13 @@ namespace Pimcore\Model\Object\Data;
 
 class Geopoint
 {
-
     /**
-     * @var double
+     * @var float
      */
     public $longitude;
 
     /**
-     * @var double
+     * @var float
      */
     public $latitude;
 
@@ -53,11 +53,12 @@ class Geopoint
 
     /**
      * @param $longitude
+     *
      * @return $this
      */
     public function setLongitude($longitude)
     {
-        $this->longitude = (double) $longitude;
+        $this->longitude = (float) $longitude;
 
         return $this;
     }
@@ -72,11 +73,12 @@ class Geopoint
 
     /**
      * @param $latitude
+     *
      * @return $this
      */
     public function setLatitude($latitude)
     {
-        $this->latitude = (double) $latitude;
+        $this->latitude = (float) $latitude;
 
         return $this;
     }
@@ -86,6 +88,6 @@ class Geopoint
      */
     public function __toString()
     {
-        return $this->longitude . "; " . $this->latitude;
+        return $this->longitude . '; ' . $this->latitude;
     }
 }

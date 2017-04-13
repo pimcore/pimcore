@@ -43,7 +43,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     /**
      * @var string
      */
-    protected $adminPath = "";
+    protected $adminPath = '';
 
     /**
      * @var Kernel
@@ -152,7 +152,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function lazyInitialize($domain, $locale)
     {
-        $cacheKey = "translation_data_" . $domain . "_" . $locale . uniqid();
+        $cacheKey = 'translation_data_' . $domain . '_' . $locale . uniqid();
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
@@ -165,14 +165,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             $catalogue = null;
 
             if (!$catalogue = Cache::load($cacheKey)) {
-                $data = ["__pimcore_dummy" => "only_a_dummy"];
+                $data = ['__pimcore_dummy' => 'only_a_dummy'];
 
-                if ($domain == "admin") {
+                if ($domain == 'admin') {
                     // add json catalogue
                     try {
-                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . "/" . $locale . ".json");
+                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $locale . '.json');
                     } catch (\Exception $e) {
-                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . "/en.json");
+                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/en.json');
                     }
 
                     $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
@@ -181,25 +181,25 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                     }
                 }
 
-                $listClass = "\\Pimcore\\Model\\Translation\\" . ucfirst($backend) . "\\Listing";
+                $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend) . '\\Listing';
                 $list = new $listClass();
 
-                $list->setCondition("language = ?", [$locale]);
+                $list->setCondition('language = ?', [$locale]);
                 $translations = $list->loadRaw();
 
                 foreach ($translations as $translation) {
-                    $translationTerm = Tool\Text::removeLineBreaks($translation["text"]);
+                    $translationTerm = Tool\Text::removeLineBreaks($translation['text']);
                     if (
-                        (!isset($data[$translation["key"]]) && !$this->getCatalogue($locale)->has($translation["key"], $domain)) ||
+                        (!isset($data[$translation['key']]) && !$this->getCatalogue($locale)->has($translation['key'], $domain)) ||
                         !empty($translationTerm)) {
-                        $data[$translation["key"]] = $translationTerm;
+                        $data[$translation['key']] = $translationTerm;
                     }
                 }
 
                 $data = [$domain => $data];
                 $catalogue = new MessageCatalogue($locale, $data);
 
-                Cache::save($catalogue, $cacheKey, ["translator", "translator_website", "translate"], null, 999);
+                Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
             }
 
             if ($catalogue) {
@@ -213,7 +213,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      * @param string $translated
      * @param string $domain
      * @param string $locale
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
@@ -227,13 +229,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                     throw new \Exception("Pimcore_Translate: Message ID's longer than 190 characters are invalid!");
                 }
 
-                $class = "\\Pimcore\\Model\\Translation\\" . ucfirst($backend);
+                $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
 
                 // no translation found create key
                 if (Tool::isValidLanguage($locale)) {
                     try {
                         $t = $class::getByKey($id);
-                        $t->addTranslation($locale, "");
+                        $t->addTranslation($locale, '');
                     } catch (\Exception $e) {
                         $t = new $class();
                         $t->setKey($id);
@@ -241,7 +243,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                         // add all available languages
                         $availableLanguages = (array)Tool::getValidLanguages();
                         foreach ($availableLanguages as $language) {
-                            $t->addTranslation($language, "");
+                            $t->addTranslation($language, '');
                         }
                     }
 
@@ -252,12 +254,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 // the key would be inserted/updated several times, what would be redundant
                 $this->getCatalogue($locale)->set($id, $id, $domain);
 
-                $translated = "";
+                $translated = '';
             }
         }
 
         // now check for custom fallback locales, only for shared translations
-        if (empty($translated) && ($domain == "messages" || $domain == "admin")) {
+        if (empty($translated) && ($domain == 'messages' || $domain == 'admin')) {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
@@ -277,13 +279,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
     /**
      * @param $domain
+     *
      * @return string
      */
     protected function getBackendForDomain($domain)
     {
         $backends = [
-            "messages" => "website",
-            "admin" => "admin"
+            'messages' => 'website',
+            'admin' => 'admin'
         ];
 
         if (isset($backends[$domain])) {

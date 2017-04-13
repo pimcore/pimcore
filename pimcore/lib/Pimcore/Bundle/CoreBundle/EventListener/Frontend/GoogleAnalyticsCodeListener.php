@@ -77,9 +77,9 @@ class GoogleAnalyticsCodeListener extends AbstractFrontendListener
 
                     // search for the end <head> tag, and insert the google analytics code before
                     // this method is much faster than using simple_html_dom and uses less memory
-                    $headEndPosition = strripos($content, "</head>");
+                    $headEndPosition = strripos($content, '</head>');
                     if ($headEndPosition !== false) {
-                        $content = substr_replace($content, $code . "</head>", $headEndPosition, 7);
+                        $content = substr_replace($content, $code . '</head>', $headEndPosition, 7);
                     }
 
                     $response->setContent($content);

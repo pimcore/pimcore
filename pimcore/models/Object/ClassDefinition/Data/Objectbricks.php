@@ -10,34 +10,34 @@
  *
  * @category   Pimcore
  * @package    Object|Class
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
-use Pimcore\Logger;
 
 class Objectbricks extends Model\Object\ClassDefinition\Data
 {
-
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = "objectbricks";
+    public $fieldtype = 'objectbricks';
 
     /**
      * Type for the generated phpdoc
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Objectbrick";
+    public $phpdocType = '\\Pimcore\\Model\\Object\\Objectbrick';
 
     /**
      * @var array
@@ -51,6 +51,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $maxItems
+     *
      * @return $this
      */
     public function setMaxItems($maxItems)
@@ -70,10 +71,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param $objectFromVersion
+     *
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [], $objectFromVersion = null)
@@ -84,7 +87,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             $allowedBrickTypes = $data->getAllowedBrickTypes();
 
             foreach ($allowedBrickTypes as $allowedBrickType) {
-                $getter = "get" . ucfirst($allowedBrickType);
+                $getter = 'get' . ucfirst($allowedBrickType);
                 $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion);
             }
         }
@@ -99,6 +102,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $allowedBrickType
      * @param $objectFromVersion
      * @param int $level
+     *
      * @return array
      */
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion, $level = 0)
@@ -106,7 +110,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $parent = Object\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
-            $data = $parent->{"get" . ucfirst($this->getName())}();
+            $data = $parent->{'get' . ucfirst($this->getName())}();
 
             return $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion, $level + 1);
         }
@@ -143,22 +147,21 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if ($calculatedChilds) {
             foreach ($calculatedChilds as $fd) {
                 $fieldData = new Object\Data\CalculatedValue($fd->getName());
-                $fieldData->setContextualData("objectbrick", $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+                $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
                 $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
                 $brickData[$fd->getName()] = $fieldData;
             }
         }
 
         $editmodeDataItem = [
-            "data" => $brickData,
-            "type" => $item->getType(),
-            "metaData" => $brickMetaData,
-            "inherited" => $inherited
+            'data' => $brickData,
+            'type' => $item->getType(),
+            'metaData' => $brickMetaData,
+            'inherited' => $inherited
         ];
 
         return $editmodeDataItem;
     }
-
 
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
@@ -170,16 +173,17 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $baseObject
      * @param $getter
      * @param $objectFromVersion
+     *
      * @return mixed
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
     {
         $result = new \stdClass();
         $parent = Object\Service::hasInheritableParentObject($baseObject);
-        $valueGetter = "get" . ucfirst($key);
+        $valueGetter = 'get' . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        if (!$objectFromVersion && method_exists($fielddefinition, "getLazyLoading")
+        if (!$objectFromVersion && method_exists($fielddefinition, 'getLazyLoading')
             && $fielddefinition->getLazyLoading()
             && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
             && !$fielddefinition instanceof Object\ClassDefinition\Data\MultihrefMetadata) {
@@ -194,7 +198,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             if (empty($relations) && !empty($parent)) {
-                $parentItem = $parent->{"get" . ucfirst($this->getName())}();
+                $parentItem = $parent->{'get' . ucfirst($this->getName())}();
                 if (!empty($parentItem)) {
                     $parentItem = $parentItem->$getter();
                     if ($parentItem) {
@@ -209,9 +213,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             } else {
                 foreach ($relations as $rel) {
                     if ($fielddefinition instanceof Object\ClassDefinition\Data\Objects) {
-                        $data[] = [$rel["id"], $rel["path"], $rel["subtype"]];
+                        $data[] = [$rel['id'], $rel['path'], $rel['subtype']];
                     } else {
-                        $data[] = [$rel["id"], $rel["path"], $rel["type"], $rel["subtype"]];
+                        $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype']];
                     }
                 }
             }
@@ -227,7 +231,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
                 $backup = Object\AbstractObject::getGetInheritedValues();
                 Object\AbstractObject::setGetInheritedValues(true);
-                $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
+                $parentItem = $parent->{'get' . ucfirst($this->getName())}()->$getter();
                 Object\AbstractObject::setGetInheritedValues($backup);
                 if (!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
@@ -243,9 +247,11 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     *
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -255,35 +261,34 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if (empty($container)) {
             $className = $object->getClass()->getName();
 
-            $containerClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\" . ucfirst($this->getName());
+            $containerClass = '\\Pimcore\\Model\\Object\\' . ucfirst($className) . '\\' . ucfirst($this->getName());
             $container = new $containerClass($object, $this->getName());
         }
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
                 $collectionData = [];
-                $collectionDef = Object\Objectbrick\Definition::getByKey($collectionRaw["type"]);
+                $collectionDef = Object\Objectbrick\Definition::getByKey($collectionRaw['type']);
 
-                $getter = "get" . ucfirst($collectionRaw["type"]);
+                $getter = 'get' . ucfirst($collectionRaw['type']);
                 $brick = $container->$getter();
                 if (empty($brick)) {
-                    $brickClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($collectionRaw["type"]);
+                    $brickClass = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($collectionRaw['type']);
                     $brick = new $brickClass($object);
                 }
 
-
-                if ($collectionRaw["data"] == "deleted") {
+                if ($collectionRaw['data'] == 'deleted') {
                     $brick->setDoDelete(true);
                 } else {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        if (array_key_exists($fd->getName(), $collectionRaw["data"])) {
-                            $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()], $object);
+                        if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
+                            $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw['data'][$fd->getName()], $object);
                         }
                     }
                     $brick->setValues($collectionData);
                     $brick->setFieldname($this->getName());
 
-                    $setter = "set" . ucfirst($collectionRaw["type"]);
+                    $setter = 'set' . ucfirst($collectionRaw['type']);
                     $container->$setter($brick);
                 }
             }
@@ -294,32 +299,38 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     *
      * @param string $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return "BRICKS";
+        return 'BRICKS';
     }
 
     /**
      * converts object data to a simple string value or CSV Export
+     *
      * @abstract
+     *
      * @param Object\AbstractObject $object
      * @param array $params
+     *
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
-        return "NOT SUPPORTED";
+        return 'NOT SUPPORTED';
     }
 
     /**
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -330,11 +341,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForSearchIndex($object, $params = [])
     {
-        $dataString = "";
+        $dataString = '';
         $obData = $this->getDataFromObjectParam($object, $params);
 
         if ($obData instanceof Object\Objectbrick) {
@@ -351,7 +363,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $dataString .= $fd->getDataForSearchIndex($item, $params) . " ";
+                    $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
                 }
             }
         }
@@ -374,11 +386,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     *
      * @return null
      */
     public function load($object, $params = [])
     {
-        $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($object->getClass()->getName()) . "\\" . ucfirst($this->getName());
+        $classname = '\\Pimcore\\Model\\Object\\' . ucfirst($object->getClass()->getName()) . '\\' . ucfirst($this->getName());
 
         if (Tool::classExists($classname)) {
             $container = new $classname($object, $this->getName());
@@ -411,12 +424,13 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $allowedTypes
+     *
      * @return $this
      */
     public function setAllowedTypes($allowedTypes)
     {
         if (is_string($allowedTypes)) {
-            $allowedTypes = explode(",", $allowedTypes);
+            $allowedTypes = explode(',', $allowedTypes);
         }
 
         if (is_array($allowedTypes)) {
@@ -439,6 +453,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /**
      * @param Model\Object\AbstractObject $object
      * @param mixed $params
+     *
      * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
@@ -467,7 +482,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
                     $el->value = $fd->getForWebserviceExport($item, $params);
-                    if ($el->value ==  null && self::$dropNullValues) {
+                    if ($el->value == null && self::$dropNullValues) {
                         continue;
                     }
 
@@ -486,12 +501,14 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($data, $relatedObject = null, $params = [], $idMapper = null)
     {
-        $containerName = "\\Pimcore\\Model\\Object\\" . ucfirst($relatedObject->getClass()->getName()) . "\\" . ucfirst($this->getName());
+        $containerName = '\\Pimcore\\Model\\Object\\' . ucfirst($relatedObject->getClass()->getName()) . '\\' . ucfirst($this->getName());
 
         if (Tool::classExists($containerName)) {
             $container = new $containerName($relatedObject, $this->getName());
@@ -499,13 +516,13 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             if (is_array($data)) {
                 foreach ($data as $collectionRaw) {
                     if ($collectionRaw instanceof \stdClass) {
-                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Element";
+                        $class = '\\Pimcore\\Model\\Webservice\\Data\\Object\\Element';
                         $collectionRaw = Tool\Cast::castToClass($class, $collectionRaw);
                     }
 
                     if ($collectionRaw != null) {
                         if (!$collectionRaw instanceof Webservice\Data\Object\Element) {
-                            throw new \Exception("invalid data in objectbrick [" . $this->getName() . "]");
+                            throw new \Exception('invalid data in objectbrick [' . $this->getName() . ']');
                         }
 
                         $brick = $collectionRaw->type;
@@ -513,20 +530,20 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                         $collectionDef = Object\Objectbrick\Definition::getByKey($brick);
 
                         if (!$collectionDef) {
-                            throw new \Exception("Unknown objectbrick in webservice import [" . $brick . "]");
+                            throw new \Exception('Unknown objectbrick in webservice import [' . $brick . ']');
                         }
 
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
                             foreach ($collectionRaw->value as $field) {
                                 if ($field instanceof \stdClass) {
-                                    $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Element";
+                                    $class = '\\Pimcore\\Model\\Webservice\\Data\\Object\\Element';
                                     $field = Tool\Cast::castToClass($class, $field);
                                 }
                                 if (!$field instanceof Webservice\Data\Object\Element) {
-                                    throw new \Exception("invalid data in objectbricks [" . $this->getName() . "]");
+                                    throw new \Exception('invalid data in objectbricks [' . $this->getName() . ']');
                                 } elseif ($field->name == $fd->getName()) {
                                     if ($field->type != $fd->getFieldType()) {
-                                        throw new \Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                                        throw new \Exception('Type mismatch for objectbricks field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
                                     }
                                     $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $params, $idMapper);
                                     break;
@@ -534,12 +551,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                             }
                         }
 
-                        $collectionClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($brick);
+                        $collectionClass = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($brick);
                         $collection = new $collectionClass($relatedObject);
                         $collection->setValues($collectionData);
                         $collection->setFieldname($this->getName());
 
-                        $setter = "set" . ucfirst($brick);
+                        $setter = 'set' . ucfirst($brick);
 
                         $container->$setter($collection);
                     }
@@ -556,6 +573,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $object
      * @param $value
      * @param array $params
+     *
      * @return mixed
      */
     public function preSetData($object, $value, $params = [])
@@ -567,9 +585,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         return $value;
     }
 
-
     /**
      * @param $data
+     *
      * @return array
      */
     public function resolveDependencies($data)
@@ -591,7 +609,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $key = $fd->getName();
-                    $getter = "get" . ucfirst($key);
+                    $getter = 'get' . ucfirst($key);
                     $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
                 }
             }
@@ -605,6 +623,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($data, $tags = [])
@@ -626,7 +645,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $key = $fd->getName();
-                    $getter = "get" . ucfirst($key);
+                    $getter = 'get' . ucfirst($key);
                     $tags = $fd->getCacheTags($item->$getter(), $tags);
                 }
             }
@@ -637,6 +656,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $class
+     *
      * @return string
      */
     public function getGetterCode($class)
@@ -644,19 +664,19 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         // getter
 
         $key = $this->getName();
-        $code = "";
+        $code = '';
 
         $code .= '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . " () {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";
 
-        $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . "\\" . ucfirst($this->getName());
+        $classname = '\\Pimcore\\Model\\Object\\' . ucfirst($class->getName()) . '\\' . ucfirst($this->getName());
 
-        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace("\\", "\\\\", $classname) . '")) { ' . "\n";
+        $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";
@@ -664,8 +684,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
 
-
-        if (method_exists($this, "preGetData")) {
+        if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
 
@@ -679,12 +698,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         return $code;
     }
 
-
     /**
      * Checks if data is valid for current data field
      *
      * @param mixed $data
-     * @param boolean $omitMandatoryCheck
+     * @param bool $omitMandatoryCheck
+     *
      * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
@@ -714,7 +733,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $key = $fd->getName();
-                        $getter = "get" . ucfirst($key);
+                        $getter = 'get' . ucfirst($key);
                         $fd->checkValidity($item->$getter());
                     }
                 }
@@ -726,11 +745,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param Object\Concrete $object
      * @param mixed $params
+     *
      * @return string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        return "NOT SUPPORTED";
+        return 'NOT SUPPORTED';
     }
 
     /**
@@ -741,11 +761,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $baseObject
      * @param $getter
      * @param $objectFromVersion
+     *
      * @return mixed
      */
     private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
     {
-        $valueGetter = "get" . ucfirst($key);
+        $valueGetter = 'get' . ucfirst($key);
 
         $value = $fielddefinition->getDiffDataForEditmode($item->$valueGetter(), $baseObject);
 
@@ -757,6 +778,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $getter
      * @param $objectFromVersion
      * @param int $level
+     *
      * @return array
      */
     private function doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level = 0)
@@ -765,7 +787,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $item = $data->$getter();
 
         if (!$item && !empty($parent)) {
-            $data = $parent->{"get" . ucfirst($this->getName())}();
+            $data = $parent->{'get' . ucfirst($this->getName())}();
 
             return $this->doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
         }
@@ -788,23 +810,23 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             $diffdata = [];
 
             foreach ($fieldData as $subdata) {
-                $diffdata["field"] = $this->getName();
-                $diffdata["key"] = $this->getName() . "~" . $fd->getName();
-                $diffdata["value"] = $subdata["value"];
-                $diffdata["type"] = $subdata["type"];
-                $diffdata["disabled"] = $subdata["disabled"];
+                $diffdata['field'] = $this->getName();
+                $diffdata['key'] = $this->getName() . '~' . $fd->getName();
+                $diffdata['value'] = $subdata['value'];
+                $diffdata['type'] = $subdata['type'];
+                $diffdata['disabled'] = $subdata['disabled'];
 
                 // this is not needed anymoe
-                unset($subdata["type"]);
-                unset($subdata["value"]);
+                unset($subdata['type']);
+                unset($subdata['value']);
 
-                $diffdata["title"] = $this->getName() . " / " . $subdata["title"];
+                $diffdata['title'] = $this->getName() . ' / ' . $subdata['title'];
                 $brickdata = [
-                    "brick" => substr($getter, 3),
-                    "name" => $fd->getName(),
-                    "subdata" => $subdata
+                    'brick' => substr($getter, 3),
+                    'name' => $fd->getName(),
+                    'subdata' => $subdata
                 ];
-                $diffdata["data"] = $brickdata;
+                $diffdata['data'] = $brickdata;
             }
 
             $result[] = $diffdata;
@@ -818,6 +840,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @param mixed $params
      * @param null $objectFromVersion
+     *
      * @return array|null
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [], $objectFromVersion = null)
@@ -844,34 +867,34 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param mixed $params
+     *
      * @return null|\Pimcore\Date
      */
-
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
-        $valueGetter = "get" . ucfirst($this->getName());
-        $valueSetter = "set" . ucfirst($this->getName());
+        $valueGetter = 'get' . ucfirst($this->getName());
+        $valueSetter = 'set' . ucfirst($this->getName());
         $brickdata = $object->$valueGetter();
 
         foreach ($data as $item) {
-            $subdata = $item["data"];
+            $subdata = $item['data'];
             if (!$subdata) {
                 continue;
             }
-            $brickname = $subdata["brick"];
+            $brickname = $subdata['brick'];
 
-            $getter = "get" . ucfirst($brickname);
-            $setter = "set" . ucfirst($brickname);
+            $getter = 'get' . ucfirst($brickname);
+            $setter = 'set' . ucfirst($brickname);
 
             $brick = $brickdata->$getter();
             if (!$brick) {
                 // brick must be added to object
-                $brickClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($brickname);
+                $brickClass = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($brickname);
                 $brick = new $brickClass($object);
             }
 
-            $fieldname = $subdata["name"];
-            $fielddata = [$subdata["subdata"]];
+            $fieldname = $subdata['name'];
+            $fielddata = [$subdata['subdata']];
 
             $collectionDef = Object\Objectbrick\Definition::getByKey($brickname);
 
@@ -892,6 +915,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /** True if change is allowed in edit mode.
      * @param string $object
      * @param mixed $params
+     *
      * @return bool
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -909,9 +933,11 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
+     *
      * @return Model\Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
@@ -932,9 +958,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if (method_exists($fd, "rewriteIds")) {
+                    if (method_exists($fd, 'rewriteIds')) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
-                        $setter = "set" . ucfirst($fd->getName());
+                        $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
                     }
                 }
@@ -974,7 +1000,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        if (method_exists($fd, "classSaved")) {
+                        if (method_exists($fd, 'classSaved')) {
                             $fd->classSaved($class);
                         }
                     }
@@ -990,12 +1016,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var  $childDef Object\ClassDefinition\Data */
+            /** @var $childDef Object\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
                 } else {
-                    if (method_exists($childDef, "getFieldDefinitions")) {
+                    if (method_exists($childDef, 'getFieldDefinitions')) {
                         self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
                     }
                 }

@@ -48,36 +48,38 @@ class Currency
      */
     protected $patternStore = [
         self::NO_SYMBOL => [
-            self::LEFT => "#,##0.00",
-            self::RIGHT => "#,##0.00"
+            self::LEFT => '#,##0.00',
+            self::RIGHT => '#,##0.00'
         ],
         self::USE_SYMBOL => [
-            self::LEFT => "¤ #,##0.00",
-            self::RIGHT => "#,##0.00 ¤"
+            self::LEFT => '¤ #,##0.00',
+            self::RIGHT => '#,##0.00 ¤'
         ],
         self::USE_SHORTNAME => [
-            self::LEFT => "¤¤ #,##0.00",
-            self::RIGHT => "#,##0.00 ¤¤"
+            self::LEFT => '¤¤ #,##0.00',
+            self::RIGHT => '#,##0.00 ¤¤'
         ],
         self::USE_NAME => [
-            self::LEFT => "¤¤¤ #,##0.00",
-            self::RIGHT => "#,##0.00 ¤¤¤"
+            self::LEFT => '¤¤¤ #,##0.00',
+            self::RIGHT => '#,##0.00 ¤¤¤'
         ]
     ];
 
     /**
      * Currency constructor.
+     *
      * @param $currencyShortName string
      */
     public function __construct($currencyShortName)
     {
         $this->currencyShortName = $currencyShortName;
-        $this->formattingService = \Pimcore::getContainer()->get("pimcore.locale.intl_formatter");
+        $this->formattingService = \Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
     }
 
     /**
      * @param float $value
      * @param string $pattern
+     *
      * @return string
      */
     public function toCurrency($value, $pattern = 'default')
@@ -106,8 +108,8 @@ class Currency
     public function getSymbol()
     {
         if (empty($this->currencySymbol)) {
-            $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, "¤||");
-            $parts = explode("||", $result);
+            $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, '¤||');
+            $parts = explode('||', $result);
             $this->currencySymbol = $parts[0];
         }
 
@@ -120,8 +122,8 @@ class Currency
     public function getName()
     {
         if (empty($this->currencyName)) {
-            $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, "¤¤¤||");
-            $parts = explode("||", $result);
+            $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, '¤¤¤||');
+            $parts = explode('||', $result);
             $this->currencyName = $parts[0];
         }
 

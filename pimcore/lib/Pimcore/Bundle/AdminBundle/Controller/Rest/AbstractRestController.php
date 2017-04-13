@@ -89,6 +89,7 @@ abstract class AbstractRestController extends AdminController
 
     /**
      * @param array|string $data
+     *
      * @return array
      */
     protected function createErrorData($data = null)
@@ -98,6 +99,7 @@ abstract class AbstractRestController extends AdminController
 
     /**
      * @param array|string $data
+     *
      * @return array
      */
     protected function normalizeResponseData($data = null)
@@ -169,6 +171,7 @@ abstract class AbstractRestController extends AdminController
      * Get decoded JSON request data
      *
      * @param Request $request
+     *
      * @return array
      *
      * @throws ResponseException
@@ -210,6 +213,7 @@ abstract class AbstractRestController extends AdminController
      * @param null    $id
      *
      * @return mixed|null
+     *
      * @throws ResponseException
      */
     protected function resolveId(Request $request, $id = null)
@@ -262,6 +266,7 @@ abstract class AbstractRestController extends AdminController
 
     /**
      * @param string $sectionName
+     *
      * @return array
      */
     protected function getProfilingData($sectionName)

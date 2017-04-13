@@ -10,6 +10,7 @@
  *
  * @category   Pimcore
  * @package    Glossary
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -21,9 +22,8 @@ namespace Pimcore\Model;
  */
 class Glossary extends AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -68,18 +68,18 @@ class Glossary extends AbstractModel
     public $site;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Glossary
      */
     public static function getById($id)
@@ -102,9 +102,9 @@ class Glossary extends AbstractModel
         return $glossary;
     }
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -115,16 +115,16 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
      * @param string $text
+     *
      * @return $this
      */
     public function setText($text)
@@ -144,6 +144,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param string $link
+     *
      * @return $this
      */
     public function setLink($link)
@@ -163,6 +164,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param string $abbr
+     *
      * @return $this
      */
     public function setAbbr($abbr)
@@ -182,6 +184,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param string $acronym
+     *
      * @return $this
      */
     public function setAcronym($acronym)
@@ -201,6 +204,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param string $language
+     *
      * @return $this
      */
     public function setLanguage($language)
@@ -220,6 +224,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param $casesensitive
+     *
      * @return $this
      */
     public function setCasesensitive($casesensitive)
@@ -230,7 +235,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getCasesensitive()
     {
@@ -239,6 +244,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param $exactmatch
+     *
      * @return $this
      */
     public function setExactmatch($exactmatch)
@@ -249,7 +255,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getExactmatch()
     {
@@ -258,6 +264,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param $site
+     *
      * @return $this
      */
     public function setSite($site)
@@ -280,6 +287,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -299,6 +307,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)
