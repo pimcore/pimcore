@@ -1,0 +1,4 @@
+class_name: EcommerceTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Ecommerce
