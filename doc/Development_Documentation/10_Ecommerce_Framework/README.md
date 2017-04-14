@@ -61,9 +61,9 @@ Following aspects are short cuts into the documentation for starting working wit
 - [Installation and Configuration](./03_Installation.md)
 - [Indexing and Listing Products](./05_Indexing_And_Listing_Products/README.md)
 - [Filtering Products](./07_Filter_Service.md)
-- [Working with Prices](./09_Working_with_Prices)
+- [Working with Prices](./09_Working_with_Prices/README.md)
 - [Working with Carts](./11_Cart_Manager.md)
-- Setting up Checkouts
+- [Setting up Checkouts](./13_Checkout_Manager/README.md)
 - Integrating Payment Functionality
 - Working with Orders
 - Tracking Manager
