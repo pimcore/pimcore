@@ -20,6 +20,7 @@ $finder = PhpCsFixer\Finder::create()
     ->notPath('/var\/classes/')
 ;
 
+// do not enable self_accessor as it breaks pimcore models relying on get_called_class()
 return PhpCsFixer\Config::create()
     ->setRules([
         '@PSR1'                  => true,
