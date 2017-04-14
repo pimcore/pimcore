@@ -195,6 +195,7 @@ pimcore.element.properties = Class.create({
                 region: "center",
                 //reference: this,
                 sm:  Ext.create('Ext.selection.RowModel', {}),
+                bufferedRenderer: false,
                 trackMouseOver: true,
                 store: store,
                 bodyCls: "pimcore_editable_grid",
