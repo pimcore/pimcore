@@ -96,6 +96,7 @@ of different Payment Provider to integrate them into the framework.
 The Order Manager is responsible for all aspects of working with orders except committing them (which is the 
 responsibility of the Commit Order Processor). These aspects contain among other things:
 * Creating orders based on carts
+* Order Storage
 * Loading orders 
 * Loading order lists and filter them (Order List)
 * Working with orders after order commit (Order Agent) 
