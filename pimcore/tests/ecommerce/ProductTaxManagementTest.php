@@ -1,5 +1,6 @@
 <?php
-namespace EcommerceFramework;
+
+namespace Pimcore\Tests\Ecommerce;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
@@ -8,21 +9,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Tests\Test\TestCase;
 
-class ProductTaxManagementTest extends \Codeception\Test\Unit
+class ProductTaxManagementTest extends TestCase
 {
     /**
      * @var \EcommerceFramework\UnitTester
      */
     protected $tester;
-
-    protected function _before()
-    {
-    }
-
-    protected function _after()
-    {
-    }
 
     private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
     {
