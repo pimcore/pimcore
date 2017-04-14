@@ -976,4 +976,17 @@ class Mail extends \Swift_Message
 
         return $attachment;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function addTo($address, $name = null) {
+        if (is_array($address)) {
+            foreach ($address as $item) {
+                parent::addTo($item);
+            }
+        } else {
+            parent::addTo($address);
+        }
+    }
 }
