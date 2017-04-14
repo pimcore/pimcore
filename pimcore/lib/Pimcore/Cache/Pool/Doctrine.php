@@ -14,7 +14,7 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Doctrine\DBAL\Connection;
+use Pimcore\Db\Connection;
 use Pimcore\Cache\Pool\Exception\CacheException;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
@@ -51,27 +51,17 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
             return;
         }
 
-        $stmt = $this->db->executeQuery(
-            'SELECT id, CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END FROM cache WHERE id IN (?)',
-            [
-                $now,
-                $ids
-            ],
-            [
-                \PDO::PARAM_INT,
-                Connection::PARAM_INT_ARRAY
-            ]
-        );
+        $results = $this->db->fetchAll('SELECT id, 
+          (CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END) as data
+            FROM cache WHERE id IN (?)', [$now, $ids], [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]);
 
-        $stmt->execute();
-
-        while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            if (null !== $row[1]) {
-                $value = $this->unserializeData($row[1]);
+        foreach($results as $row) {
+            if (null !== $row['data']) {
+                $value = $this->unserializeData($row['data']);
 
                 // we don't load tags from the DB, therefore $cacheItem->getPreviousTags() doesn't return anything
                 // if we need previous tags, update the query to join the tags table and to return them as result
-                yield $row[0] => [
+                yield $row['id'] => [
                     'value' => $value,
                     'tags'  => []
                 ];
@@ -162,15 +152,11 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
             return [];
         }
 
-        $stmt = $this->db->executeQuery(
+        $result = $this->db->fetchCol(
             'SELECT DISTINCT id FROM cache_tags WHERE tag IN (?)',
             [$tags],
-            [Connection::PARAM_INT_ARRAY]
+            [Connection::PARAM_STR_ARRAY]
         );
-
-        $stmt->execute();
-
-        $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
         return $result;
     }
