@@ -983,10 +983,10 @@ class Mail extends \Swift_Message
     public function addTo($address, $name = null) {
         if (is_array($address)) {
             foreach ($address as $item) {
-                parent::addTo($item);
+                parent::addTo($item, $name);
             }
         } else {
-            parent::addTo($address);
+            parent::addTo($address, $name);
         }
     }
 }
