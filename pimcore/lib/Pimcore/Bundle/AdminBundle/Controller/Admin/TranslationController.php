@@ -1085,9 +1085,8 @@ class TranslationController extends AdminController
      */
     public function wordExportAction(Request $request)
     {
-
-        //error_reporting(E_ERROR);
-        //ini_set("display_errors", "off");
+        error_reporting(0);
+        ini_set("display_errors", "off");
 
         $id = $request->get('id');
         $data = $this->decodeJson($request->get('data'));
@@ -1095,7 +1094,7 @@ class TranslationController extends AdminController
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $id . '.html';
         if (!is_file($exportFile)) {
-            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/word-export.css') . '</style>');
+            File::put($exportFile, '');
         }
 
         foreach ($data as $el) {
@@ -1299,43 +1298,37 @@ class TranslationController extends AdminController
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return Response
      */
     public function wordExportDownloadAction(Request $request)
     {
         $id = $request->get('id');
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $id . '.html';
 
-        // add closing body/html
-        //$f = fopen($exportFile, "a+");
-        //fwrite($f, "</body></html>");
-        //fclose($f);
+        // no conversion, output html file, works fine with MS Word and LibreOffice
+        $content = file_get_contents($exportFile);
+        @unlink($exportFile);
 
-        // should be done via Pimcore_Document(_Adapter_LibreOffice) in the future
+        // replace <script> and <link>
+        $content = preg_replace("/<link[^>]+>/im","$1",$content);
+        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im","$1",$content);
 
-        if (\Pimcore\Document::isFileTypeSupported('docx')) {
-            $lockKey = 'soffice';
-            Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions of the same document
+        $content =
+            "<html>\n" .
+                "<head>\n" .
+                    '<style type="text/css">' . "\n" .
+                    file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") .
+                    "</style>\n" .
+                "</head>\n\n" .
+                "<body>\n" .
+                    $content .
+                "\n\n</body>\n" .
+            "</html>\n"
+        ;
 
-            $out = Tool\Console::exec(\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_SYSTEM_TEMP_DIRECTORY . ' ' . $exportFile);
-
-            Logger::debug('LibreOffice Output was: ' . $out);
-
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($exportFile) . '$/', '.docx', basename($exportFile));
-
-            Model\Tool\Lock::release($lockKey);
-            // end what should be done in Pimcore_Document
-
-            $response = new BinaryFileResponse($exportFile);
-            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        } else {
-            $response = new BinaryFileResponse($exportFile);
-            // no conversion, output html file
-            $response->headers->set('Content-Type', 'text/html');
-        }
-
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFile));
-        $response->deleteFileAfterSend(true);
+        $response = new Response($content);
+        $response->headers->set('Content-Type', 'text/html');
+        $response->headers->set('Content-Disposition', 'attachment; filename="word-export-' . date("Ymd") . '_' . uniqid() . '.htm"');
 
         return $response;
     }
