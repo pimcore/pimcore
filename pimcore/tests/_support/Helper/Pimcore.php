@@ -232,11 +232,11 @@ class Pimcore extends Module\Symfony
         $databases = $schemaManager->listDatabases();
         if (in_array($dbName, $databases)) {
             $this->debug(sprintf('[DB] Dropping DB %s', $dbName));
-            $schemaManager->dropDatabase($dbName);
+            $schemaManager->dropDatabase($connection->quoteIdentifier($dbName));
         }
 
         $this->debug(sprintf('[DB] Creating DB %s', $dbName));
-        $schemaManager->createDatabase($dbName);
+        $schemaManager->createDatabase($connection->quoteIdentifier($dbName));
     }
 
     /**
