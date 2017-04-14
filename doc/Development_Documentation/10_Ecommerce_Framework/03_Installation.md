@@ -54,7 +54,7 @@ Possibly the index update scripts need to be adapted.
 
 ## Configuring EcommerceFrameworkConfig.php
 
-[Sample EcommerceFrameworkConfig.php](../../../pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php)
+[Sample EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php)
 
 Open `app/config/pimcore/EcommerceFrameworkConfig.php` and adjust the settings. This configuration file is the central 
 configuration for the E-Commerce Framework and defines the implementations and configurations for all modules.
