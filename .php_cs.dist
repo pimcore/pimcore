@@ -59,7 +59,6 @@ return PhpCsFixer\Config::create()
         'phpdoc_separation'                   => true,
         'phpdoc_single_line_var_spacing'      => true,
         'return_type_declaration'             => true,
-        'self_accessor'                       => true,
         'short_scalar_cast'                   => true,
         'single_blank_line_before_namespace'  => true,
         'single_quote'                        => true,
