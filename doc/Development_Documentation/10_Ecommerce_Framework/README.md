@@ -59,7 +59,7 @@ Following aspects are short cuts into the documentation for starting working wit
 
 - [Architecture Overview](./01_Architecture_Overview.md)
 - [Installation and Configuration](./03_Installation.md)
-- Indexing and Listing Products
+- [Indexing and Listing Products](./05_Indexing_And_Listing_Products/README.md)
 - Filtering Products
 - Working with Prices
 - Working with Carts 

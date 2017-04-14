@@ -41,7 +41,7 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
    * The interfaces define methods that are needed for the two use cases and need to be implemented. 
 
 > For the abstract class use the parent class functionality of Pimcore. For implementing the interfaces use either 
-the parent class functionality or the dependency injection functionality of pimcore 
+the parent class functionality or the dependency injection functionality of Pimcore 
 (see also [Overriding Models](../20_Extending_Pimcore/03_Overriding_Models.md)).
 
 ### Product Category
@@ -65,7 +65,7 @@ So this configuration file specifies things like
 - availability systems
 - checkout manager and checkout steps
 - payment providers
-- index service and which attributes should be in the product index
+- [Index Service and which attributes should be in the Product Index](./05_Index_Service/README.md)
 - pricing manager
 - ...
 For detailed information see comments within the configuration file. Depending on your use case, you might not need 
