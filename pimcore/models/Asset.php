@@ -231,7 +231,7 @@ class Asset extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         try {
-            $asset = new self();
+            $asset = new Asset();
 
             if (Tool::isValidPath($path)) {
                 $asset->getDao()->getByPath($path);
@@ -272,7 +272,7 @@ class Asset extends Element\AbstractElement
 
         try {
             if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
-                $asset = new self();
+                $asset = new Asset();
                 $asset->getDao()->getById($id);
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
@@ -573,7 +573,7 @@ class Asset extends Element\AbstractElement
                 throw new \Exception('Cannot create asset called ".." or "."');
             }
 
-            $parent = self::getById($this->getParentId());
+            $parent = Asset::getById($this->getParentId());
             if ($parent) {
                 // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
@@ -597,8 +597,8 @@ class Asset extends Element\AbstractElement
         }
 
         if (Asset\Service::pathExists($this->getRealFullPath())) {
-            $duplicate = self::getByPath($this->getRealFullPath());
-            if ($duplicate instanceof self and $duplicate->getId() != $this->getId()) {
+            $duplicate = Asset::getByPath($this->getRealFullPath());
+            if ($duplicate instanceof Asset and $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
             }
         }
@@ -1767,7 +1767,7 @@ class Asset extends Element\AbstractElement
     public function setParent($parent)
     {
         $this->parent = $parent;
-        if ($parent instanceof self) {
+        if ($parent instanceof Asset) {
             $this->parentId = $parent->getId();
         }
 
@@ -1826,7 +1826,7 @@ class Asset extends Element\AbstractElement
     {
         if (isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
-            $originalElement = self::getById($this->getId());
+            $originalElement = Asset::getById($this->getId());
             if ($originalElement) {
                 $this->setFilename($originalElement->getFilename());
                 $this->setPath($originalElement->getRealPath());

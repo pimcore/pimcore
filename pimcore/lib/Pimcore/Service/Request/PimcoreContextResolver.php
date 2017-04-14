@@ -124,7 +124,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
             }
         }
 
-        return self::CONTEXT_DEFAULT;
+        return static::CONTEXT_DEFAULT;
     }
 
     /**

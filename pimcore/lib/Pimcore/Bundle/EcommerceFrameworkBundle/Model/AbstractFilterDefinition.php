@@ -30,7 +30,7 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof self) {
+        if ($object instanceof AbstractFilterDefinition) {
             return $object;
         }
 

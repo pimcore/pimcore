@@ -30,7 +30,7 @@ class AbstractCategory extends \Pimcore\Model\Object\Concrete
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof self) {
+        if ($object instanceof AbstractCategory) {
             return $object;
         }
 

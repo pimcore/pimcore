@@ -240,7 +240,7 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         try {
-            $document = new self();
+            $document = new Document();
             // validate path
             if (Tool::isValidPath($path)) {
                 $document->getDao()->getByPath($path);
@@ -281,7 +281,7 @@ class Document extends Element\AbstractElement
 
         try {
             if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-                $document = new self();
+                $document = new Document();
                 $document->getDao()->getById($id);
 
                 $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
@@ -502,7 +502,7 @@ class Document extends Element\AbstractElement
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
-            $parent = self::getById($this->getParentId());
+            $parent = Document::getById($this->getParentId());
             if ($parent) {
                 // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
@@ -525,8 +525,8 @@ class Document extends Element\AbstractElement
         }
 
         if (Document\Service::pathExists($this->getRealFullPath())) {
-            $duplicate = self::getByPath($this->getRealFullPath());
-            if ($duplicate instanceof self and $duplicate->getId() != $this->getId()) {
+            $duplicate = Document::getByPath($this->getRealFullPath());
+            if ($duplicate instanceof Document and $duplicate->getId() != $this->getId()) {
                 throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
             }
         }
@@ -840,7 +840,7 @@ class Document extends Element\AbstractElement
             $parent = $this;
             while ($parent) {
                 if ($hardlinkId = $documentService->getDocumentIdFromHardlinkInSameSite(Site::getCurrentSite(), $parent)) {
-                    $hardlink = self::getById($hardlinkId);
+                    $hardlink = Document::getById($hardlinkId);
                     if (FrontendTool::isDocumentInCurrentSite($hardlink)) {
                         $siteRootPath = Site::getCurrentSite()->getRootPath();
                         $siteRootPath = preg_quote($siteRootPath);
@@ -1303,7 +1303,7 @@ class Document extends Element\AbstractElement
     public function getParent()
     {
         if ($this->parent === null) {
-            $this->setParent(self::getById($this->getParentId()));
+            $this->setParent(Document::getById($this->getParentId()));
         }
 
         return $this->parent;
@@ -1319,7 +1319,7 @@ class Document extends Element\AbstractElement
     public function setParent($parent)
     {
         $this->parent = $parent;
-        if ($parent instanceof self) {
+        if ($parent instanceof Document) {
             $this->parentId = $parent->getId();
         }
 
@@ -1354,7 +1354,7 @@ class Document extends Element\AbstractElement
     {
         if (isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
-            $originalElement = self::getById($this->getId());
+            $originalElement = Document::getById($this->getId());
             if ($originalElement) {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getRealPath());

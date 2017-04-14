@@ -97,7 +97,7 @@ class Sanitycheck extends Model\AbstractModel
      */
     public static function getNext()
     {
-        $sanityCheck = new self();
+        $sanityCheck = new Sanitycheck();
         $sanityCheck->getDao()->getNext();
         if ($sanityCheck->getId() and $sanityCheck->getType()) {
             return $sanityCheck;

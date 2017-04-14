@@ -275,7 +275,7 @@ class Localizedfield extends Model\AbstractModel
                             $method = 'getLocalizedfields';
                             if (method_exists($parent, $method)) {
                                 $localizedFields = $parent->getLocalizedFields();
-                                if ($localizedFields instanceof self) {
+                                if ($localizedFields instanceof Localizedfield) {
                                     if ($localizedFields->object->getId() != $this->object->getId()) {
                                         $data = $localizedFields->getLocalizedValue($name, $language, true);
                                     }

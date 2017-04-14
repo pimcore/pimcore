@@ -155,7 +155,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
     {
         $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-        if ($object instanceof self) {
+        if ($object instanceof AbstractOfferToolProduct) {
             return $object;
         }
 

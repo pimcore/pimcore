@@ -83,7 +83,7 @@ class Tag extends Model\AbstractModel
      */
     public static function getTagsForElement($cType, $cId)
     {
-        $tag = new self();
+        $tag = new Tag();
 
         return $tag->getDao()->getTagsForElement($cType, $cId);
     }
@@ -122,7 +122,7 @@ class Tag extends Model\AbstractModel
      */
     public static function setTagsForElement($cType, $cId, array $tags)
     {
-        $tag = new self();
+        $tag = new Tag();
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
 
@@ -134,7 +134,7 @@ class Tag extends Model\AbstractModel
      */
     public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false)
     {
-        $tag = new self();
+        $tag = new Tag();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
     }
 
@@ -229,7 +229,7 @@ class Tag extends Model\AbstractModel
     public function getParent()
     {
         if ($this->parent == null) {
-            $this->parent = self::getById($this->getParentId());
+            $this->parent = Tag::getById($this->getParentId());
         }
 
         return $this->parent;

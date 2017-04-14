@@ -334,7 +334,7 @@ class Classificationstore extends Model\AbstractModel
                             if (method_exists($parent, $method)) {
                                 $getter = 'get' . ucfirst($this->fieldname);
                                 $classificationStore = $parent->$getter();
-                                if ($classificationStore instanceof self) {
+                                if ($classificationStore instanceof Classificationstore) {
                                     if ($classificationStore->object->getId() != $this->object->getId()) {
                                         $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
                                     }

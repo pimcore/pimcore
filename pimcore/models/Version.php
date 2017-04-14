@@ -346,7 +346,7 @@ class Version extends AbstractModel
         $versions = array_merge($days, $steps);
 
         foreach ($versions as $id) {
-            $version = self::getById($id);
+            $version = Version::getById($id);
             $version->delete();
         }
     }
@@ -660,7 +660,7 @@ class Version extends AbstractModel
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {
                     try {
-                        $version = self::getById($id);
+                        $version = Version::getById($id);
                     } catch (\Exception $e) {
                         $ignoredIds[] = $id;
                         Logger::debug('Version with ' . $id . " not found\n");

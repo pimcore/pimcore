@@ -158,7 +158,7 @@ class Site extends AbstractModel
             $site = self::getById($mixed);
         } elseif (is_string($mixed)) {
             $site = self::getByDomain($mixed);
-        } elseif ($mixed instanceof self) {
+        } elseif ($mixed instanceof Site) {
             $site = $mixed;
         }
 
