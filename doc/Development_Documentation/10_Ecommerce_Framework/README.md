@@ -49,7 +49,7 @@ it is a set of tools and functionality to help building e-commerce applications 
 - Tools for working with and managing Orders
 - Concepts for setting up multi tenant and multi shop solutions
 
-For a first impression have a look at our [ecommerce demo](http://ecommercedemo.pimcore.org). For more complex solutions
+For a first impression have a look at our [E-Commerce Demo](http://ecommercedemo.pimcore.org). For more complex solutions
 have a look at our [case studies](https://www.pimcore.org/en/resources/casestudies). 
 
 
@@ -64,7 +64,7 @@ Following aspects are short cuts into the documentation for starting working wit
 - [Working with Prices](./09_Working_with_Prices/README.md)
 - [Working with Carts](./11_Cart_Manager.md)
 - [Setting up Checkouts](./13_Checkout_Manager/README.md)
-- Integrating Payment Functionality
+- [Integrating Payment Functionality](./15_Payment/README.md)
 - Working with Orders
 - Tracking Manager
 
