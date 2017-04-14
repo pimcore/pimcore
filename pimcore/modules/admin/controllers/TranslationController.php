@@ -1026,8 +1026,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
     public function wordExportAction()
     {
 
-        //error_reporting(E_ERROR);
-        //ini_set("display_errors", "off");
+        error_reporting(0);
+        ini_set("display_errors", "off");
 
         $id = $this->getParam("id");
         $data = \Zend_Json::decode($this->getParam("data"));
@@ -1035,7 +1035,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
         if (!is_file($exportFile)) {
-            File::put($exportFile, '<style type="text/css">' . file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") . '</style>');
+            File::put($exportFile, '');
         }
 
         foreach ($data as $el) {
@@ -1245,19 +1245,35 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $id = $this->getParam("id");
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
 
+        $content = file_get_contents($exportFile);
+        @unlink($exportFile);
+
+        // replace <script> and <link>
+        $content = preg_replace("/<link[^>]+>/im","$1",$content);
+        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im","$1",$content);
+
+        $content =
+            "<html>\n" .
+            "<head>\n" .
+                '<style type="text/css">' . "\n" .
+                    file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") .
+                "</style>\n" .
+            "</head>\n\n" .
+            "<body>\n" .
+                $content .
+            "\n\n</body>\n" .
+            "</html>\n"
+        ;
 
         // no conversion, output html file, works fine with MS Word and LibreOffice
-        $tmpName = $exportFile;
         header("Content-Type: text/html");
-        header('Content-Disposition: attachment; filename="' . basename($tmpName) . '"');
+        header('Content-Disposition: attachment; filename="word-export-' . date("Ymd") . '_' . uniqid() . '.htm"');
 
         while (@ob_end_flush());
         flush();
 
-        readfile($tmpName);
+        echo $content;
 
-        @unlink($exportFile);
-        @unlink($tmpName);
         exit;
     }
 
