@@ -1245,33 +1245,13 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $id = $this->getParam("id");
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $id . ".html";
 
-        // add closing body/html
-        //$f = fopen($exportFile, "a+");
-        //fwrite($f, "</body></html>");
-        //fclose($f);
 
-        // should be done via Pimcore_Document(_Adapter_LibreOffice) in the future
-        if (\Pimcore\Document::isFileTypeSupported("docx")) {
-            $lockKey = "soffice";
-            Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions of the same document
+        // no conversion, output html file, works fine with MS Word and LibreOffice
+        $tmpName = $exportFile;
+        header("Content-Type: text/html");
+        header('Content-Disposition: attachment; filename="' . basename($tmpName) . '"');
 
-            $out = Tool\Console::exec(\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_SYSTEM_TEMP_DIRECTORY . " " . $exportFile);
-
-            Logger::debug("LibreOffice Output was: " . $out);
-
-            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($exportFile) . "$/", ".docx", basename($exportFile));
-
-            Model\Tool\Lock::release($lockKey);
-            // end what should be done in Pimcore_Document
-
-            header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-            header('Content-Disposition: attachment; filename="' . basename($tmpName) . '"');
-        } else {
-            // no conversion, output html file
-            $tmpName = $exportFile;
-            header("Content-Type: text/html");
-            header('Content-Disposition: attachment; filename="' . basename($tmpName) . '"');
-        } while (@ob_end_flush());
+        while (@ob_end_flush());
         flush();
 
         readfile($tmpName);
