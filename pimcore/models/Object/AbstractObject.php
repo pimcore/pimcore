@@ -1121,6 +1121,45 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param $fieldname
+     * @return array
+     */
+    public function getOptionsForSelectField($fieldname) {
+        return Service::getOptionsForSelectField($this, $fieldname);
+    }
+
+    /**
+     * alias of getOptionsForSelectField
+     * @param $fieldname
+     * @return array
+     */
+    public function getOptionsForMultiSelectField($fieldname) {
+        return $this->getOptionsForSelectField($fieldname);
+    }
+
+    /**
+     * @param $fieldname
+     * @return string
+     */
+    public function getDisplayNameForSelectField($fieldname) {
+        $value = $this->{"get" . ucfirst($fieldname)}();
+        return $this->getOptionsForSelectField($fieldname)[$value];
+    }
+
+    /**
+     * @param $fieldname
+     * @return array
+     */
+    public function getDisplayNameForMultiSelectField($fieldname) {
+        $values = $this->{"get" . ucfirst($fieldname)}();
+        $displayNames = [];
+        foreach ($values as $value) {
+            $displayNames[] = $this->getOptionsForMultiSelectField($fieldname)[$value];
+        }
+        return $displayNames;
+    }
+
+    /**
      * @return Model\Element\AdminStyle
      */
     public function getElementAdminStyle()
