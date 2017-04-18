@@ -308,6 +308,40 @@ abstract class AbstractListing extends AbstractModel
     }
 
     /**
+     * @param string $condition
+     * @return $this
+     */
+    public function addCondition($condition, $conditionVariables = null) {
+        if ($this->condition) $this->condition .= ' AND '.$condition;
+        else $this->condition = $condition;
+
+        // statement variables
+        if(is_array($conditionVariables)) {
+            $this->setConditionVariables(array_merge($this->conditionVariables, $conditionVariables));
+        } else if ($conditionVariables !== null) {
+             $this->setConditionVariables(array_push($this->conditionVariables, $conditionVariables));
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $condition
+     * @return $this
+     */
+    public function orCondition($condition, $conditionVariables = null) {
+        if ($this->condition) $this->condition .= ' OR '.$condition;
+        else $this->condition = $condition;
+
+        // statement variables
+        if(is_array($conditionVariables)) {
+            $this->setConditionVariables(array_merge($this->conditionVariables, $conditionVariables));
+        } else if ($conditionVariables !== null) {
+             $this->setConditionVariables(array_push($this->conditionVariables, $conditionVariables));
+        }
+        return $this;
+    }
+	
+    /**
      * @return string
      */
     public function getGroupBy()
