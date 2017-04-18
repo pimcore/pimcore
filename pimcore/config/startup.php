@@ -126,8 +126,11 @@ $includePaths = [
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
 // composer autoloader
-include_once(PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php");
-
+/** @var $loader \Composer\Autoload\ClassLoader */
+$loader = include_once(PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php");
+// tell the autoloader where to find Pimcore's generated class stubs
+// this is primarily necessary for tests and custom class directories, which are not covered in composer.json
+$loader->addPsr4('Pimcore\\Model\\Object\\', PIMCORE_CLASS_DIRECTORY . '/Object');
 
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
