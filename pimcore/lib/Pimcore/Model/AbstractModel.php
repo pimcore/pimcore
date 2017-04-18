@@ -93,7 +93,12 @@ abstract class AbstractModel
             self::$daoClassMap = include(PIMCORE_PATH . "/config/dao-classmap.php");
         }
 
-        if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
+        // we have 2 static mappings for objects for performance reasons
+        if($this instanceof Object\Concrete) {
+            $dao = 'Pimcore\Model\Object\Concrete\Dao';
+        } else if ($this instanceof Object\Listing\Concrete) {
+            $dao = 'Pimcore\Model\Object\Listing\Concrete\Dao';
+        } else if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
             $dao = self::$daoClassCache[$cacheKey];
         } elseif (!$key || $forceDetection) {
             if(isset(self::$daoClassMap[$myClass])) {
