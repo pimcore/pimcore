@@ -9,7 +9,7 @@
 * [Documents - *Managing Web Pages*](./03_Documents/README.md) 
 * [Assets - *Media Library / Digital Asset Management*](./04_Assets/README.md) 
 * [Objects - *Custom Data Models / Entities, PIM / MDM*](./05_Objects/README.md) 
-* [E-Commerce Framework - *Create E-Commerce Applications with Pimcore](./10_Ecommerce_Framework/README.md)
+* [E-Commerce Framework - *Create E-Commerce Applications with Pimcore](./10_E-Commerce_Framework/README.md)
 
 ## Platform Topics
 * [Multilanguage & Localization](./06_Multi_Language_i18n/README.md) 
