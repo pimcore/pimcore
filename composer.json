@@ -90,10 +90,10 @@
       "Pimcore\\Model\\Object\\": "website/var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
-      "": ["website/lib","website/models"]
+      "Website\\": ["website/lib/Website","website/models/Website"]
     },
     "psr-0": {
-      "": ["website/lib","website/models"]
+      "Website_": ["website/lib/Website","website/models/Website"]
     }
   },
   "scripts": {
