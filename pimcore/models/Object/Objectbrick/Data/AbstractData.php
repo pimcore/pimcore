@@ -23,7 +23,7 @@ use Pimcore\Model\Object;
 /**
  * @method \Pimcore\Model\Object\Objectbrick\Data\Dao getDao()
  */
-class AbstractData extends Model\AbstractModel
+abstract class AbstractData extends Model\AbstractModel
 {
     /**
      * @var string
