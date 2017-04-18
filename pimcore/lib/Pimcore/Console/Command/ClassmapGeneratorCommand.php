@@ -27,11 +27,6 @@ class ClassmapGeneratorCommand extends AbstractCommand
             ->setName('classmap-generator')
             ->setDescription('Generate class maps to improve performance')
             ->addOption(
-                'core', 'c',
-                InputOption::VALUE_NONE,
-                "Generate class map for all core files in /pimcore (usually used by the core team)"
-            )
-            ->addOption(
                 'website', 'w',
                 InputOption::VALUE_NONE,
                 'Generate class map for all classes in include path (usually for you ;-) ) - this is the default'
@@ -44,20 +39,9 @@ class ClassmapGeneratorCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $excludePatterns = [];
-        if ($input->getOption("core")) {
-            $paths = [
-                PIMCORE_PATH . "/lib",
-                PIMCORE_PATH . "/models",
-            ];
-            $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 
-            $excludePatterns = [
-                "/^Csv/",
-            ];
-        } else {
-            $paths = explode(PATH_SEPARATOR, get_include_path());
-            $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
-        }
+        $paths = explode(PATH_SEPARATOR, get_include_path());
+        $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
 
         $globalMap = [];
         $map = new \stdClass();

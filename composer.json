@@ -89,7 +89,11 @@
     "psr-4": {
       "Pimcore\\Model\\Object\\": "website/var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
-      "Pimcore\\": "pimcore/lib/Pimcore"
+      "Pimcore\\": "pimcore/lib/Pimcore",
+      "": ["website/lib","website/models"]
+    },
+    "psr-0": {
+      "": ["website/lib","website/models"]
     }
   },
   "scripts": {

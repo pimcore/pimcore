@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -16,16 +16,10 @@ namespace Pimcore\Loader;
 
 use Pimcore\Tool;
 
-class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
+class CompatibilityAutoloader
 {
-    /**
-     * Autoload Pimcore Classes
-     *
-     * @param string $class
-     */
-    public function autoload($class)
+    public function loadClass($class)
     {
-
         // manual aliasing
         $classAliases = [
             "Pimcore\\Resource" => "Pimcore\\Db",
@@ -43,8 +37,6 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
 
             return;
         }
-
-        parent::autoload($class);
 
         // compatibility from Resource => Dao
         if (strpos($class, "Resource") && !class_exists($class, false) && !interface_exists($class, false)) {
@@ -155,5 +147,23 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
                 }
             }
         }
+    }
+
+    /**
+     * Registers this instance as an autoloader.
+     *
+     * @param bool $prepend
+     */
+    public function register($prepend = false)
+    {
+        spl_autoload_register(array($this, 'loadClass'), true, $prepend);
+    }
+
+    /**
+     * Removes this instance from the registered autoloaders.
+     */
+    public function unregister()
+    {
+        spl_autoload_unregister(array($this, 'loadClass'));
     }
 }
