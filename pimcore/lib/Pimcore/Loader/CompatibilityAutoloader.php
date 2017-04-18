@@ -119,6 +119,7 @@ class CompatibilityAutoloader
             if (Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
                 if (!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($namespacedClass, $class);
+
                     return true;
                 }
             }
@@ -157,7 +158,7 @@ class CompatibilityAutoloader
      */
     public function register($prepend = false)
     {
-        spl_autoload_register(array($this, 'loadClass'), true, $prepend);
+        spl_autoload_register([$this, 'loadClass'], true, $prepend);
     }
 
     /**
@@ -165,6 +166,6 @@ class CompatibilityAutoloader
      */
     public function unregister()
     {
-        spl_autoload_unregister(array($this, 'loadClass'));
+        spl_autoload_unregister([$this, 'loadClass']);
     }
 }

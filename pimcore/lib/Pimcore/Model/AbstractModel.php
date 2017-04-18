@@ -93,11 +93,11 @@ abstract class AbstractModel
         }
 
         // we have 2 static mappings for objects for performance reasons
-        if($this instanceof Object\Concrete) {
+        if ($this instanceof Object\Concrete) {
             $dao = 'Pimcore\Model\Object\Concrete\Dao';
-        } else if ($this instanceof Object\Listing\Concrete) {
+        } elseif ($this instanceof Object\Listing\Concrete) {
             $dao = 'Pimcore\Model\Object\Listing\Concrete\Dao';
-        } else if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
+        } elseif (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
             $dao = self::$daoClassCache[$cacheKey];
         } elseif (!$key || $forceDetection) {
             if (isset(self::$daoClassMap[$myClass])) {
@@ -137,8 +137,8 @@ abstract class AbstractModel
      * @param string $modelClass
      * @return string|null
      */
-    public static function locateDaoClass($modelClass) {
-
+    public static function locateDaoClass($modelClass)
+    {
         $forbiddenClassNames = ['Pimcore\\Resource'];
 
         $classes = class_parents($modelClass);

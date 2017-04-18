@@ -148,7 +148,7 @@ $autoloaderClassMapFiles = [
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     if (file_exists($autoloaderClassMapFile)) {
         $classMapAutoLoader = new \Zend_Loader_ClassMapAutoloader([$autoloaderClassMapFile]);
-        spl_autoload_register(array($classMapAutoLoader, 'autoload'), true, false);
+        spl_autoload_register([$classMapAutoLoader, 'autoload'], true, false);
         break;
     }
 }
