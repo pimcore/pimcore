@@ -2,7 +2,7 @@
 
 The following architecture overview shows available framework components. The component configuration takes place in 
 the `EcommerceFrameworkConfig.php` file and a factory is responsible for instantiation of the implementations. 
-For component implementation a custom implementation can be configured and used. 
+For each component a custom implementation can be configured and used. 
 
 ![bigpicture](../img/ecommerce-architecture.png)
 
@@ -17,32 +17,32 @@ data from the index.
 These aspects contain among other things: 
 * Defining which attributes should be indexed.
 * Implementations for different search backends (e.g. mysql, elasticsearch, fact finder, findologic).
-* Product lists as the API to access the product data stored in the search index. Product lists can be used 
+* *Product Lists* as the API to access the product data stored in the search index. *Product Lists* can be used 
   by controllers to display product listings.
 
 
 ## Filter Service
 The Filter Service is responsible for all aspects concerning filtering products and setting up a filtered navigation. 
- It is tightly coupled with the product lists of the Index Service, provides the developer a simple API for building
+ It is tightly coupled with the *Product Lists* of the Index Service, provides the developer a simple API for building
  a layered navigation and takes care of query generation, counting results and stuff.  
 
 
 ## Availability System
-The Availability System is responsible for all aspects concerning product availability. Here the logic for calculating 
-availabilities, calling external availability services, etc. is encapsulated. Each product has an Availability System 
-assigned and when it comes to getting the availability of a product, this should be delegated to the Availability 
-System of the product.  
+The *Availability System* is responsible for all aspects concerning product availability. Here the logic for calculating 
+availabilities, calling external availability services, etc. is encapsulated. Each product has an *Availability System* 
+assigned and when it comes to getting the availability of a product, this should be delegated to the *Availability 
+System* of the product.  
 
 ## Price System and Taxes
-Like Availability Systems, there are Price Systems which are responsible for all aspects of getting product prices. 
-Here the logic of calculating the product prices should be encapsulated. Each product has a Price System and when it 
-comes to getting the price of a product, this should be delegated to the Price System of the product.
+Like *Availability Systems*, there are *Price Systems* which are responsible for all aspects of getting product prices. 
+Here the logic of calculating the product prices should be encapsulated. Each product has a *Price System* and when it 
+comes to getting the price of a product, this should be delegated to the *Price System* of the product.
 
-Also Tax Management is located in this component. 
+Also *Tax Management* is located in this component. 
 
 
 ## Pricing Manager
-In addition to the Price System, there is the Pricing Manager which is responsible for all aspects concerning 
+In addition to the *Price System*, there is the Pricing Manager which is responsible for all aspects concerning 
 modification of prices for marketing purposes. Therefore pricing rules (e.g. certain products, certain time frames, ...)
 build conditions which need to be valid that certain pricing actions (e.g. product price discount, free shipping, ...) 
 are executed. 
@@ -68,7 +68,7 @@ The Cart Manager is responsible for all aspects concerning carts. These aspects 
 
 
 ## Checkout Manager
-The Checkout Manager is responsible for all aspects concerning checkout process and a one-stop API for getting 
+The Checkout Manager is responsible for all aspects concerning checkout process and an one-stop API for getting 
 through the checkout process. The Checkout Manager always works with a cart and at certain points in the checkout 
 process it delegates to other components to convert the cart to an order object (Order Manager), start payment 
 operations (Commit Order Processor and Payment Manager) and commits the order (Commit Order Processor). 
@@ -89,7 +89,7 @@ notifications when no cart is available anymore.
 
 ## Payment Manager
 The Payment Manager is responsible for all aspects concerning payment. The main aspect is the implementation
-of different Payment Provider to integrate them into the framework. 
+of different Payment Providers to integrate them into the framework. 
 
 
 ## Order Manager 

@@ -10,17 +10,15 @@ and provides the developer a clean API for creating product listings in the fron
 
 
 ## 1 - Setting up Filter Types
-Each product listing has different filters like drop downs, multi selects, input fields, number ranges, etc. and each of 
+Each product listing has different filters like drop downs, multi selects, input fields, number ranges, etc. Each of 
 these Filter Types require
 - special configuration
 - special presentation in the view
 - special filter conditions for the Product Index
 
-The Filter Types are responsible for these three tasks. By composing filter definition objects (see next chapter) 
-out of Filter Type object [field collections](../05_Objects/01_Object_Classes/01_Data_Types/19_Fieldcollections.md) a 
-simple configuration of filters is possible for the user. 
+The Filter Types are responsible for these three tasks and can be used for composing filter definition objects (see next chapter).
 
-The backend implementation of Filter Types is done in php classes which extend the abstract class 
+The backend implementation of Filter Types takes place in php classes which extend the abstract class 
 `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType` and are responsible for creating 
 the correct filter conditions based on the Product Index implementation and rendering the filter output to the frontend. 
 
@@ -80,12 +78,13 @@ The configuration of the Filter Types takes place in the
 
 **Configuration elements are:**
 - `FilterCategory`: The key of the array represents the field collection type (= name of field collection) for configuration 
-  in filter definition objects. 
+  in filter definition objects (see next chapter). 
 - `class`: Backend implementation of the filter type. 
 - `script`: Default view script of the filter type, can be overwritten in the filter definition objects. 
   You can find some script filter examples in the E-Commerce Framework Demo [here](https://github.com/pimcore/demo-ecommerce/tree/master/app/Resources/views/Shop/filters). 
 
-- `Helper`: is a helper implementation that gets available values for pre select settings in the filter definition objects 
+
+- `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 
   based on the [filter group](./05_Index_Service/01_Product_Index_Configuration.md) setting in the index attributes 
   definition. 
 
@@ -94,12 +93,14 @@ The configuration of the Filter Types takes place in the
 ## 2 - Setting up FilterDefinition Objects
 The configuration of available filters and the set up of product listings in the frontend takes place in FilterDefinition 
 Pimcore objects. Configuration options are beside others: 
-- General settings like page size etc. 
-- PreConditions for pre filtering of products, e.g. only products of a certain category. These preconditions cannot be 
+- General settings like `page size` etc. 
+- `PreConditions` for pre filtering of products, e.g. only products of a certain category. These preconditions cannot be 
 changed by the user in the frontend. 
-- Filters that are visible in the frontend. 
+- `Filters` that are visible in the frontend. 
+
 
 ![FilterDefinition](../img/filter-definitions.jpg)
+
 
 The configuration of preconditions and filters is done by field collection entries, whereby the field collection types 
 are mapped to Filter Types and their backend implementations in the `EcommerceFrameworkConfig.php` (see previous chapter). 

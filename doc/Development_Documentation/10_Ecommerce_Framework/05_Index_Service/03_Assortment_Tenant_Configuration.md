@@ -2,23 +2,23 @@
 
 The E-Commerce Framework provides a two level Assortment Tenant system for the Product Index: 
 
-   1. Assortment Tenant: The first level of tenants are heavy-weight tenants. They allow multiple shop instances within one 
+   1. **Assortment Tenant**: The first level of tenants are heavy-weight tenants. They allow multiple shop instances within one 
    system. The shop instances are completely independent from each other and can contain complete different products, 
    index attributes and even use different product index implementations.
 
-   2. Assortment SubTenant: The second level of tenants are light-weight tenants, which exist within a shop instance. 
+   2. **Assortment Subtenant**: The second level of tenants are light-weight tenants, which exist within a shop instance. 
    Light-weight tenants use the same Product Index with the same attributes as their parent shop, but can contain a subset 
    of the products. So they are meant to be used for implementing different product assortments within one shop. 
 
 One system can have multiple tenants (heavy- and light-weight). But too many tenants can have bad effects on the performance 
-of saving products, since all *Product Indices* need to be updated on each save. 
+of saving products, since all *Product Indices* need to be updated on every save. 
 
 By default the system always uses one heavy-weight tenant (= `DefaultMysql`), but the default tenant can be disabled. 
 
 
 ### Configuration of Assortment Tenants
 For setting up a Assortment Tenant, following steps are necessary: 
-- **Implementation of a Tenant Config**
+- **Implementation of a Tenant Config:**
 The Tenant Config class is the central configuration of an assortment tenant, defines which products are available for 
 the tenant and provides the connection to the used *Product Index* implementation. It needs to implement 
 [`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IndexService/Config/IConfig.php). 
@@ -38,13 +38,13 @@ and may be extended:
 - **Configuring Assortment Tenants within `EcommerceFrameworkConfig.php`:** 
 Each tenant has to be configured within `EcommerceFrameworkConfig.php` by defining the tenant config class and index 
 attributes. Depending on the *Product Index* implementation, additional configuration may be necessary. The configuration 
-also can be outsourced in to an additional configuration file. For more information and samples see the 
+also can be outsourced into an additional configuration file. For more information and samples see the 
 [Sample EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L472). 
 
 
 ### Setting current Assortment Tenant for Frontend
 The [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IEnvironment.php#L22-L22) 
-provides following methods to set the current Assortment Tenant: 
+provides following methods to set the current Assortment Tenant when working with *Product Lists* in Code: 
 ```php
 <?php
     /**

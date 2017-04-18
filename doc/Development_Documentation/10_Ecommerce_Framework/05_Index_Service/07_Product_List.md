@@ -4,7 +4,7 @@ implement the interface `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\P
 Product Index implementation specific. Detailed method documentation is available in 
 [in-source documentation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IndexService/ProductList/IProductList.php). 
 
-For getting a Produt List instance suitable for the current Product Index implementation and filter for products see 
+For how to get a Product List instance suitable for the current Product Index implementation and filter for products see 
 following code sample: 
 
 ```php 

@@ -9,12 +9,12 @@ provider (currently implemented are [fact finder](http://www.fact-finder.de/) an
 These implementations can be configured in [Assortment Tenants](./03_Assortment_Tenant_Configuration.md). The default 
 tenant always uses `DefaultMysql` as implementation.  
 
-The *Product Index* has several advantages:  
+The separate *Product Index* has several advantages:  
 - It is completely independent from the Pimcore object structure, only contains needed information and can pre-calculate 
   complex data.
 - It can be optimized without any side effects on Pimcore for requirements considering filtering, listing and 
   searching products. 
-- It supports assortment tenants and therefor allows optimized indices for multiple assortments within one system. 
+- It supports assortment tenants and therefore allows optimized indices for multiple assortments within one system. 
 
 
 Based on the *Product Index* the [*Product List*](./07_Product_List.md) provides a one stop API for accessing data and 
@@ -26,3 +26,4 @@ See the following topics for details:
 - [Assortment Tenant configuration](./03_Assortment_Tenant_Configuration.md)
 - [Data architecture and indexing process](./05_Data_Architecture_and_Indexing_Process.md)
 - [Working with Product Lists](07_Product_List.md)
+- [Mockup Objects in Product List Results](09_Mockup_Objects.md)

@@ -53,9 +53,9 @@ Defines attributes which should be considered in fulltext-search. All attributes
 Defines for all attributes if and how they should be indexed. Following configuration options are available: 
 - `name` (mandatory): Name of attribute in product index, also used as `fieldname`, if `fieldname` is not provided. 
 - `type` (mandatory for mysql): Datatype for column in Product Index. 
-- `fieldname` (optional): Field name in product object, needed if different than `name` in index.
+- `fieldname` (optional): Field name in product object, needed if it is different than `name` in index.
 - `locale` (optional): Used locale for data retrieving if field is in a localized field. 
-- `getter` (optional): Special getter implementation for getting attribute value. Per default, the method `getNAME()`
+- `getter` (optional): Special getter implementation for getting attribute value. Per default, the method `get<NAME>()`
    of the product object is called. If this is not suitable, an alternative getter class can be defined which is 
    responsible for getting the value. This can be used for calculations, getting complex values 
    (field collections, object bricks), etc. Getter implementations need to implement 
@@ -65,10 +65,12 @@ interpreter class, this data can be transformed and manipulated before storing. 
 of assets, normalization of data, special treatment of relations, etc. Interpreter implementations need to implement
 `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Interpreter` interface. 
  
-- `hideInFieldlistDatatype` (optional): Hides column in FieldList drop down (see FilterService for more information).
-- `filtergroup` (optional): Defines filter group for the FieldList drop down (see FilterService for more information).
+- `hideInFieldlistDatatype` (optional): Hides column in FieldList drop down (see [FilterService](../07_Filter_Service.md) 
+   for more information).
+- `filtergroup` (optional): Defines filter group for the FieldList drop down (see [FilterService](../07_Filter_Service.md) 
+   for more information).
 
-Each attribute can have an additional `<config>`-element for additional configuration which can be used in getter or 
+Each attribute can have an additional `<config>`-element for further configuration which can be used in getter or 
  interpreter implementations.
 
 
@@ -94,7 +96,7 @@ Needed configuration:
   of product object and returns them as array. 
 
 
-#### Selection of available Interpreters
+#### Selection of available Interpreters:
 - `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\AssetId`: Stores only asset id into *Product Index*.
 - `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultObjects`: Default interpreter to store object 
   relations as relations into the *Product Index*.
