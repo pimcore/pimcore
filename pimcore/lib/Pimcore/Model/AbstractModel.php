@@ -14,8 +14,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\File;
-use Pimcore\Db;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
@@ -94,7 +92,12 @@ abstract class AbstractModel
             self::$daoClassMap = include(PIMCORE_PATH . "/config/dao-classmap.php");
         }
 
-        if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
+        // we have 2 static mappings for objects for performance reasons
+        if($this instanceof Object\Concrete) {
+            $dao = 'Pimcore\Model\Object\Concrete\Dao';
+        } else if ($this instanceof Object\Listing\Concrete) {
+            $dao = 'Pimcore\Model\Object\Listing\Concrete\Dao';
+        } else if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
             $dao = self::$daoClassCache[$cacheKey];
         } elseif (!$key || $forceDetection) {
             if (isset(self::$daoClassMap[$myClass])) {
@@ -131,70 +134,48 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $className
-     */
-    protected static function determineResourceClass($className)
-    {
-        $filesToInclude = [];
-
-        $filePath = str_replace(["_", "\\"], "/", $className) . ".php";
-        $filesToInclude[] = preg_replace("@^Pimcore/Model/@", "", $filePath);
-        $filesToInclude[] = $filePath;
-
-        foreach ($filesToInclude as $fileToInclude) {
-            if ($fileToInclude == "Dao.php" || $fileToInclude == "Resource.php") {
-                return;
-            }
-
-            if (File::isIncludeable($fileToInclude)) {
-                include_once($fileToInclude);
-                if (Tool::classExists($className)) {
-                    return $className;
-                }
-            }
-        }
-
-        return;
-    }
-
-    /**
      * @param string $modelClass
      * @return string|null
      */
-    public static function locateDaoClass($modelClass)
-    {
+    public static function locateDaoClass($modelClass) {
+
+        $forbiddenClassNames = ['Pimcore\\Resource'];
+
         $classes = class_parents($modelClass);
         array_unshift($classes, $modelClass);
 
         foreach ($classes as $class) {
-            $delimiter = "_"; // old prefixed class style
-            if (strpos($class, "\\")) {
-                $delimiter = "\\"; // that's the new with namespaces
+            $delimiter = '_'; // old prefixed class style
+            if (strpos($class, '\\')) {
+                $delimiter = '\\'; // that's the new with namespaces
             }
 
             $classParts = explode($delimiter, $class);
             $length = count($classParts);
-            $className = null;
+            $daoClass = null;
 
             for ($i = 0; $i < $length; $i++) {
+                $classNames = [
+                    implode($delimiter, $classParts) . $delimiter . 'Dao',
+                    implode($delimiter, $classParts) . $delimiter . 'Resource'
+                ];
 
-                // check for a general dao adapter
-                $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Dao";
-                if ($className = self::determineResourceClass($tmpClassName)) {
-                    break;
+                foreach ($classNames as $tmpClassName) {
+                    if (Tool::classExists($tmpClassName) && !in_array($tmpClassName, $forbiddenClassNames)) {
+                        $daoClass = $tmpClassName;
+                        break;
+                    }
                 }
 
-                // check for the old style resource adapter
-                $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource";
-                if ($className = self::determineResourceClass($tmpClassName)) {
+                if ($daoClass) {
                     break;
                 }
 
                 array_pop($classParts);
             }
 
-            if ($className) {
-                return $className;
+            if ($daoClass) {
+                return $daoClass;
             }
         }
 

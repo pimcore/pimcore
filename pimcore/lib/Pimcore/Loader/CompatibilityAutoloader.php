@@ -35,7 +35,7 @@ class CompatibilityAutoloader
         if (array_key_exists($class, $classAliases)) {
             class_alias($classAliases[$class], $class);
 
-            return;
+            return true;
         }
 
         // compatibility from Resource => Dao
@@ -77,7 +77,7 @@ class CompatibilityAutoloader
                 if (!class_exists($alias, false) && !interface_exists($alias, false)) {
                     class_alias($class, $alias);
 
-                    return; // skip here, nothing more to do ...
+                    return true; // skip here, nothing more to do ...
                 }
             }
         }
@@ -119,6 +119,7 @@ class CompatibilityAutoloader
             if (Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
                 if (!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($namespacedClass, $class);
+                    return true;
                 }
             }
         }
