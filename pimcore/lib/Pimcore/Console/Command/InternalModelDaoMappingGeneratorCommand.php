@@ -44,18 +44,17 @@ class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
 
         $map = [];
 
-        foreach($finder as $file) {
-            $className = str_replace([DIRECTORY_SEPARATOR, ".php"],["\\", ""], $file->getRelativePathname());
+        foreach ($finder as $file) {
+            $className = str_replace([DIRECTORY_SEPARATOR, ".php"], ["\\", ""], $file->getRelativePathname());
             $className = "Pimcore\\Model\\" . $className;
 
-            if(class_exists($className)) {
-
+            if (class_exists($className)) {
                 $parents = class_parents($className);
-                if(is_array($parents) && in_array("Pimcore\\Model\\AbstractModel", $parents)) {
+                if (is_array($parents) && in_array("Pimcore\\Model\\AbstractModel", $parents)) {
                     $reflection = new \ReflectionClass($className);
-                    if(!$reflection->isAbstract()) {
+                    if (!$reflection->isAbstract()) {
                         $daoClass = Asset::locateDaoClass($className);
-                        if($daoClass) {
+                        if ($daoClass) {
                             $map[$className] = $daoClass;
                         }
                     }

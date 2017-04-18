@@ -1025,7 +1025,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
     public function wordExportAction()
     {
-
         error_reporting(0);
         ini_set("display_errors", "off");
 
@@ -1249,8 +1248,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         @unlink($exportFile);
 
         // replace <script> and <link>
-        $content = preg_replace("/<link[^>]+>/im","$1",$content);
-        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im","$1",$content);
+        $content = preg_replace("/<link[^>]+>/im", "$1", $content);
+        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im", "$1", $content);
 
         $content =
             "<html>\n" .
@@ -1267,9 +1266,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
         // no conversion, output html file, works fine with MS Word and LibreOffice
         header("Content-Type: text/html");
-        header('Content-Disposition: attachment; filename="word-export-' . date("Ymd") . '_' . uniqid() . '.htm"');
-
-        while (@ob_end_flush());
+        header('Content-Disposition: attachment; filename="word-export-' . date("Ymd") . '_' . uniqid() . '.htm"'); while (@ob_end_flush());
         flush();
 
         echo $content;
