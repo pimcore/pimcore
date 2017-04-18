@@ -93,7 +93,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 ```
 
 ### Commit Order Processor
-A simple implementation of `Website_OnlineShop_Order_Processor` could look like: 
+A simple implementation of `\AppBundle\Checkout\Processor` could look like: 
 
 ```php
 <?php

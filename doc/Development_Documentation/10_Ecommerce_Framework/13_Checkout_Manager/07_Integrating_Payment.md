@@ -18,7 +18,7 @@ $payment = $manager->getPayment();
 
 //configure payment - this depends on the payment provider
 // sample payment config - wirecard
-$config['language'] = Zend_Registry::get("Zend_Locale")->getLanguage();
+$config['language'] = $language;
 $config['successURL'] = $url . 'success';
 $config['cancelURL'] = $url . 'cancel';
 $config['failureURL'] = $url . 'failure';

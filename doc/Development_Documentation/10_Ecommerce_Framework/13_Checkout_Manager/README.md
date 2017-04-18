@@ -1,6 +1,6 @@
 # Checkout Manager
 
-The Checkout Manager is responsible for all aspects concerning checkout process and a one-stop API for getting 
+The Checkout Manager is responsible for all aspects concerning checkout process and an one-stop API for getting 
 through the checkout process. 
 
 But: The checkout manager is not an out-of-the-box checkout process! 

@@ -66,5 +66,7 @@ if ($token = strip_tags($this->getParam('voucherToken'))) {
 | 8    | No more usages for a single token. |
 
 
+
+
 > Since benefits for vouchers are defined via Pricing Rules, no special actions are needed to display them. 
 > They are just displayed the same way as all other Pricing Rules.
