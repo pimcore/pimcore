@@ -40,7 +40,12 @@ class ClassmapGeneratorCommand extends AbstractCommand
     {
         $excludePatterns = [];
 
-        $paths = explode(PATH_SEPARATOR, get_include_path());
+        $paths = [
+            PIMCORE_PLUGINS_PATH,
+            PIMCORE_WEBSITE_PATH . "/lib",
+            PIMCORE_WEBSITE_PATH . "/models",
+            PIMCORE_CLASS_DIRECTORY,
+        ];
         $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
 
         $globalMap = [];
