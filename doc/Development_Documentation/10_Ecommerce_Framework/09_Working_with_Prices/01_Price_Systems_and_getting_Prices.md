@@ -17,7 +17,7 @@ There are two places where the configuration of Price Systems takes place:
   In the `pricesystems` section the mapping between Price System names and their implementation classes takes place. 
   Price System implementations at least need to implement the interface `\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`, 
   but [there](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem) 
-  exist already some useful concrete implementations. 
+  already exist some useful concrete implementations. 
 
 ```php
 'pricesystems' => [

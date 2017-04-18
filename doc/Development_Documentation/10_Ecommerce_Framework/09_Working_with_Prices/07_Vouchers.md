@@ -53,6 +53,7 @@ if ($token = strip_tags($this->getParam('voucherToken'))) {
 
 ```
 #### Error Codes of Exceptions thrown
+
 | Code 	| Description                                                      	|
 |------	|------------------------------------------------------------------	|
 | 1  	| Token already in use.                                            	|
@@ -63,6 +64,7 @@ if ($token = strip_tags($this->getParam('voucherToken'))) {
 | 6 	| Criteria onlyTokenPerCart: Tokens in cart and tried to add token of type "only"|
 | 7 	| Criteria onlyTokenPerCart: Token of type "only" already in cart. 	|
 | 8 	| No more usages for a single token.|
+
 
 > Since benefits for vouchers are defined via Pricing Rules, no special actions are needed to display them. 
 > They are just displayed the same way as all other Pricing Rules.
