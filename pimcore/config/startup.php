@@ -153,13 +153,21 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     }
 }
 
-$compatibilityClassLoader = new \Pimcore\Loader\CompatibilityAutoloader();
-$compatibilityClassLoader->register();
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->suppressNotFoundWarnings(true);
 $autoloader->setFallbackAutoloader(false);
 $autoloader->registerNamespace('Pimcore');
+
+
+// re-register Composer's autoloader to put him on top of the stack, especially before the ZF Autoloader
+$loader->unregister();
+$loader->register(true);
+
+// compatibility loader must have the top priority
+$compatibilityClassLoader = new \Pimcore\Loader\CompatibilityAutoloader($loader);
+$compatibilityClassLoader->register(true);
+
 
 // generic pimcore startup
 \Pimcore::setSystemRequirements();

@@ -18,6 +18,24 @@ use Pimcore\Tool;
 
 class CompatibilityAutoloader
 {
+    /**
+     * @var null|\Composer\Autoload\ClassLoader
+     */
+    protected $composerAutoloader = null;
+
+    /**
+     * CompatibilityAutoloader constructor.
+     * @param $composerAutoloader
+     */
+    public function __construct($composerAutoloader)
+    {
+        $this->composerAutoloader = $composerAutoloader;
+    }
+
+    /**
+     * @param $class
+     * @return bool
+     */
     public function loadClass($class)
     {
         // manual aliasing
@@ -53,10 +71,7 @@ class CompatibilityAutoloader
 
             // first check for a model, if it doesnt't work fall back to the default autoloader
             if (!class_exists($class, false) && !interface_exists($class, false)) {
-                if (!$this->loadModel($class)) {
-                    $loader = \Zend_Loader_Autoloader::getInstance();
-                    $loader->autoload($class);
-                }
+                $this->composerAutoloader->loadClass($class);
             }
 
             if (class_exists($class, false) || interface_exists($class, false)) {
@@ -114,36 +129,11 @@ class CompatibilityAutoloader
             }
 
             // check if the class is a model, if so, load it
-            $this->loadModel($namespacedClass);
+            $this->composerAutoloader->loadClass($namespacedClass);
 
             if (Tool::classExists($namespacedClass) || Tool::interfaceExists($namespacedClass)) {
                 if (!class_exists($class, false) && !interface_exists($class, false)) {
                     class_alias($namespacedClass, $class);
-
-                    return true;
-                }
-            }
-        }
-    }
-
-    /**
-     * @param $class
-     * @return bool
-     */
-    protected function loadModel($class)
-    {
-        if (strpos($class, "Pimcore\\Model\\") === 0) {
-            $modelFile = PIMCORE_PATH . "/models/" . str_replace(["Pimcore\\Model\\", "\\"], ["", "/"], $class) . ".php";
-            if (file_exists($modelFile)) {
-                include_once $modelFile;
-
-                return true;
-            }
-
-            if (strpos($class, "Pimcore\\Model\\Object\\") === 0) {
-                $modelFile = PIMCORE_CLASS_DIRECTORY . "/" . str_replace(["Pimcore\\Model\\", "\\"], ["", "/"], $class) . ".php";
-                if (file_exists($modelFile)) {
-                    include_once $modelFile;
 
                     return true;
                 }
