@@ -355,6 +355,25 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
         });
     },
 
+    addDataFromSelector: function (items) {
+
+        if (items.length > 0) {
+
+            var toBeRequested = new Ext.util.Collection();
+
+            for (var i = 0; i < items.length; i++) {
+                if (!this.objectAlreadyExists(items[i].id)) {
+                    toBeRequested.add(this.store.add({
+                        id: items[i].id,
+                        path: items[i].fullpath,
+                        type: items[i].classname
+                    }));
+                }
+            }
+        }
+    }
+    ,
+
 
     dndAllowed: function(data, fromTree) {
 
