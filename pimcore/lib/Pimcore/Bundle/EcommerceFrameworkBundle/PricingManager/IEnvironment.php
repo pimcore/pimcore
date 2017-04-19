@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 interface IEnvironment
 {
+    const EXECUTION_MODE_PRODUCT = "product";
+    const EXECUTION_MODE_CART = "cart";
+
     /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      *
@@ -101,6 +104,21 @@ interface IEnvironment
      * @return AttributeBagInterface
      */
     public function getSession();
+
+
+    /**
+     * sets execution mode of system - either product or cart
+     *
+     * @param $executionMode
+     */
+    public function setExecutionMode($executionMode);
+
+    /**
+     * returns in with execution mode the system is - either product or cart
+     *
+     * @return string
+     */
+    public function getExecutionMode();
 
     /**
      * returns hash of environment based on its content

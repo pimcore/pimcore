@@ -54,6 +54,13 @@ class Environment implements IEnvironment
     protected $session;
 
     /**
+     * Execution mode of system - either product or cart
+     *
+     * @var string
+     */
+    protected $executionMode = IEnvironment::EXECUTION_MODE_PRODUCT;
+
+    /**
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
      *
      * @return IEnvironment
@@ -193,6 +200,17 @@ class Environment implements IEnvironment
         return $this;
     }
 
+    public function setExecutionMode($executionMode)
+    {
+        $this->executionMode = $executionMode;
+    }
+
+    public function getExecutionMode()
+    {
+        return $this->executionMode;
+    }
+
+
     /**
      * returns hash of environment based on its content
      *
@@ -220,6 +238,8 @@ class Environment implements IEnvironment
         if ($this->getRule()) {
             $hash .= spl_object_hash($this->getRule());
         }
+
+        $hash .= $this->getExecutionMode();
 
         return sha1($hash);
     }

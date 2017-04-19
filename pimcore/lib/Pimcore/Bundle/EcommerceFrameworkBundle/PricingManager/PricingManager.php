@@ -88,6 +88,7 @@ class PricingManager implements IPricingManager
         // configure environment
         $env = $this->getEnvironment();
         $env->setCart($cart);
+        $env->setExecutionMode(IEnvironment::EXECUTION_MODE_CART);
         $env->setProduct(null);
 
         $categories = [];
