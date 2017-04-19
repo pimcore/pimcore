@@ -45,10 +45,10 @@ class CssCombine extends \Zend_Controller_Plugin_Abstract
         }
 
         if ($this->enabled) {
-            include_once("simple_html_dom.php");
+            include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
             $body = $this->getResponse()->getBody();
-            
+
             $html = str_get_html($body);
             if ($html) {
                 $styles = $html->find("link[rel=stylesheet], style[type=text/css]");

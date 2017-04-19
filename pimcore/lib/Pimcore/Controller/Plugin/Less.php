@@ -69,9 +69,9 @@ class Less extends \Zend_Controller_Plugin_Abstract
         if (!\Pimcore\Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
-        
+
         if ($this->enabled) {
-            include_once("simple_html_dom.php");
+            include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
             $body = $this->getResponse()->getBody();
             $body = \Pimcore\Tool\Less::processHtml($body);

@@ -63,7 +63,7 @@ class Newsletter
         // render the document and rewrite the links (if analytics is enabled)
         if ($newsletterDocument->getEnableTrackingParameters()) {
             if ($contentHTML) {
-                include_once("simple_html_dom.php");
+                include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
                 $html = str_get_html($contentHTML);
                 if ($html) {
@@ -171,7 +171,7 @@ class Newsletter
         // render the document and rewrite the links (if analytics is enabled)
         if ($newsletter->getGoogleAnalytics()) {
             if ($content = $mail->getBodyHtmlRendered()) {
-                include_once("simple_html_dom.php");
+                include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
                 $html = str_get_html($content);
                 if ($html) {

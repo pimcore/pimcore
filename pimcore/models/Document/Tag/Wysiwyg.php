@@ -19,7 +19,7 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Tool\Text;
 
-include_once("simple_html_dom.php");
+include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -122,7 +122,7 @@ class Wysiwyg extends Model\Document\Tag
             throw new \Exception("cannot get values from web service import - invalid data");
         }
     }
-    
+
     /**
      * @return array
      */

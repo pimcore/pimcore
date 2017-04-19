@@ -214,7 +214,7 @@ class View extends \Zend_View
             // add a class and the pimcore id / type so that it can be opened in editmode using the context menu
             // if there's no first level HTML container => add one (wrapper)
             if ($this->editmode) {
-                include_once("simple_html_dom.php");
+                include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
                 $editmodeClass = " pimcore_editable pimcore_tag_inc ";
 

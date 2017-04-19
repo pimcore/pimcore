@@ -285,7 +285,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
 
         // add scripts in html header for pages in editmode
         if ($this->controller->editmode && Document\Service::isValidType($this->controller->document->getType())) { //ckogler
-            include_once("simple_html_dom.php");
+            include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
             $html = $this->getResponse()->getBody();
 
             if ($html) {

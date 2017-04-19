@@ -821,7 +821,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
     public function xliffImportElementAction()
     {
-        include_once("simple_html_dom.php");
+        include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
         $id = $this->getParam("id");
         $step = $this->getParam("step");
@@ -1104,7 +1104,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     $html = preg_replace("@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@", "", $html);
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    include_once("simple_html_dom.php");
+                    include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
                     $dom = str_get_html($html);
                     if ($dom) {
 

@@ -152,13 +152,13 @@ class CDN extends \Zend_Controller_Plugin_Abstract
         if ($store[$path]) {
             return $store[$path];
         }
-        
+
         $hosts = $this->getHostnames();
         $i = array_rand($hosts);
-        
+
         $new = $hosts[$i].$path;
         $this->cachedItems[$path] = $new;
-        
+
         return $new;
     }
 
@@ -170,12 +170,12 @@ class CDN extends \Zend_Controller_Plugin_Abstract
         if (!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
-        
+
         if ($this->enabled) {
-            include_once("simple_html_dom.php");
-            
+            include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
+
             $body = $this->getResponse()->getBody();
-            
+
             $html = str_get_html($body);
             if ($html) {
                 $elements = $html->find("link[rel=stylesheet], img, script[src]");

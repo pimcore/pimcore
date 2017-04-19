@@ -101,7 +101,7 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract
                             } else {
                                 // use simple_html_dom
                                 if (!$html) {
-                                    include_once("simple_html_dom.php");
+                                    include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
                                     $html = str_get_html($body);
                                 }
 
