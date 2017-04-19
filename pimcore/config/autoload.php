@@ -52,4 +52,6 @@ if (!class_exists('Zend_Date')) {
     require_once PIMCORE_PATH . '/lib/compatibility-stubs.php';
 }
 
+\Pimcore::setAutoloader($loader);
+
 return $loader;

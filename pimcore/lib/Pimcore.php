@@ -39,6 +39,11 @@ class Pimcore
     private static $kernel;
 
     /**
+     * @var \Composer\Autoload\ClassLoader
+     */
+    private static $autoloader;
+
+    /**
      * @var array items to be excluded from garbage collection
      */
     private static $globallyProtectedItems;
@@ -217,6 +222,22 @@ class Pimcore
         }
 
         return false;
+    }
+
+    /**
+     * @return \Composer\Autoload\ClassLoader
+     */
+    public static function getAutoloader(): \Composer\Autoload\ClassLoader
+    {
+        return self::$autoloader;
+    }
+
+    /**
+     * @param \Composer\Autoload\ClassLoader $autoloader
+     */
+    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader)
+    {
+        self::$autoloader = $autoloader;
     }
 
     /** Add $keepItems to the list of items which are protected from garbage collection.

@@ -22,7 +22,6 @@ if ($debug) {
 
 $kernel = new AppKernel(Config::getEnvironment(), $debug);
 Pimcore::setKernel($kernel);
-
 $kernel->boot();
 
 return $kernel;
