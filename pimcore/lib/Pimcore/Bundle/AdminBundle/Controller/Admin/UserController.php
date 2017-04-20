@@ -820,13 +820,13 @@ class UserController extends AdminController implements EventedControllerInterfa
             return;
         }
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = ['get-current-user', 'update-current-user', 'get-available-permissions', 'get-minimal', 'get-image', 'upload-current-user-image'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('users');
-        }
+        $unrestrictedActions = [
+            'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
+            'getImageAction', 'uploadCurrentUserImageAction'
+        ];
+
+        $this->checkActionPermission($event, 'users', $unrestrictedActions);
     }
 
     /**

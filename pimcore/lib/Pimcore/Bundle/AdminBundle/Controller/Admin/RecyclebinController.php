@@ -202,13 +202,8 @@ class RecyclebinController extends AdminController implements EventedControllerI
         @ini_set('max_execution_time', $timeout);
         set_time_limit($timeout);
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = ['add'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('recyclebin');
-        }
+        $this->checkActionPermission($event, 'recyclebin', ['addAction']);
     }
 
     /**

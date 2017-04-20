@@ -253,13 +253,8 @@ class TargetingController extends AdminController implements EventedControllerIn
             return;
         }
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = ['persona-list'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('targeting');
-        }
+        $this->checkActionPermission($event, 'targeting', ['personaListAction']);
     }
 
     /**

@@ -273,13 +273,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             return;
         }
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = [];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('documents');
-        }
+        $this->checkPermission('documents');
     }
 
     /**

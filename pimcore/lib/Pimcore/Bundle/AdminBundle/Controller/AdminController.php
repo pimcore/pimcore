@@ -21,6 +21,7 @@ use Pimcore\Model\User;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
@@ -78,6 +79,27 @@ abstract class AdminController extends Controller implements AdminControllerInte
             );
 
             throw new AccessDeniedHttpException('Attempt to access ' . $permission . ', but has no permission to do so.');
+        }
+    }
+
+    /**
+     * Check permission against all controller actions. Can optionally exclude a list of actions.
+     *
+     * @param FilterControllerEvent $event
+     * @param string $permission
+     * @param array $unrestrictedActions
+     */
+    protected function checkActionPermission(FilterControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    {
+        $actionName = null;
+        $controller = $event->getController();
+
+        if (is_array($controller) && count($controller) === 2 && is_string($controller[1])) {
+            $actionName = $controller[1];
+        }
+
+        if (null === $actionName || !in_array($actionName, $unrestrictedActions)) {
+            $this->checkPermission($permission);
         }
     }
 

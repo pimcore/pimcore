@@ -2082,13 +2082,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             return;
         }
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = [];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('objects');
-        }
+        $this->checkPermission('objects');
 
         $this->_objectService = new Object\Service($this->getUser());
     }

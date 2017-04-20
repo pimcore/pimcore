@@ -196,12 +196,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
             return;
         }
 
-        $request = $event->getRequest();
-
-        $notRestrictedActions = ['code'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('qr_codes');
-        }
+        $this->checkActionPermission($event, 'qr_codes', ['codeAction']);
     }
 
     /**
