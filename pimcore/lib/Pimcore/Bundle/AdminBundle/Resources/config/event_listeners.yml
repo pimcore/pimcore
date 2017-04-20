@@ -25,7 +25,7 @@ services:
     #
 
     pimcore_admin.event_listener.webservice_exception:
-        class: Pimcore\Bundle\AdminBundle\EventListener\WebserviceExceptionListener
+        class: Pimcore\Bundle\AdminBundle\EventListener\AdminExceptionListener
         tags:
             - { name: kernel.event_subscriber }
 
