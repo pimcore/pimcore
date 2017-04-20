@@ -28,6 +28,7 @@ use Pimcore\Tool\Authentication;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -57,10 +58,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     /**
      * @Route("/login", name="pimcore_admin_login")
+     * @Route("/login/", name="pimcore_admin_login_fallback")
+     *
      * @TemplatePhp()
      */
     public function loginAction(Request $request)
     {
+        if ($request->get('_route') === 'pimcore_admin_login_fallback') {
+            return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
+        }
+
         if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
             return $this->redirect('/install.php');
         }
