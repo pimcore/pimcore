@@ -280,7 +280,7 @@ class Installer extends AbstractInstaller
                 $fieldCollection->setKey($key);
             }
 
-            $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/fieldcollection_sources/' . $filename);
+            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/fieldcollection_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
             if (!$success) {
                 Logger::err("Could not import $key FieldCollection.");
@@ -332,7 +332,7 @@ class Installer extends AbstractInstaller
                 $brick->setKey($key);
             }
 
-            $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/objectbrick_sources/' . $filename);
+            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/objectbrick_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
             if (!$success) {
                 Logger::err("Could not import $key ObjectBrick.");
@@ -432,7 +432,7 @@ class Installer extends AbstractInstaller
     }
 
     /**
-     *  indicates wether this plugins is currently installed
+     *  indicates if this bundle is currently installed
      *
      * @return bool
      */
