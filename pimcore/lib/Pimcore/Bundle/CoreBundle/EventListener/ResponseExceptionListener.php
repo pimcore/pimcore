@@ -68,6 +68,9 @@ class ResponseExceptionListener implements EventSubscriberInterface, PimcoreCont
         // handle ResponseException (can be used from any context)
         if ($exception instanceof ResponseException) {
             $event->setResponse($exception->getResponse());
+
+            // a response was explicitely set -> do not continue to error page
+            return;
         }
 
         // further checks are only valid for default context
