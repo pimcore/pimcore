@@ -1013,11 +1013,7 @@ abstract class Data
      */
     public function isEmpty($data)
     {
-        if (empty($data)) {
-            return true;
-        }
-
-        return false;
+        return empty($data) && !is_numeric($data) && !is_bool($data);
     }
 
     /** True if change is allowed in edit mode.
