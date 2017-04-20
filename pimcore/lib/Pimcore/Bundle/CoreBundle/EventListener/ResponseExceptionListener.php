@@ -25,6 +25,7 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ResponseExceptionListener implements EventSubscriberInterface, PimcoreContextResolverAwareInterface
@@ -88,6 +89,16 @@ class ResponseExceptionListener implements EventSubscriberInterface, PimcoreCont
             return;
         }
 
+        $exception = $event->getException();
+
+        $statusCode = 500;
+        $headers    = [];
+
+        if ($exception instanceof HttpExceptionInterface) {
+            $statusCode = $exception->getStatusCode();
+            $header     = $exception->getHeaders();
+        }
+
         $errorPath = Config::getSystemConfig()->documents->error_pages->default;
 
         if (Site::isSiteRequest()) {
@@ -115,6 +126,6 @@ class ResponseExceptionListener implements EventSubscriberInterface, PimcoreCont
             $response = 'Page not found. 🦄';
         }
 
-        $event->setResponse(new Response($response));
+        $event->setResponse(new Response($response, $statusCode, $headers));
     }
 }
