@@ -30,7 +30,7 @@ pimcore:
 **It is crucial that your override class extends the origin class, if not you'll break the entire system.**
 
 > **Don't forget to clear all caches (Symfony + Data Cache) after you have configured a class override**
-`./bin/console cache:clear --no-warmup && ./bin/cache pimcore:cache:clear`
+`./bin/console cache:clear --no-warmup && ./bin/console pimcore:cache:clear`
 
 ## Example 
 
