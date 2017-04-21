@@ -1,10 +1,8 @@
 <?php
 namespace Pimcore\Tests\Helper;
 
-use Codeception\Module;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Tests\Util\TestHelper;
 
 class Model extends AbstractDefinitionHelper
 {

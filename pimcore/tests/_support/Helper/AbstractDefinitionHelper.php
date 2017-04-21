@@ -15,7 +15,6 @@
 namespace Pimcore\Tests\Helper;
 
 use Codeception\Module;
-use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Tests\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module
@@ -65,4 +64,3 @@ abstract class AbstractDefinitionHelper extends Module
 
     abstract public function initializeDefinitions();
 }
-

@@ -41,6 +41,7 @@ class ClientFactory
         }
 
         $client = new Client($guzzleConfig);
+
         return $client;
     }
 }

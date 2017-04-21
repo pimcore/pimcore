@@ -624,9 +624,10 @@ class LegacyClassMappingTool
      * @var bool
      */
     protected static $mappingLoaded = false;
+
     public static function loadMapping()
     {
-        if(self::$mappingLoaded) {
+        if (self::$mappingLoaded) {
             return;
         }
 

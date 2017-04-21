@@ -1339,7 +1339,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         // check permissions
         $unrestrictedActions = [
             'getTreeAction', 'fieldcollectionListAction', 'fieldcollectionTreeAction', 'fieldcollectionGetAction',
-            'getClassDefinitionForColumnConfigAction','objectbrickListAction', 'objectbrickTreeAction', 'objectbrickGetAction'
+            'getClassDefinitionForColumnConfigAction', 'objectbrickListAction', 'objectbrickTreeAction', 'objectbrickGetAction'
         ];
 
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);

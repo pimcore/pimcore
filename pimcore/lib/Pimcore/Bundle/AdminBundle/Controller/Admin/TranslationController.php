@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
 use Pimcore\Logger;
-use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
@@ -1086,7 +1085,7 @@ class TranslationController extends AdminController
     public function wordExportAction(Request $request)
     {
         error_reporting(0);
-        ini_set("display_errors", "off");
+        ini_set('display_errors', 'off');
 
         $id = $request->get('id');
         $data = $this->decodeJson($request->get('data'));
@@ -1310,14 +1309,14 @@ class TranslationController extends AdminController
         @unlink($exportFile);
 
         // replace <script> and <link>
-        $content = preg_replace("/<link[^>]+>/im","$1",$content);
-        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im","$1",$content);
+        $content = preg_replace('/<link[^>]+>/im', '$1', $content);
+        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im", '$1', $content);
 
         $content =
             "<html>\n" .
                 "<head>\n" .
                     '<style type="text/css">' . "\n" .
-                    file_get_contents(PIMCORE_PATH . "/static6/css/word-export.css") .
+                    file_get_contents(PIMCORE_PATH . '/static6/css/word-export.css') .
                     "</style>\n" .
                 "</head>\n\n" .
                 "<body>\n" .
@@ -1328,7 +1327,7 @@ class TranslationController extends AdminController
 
         $response = new Response($content);
         $response->headers->set('Content-Type', 'text/html');
-        $response->headers->set('Content-Disposition', 'attachment; filename="word-export-' . date("Ymd") . '_' . uniqid() . '.htm"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="word-export-' . date('Ymd') . '_' . uniqid() . '.htm"');
 
         return $response;
     }
