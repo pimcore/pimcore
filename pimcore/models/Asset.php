@@ -313,7 +313,7 @@ class Asset extends Element\AbstractElement
 
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
-        $class = 'Asset';
+        $class = Asset::class;
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
