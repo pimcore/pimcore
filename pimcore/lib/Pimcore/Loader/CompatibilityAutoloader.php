@@ -129,7 +129,7 @@ class CompatibilityAutoloader
             }
 
             // check if the class is a model, if so, load it
-            if(!class_exists($namespacedClass, false) && !interface_exists($namespacedClass, false)) {
+            if (!class_exists($namespacedClass, false) && !interface_exists($namespacedClass, false)) {
                 $this->composerAutoloader->loadClass($namespacedClass);
             }
 
