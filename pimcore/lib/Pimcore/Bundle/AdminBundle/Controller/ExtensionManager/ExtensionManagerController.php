@@ -120,6 +120,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $message = $this->installAssets();
         } elseif ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
+            $reload = true;
         }
 
         $data = [
