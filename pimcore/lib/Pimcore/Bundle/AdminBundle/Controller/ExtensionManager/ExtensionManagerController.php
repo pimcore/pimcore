@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Handles all "new" extensions as of pimcore 5 (bundles, new areabrick layout) and pipes legacy extension requests
@@ -108,19 +109,54 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $type   = $request->get('type');
         $id     = $request->get('id');
         $enable = $request->get('method', 'enable') === 'enable' ? true : false;
-        $reload = false;
+
+        $reload  = false;
+        $message = null;
 
         if ($type === 'bundle') {
             $this->bundleManager->setState($id, $enable);
             $reload = true;
+
+            if ($enable) {
+                $message = $this->installAssets();
+            }
         } elseif ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
+            $reload = true;
         }
 
-        return $this->json([
+        $data = [
             'success' => true,
-            'reload'  => $reload
-        ]);
+            'reload'  => $reload,
+        ];
+
+        if ($message) {
+            $data['message'] = $message;
+        }
+
+        return $this->json($data);
+    }
+
+    /**
+     * Runs array:install command and returns its result as array (line-by-line)
+     *
+     * @return array
+     */
+    private function installAssets(): array
+    {
+        $assetsInstaller = $this->get('pimcore.tool.assets_installer');
+
+        try {
+            $installProcess = $assetsInstaller->install();
+
+            $message = str_replace("'", '', $installProcess->getCommandLine()) . PHP_EOL . $installProcess->getOutput();
+        } catch (ProcessFailedException $e) {
+            $message = 'Failed to run assets:install command. Please run command manually.' . PHP_EOL . PHP_EOL . $e->getMessage();
+        }
+
+        $message = explode(PHP_EOL, $message);
+
+        return $message;
     }
 
     /**
