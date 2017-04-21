@@ -134,7 +134,9 @@ pimcore.extensionmanager.admin = Class.create({
 
                         var rec = grid.getStore().getAt(rowIndex);
                         var method = rec.get("active") ? "disable" : "enable";
-                        
+
+                        this.panel.setLoading(true);
+
                         Ext.Ajax.request({
                             url: '/admin/extensionmanager/admin/toggle-extension-state',
                             params: {
@@ -146,15 +148,42 @@ pimcore.extensionmanager.admin = Class.create({
                             success: function (transport) {
                                 var res = Ext.decode(transport.responseText);
 
-                                if(!empty(res.message)) {
-                                    Ext.Msg.alert(" ", res.message);
+                                var message = '';
+                                if (res.reload) {
+                                    message += '<p style="text-align: center">';
+                                    message += t("please_dont_forget_to_reload_pimcore_after_modifications");
+                                    message += '</p>';
                                 }
 
-                                if(res.reload) {
-                                    window.location.reload();
-                                } else {
-                                    this.reload();
+                                if (res.message) {
+                                    message += '<br /><hr />';
+                                    message += '<pre style="font-size:11px;word-wrap: break-word;margin-bottom: 0">';
+
+                                    if (Ext.isArray(res.message)) {
+                                        Ext.Array.each(res.message, function(line) {
+                                            if (message.length > 0) {
+                                                message += "\n"
+                                            }
+
+                                            message += strip_tags(line);
+                                        });
+                                    } else {
+                                        if (message.length > 0) {
+                                            message += "\n"
+                                        }
+
+                                        message += strip_tags(res.message);
+                                    }
+
+                                    message += '</pre>';
                                 }
+
+                                if (!empty(message)) {
+                                    this.showMessageWindow(t("success"), message, "success");
+                                }
+
+                                this.panel.setLoading(false);
+                                this.reload();
                             }.bind(this)
                         });
                     }.bind(this)
@@ -351,6 +380,30 @@ pimcore.extensionmanager.admin = Class.create({
         });
 
         return this.grid;
+    },
+
+    showMessageWindow: function (title, message, type) {
+        var win = new Ext.Window({
+            modal: true,
+            iconCls: 'pimcore_icon_' + type,
+            title: title,
+            width: 700,
+            maxHeight: 500,
+            html: message,
+            autoScroll: true,
+            bodyStyle: "padding: 10px; background:#fff;",
+            buttonAlign: "center",
+            shadow: false,
+            closable: false,
+            buttons: [{
+                text: t("OK"),
+                handler: function () {
+                    win.close();
+                }
+            }]
+        });
+
+        win.show();
     },
 
     reload: function () {
