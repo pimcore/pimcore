@@ -117,7 +117,9 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $this->bundleManager->setState($id, $enable);
             $reload = true;
 
-            $message = $this->installAssets();
+            if ($enable) {
+                $message = $this->installAssets();
+            }
         } elseif ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
             $reload = true;
