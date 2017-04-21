@@ -444,6 +444,7 @@
     "files": "Files",
     "next": "Next",
     "please_dont_forget_to_reload_pimcore_after_modifications": "Please don't forget to reload pimcore after your modifications",
+    "clear_cache_and_reload": "Clear cache and reload",
     "enable": "Enable",
     "disable": "Disable",
     "configure": "Configure",

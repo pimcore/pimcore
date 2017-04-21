@@ -101,6 +101,102 @@ pimcore.extensionmanager.admin = Class.create({
 
         this.store.load();
 
+        var toolbar = Ext.create('Ext.Toolbar', {
+            cls: 'main-toolbar',
+            items: [
+                {
+                    text: t("refresh"),
+                    iconCls: "pimcore_icon_reload",
+                    handler: this.reload.bind(this)
+                },
+                '->',
+                '<b id="ext-manager-reload-info" style="visibility: hidden">' + t("please_dont_forget_to_reload_pimcore_after_modifications") + '!</b>',
+                {
+                    text: t("clear_cache_and_reload"),
+                    iconCls: "pimcore_icon_clear_cache",
+                    handler: function() {
+                        Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function (btn) {
+                            if (btn === 'yes') {
+                                self.panel.setLoading(true);
+
+                                Ext.Ajax.request({
+                                    url: '/admin/settings/clear-cache',
+                                    params: {
+                                        only_symfony_cache: true
+                                    },
+                                    success: function () {
+                                        window.location.reload();
+                                    },
+                                    failure: function () {
+                                        self.panel.setLoading(false);
+                                    }
+                                });
+                            }
+                        });
+                    }.bind(this)
+                }
+            ]
+        });
+
+        var handleSuccess = function (transport) {
+            var res = Ext.decode(transport.responseText);
+
+            var message = '';
+            var showAsToast = true;
+
+            if (res.reload) {
+                message += t("please_dont_forget_to_reload_pimcore_after_modifications") + "!";
+
+                // show reload message
+                Ext.get('ext-manager-reload-info').show();
+                toolbar.updateLayout();
+            }
+
+            if (res.message) {
+                showAsToast = false;
+
+                if (message) {
+                    message = '<p style="text-align: center">' + message + '</p>';
+                    message += '<br /><hr />';
+                }
+
+                message += '<pre style="font-size:11px;word-wrap: break-word;margin-bottom: 0">';
+
+                if (Ext.isArray(res.message)) {
+                    Ext.Array.each(res.message, function(line) {
+                        if (message.length > 0) {
+                            message += "\n"
+                        }
+
+                        message += strip_tags(line);
+                    });
+                } else {
+                    if (message.length > 0) {
+                        message += "\n"
+                    }
+
+                    message += strip_tags(res.message);
+                }
+
+                message += '</pre>';
+            }
+
+            self.panel.setLoading(false);
+            this.reload();
+
+            if (!empty(message)) {
+                if (showAsToast) {
+                    pimcore.helpers.showNotification(t("success"), message, "success");
+                } else {
+                    self.showMessageWindow(t("success"), message, "success");
+                }
+            }
+        }.bind(this);
+
+        var handleFailure = function() {
+            this.panel.setLoading(false);
+        }.bind(this);
+
         var typesColumns = [
             {header: t("type"), width: 50, sortable: false, dataIndex: 'type', renderer:
             function (value, metaData, record, rowIndex, colIndex, store) {
@@ -145,46 +241,8 @@ pimcore.extensionmanager.admin = Class.create({
                                 type: rec.get("type"),
                                 extensionType: self.getExtensionType(rec)
                             },
-                            success: function (transport) {
-                                var res = Ext.decode(transport.responseText);
-
-                                var message = '';
-                                if (res.reload) {
-                                    message += '<p style="text-align: center">';
-                                    message += t("please_dont_forget_to_reload_pimcore_after_modifications");
-                                    message += '</p>';
-                                }
-
-                                if (res.message) {
-                                    message += '<br /><hr />';
-                                    message += '<pre style="font-size:11px;word-wrap: break-word;margin-bottom: 0">';
-
-                                    if (Ext.isArray(res.message)) {
-                                        Ext.Array.each(res.message, function(line) {
-                                            if (message.length > 0) {
-                                                message += "\n"
-                                            }
-
-                                            message += strip_tags(line);
-                                        });
-                                    } else {
-                                        if (message.length > 0) {
-                                            message += "\n"
-                                        }
-
-                                        message += strip_tags(res.message);
-                                    }
-
-                                    message += '</pre>';
-                                }
-
-                                if (!empty(message)) {
-                                    this.showMessageWindow(t("success"), message, "success");
-                                }
-
-                                this.panel.setLoading(false);
-                                this.reload();
-                            }.bind(this)
+                            success: handleSuccess,
+                            failure: handleFailure
                         });
                     }.bind(this)
                 }]
@@ -216,6 +274,8 @@ pimcore.extensionmanager.admin = Class.create({
                             return;
                         }
 
+                        this.panel.setLoading(true);
+
                         Ext.Ajax.request({
                             url: '/admin/extensionmanager/admin/' + method,
                             params: {
@@ -223,19 +283,8 @@ pimcore.extensionmanager.admin = Class.create({
                                 type: rec.get("type"),
                                 extensionType: self.getExtensionType(rec)
                             },
-                            success: function (transport) {
-                                var res = Ext.decode(transport.responseText);
-
-                                if(!empty(res.message)) {
-                                    Ext.Msg.alert(" ", res.message);
-                                }
-
-                                if(res.reload) {
-                                    window.location.reload();
-                                } else {
-                                    this.reload();
-                                }
-                            }.bind(this)
+                            success: handleSuccess,
+                            failure: handleFailure
                         });
                     }.bind(this)
                 }]
@@ -265,6 +314,8 @@ pimcore.extensionmanager.admin = Class.create({
                             return;
                         }
 
+                        this.panel.setLoading(true);
+
                         Ext.Ajax.request({
                             url: '/admin/extensionmanager/admin/update',
                             params: {
@@ -272,19 +323,8 @@ pimcore.extensionmanager.admin = Class.create({
                                 type: rec.get("type"),
                                 extensionType: self.getExtensionType(rec)
                             },
-                            success: function (transport) {
-                                var res = Ext.decode(transport.responseText);
-
-                                if(!empty(res.message)) {
-                                    Ext.Msg.alert(" ", res.message);
-                                }
-
-                                if(res.reload) {
-                                    window.location.reload();
-                                } else {
-                                    this.reload();
-                                }
-                            }.bind(this)
+                            success: handleSuccess,
+                            failure: handleFailure
                         });
                     }.bind(this)
                 }]
@@ -348,17 +388,6 @@ pimcore.extensionmanager.admin = Class.create({
                 hideable: false
             }
         ];
-
-        var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
-            items: [
-                {
-                    text: t("refresh"),
-                    iconCls: "pimcore_icon_reload",
-                    handler: this.reload.bind(this)
-                }, "->" , "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"
-            ]
-        });
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,

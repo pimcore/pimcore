@@ -650,20 +650,29 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('clear_cache');
 
-        // empty document cache
-        Cache::clearAll();
+        $onlyPimcoreCache = (bool)$request->get('only_pimcore_cache');
+        $onlySymfonyCache = (bool)$request->get('only_symfony_cache');
 
-        $db = \Pimcore\Db::get();
-        $db->query('truncate table cache_tags');
-        $db->query('truncate table cache');
+        if (!$onlySymfonyCache) {
+            // empty document cache
+            Cache::clearAll();
 
-        \Pimcore\Tool::clearSymfonyCache($this->container);
+            $db = \Pimcore\Db::get();
+            $db->query('truncate table cache_tags');
+            $db->query('truncate table cache');
+        }
 
-        $this->get('filesystem')->remove(PIMCORE_CACHE_DIRECTORY);
-        // PIMCORE-1854 - recreate .dummy file => should remain
-        \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
+        if (!$onlyPimcoreCache) {
+            \Pimcore\Tool::clearSymfonyCache($this->container);
+        }
 
-        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
+        if (!$onlySymfonyCache) {
+            $this->get('filesystem')->remove(PIMCORE_CACHE_DIRECTORY);
+            // PIMCORE-1854 - recreate .dummy file => should remain
+            \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
+
+            \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
+        }
 
         return $this->json(['success' => true]);
     }
