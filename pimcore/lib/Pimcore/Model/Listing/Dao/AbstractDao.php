@@ -44,7 +44,12 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                         $lastOrder = $order[$c];
                     }
 
-                    $parts[] = $key . " " . $lastOrder;
+                    $tableAlias = '';
+                    if(strpos($key, ".") === FALSE && $this instanceof Model\Object\Listing\Concrete\Dao) {
+                        $tableAlias = $this->getTableName() . ".";
+                    }
+
+                    $parts[] = $tableAlias . $key . " " . $lastOrder;
 
                     $c++;
                 }
@@ -120,7 +125,12 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                         $lastOrder = $order[$c];
                     }
 
-                    $parts[] = $key . " " . $lastOrder;
+                    $tableAlias = '';
+                    if(strpos($key, ".") === FALSE && $this instanceof Model\Object\Listing\Concrete\Dao) {
+                        $tableAlias = $this->getTableName() . ".";
+                    }
+
+                    $parts[] = $tableAlias . $key . " " . $lastOrder;
 
                     $c++;
                 }
