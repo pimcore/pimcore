@@ -210,8 +210,6 @@
     "poster_image": "Poster-Image",
     "delete_master_document": "Delete master document",
     "open_master_document": "Open master document",
-    "password_protection": "Password-Protection",
-    "http_auth_warning": "WARNING: This applies to all websites",
     "logger": "Core Logger",
     "redirect_unknown_domains_to_main_domain": "Redirect unknown domains (not used for a site and for redirects, ...) to the main domain (above)",
     "colorspace": "Colorspace",

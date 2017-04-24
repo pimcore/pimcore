@@ -421,10 +421,6 @@ class SettingsController extends AdminController
                 'defaultLanguage' => $values['general.defaultLanguage'],
                 'loginscreencustomimage' => $values['general.loginscreencustomimage'],
                 'disableusagestatistics' => $values['general.disableusagestatistics'],
-                'http_auth' => [
-                    'username' => $values['general.http_auth.username'],
-                    'password' => $values['general.http_auth.password']
-                ],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
                 'devmode' => $values['general.devmode'],
                 'instanceIdentifier' => $values['general.instanceIdentifier'],
