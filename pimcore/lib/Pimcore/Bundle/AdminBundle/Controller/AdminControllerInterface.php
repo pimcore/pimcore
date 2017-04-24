@@ -14,12 +14,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\EventListener\AdminSessionListener;
-
 /**
  * Tagging interface defining controller as admin controller.
- *
- * @see AdminSessionListener
  */
 interface AdminControllerInterface extends DoubleAuthenticationControllerInterface
 {
