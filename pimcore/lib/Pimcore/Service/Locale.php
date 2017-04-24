@@ -14,6 +14,7 @@
 
 namespace Pimcore\Service;
 
+use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Locale
@@ -29,13 +30,19 @@ class Locale
     protected $requestStack;
 
     /**
-     * Locale constructor.
-     *
-     * @param RequestStack|null $requestStack
+     * @var Translator
      */
-    public function __construct(RequestStack $requestStack = null)
+    protected $translator;
+
+    /**
+     * Locale constructor.
+     * @param RequestStack|null $requestStack
+     * @param Translator|null $translator
+     */
+    public function __construct(RequestStack $requestStack = null, Translator $translator = null)
     {
         $this->requestStack = $requestStack;
+        $this->translator = $translator;
     }
 
     /**
@@ -142,6 +149,15 @@ class Locale
             if ($masterRequest) {
                 $masterRequest->setLocale($locale);
             }
+
+            $currentRequest = $this->requestStack->getCurrentRequest();
+            if($currentRequest) {
+                $currentRequest->setLocale($locale);
+            }
+        }
+
+        if($this->translator) {
+            $this->translator->setLocale($locale);
         }
     }
 

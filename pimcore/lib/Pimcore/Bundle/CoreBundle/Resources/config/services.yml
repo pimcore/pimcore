@@ -101,7 +101,7 @@ services:
 
     pimcore.locale:
       class: Pimcore\Service\Locale
-      arguments: ['@request_stack']
+      arguments: ['@request_stack', '@pimcore.translator']
 
     # Formatting service for dates, times and numbers
     pimcore.locale.intl_formatter:
