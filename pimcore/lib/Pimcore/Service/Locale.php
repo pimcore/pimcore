@@ -36,6 +36,7 @@ class Locale
 
     /**
      * Locale constructor.
+     *
      * @param RequestStack|null $requestStack
      * @param Translator|null $translator
      */
@@ -151,12 +152,12 @@ class Locale
             }
 
             $currentRequest = $this->requestStack->getCurrentRequest();
-            if($currentRequest) {
+            if ($currentRequest) {
                 $currentRequest->setLocale($locale);
             }
         }
 
-        if($this->translator) {
+        if ($this->translator) {
             $this->translator->setLocale($locale);
         }
     }
