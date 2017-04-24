@@ -2272,7 +2272,6 @@ class CleanupPendingOrdersCommand extends \Pimcore\Bundle\EcommerceFrameworkBund
 
 namespace OnlineShop\Framework\Console\Command\Voucher {
 
-
 /**
  * @deprecated
  * class CleanupReservationsCommand

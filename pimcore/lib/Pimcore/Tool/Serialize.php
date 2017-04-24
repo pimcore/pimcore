@@ -85,7 +85,11 @@ class Serialize
                 $value = self::loopFilterCycles($value);
             }
         } elseif (is_object($element)) {
-            $clone = clone $element; // do not modify the original object
+            try {
+                $clone = clone $element; // do not modify the original object
+            } catch (\Throwable $e) {
+                return sprintf('"* NON-CLONEABLE (%s): %s *"', get_class($element), $e->getMessage());
+            }
 
             if (in_array($element, self::$loopFilterProcessedObjects, true)) {
                 return '"* RECURSION (' . get_class($element) . ') *"';

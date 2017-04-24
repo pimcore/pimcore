@@ -1,53 +1,18 @@
 <?php
 namespace Pimcore\Tests\Helper;
 
-use Codeception\Module;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Tests\Util\TestHelper;
 
-class Model extends Module
+class Model extends AbstractDefinitionHelper
 {
-    /**
-     * @var array
-     */
-    protected $config = [
-        'initialize_definitions' => true,
-        'cleanup'                => true
-    ];
-
-    /**
-     * @return Module|ClassManager
-     */
-    protected function getClassManager()
-    {
-        return $this->getModule('\\' . ClassManager::class);
-    }
-
     /**
      * @inheritDoc
      */
     public function _beforeSuite($settings = [])
     {
         AbstractObject::setHideUnpublished(false);
-
-        if ($this->config['initialize_definitions']) {
-            if (TestHelper::supportsDbTests()) {
-                $this->initializeDefinitions();
-            } else {
-                $this->debug('[MODEL] Not initializing model definitions as DB is not connected');
-            }
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function _afterSuite()
-    {
-        if ($this->config['cleanup']) {
-            TestHelper::cleanUp();
-        }
+        parent::_beforeSuite($settings);
     }
 
     /**

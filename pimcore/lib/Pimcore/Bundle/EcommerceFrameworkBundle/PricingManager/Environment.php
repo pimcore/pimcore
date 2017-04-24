@@ -210,7 +210,6 @@ class Environment implements IEnvironment
         return $this->executionMode;
     }
 
-
     /**
      * returns hash of environment based on its content
      *

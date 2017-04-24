@@ -18,7 +18,7 @@ confirmation mails, ...) is located.
 The default implementation `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor` provides 
 basic functionality like creating a Pimcore order object and sending an order confirmation mail.
 
-Order creation it self is delegated to the `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager`.
+Order creation itself is delegated to the `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager`.
  
  
 ## Typically needed Custom Extensions

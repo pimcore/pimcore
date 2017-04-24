@@ -2083,13 +2083,9 @@ class AssetController extends ElementControllerBase implements EventedController
             return;
         }
 
-        $request = $event->getRequest();
-
-        // check permissions
-        $notRestrictedActions = ['get-image-thumbnail', 'get-video-thumbnail', 'get-document-thumbnail'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('assets');
-        }
+        $this->checkActionPermission($event, 'assets', [
+            'getImageThumbnailAction', 'getVideoThumbnailAction', 'getDocumentThumbnailAction'
+        ]);
 
         $this->_assetService = new Asset\Service($this->getUser());
     }

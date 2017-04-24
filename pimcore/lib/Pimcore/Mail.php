@@ -980,7 +980,8 @@ class Mail extends \Swift_Message
     /**
      * @inheritdoc
      */
-    public function addTo($address, $name = null) {
+    public function addTo($address, $name = null)
+    {
         if (is_array($address)) {
             foreach ($address as $item) {
                 parent::addTo($item, $name);

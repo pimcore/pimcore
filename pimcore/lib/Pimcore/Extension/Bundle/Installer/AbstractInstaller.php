@@ -67,7 +67,7 @@ class AbstractInstaller implements InstallerInterface
      */
     public function canBeUpdated()
     {
-        false;
+        return false;
     }
 
     /**

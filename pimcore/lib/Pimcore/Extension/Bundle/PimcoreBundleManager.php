@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -92,7 +95,7 @@ class PimcoreBundleManager
      *
      * @return PimcoreBundleInterface[]
      */
-    public function getActiveBundles($onlyInstalled = true)
+    public function getActiveBundles(bool $onlyInstalled = true): array
     {
         $bundles = [];
         foreach ($this->kernel->getBundles() as $bundle) {
@@ -114,7 +117,7 @@ class PimcoreBundleManager
      *
      * @return PimcoreBundleInterface
      */
-    public function getActiveBundle($id, $onlyInstalled = true)
+    public function getActiveBundle(string $id, bool $onlyInstalled = true): PimcoreBundleInterface
     {
         foreach ($this->getActiveBundles($onlyInstalled) as $bundle) {
             if ($this->getBundleIdentifier($bundle) === $id) {
@@ -130,7 +133,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    public function getAvailableBundles()
+    public function getAvailableBundles(): array
     {
         if (null === $this->availableBundles) {
             $this->availableBundles = $this->bundleLocator->findBundles();
@@ -144,7 +147,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    protected function getBundlesFromConfig()
+    protected function getBundlesFromConfig(): array
     {
         $config = $this->config->loadConfig();
         if (!isset($config->bundle)) {
@@ -159,7 +162,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    public function getEnabledBundles()
+    public function getEnabledBundles(): array
     {
         $result  = [];
         $bundles = $this->getBundlesFromConfig();
@@ -178,7 +181,7 @@ class PimcoreBundleManager
      *
      * @return string
      */
-    public function getBundleIdentifier($bundle)
+    public function getBundleIdentifier($bundle): string
     {
         $identifier = $bundle;
         if ($bundle instanceof PimcoreBundleInterface) {
@@ -193,7 +196,7 @@ class PimcoreBundleManager
      *
      * @param string $bundle
      */
-    protected function validateBundleIdentifier($bundle)
+    protected function validateBundleIdentifier(string $bundle)
     {
         $validNames = array_merge(
             array_keys($this->getActiveBundles(false)),
@@ -211,7 +214,7 @@ class PimcoreBundleManager
      * @param string|PimcoreBundleInterface $bundle
      * @param bool $state
      */
-    public function setState($bundle, $state)
+    public function setState($bundle, bool $state)
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -254,7 +257,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function isEnabled($bundle)
+    public function isEnabled($bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -269,7 +272,7 @@ class PimcoreBundleManager
      *
      * @return null|Installer\InstallerInterface
      */
-    protected function loadBundleInstaller(PimcoreBundleInterface $bundle, $throwException = false)
+    protected function loadBundleInstaller(PimcoreBundleInterface $bundle, bool $throwException = false)
     {
         if (null === $installer = $bundle->getInstaller()) {
             if ($throwException) {
@@ -325,7 +328,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function canBeInstalled(PimcoreBundleInterface $bundle)
+    public function canBeInstalled(PimcoreBundleInterface $bundle): bool
     {
         if (!$this->isEnabled($bundle)) {
             return false;
@@ -345,7 +348,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function canBeUninstalled(PimcoreBundleInterface $bundle)
+    public function canBeUninstalled(PimcoreBundleInterface $bundle): bool
     {
         if (!$this->isEnabled($bundle)) {
             return false;
@@ -365,7 +368,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function isInstalled(PimcoreBundleInterface $bundle)
+    public function isInstalled(PimcoreBundleInterface $bundle): bool
     {
         if (null === $installer = $bundle->getInstaller()) {
             // bundle has no dedicated installer, so we can treat it as installed
@@ -382,7 +385,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function needsReloadAfterInstall(PimcoreBundleInterface $bundle)
+    public function needsReloadAfterInstall(PimcoreBundleInterface $bundle): bool
     {
         if (null === $installer = $bundle->getInstaller()) {
             // bundle has no dedicated installer
@@ -399,7 +402,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function canBeUpdated(PimcoreBundleInterface $bundle)
+    public function canBeUpdated(PimcoreBundleInterface $bundle): bool
     {
         if (!$this->isEnabled($bundle)) {
             return false;
@@ -435,7 +438,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         $paths = $this->resolvePaths('js');
 
@@ -447,7 +450,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         $paths = $this->resolvePaths('css');
 
@@ -459,7 +462,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         $paths = $this->resolvePaths('js', 'editmode');
 
@@ -471,7 +474,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    public function getEditmodeCssPaths()
+    public function getEditmodeCssPaths(): array
     {
         $paths = $this->resolvePaths('css', 'editmode');
 
@@ -481,12 +484,12 @@ class PimcoreBundleManager
     /**
      * Iterates installed bundles and fetches asset paths
      *
-     * @param      $type
-     * @param null $mode
+     * @param string $type
+     * @param string|null $mode
      *
      * @return array
      */
-    protected function resolvePaths($type, $mode = null)
+    protected function resolvePaths(string $type, string $mode = null): array
     {
         $type = ucfirst($type);
 
@@ -527,7 +530,7 @@ class PimcoreBundleManager
      *
      * @return array
      */
-    protected function resolveEventPaths(array $paths, $eventName)
+    protected function resolveEventPaths(array $paths, string $eventName): array
     {
         $event = new PathsEvent($paths);
 

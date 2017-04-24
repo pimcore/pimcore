@@ -40,22 +40,21 @@ class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
         $finder
             ->files()
             ->name('/(?<!Dao)\.php$/')
-            ->in(PIMCORE_PATH . "/models");
+            ->in(PIMCORE_PATH . '/models');
 
         $map = [];
 
-        foreach($finder as $file) {
-            $className = str_replace([DIRECTORY_SEPARATOR, ".php"],["\\", ""], $file->getRelativePathname());
-            $className = "Pimcore\\Model\\" . $className;
+        foreach ($finder as $file) {
+            $className = str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $file->getRelativePathname());
+            $className = 'Pimcore\\Model\\' . $className;
 
-            if(class_exists($className)) {
-
+            if (class_exists($className)) {
                 $parents = class_parents($className);
-                if(is_array($parents) && in_array("Pimcore\\Model\\AbstractModel", $parents)) {
+                if (is_array($parents) && in_array('Pimcore\\Model\\AbstractModel', $parents)) {
                     $reflection = new \ReflectionClass($className);
-                    if(!$reflection->isAbstract()) {
+                    if (!$reflection->isAbstract()) {
                         $daoClass = Asset::locateDaoClass($className);
-                        if($daoClass) {
+                        if ($daoClass) {
                             $map[$className] = $daoClass;
                         }
                     }
@@ -63,7 +62,7 @@ class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
             }
         }
 
-        $mapFile = PIMCORE_PATH . "/config/dao-classmap.php";
+        $mapFile = PIMCORE_PATH . '/config/dao-classmap.php';
         File::putPhpFile($mapFile, to_php_data_file_format($map));
     }
 }

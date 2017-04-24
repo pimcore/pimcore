@@ -345,3 +345,7 @@ services:
     pimcore.rest_client:
         class: Pimcore\Tool\RestClient
         arguments: ['@pimcore.http_client']
+
+    pimcore.tool.assets_installer:
+        class: Pimcore\Tool\AssetsInstaller
+        arguments: ['@kernel', '@pimcore_admin.serializer']

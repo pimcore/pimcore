@@ -1336,13 +1336,13 @@ class ClassController extends AdminController implements EventedControllerInterf
             return;
         }
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = ['get-tree', 'fieldcollection-list', 'fieldcollection-tree', 'fieldcollection-get', 'get-class-definition-for-column-config', 'objectbrick-list', 'objectbrick-tree', 'objectbrick-get'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('classes');
-        }
+        $unrestrictedActions = [
+            'getTreeAction', 'fieldcollectionListAction', 'fieldcollectionTreeAction', 'fieldcollectionGetAction',
+            'getClassDefinitionForColumnConfigAction', 'objectbrickListAction', 'objectbrickTreeAction', 'objectbrickGetAction'
+        ];
+
+        $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
 
     /**

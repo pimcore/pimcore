@@ -182,7 +182,7 @@ Ext.onReady(function () {
         console.log("xhr request failed");
 
         if (!response.aborted && options["ignoreErrors"] !== true) {
-            if (response.status == 503) {
+            if (response.status === 503) {
                 //show wait info
                 if (!pimcore.maintenanceWindow) {
                     pimcore.maintenanceWindow = new Ext.Window({
@@ -200,24 +200,45 @@ Ext.onReady(function () {
                 //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
                 // be saved due to HTTP 500 Response)
                 var errorMessage = "";
+                var errorDetailMessage = "\n" + response.responseText;
 
                 try {
                     errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
                     errorMessage += "URL: " + options.url + "\n";
-                    if (options["params"]) {
+
+                    if (options["params"] && options["params"].length > 0) {
                         errorMessage += "Params:\n";
                         Ext.iterate(options.params, function (key, value) {
                             errorMessage += ( "-> " + key + ": " + value.substr(0, 500) + "\n");
                         });
                     }
+
                     if (options["method"]) {
                         errorMessage += "Method: " + options.method + "\n";
                     }
-                    errorMessage += "Message: \n" + response.responseText;
+
+                    try {
+                        var json = Ext.util.JSON.decode(response.responseText);
+
+                        if (json) {
+                            if ('undefined' !== typeof json.message && json.message.length > 0) {
+                                errorDetailMessage = json.message;
+                            }
+
+                            if ('undefined' !== typeof json.trace && json.trace.length > 0) {
+                                errorDetailMessage += "\nTrace: " + JSON.stringify(json.trace, null, 2);
+                            }
+                        }
+                    } catch (e) {
+                        // noop, just fall back to generic error message (whole response text)
+                    }
+
+                    errorMessage += "Message: " + errorDetailMessage;
                 } catch (e) {
                     errorMessage += "\n\n";
                     errorMessage += response.responseText;
                 }
+
                 pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
             }
         }

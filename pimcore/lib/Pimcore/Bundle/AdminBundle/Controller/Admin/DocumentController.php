@@ -1434,13 +1434,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return;
         }
 
-        $request = $event->getRequest();
-
         // check permissions
-        $notRestrictedActions = ['doc-types'];
-        if (!in_array($request->get('action'), $notRestrictedActions)) {
-            $this->checkPermission('documents');
-        }
+        $this->checkActionPermission($event, 'documents', ['docTypesAction']);
 
         $this->_documentService = new Document\Service($this->getUser());
     }

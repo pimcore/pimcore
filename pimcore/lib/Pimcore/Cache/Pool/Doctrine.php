@@ -14,9 +14,9 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Pimcore\Db\Connection;
 use Pimcore\Cache\Pool\Exception\CacheException;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
+use Pimcore\Db\Connection;
 
 class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
 {
@@ -55,7 +55,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
           (CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END) as data
             FROM cache WHERE id IN (?)', [$now, $ids], [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]);
 
-        foreach($results as $row) {
+        foreach ($results as $row) {
             if (null !== $row['data']) {
                 $value = $this->unserializeData($row['data']);
 
