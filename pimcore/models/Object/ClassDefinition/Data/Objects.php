@@ -641,9 +641,9 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             $result = [];
             foreach ($tabledata as $in) {
                 $out = [];
-                $out["id"] = $in["id"];
-                $out["path"] = $in["fullpath"];
-                $out["type"] = $in["type"];
+                $out["id"] = $in[0];
+                $out["path"] = $in[1];
+                $out["type"] = $in[2];
                 $result[] = $out;
             }
 
