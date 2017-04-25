@@ -148,6 +148,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                         }
 
                         this.availablePanels[oldLanguage].hide();
+                        this.component.updateLayout();
                         this.availablePanels[newLanguage].show();
                         this.currentLanguage = newLanguage;
                         this.component.updateLayout();
