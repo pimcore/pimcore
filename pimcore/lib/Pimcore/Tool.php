@@ -357,7 +357,7 @@ class Tool
             || array_key_exists('pimcore_admin', $_REQUEST)
             || array_key_exists('pimcore_object_preview', $_REQUEST)
             || array_key_exists('pimcore_version', $_REQUEST)
-            || preg_match('@^/pimcore_document_tag_renderlet@', $_SERVER['REQUEST_URI'])) {
+            || preg_match('@^/admin/document_tag/renderlet@', $_SERVER['REQUEST_URI'])) {
             return true;
         }
 

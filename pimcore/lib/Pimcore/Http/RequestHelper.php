@@ -96,7 +96,7 @@ class RequestHelper
             }
         }
 
-        if (preg_match('@^/pimcore_document_tag_renderlet@', $request->getRequestUri())) {
+        if (preg_match('@^/admin/document_tag/renderlet@', $request->getRequestUri())) {
             return true;
         }
 
