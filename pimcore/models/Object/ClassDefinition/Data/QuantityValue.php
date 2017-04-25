@@ -282,20 +282,19 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck && $this->getMandatory() && ($data === null || $data->getValue() === null)) {
-            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+        if ($omitMandatoryCheck) {
+            return;
+        }
+
+        if ($this->getMandatory() &&
+            ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
+            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (!empty($data)) {
             $value = $data->getValue();
-            if ((!empty($value) && !is_numeric($data->getValue()))) {
-                throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
-            }
-
-            if (!empty($data->getUnitId())) {
-                if (!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
-                }
+            if ((!empty($value) && !is_numeric($data->getValue())) || !($data->getUnitId())) {
+                throw new Model\Element\ValidationException("Invalid dimension unit data " . $this->getName());
             }
         }
     }
