@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -34,55 +35,14 @@ use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
-abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
+abstract class Kernel extends SymfonyKernel
 {
     /**
      * @var Extension\Config
      */
     protected $extensionConfig;
-
-    /**
-     * Returns an array of bundles to register.
-     *
-     * @return BundleInterface[] An array of bundle instances
-     */
-    public function registerBundles()
-    {
-        $bundles = [
-            // symfony "core"/standard
-            new FrameworkBundle(),
-            new SecurityBundle(),
-            new TwigBundle(),
-            new MonologBundle(),
-            new SwiftmailerBundle(),
-            new DoctrineBundle(),
-            new SensioFrameworkExtraBundle(),
-
-            // CMF bundles
-            new CmfRoutingBundle(),
-
-            // pimcore bundles
-            new PimcoreCoreBundle(),
-            new PimcoreAdminBundle(),
-        ];
-
-        // bundles registered in extensions.php
-        $bundles = $this->registerExtensionManagerBundles($bundles);
-
-        // load environment specific bundles
-        if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
-            $bundles[] = new DebugBundle();
-            $bundles[] = new WebProfilerBundle();
-            $bundles[] = new SensioDistributionBundle();
-
-            if ('dev' === $this->getEnvironment()) {
-                $bundles[] = new SensioGeneratorBundle();
-            }
-        }
-
-        return $bundles;
-    }
 
     /**
      * {@inheritdoc}
@@ -166,22 +126,79 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
     }
 
     /**
-     * @param array $bundles
+     * Returns an array of bundles to register.
      *
-     * @return array
+     * @return BundleInterface[] An array of bundle instances
      */
-    protected function registerExtensionManagerBundles(array $bundles)
+    public function registerBundles(): array
+    {
+        $collection = new BundleCollection();
+
+        $this->buildBundleCollection($collection);
+
+        return $collection->getBundles($this->getEnvironment());
+    }
+
+    /**
+     * Adds bundles to register to the bundle collection. The collection is able
+     * to handle priorities and environment specific bundles.
+     *
+     * @param BundleCollection $collection
+     */
+    protected function buildBundleCollection(BundleCollection $collection)
+    {
+        $collection->addBundles([
+            // symfony "core"/standard
+            new FrameworkBundle(),
+            new SecurityBundle(),
+            new TwigBundle(),
+            new MonologBundle(),
+            new SwiftmailerBundle(),
+            new DoctrineBundle(),
+            new SensioFrameworkExtraBundle(),
+
+            // CMF bundles
+            new CmfRoutingBundle(),
+        ], 100);
+
+        // environment specific bundles dev + test bundles
+        $collection->addBundle(
+            new SensioGeneratorBundle(),
+            80, ['dev']
+        );
+
+        $collection->addBundles(
+            [
+                new DebugBundle(),
+                new WebProfilerBundle(),
+                new SensioDistributionBundle()
+            ],
+            80, ['dev', 'test']
+        );
+
+        // pimcore bundles
+        $collection->addBundles([
+            new PimcoreCoreBundle(),
+            new PimcoreAdminBundle(),
+        ], 60);
+
+        // bundles registered in extensions.php
+        $this->registerExtensionManagerBundles($collection);
+    }
+
+    /**
+     * @param BundleCollection $collection
+     */
+    protected function registerExtensionManagerBundles(BundleCollection $collection)
     {
         $config = $this->extensionConfig->loadConfig();
         if (isset($config->bundle)) {
             foreach ($config->bundle->toArray() as $bundleName => $state) {
                 if ((bool) $state && class_exists($bundleName)) {
-                    $bundles[] = new $bundleName();
+                    $collection->addBundle(new $bundleName);
                 }
             }
         }
-
-        return $bundles;
     }
 
     /**
