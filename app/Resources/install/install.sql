@@ -447,7 +447,8 @@ CREATE TABLE `schedule_tasks` (
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
-  KEY `active` (`active`)
+  KEY `active` (`active`),
+  KEY `version` (`version`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `search_backend_data`;

@@ -674,6 +674,12 @@ class Version extends AbstractModel
                         continue;
                     }
 
+                    // do not delete versions referenced in the scheduler
+                    if($this->getDao()->isVersionUsedInScheduler($version)) {
+                        $ignoredIds[] = $version->getId();
+                        continue;
+                    }
+
                     if ($version->getCtype() == 'document') {
                         $element = Document::getById($version->getCid());
                     } elseif ($version->getCtype() == 'asset') {
