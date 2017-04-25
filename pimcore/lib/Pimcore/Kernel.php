@@ -134,18 +134,21 @@ abstract class Kernel extends SymfonyKernel
     {
         $collection = new BundleCollection();
 
-        $this->buildBundleCollection($collection);
+        // core bundles (Symfony, Pimcore)
+        $this->registerCoreBundlesToCollection($collection);
 
-        return $collection->getBundles($this->getEnvironment());
+        // bundles registered in extensions.php
+        $this->registerExtensionManagerBundles($collection);
+
+        // custom bundles
+        $this->registerBundlesToCollection($collection);
+
+        $bundles = $collection->getBundles($this->getEnvironment());
+
+        return $bundles;
     }
 
-    /**
-     * Adds bundles to register to the bundle collection. The collection is able
-     * to handle priorities and environment specific bundles.
-     *
-     * @param BundleCollection $collection
-     */
-    protected function buildBundleCollection(BundleCollection $collection)
+    protected function registerCoreBundlesToCollection(BundleCollection $collection)
     {
         $collection->addBundles([
             // symfony "core"/standard
@@ -181,9 +184,6 @@ abstract class Kernel extends SymfonyKernel
             new PimcoreCoreBundle(),
             new PimcoreAdminBundle(),
         ], 60);
-
-        // bundles registered in extensions.php
-        $this->registerExtensionManagerBundles($collection);
     }
 
     /**
@@ -229,6 +229,18 @@ abstract class Kernel extends SymfonyKernel
                 $collection->addBundle(new $className, $priority, $environments);
             }
         }
+    }
+
+    /**
+     * Adds bundles to register to the bundle collection. The collection is able
+     * to handle priorities and environment specific bundles.
+     *
+     * To be implemented in child classes
+     *
+     * @param BundleCollection $collection
+     */
+    public function registerBundlesToCollection(BundleCollection $collection)
+    {
     }
 
     /**

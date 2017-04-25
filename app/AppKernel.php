@@ -23,10 +23,8 @@ class AppKernel extends Kernel
      *
      * @param BundleCollection $collection
      */
-    protected function buildBundleCollection(BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection)
     {
-        parent::buildBundleCollection($collection);
-
         if (class_exists('\\AppBundle\\AppBundle')) {
             $collection->addBundle(new \AppBundle\AppBundle);
         }
