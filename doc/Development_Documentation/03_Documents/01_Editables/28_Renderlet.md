@@ -15,7 +15,7 @@ A typical use-case would be to render product objects within a document.
 | `className`    | string    | Specify class name (if type **object** chosen)                                     |             |
 | `controller`   | string    | Specify controller                                                                 | X           |
 | `height`       | integer   | Height of the renderlet in pixel                                                   |             |
-| `module`       | string    | Specify module (default: website)                                                  |             |
+| `bundle`       | string    | Specify bundle (default: `AppBundle`)                                              |             |
 | `reload`       | bool      | Reload document on change                                                          |             |
 | `template`     | string    | Specify template                                                                   |             |
 | `title`        | string    | Add a title to the box in editmode                                                 |             |
@@ -24,7 +24,7 @@ A typical use-case would be to render product objects within a document.
 | `class`        | string    | A CSS class that is added to the surrounding container of this element in editmode |             |
 
 Optionally you can pass every parameter (with a scalar data type) you like to the renderlet which can be accessed in 
-the configured controller with `$this->getParam("yourKey")`.
+the configured controller with `$request->get('yourKey')`.
 
 ## Methods
 
@@ -34,17 +34,15 @@ the configured controller with `$this->getParam("yourKey")`.
 
 ## In the configured Controller Action
 
-In the target controller action, you get the following parameters which can be accessed by `$this->getParam("key")`.
+In the target controller action, you get the following parameters which can be accessed by `$request->get('key')`.
 
 | Name       | Type                   | Description                                                                                      |
 |------------|------------------------|--------------------------------------------------------------------------------------------------|
-| `document` | Pimcore\Model\Document | If the element which is dropped on the renderlet is a document this parameter is defined.        |
 | `id`       | integer                | The id of the element assigned to the renderlet                                                  |
-| `object`   | Pimcore\Model\Object   | If the element which is dropped on the renderlet is an object this parameter is defined.         |
-| `subtype`  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
 | `type`     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
+| `subtype`  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
 
-If you have defined any custom parameters on the renderlet configuration you can access them also with `$this->getParam()`.
+If you have defined any custom parameters on the renderlet configuration you can access them also with `$request->get('yourParam')`.
 
 ## Example
 
@@ -56,7 +54,7 @@ The code below shows how to use renderlet to create gallery based on it.
 <section id="renderlet-gallery">
     <?= $this->renderlet("myGallery", [
         "controller" => "content",
-        "action" => "my-gallery",
+        "action" => "myGallery",
         "title" => "Drag an asset folder here to get a gallery",
         "height" => 400
     ]); ?>
@@ -70,11 +68,11 @@ Now editors are able to put elements onto the renderlet in the editmode.
 ### Specify the Controller Action
 
 ```php
-public function myGalleryAction()
+public function myGalleryAction(Request $request)
 {
-    if($this->getParam('type') == 'asset') {
-        $asset = Asset::getById($this->getParam('id'));
-        if($asset->getType("folder")) {
+    if ('asset' === $request->get('type')) {
+        $asset = Asset::getById($request->get('id'));
+        if ('folder' === $asset->getType()) {
             $this->view->assets = $asset->getChildren();
         }
     }
@@ -90,19 +88,19 @@ Now you have to create the template file at: `website/views/scripts/content/my-g
 
 ```php
 <?php
-/** @var \Pimcore\View $this */
+/** @var \Pimcore\Templating\PhpEngine $this */
 ?>
-<?php if($this->assets): ?>
+<?php if ($this->assets): ?>
     <div class="my-gallery">
         <?php
-        foreach($this->assets as $asset):
-            if($asset instanceof Pimcore\Model\Asset\Image):
+        foreach ($this->assets as $asset):
+            if ($asset instanceof Pimcore\Model\Asset\Image):
                 /** @var Pimcore\Model\Asset\Image $asset */
-            ?>
-            <div class="gallery-row">
-                <?= $asset->getThumbnail('galleryThumbnail')->getHTML(); ?>
-            </div>
-        <?php
+                ?>
+                <div class="gallery-row">
+                    <?= $asset->getThumbnail('galleryThumbnail')->getHTML(); ?>
+                </div>
+                <?php
             endif;
         endforeach; ?>
     </div>
