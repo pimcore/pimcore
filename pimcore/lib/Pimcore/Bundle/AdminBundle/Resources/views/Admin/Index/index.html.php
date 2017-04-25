@@ -86,6 +86,16 @@ $user      = $userProxy->getUser();
     </style>
 
     <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
+
+    <script type="text/javascript">
+        var pimcore = {}; // namespace
+
+        // hide symfony toolbar by default
+        var symfonyToolbarKey = 'sf2/profiler/toolbar/displayState';
+        if(!window.localStorage.getItem(symfonyToolbarKey)) {
+            window.localStorage.setItem(symfonyToolbarKey, 'none');
+        }
+    </script>
 </head>
 
 <body>
@@ -138,10 +148,6 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 </div>
 
 <div id="pimcore_tooltip" style="display: none;"></div>
-
-<script type="text/javascript">
-    var pimcore = {}; // namespace
-</script>
 
 <?php // define stylesheets ?>
 <?php
