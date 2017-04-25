@@ -187,16 +187,46 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
+     * Registers bundles enabled via extension manager
+     *
      * @param BundleCollection $collection
      */
     protected function registerExtensionManagerBundles(BundleCollection $collection)
     {
         $config = $this->extensionConfig->loadConfig();
         if (isset($config->bundle)) {
-            foreach ($config->bundle->toArray() as $bundleName => $state) {
-                if ((bool) $state && class_exists($bundleName)) {
-                    $collection->addBundle(new $bundleName);
+            foreach ($config->bundle->toArray() as $className => $config) {
+                if (!class_exists($className)) {
+                    continue;
                 }
+
+                $priority     = 0;
+                $environments = [];
+
+                if (is_bool($config)) {
+                    if (!$config) {
+                        continue;
+                    }
+                } elseif (is_array($config)) {
+                    $enabled = isset($config['enabled']) && (bool)$config['enabled'];
+                    if (!$enabled) {
+                        continue;
+                    }
+
+                    if (isset($config['priority'])) {
+                        $priority = (int)$config['priority'];
+                    }
+
+                    if (isset($config['environments'])) {
+                        if (is_array($config['environments'])) {
+                            $environments = $config['environments'];
+                        }
+                    }
+                } else {
+                    continue;
+                }
+
+                $collection->addBundle(new $className, $priority, $environments);
             }
         }
     }
