@@ -694,7 +694,7 @@
     "path": "Path",
     "key": "Key",
     "id": "ID",
-    "name_and_meta_data": "Name & Metadata",
+    "title_description_meta_data": "Title, Description & Metadata",
     "name": "Name",
     "title": "Title",
     "description": "Description",

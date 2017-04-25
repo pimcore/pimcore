@@ -1389,3 +1389,74 @@ span.warning {
 .grid_nicepath_requested {
     background-color: lightblue;
 }
+
+/* page SERP preview */
+
+.pimcore_document_page_serp_preview {
+
+    position: absolute;
+    left: 705px;
+    top: 0;
+    width:620px;
+    padding: 10px;
+
+    font-family:arial,sans-serif;
+    background: #f2f2f2;
+}
+
+.pimcore_document_page_serp_preview .entry {
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    border-radius: 2px;
+    border-bottom: 1px hidden #fff;
+    margin: 0 0 10px 0;
+    padding: 10px 16px 10px 16px;
+}
+
+.pimcore_document_page_serp_preview .desktop {
+    width: 632px;
+}
+
+.pimcore_document_page_serp_preview .mobile {
+    width: 384px;
+}
+
+.pimcore_document_page_serp_preview .title {
+    color: #1a0dab;
+}
+
+.pimcore_document_page_serp_preview .url {
+    font-size: 14px;
+    color: #006621;
+}
+
+.pimcore_document_page_serp_preview .description {
+    color: #545454;
+}
+
+.pimcore_document_page_serp_preview .desktop .title {
+    font-size: 18px;
+    display:inline-block;
+    padding: 0 0 3px 0;
+}
+
+.pimcore_document_page_serp_preview .desktop .description {
+    font-size:13px;
+    padding: 0 0 0 0;
+}
+
+.pimcore_document_page_serp_preview .mobile .title {
+    font-size: 16px;
+    padding: 0 0 2px 0;
+    line-height: 20px;
+}
+
+.pimcore_document_page_serp_preview .mobile .url {
+    padding: 0 0 12px 0;
+}
+
+.pimcore_document_page_serp_preview .mobile .description {
+    font-size:14px;
+    padding: 11px 0 0 0;
+    border-top:1px solid #EEEEEE;
+}
