@@ -30,6 +30,15 @@ final class StateConfig
     private static $optionsResolver;
 
     /**
+     * @var array
+     */
+    private static $optionDefaults = [
+        'enabled'      => false,
+        'priority'     => 0,
+        'environments' => []
+    ];
+
+    /**
      * @var Config
      */
     private $config;
@@ -40,32 +49,6 @@ final class StateConfig
     public function __construct(Config $config)
     {
         $this->config = $config;
-    }
-
-    /**
-     * Sets the normalized bundle state on the extension manager config
-     *
-     * @param string $bundle
-     * @param array $options
-     */
-    public function setState(string $bundle, array $options)
-    {
-        $config = $this->config->loadConfig();
-        if (!isset($config->bundle)) {
-            $config->bundle = new PimcoreConfig\Config([], true);
-        }
-
-        $entry = [];
-        if (isset($config->bundle->$bundle)) {
-            $entry = $config->bundle->$bundle;
-        }
-
-        $entry = array_merge($entry, $options);
-        $entry = self::normalizeOptions($entry);
-
-        $config->bundle->$bundle = $entry;
-
-        $this->config->saveConfig($config);
     }
 
     /**
@@ -113,10 +96,66 @@ final class StateConfig
 
         $result = [];
         foreach ($bundles as $bundleName => $options) {
-            $result[$bundleName] = self::normalizeOptions($options);
+            $result[$bundleName] = $this->normalizeOptions($options);
         }
 
         return $result;
+    }
+
+    /**
+     * Sets the normalized bundle state on the extension manager config
+     *
+     * @param string $bundle
+     * @param array $options
+     */
+    public function setState(string $bundle, array $options)
+    {
+        $config = $this->config->loadConfig();
+        if (!isset($config->bundle)) {
+            $config->bundle = new PimcoreConfig\Config([], true);
+        }
+
+        $entry = [];
+        if (isset($config->bundle->$bundle)) {
+            $entry = $this->normalizeOptions($config->bundle->$bundle->toArray());
+        }
+
+        $entry = array_merge($entry, $options);
+        $entry = $this->prepareWriteOptions($entry);
+
+        $config->bundle->$bundle = $entry;
+
+        $this->config->saveConfig($config);
+    }
+
+    /**
+     * Prepares options for writing. If all options besides enabled are the same as the default
+     * value, just the state will be written as bool,
+     *
+     * @param array $options
+     * @return array|bool
+     */
+    private function prepareWriteOptions(array $options)
+    {
+        $options = $this->normalizeOptions($options);
+
+        $isDefault = true;
+        foreach (array_keys(self::$optionDefaults) as $option) {
+            if ('enabled' === $option) {
+                continue;
+            }
+
+            if ($options[$option] !== static::$optionDefaults[$option]) {
+                $isDefault = false;
+                break;
+            }
+        }
+
+        if ($isDefault) {
+            return $options['enabled'];
+        }
+
+        return $options;
     }
 
     /**
@@ -126,7 +165,7 @@ final class StateConfig
      *
      * @return array
      */
-    final public static function normalizeOptions($options): array
+    private function normalizeOptions($options): array
     {
         if (is_bool($options)) {
             $options = ['enabled' => $options];
@@ -150,13 +189,9 @@ final class StateConfig
         }
 
         $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'enabled'      => false,
-            'priority'     => 0,
-            'environments' => []
-        ]);
+        $resolver->setDefaults(self::$optionDefaults);
 
-        $resolver->setRequired(['enabled', 'priority', 'environments']);
+        $resolver->setRequired(array_keys(self::$optionDefaults));
 
         $resolver->setAllowedTypes('enabled', 'bool');
         $resolver->setAllowedTypes('priority', 'int');
