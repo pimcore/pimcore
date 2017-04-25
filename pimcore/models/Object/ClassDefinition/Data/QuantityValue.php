@@ -400,7 +400,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
                 $unit = Model\Object\QuantityValue\Unit::getById($unitId);
                 if ($unit && $unit->getAbbreviation() == $value["unitAbbreviation"]) {
                     return new \Pimcore\Model\Object\Data\QuantityValue($value["value"], $unitId);
-                } elseif(!$unit && is_null($value['unit'])) {
+                } elseif (!$unit && is_null($value['unit'])) {
                     return new \Pimcore\Model\Object\Data\QuantityValue($value["value"]);
                 } else {
                     throw new \Exception(get_class($this).": cannot get values from web service import - unit id and unit abbreviation do not match with local database");
