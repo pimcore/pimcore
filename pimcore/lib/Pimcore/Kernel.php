@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
+use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
@@ -193,41 +194,14 @@ abstract class Kernel extends SymfonyKernel
      */
     protected function registerExtensionManagerBundles(BundleCollection $collection)
     {
-        $config = $this->extensionConfig->loadConfig();
-        if (isset($config->bundle)) {
-            foreach ($config->bundle->toArray() as $className => $config) {
-                if (!class_exists($className)) {
-                    continue;
-                }
+        $stateConfig = new StateConfig($this->extensionConfig);
 
-                $priority     = 0;
-                $environments = [];
-
-                if (is_bool($config)) {
-                    if (!$config) {
-                        continue;
-                    }
-                } elseif (is_array($config)) {
-                    $enabled = isset($config['enabled']) && (bool)$config['enabled'];
-                    if (!$enabled) {
-                        continue;
-                    }
-
-                    if (isset($config['priority'])) {
-                        $priority = (int)$config['priority'];
-                    }
-
-                    if (isset($config['environments'])) {
-                        if (is_array($config['environments'])) {
-                            $environments = $config['environments'];
-                        }
-                    }
-                } else {
-                    continue;
-                }
-
-                $collection->addBundle(new $className, $priority, $environments);
+        foreach ($stateConfig->getEnabledBundles() as $className => $options) {
+            if (!class_exists($className)) {
+                continue;
             }
+
+            $collection->addBundle(new $className, $options['priority'], $options['environments']);
         }
     }
 

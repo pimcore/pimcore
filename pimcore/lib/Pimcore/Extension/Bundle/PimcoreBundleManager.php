@@ -20,6 +20,7 @@ namespace Pimcore\Extension\Bundle;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
+use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
@@ -32,9 +33,9 @@ use Symfony\Component\Routing\RouterInterface;
 class PimcoreBundleManager
 {
     /**
-     * @var Config
+     * @var StateConfig
      */
-    protected $config;
+    protected $stateConfig;
 
     /**
      * @var PimcoreBundleLocator
@@ -67,20 +68,20 @@ class PimcoreBundleManager
     protected $enabledBundles;
 
     /**
-     * @param Config $config
+     * @param StateConfig $stateConfig
      * @param PimcoreBundleLocator $bundleLocator
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $dispatcher
      * @param RouterInterface $router
      */
     public function __construct(
-        Config $config,
+        StateConfig $stateConfig,
         PimcoreBundleLocator $bundleLocator,
         KernelInterface $kernel,
         EventDispatcherInterface $dispatcher,
         RouterInterface $router
     ) {
-        $this->config         = $config;
+        $this->stateConfig    = $stateConfig;
         $this->bundleLocator  = $bundleLocator;
         $this->kernel         = $kernel;
         $this->dispatcher     = $dispatcher;
@@ -143,37 +144,13 @@ class PimcoreBundleManager
     }
 
     /**
-     * Loads bundles defined in configuration
+     * Lists enabled bundle names from config
      *
      * @return array
      */
-    protected function getBundlesFromConfig(): array
+    public function getEnabledBundleNames(): array
     {
-        $config = $this->config->loadConfig();
-        if (!isset($config->bundle)) {
-            return [];
-        }
-
-        return $config->bundle->toArray();
-    }
-
-    /**
-     * Lists enabled bundles from config
-     *
-     * @return array
-     */
-    public function getEnabledBundles(): array
-    {
-        $result  = [];
-        $bundles = $this->getBundlesFromConfig();
-
-        foreach ($bundles as $bundleName => $state) {
-            if ((bool) $state) {
-                $result[] = $bundleName;
-            }
-        }
-
-        return $result;
+        return $this->stateConfig->getEnabledBundleNames();
     }
 
     /**
@@ -209,25 +186,18 @@ class PimcoreBundleManager
     }
 
     /**
-     * Enables/disables a bundle
+     * Updates state for a bundle and writes it to config
      *
      * @param string|PimcoreBundleInterface $bundle
-     * @param bool $state
+     * @param array $options
      */
-    public function setState($bundle, bool $state)
+    public function setState($bundle, array $options)
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
         $this->validateBundleIdentifier($identifier);
 
-        $config = $this->config->loadConfig();
-        if (!isset($config->bundle)) {
-            $config->bundle = new PimcoreConfig\Config([], true);
-        }
-
-        $config->bundle->$identifier = (bool) $state;
-
-        $this->config->saveConfig($config);
+        $this->stateConfig->setState($identifier, $options);
     }
 
     /**
@@ -237,7 +207,7 @@ class PimcoreBundleManager
      */
     public function enable($bundle)
     {
-        $this->setState($bundle, true);
+        $this->setState($bundle, ['enabled' => true]);
     }
 
     /**
@@ -247,7 +217,7 @@ class PimcoreBundleManager
      */
     public function disable($bundle)
     {
-        $this->setState($bundle, false);
+        $this->setState($bundle, ['enabled' => false]);
     }
 
     /**
@@ -263,7 +233,7 @@ class PimcoreBundleManager
 
         $this->validateBundleIdentifier($identifier);
 
-        return in_array($identifier, $this->getEnabledBundles());
+        return in_array($identifier, $this->getEnabledBundleNames());
     }
 
     /**

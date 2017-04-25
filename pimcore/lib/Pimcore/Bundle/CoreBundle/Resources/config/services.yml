@@ -249,10 +249,14 @@ services:
             - '%pimcore.extensions.bundles.search_paths%'
             - '%pimcore.extensions.bundles.handle_composer%'
 
+    pimcore.extension.bundle.state_config:
+        class: Pimcore\Extension\Bundle\Config\StateConfig
+        arguments: ['@pimcore.extension.config']
+
     pimcore.extension.bundle_manager:
         class: Pimcore\Extension\Bundle\PimcoreBundleManager
         arguments:
-            - '@pimcore.extension.config'
+            - '@pimcore.extension.bundle.state_config'
             - '@pimcore.extension.bundle_locator'
             - '@kernel'
             - '@event_dispatcher'

@@ -114,7 +114,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $message = null;
 
         if ($type === 'bundle') {
-            $this->bundleManager->setState($id, $enable);
+            $this->bundleManager->setState($id, ['enabled' => $enable]);
             $reload = true;
 
             if ($enable) {
@@ -302,7 +302,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $bm = $this->bundleManager;
 
         $results = [];
-        foreach ($bm->getEnabledBundles() as $className) {
+        foreach ($bm->getEnabledBundleNames() as $className) {
             $bundle = $bm->getActiveBundle($className, false);
 
             $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
