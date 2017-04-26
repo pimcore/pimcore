@@ -117,8 +117,6 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 $start = 0;
                 $limit = 15;
-                $orderKey = "oo_id";
-                $order = "ASC";
 
                 $fields = [];
                 $bricks = [];
