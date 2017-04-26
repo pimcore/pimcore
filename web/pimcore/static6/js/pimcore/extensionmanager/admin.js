@@ -82,21 +82,31 @@ pimcore.extensionmanager.admin = Class.create({
                 extend: 'Ext.data.Model',
                 fields: [
                     "id", "extensionId", "type", "name", "description", "installed", "installable", "uninstallable", "active",
-                    "configuration", "updateable", "xmlEditorFile", "version"
+                    "configuration", "updateable", "xmlEditorFile", "version", "priority", "environments"
                 ],
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/extensionmanager/admin/get-extensions',
+                    url: '/admin/extensionmanager/admin/extensions',
                     reader: {
                         type: 'json',
-                        rootProperty: "extensions"
+                        rootProperty: 'extensions'
+                    },
+                    writer: {
+                        type: 'json',
+                        rootProperty: 'extensions',
+                        allowSingle: false
+                    },
+                    actionMethods: {
+                        read: 'GET',
+                        update: 'PUT'
                     }
                 }
             });
         }
 
         this.store = new Ext.data.Store({
-            model: 'pimcore.model.extensions.admin'
+            model: 'pimcore.model.extensions.admin',
+            autoSync: false
         });
 
         this.store.load();
@@ -111,6 +121,19 @@ pimcore.extensionmanager.admin = Class.create({
                 },
                 '->',
                 '<b id="ext-manager-reload-info" style="visibility: hidden">' + t("please_dont_forget_to_reload_pimcore_after_modifications") + '!</b>',
+                {
+                    text: t("apply"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function() {
+                        self.panel.setLoading(true);
+                        self.store.sync({
+                            callback: function() {
+                                self.panel.setLoading(false);
+                                console.log('CB', arguments);
+                            }
+                        });
+                    }.bind(this)
+                },
                 {
                     text: t("clear_cache_and_reload"),
                     iconCls: "pimcore_icon_clear_cache",
@@ -386,6 +409,20 @@ pimcore.extensionmanager.admin = Class.create({
                 dataIndex: 'xmlEditorFile',
                 hidden: true,
                 hideable: false
+            },
+            {
+                header: t("priority"),
+                width: 80,
+                sortable: true,
+                dataIndex: 'priority',
+                editor: new Ext.form.Number({})
+            },
+            {
+                header: t("environments"),
+                width: 100,
+                sortable: false,
+                dataIndex: 'environments',
+                editor: new Ext.form.TextField({})
             }
         ];
 
@@ -399,6 +436,11 @@ pimcore.extensionmanager.admin = Class.create({
                     flex: 0
                 }
             },
+            plugins: [
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1
+                })
+            ],
             trackMouseOver: true,
             columnLines: true,
             stripeRows: true,
