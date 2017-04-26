@@ -75,7 +75,6 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
     {
         // make sure only the pimcore_admin user provider can be used with this authentication provider
         $builder
-            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('provider')
                     ->defaultValue('pimcore_admin')
