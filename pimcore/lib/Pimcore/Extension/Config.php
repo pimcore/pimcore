@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -32,7 +35,7 @@ class Config
     /**
      * @return PimcoreConfig\Config
      */
-    public function loadConfig()
+    public function loadConfig(): PimcoreConfig\Config
     {
         if (!$this->config) {
             if ($this->configFileExists()) {
@@ -61,9 +64,9 @@ class Config
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function locateConfigFile()
+    public function locateConfigFile(): string
     {
         if (null === $this->file) {
             $this->file = PimcoreConfig::locateConfigFile('extensions.php');
@@ -75,7 +78,7 @@ class Config
     /**
      * @return bool
      */
-    public function configFileExists()
+    public function configFileExists(): bool
     {
         if (null !== $file = $this->locateConfigFile()) {
             return file_exists($file);

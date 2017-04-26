@@ -103,6 +103,23 @@ final class StateConfig
     }
 
     /**
+     * Returns the normalized bundle state from the extension manager config
+     *
+     * @param string $bundle
+     *
+     * @return array
+     */
+    public function getState(string $bundle): array
+    {
+        $bundles = $this->getBundlesFromConfig();
+        if (isset($bundles[$bundle])) {
+            return $bundles[$bundle];
+        }
+
+        return $this->normalizeOptions([]);
+    }
+
+    /**
      * Sets the normalized bundle state on the extension manager config
      *
      * @param string $bundle
@@ -111,6 +128,30 @@ final class StateConfig
     public function setState(string $bundle, array $options)
     {
         $config = $this->config->loadConfig();
+
+        $this->updateBundleState($config, $bundle, $options);
+
+        $this->config->saveConfig($config);
+    }
+
+    /**
+     * Batch update bundle states
+     *
+     * @param array $states
+     */
+    public function setStates(array $states)
+    {
+        $config = $this->config->loadConfig();
+
+        foreach ($states as $bundle => $options) {
+            $this->updateBundleState($config, $bundle, $options);
+        }
+
+        $this->config->saveConfig($config);
+    }
+
+    private function updateBundleState(PimcoreConfig\Config $config, string $bundle, array $options)
+    {
         if (!isset($config->bundle)) {
             $config->bundle = new PimcoreConfig\Config([], true);
         }
@@ -124,8 +165,6 @@ final class StateConfig
         $entry = $this->prepareWriteOptions($entry);
 
         $config->bundle->$bundle = $entry;
-
-        $this->config->saveConfig($config);
     }
 
     /**
@@ -198,9 +237,20 @@ final class StateConfig
         $resolver->setAllowedTypes('environments', 'array');
 
         $resolver->setNormalizer('environments', function (Options $options, $value) {
-            return array_map(function ($item) {
-                return (string)$item;
+            // normalize to string and trim
+            $value = array_map(function ($item) {
+                $item = (string)$item;
+                $item = trim($item);
+
+                return $item;
             }, $value);
+
+            // remove empty values
+            $value = array_filter($value, function($item) {
+                return !empty($item);
+            });
+
+            return $value;
         });
 
         self::$optionsResolver = $resolver;

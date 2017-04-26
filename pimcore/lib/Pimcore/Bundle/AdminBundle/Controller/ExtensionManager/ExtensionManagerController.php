@@ -355,6 +355,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
     {
         $bm = $this->bundleManager;
 
+        $state = $bm->getState($bundle);
+
         $info = [
             'id'            => $bm->getBundleIdentifier($bundle),
             'type'          => 'bundle',
@@ -366,7 +368,9 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'updateable'    => false,
             'installed'     => $installed,
             'configuration' => $this->getIframePath($bundle),
-            'version'       => $bundle->getVersion()
+            'version'       => $bundle->getVersion(),
+            'priority'      => $state['priority'],
+            'environments'  => implode(', ', $state['environments'])
         ];
 
         // only check for installation specifics if the bundle is enabled

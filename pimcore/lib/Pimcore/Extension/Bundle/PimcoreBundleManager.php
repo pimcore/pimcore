@@ -186,6 +186,22 @@ class PimcoreBundleManager
     }
 
     /**
+     * Reads bundle state from config
+     *
+     * @param $bundle
+     *
+     * @return array
+     */
+    public function getState($bundle): array
+    {
+        $identifier = $this->getBundleIdentifier($bundle);
+
+        $this->validateBundleIdentifier($identifier);
+
+        return $this->stateConfig->getState($identifier);
+    }
+
+    /**
      * Updates state for a bundle and writes it to config
      *
      * @param string|PimcoreBundleInterface $bundle
@@ -198,6 +214,25 @@ class PimcoreBundleManager
         $this->validateBundleIdentifier($identifier);
 
         $this->stateConfig->setState($identifier, $options);
+    }
+
+    /**
+     * Batch updates bundle states
+     *
+     * @param array $states
+     */
+    public function setStates(array $states)
+    {
+        $updates = [];
+
+        foreach ($states as $bundle => $options) {
+            $identifier = $this->getBundleIdentifier($bundle);
+            $this->validateBundleIdentifier($identifier);
+
+            $updates[$identifier] = $options;
+        }
+
+        $this->stateConfig->setStates($updates);
     }
 
     /**
