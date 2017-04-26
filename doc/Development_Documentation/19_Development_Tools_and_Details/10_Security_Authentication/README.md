@@ -1,4 +1,4 @@
-# Security/Authentication
+# Security and Authentication
 
 You can make full use of the [Symfony Security Component](http://symfony.com/doc/current/security.html) to handle complex
 authentication/authorization scenarios. However, as the Pimcore administration interface and the REST API already
