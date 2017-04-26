@@ -132,5 +132,5 @@ RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommercefram
 
 <?php } else if ($form instanceof \Zend_Form) { ?>
 ```
-- run additional `composer update` in order to update symlinks in `web/bundles` folder
+- run additional `assets:install` command in order to update symlinks in `web/bundles` folder
 - migrate content of `app/config/pimcore/di.php` to `app/config/config.yml`, see [Overriding Models](../../../20_Extending_Pimcore/03_Overriding_Models.md) for details. 
