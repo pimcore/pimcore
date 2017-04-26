@@ -36,7 +36,7 @@ return [
         "pattern" => "@/category\\-example@",
         "reverse" => "/en/category-example",
         "module" => "",
-        "controller" => "category_example",
+        "controller" => "Category\\Example",
         "action" => "test",
         "variables" => NULL,
         "defaults" => NULL,
