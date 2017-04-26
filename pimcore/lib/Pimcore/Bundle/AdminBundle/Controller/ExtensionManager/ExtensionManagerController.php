@@ -24,6 +24,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Routing\RouteReferenceInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,7 +77,10 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/get-extensions")
+     * @Route("/admin/extensions")
+     * @Method("GET")
+     *
+     * @return JsonResponse
      */
     public function getExtensionsAction()
     {
@@ -91,6 +95,56 @@ class ExtensionManagerController extends AdminController implements EventedContr
         }
 
         return $this->json(['extensions' => $extensions]);
+    }
+
+    /**
+     * Updates bundle options (priority, environments)
+     *
+     * @Route("/admin/extensions")
+     * @Method("PUT")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function updateExtensionsAction(Request $request)
+    {
+        $data = $this->decodeJson($request->getContent());
+
+        if (!is_array($data) || !isset($data['extensions']) || !is_array($data['extensions'])) {
+            throw new BadRequestHttpException('Invalid data. Need an array of extensions to update.');
+        }
+
+        $updates = [];
+        foreach ($data['extensions'] as $row) {
+            if (!$row || !is_array($row) || !isset($row['id'])) {
+                throw new BadRequestHttpException('Invalid data. Missing row ID.');
+            }
+
+            $id = (string)$row['id'];
+
+            $options = [];
+            if (isset($row['environments'])) {
+                $environments = explode(',', $row['environments']);
+                $environments = array_map(function ($item) {
+                    return trim((string)$item);
+                }, $environments);
+
+                $options['environments'] = $environments;
+            }
+
+            if (isset($row['priority'])) {
+                $options['priority'] = (int)$row['priority'];
+            }
+
+            $updates[$id] = $options;
+        }
+
+        $this->bundleManager->setStates($updates);
+
+        return $this->json([
+            'extensions' => $this->getBundleList(array_keys($updates))
+        ]);
     }
 
     /**
@@ -114,7 +168,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $message = null;
 
         if ($type === 'bundle') {
-            $this->bundleManager->setState($id, $enable);
+            $this->bundleManager->setState($id, ['enabled' => $enable]);
             $reload = true;
 
             if ($enable) {
@@ -295,14 +349,16 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
+     * @param array $filter
+     *
      * @return array
      */
-    private function getBundleList()
+    private function getBundleList(array $filter = [])
     {
         $bm = $this->bundleManager;
 
         $results = [];
-        foreach ($bm->getEnabledBundles() as $className) {
+        foreach ($bm->getEnabledBundleNames() as $className) {
             $bundle = $bm->getActiveBundle($className, false);
 
             $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
@@ -320,7 +376,36 @@ class ExtensionManagerController extends AdminController implements EventedContr
             }
         }
 
-        return array_values($results);
+        $results = array_values($results);
+
+        if (count($filter) > 0) {
+            $results = array_filter($results, function (array $item) use ($filter) {
+                return in_array($item['id'], $filter);
+            });
+        }
+
+        // show enabled/active first, then order by priority for
+        // bundles with the same enabled state
+        usort($results, function ($a, $b) {
+            if ($a['active'] && !$b['active']) {
+                return -1;
+            }
+
+            if (!$a['active'] && $b['active']) {
+                return 1;
+            }
+
+            if ($a['active'] === $b['active']) {
+                if ($a['priority'] === $b['priority']) {
+                    return 0;
+                }
+
+                // reverse sorty by priority -> higher comes first
+                return $a['priority'] < $b['priority'] ? 1 : -1;
+            }
+        });
+
+        return $results;
     }
 
     /**
@@ -355,6 +440,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
     {
         $bm = $this->bundleManager;
 
+        $state = $bm->getState($bundle);
+
         $info = [
             'id'            => $bm->getBundleIdentifier($bundle),
             'type'          => 'bundle',
@@ -366,7 +453,9 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'updateable'    => false,
             'installed'     => $installed,
             'configuration' => $this->getIframePath($bundle),
-            'version'       => $bundle->getVersion()
+            'version'       => $bundle->getVersion(),
+            'priority'      => $state['priority'],
+            'environments'  => implode(', ', $state['environments'])
         ];
 
         // only check for installation specifics if the bundle is enabled

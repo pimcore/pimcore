@@ -82,21 +82,40 @@ pimcore.extensionmanager.admin = Class.create({
                 extend: 'Ext.data.Model',
                 fields: [
                     "id", "extensionId", "type", "name", "description", "installed", "installable", "uninstallable", "active",
-                    "configuration", "updateable", "xmlEditorFile", "version"
+                    "configuration", "updateable", "xmlEditorFile", "version", "priority", "environments"
                 ],
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/extensionmanager/admin/get-extensions',
+                    url: '/admin/extensionmanager/admin/extensions',
                     reader: {
                         type: 'json',
-                        rootProperty: "extensions"
+                        rootProperty: 'extensions'
+                    },
+                    writer: {
+                        type: 'json',
+                        rootProperty: 'extensions',
+                        allowSingle: false
+                    },
+                    actionMethods: {
+                        read: 'GET',
+                        update: 'PUT'
                     }
                 }
             });
         }
 
         this.store = new Ext.data.Store({
-            model: 'pimcore.model.extensions.admin'
+            model: 'pimcore.model.extensions.admin',
+            autoSync: true,
+            listeners: {
+                beforesync: function () {
+                    self.panel.setLoading(true);
+                },
+
+                update: function () {
+                    self.panel.setLoading(false);
+                }
+            }
         });
 
         this.store.load();
@@ -386,6 +405,21 @@ pimcore.extensionmanager.admin = Class.create({
                 dataIndex: 'xmlEditorFile',
                 hidden: true,
                 hideable: false
+            },
+            {
+                header: t("priority"),
+                width: 80,
+                align: 'right',
+                sortable: true,
+                dataIndex: 'priority',
+                editor: new Ext.form.Number({})
+            },
+            {
+                header: t("environments"),
+                width: 100,
+                sortable: false,
+                dataIndex: 'environments',
+                editor: new Ext.form.TextField({})
             }
         ];
 
@@ -399,6 +433,19 @@ pimcore.extensionmanager.admin = Class.create({
                     flex: 0
                 }
             },
+            plugins: [
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1,
+                    listeners: {
+                        beforeedit: function (editor, context, eOpts) {
+                            // only allow editing for bundles
+                            if (context.record.data.type !== 'bundle') {
+                                return false;
+                            }
+                        }
+                    }
+                })
+            ],
             trackMouseOver: true,
             columnLines: true,
             stripeRows: true,

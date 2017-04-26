@@ -11,29 +11,26 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class AppKernel extends Kernel
 {
     /**
-     * Returns an array of bundles to register.
+     * Adds bundles to register to the bundle collection. The collection is able
+     * to handle priorities and environment specific bundles.
      *
-     * @return BundleInterface[] An array of bundle instances
+     * @param BundleCollection $collection
      */
-    public function registerBundles()
+    public function registerBundlesToCollection(BundleCollection $collection)
     {
-        // pimcore bundles
-        $bundles = parent::registerBundles();
-
         if (class_exists('\\AppBundle\\AppBundle')) {
-            $bundles[] = new \AppBundle\AppBundle;
+            $collection->addBundle(new \AppBundle\AppBundle);
         }
 
         if (class_exists('\Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle')) {
-            $bundles[] = new \Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle;
+            $collection->addBundle(new \Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle);
         }
-
-        return $bundles;
     }
 }
