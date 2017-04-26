@@ -156,15 +156,20 @@ final class StateConfig
             $config->bundle = new PimcoreConfig\Config([], true);
         }
 
-        $entry = [];
+        $state = [];
         if (isset($config->bundle->$bundle)) {
-            $entry = $this->normalizeOptions($config->bundle->$bundle->toArray());
+            $currentState = $config->bundle->$bundle;
+            if ($currentState instanceof PimcoreConfig\Config) {
+                $currentState = $currentState->toArray();
+            }
+
+            $state = $this->normalizeOptions($currentState);
         }
 
-        $entry = array_merge($entry, $options);
-        $entry = $this->prepareWriteOptions($entry);
+        $state = array_merge($state, $options);
+        $state = $this->prepareWriteOptions($state);
 
-        $config->bundle->$bundle = $entry;
+        $config->bundle->$bundle = $state;
     }
 
     /**
