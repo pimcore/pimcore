@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,33 +15,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore;
+namespace Pimcore\Bundle\AdminBundle\Security\Authentication\Token;
 
-class Version
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
+
+class PreAuthenticatedAdminToken extends PreAuthenticatedToken
 {
-    /**
-     * @var string
-     */
-    public static $version = '5.0.0-alpha.1';
-
-    /**
-     * @var int
-     */
-    public static $revision = 47;
-
-    /**
-     * @return string
-     */
-    public static function getVersion()
-    {
-        return self::$version;
-    }
-
-    /**
-     * @return int
-     */
-    public static function getRevision()
-    {
-        return self::$revision;
-    }
 }

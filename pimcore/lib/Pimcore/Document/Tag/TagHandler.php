@@ -337,7 +337,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction($view, $controller, $action, $parent = null, array $params = [])
+    public function renderAction($view, $controller, $action, $parent = null, array $params = [], array $query = [], array $options = [])
     {
         $document = $params['document'];
         if ($document && $document instanceof PageSnippet) {
@@ -348,9 +348,10 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             $parent,
             $controller,
             $action,
-            $params
+            $params,
+            $query
         );
 
-        return $this->actionRenderer->render($controller);
+        return $this->actionRenderer->render($controller, $options);
     }
 }

@@ -132,6 +132,7 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
     },
 
     updateContent: function (path) {
+        var self = this;
 
         this.getBody().removeCls("pimcore_tag_snippet_empty");
         this.getBody().dom.innerHTML = '<br />&nbsp;&nbsp;Loading ...';
@@ -148,14 +149,36 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
         }
 
+        var setContent = function(content) {
+            self.getBody().dom.innerHTML = content;
+            self.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+            self.updateDimensions();
+        };
+
         Ext.Ajax.request({
             method: "get",
-            url: "/pimcore_document_tag_renderlet",
+            url: "/admin/document_tag/renderlet",
             success: function (response) {
-                this.getBody().dom.innerHTML = response.responseText;
-                this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-                this.updateDimensions();
+                setContent(response.responseText);
             }.bind(this),
+
+            failure: function(response) {
+                var message = response.responseText;
+
+                try {
+                    var json = Ext.decode(response.responseText);
+                    if (json && 'undefined' !== typeof json.message) {
+                        message = '<strong style="color:red">' + json.message + '</strong>';
+                    }
+                } catch (e) {
+                    // noop - fall back to responseText
+                }
+
+                message = '<br />&nbsp;&nbsp;' + message;
+
+                setContent(message);
+            }.bind(this),
+
             params: params
         });
     },

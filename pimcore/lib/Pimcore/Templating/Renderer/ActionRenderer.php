@@ -126,6 +126,10 @@ class ActionRenderer
             $params[DynamicRouter::CONTENT_TEMPLATE] = $template;
         }
 
+        if ($language = $document->getProperty('language')) {
+            $params['_locale'] = $language;
+        }
+
         return $params;
     }
 }

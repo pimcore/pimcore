@@ -161,6 +161,49 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             } catch (e) {}
 
 
+            var updateSerpPreview = function () {
+
+                var metaPanel = this.layout.getComponent("metaDataPanel");
+                var title = metaPanel.getComponent("title").getValue();
+                var description = metaPanel.getComponent("description").getValue();
+
+                var truncate = function( text, n ){
+                    if (text.length <= n) { return text; }
+                    var subString = text.substr(0, n-1);
+                    return subString.substr(0, subString.lastIndexOf(' ')) + " ...";
+                };
+
+                if(!title) {
+                    metaPanel.getComponent("serpPreview").hide();
+                    return false;
+                }
+
+                if(metaPanel.getEl().getWidth() > 1350) {
+                    metaPanel.getComponent("serpPreview").show();
+                }
+
+                var desktopTitleEl = Ext.get(metaPanel.getComponent("serpPreview").getEl().selectNode(".desktop .title"));
+                var stringParts = title.split(" ");
+                desktopTitleEl.setHtml(title);
+                while(desktopTitleEl.getWidth() >= 600) {
+                    stringParts.splice(-1,1);
+                    tmpString = stringParts.join(" ") + " ...";
+                    desktopTitleEl.setHtml(tmpString);
+                }
+
+                var desktopDescrEl = metaPanel.getComponent("serpPreview").getEl().selectNode(".desktop .description");
+                Ext.fly(desktopDescrEl).setHtml(truncate(description, 160));
+
+                var mobileTitleEl = metaPanel.getComponent("serpPreview").getEl().selectNode(".mobile .title");
+                Ext.fly(mobileTitleEl).setHtml(truncate(title, 78));
+
+                var mobileDescrEl = metaPanel.getComponent("serpPreview").getEl().selectNode(".mobile .description");
+                Ext.fly(mobileDescrEl).setHtml(truncate(description, 130));
+
+                return true;
+            }.bind(this);
+
+            var serpAbsoluteUrl = window.location.protocol + '//' + window.location.hostname + this.document.data.path + this.document.data.key;
 
             // create layout
             this.layout = new Ext.FormPanel({
@@ -172,18 +215,19 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 items: [
                     {
                         xtype:'fieldset',
-                        title: t('name_and_meta_data'),
+                        title: t('title_description_meta_data'),
+                        itemId: "metaDataPanel",
                         collapsible: true,
                         autoHeight:true,
                         defaults: {
                             labelWidth: 200
                         },
-
                         defaultType: 'textarea',
                         items :[
                             {
                                 fieldLabel: t('title') + " (" + this.document.data.title.length + ")",
                                 name: 'title',
+                                itemId: 'title',
                                 maxLength: 255,
                                 height: 51,
                                 width: 700,
@@ -192,6 +236,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                 listeners: {
                                     "keyup": function (el) {
                                         el.labelEl.update(t("title") + " (" + el.getValue().length + "):");
+                                        updateSerpPreview();
                                     }
                                 }
                             },
@@ -201,16 +246,44 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                 height: 51,
                                 width: 700,
                                 name: 'description',
+                                itemId: 'description',
                                 value: this.document.data.description,
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
                                         el.labelEl.update(t("description") + " (" + el.getValue().length + "):");
+                                        updateSerpPreview();
                                     }
                                 }
                             },
-                            this.metaDataPanel
-                        ]
+                            this.metaDataPanel,
+                            {
+                                xtype: "container",
+                                itemId: "serpPreview",
+                                cls: "pimcore_document_page_serp_preview",
+                                hidden: true,
+                                html:
+                                '<div class="entry desktop">' +
+                                    '<div class="title"></div>' +
+                                    '<div class="url">' + serpAbsoluteUrl + '</div>' +
+                                    '<div class="description"></div>' +
+                                '</div>' +
+                                '<div class="entry mobile">' +
+                                    '<div class="title"></div>' +
+                                    '<div class="url">' + serpAbsoluteUrl + '</div>' +
+                                    '<div class="description"></div>' +
+                                '</div>'
+                            }
+                        ],
+                        listeners: {
+                            "afterrender": function (el) {
+                                window.setTimeout(function () {
+                                    if(updateSerpPreview() && el.getEl().getWidth() > 1350) {
+                                        el.getComponent("serpPreview").show();
+                                    }
+                                }, 1000);
+                            }
+                        }
                     },{
                         xtype:'fieldset',
                         title: t('pretty_url') + " / " + t("redirects"),

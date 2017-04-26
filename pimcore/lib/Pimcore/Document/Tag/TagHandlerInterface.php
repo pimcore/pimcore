@@ -65,8 +65,10 @@ interface TagHandlerInterface
      * @param string $action
      * @param string|null $parent Bundle or module (legacy) name
      * @param array $params
+     * @param array $query
+     * @param array $options
      *
      * @return string
      */
-    public function renderAction($view, $controller, $action, $parent = null, array $params = []);
+    public function renderAction($view, $controller, $action, $parent = null, array $params = [], array $query = [], array $options = []);
 }

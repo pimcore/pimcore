@@ -119,11 +119,6 @@ class Renderlet extends Model\Document\Tag
             $this->options['action'] = Config::getSystemConfig()->documents->default_action;
         }
 
-        $document = null;
-        if ($this->o instanceof Document) {
-            $document = $this->o;
-        }
-
         if (method_exists($this->o, 'isPublished')) {
             if (!$this->o->isPublished()) {
                 return '';
@@ -131,13 +126,10 @@ class Renderlet extends Model\Document\Tag
         }
 
         if ($this->o instanceof Element\ElementInterface) {
-            $blockparams = ['action', 'controller', 'module', 'template'];
+            $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
 
             $params = [
                 'template' => isset($this->options['template']) ? $this->options['template'] : null,
-                'object' => $this->o,
-                'element' => $this->o,
-                'document' => $document,
                 'id' => $this->id,
                 'type' => $this->type,
                 'subtype' => $this->subtype,

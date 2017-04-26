@@ -63,6 +63,19 @@ services:
     # SECURITY
     #
 
+    # standard user provider returning admin users wrapped in a Pimcore\Bundle\AdminBundle\Security\User\User proxy object.
+    # using this user providers allows implementations to authenticate against pimcore users on every desired firewall
+    pimcore_admin.security.user_provider:
+        class: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+
+    # the password encoder factory builds a dedicated encoder per user
+    # as we need the user instance to encode passwords. see pimcore.security.encoder_factories
+    pimcore_admin.security.password_encoder_factory:
+        class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
+        arguments:
+            - Pimcore\Bundle\AdminBundle\Security\Encoder\AdminPasswordEncoder
+
+    # guard implementation handling admin form login for the main admin firewall
     pimcore_admin.security.admin_authenticator:
         class: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
         arguments:
@@ -78,6 +91,7 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
+    # guard implementation handling webservice login
     pimcore_admin.security.webservice_authenticator:
         class: Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator
         calls:
@@ -109,16 +123,35 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-    # the services below are only needed to use the build-in http auth for webdav - not fully working yet!
-    pimcore_admin.security.user_provider:
-        class: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+    # user checker checking admin users for validity
+    pimcore_admin.security.user_checker:
+        class: Pimcore\Bundle\AdminBundle\Security\User\UserChecker
 
-    # the password encoder factory builds a dedicated encoder per user
-    # as we need the user instance to encode passwords. see pimcore.security.encoder_factories
-    pimcore_admin.security.password_encoder_factory:
-        class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
+    #
+    # pimcore_admin_pre_auth authentication provider
+    #
+    # The 'pimcore_admin_pre_auth' authentication provider checks against already logged in admin users. Logging in through
+    # this provider is not possible, only previously authenticated users.
+    #
+    # Provider instances are built by Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory
+    #
+    pimcore.security.authentication.provider.admin_pre_auth:
+        class: Symfony\Component\Security\Core\Authentication\Provider\PreAuthenticatedAuthenticationProvider
+        public: false
+        abstract: true
         arguments:
-            - Pimcore\Bundle\AdminBundle\Security\Encoder\AdminPasswordEncoder
+            - '@?' # user provider will be set by factory
+            - '@pimcore_admin.security.user_checker'
+            - '@?' # provider key will be set by factory
+
+    pimcore.security.authentication.listener.admin_pre_auth:
+        class: Pimcore\Bundle\AdminBundle\Security\Firewall\PreAuthenticatedAdminSessionListener
+        public: false
+        abstract: true
+        arguments:
+            - '@security.token_storage'
+            - '@security.authentication.manager'
+            - '@?' # provider key will be set by factory
 
     #
     # API

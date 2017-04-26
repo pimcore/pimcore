@@ -84,10 +84,10 @@ pimcore.object.helpers.grid = Class.create({
                 rootProperty: 'data'
             },
             api: {
-                create  : this.url + "?xaction=create",
-                read    : this.url + "?xaction=read",
-                update  : this.url + "?xaction=update",
-                destroy : this.url + "?xaction=destroy"
+                create  : this.url + "&xaction=create",
+                read    : this.url + "&xaction=read",
+                update  : this.url + "&xaction=update",
+                destroy : this.url + "&xaction=destroy"
             },
             actionMethods: {
                 create : 'POST',

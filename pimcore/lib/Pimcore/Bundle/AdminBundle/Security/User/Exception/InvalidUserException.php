@@ -12,33 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore;
+namespace Pimcore\Bundle\AdminBundle\Security\User\Exception;
 
-class Version
+use Symfony\Component\Security\Core\Exception\AccountStatusException;
+
+class InvalidUserException extends AccountStatusException
 {
-    /**
-     * @var string
-     */
-    public static $version = '5.0.0-alpha.1';
-
-    /**
-     * @var int
-     */
-    public static $revision = 47;
-
-    /**
-     * @return string
-     */
-    public static function getVersion()
-    {
-        return self::$version;
-    }
-
-    /**
-     * @return int
-     */
-    public static function getRevision()
-    {
-        return self::$revision;
-    }
 }
