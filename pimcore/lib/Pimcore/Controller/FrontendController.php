@@ -75,6 +75,8 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function onKernelController(FilterControllerEvent $event)
     {
+        // enable view auto-rendering
+        $this->setViewAutoRender($event->getRequest(), true, 'php');
     }
 
     /**

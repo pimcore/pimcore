@@ -4,7 +4,11 @@ namespace AppBundle\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
+/**
+ * @ignore
+ */
 abstract class AbstractController extends FrontendController
 {
     /**
@@ -12,7 +16,14 @@ abstract class AbstractController extends FrontendController
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'php');
+        parent::onKernelController($event);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        parent::onKernelResponse($event);
     }
 }
