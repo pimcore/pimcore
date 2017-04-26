@@ -232,7 +232,13 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         }
 
         // update export item
-        $this->updateExportItem($objectId, $xml);
+        if($data['data']['active'] === true) {
+            // update export item
+            $this->updateExportItem($objectId, $xml);
+        } else {
+            // delete from export
+            $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
+        }
 
         // create / update mockup cache
         $this->saveToMockupCache($objectId, $data);
