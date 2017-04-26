@@ -106,7 +106,16 @@ pimcore.extensionmanager.admin = Class.create({
 
         this.store = new Ext.data.Store({
             model: 'pimcore.model.extensions.admin',
-            autoSync: false
+            autoSync: true,
+            listeners: {
+                beforesync: function () {
+                    self.panel.setLoading(true);
+                },
+
+                update: function () {
+                    self.panel.setLoading(false);
+                }
+            }
         });
 
         this.store.load();
@@ -121,19 +130,6 @@ pimcore.extensionmanager.admin = Class.create({
                 },
                 '->',
                 '<b id="ext-manager-reload-info" style="visibility: hidden">' + t("please_dont_forget_to_reload_pimcore_after_modifications") + '!</b>',
-                {
-                    text: t("apply"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: function() {
-                        self.panel.setLoading(true);
-                        self.store.sync({
-                            callback: function() {
-                                self.panel.setLoading(false);
-                                console.log('CB', arguments);
-                            }
-                        });
-                    }.bind(this)
-                },
                 {
                     text: t("clear_cache_and_reload"),
                     iconCls: "pimcore_icon_clear_cache",
@@ -413,6 +409,7 @@ pimcore.extensionmanager.admin = Class.create({
             {
                 header: t("priority"),
                 width: 80,
+                align: 'right',
                 sortable: true,
                 dataIndex: 'priority',
                 editor: new Ext.form.Number({})
@@ -438,7 +435,15 @@ pimcore.extensionmanager.admin = Class.create({
             },
             plugins: [
                 Ext.create('Ext.grid.plugin.CellEditing', {
-                    clicksToEdit: 1
+                    clicksToEdit: 1,
+                    listeners: {
+                        beforeedit: function (editor, context, eOpts) {
+                            // only allow editing for bundles
+                            if (context.record.data.type !== 'bundle') {
+                                return false;
+                            }
+                        }
+                    }
                 })
             ],
             trackMouseOver: true,
