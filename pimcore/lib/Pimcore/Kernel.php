@@ -149,6 +149,11 @@ abstract class Kernel extends SymfonyKernel
         return $bundles;
     }
 
+    /**
+     * Registers "core" bundles
+     *
+     * @param BundleCollection $collection
+     */
     protected function registerCoreBundlesToCollection(BundleCollection $collection)
     {
         $collection->addBundles([
@@ -171,14 +176,11 @@ abstract class Kernel extends SymfonyKernel
             80, ['dev']
         );
 
-        $collection->addBundles(
-            [
-                new DebugBundle(),
-                new WebProfilerBundle(),
-                new SensioDistributionBundle()
-            ],
-            80, ['dev', 'test']
-        );
+        $collection->addBundles([
+            new DebugBundle(),
+            new WebProfilerBundle(),
+            new SensioDistributionBundle()
+        ], 80, ['dev', 'test']);
 
         // pimcore bundles
         $collection->addBundles([
