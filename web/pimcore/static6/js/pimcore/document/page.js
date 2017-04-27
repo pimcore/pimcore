@@ -128,6 +128,10 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         // data
         try {
             parameters.data = Ext.encode(this.edit.getValues());
+
+            if(this.edit.persona && this.edit.persona.getValue()) {
+                parameters.appendEditables = "true";
+            }
         }
         catch (e2) {
             //console.log(e2);
