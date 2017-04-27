@@ -277,7 +277,7 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Get Object Count
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/document-count?apikey=[API-KEY]&condition=type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-count?apikey=[API-KEY]&condition=type%3D%27folder%27`
 * **Returns**: The total number of objects matching the given criteria.
 * **Parameters**:
     * **condition**: where clause
