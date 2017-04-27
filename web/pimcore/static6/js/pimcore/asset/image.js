@@ -303,13 +303,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     xtype: "numberfield",
                     name: "quality",
                     fieldLabel: t("quality"),
-                    value: 95
+                    emptyText: t("original")
                 }, {
                     xtype: "numberfield",
                     name: "dpi",
                     itemId: "dpi",
                     fieldLabel: "DPI",
-                    value: 300,
+                    emptyText: t("original"),
                     disabled: !this.data.imageInfo["exiftoolAvailable"]
                 }],
                 buttons: [{
