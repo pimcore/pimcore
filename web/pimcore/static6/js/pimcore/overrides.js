@@ -776,5 +776,9 @@ Ext.define('EXTJS_23846.Gesture', {
 });
 
 // use only native scroll bar, the touch-scroller causes issues on hybrid touch devices when using with a mouse
-// this should be fixed in ExtJS 6.2.2
-Ext.supports.touchScroll = 1;
+// this ist fixed in ExtJS 6.2.0 since there's no TouchScroller anymore, see:
+// http://docs.sencha.com/extjs/6.2.0/guides/whats_new/extjs_upgrade_guide.html
+Ext.define('Ext.scroll.TouchScroller', {
+    extend: 'Ext.scroll.DomScroller',
+    alias: 'scroller.touch'
+});
