@@ -934,7 +934,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             if ($thumbnailConfig->getFormat() == "JPEG") {
                 $thumbnailConfig->setPreserveMetaData(true);
-                $thumbnailConfig->setPreserveColor(true);
+
+                if(empty($config["quality"])) {
+                    $thumbnailConfig->setPreserveColor(true);
+                }
             }
 
             $thumbnail = $image->getThumbnail($thumbnailConfig);

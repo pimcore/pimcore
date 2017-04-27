@@ -1,5 +1,9 @@
 [
     {
+        "term": "original",
+        "definition": "Original"
+    },
+    {
         "term": "no_image_assigned",
         "definition": "No image assigned"
     },
