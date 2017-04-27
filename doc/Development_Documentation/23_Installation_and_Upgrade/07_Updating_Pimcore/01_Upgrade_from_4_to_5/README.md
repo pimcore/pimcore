@@ -4,6 +4,8 @@ Since Pimcore 5 is built on an entire different platform/framework (Symfony repl
 Pimcore 4 to Pimcore 5 is not possible.
 This guide shows you how to migrate your Pimcore applications.
 
+To ease migration, the [Pimcore CLI](https://github.com/pimcore/pimcore-cli) project provides a set of tools which ease
+the migration. Please see the documentation for further details.
 
 Migration of applications to Pimcore 5 can be seen as a two-step process: 
 

@@ -4,10 +4,11 @@ moves and minor code updates.
 This guide describes the steps needed in detail. 
   
 - **Backup your system!** 
-- Execute the [migration.sh](./migration.sh) script with following sytax `./migration.sh <PATH TO PIMCORE ROOT>`. 
-This script does following things for you: 
-  - move old `pimcore` folder to `pimcore4`
-  - download latest Pimcore 5 build and extract it
+
+- The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
+  to do the following:
+
+  - extract Pimcore 5 build
   - create several necessary directories
   - move config files to new locations
   - move class files to new location
@@ -17,7 +18,8 @@ This script does following things for you:
   - move assets to new location
   - move website folder to /legacy/website
   - move plugins folder to /legacy/plugins
-  - run composer update
+
+- A simpler [migration.sh](./migration.sh) script handles basic file moving and can be adapted to your needs
 
 - Refactor `constants.php` and move it to `app/constants.php`
 - Refactor `startup.php` and move content either to `AppKernel::boot()` or `AppBundle::boot()`
@@ -133,4 +135,4 @@ RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommercefram
 <?php } else if ($form instanceof \Zend_Form) { ?>
 ```
 - run `assets:install` command in order to update symlinks in `web/bundles` folder
-- migrate content of `app/config/pimcore/di.php` to `app/config/config.yml`, see [Overriding Models](../../../20_Extending_Pimcore/03_Overriding_Models.md) for details. 
+- migrate content of `app/config/pimcore/di.php` to `app/config/config.yml`, see [Overriding Models](../../../20_Extending_Pimcore/03_Overriding_Models.md) for details.
