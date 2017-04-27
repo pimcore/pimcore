@@ -152,7 +152,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function lazyInitialize($domain, $locale)
     {
-        $cacheKey = 'translation_data_' . $domain . '_' . $locale . uniqid();
+        $cacheKey = 'translation_data_' . $domain . '_' . $locale;
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
