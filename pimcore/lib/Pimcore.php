@@ -31,6 +31,11 @@ class Pimcore
     /**
      * @var bool
      */
+    private static $debugMode;
+
+    /**
+     * @var bool
+     */
     private static $inShutdown = false;
 
     /**
@@ -101,6 +106,10 @@ class Pimcore
      */
     public static function inDebugMode()
     {
+        if (null !== self::$debugMode) {
+            return self::$debugMode;
+        }
+
         if (defined('PIMCORE_DEBUG')) {
             return PIMCORE_DEBUG;
         }
@@ -124,6 +133,16 @@ class Pimcore
         }
 
         return $debug;
+    }
+
+    /**
+     * Sets debug mode (overrides the PIMCORE_DEBUG constant and the debug mode from config)
+     *
+     * @param bool $debugMode
+     */
+    public static function setDebugMode(bool $debugMode = true)
+    {
+        self::$debugMode = (bool)$debugMode;
     }
 
     /**
