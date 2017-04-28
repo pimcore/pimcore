@@ -13,7 +13,9 @@
  */
 
 // configure some constants needed by pimcore
-$projectRoot = getenv('PIMCORE_PROJECT_ROOT') ?: realpath(__DIR__ . '/../..');
+$projectRoot = getenv('PIMCORE_PROJECT_ROOT')
+    ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
+    ?: realpath(__DIR__ . '/../..');
 
 $customConstants = $projectRoot . '/app/constants.php';
 if (file_exists($customConstants)) {
