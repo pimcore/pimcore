@@ -2911,6 +2911,7 @@ pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, resp
         }
     }, this);
 
+    gridView.updateLayout();
 };
 
 pimcore.helpers.isValidPassword = function (pass) {
