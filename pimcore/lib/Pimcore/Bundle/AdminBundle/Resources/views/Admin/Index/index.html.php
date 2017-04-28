@@ -1,7 +1,7 @@
 <?php
 /** @var \Pimcore\Templating\PhpEngine $view */
 /** @var \Pimcore\Templating\PhpEngine $this */
-/** @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app */
+/** @var \Pimcore\Templating\GlobalVariables $app */
 $app = $view->app;
 
 $language = $app->getRequest()->getLocale();

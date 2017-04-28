@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating\GlobalVariables;
+namespace Pimcore\Templating;
 
 use Symfony\Bundle\FrameworkBundle\Templating\GlobalVariables as BaseGlobalVariables;
 use Symfony\Component\DependencyInjection\ContainerInterface;

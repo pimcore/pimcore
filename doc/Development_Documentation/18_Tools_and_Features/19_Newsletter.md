@@ -143,7 +143,7 @@ The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.php`
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */
 
 $this->extend('layout.html.php');
@@ -211,7 +211,7 @@ The confirm action view: `app/Resources/views/Newsletter/confirm.html.php`
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */
 ?>
 
@@ -236,7 +236,7 @@ The unsubscribe action view: `app/Resources/views/Newsletter/unsubscribe.html.ph
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */
 
 $this->extend('layout.html.php');

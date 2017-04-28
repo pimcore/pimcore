@@ -47,7 +47,7 @@ Then we can put some template code into it, for example:
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */
 
 $this->extend('layout.html.php');
@@ -88,7 +88,7 @@ Then we can also put some HTML and template code into it:
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */ 
 ?>
 <!DOCTYPE html>
@@ -250,7 +250,7 @@ Then we also need a new template for our product action: `app/Resources/views/Co
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */
 
 $this->extend('layout.html.php');
@@ -304,7 +304,7 @@ In the template file (`app/Resources/views/Content/product.html.php`) add few li
 /**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables\GlobalVariables $app
+ * @var \Pimcore\Templating\GlobalVariables $app
  */
 
 $this->extend('layout.html.php');
