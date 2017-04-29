@@ -176,7 +176,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             ];
         }
 
-        return $this->json($data, true);
+        return $this->json($data);
     }
 
     /**
