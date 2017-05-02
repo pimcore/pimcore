@@ -295,7 +295,9 @@ echo $mainNavigation->render();
 Later in the template of the navigation (`/navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
 
 ```php
-<?php foreach( $this->container as $page ){ ?>
+<?php 
+$container = $this->getViewModel()->get('container');
+foreach( $container as $page ){ ?>
     <?php if($page->isVisible()){ ?>
          <li class="<?php if( $page->getActive(true) ){ ?>active<?php } ?>">
           <a href="<?= $page->getUri() ?>" target="<?= $page->getTarget() ?>"><?= $page->getLabel() ?></a>
