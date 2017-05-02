@@ -80,6 +80,11 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @var array
+     */
+    protected static $pathCache = [];
+
+    /**
      * ID of the document
      *
      * @var int
@@ -239,6 +244,12 @@ class Document extends Element\AbstractElement
     {
         $path = Element\Service::correctPath($path);
 
+        if(isset(self::$pathCache[$path])) {
+            return self::$pathCache[$path];
+        }
+
+        $doc = null;
+
         try {
             $document = new Document();
             // validate path
@@ -246,12 +257,15 @@ class Document extends Element\AbstractElement
                 $document->getDao()->getByPath($path);
             }
 
-            return self::getById($document->getId());
+            $doc = self::getById($document->getId());
         } catch (\Exception $e) {
             Logger::debug($e->getMessage());
+            $doc = null;
         }
 
-        return null;
+        self::$pathCache[$path] = $doc;
+
+        return $doc;
     }
 
     /**
