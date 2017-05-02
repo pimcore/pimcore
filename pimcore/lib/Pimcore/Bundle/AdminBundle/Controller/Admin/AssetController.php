@@ -1910,7 +1910,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/clear-thumbnails")
+     * @Route("/clear-thumbnail")
      *
      * @param Request $request
      *
