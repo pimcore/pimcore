@@ -1059,7 +1059,7 @@ class Menu extends AbstractHelper
         }
 
         $model = [
-            'container' => $container
+            'pages' => $container, // we can't use `container` as index name, since this is used by the DI-container
         ];
 
         return $this->getTemplatingEngine()->render($partial, $model);

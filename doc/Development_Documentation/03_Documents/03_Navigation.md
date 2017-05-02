@@ -129,14 +129,14 @@ For example, inside your view:
 
 ```php
 <?php
-    $this->navigation($this->document, $mainNavStartNode)->menu()->setPartial('includes/navigation.html.php')->render();
+    echo $this->navigation($this->document, $mainNavStartNode)->menu()->setPartial('Includes/navigation.html.php')->render();
 ?>
 ```
 
-`app/Resources/views/includes/navigation.html.php`
+`app/Resources/views/Includes/navigation.html.php`
 
 ```php
-<?php foreach($this->container as $page): ?>
+<?php foreach($this->pages as $page): ?>
 
     <div class="my-menu-element">
 
@@ -287,15 +287,15 @@ $mainNavigation = $this->navigation($this->document, $mainNavStartNode, null, fu
     $page->setCustomSetting("title", $document->getTitle());
     $page->setCustomSetting("headline", $document->getElement("headline")->getData());
 });
-$mainNavigation->menu()->setPartial("/navigation/partials/navigation.html.php");
+$mainNavigation->menu()->setPartial("/Navigation/partials/navigation.html.php");
 echo $mainNavigation->render();
 ?>
 ```
 
-Later in the template of the navigation (`/navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
+Later in the template of the navigation (`/Navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
 
 ```php
-<?php foreach( $this->container as $page ){ ?>
+<?php foreach( $this->pages as $page ){ ?>
     <?php if($page->isVisible()){ ?>
          <li class="<?php if( $page->getActive(true) ){ ?>active<?php } ?>">
           <a href="<?= $page->getUri() ?>" target="<?= $page->getTarget() ?>"><?= $page->getLabel() ?></a>

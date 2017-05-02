@@ -82,9 +82,11 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
      */
     public function __invoke($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
     {
-        // this is the new more convenient way of creating a navigation
-        $navContainer = $this->getBuilder()->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache);
-        $this->setContainer($navContainer);
+        if($activeDocument) {
+            // this is the new more convenient way of creating a navigation
+            $navContainer = $this->getBuilder()->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache);
+            $this->setContainer($navContainer);
+        }
 
         return $this;
     }
