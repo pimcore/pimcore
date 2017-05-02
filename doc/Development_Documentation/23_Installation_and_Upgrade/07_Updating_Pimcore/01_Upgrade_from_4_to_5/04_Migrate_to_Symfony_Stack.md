@@ -101,6 +101,7 @@ This will result in data loss!
 
   - Navigation Changes
      - Replace `$this->pimcoreNavigation` with `$this->navigation`. 
+     - In your navigation partial scripts, use `$this->pages` instead of `$this->container` (reserved for DI-container)
      - Replace `Pimcore\Navigation\Page\Uri` with `Pimcore\Navigation\Page\Document`. 
      - Every thing else should remain the same. 
 
