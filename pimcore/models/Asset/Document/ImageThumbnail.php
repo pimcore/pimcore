@@ -93,7 +93,7 @@ class ImageThumbnail
     public function getPath()
     {
         $fsPath = $this->getFileSystemPath();
-        $path = str_replace(PIMCORE_WEB_ROOT, '', $fsPath);
+        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
         $path = urlencode_ignore_slash($path);
 
         $event = new GenericEvent($this, [
@@ -127,7 +127,7 @@ class ImageThumbnail
             $this->filesystemPath = $errorImage;
         } elseif (!$this->filesystemPath) {
             $config = $this->getConfig();
-            $config->setName('document_' . $config->getName().'-'.$this->page);
+            $config->setFilenameSuffix("page-" . $this->page);
 
             try {
                 $path = null;
@@ -152,6 +152,7 @@ class ImageThumbnail
                 }
 
                 if ($config) {
+
                     $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $this->deferred, true, $generated);
                 }
 

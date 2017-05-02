@@ -23,10 +23,10 @@ _pimcore_service_qrcode:
         key: '[a-zA-Z0-9_\-]+'
 
 _pimcore_service_thumbnail:
-    path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
+    path: /{prefix}/image-thumb__{assetId}__{thumbnailName}/{filename}
     defaults: { _controller: PimcoreCoreBundle:PublicServices:thumbnail}
     requirements:
-        assetIdGroup: '\d+'
+        prefix: '.*'
         assetId: '\d+'
         thumbnailName: '[a-zA-Z0-9_\-]+'
         filename: '.*'

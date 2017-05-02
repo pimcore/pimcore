@@ -94,7 +94,7 @@ class ImageThumbnail
     public function getPath()
     {
         $fsPath = $this->getFileSystemPath();
-        $path = str_replace(PIMCORE_WEB_ROOT, '', $fsPath);
+        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
         $path = urlencode_ignore_slash($path);
 
         $event = new GenericEvent($this, [

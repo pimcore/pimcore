@@ -1779,10 +1779,8 @@ class Asset extends Element\AbstractElement
      */
     public function getImageThumbnailSavePath()
     {
-        // group the thumbnails because of limitations of some filesystems (eg. ext3 allows only 32k subfolders)
-        $group = floor($this->getId() / 10000) * 10000;
-        $path = PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails/' . $group . '/' . $this->getId();
-
+        $path = PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails' . $this->getRealPath();
+        $path = rtrim($path, "/");
         return $path;
     }
 
@@ -1791,10 +1789,8 @@ class Asset extends Element\AbstractElement
      */
     public function getVideoThumbnailSavePath()
     {
-        // group the thumbnails because of limitations of some filesystems (eg. ext3 allows only 32k subfolders)
-        $group = floor($this->getId() / 10000) * 10000;
-        $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails/' . $group . '/' . $this->getId();
-
+        $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails' . $this->getRealPath();
+        $path = rtrim($path, "/");
         return $path;
     }
 

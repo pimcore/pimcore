@@ -79,6 +79,11 @@ RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{DOCUMENT_ROOT}/var/assets%{REQUEST_URI} -f
 RewriteRule ^(.*)$ /var/assets%{REQUEST_URI} [PT,L]
 
+# Thumbnails
+RewriteCond %{REQUEST_URI} .*/(image|video)-thumb__[\d]+__.*
+RewriteCond %{DOCUMENT_ROOT}/var/tmp/%1-thumbnails%{REQUEST_URI} -f
+RewriteRule ^(.*)$ /var/tmp/%1-thumbnails%{REQUEST_URI} [PT,L]
+
 # cache-buster rule for scripts & stylesheets embedded using view helpers
 RewriteRule ^cache-buster\-[\d]+/(.*) $1 [PT,L]
 

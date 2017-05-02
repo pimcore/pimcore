@@ -80,7 +80,7 @@ class Processor
     }
 
     /**
-     * @param $asset
+     * @param Asset $asset
      * @param Config $config
      * @param null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
@@ -89,7 +89,7 @@ class Processor
      *
      * @return mixed|string
      */
-    public static function process($asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false, &$generated = false)
+    public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false, &$generated = false)
     {
         $generated = false;
         $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
@@ -98,12 +98,6 @@ class Processor
 
         if (!$fileSystemPath && $asset instanceof Asset) {
             $fileSystemPath = $asset->getFileSystemPath();
-        }
-
-        if ($asset instanceof Asset) {
-            $id = $asset->getId();
-        } else {
-            $id = 'dyn~' . crc32($fileSystemPath);
         }
 
         $fileExt = File::getFileExtension(basename($fileSystemPath));
@@ -143,8 +137,9 @@ class Processor
             }
         }
 
-        $thumbDir = $asset->getImageThumbnailSavePath() . '/thumb__' . $config->getName();
+        $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . '/', '', $asset->getFilename());
+
         // add custom suffix if available
         if ($config->getFilenameSuffix()) {
             $filename .= '~-~' . $config->getFilenameSuffix();
@@ -168,7 +163,7 @@ class Processor
         if ($deferred) {
             // only add the config to the TmpStore if necessary (the config is auto-generated)
             if (!Config::getByName($config->getName())) {
-                $configId = 'thumb_' . $id . '__' . md5(self::returnPath($fsPath, false));
+                $configId = 'thumb_' . $asset->getId() . '__' . md5(self::returnPath($fsPath, false));
                 TmpStore::add($configId, $config, 'thumbnail_deferred');
             }
 
@@ -359,7 +354,7 @@ class Processor
     protected static function returnPath($path, $absolute)
     {
         if (!$absolute) {
-            $path = str_replace(PIMCORE_WEB_ROOT, '', $path);
+            $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $path);
         }
 
         return $path;
