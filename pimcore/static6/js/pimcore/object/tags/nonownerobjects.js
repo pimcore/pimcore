@@ -85,7 +85,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         var cls = 'object_field';
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var record = classStore.getAt(classStore.find('text', this.fieldConfig.ownerClassName));
+        var record = classStore.getAt(classStore.findExact('text', this.fieldConfig.ownerClassName));
 
         // no class for nonowner is specified
         if(!record) {
@@ -279,7 +279,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         var classname = data.className;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var record = classStore.getAt(classStore.find('text', classname));
+        var record = classStore.getAt(classStore.findExact('text', classname));
         var name = record.data.text;
 
         if (this.fieldConfig.ownerClassName == name) {
@@ -292,7 +292,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
     openSearchEditor: function () {
         var allowedClasses = [];
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var record = classStore.getAt(classStore.find('text', this.fieldConfig.ownerClassName));
+        var record = classStore.getAt(classStore.findExact('text', this.fieldConfig.ownerClassName));
         allowedClasses.push(record.data.text);
 
 
