@@ -16,7 +16,6 @@ namespace Pimcore\Templating;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Tag;
-use Pimcore\Templating\GlobalVariables;
 use Pimcore\Templating\Helper\Cache;
 use Pimcore\Templating\Helper\Glossary;
 use Pimcore\Templating\Helper\HeadLink;

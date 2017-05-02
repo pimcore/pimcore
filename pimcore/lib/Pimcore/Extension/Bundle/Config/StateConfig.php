@@ -177,6 +177,7 @@ final class StateConfig
      * value, just the state will be written as bool,
      *
      * @param array $options
+     *
      * @return array|bool
      */
     private function prepareWriteOptions(array $options)
@@ -251,7 +252,7 @@ final class StateConfig
             }, $value);
 
             // remove empty values
-            $value = array_filter($value, function($item) {
+            $value = array_filter($value, function ($item) {
                 return !empty($item);
             });
 

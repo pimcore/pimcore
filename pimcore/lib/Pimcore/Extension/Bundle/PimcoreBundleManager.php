@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Config as PimcoreConfig;
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;

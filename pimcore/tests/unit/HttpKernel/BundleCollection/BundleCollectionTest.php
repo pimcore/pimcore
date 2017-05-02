@@ -145,7 +145,6 @@ class BundleCollectionTest extends TestCase
             $bundles[2],
             $bundles[3]
         ], $collection->getBundles('test'));
-
     }
 }
 

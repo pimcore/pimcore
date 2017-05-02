@@ -288,18 +288,18 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
         if ($this->getMandatory() &&
             ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
-            throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!empty($data)) {
             $value = $data->getValue();
             if ((!empty($value) && !is_numeric($data->getValue()))) {
-                throw new Model\Element\ValidationException("Invalid dimension unit data " . $this->getName());
+                throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
             }
 
-            if(!empty($data->getUnitId())) {
-                if(!is_numeric($data->getUnitId())) {
-                    throw new Model\Element\ValidationException("Unit id has to be empty or numeric " . $data->getUnitId());
+            if (!empty($data->getUnitId())) {
+                if (!is_numeric($data->getUnitId())) {
+                    throw new Model\Element\ValidationException('Unit id has to be empty or numeric ' . $data->getUnitId());
                 }
             }
         }
@@ -417,22 +417,22 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
             return null;
         } else {
             $value = (array) $value;
-            if (array_key_exists("value", $value) && array_key_exists("unit", $value) && array_key_exists("unitAbbreviation", $value)) {
-                $unitId = $value["unit"];
+            if (array_key_exists('value', $value) && array_key_exists('unit', $value) && array_key_exists('unitAbbreviation', $value)) {
+                $unitId = $value['unit'];
                 if ($idMapper) {
-                    $unitId = $idMapper->getMappedId("unit", $unitId);
+                    $unitId = $idMapper->getMappedId('unit', $unitId);
                 }
 
                 $unit = Model\Object\QuantityValue\Unit::getById($unitId);
-                if ($unit && $unit->getAbbreviation() == $value["unitAbbreviation"]) {
-                    return new \Pimcore\Model\Object\Data\QuantityValue($value["value"], $unitId);
-                } elseif(!$unit && is_null($value['unit'])) {
-                    return new \Pimcore\Model\Object\Data\QuantityValue($value["value"]);
+                if ($unit && $unit->getAbbreviation() == $value['unitAbbreviation']) {
+                    return new \Pimcore\Model\Object\Data\QuantityValue($value['value'], $unitId);
+                } elseif (!$unit && is_null($value['unit'])) {
+                    return new \Pimcore\Model\Object\Data\QuantityValue($value['value']);
                 } else {
-                    throw new \Exception(get_class($this).": cannot get values from web service import - unit id and unit abbreviation do not match with local database");
+                    throw new \Exception(get_class($this).': cannot get values from web service import - unit id and unit abbreviation do not match with local database');
                 }
             } else {
-                throw new \Exception(get_class($this).": cannot get values from web service import - invalid data");
+                throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
             }
         }
     }

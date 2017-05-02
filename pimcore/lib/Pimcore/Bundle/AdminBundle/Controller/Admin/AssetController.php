@@ -1055,7 +1055,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($thumbnailConfig->getFormat() == 'JPEG') {
                 $thumbnailConfig->setPreserveMetaData(true);
 
-                if(empty($config["quality"])) {
+                if (empty($config['quality'])) {
                     $thumbnailConfig->setPreserveColor(true);
                 }
             }

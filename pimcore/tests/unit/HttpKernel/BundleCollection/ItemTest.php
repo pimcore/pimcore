@@ -53,4 +53,3 @@ class ItemTest extends TestCase
 class ItemTestBundle extends Bundle
 {
 }
-

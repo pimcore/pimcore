@@ -675,7 +675,7 @@ class Version extends AbstractModel
                     }
 
                     // do not delete versions referenced in the scheduler
-                    if($this->getDao()->isVersionUsedInScheduler($version)) {
+                    if ($this->getDao()->isVersionUsedInScheduler($version)) {
                         $ignoredIds[] = $version->getId();
                         continue;
                     }

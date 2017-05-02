@@ -132,10 +132,12 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param Model\Version $version
+     *
      * @return bool
      */
-    public function isVersionUsedInScheduler($version) {
-        $exists = $this->db->fetchOne("SELECT id FROM schedule_tasks WHERE version = ?", [$version->getId()]);
+    public function isVersionUsedInScheduler($version)
+    {
+        $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
 
         return (bool) $exists;
     }

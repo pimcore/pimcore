@@ -232,7 +232,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         }
 
         // update export item
-        if($data['data']['active'] === true) {
+        if ($data['data']['active'] === true) {
             // update export item
             $this->updateExportItem($objectId, $xml);
         } else {
