@@ -241,15 +241,22 @@ abstract class Admin extends Action
             \Zend_Registry::set("Zend_Locale", $locale);
         } else {
             // check if given language is installed if not => skip
-            if (!in_array((string) $locale->getLanguage(), AdminTool::getLanguages())) {
-                return;
+            $translationLocale = (string) $locale;
+            if (!in_array((string) $locale, AdminTool::getLanguages())) {
+                if (in_array((string) $locale->getLanguage(), AdminTool::getLanguages())) {
+                    $translationLocale = new \Zend_Locale($locale->getLanguage());
+                } else if (in_array((string) $language, AdminTool::getLanguages())) {
+                    $translationLocale = $language;
+                } else {
+                    return;
+                }
             }
 
             \Zend_Registry::set("Zend_Locale", $locale);
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
                 $t = \Zend_Registry::get("Zend_Translate");
                 if ((string) $locale != (string) $t->getLocale()) {
-                    $languageFile = AdminTool::getLanguageFile($locale);
+                    $languageFile = AdminTool::getLanguageFile($translationLocale);
                     $t->addTranslation($languageFile, $locale);
                     $t->setLocale($locale);
                 }

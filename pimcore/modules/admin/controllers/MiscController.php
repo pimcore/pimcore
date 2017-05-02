@@ -45,6 +45,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $languageFiles = [
             $language => Tool\Admin::getLanguageFile($language),
+            $this->getUser()->getLanguage() => Tool\Admin::getLanguageFile($this->getUser()->getLanguage()),
             "en" => Tool\Admin::getLanguageFile("en")
         ];
 

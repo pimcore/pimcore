@@ -20,6 +20,10 @@ use Pimcore\Tool\Text\Csv;
 
 class Admin
 {
+    /**
+     * @var array
+     */
+    protected static $availableLanguages;
 
     /**
      * Finds the translation file for a given language
@@ -48,25 +52,28 @@ class Admin
      */
     public static function getLanguages()
     {
-        $languages = [];
-        $languageDirs = [PIMCORE_PATH . "/config/texts/", PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
-        foreach ($languageDirs as $filesDir) {
-            if (is_dir($filesDir)) {
-                $files = scandir($filesDir);
-                foreach ($files as $file) {
-                    if (is_file($filesDir . $file)) {
-                        $parts = explode(".", $file);
-                        if ($parts[1] == "json") {
-                            if (\Zend_Locale::isLocale($parts[0])) {
-                                $languages[] = $parts[0];
+        if(!self::$availableLanguages) {
+            $languages = [];
+            $languageDirs = [PIMCORE_PATH . "/config/texts/", PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
+            foreach ($languageDirs as $filesDir) {
+                if (is_dir($filesDir)) {
+                    $files = scandir($filesDir);
+                    foreach ($files as $file) {
+                        if (is_file($filesDir . $file)) {
+                            $parts = explode(".", $file);
+                            if ($parts[1] == "json") {
+                                if (\Zend_Locale::isLocale($parts[0])) {
+                                    $languages[] = $parts[0];
+                                }
                             }
                         }
                     }
                 }
             }
+            self::$availableLanguages = $languages;
         }
 
-        return $languages;
+        return self::$availableLanguages;
     }
 
     /**
