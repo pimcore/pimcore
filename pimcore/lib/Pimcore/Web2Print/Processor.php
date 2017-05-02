@@ -69,7 +69,7 @@ abstract class Processor
 
         $env = \Pimcore\Config::getEnvironment();
         if ($env !== false) {
-            $args[] = '--environment=' . $env;
+            $args[] = '--env=' . $env;
         }
 
         $cmd = Tool\Console::getPhpCli() . ' ' . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' web2print:pdf-creation ' . implode(' ', $args);

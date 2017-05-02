@@ -66,10 +66,10 @@ PIMCORE_ENVIRONMENT="dev"; export PIMCORE_ENVIRONMENT
 
 ### Console Commands
 
-When running `./bin/console` application, set the environment by `--environment=dev`.
+When running `./bin/console` application, set the environment by `--env=dev`.
  
 ```
-./bin/console --environment=dev ...
+./bin/console --env=dev ...
 ```
 
 ### Switching Environments Dynamically

@@ -708,9 +708,9 @@ class Config
             }
 
             if (!$environment && php_sapi_name() === 'cli') {
-                // check CLI option: --environment[=ENVIRONMENT]
+                // check CLI option: [-e|--env ENV]
                 foreach ($_SERVER['argv'] as $argument) {
-                    if (preg_match("@\-\-environment=(.*)@", $argument, $matches)) {
+                    if (preg_match("@\-\-env=(.*)@", $argument, $matches)) {
                         $environment = $matches[1];
                         break;
                     }

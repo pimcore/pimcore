@@ -249,7 +249,7 @@ class Console
         $cmd = $phpCli . ' ' . $script;
 
         if (Config::getEnvironment()) {
-            $cmd .= ' --environment=' . Config::getEnvironment();
+            $cmd .= ' --env=' . Config::getEnvironment();
         }
 
         if (!empty($arguments)) {
