@@ -245,7 +245,7 @@ abstract class Admin extends Action
             if (!in_array((string) $locale, AdminTool::getLanguages())) {
                 if (in_array((string) $locale->getLanguage(), AdminTool::getLanguages())) {
                     $translationLocale = new \Zend_Locale($locale->getLanguage());
-                } else if (in_array((string) $language, AdminTool::getLanguages())) {
+                } elseif (in_array((string) $language, AdminTool::getLanguages())) {
                     $translationLocale = $language;
                 } else {
                     return;

@@ -287,8 +287,8 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
                 throw new Model\Element\ValidationException("Invalid dimension unit data " . $this->getName());
             }
 
-            if(!empty($data->getUnitId())) {
-                if(!is_numeric($data->getUnitId())) {
+            if (!empty($data->getUnitId())) {
+                if (!is_numeric($data->getUnitId())) {
                     throw new Model\Element\ValidationException("Unit id has to be empty or numeric " . $data->getUnitId());
                 }
             }

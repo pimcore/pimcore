@@ -136,7 +136,7 @@ abstract class Document extends Admin
     protected function addDataToDocument(Model\Document $document)
     {
         // if a persona variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if($this->getParam("appendEditables")) {
+        if ($this->getParam("appendEditables")) {
             $document->getElements();
         }
 

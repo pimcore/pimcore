@@ -52,7 +52,7 @@ class Admin
      */
     public static function getLanguages()
     {
-        if(!self::$availableLanguages) {
+        if (!self::$availableLanguages) {
             $languages = [];
             $languageDirs = [PIMCORE_PATH . "/config/texts/", PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
             foreach ($languageDirs as $filesDir) {
