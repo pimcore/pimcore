@@ -562,6 +562,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         } else {
             $sql = $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
                 . " AND " . $db->quoteInto("position = ?", $position);
+
+            if ($params && $params["context"] && $params["context"]["fieldname"]) {
+                $sql .= " AND " . $db->quoteInto("ownername = ?", $params["context"]["fieldname"]);
+            }
         }
 
         $db->delete($table, $sql);
@@ -645,7 +649,13 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 . " AND " . $db->quoteInto("fieldname = ?", $this->getName())
             );
         } else {
-            $db->delete("object_metadata_" . $object->getClassId(), $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+            $condition = $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName());
+
+            if ($params && $params["context"] && $params["context"]["fieldname"]) {
+                $condition .= " AND " . $db->quoteInto("ownername = ?", $params["context"]["fieldname"]);
+            }
+
+            $db->delete("object_metadata_" . $object->getClassId(), $condition);
         }
     }
 
