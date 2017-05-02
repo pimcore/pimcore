@@ -117,8 +117,6 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 $start = 0;
                 $limit = 15;
-                $orderKey = "o_id";
-                $order = "ASC";
 
                 $fields = [];
                 $bricks = [];
@@ -140,13 +138,13 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     $start = $this->getParam("start");
                 }
 
-                $orderKey = "o_id";
+                $orderKey = "oo_id";
                 $order = "ASC";
 
                 $colMappings = [
                     "filename" => "o_key",
                     "fullpath" => ["o_path", "o_key"],
-                    "id" => "o_id",
+                    "id" => "oo_id",
                     "published" => "o_published",
                     "modificationDate" => "o_modificationDate",
                     "creationDate" => "o_creationDate"
