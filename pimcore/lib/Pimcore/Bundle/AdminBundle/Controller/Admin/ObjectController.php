@@ -1586,7 +1586,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $colMappings = [
                 'filename' => 'o_key',
                 'fullpath' => ['o_path', 'o_key'],
-                'id' => 'o_id',
+                'id' => 'oo_id',
                 'published' => 'o_published',
                 'modificationDate' => 'o_modificationDate',
                 'creationDate' => 'o_creationDate'
@@ -1594,7 +1594,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
             $start = 0;
             $limit = 20;
-            $orderKey = 'o_id';
+            $orderKey = 'oo_id';
             $order = 'ASC';
 
             $fields = [];
