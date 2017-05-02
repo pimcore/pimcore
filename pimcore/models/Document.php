@@ -244,26 +244,27 @@ class Document extends Element\AbstractElement
     {
         $path = Element\Service::correctPath($path);
 
-        if(isset(self::$pathCache[$path])) {
-            return self::$pathCache[$path];
+        $cacheKey = "document_path_" . md5($path);
+
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            return \Pimcore\Cache\Runtime::get($cacheKey);
         }
 
         $doc = null;
 
         try {
-            $document = new Document();
+            $helperDoc = new Document();
             // validate path
             if (Tool::isValidPath($path)) {
-                $document->getDao()->getByPath($path);
+                $helperDoc->getDao()->getByPath($path);
             }
 
-            $doc = self::getById($document->getId());
+            $doc = self::getById($helperDoc->getId());
+            \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
             Logger::debug($e->getMessage());
             $doc = null;
         }
-
-        self::$pathCache[$path] = $doc;
 
         return $doc;
     }
