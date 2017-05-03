@@ -17,10 +17,10 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: [!event]
+            channels: ["!event"]
         console:
             type:   console
-            channels: [!event]
+            channels: ["!event"]
 
 pimcore:
     error_handling:
