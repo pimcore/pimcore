@@ -127,7 +127,7 @@ class ImageThumbnail
             $this->filesystemPath = $errorImage;
         } elseif (!$this->filesystemPath) {
             $config = $this->getConfig();
-            $config->setFilenameSuffix("page-" . $this->page);
+            $config->setFilenameSuffix('page-' . $this->page);
 
             try {
                 $path = null;
@@ -152,7 +152,6 @@ class ImageThumbnail
                 }
 
                 if ($config) {
-
                     $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $this->deferred, true, $generated);
                 }
 

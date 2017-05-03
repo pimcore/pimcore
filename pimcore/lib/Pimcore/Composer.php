@@ -22,9 +22,11 @@ class Composer
 {
     /**
      * @param Event $event
+     *
      * @return string
      */
-    protected static function getRootPath($event) {
+    protected static function getRootPath($event)
+    {
         $config = $event->getComposer()->getConfig();
         $rootPath = dirname($config->get('vendor-dir'));
 
@@ -48,11 +50,11 @@ class Composer
             'update-scripts',
         ];
 
-        foreach($cleanupFiles as $file) {
-            $path = $rootPath . "/" . $file;
+        foreach ($cleanupFiles as $file) {
+            $path = $rootPath . '/' . $file;
             if (is_dir($path)) {
                 $filesystem->removeDirectory($path);
-            } else if (is_file($path)) {
+            } elseif (is_file($path)) {
                 $filesystem->unlink($path);
             }
         }
@@ -81,11 +83,12 @@ class Composer
     /**
      * @param string $rootPath
      */
-    public static function parametersYmlCheck($rootPath) {
+    public static function parametersYmlCheck($rootPath)
+    {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
-        $parametersYml = $rootPath . "/app/config/parameters.yml";
-        $parametersYmlExample = $rootPath . "/app/config/parameters.example.yml";
-        if(!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
+        $parametersYml = $rootPath . '/app/config/parameters.yml';
+        $parametersYmlExample = $rootPath . '/app/config/parameters.example.yml';
+        if (!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
             copy($parametersYmlExample, $parametersYml);
         }
     }

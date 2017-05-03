@@ -1780,7 +1780,8 @@ class Asset extends Element\AbstractElement
     public function getImageThumbnailSavePath()
     {
         $path = PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails' . $this->getRealPath();
-        $path = rtrim($path, "/");
+        $path = rtrim($path, '/');
+
         return $path;
     }
 
@@ -1790,7 +1791,8 @@ class Asset extends Element\AbstractElement
     public function getVideoThumbnailSavePath()
     {
         $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails' . $this->getRealPath();
-        $path = rtrim($path, "/");
+        $path = rtrim($path, '/');
+
         return $path;
     }
 

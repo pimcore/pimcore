@@ -111,7 +111,7 @@ class Processor
         }
 
         foreach ($formats as $format) {
-            $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . "__" . $config->getName();
+            $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . '/', '', $asset->getFilename()) . '.' . $format;
             $fsPath = $thumbDir . '/' . $filename;
             $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
