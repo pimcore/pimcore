@@ -22,24 +22,39 @@ class Composer
 {
     /**
      * @param Event $event
+     * @return string
      */
-    public static function postCreateProject(Event $event)
-    {
+    protected static function getRootPath($event) {
         $config = $event->getComposer()->getConfig();
         $rootPath = dirname($config->get('vendor-dir'));
 
-        // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
-        $parametersYml = $rootPath . "/app/config/parameters.yml";
-        if(!file_exists($parametersYml)) {
-            copy($rootPath . "/app/config/parameters.example.yml", $parametersYml);
-        }
+        return $rootPath;
+    }
 
-        // cleanup
-        @unlink($rootPath . '/.travis.yml');
+    /**
+     * @param Event $event
+     */
+    public static function postCreateProject(Event $event)
+    {
+        $rootPath = self::getRootPath($event);
+
+        self::parametersYmlCheck($rootPath);
 
         $filesystem = new Filesystem();
-        if (is_dir($rootPath . '/update')) {
-            $filesystem->removeDirectory($rootPath . '/update');
+        $cleanupFiles = [
+            '.github',
+            '.travis',
+            '.travis.yml',
+            'update-scripts',
+        ];
+
+        foreach($cleanupFiles as $file) {
+            $path = $rootPath . "/" . $file;
+            if (is_dir($path)) {
+                $filesystem->removeDirectory($path);
+            } else if (is_file($path)) {
+                $filesystem->unlink($path);
+            }
         }
     }
 
@@ -48,9 +63,8 @@ class Composer
      */
     public static function postInstall(Event $event)
     {
-        $config = $event->getComposer()->getConfig();
-        $rootPath = dirname($config->get('vendor-dir'));
-
+        $rootPath = self::getRootPath($event);
+        self::parametersYmlCheck($rootPath);
         self::zendFrameworkOptimization($rootPath);
     }
 
@@ -59,10 +73,21 @@ class Composer
      */
     public static function postUpdate(Event $event)
     {
-        $config = $event->getComposer()->getConfig();
-        $rootPath = dirname($config->get('vendor-dir'));
-
+        $rootPath = self::getRootPath($event);
+        self::parametersYmlCheck($rootPath);
         self::zendFrameworkOptimization($rootPath);
+    }
+
+    /**
+     * @param string $rootPath
+     */
+    public static function parametersYmlCheck($rootPath) {
+        // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
+        $parametersYml = $rootPath . "/app/config/parameters.yml";
+        $parametersYmlExample = $rootPath . "/app/config/parameters.example.yml";
+        if(!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
+            copy($parametersYmlExample, $parametersYml);
+        }
     }
 
     /**

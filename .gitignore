@@ -42,6 +42,7 @@
 
 # composer
 /composer.lock
+/composer.phar
 !/vendor
 /vendor/*
 !/vendor/.gitkeep
