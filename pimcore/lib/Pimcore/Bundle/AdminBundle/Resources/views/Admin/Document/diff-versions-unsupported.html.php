@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
+    <?php
+        $this->get("translate")->setDomain("admin");
+    ?>
     <meta charset="UTF-8">
     <style type="text/css">
-        
+
         html, body {
             height: 100%;
         }

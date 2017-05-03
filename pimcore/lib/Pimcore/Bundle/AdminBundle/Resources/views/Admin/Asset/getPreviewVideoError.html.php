@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <?php
+        $this->get("translate")->setDomain("admin");
+    ?>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/pimcore/static6/css/admin.css"/>
 
