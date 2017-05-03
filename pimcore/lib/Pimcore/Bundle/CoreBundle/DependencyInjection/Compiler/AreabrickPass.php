@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 use Doctrine\Common\Util\Inflector;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Symfony\Component\Config\Resource\DirectoryResource;
+use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -82,7 +84,7 @@ class AreabrickPass implements CompilerPassInterface
     {
         $bundles = $container->getParameter('kernel.bundles_metadata');
         foreach ($bundles as $bundleName => $bundleMetadata) {
-            $bundleAreas = $this->findBundleBricks($bundleName, $bundleMetadata, $excludedClasses);
+            $bundleAreas = $this->findBundleBricks($container, $bundleName, $bundleMetadata, $excludedClasses);
 
             foreach ($bundleAreas as $bundleArea) {
                 /** @var \ReflectionClass $reflector */
@@ -126,13 +128,14 @@ class AreabrickPass implements CompilerPassInterface
     /**
      * Look for classes implementing AreabrickInterface in each bundle's Document\Areabrick sub-namespace
      *
-     * @param $name
-     * @param $metadata
+     * @param ContainerBuilder $container
+     * @param string $name
+     * @param array $metadata
      * @param array $excludedClasses
      *
      * @return array
      */
-    protected function findBundleBricks($name, $metadata, array $excludedClasses = [])
+    protected function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
     {
         $directory = implode(DIRECTORY_SEPARATOR, [
             $metadata['path'],
@@ -140,8 +143,14 @@ class AreabrickPass implements CompilerPassInterface
             'Areabrick'
         ]);
 
+        // update cache when directory is added/removed
+        $container->addResource(new FileExistenceResource($directory));
+
         if (!file_exists($directory) || !is_dir($directory)) {
             return [];
+        } else {
+            // update container cache when areabricks are added/changed
+            $container->addResource(new DirectoryResource($directory, '/\.php$/'));
         }
 
         $finder = new Finder();
