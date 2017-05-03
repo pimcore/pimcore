@@ -28,6 +28,12 @@ class Composer
         $config = $event->getComposer()->getConfig();
         $rootPath = dirname($config->get('vendor-dir'));
 
+        // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
+        $parametersYml = $rootPath . "/app/config/parameters.yml";
+        if(!file_exists($parametersYml)) {
+            copy($rootPath . "/app/config/parameters.example.yml", $parametersYml);
+        }
+
         // cleanup
         @unlink($rootPath . '/.travis.yml');
 
@@ -64,6 +70,7 @@ class Composer
      */
     public static function zendFrameworkOptimization($rootPath)
     {
+        // @TODO: Remove in 6.0
 
         // strips all require_once out of the sources
         // see also: http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed

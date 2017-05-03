@@ -35,7 +35,7 @@
         exit;
     }
 
-    // ensure that there's a parametes.yml, if not we'll create a temporary one, so that the requirement check works
+    // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
     $parametersYml = PIMCORE_APP_ROOT . "/config/parameters.yml";
     if(!file_exists($parametersYml)) {
         copy(PIMCORE_APP_ROOT . "/config/parameters.example.yml", $parametersYml);
