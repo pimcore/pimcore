@@ -343,6 +343,13 @@ services:
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
 
+    pimcore.document.renderer:
+        class: Pimcore\Document\Renderer\DocumentRenderer
+        arguments:
+            - '@request_stack'
+            - '@pimcore.templating.action_renderer'
+            - '@fragment.renderer.inline'
+
     pimcore.http_client:
         class: \GuzzleHttp\Client
         factory: ['Pimcore\Http\ClientFactory', createHttpClient]
