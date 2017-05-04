@@ -34,7 +34,7 @@ class Mail extends \Swift_Message
     protected static $debugEmailAddresses = [];
 
     /**
-     * @var object Pimcore_Placeholder
+     * @var Placeholder
      */
     protected $placeholderObject;
 
@@ -708,18 +708,22 @@ class Mail extends \Swift_Message
     {
         $html = $this->getBody();
 
-        //if the content was manually set with $obj->setBody(); this content will be used
-        //and not the content of the Document!
-        if ($html) {
-            $content = $this->placeholderObject->replacePlaceholders($html, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
-        } elseif ($this->getDocument() instanceof Model\Document) {
-            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
-        } else {
-            $content = null;
+        // if the content was manually set with $obj->setBody(); this content will be used
+        // and not the content of the Document!
+        if (!$html) {
+            // render document
+            if ($this->getDocument() instanceof Model\Document) {
+                $attributes = $this->getParams();
+
+                $html = Model\Document\Service::render($this->getDocument(), $attributes, $this->getEnableLayoutOnPlaceholderRendering());
+            }
         }
 
-        //modifying the content e.g set absolute urls...
-        if ($content) {
+        $content = null;
+        if ($html) {
+            $content = $this->placeholderObject->replacePlaceholders($html, $this->getParams(), $this->getDocument());
+
+            // modifying the content e.g set absolute urls...
             $content = MailHelper::embedAndModifyCss($content, $this->getDocument());
             $content = MailHelper::setAbsolutePaths($content, $this->getDocument(), $this->getHostUrl());
         }
