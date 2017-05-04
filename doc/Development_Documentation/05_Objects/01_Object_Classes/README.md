@@ -14,7 +14,7 @@ into smaller units of data belonging together. It depends on the use case how da
 Common applications are tabs/groups for different languages or logical groups like basic data, media, sales data, etc.
 In addition to the master editor layout, Custom Layouts for different views on the object data can be defined. 
 
-To define a class, the menu `Settings` -> `Objects` -> `Classes` needs to be used the Pimcore toolbar menu. 
+To define a class, the menu `Settings` -> `Objects` -> `Classes` needs to be used in the Pimcore toolbar menu. 
 The class name has to be a valid PHP class name. After creating a new class, the class attributes and layout can be built.
 
 Class attributes are defined from a set of predefined data types. 
