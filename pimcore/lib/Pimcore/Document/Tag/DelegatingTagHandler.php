@@ -131,10 +131,10 @@ class DelegatingTagHandler implements TagHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction($view, $controller, $action, $parent = null, array $params = [], array $query = [], array $options = [])
+    public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
     {
         $handler = $this->getHandlerForView($view);
 
-        return $handler->renderAction($view, $controller, $action, $parent, $params, $query, $options);
+        return $handler->renderAction($view, $controller, $action, $parent, $attributes, $query, $options);
     }
 }

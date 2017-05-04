@@ -42,31 +42,34 @@ class Action extends Helper
     }
 
     /**
-     * @param $action
-     * @param $controller
-     * @param $module
-     * @param array $params
+     * @param string $action
+     * @param string $controller
+     * @param string|null $module
+     * @param array $attributes
+     * @param array $query
+     * @param array $options
      *
-     * @return mixed
+     * @return string
      */
-    public function __invoke($action, $controller, $module = null, array $params = [])
+    public function __invoke($action, $controller, $module = null, array $attributes = [], array $query = [], array $options = [])
     {
-        $document = isset($params['document']) ? $params['document'] : null;
+        $document = isset($attributes['document']) ? $attributes['document'] : null;
         if ($document && $document instanceof PageSnippet) {
-            $params = $this->actionRenderer->addDocumentParams($document, $params);
+            $attributes = $this->actionRenderer->addDocumentAttributes($document, $attributes);
         }
 
         if (!$module) {
             $module = 'AppBundle';
         }
 
-        $controller = $this->actionRenderer->createControllerReference(
+        $uri = $this->actionRenderer->createControllerReference(
             $module,
             $controller,
             $action,
-            $params
+            $attributes,
+            $query
         );
 
-        return $this->actionRenderer->render($controller);
+        return $this->actionRenderer->render($uri, $options);
     }
 }

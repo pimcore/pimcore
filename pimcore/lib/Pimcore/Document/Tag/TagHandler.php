@@ -337,21 +337,22 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction($view, $controller, $action, $parent = null, array $params = [], array $query = [], array $options = [])
+    public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
     {
-        $document = $params['document'];
+        $document = $attributes['document'];
         if ($document && $document instanceof PageSnippet) {
-            $params = $this->actionRenderer->addDocumentParams($document, $params);
+            unset($attributes['document']);
+            $attributes = $this->actionRenderer->addDocumentAttributes($document, $attributes);
         }
 
-        $controller = $this->actionRenderer->createControllerReference(
+        $uri = $this->actionRenderer->createControllerReference(
             $parent,
             $controller,
             $action,
-            $params,
+            $attributes,
             $query
         );
 
-        return $this->actionRenderer->render($controller, $options);
+        return $this->actionRenderer->render($uri, $options);
     }
 }

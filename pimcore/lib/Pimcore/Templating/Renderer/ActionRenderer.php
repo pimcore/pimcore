@@ -67,12 +67,12 @@ class ActionRenderer
      * @param $bundle
      * @param $controller
      * @param $action
-     * @param array $params
+     * @param array $attributes
      * @param array $query
      *
      * @return ControllerReference
      */
-    public function createControllerReference($bundle, $controller, $action, array $params = [], array $query = [])
+    public function createControllerReference($bundle, $controller, $action, array $attributes = [], array $query = [])
     {
         $controller = $this->configNormalizer->formatController(
             $bundle,
@@ -80,27 +80,27 @@ class ActionRenderer
             $action
         );
 
-        return $this->actionsHelper->controller($controller, $params, $query);
+        return $this->actionsHelper->controller($controller, $attributes, $query);
     }
 
     /**
      * Create a document controller reference
      *
      * @param Document\PageSnippet $document
-     * @param array $params
+     * @param array $attributes
      * @param array $query
      *
      * @return ControllerReference
      */
-    public function createDocumentReference(Document\PageSnippet $document, array $params = [], array $query = [])
+    public function createDocumentReference(Document\PageSnippet $document, array $attributes = [], array $query = [])
     {
-        $params = $this->addDocumentParams($document, $params);
+        $attributes = $this->addDocumentAttributes($document, $attributes);
 
         return $this->createControllerReference(
             $document->getModule(),
             $document->getController(),
             $document->getAction(),
-            $params,
+            $attributes,
             $query
         );
     }
@@ -109,27 +109,27 @@ class ActionRenderer
      * Add document params to params array
      *
      * @param Document\PageSnippet $document
-     * @param array $params
+     * @param array $attributes
      *
      * @return array
      */
-    public function addDocumentParams(Document\PageSnippet $document, array $params = [])
+    public function addDocumentAttributes(Document\PageSnippet $document, array $attributes = [])
     {
         // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
         // a route's document and template. Those attributes are later used by controller listeners to
         // determine what to render. By injecting those attributes into the sub-request we can rely on
         // the same rendering logic as in the routed request.
-        $params[DynamicRouter::CONTENT_KEY] = $document;
+        $attributes[DynamicRouter::CONTENT_KEY] = $document;
 
         if ($document->getTemplate()) {
-            $template = $this->configNormalizer->normalizeTemplate($document->getTemplate());
-            $params[DynamicRouter::CONTENT_TEMPLATE] = $template;
+            $template                                    = $this->configNormalizer->normalizeTemplate($document->getTemplate());
+            $attributes[DynamicRouter::CONTENT_TEMPLATE] = $template;
         }
 
         if ($language = $document->getProperty('language')) {
-            $params['_locale'] = $language;
+            $attributes['_locale'] = $language;
         }
 
-        return $params;
+        return $attributes;
     }
 }
