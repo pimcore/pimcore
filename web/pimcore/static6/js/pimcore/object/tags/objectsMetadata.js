@@ -65,6 +65,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     this.dataChanged = true;
                 }.bind(this),
                 update: function(store) {
+                    if(store.ignoreDataChanged) {
+                        return;
+                    }
                     this.dataChanged = true;
                 }.bind(this)
             },

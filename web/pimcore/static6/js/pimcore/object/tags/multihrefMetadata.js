@@ -65,6 +65,9 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                     this.dataChanged = true;
                 }.bind(this),
                 update: function(store) {
+                    if(store.ignoreDataChanged) {
+                        return;
+                    }
                     this.dataChanged = true;
                 }.bind(this)
             },
