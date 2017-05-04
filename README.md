@@ -16,9 +16,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
 * Help [translating](https://poeditor.com/join/project/VWmZyvFVMH) Pimcore
-* [Google Group](https://groups.google.com/forum/#!forum/pimcore) - Discussions 
-* [StackOverflow](http://stackoverflow.com/questions/tagged/pimcore) - Questions / Support 
-
+* [Forums](https://talk.pimcore.org/) - Discussions 
 
 
 ## Contribute
