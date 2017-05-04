@@ -140,6 +140,7 @@ services:
 
     pimcore.cache.runtime:
       class: Pimcore\Cache\Runtime
+      synthetic: true
 
     #
     # REQUEST SPECIFICS

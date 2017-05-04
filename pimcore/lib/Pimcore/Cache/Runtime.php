@@ -14,8 +14,10 @@
 
 namespace Pimcore\Cache;
 
-class Runtime extends \ArrayObject
+final class Runtime extends \ArrayObject
 {
+    const SERVICE_ID = 'pimcore.cache.runtime';
+
     protected static $tempInstance;
 
     /**
@@ -26,12 +28,23 @@ class Runtime extends \ArrayObject
     public static function getInstance()
     {
         if (\Pimcore::hasContainer()) {
-            $instance = \Pimcore::getContainer()->get('pimcore.cache.runtime');
+            $container = \Pimcore::getContainer();
+
+            /** @var self $instance */
+            $instance = null;
+            if ($container->has(self::SERVICE_ID)) {
+                $instance = $container->get(self::SERVICE_ID);
+            } else {
+                $instance = new self;
+                $container->set(self::SERVICE_ID, $instance);
+            }
+
             if (self::$tempInstance) {
                 // copy values from static temp. instance to the service instance
                 foreach (self::$tempInstance as $key => $value) {
                     $instance->offsetSet($key, $value);
                 }
+
                 self::$tempInstance = null;
             }
 
@@ -169,6 +182,6 @@ class Runtime extends \ArrayObject
             }
         }
 
-        \Pimcore::getContainer()->set('pimcore.cache.runtime', $newInstance);
+        \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
     }
 }

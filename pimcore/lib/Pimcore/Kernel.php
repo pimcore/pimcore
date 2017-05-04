@@ -17,6 +17,7 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
+use Pimcore\Cache\Runtime;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
@@ -105,6 +106,9 @@ abstract class Kernel extends SymfonyKernel
 
         // init container
         $this->initializeContainer();
+
+        // initialize runtime cache (defined as synthetic service)
+        Runtime::getInstance();
 
         // set the extension config on the container
         $this->getContainer()->set('pimcore.extension.config', $this->extensionConfig);
