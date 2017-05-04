@@ -17,8 +17,10 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Exception\MissingDependencyException;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -53,27 +55,49 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * static function to render a document outside of a view
+     * Renders a document outside of a view with support for legacy documents
+     *
+     * Parameter order was kept for BC (useLayout before query and options).
      *
      * @static
      *
-     * @param Document $document
-     * @param array $params
+     * @param Document\PageSnippet $document
+     * @param array $attributes
      * @param bool $useLayout
+     * @param array $query
+     * @param array $options
      *
      * @return string
      */
-    public static function render(Document $document, $params = [], $useLayout = false)
+    public static function render(Document\PageSnippet $document, array $attributes = [], $useLayout = false, array $query = [], array $options = []): string
     {
+        $container = \Pimcore::getContainer();
+
+        /** @var DocumentRendererInterface $renderer */
+        $renderer = null;
+
         if ($document->doRenderWithLegacyStack()) {
-            $renderer = \Pimcore::getContainer()->get('pimcore.templating.legacy_document_renderer');
+            $serviceId = 'pimcore.document.legacy_renderer';
+            if (!$container->has($serviceId)) {
+                throw new MissingDependencyException(sprintf(
+                    'Document %d (%s) is expected to be renderer with the legacy renderer, but legacy renderer does not exist as service "%s"',
+                    $document->getId(),
+                    $document->getFullPath(),
+                    $serviceId
+                ));
+            }
 
-            return $renderer->render($document, $params, $useLayout);
+            $renderer = $container->get($serviceId);
         } else {
-            $renderer = \Pimcore::getContainer()->get('pimcore.templating.document_renderer');
-
-            return $renderer->render($document, $params, $useLayout);
+            $renderer = $container->get('pimcore.document.renderer');
         }
+
+        // keep useLayout compatibility
+        if ($useLayout) {
+            $attributes['_useLayout'] = $useLayout;
+        }
+
+        return $renderer->render($document, $attributes, $query, $options);
     }
 
     /**
