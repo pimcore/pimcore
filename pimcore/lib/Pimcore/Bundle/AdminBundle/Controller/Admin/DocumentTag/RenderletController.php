@@ -64,7 +64,7 @@ class RenderletController extends AdminController
         if ($document = $request->get('pimcore_parentDocument')) {
             $document = Document::getById($document);
             if ($document) {
-                $attributes = $actionRenderer->addDocumentParams($document, $attributes);
+                $attributes = $actionRenderer->addDocumentAttributes($document, $attributes);
             }
         }
 
