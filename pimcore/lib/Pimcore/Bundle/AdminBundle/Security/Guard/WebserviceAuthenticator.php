@@ -37,7 +37,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        throw new AccessDeniedHttpException('API request needs either a valid API key or a valid session.');
+        throw $this->createAccessDeniedException($authException);
     }
 
     /**
@@ -60,6 +60,13 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
                 }
             }
         }
+
+        throw $this->createAccessDeniedException();
+    }
+
+    private function createAccessDeniedException(\Throwable $previous = null)
+    {
+        return new AccessDeniedHttpException('API request needs either a valid API key or a valid session.', $previous);
     }
 
     /**
@@ -137,7 +144,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
             'path' => $request->getPathInfo()
         ]);
 
-        throw new AccessDeniedHttpException('API request needs either a valid API key or a valid session.');
+        throw $this->createAccessDeniedException($exception);
     }
 
     /**
