@@ -2898,6 +2898,7 @@ pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, resp
         pathProperty: "path"
     });
 
+    store.ignoreDataChanged = true;
     store.each(function (record, id) {
         var recordId = record.data[config.idProperty];
         if (typeof responseData[recordId] != "undefined") {
@@ -2910,6 +2911,7 @@ pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, resp
             }
         }
     }, this);
+    store.ignoreDataChanged = false;
 
     gridView.updateLayout();
 };
