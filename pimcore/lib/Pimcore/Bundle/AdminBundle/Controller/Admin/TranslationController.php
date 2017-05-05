@@ -1281,6 +1281,8 @@ class TranslationController extends AdminController
             } catch (\Exception $e) {
                 Logger::error('Word Export: ' . $e->getMessage());
                 Logger::error($e);
+
+                throw $e;
             }
         }
 
