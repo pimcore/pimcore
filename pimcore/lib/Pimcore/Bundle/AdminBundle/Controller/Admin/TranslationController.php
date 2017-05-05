@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -1302,7 +1303,28 @@ class TranslationController extends AdminController
     public function wordExportDownloadAction(Request $request)
     {
         $id = $request->get('id');
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $id . '.html';
+        $id = preg_replace('/\.+/', '.', $id);
+
+        if (!preg_match('/^[a-z0-9\.]+$/', $id)) {
+            throw new BadRequestHttpException('Invalid ID format');
+        }
+
+        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $id . '.html';
+        $exportFile = realpath($exportFile);
+
+        if (false !== $exportFile && substr($exportFile, 0, strlen(PIMCORE_SYSTEM_TEMP_DIRECTORY)) !== PIMCORE_SYSTEM_TEMP_DIRECTORY) {
+            $exception = new BadRequestHttpException('Invalid path/possible path injection');
+
+            $this->get('monolog.logger.pimcore')->error($exception->getMessage(), [
+                'exportFile' => $exportFile
+            ]);
+
+            throw $exception;
+        }
+
+        if (false === $exportFile || !file_exists($exportFile)) {
+            throw $this->createNotFoundException(sprintf('Export file does not exist at path %s', $exportFile));
+        }
 
         // no conversion, output html file, works fine with MS Word and LibreOffice
         $content = file_get_contents($exportFile);
@@ -1316,7 +1338,7 @@ class TranslationController extends AdminController
             "<html>\n" .
                 "<head>\n" .
                     '<style type="text/css">' . "\n" .
-                    file_get_contents(PIMCORE_PATH . '/static6/css/word-export.css') .
+                    file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/word-export.css') .
                     "</style>\n" .
                 "</head>\n\n" .
                 "<body>\n" .
