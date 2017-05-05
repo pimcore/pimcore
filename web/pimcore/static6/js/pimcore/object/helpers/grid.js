@@ -73,6 +73,10 @@ pimcore.object.helpers.grid = Class.create({
             }
         }
 
+        var glue = '&';
+        if(this.url.indexOf('?') === -1) {
+            glue = '?';
+        }
 
         var proxy = {
             type: 'ajax',
@@ -84,10 +88,10 @@ pimcore.object.helpers.grid = Class.create({
                 rootProperty: 'data'
             },
             api: {
-                create  : this.url + "&xaction=create",
-                read    : this.url + "&xaction=read",
-                update  : this.url + "&xaction=update",
-                destroy : this.url + "&xaction=destroy"
+                create  : this.url + glue + "xaction=create",
+                read    : this.url + glue  + "xaction=read",
+                update  : this.url + glue  + "xaction=update",
+                destroy : this.url + glue  + "xaction=destroy"
             },
             actionMethods: {
                 create : 'POST',

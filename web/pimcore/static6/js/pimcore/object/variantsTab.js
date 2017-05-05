@@ -73,7 +73,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,
             fields,
-            "/admin/variants/get-variants?",
+            "/admin/variants/get-variants",
             {
                 language: this.gridLanguage,
                 objectId: this.element.id
