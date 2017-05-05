@@ -261,7 +261,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      */
     protected function addContextRoutes(ContainerBuilder $container, array $config)
     {
-        $guesser = $container->getDefinition('pimcore.service.request.pimcore_context_resolver');
+        $guesser = $container->getDefinition('pimcore.service.context.pimcore_context_guesser');
 
         foreach ($config as $context => $contextConfig) {
             $guesser->addMethodCall('addContextRoutes', [$context, $contextConfig['routes']]);

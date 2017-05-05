@@ -149,6 +149,10 @@ services:
     pimcore.service.request_matcher_factory:
         class: Pimcore\Service\RequestMatcherFactory
 
+    pimcore.service.context.pimcore_context_guesser:
+        class: Pimcore\Service\Context\PimcoreContextGuesser
+        arguments: ['@pimcore.service.request_matcher_factory']
+
     #
     # REQUEST RESOLVERS
     #
@@ -157,7 +161,7 @@ services:
 
     pimcore.service.request.pimcore_context_resolver:
         class: Pimcore\Service\Request\PimcoreContextResolver
-        arguments: ['@request_stack', '@pimcore.service.request_matcher_factory']
+        arguments: ['@request_stack', '@pimcore.service.context.pimcore_context_guesser']
 
     pimcore.service.request.site_resolver:
         class: Pimcore\Service\Request\SiteResolver
