@@ -90,9 +90,9 @@ class Service extends Model\Element\Service
             $list = new $listName();
             $conditionParts = [];
             foreach ($fields as $field) {
-                $conditionParts[] = $field . "='" . $userId . "'";
+                $conditionParts[] = $field . " = ?";
             }
-            $list->setCondition(implode(" AND ", $conditionParts));
+            $list->setCondition(implode(" AND ", $conditionParts), array_fill(0, count($conditionParts), $userId));
             $objects = $list->load();
             $userObjects = array_merge($userObjects, $objects);
         }
