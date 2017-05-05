@@ -223,18 +223,18 @@ class IndexController extends AdminController
     protected function addMaintenanceSettings(ViewModel $settings)
     {
         // check maintenance
-        $maintenance_enabled = false;
+        $maintenance_active = false;
 
         $manager = Model\Schedule\Manager\Factory::getManager('maintenance.pid');
 
         $lastExecution = $manager->getLastExecution();
         if ($lastExecution) {
             if ((time() - $lastExecution) < 3660) { // maintenance script should run at least every hour + a little tolerance
-                $maintenance_enabled = true;
+                $maintenance_active = true;
             }
         }
 
-        $settings->maintenance_enabled = $maintenance_enabled;
+        $settings->maintenance_active = $maintenance_active;
         $settings->maintenance_mode    = Admin::isInMaintenanceMode();
 
         return $this;
