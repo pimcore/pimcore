@@ -153,10 +153,11 @@ class Snippet extends Model\Document\Tag
                 return '';
             }
         } catch (\Exception $e) {
+            Logger::error($e);
+
             if (\Pimcore::inDebugMode()) {
                 return 'ERROR: ' . $e->getMessage() . ' (for details see debug.log)';
             }
-            Logger::error($e);
         }
     }
 
