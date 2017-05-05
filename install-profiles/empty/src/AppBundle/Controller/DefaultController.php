@@ -2,9 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 
-class DefaultController extends AbstractController
+class DefaultController extends FrontendController
 {
     /**
      * @param Request $request

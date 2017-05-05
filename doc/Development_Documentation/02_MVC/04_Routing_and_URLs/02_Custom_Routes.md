@@ -41,14 +41,23 @@ the custom route:
 ![Custom Routes and Variables](../../img/custom-routes2.png)
 
 ```php
-class NewsController extends AbstractController
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+
+class NewsController extends FrontendController
 {
     public function detailAction(Request $request)
     {
         $id = $request->get('id');
         $text = $request->get('text');
         
-        ...
+        // ...
+    }
+}
 ```
 
 The default variables can be accessed the same way.

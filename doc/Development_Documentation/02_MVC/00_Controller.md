@@ -6,9 +6,9 @@ Pimcore controllers play the designated role in the MVC pattern. They bind the d
 the functionality of the application. It is good practise to keep the controllers as lean as possible and encapsulate
 the business logic into models or services/libraries. 
 
-Pimcore offers an abstract class (`Pimcore\Controller\FrontendController`), which can be implemented by your controllers 
-(or better use `AppBundle\Controller\AbstractController` out of your bundle). This abstract class adds some Pimcore specific 
- dispatching features - especially in combination with Pimcore Documents, multi-language support etc. 
+Pimcore offers an abstract class (`Pimcore\Controller\FrontendController`), which can be implemented by your controllers.
+This abstract class adds some Pimcore specific dispatching features - especially in combination with Pimcore Documents,
+multi-language support etc. 
 
 The naming of the file and the class is just the same as in Symfony. 
 
@@ -28,14 +28,22 @@ You can override this by using `return $this->render(":Bar:foo.html.php", ["para
  like in the example below or you can of course just return a `Response` object, just the way how Symfony works.
 
 ```php
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Document;
- 
-class DefaultController extends AbstractController {
- 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class DefaultController extends FrontendController
+{ 
     /**
      * Home page action. Will use the template /app/Resources/views/Default/home.html.php
     */
-    public function homeAction(Request $request) {
+    public function homeAction(Request $request)
+    {
         //Set a view variable with the name "foo" and the value "bar"
         $this->view->foo = 'bar';
     }
@@ -43,7 +51,8 @@ class DefaultController extends AbstractController {
     /**
     * Default page action. Will use the template /app/Resources/views/Default/default.html.php
     */
-    public function defaultAction(Request $request) {
+    public function defaultAction(Request $request)
+    {
         //it is perfectly fine for an action to be empty.
     }
     
@@ -51,30 +60,28 @@ class DefaultController extends AbstractController {
     * Example using a different template than the name of the action.
     * Will use the template /app/Resources/views/Default/different.html.php as view.
     */
-    public function differentAction() {
+    public function differentAction()
+    {
         return $this->render(":Default:somethingelse.html.php", ["foo" => "bar"]);
     }
     
     /**
      * This action returns a JSON response. 
     */
-    public function jsonAction(Request $request) {
-        $this->json(array('key' => 'value'));
+    public function jsonAction(Request $request)
+    {
+        return $this->json(array('key' => 'value'));
     }
     
     /**
      * This returns a standard symfony Response object 
     */
-    public function customAction(Request $request) {
+    public function customAction(Request $request)
+    {
         return new Response("Just some text");
     }
-```
-
-Put your controllers in the following directory: `/src/AppBundle/Controller`
-
-There are some helpers defined in `\Pimcore\Controller\FrontendController`. 
-But the best way is to use `\AppBundle\Controller\AbstractController` which is already shipped with Pimcore 
-and extends the `FrontendController` and can be modified and extended the way you need it.
+}
+``` 
 
 ###### There are also some properties which can be useful:
 

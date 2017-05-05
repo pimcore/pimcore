@@ -2,13 +2,12 @@
 
 namespace AppBundle\Controller\Category;
 
-use AppBundle\Controller\AbstractController;
+use Pimcore\Controller\FrontendController;
 
-class ExampleController extends AbstractController
+class ExampleController extends FrontendController
 {
     public function testAction()
     {
-
         /*
          * This is an example of a categorization of controllers
          * you can create folders to structure your controllers into sub-modules

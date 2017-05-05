@@ -2,11 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Object\News;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
-class NewsController extends AbstractController
+class NewsController extends FrontendController
 {
     public function indexAction(Request $request)
     {

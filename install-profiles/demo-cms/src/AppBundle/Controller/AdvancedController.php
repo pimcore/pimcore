@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Pimcore\Mail;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -10,7 +11,7 @@ use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
-class AdvancedController extends AbstractController
+class AdvancedController extends FrontendController
 {
     public function indexAction()
     {

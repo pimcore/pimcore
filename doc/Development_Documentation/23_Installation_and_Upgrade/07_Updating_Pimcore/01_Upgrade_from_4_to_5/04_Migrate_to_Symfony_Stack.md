@@ -17,7 +17,6 @@ ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL
 ### Controller
 - Move Controllers to `/src/AppBundle/Controllers/`.
 - Add namespace to controllers and extend them from `Pimcore\Controller\FrontendController` 
-  or your `AbstractController` if necessary. 
 - Controllers now live in namespaces. As a consequence everything in default namespace 
 (like Exception, stdClass, ...) need to be prefixed with `\`.
 - `init()` is not available anymore. Migrate all content, most likely to `onKernelController()`. 

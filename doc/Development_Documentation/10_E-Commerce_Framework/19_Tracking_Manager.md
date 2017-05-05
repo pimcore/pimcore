@@ -74,20 +74,30 @@ See the following examples
 ### Product Impression
 ```php
 <?php
-class ShopController extends AbstractController {
-    public function listAction(Request $request) {
-        ...
+
+namespace AppBundle\Controller;
+
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+use Zend\Paginator\Paginator;
+
+class ShopController extends FrontendController
+{
+    public function listAction(Request $request)
+    {       
+        // ...
         $paginator = new Paginator($products);
         $paginator->setCurrentPageNumber( $request->get('page') );
 
         $trackingManager = Factory::getInstance()->getTrackingManager();
-        foreach($paginator as $product) {
+        foreach ($paginator as $product) {
             $trackingManager->trackProductImpression($product);
         }
-        ...
+        
+        // ...
     }
 }
-
 ```
 
 ### Checkout

@@ -2,11 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ContentController extends AbstractController
+class ContentController extends FrontendController
 {
     public function defaultAction()
     {

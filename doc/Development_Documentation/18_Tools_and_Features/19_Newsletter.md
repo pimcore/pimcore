@@ -61,11 +61,13 @@ For example, `\NewsletterController`: `src/AppBundle/Controllers/NewsletterContr
 
 namespace AppBundle\Controller; 
 
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\HttpFoundation\Request;
 
-class NewsletterController extends AbstractController
+
+class NewsletterController extends FrontendController
 {
     public function subscribeAction(Request $request)
     {

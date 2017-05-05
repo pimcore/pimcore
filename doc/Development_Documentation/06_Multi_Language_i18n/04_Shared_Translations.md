@@ -40,12 +40,15 @@ Available languages are defined within the system languages, see [here](./README
 
 namespace AppBundle\Controller;
 
-class ContentController extends AbstractController
+use Pimcore\Controller\FrontendController;
+
+class ContentController extends FrontendController
 {
     public function defaultAction()
     {
         $translation = $this->get("translator")->trans("legal_notice");
     }
+}
 ```
 
 

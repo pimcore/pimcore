@@ -19,10 +19,10 @@ You have to put the file into the `/src/AppBundle/Controller` directory.
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-class ContentController extends AbstractController
+class ContentController extends FrontendController
 {
     public function defaultAction(Request $request)
     {
@@ -226,19 +226,17 @@ Therefore create another action in the controller (ContentController) called `pr
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-class ContentController extends AbstractController
+class ContentController extends FrontendController
 {
     public function defaultAction (Request $request)
     {
-    
     }
     
     public function productAction(Request $request)
     {
-    
     }
 }
 ```

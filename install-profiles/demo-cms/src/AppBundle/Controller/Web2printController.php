@@ -2,9 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 
-class Web2printController extends AbstractController
+class Web2printController extends FrontendController
 {
     public function defaultAction()
     {

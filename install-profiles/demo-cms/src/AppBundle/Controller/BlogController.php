@@ -2,11 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
-class BlogController extends AbstractController
+class BlogController extends FrontendController
 {
     public function indexAction(Request $request)
     {
