@@ -1154,12 +1154,7 @@ class TranslationController extends AdminController
                     }
 
                     // we need to set the parameter "pimcore_admin" here to be able to render unpublished documents
-                    $reqBak = $_REQUEST;
-                    $_REQUEST['pimcore_admin'] = true;
-
-                    $html = Document\Service::render($element, [], false);
-
-                    $_REQUEST = $reqBak; // set the request back to original
+                    $html = Document\Service::render($element, [], false, ['pimcore_admin' => true]);
 
                     $html = preg_replace('@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@', '', $html);
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);

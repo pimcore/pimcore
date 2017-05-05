@@ -101,7 +101,9 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
             return;
         }
 
-        $adminRequest = $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
+        $adminRequest =
+            $this->requestHelper->isFrontendRequestByAdmin($request) ||
+            $this->requestHelper->isFrontendRequestByAdmin($this->requestHelper->getMasterRequest());
 
         $user = null;
         if ($adminRequest) {
