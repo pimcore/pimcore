@@ -26,14 +26,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class PimcoreContextResolver extends AbstractRequestResolver
 {
+    const ATTRIBUTE_PIMCORE_CONTEXT = '_pimcore_context';
+
     const CONTEXT_ADMIN = 'admin';
     const CONTEXT_WEBSERVICE = 'webservice';
     const CONTEXT_DEFAULT = 'default';
-
-    /**
-     * @var string
-     */
-    protected $pimcoreContext;
 
     /**
      * @var PimcoreContextGuesser
@@ -41,26 +38,11 @@ class PimcoreContextResolver extends AbstractRequestResolver
     protected $guesser;
 
     /**
-     * @var array
-     */
-    protected $routes = [];
-
-    /**
-     * @var RequestMatcherInterface[]
-     */
-    protected $matchers;
-
-    /**
-     * @var RequestMatcherFactory
-     */
-    protected $requestMatcherFactory;
-
-    /**
      * @inheritDoc
      */
-    public function __construct(RequestStack $requestStack, RequestMatcherFactory $requestMatcherFactory)
+    public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
     {
-        $this->requestMatcherFactory = $requestMatcherFactory;
+        $this->guesser = $guesser;
 
         parent::__construct($requestStack);
     }
@@ -74,72 +56,28 @@ class PimcoreContextResolver extends AbstractRequestResolver
      */
     public function getPimcoreContext(Request $request = null)
     {
-        if (!$this->pimcoreContext) {
-            if (null === $request) {
-                // per default the pimcore context always depends on the master request
-                $request = $this->getMasterRequest();
-            }
-
-            $context = $this->guess($request);
-            $this->pimcoreContext = $context;
+        if (null === $request) {
+            $request = $this->getCurrentRequest();
         }
 
-        return $this->pimcoreContext;
+        $context = $request->attributes->get(self::ATTRIBUTE_PIMCORE_CONTEXT);
+
+        if (!$context) {
+            $context = $this->guesser->guess($request, static::CONTEXT_DEFAULT);
+            $this->setPimcoreContext($request, $context);
+        }
+
+        return $context;
     }
 
     /**
-     * @param string $context
-     */
-    public function setPimcoreContext($context)
-    {
-        $this->pimcoreContext = $context;
-    }
-
-    /**
-     * Add context specific routes
-     *
-     * @param string $context
-     * @param array $routes
-     */
-    public function addContextRoutes($context, array $routes)
-    {
-        $this->routes[$context] = $routes;
-    }
-
-    /**
-     * Guess the pimcore context
+     * Sets the pimcore context on the request
      *
      * @param Request $request
-     *
-     * @return string
+     * @param string $context
      */
-    public function guess(Request $request)
+    public function setPimcoreContext(Request $request, string $context)
     {
-        /** @var RequestMatcherInterface[] $matchers */
-        foreach ($this->getMatchers() as $context => $matchers) {
-            foreach ($matchers as $matcher) {
-                if ($matcher->matches($request)) {
-                    return $context;
-                }
-            }
-        }
-
-        return static::CONTEXT_DEFAULT;
-    }
-
-    /**
-     * Get request matchers to query admin pimcore context from
-     *
-     * @return RequestMatcherInterface[]
-     */
-    protected function getMatchers()
-    {
-        if (null === $this->matchers) {
-            foreach ($this->routes as $context => $routes) {
-                $this->matchers[$context] = $this->requestMatcherFactory->buildRequestMatchers($routes);
-            }
-        }
-
-        return $this->matchers;
+        $request->attributes->set(self::ATTRIBUTE_PIMCORE_CONTEXT, $context);
     }
 }

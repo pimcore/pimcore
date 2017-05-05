@@ -1088,11 +1088,12 @@ class TranslationController extends AdminController
         error_reporting(0);
         ini_set('display_errors', 'off');
 
-        $id = $request->get('id');
+        $id         = $this->sanitzeExportId((string)$request->get('id'));
+        $exportFile = $this->getExportFilePath($id, false);
+
         $data = $this->decodeJson($request->get('data'));
         $source = $request->get('source');
 
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $id . '.html';
         if (!is_file($exportFile)) {
             File::put($exportFile, '');
         }
@@ -1153,12 +1154,7 @@ class TranslationController extends AdminController
                     }
 
                     // we need to set the parameter "pimcore_admin" here to be able to render unpublished documents
-                    $reqBak = $_REQUEST;
-                    $_REQUEST['pimcore_admin'] = true;
-
-                    $html = Document\Service::render($element, [], false);
-
-                    $_REQUEST = $reqBak; // set the request back to original
+                    $html = Document\Service::render($element, [], false, ['pimcore_admin' => true]);
 
                     $html = preg_replace('@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@', '', $html);
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
@@ -1285,6 +1281,8 @@ class TranslationController extends AdminController
             } catch (\Exception $e) {
                 Logger::error('Word Export: ' . $e->getMessage());
                 Logger::error($e);
+
+                throw $e;
             }
         }
 
@@ -1302,29 +1300,8 @@ class TranslationController extends AdminController
      */
     public function wordExportDownloadAction(Request $request)
     {
-        $id = $request->get('id');
-        $id = preg_replace('/\.+/', '.', $id);
-
-        if (!preg_match('/^[a-z0-9\.]+$/', $id)) {
-            throw new BadRequestHttpException('Invalid ID format');
-        }
-
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $id . '.html';
-        $exportFile = realpath($exportFile);
-
-        if (false !== $exportFile && substr($exportFile, 0, strlen(PIMCORE_SYSTEM_TEMP_DIRECTORY)) !== PIMCORE_SYSTEM_TEMP_DIRECTORY) {
-            $exception = new BadRequestHttpException('Invalid path/possible path injection');
-
-            $this->get('monolog.logger.pimcore')->error($exception->getMessage(), [
-                'exportFile' => $exportFile
-            ]);
-
-            throw $exception;
-        }
-
-        if (false === $exportFile || !file_exists($exportFile)) {
-            throw $this->createNotFoundException(sprintf('Export file does not exist at path %s', $exportFile));
-        }
+        $id         = $this->sanitzeExportId((string)$request->get('id'));
+        $exportFile = $this->getExportFilePath($id, true);
 
         // no conversion, output html file, works fine with MS Word and LibreOffice
         $content = file_get_contents($exportFile);
@@ -1352,6 +1329,27 @@ class TranslationController extends AdminController
         $response->headers->set('Content-Disposition', 'attachment; filename="word-export-' . date('Ymd') . '_' . uniqid() . '.htm"');
 
         return $response;
+    }
+
+    private function sanitzeExportId(string $id): string
+    {
+        if (empty($id) || !preg_match('/^[a-z0-9]+$/', $id)) {
+            throw new BadRequestHttpException('Invalid export ID format');
+        }
+
+        return $id;
+    }
+
+    private function getExportFilePath(string $id, bool $checkExistence = true): string
+    {
+        // no need to check for path traversals here as sanitizeExportId restricted the ID parameter
+        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $id . '.html';
+
+        if ($checkExistence && !file_exists($exportFile)) {
+            throw $this->createNotFoundException(sprintf('Export file does not exist at path %s', $exportFile));
+        }
+
+        return $exportFile;
     }
 
     /**

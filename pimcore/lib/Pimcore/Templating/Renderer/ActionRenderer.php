@@ -16,6 +16,7 @@ namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Model\Document;
 use Pimcore\Service\MvcConfigNormalizer;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
@@ -110,11 +111,18 @@ class ActionRenderer
      *
      * @param Document\PageSnippet $document
      * @param array $attributes
+     * @param string|null $context
      *
      * @return array
      */
-    public function addDocumentAttributes(Document\PageSnippet $document, array $attributes = [])
+    public function addDocumentAttributes(Document\PageSnippet $document, array $attributes = [], string $context = PimcoreContextResolver::CONTEXT_DEFAULT)
     {
+        if (null !== $context) {
+            // document needs to be rendered with default context as the context guesser can't resolve the
+            // context from a fragment route
+            $attributes[PimcoreContextResolver::ATTRIBUTE_PIMCORE_CONTEXT] = $context;
+        }
+
         // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
         // a route's document and template. Those attributes are later used by controller listeners to
         // determine what to render. By injecting those attributes into the sub-request we can rely on
