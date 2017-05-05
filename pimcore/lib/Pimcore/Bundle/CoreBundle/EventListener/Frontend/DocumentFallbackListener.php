@@ -88,14 +88,27 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
             return;
         } else {
             // if we're in a sub request and no explicit document is set - try to load document from
-            // master request and set it on our sub-request
+            // parent and/or master request and set it on our sub-request
             if (!$event->isMasterRequest()) {
+                $parentRequest = $this->requestStack->getParentRequest();
                 $masterRequest = $this->requestStack->getMasterRequest();
 
-                if ($document = $this->documentResolver->getDocument($masterRequest)) {
-                    $this->documentResolver->setDocument($request, $document);
+                $eligibleRequests = [];
 
-                    return;
+                if (null !== $parentRequest) {
+                    $eligibleRequests[] = $parentRequest;
+                }
+
+                if ($masterRequest !== $parentRequest) {
+                    $eligibleRequests[] = $masterRequest;
+                }
+
+                foreach ($eligibleRequests as $eligibleRequest) {
+                    if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
+                        $this->documentResolver->setDocument($request, $document);
+
+                        return;
+                    }
                 }
             }
         }
