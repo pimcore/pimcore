@@ -93,9 +93,7 @@ class Service extends Model\Element\Service
         }
 
         // keep useLayout compatibility
-        if ($useLayout) {
-            $attributes['_useLayout'] = $useLayout;
-        }
+        $attributes['_useLayout'] = $useLayout;
 
         return $renderer->render($document, $attributes, $query, $options);
     }
