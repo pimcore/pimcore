@@ -1172,7 +1172,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                 $s1 = $sorting[$a["id"]] ? $sorting[$a["id"]] : 0;
                 $s2 = $sorting[$b["id"]] ? $sorting[$b["id"]] : 0;
 
-                if ($s1 < $s2) {
+                if ($s1 > $s2) {
                     return 1;
                 } elseif ($s2 > $s1) {
                     return -1;
