@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -29,5 +32,5 @@ interface TemplateControllerInterface
      * @param bool $autoRender
      * @param string|null $engine
      */
-    public function setViewAutoRender(Request $request, $autoRender, $engine = null);
+    public function setViewAutoRender(Request $request, bool $autoRender, string $engine = null);
 }
