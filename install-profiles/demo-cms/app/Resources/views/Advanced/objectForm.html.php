@@ -7,85 +7,88 @@
 
 $this->extend('layout.html.php');
 
+/** @var \Symfony\Component\Form\FormView $form */
+$form = $this->form;
 ?>
 
-<?php if((!$this->error && !$this->success)|| $this->editmode) { ?>
+
+<?php if ((!$this->error && !$this->success) || $this->editmode) { ?>
     <?= $this->template('Includes/content-default.html.php') ?>
 <?php } ?>
 
-<?php if($this->error || $this->editmode) { ?>
-    <br />
+<?php if ($this->error || $this->editmode) { ?>
+    <br/>
     <div class="alert alert-error">
         <?= $this->input("errorMessage"); ?>
     </div>
 <?php } ?>
 
-<?php if(!$this->success) { ?>
-    <form class="form-horizontal" role="form" action="" method="post">
-            <div class="form-group">
-                <label class="col-lg-2 control-label"><?= $this->translate("Gender"); ?></label>
-                <div class="col-lg-10">
-                    <select name="gender" class="form-control">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-2 control-label"><?= $this->translate("Firstname"); ?></label>
-                <div class="col-lg-10">
-                    <input name="firstname" type="text" class="form-control" placeholder="" value="<?= $this->firstname; ?>">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-2 control-label"><?= $this->translate("Lastname"); ?></label>
-                <div class="col-lg-10">
-                    <input name="lastname" type="text" class="form-control" placeholder="" value="<?= $this->lastname; ?>">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
-                <div class="col-lg-10">
-                    <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->email; ?>">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg-2 control-label"><?= $this->translate("Message"); ?></label>
-                <div class="col-lg-10">
-                    <textarea name="message" type="text" class="form-control" placeholder="" value="<?= $this->message; ?>"></textarea>
-                </div>
-            </div>
+<?php if (!$this->success) { ?>
 
-            <div class="form-group">
-                <div class="col-lg-offset-2 col-lg-10">
-                    <div class="checkbox">
-                        <label>
-                            <input name="terms" type="checkbox"> <?= $this->translate("I accept the terms of use"); ?>
-                        </label>
-                    </div>
-                </div>
-            </div>
+    <?php
+    // We created a custom form theme, overriding the form group template with bootstrap markup in app/Resources/view/Form/default
+    // In the form theme, we just can override what we want to change as non-existing templates will fall back to the default
+    // implementation.
+    //
+    // To customize a template, just add the corresponding template to the folder above. The original templates can be
+    // found in vendor/symfony/symfony/src/Symfony/Bundle/FrameworkBundle/Resources/views/Form
+    //
+    // see:
+    // * http://symfony.com/doc/current/form/form_customization.html and
+    // * http://symfony.com/doc/current/form/rendering.html
+    // * http://symfony.com/doc/current/form/form_themes.html
+    $this->form()->setTheme($form, ':Form/default');
+    ?>
 
-            <br />
+    <?= $this->form()->start($form, [
+        'attr' => [
+            'class' => 'form-horizontal',
+            'role'  => 'form'
+        ]
+    ]); ?>
 
-            <div class="form-group">
-                <div class="col-lg-offset-2 col-lg-10">
-                    <button type="submit" class="btn btn-default"><?= $this->translate("Submit"); ?></button>
-                </div>
+    <?php // call row() for normal inputs ?>
+    <?= $this->form()->row($form['gender']) ?>
+    <?= $this->form()->row($form['firstname']) ?>
+    <?= $this->form()->row($form['lastname']) ?>
+    <?= $this->form()->row($form['email']) ?>
+    <?= $this->form()->row($form['message']) ?>
+
+    <?php // render checkbox manually as we need custom markup ?>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <div class="checkbox">
+                <label>
+                    <?= $this->form()->widget($form['terms']) ?> <?= $form['terms']->vars['label'] ?>
+                </label>
             </div>
-    </form>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <?= $this->form()->widget($form['submit'], [
+                'attr' => ['class' => 'btn btn-default']
+            ]) ?>
+        </div>
+    </div>
+
+    <?= $this->form()->end($form); ?>
+
 <?php } else { ?>
 
     <h2><?= $this->translate("Thank you very much"); ?></h2>
-
     <p>
         We received the following information from you:
 
-        <br />
-        <br />
+        <br/>
+        <br/>
 
-        <b>Firstname: </b> <?= $this->firstname; ?><br />
-        <b>Lastname: </b> <?= $this->lastname; ?><br />
-        <b>E-Mail: </b> <?= $this->email; ?><br />
+        <b>Firstname: </b> <?= $this->escape($this->firstname); ?><br/>
+        <b>Lastname: </b> <?= $this->escape($this->lastname); ?><br/>
+        <b>E-Mail: </b> <?= $this->escape($this->email); ?><br/>
     </p>
+
 <?php } ?>

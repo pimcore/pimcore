@@ -14,6 +14,7 @@ framework:
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
+    form: ~
     templating:
         engines: ['php', 'twig']
     default_locale:  "%locale%"
