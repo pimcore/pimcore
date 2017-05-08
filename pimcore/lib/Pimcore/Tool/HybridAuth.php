@@ -71,16 +71,10 @@ class HybridAuth
     public static function authenticate($provider, $params = null)
     {
         self::init();
+        static::initializeHybridAuth();
 
-        $adapter = null;
-        try {
-            static::initializeHybridAuth();
-
-            $provider = @trim(strip_tags($provider));
-            $adapter = \Hybrid_Auth::authenticate($provider, $params);
-        } catch (\Exception $e) {
-            Logger::info($e);
-        }
+        $provider = @trim(strip_tags($provider));
+        $adapter = \Hybrid_Auth::authenticate($provider, $params);
 
         return $adapter;
     }
