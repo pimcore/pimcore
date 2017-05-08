@@ -14,7 +14,9 @@
 
 namespace Pimcore\Console;
 
+use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Tool\Admin;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,15 +24,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
  */
-abstract class AbstractCommand extends \Symfony\Component\Console\Command\Command
+abstract class AbstractCommand extends Command
 {
-    /** @var InputInterface */
+    /**
+     * @var PimcoreStyle
+     */
+    protected $io;
+
+    /**
+     * @var InputInterface
+     */
     protected $input;
 
-    /** @var ConsoleOutput */
+    /**
+     * @var ConsoleOutput
+     */
     protected $output;
 
-    /** @var Dumper */
+    /**
+     * @var Dumper
+     */
     protected $dumper;
 
     /**
@@ -41,6 +54,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     {
         parent::initialize($input, $output);
 
+        $this->io     = new PimcoreStyle($input, $output);
         $this->input  = $input;
         $this->output = $output;
 
