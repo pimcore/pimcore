@@ -21,14 +21,18 @@ class PersonInquiryType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var ClassDefinition\Data\Select $genderFieldDefinition */
-        $genderFieldDefinition = $this->getFieldDefinition('person', 'gender');
-
         $builder
             ->add('gender', ChoiceType::class, [
                 'label'    => 'Gender',
                 'required' => true,
-                'choices'  => $this->getSelectChoices($genderFieldDefinition)
+
+                // when working with objects, you could fetch the available
+                // choices from the field definition - we kept it hardcoded
+                // here for simplicity
+                'choices'  => [
+                    'Female' => 'female',
+                    'Male'   => 'male'
+                ]
             ])
             ->add('firstname', TextType::class, [
                 'label'       => 'Firstname',
@@ -66,69 +70,5 @@ class PersonInquiryType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-    }
-
-    /**
-     * Loads select choices for a select field
-     *
-     * @param ClassDefinition\Data\Select $fieldDefinition
-     * @param bool $allowEmpty
-     *
-     * @return array
-     */
-    private function getSelectChoices(ClassDefinition\Data\Select $fieldDefinition, $allowEmpty = false): array
-    {
-        $choices = [];
-        foreach ($fieldDefinition->getOptions() as $fieldOption) {
-            if (empty($fieldOption['key']) && !$allowEmpty) {
-                continue;
-            }
-
-            $choices[$fieldOption['value']] = $fieldOption['key'];
-        }
-
-        return $choices;
-    }
-
-    /**
-     * Loads a field definition
-     *
-     * @param string $className
-     * @param string $fieldName
-     *
-     * @return ClassDefinition\Data
-     */
-    private function getFieldDefinition(string $className, string $fieldName): ClassDefinition\Data
-    {
-        static $fieldDefinitions;
-
-        if (null === $fieldDefinitions) {
-            $fieldDefinitions = [];
-        }
-
-        $cacheKey = $className . ':' . $fieldName;
-        if (isset($fieldDefinitions[$cacheKey])) {
-            return $fieldDefinitions[$cacheKey];
-        }
-
-        $classDefinition = ClassDefinition::getByName($className);
-
-        if (!$classDefinition) {
-            throw new \InvalidArgumentException(sprintf('Class definition for class "%s" could no be loaded', $className));
-        }
-
-        $fieldDefinition = $classDefinition->getFieldDefinition($fieldName);
-
-        if (!$fieldDefinition) {
-            throw new \InvalidArgumentException(sprintf(
-                'Field definition "%s" for class "%s" does could not be loaded',
-                $fieldName,
-                $className
-            ));
-        }
-
-        $fieldDefinitions[$cacheKey] = $fieldDefinition;
-
-        return $fieldDefinition;
     }
 }
