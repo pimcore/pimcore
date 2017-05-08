@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\ContactFormType;
 use AppBundle\Form\PersonInquiryType;
 use Pimcore\Controller\FrontendController;
 use Pimcore\File;
@@ -28,48 +29,57 @@ class AdvancedController extends FrontendController
     {
         $success = false;
 
-        if ($request->get('provider')) {
-            $adapter = Tool\HybridAuth::authenticate($request->get('provider'));
-            if ($adapter) {
-                $user_data = $adapter->getUserProfile();
-                if ($user_data) {
-                    $request->request->set('firstname', $user_data->firstName);
-                    $request->request->set('lastname', $user_data->lastName);
-                    $request->request->set('email', $user_data->email);
-                    $request->request->set('gender', $user_data->gender);
+        // initialize form and handle request data
+        $form = $this->createForm(ContactFormType::class);
+        $form->handleRequest($request);
+
+        // handle social login and pre-fill form
+        if (!$form->isSubmitted()) {
+            if ($request->get('provider')) {
+                /** @var \Hybrid_Provider_Adapter|\Hybrid_Provider_Model $adapter */
+                $adapter = Tool\HybridAuth::authenticate($request->get('provider'));
+                if ($adapter) {
+                    $userData = $adapter->getUserProfile();
+                    if ($userData) {
+                        $form->setData([
+                            'gender'    => $userData->gender,
+                            'firstname' => $userData->firstName,
+                            'lastname'  => $userData->lastName,
+                            'email'     => $userData->email
+                        ]);
+                    }
                 }
             }
-        }
+        } else {
+            if ($form->isValid()) {
+                $success = true;
 
-        // getting parameters is very easy ... just call $request->get("yorParamKey"); regardless if's POST or GET
-        if ($request->get('firstname') && $request->get('lastname') && $request->get('email') && $request->get('message')) {
-            $success = true;
+                $data = $form->getData();
 
-            $mail = new Mail();
-            $mail->setIgnoreDebugMode(true);
+                $mail = new Mail();
+                $mail->setIgnoreDebugMode(true);
 
-            // To is used from the email document, but can also be set manually here (same for subject, CC, BCC, ...)
-            //$mail->addTo("info@pimcore.org");
+                // To is used from the email document, but can also be set manually here (same for subject, CC, BCC, ...)
+                //$mail->addTo("info@pimcore.org");
 
-            $emailDocument = $this->document->getProperty('email');
-            if (!$emailDocument) {
-                $emailDocument = Document::getById(38);
-            }
+                $emailDocument = $this->document->getProperty('email');
+                if (!$emailDocument) {
+                    $emailDocument = Document::getById(38);
+                }
 
-            $mail->setDocument($emailDocument);
-            $mail->setParams($request->request->all());
-            $mail->send();
-        }
+                $mail->setDocument($emailDocument);
+                $mail->setParams($data);
+                $mail->send();
 
-        // do some validation & assign the parameters to the view
-        foreach (['firstname', 'lastname', 'email', 'message', 'gender'] as $key) {
-            if ($request->get($key)) {
-                $this->view->$key = htmlentities(strip_tags($request->get($key)));
+                // add form data as view parameters
+                $this->view->getParameters()->add($data);
             }
         }
 
-        // assign the status to the view
         $this->view->success = $success;
+
+        // add the form view
+        $this->view->form = $form->createView();
     }
 
     public function searchAction(Request $request)

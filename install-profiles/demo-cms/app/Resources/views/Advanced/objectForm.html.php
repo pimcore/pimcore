@@ -26,12 +26,12 @@ $form = $this->form;
 <?php if (!$this->success) { ?>
 
     <?php
-    // we a custom form theme, overriding the form group template
-    // with bootstrap markup in app/Resources/view/Form/default
-    // in the form theme, we just can override what we want to change
+    // We created a custom form theme, overriding the form group template with bootstrap markup in app/Resources/view/Form/default
+    // In the form theme, we just can override what we want to change as non-existing templates will fall back to the default
+    // implementation.
     //
-    // to customize a template, just add the corresponding template to the folder above
-    // the original templates can be found in vendor/symfony/symfony/src/Symfony/Bundle/FrameworkBundle/Resources/views/Form
+    // To customize a template, just add the corresponding template to the folder above. The original templates can be
+    // found in vendor/symfony/symfony/src/Symfony/Bundle/FrameworkBundle/Resources/views/Form
     //
     // see:
     // * http://symfony.com/doc/current/form/form_customization.html and
@@ -86,9 +86,9 @@ $form = $this->form;
         <br/>
         <br/>
 
-        <b>Firstname: </b> <?= $this->firstname; ?><br/>
-        <b>Lastname: </b> <?= $this->lastname; ?><br/>
-        <b>E-Mail: </b> <?= $this->email; ?><br/>
+        <b>Firstname: </b> <?= $this->escape($this->firstname); ?><br/>
+        <b>Lastname: </b> <?= $this->escape($this->lastname); ?><br/>
+        <b>E-Mail: </b> <?= $this->escape($this->email); ?><br/>
     </p>
 
 <?php } ?>
