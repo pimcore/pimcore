@@ -29,7 +29,7 @@ See the [Pimcore Bundles](./05_Pimcore_Bundles.md) documentation to getting star
 
 ### Generating Pimcore Bundles
 
-With [SensioGeneratorBundle](http://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html) there's already a  
+With [SensioGeneratorBundle](http://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html) there's already a
 great bundle which facilitates creation of new bundles. Pimcore extends the `SensioGeneratorBundle` and  adds a
 `PimcoreGeneratorBundle` which provides commands to build Pimcore specific code. At the moment, it provides a single
 command which can be used to generate new Pimcore Bundles:
@@ -39,7 +39,7 @@ command which can be used to generate new Pimcore Bundles:
 $ bin/console pimcore:generate:bundle
 
 # generate bundle with a given name and don't ask questions
-$ bin/console pimcore:generate:bundle --namespace=Elements/FooBundle --no-interaction
+$ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
 ```
 
 ## Common tasks
