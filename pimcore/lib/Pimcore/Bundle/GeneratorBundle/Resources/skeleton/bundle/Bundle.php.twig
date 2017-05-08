@@ -1,0 +1,9 @@
+{% extends "skeleton/bundle/Bundle.php.twig" %}
+
+{% block use_statements %}
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ bundle }} extends AbstractPimcoreBundle
+{% endblock class_definition %}

@@ -17,6 +17,7 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
+use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
@@ -190,6 +191,7 @@ abstract class Kernel extends SymfonyKernel
         $collection->addBundles([
             new PimcoreCoreBundle(),
             new PimcoreAdminBundle(),
+            new PimcoreGeneratorBundle()
         ], 60);
     }
 
