@@ -194,6 +194,9 @@ services:
         class: Pimcore\Service\Request\ViewModelResolver
         arguments: ['@request_stack', '@pimcore.service.request.template_vars_resolver']
 
+    pimcore.service.request.response_header_resolver:
+        class: Pimcore\Service\Request\ResponseHeaderResolver
+        arguments: ['@request_stack']
 
     #
     # ARGUMENT RESOLVERS

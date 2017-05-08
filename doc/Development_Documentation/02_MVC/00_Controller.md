@@ -33,9 +33,9 @@ You can override this by using `return $this->render(":Bar:foo.html.php", ["para
 namespace AppBundle\Controller;
 
 use Pimcore\Controller\FrontendController;
-use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Pimcore\Controller\Configuration\ResponseHeader;
 
 class DefaultController extends FrontendController
 { 
@@ -56,6 +56,18 @@ class DefaultController extends FrontendController
         //it is perfectly fine for an action to be empty.
     }
     
+    /**
+     * The frontend controller provides methods to add response headers via annotation without having
+     * access to the final response object (as it is automatically created when rendering the view).
+     *
+     * @ResponseHeader("X-Foo", values={"123456", "98765"})
+     */
+    public function headerAction(Request $request)
+    {
+        // schedule a response header via code
+        $this->addResponseHeader('X-Foo', 'bar', false, $request);
+    }
+
     /**
     * Example using a different template than the name of the action.
     * Will use the template /app/Resources/views/Default/different.html.php as view.

@@ -147,6 +147,12 @@ services:
     # RESPONSE TRANSFORMING
     #
 
+    pimcore.event_listener.response_header:
+        class: Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener
+        arguments: ['@pimcore.service.request.response_header_resolver']
+        tags:
+            - { name: kernel.event_subscriber }
+
     pimcore.event_listener.editmode_listener:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver', '@pimcore.extension.bundle_manager']

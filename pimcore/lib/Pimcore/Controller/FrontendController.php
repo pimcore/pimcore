@@ -14,6 +14,7 @@
 
 namespace Pimcore\Controller;
 
+use Pimcore\Controller\Configuration\ResponseHeader;
 use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Model\ViewModel;
@@ -113,6 +114,24 @@ abstract class FrontendController extends Controller implements EventedControlle
         }
 
         $this->setViewAutoRender($request, false);
+    }
+
+    /**
+     * We don't have a response object at this point, but we can add headers here which will be
+     * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
+     *
+     * @param string $key
+     * @param array|string $values
+     * @param bool $replace
+     * @param Request|null $request
+     */
+    protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
+    {
+        if (null === $request) {
+            $request = $this->get('request_stack')->getCurrentRequest();
+        }
+
+        $this->get('pimcore.service.request.response_header_resolver')->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**
