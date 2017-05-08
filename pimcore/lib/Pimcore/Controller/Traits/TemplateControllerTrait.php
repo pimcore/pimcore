@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -22,12 +25,12 @@ trait TemplateControllerTrait
     /**
      * @inheritDoc
      */
-    public function setViewAutoRender(Request $request, $autoRender, $engine = null)
+    public function setViewAutoRender(Request $request, bool $autoRender, string $engine = null)
     {
         $autoRender = (bool)$autoRender;
 
         if ($autoRender) {
-            $request->attributes->set(TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER, (bool)$autoRender);
+            $request->attributes->set(TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER, $autoRender);
 
             if (null !== $engine) {
                 $request->attributes->set(TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER_ENGINE, $engine);
