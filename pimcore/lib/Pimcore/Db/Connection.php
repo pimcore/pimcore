@@ -452,6 +452,16 @@ class Connection extends \Doctrine\DBAL\Connection
     }
 
     /**
+     * ZF1 compatibility method, whether the db driver supported named parameters or not
+     * Doctrine has built in support for parameters even for Mysqli => always true
+     * @return bool
+     * @deprecated
+     */
+    public function supportsParameters() {
+        return true;
+    }
+
+    /**
      * Adds an adapter-specific LIMIT clause to the SELECT statement.
      *
      * @param  string $sql
