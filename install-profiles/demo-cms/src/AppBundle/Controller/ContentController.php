@@ -2,11 +2,16 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Controller\Configuration\ResponseHeader;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Pimcore\Controller\Configuration\ResponseHeader;
 
 class ContentController extends FrontendController
 {
@@ -45,26 +50,51 @@ class ContentController extends FrontendController
 
     public function simpleFormAction(Request $request)
     {
+        // we directly use the form builder here, but it's recommended to create a dedicated
+        // form type class for your forms (see forms on advanced examples)
+        // see http://symfony.com/doc/current/forms.html
+
+        /** @var Form $form */
+        $form = $this->createFormBuilder()
+            ->add('firstname', TextType::class, [
+                'label'       => 'Firstname',
+                'required'    => true
+            ])
+            ->add('lastname', TextType::class, [
+                'label'    => 'Lastname',
+                'required' => true
+            ])
+            ->add('email', EmailType::class, [
+                'label'    => 'E-Mail',
+                'required' => true,
+                'attr'     => [
+                    'placeholder' => 'example@example.com'
+                ]
+            ])
+            ->add('checkbox', CheckboxType::class, [
+                'label' => 'Check me out'
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Submit'
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
         $success = false;
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $success = true;
 
-        // getting parameters is very easy ... just call $request->get("yourParamKey"); regardless if's POST or GET
-        if ($request->get('firstname') && $request->get('lastname') && $request->get('email')) {
-            $success = true;
-
-            // of course you can store the data here into an object, or send a mail, ... do whatever you want or need
-            // ...
-            // ...
-        }
-
-        // do some validation & assign the parameters to the view
-        foreach (['firstname', 'lastname', 'email'] as $key) {
-            if ($request->get($key)) {
-                $this->view->$key = htmlentities(strip_tags($request->get($key)));
+                // we just assign the data to the view for now
+                // of course you can store the data here into an object, or send a mail, ... do whatever you want or need
+                $this->view->getParameters()->add($form->getData());
             }
         }
 
-        // assign the status to the view
+        // add success state and form view to the view
         $this->view->success = $success;
+        $this->view->form    = $form->createView();
     }
 
     /**
