@@ -306,8 +306,6 @@ class Pimcore
         Db::close();
 
         $protectedItems = [
-            'pimcore_tag_block_current',
-            'pimcore_tag_block_numeration',
             'Config_system',
             'pimcore_admin_user',
             'Config_website',

@@ -283,6 +283,9 @@ services:
     # DOCUMENT TAG HANDLING (EDITABLES)
     #
 
+    pimcore.document.tag.block_state_stack:
+        class: Pimcore\Document\Tag\Block\BlockStateStack
+
     pimcore.document.tag.handler:
         class: Pimcore\Document\Tag\DelegatingTagHandler
         calls:

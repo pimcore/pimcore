@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Facade\Translate;
@@ -237,17 +238,14 @@ class Areablock extends Model\Document\Tag
 
     public function blockConstruct()
     {
-        // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-        $suffixes[] = $this->indices[$this->current]['key'];
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
+        // set the current block suffix for the child elements (0, 1, 3, ...)
+        // this will be removed in blockDestruct
+        $this->getBlockState()->pushIndex($this->indices[$this->current]['key']);
     }
 
     public function blockDestruct()
     {
-        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-        array_pop($suffixes);
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
+        $this->getBlockState()->popIndex();
     }
 
     /**
@@ -306,18 +304,12 @@ class Areablock extends Model\Document\Tag
     public function start()
     {
         reset($this->indices);
-        $this->setupStaticEnvironment();
 
         $options = $this->getEditmodeOptions();
         $this->outputEditmodeOptions($options);
 
-        // set name suffix for the whole block element, this will be addet to all child elements of the block
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-        }
-        $suffixes[] = $this->getName();
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // set name suffix for the whole block element, this will be added to all child elements of the block
+        $this->getBlockState()->pushBlock($this->getName());
 
         $attributes      = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
@@ -334,13 +326,8 @@ class Areablock extends Model\Document\Tag
     {
         $this->current = 0;
 
-        // remove the suffix which was set by self::start()
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            array_pop($suffixes);
-        }
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // remove the current block which was set by $this->start()
+        $this->getBlockState()->popBlock();
 
         $this->outputEditmode('</div>');
     }
@@ -368,35 +355,6 @@ class Areablock extends Model\Document\Tag
     public function blockEnd()
     {
         $this->outputEditmode('</div>');
-    }
-
-    /**
-     * Setup some settings that are needed for blocks
-     */
-    public function setupStaticEnvironment()
-    {
-
-        // setup static environment for blocks
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $current = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            if (!is_array($current)) {
-                $current = [];
-            }
-        } else {
-            $current = [];
-        }
-
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            if (!is_array($numeration)) {
-                $numeration = [];
-            }
-        } else {
-            $numeration = [];
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $numeration);
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $current);
     }
 
     /**
@@ -715,5 +673,11 @@ class Areablock extends Model\Document\Tag
         }
 
         return $list;
+    }
+
+    private function getBlockState(): BlockState
+    {
+        // TODO inject block state via DI
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 }

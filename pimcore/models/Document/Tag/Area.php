@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\ExtensionManager;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
@@ -80,13 +81,9 @@ class Area extends Model\Document\Tag
             return;
         }
 
-        $this->setupStaticEnvironment();
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-        }
-        $suffixes[] = $this->getName();
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // push current block name
+        $blockState = $this->getBlockState();
+        $blockState->pushBlock($this->getName());
 
         $this->current = $count;
 
@@ -101,9 +98,8 @@ class Area extends Model\Document\Tag
             $info = null;
         }
 
-        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-        $suffixes[] = 1;
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
+        // start at first index
+        $blockState->pushIndex(1);
 
         $params = [];
         if (is_array($options['params']) && array_key_exists($options['type'], $options['params'])) {
@@ -116,19 +112,9 @@ class Area extends Model\Document\Tag
 
         $tagHandler->renderAreaFrontend($info);
 
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            array_pop($suffixes);
-        }
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
-
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            array_pop($suffixes);
-        }
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // remove current block and index from stack
+        $blockState->popIndex();
+        $blockState->popBlock();
     }
 
     /**
@@ -153,35 +139,6 @@ class Area extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         return $this;
-    }
-
-    /**
-     * Setup some settings that are needed for blocks
-     */
-    public function setupStaticEnvironment()
-    {
-
-        // setup static environment for blocks
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $current = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            if (!is_array($current)) {
-                $current = [];
-            }
-        } else {
-            $current = [];
-        }
-
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            if (!is_array($numeration)) {
-                $numeration = [];
-            }
-        } else {
-            $numeration = [];
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $numeration);
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $current);
     }
 
     /**
@@ -228,5 +185,11 @@ class Area extends Model\Document\Tag
         }
 
         return $element;
+    }
+
+    private function getBlockState(): BlockState
+    {
+        // TODO inject block state via DI
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 }

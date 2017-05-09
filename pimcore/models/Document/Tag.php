@@ -564,31 +564,33 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             $name = $document->getPersonaElementName($name);
         }
 
+        $blockState = \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $blocks = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
+        if ($blockState->hasBlocks()) {
+            $blocks  = $blockState->getBlocks();
+            $indexes = $blockState->getIndexes();
 
-            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            if (is_array($blocks) and count($blocks) > 0) {
-                if ($type == 'block') {
-                    $tmpBlocks = $blocks;
-                    $tmpNumeration = $numeration;
-                    array_pop($tmpBlocks);
-                    array_pop($tmpNumeration);
+            if ($type === 'block') {
+                $tmpBlocks  = $blocks;
+                $tmpIndexes = $indexes;
 
-                    $tmpName = $name;
-                    if (is_array($tmpBlocks)) {
-                        $tmpName = $name . implode('_', $tmpBlocks) . implode('_', $tmpNumeration);
-                    }
+                array_pop($tmpBlocks);
+                array_pop($tmpIndexes);
 
-                    if ($blocks[count($blocks) - 1] == $tmpName) {
-                        array_pop($blocks);
-                        array_pop($numeration);
-                    }
+                $tmpName = $name;
+                if (is_array($tmpBlocks)) {
+                    $tmpName = $name . implode('_', $tmpBlocks) . implode('_', $tmpIndexes);
                 }
-                $name = $name . implode('_', $blocks) . implode('_', $numeration);
+
+                if ($blocks[count($blocks) - 1] == $tmpName) {
+                    array_pop($blocks);
+                    array_pop($indexes);
+                }
             }
+
+            $name = $name . implode('_', $blocks) . implode('_', $indexes);
         }
 
         if (strlen($name) > 750) {
