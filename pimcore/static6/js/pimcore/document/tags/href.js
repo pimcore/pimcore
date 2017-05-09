@@ -244,7 +244,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                     iconCls: "pimcore_icon_show_in_tree",
                     handler: function (item) {
                         item.parentMenu.destroy();
-                        pimcore.treenodelocator.showInTree(this.data.id, "document");
+                        pimcore.treenodelocator.showInTree(this.data.id, this.data.elementType);
                     }.bind(this)
                 }));
             }
