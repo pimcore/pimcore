@@ -891,6 +891,8 @@ pimcore.asset.tree = Class.create({
             jQuery("body").append('<input type="file" name="multiUploadField" id="multiUploadField" multiple>');
         }
 
+        jQuery("#multiUploadField").val("");
+
         // this is the tree node
         jQuery("#multiUploadField").unbind("change");
         jQuery("#multiUploadField").on("change", function (e) {
