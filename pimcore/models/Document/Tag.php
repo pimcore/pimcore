@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\Tool\HtmlUtils;
 use Pimcore\View;
 
 /**
@@ -110,7 +111,41 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function admin()
     {
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
+
+        $this->outputEditmode('<div ' . $attributeString . '></div>');
+    }
+
+    /**
+     * Builds options passed to editmode frontend as JSON config
+     *
+     * @return array
+     */
+    protected function getEditmodeOptions(): array
+    {
+        $options = [
+            'id'        => 'pimcore_editable_' . $this->getName(),
+            'name'      => $this->getName(),
+            'options'   => $this->getOptions(),
+            'data'      => $this->getEditmodeData(),
+            'type'      => $this->getType(),
+            'inherited' => $this->getInherited()
+        ];
+
+        return $options;
+    }
+
+    /**
+     * Builds data used for editmode
+     *
+     * @return mixed
+     */
+    protected function getEditmodeData()
+    {
         // get configuration data for admin
         if (method_exists($this, 'getDataEditmode')) {
             $data = $this->getDataEditmode();
@@ -118,27 +153,80 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             $data = $this->getData();
         }
 
-        $options = [
-            'options' => $this->getOptions(),
-            'data' => $data,
-            'name' => $this->getName(),
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'type' => $this->getType(),
-            'inherited' => $this->getInherited()
-        ];
-        $options = json_encode($options);
+        return $data;
+    }
 
-        $class = 'pimcore_editable pimcore_tag_' . $this->getType();
-        if (array_key_exists('class', $this->getOptions())) {
-            $class .= (' ' . $this->getOptions()['class']);
+    /**
+     * Builds attributes used on the editmode HTML element
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function getEditmodeElementAttributes(array $options): array
+    {
+        if (!isset($options['id'])) {
+            throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable options array', $this->getName()));
         }
 
-        return '
+        $attributes = [
+            'id'            => $options['id'],
+            'class'         => implode(' ', $this->getEditmodeElementClasses())
+        ];
+
+        return $attributes;
+    }
+
+    /**
+     * Builds classes used on the editmode HTML element
+     *
+     * @return array
+     */
+    protected function getEditmodeElementClasses(): array
+    {
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        $editableOptions = $this->getOptions();
+        if (isset($editableOptions['class'])) {
+            if (is_array($editableOptions['class'])) {
+                $classes = array_merge($classes, $editableOptions['class']);
+            } else {
+                $classes[] = (string)$editableOptions['class'];
+            }
+
+            $classes[] = (string)$editableOptions['class'];
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Sends data to the output stream
+     *
+     * @param string $value
+     */
+    protected function outputEditmode($value)
+    {
+        if ($this->getEditmode()) {
+            echo $value . "\n";
+        }
+    }
+
+    /**
+     * Push editmode options into the JS config array
+     *
+     * @param array $options
+     */
+    protected function outputEditmodeOptions(array $options)
+    {
+        $this->outputEditmode('
             <script type="text/javascript">
-                editableConfigurations.push(' . $options . ');
+                editableConfigurations.push(' . json_encode($options) . ');
             </script>
-            <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '"></div>
-        ';
+        ');
     }
 
     /**

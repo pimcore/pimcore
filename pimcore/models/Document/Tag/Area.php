@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\ExtensionManager;
 use Pimcore\Model;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -50,42 +51,17 @@ class Area extends Model\Document\Tag
      */
     public function admin()
     {
-        // get configuration data for admin
-        if (method_exists($this, 'getDataEditmode')) {
-            $data = $this->getDataEditmode();
-        } else {
-            $data = $this->getData();
-        }
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
-        $options = [
-            'options' => $this->getOptions(),
-            'data' => $data,
-            'name' => $this->getName(),
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'type' => $this->getType(),
-            'inherited' => $this->getInherited()
-        ];
-        $options = $options = json_encode($options);
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        if ($this->editmode) {
-            $class = 'pimcore_editable pimcore_tag_' . $this->getType();
-            if (array_key_exists('class', $this->getOptions())) {
-                $class .= (' ' . $this->getOptions()['class']);
-            }
-
-            echo '
-                <script type="text/javascript">
-                    editableConfigurations.push(' . $options . ');
-                </script>
-                <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '">
-            ';
-        }
+        $this->outputEditmode('<div ' . $attributeString . '>');
 
         $this->frontend();
 
-        if ($this->editmode) {
-            echo '</div>';
-        }
+        $this->outputEditmode('</div>');
     }
 
     /**

@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -268,6 +269,36 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getEditmodeOptions(): array
+    {
+        $configOptions = array_merge($this->getToolBarDefaultConfig(), $this->getOptions());
+
+        $options = parent::getEditmodeOptions();
+        $options = array_merge($options, [
+            'options' => $configOptions
+        ]);
+
+        return $options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementAttributes(array $options): array
+    {
+        $attributes = parent::getEditmodeElementAttributes($options);
+
+        $attributes = array_merge($attributes, [
+            'name' => $this->getName(),
+            'type' => $this->getType()
+        ]);
+
+        return $attributes;
+    }
+
+    /**
      * Is executed at the beginning of the loop and setup some general settings
      *
      * @return $this
@@ -277,31 +308,8 @@ class Areablock extends Model\Document\Tag
         reset($this->indices);
         $this->setupStaticEnvironment();
 
-        // get configuration data for admin
-        if (method_exists($this, 'getDataEditmode')) {
-            $data = $this->getDataEditmode();
-        } else {
-            $data = $this->getData();
-        }
-
-        $configOptions = array_merge($this->getToolBarDefaultConfig(), $this->getOptions());
-
-        $options = [
-            'options' => $configOptions,
-            'data' => $data,
-            'name' => $this->getName(),
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'type' => $this->getType(),
-            'inherited' => $this->getInherited()
-        ];
-        $options = json_encode($options);
-        //$options = base64_encode($options);
-
-        $this->outputEditmode('
-            <script type="text/javascript">
-                editableConfigurations.push('.$options.');
-            </script>
-        ');
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
         // set name suffix for the whole block element, this will be addet to all child elements of the block
         $suffixes = [];
@@ -311,12 +319,10 @@ class Areablock extends Model\Document\Tag
         $suffixes[] = $this->getName();
         \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
 
-        $class = 'pimcore_editable pimcore_tag_' . $this->getType();
-        if (array_key_exists('class', $this->getOptions())) {
-            $class .= (' ' . $this->getOptions()['class']);
-        }
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="' . $class . '" type="' . $this->getType() . '">');
+        $this->outputEditmode('<div ' . $attributeString . '>');
 
         return $this;
     }
@@ -362,18 +368,6 @@ class Areablock extends Model\Document\Tag
     public function blockEnd()
     {
         $this->outputEditmode('</div>');
-    }
-
-    /**
-     * Sends data to the output stream
-     *
-     * @param string $v
-     */
-    public function outputEditmode($v)
-    {
-        if ($this->getEditmode()) {
-            echo $v . "\n";
-        }
     }
 
     /**
