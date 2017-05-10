@@ -466,7 +466,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public static function buildTagName(string $type, string $name, Document $document = null)
     {
         if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
-            throw new \Exception("Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+), your name was: " . $name);
+            throw new \InvalidArgumentException(
+                'Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+). Your name was: ' . $name
+            );
         }
 
         // check for persona content
