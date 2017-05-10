@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Document\Tag\NamingStrategy\HierarchicalNamingStrategy;
+use Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -564,39 +566,25 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             $name = $document->getPersonaElementName($name);
         }
 
-        $blockState = \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
-
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if ($blockState->hasBlocks()) {
-            $blocks  = $blockState->getBlocks();
-            $indexes = $blockState->getIndexes();
 
-            if ($type === 'block') {
-                $tmpBlocks  = $blocks;
-                $tmpIndexes = $indexes;
+        $blockState = \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
 
-                array_pop($tmpBlocks);
-                array_pop($tmpIndexes);
+        $legacyNamingStrategy       = new LegacyNamingStrategy();
+        $hierarchicalNamingStrategy = new HierarchicalNamingStrategy();
 
-                $tmpName = $name;
-                if (is_array($tmpBlocks)) {
-                    $tmpName = $name . implode('_', $tmpBlocks) . implode('_', $tmpIndexes);
-                }
+        $oldName = $legacyNamingStrategy->buildTagName($name, $type, $blockState);
+        $newName = $hierarchicalNamingStrategy->buildTagName($name, $type, $blockState);
+        $tagName = $oldName;
 
-                if ($blocks[count($blocks) - 1] == $tmpName) {
-                    array_pop($blocks);
-                    array_pop($indexes);
-                }
-            }
-
-            $name = $name . implode('_', $blocks) . implode('_', $indexes);
+        if (strlen($tagName) > 750) {
+            throw new \Exception(sprintf(
+                'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
+                $name, $tagName
+            ));
         }
 
-        if (strlen($name) > 750) {
-            throw new \Exception('Composite name is longer than 750 characters - use shorter names for your editables or reduce amount of nesting levels. Name is: ' . $name);
-        }
-
-        return $name;
+        return $tagName;
     }
 }
