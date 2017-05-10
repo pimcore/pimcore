@@ -144,10 +144,10 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z]+[a-zA-Z0-9]*/);
-        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete",
-                                                                                                        "interface"];
+        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","dao", "concrete",
+            "items", "object", "interface"];
 
-        if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
+        if (button == "ok" && value.length > 2 && regresult == value && !in_arrayi(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
                 params: {
