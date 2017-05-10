@@ -452,15 +452,18 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @param null $document
+     * Builds a tag name for an editable, taking current
+     * block state (block, index) into account.
+     *
+     * @param string $type
+     * @param string $name
+     * @param Document|null $document
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function buildTagName($type, $name, $document = null)
+    public static function buildTagName(string $type, string $name, Document $document = null)
     {
         if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
             throw new \Exception("Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+), your name was: " . $name);
