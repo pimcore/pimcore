@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
@@ -309,7 +310,7 @@ class Areablock extends Model\Document\Tag
         $this->outputEditmodeOptions($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
-        $this->getBlockState()->pushBlock($this->getName());
+        $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
         $attributes      = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);

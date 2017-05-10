@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\ExtensionManager;
 use Pimcore\Model;
@@ -83,7 +84,7 @@ class Area extends Model\Document\Tag
 
         // push current block name
         $blockState = $this->getBlockState();
-        $blockState->pushBlock($this->getName());
+        $blockState->pushBlock(BlockName::createFromTag($this));
 
         $this->current = $count;
 

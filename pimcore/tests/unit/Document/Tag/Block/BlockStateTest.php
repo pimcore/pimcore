@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Tag\Block;
 
+use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Tests\Test\TestCase;
 
@@ -32,18 +33,23 @@ class BlockStateTest extends TestCase
         $this->assertEquals(0, count($state->getBlocks()));
         $this->assertFalse($state->hasBlocks());
 
-        $state->pushBlock('A');
-        $state->pushBlock('B');
+        $blockNames = [
+            new BlockName('A', 'realA'),
+            new BlockName('B', 'realB')
+        ];
+
+        $state->pushBlock($blockNames[0]);
+        $state->pushBlock($blockNames[1]);
 
         $this->assertEquals(2, count($state->getBlocks()));
         $this->assertTrue($state->hasBlocks());
-        $this->assertEquals(['A', 'B'], $state->getBlocks());
+        $this->assertEquals($blockNames, $state->getBlocks());
 
         $state->popBlock();
 
         $this->assertEquals(1, count($state->getBlocks()));
         $this->assertTrue($state->hasBlocks());
-        $this->assertEquals(['A'], $state->getBlocks());
+        $this->assertEquals([$blockNames[0]], $state->getBlocks());
 
         $state->popBlock();
 

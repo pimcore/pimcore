@@ -21,8 +21,6 @@ namespace Pimcore\Document\Tag\Block;
  * Handles block state (current block level, current block index). This is the
  * data which previously was handled in Registry pimcore_tag_block_current and
  * pimcore_tag_block_numeration.
- *
- * @internal
  */
 final class BlockStateStack implements \Countable
 {

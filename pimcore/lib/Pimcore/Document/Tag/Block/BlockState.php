@@ -17,10 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\Block;
 
+/**
+ * Keeps track of the current block nesting level and index (will be used from
+ * editables to build their hierarchical tag name).
+ *
+ * On sub requests, a new BlockState is added to the state stack which is valid
+ * for the sub request.
+ */
 final class BlockState
 {
     /**
-     * @var string[]
+     * @var BlockName[]
      */
     private $blocks = [];
 
@@ -30,7 +37,7 @@ final class BlockState
     private $indexes = [];
 
     /**
-     * @return string[]
+     * @return BlockName[]
      */
     public function getBlocks(): array
     {
@@ -42,12 +49,12 @@ final class BlockState
         return !empty($this->blocks);
     }
 
-    public function pushBlock(string $block)
+    public function pushBlock(BlockName $block)
     {
         array_push($this->blocks, $block);
     }
 
-    public function popBlock(): string
+    public function popBlock(): BlockName
     {
         if (empty($this->blocks)) {
             throw new \UnderflowException('There are no blocks to pop from as blocks list is empty');
