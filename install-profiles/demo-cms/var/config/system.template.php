@@ -30,9 +30,9 @@ return [
     "database" => [
         "params" => [
             "host" => "localhost",
-            "username" => "pimcore_demo",
+            "username" => "pimcore_demo_5",
             "password" => "secretpassword",
-            "dbname" => "pimcore_demo_pimcore",
+            "dbname" => "pimcore_demo_pimcore_5",
             "port" => "3306"
         ]
     ],
