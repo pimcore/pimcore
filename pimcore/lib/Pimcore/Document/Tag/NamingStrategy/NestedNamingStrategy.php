@@ -19,8 +19,18 @@ namespace Pimcore\Document\Tag\NamingStrategy;
 
 use Pimcore\Document\Tag\Block\BlockName;
 
-class HierarchicalNamingStrategy extends AbstractNamingStrategy
+final class NestedNamingStrategy extends AbstractNamingStrategy
 {
+    const STRATEGY_NAME = 'nested';
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return self::STRATEGY_NAME;
+    }
+
     /**
      * @param string $name
      * @param BlockName[] $blocks

@@ -22,6 +22,13 @@ use Pimcore\Document\Tag\Block\BlockState;
 interface NamingStrategyInterface
 {
     /**
+     * Get the name of the naming strategy (used in frontend)
+     *
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
      * Builds a tag name, taking current block state into account
      *
      * @param string $name

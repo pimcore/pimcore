@@ -129,6 +129,16 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                ->arrayNode('editables')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('naming_strategy')
+                            ->info('Sets naming strategy used to build editable names')
+                            ->values(['legacy', 'nested'])
+                            ->defaultValue('nested')
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
                         ->children()

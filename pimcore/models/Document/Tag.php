@@ -17,8 +17,8 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Document\Tag\NamingStrategy\HierarchicalNamingStrategy;
 use Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy;
+use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -573,14 +573,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
 
-        $blockState = \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $container      = \Pimcore::getContainer();
+        $blockState     = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
-        $legacyNamingStrategy       = new LegacyNamingStrategy();
-        $hierarchicalNamingStrategy = new HierarchicalNamingStrategy();
-
-        $oldName = $legacyNamingStrategy->buildTagName($name, $type, $blockState);
-        $newName = $hierarchicalNamingStrategy->buildTagName($name, $type, $blockState);
-        $tagName = $oldName;
+        $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
 
         if (strlen($tagName) > 750) {
             throw new \Exception(sprintf(

@@ -19,8 +19,18 @@ namespace Pimcore\Document\Tag\NamingStrategy;
 
 use Pimcore\Document\Tag\Block\BlockName;
 
-class LegacyNamingStrategy extends AbstractNamingStrategy
+final class LegacyNamingStrategy extends AbstractNamingStrategy
 {
+    const STRATEGY_NAME = 'legacy';
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return self::STRATEGY_NAME;
+    }
+
     /**
      * @param string $name
      * @param BlockName[] $blocks

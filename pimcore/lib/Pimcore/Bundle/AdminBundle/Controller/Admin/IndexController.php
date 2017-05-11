@@ -133,10 +133,13 @@ class IndexController extends AdminController
         ]);
 
         // flags
+        $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
+
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
             'document_generatepreviews' => (bool)$config->documents->generatepreview,
+            'document_naming_strategy' => $namingStrategy->getName(),
             'asset_disable_tree_preview' => (bool)$config->assets->disable_tree_preview,
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),

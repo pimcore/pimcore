@@ -19,19 +19,19 @@ namespace Pimcore\Tests\Unit\Document\Tag\NamingStrategy;
 
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
-use Pimcore\Document\Tag\NamingStrategy\HierarchicalNamingStrategy;
+use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 use Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Tests\Test\TestCase;
 
-class HierarchicalNamingStrategyTest extends AbstractNamingStrategyTest
+class NestedNamingStrategyTest extends AbstractNamingStrategyTest
 {
     /**
      * @inheritdoc
      */
     protected function buildNamingStrategy(): NamingStrategyInterface
     {
-        return new HierarchicalNamingStrategy();
+        return new NestedNamingStrategy();
     }
 
     /**
