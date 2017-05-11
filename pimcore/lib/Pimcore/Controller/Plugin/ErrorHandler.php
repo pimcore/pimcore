@@ -80,6 +80,10 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler
                     $request->setParam("document", $document);
                     \Zend_Registry::set("pimcore_error_document", $document);
 
+                    // reset request source
+                    // see https://github.com/pimcore/pimcore/issues/1489
+                    $this->getRequest()->setParam("pimcore_request_source", null);
+
                     // ensure that a viewRenderer exists, and is enabled
                     if (!\Zend_Controller_Action_HelperBroker::hasHelper("viewRenderer")) {
                         $viewRenderer = new \Pimcore\Controller\Action\Helper\ViewRenderer();
