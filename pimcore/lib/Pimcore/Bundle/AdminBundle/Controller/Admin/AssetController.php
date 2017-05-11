@@ -782,7 +782,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/webdav{path}", requirements={"path"=".*"})
+     * @Route("/webdav{path}", requirements={"path"=".*"}, name="pimcore_admin_webdav")
      *
      * @param Request $request
      */
