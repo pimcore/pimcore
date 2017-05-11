@@ -6,6 +6,15 @@ imports:
 
 #pimcore:
 
+#### REDIS CACHE
+#    cache:
+#        pools:
+#            redis:
+#                enabled: true
+#                connection:
+#                    server: localhost
+#                    database: 14
+
 #### FEATURE FLAGS
 #    flags:
 #        zend_date: true
