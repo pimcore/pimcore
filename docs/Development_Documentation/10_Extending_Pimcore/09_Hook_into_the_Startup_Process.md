@@ -74,11 +74,8 @@ if (!defined("WEBSITE_MODULE_PATH"))  define("WEBSITE_MODULE_PATH", PIMCORE_DOCU
 $front = \Zend_Controller_Front::getInstance();
 $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/modules");
  
- 
 //------------------------------------------------------------------------------------------------------------- Company
-$autoloader = \Zend_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('Company');
- 
+
 set_include_path(implode(PATH_SEPARATOR, [
       WEBSITE_MODULE_PATH . '/Company/lib',
       get_include_path(),

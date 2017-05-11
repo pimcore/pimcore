@@ -1,3 +1,40 @@
+##  Upgrade Notes for 4.6.0
+
+#### Autoloader Optimization
+In order to improve the performance of the autoloading process, 
+the Zend Framework class loader was replaced by Composer's autoloader wherever it was possible. 
+If you're using custom classes, namespaces or include-paths in your project, it's necessary to update your
+`composer.json` before you perform the upgrade. 
+
+##### Example
+The following code in eg. your `startup.php` 
+```php
+$autoloader = \Zend_Loader_Autoloader::getInstance();
+$autoloader->registerNamespace('YourVendorPrefix');
+```
+turns into in your `composer.json` (add to the existing autoloading configuration): 
+
+```php
+    "autoload": {
+        "psr-4": {
+            ...
+            "YourVendorPrefix\\": [
+                "website/lib/YourVendorPrefix",
+                "website/models/YourVendorPrefix"
+            ]
+            ...
+        },
+        "psr-0": {
+            ...
+            "YourVendorPrefix_": [
+                "website/lib/YourVendorPrefix",
+                "website/models/YourVendorPrefix"
+            ]
+            ...
+        }
+```
+
+
 ##  Upgrade notes for 4.4.0
 - Dropped support for PHP 5.5 (reached end of life)
 - Memcached adapter is deprecated, please use Redis2 instead. 

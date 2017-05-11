@@ -95,15 +95,7 @@ After registering the namespace have to make sure the right class is loaded, eit
 
 ##### Register a new namespace (only when not using Website\ namespace)
 
-To add your own namespace place the following code in  `/website/config/startup.php`:
-
-```php
-$autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('Mynamespace');
-```
-
-After this you can use classes with a name like `Mynamespace` or `Mynamespace\Product` as your models.
-
+To add your own namespace use the `psr-4` or `psr-0` configuration in your `composer.json`:
 
 #### Using the Class Mapping
 After that, wherever you retrieve an `Object\News` you will get an `Website\Model\News`, also the following 
