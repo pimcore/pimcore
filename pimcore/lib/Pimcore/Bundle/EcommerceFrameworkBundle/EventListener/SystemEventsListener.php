@@ -24,18 +24,18 @@ class SystemEventsListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        $installer = new Installer();
-        if ($installer->isInstalled()) {
-            return [
-                SystemEvents::MAINTENANCE => 'onMaintenance',
-            ];
-        } else {
-            return [];
-        }
+        return [
+            SystemEvents::MAINTENANCE => 'onMaintenance',
+        ];
     }
 
     public function onMaintenance()
     {
+        $installer = new Installer();
+        if (!$installer->isInstalled()) {
+            return;
+        }
+
         $checkoutManager = Factory::getInstance()->getCheckoutManager(new Cart());
         $checkoutManager->cleanUpPendingOrders();
 
