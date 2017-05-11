@@ -104,7 +104,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * @param ContainerBuilder $container
      * @param $config
      */
-    protected function configureModelFactory(ContainerBuilder $container, $config)
+    private function configureModelFactory(ContainerBuilder $container, array $config)
     {
         $service = $container->getDefinition('pimcore.model.factory');
 
@@ -123,7 +123,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * @param ContainerBuilder $container
      * @param array $config
      */
-    protected function configureImplementationLoaders(ContainerBuilder $container, $config)
+    private function configureImplementationLoaders(ContainerBuilder $container, array $config)
     {
         $services = [
             'pimcore.implementation_loader.document.tag'  => [
@@ -177,7 +177,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * @param LoaderInterface  $loader
      * @param array            $config
      */
-    protected function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
+    private function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
     {
         $coreCachePool = null;
         if (null !== $config['cache']['pool_service_id']) {
@@ -241,7 +241,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * @param ContainerBuilder $container
      * @param $config
      */
-    protected function configurePasswordEncoders(ContainerBuilder $container, $config)
+    private function configurePasswordEncoders(ContainerBuilder $container, array $config)
     {
         $definition = $container->findDefinition('pimcore.security.encoder_factory');
 
@@ -259,7 +259,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * @param ContainerBuilder $container
      * @param array $config
      */
-    protected function addContextRoutes(ContainerBuilder $container, array $config)
+    private function addContextRoutes(ContainerBuilder $container, array $config)
     {
         $guesser = $container->getDefinition('pimcore.service.context.pimcore_context_guesser');
 
@@ -274,7 +274,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      *
      * @param ContainerBuilder $container
      */
-    protected function setAnnotationRouteControllerLoader(ContainerBuilder $container)
+    private function setAnnotationRouteControllerLoader(ContainerBuilder $container)
     {
         $parameter = 'sensio_framework_extra.routing.loader.annot_class.class';
 
