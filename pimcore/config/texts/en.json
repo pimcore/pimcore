@@ -5133,6 +5133,10 @@
         "definition": "Hide Edit Image Tab"
     },
     {
+        "term": "disable_text_edit_panel_tab",
+        "definition": "Disable Edit Tab for Text assets"
+    },
+    {
         "term": "merge_csv",
         "definition": "Import &amp; Merge CSV"
     },

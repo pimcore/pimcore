@@ -438,6 +438,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
                 "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"],
                 "hide_edit_image" => $values["assets.hide_edit_image"],
+                "disable_text_edit_panel_tab" => $values["assets.disable_text_edit_panel_tab"],
                 "disable_tree_preview" => $values["assets.disable_tree_preview"]
             ],
             "services" => [

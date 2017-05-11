@@ -42,6 +42,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
     public function getDataByIdAction()
     {
+        $systemConfig = \Pimcore\Config::getSystemConfig();
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "asset")) {
@@ -67,7 +68,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $asset->setLocked($asset->isLocked());
         $asset->setParent(null);
 
-        if ($asset instanceof Asset\Text) {
+        if ($asset instanceof Asset\Text && !$systemConfig->assets->disable_text_edit_panel_tab) {
             $asset->data =  \ForceUTF8\Encoding::toUTF8($asset->getData());
         }
 

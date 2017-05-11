@@ -584,6 +584,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         htmltoimage: <?= \Zend_Json::encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
         videoconverter: <?= \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>,
         asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
+        disable_text_edit_panel_tab: <?= $this->config->assets->disable_text_edit_panel_tab ? "true" : "false" ?>,
         perspective: <?= \Zend_Json::encode($runtimePerspective) ?>,
         availablePerspectives: <?= \Zend_Json::encode(\Pimcore\Config::getAvailablePerspectives(\Pimcore\Tool\Admin::getCurrentUser())) ?>,
         customviews: <?= \Zend_Json::encode($this->customview_config) ?>,

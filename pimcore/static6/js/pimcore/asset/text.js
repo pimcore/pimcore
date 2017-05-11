@@ -43,7 +43,9 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
         var items = [];
         var user = pimcore.globalmanager.get("user");
 
-        items.push(this.getEditPanel());
+        if (!pimcore.settings.disable_text_edit_panel_tab) {
+            items.push(this.getEditPanel());
+        }
 
         if (this.isAllowed("publish")) {
             items.push(this.metadata.getLayout());
@@ -112,7 +114,9 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
         var parameters = $super(only);
         
         if(!Ext.isString(only)) {
-            parameters.data = this.editArea.getValue();
+            if (this.editArea) {
+                parameters.data = this.editArea.getValue();
+            }
         }
         
         return parameters;
