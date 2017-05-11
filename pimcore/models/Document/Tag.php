@@ -557,6 +557,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public static function buildTagName(string $type, string $name, Document $document = null)
     {
+        // do NOT allow dots (.) and colons (:) here as they act as delimiters
+        // for block hierarchy in the new naming scheme (see #1467)!
         if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
             throw new \InvalidArgumentException(
                 'Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+). Your name was: ' . $name
