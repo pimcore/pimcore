@@ -234,7 +234,7 @@ class Translate extends \Zend_Translate_Adapter
         $messageId = trim($messageId);
 
         // don't create translation if it's just empty
-        if (array_key_exists($messageId, $this->_translate[$locale])) {
+        if (empty($messageId) || array_key_exists($messageId, $this->_translate[$locale])) {
             return;
         }
 
