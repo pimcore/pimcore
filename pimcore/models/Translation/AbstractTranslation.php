@@ -377,7 +377,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                         }
 
                         if ($dirty) {
-                            if ($keyValueArray['creationDate']) {
+                            if (array_key_exists('creationDate', $keyValueArray) && $keyValueArray['creationDate']) {
                                 $t->setCreationDate($keyValueArray['creationDate']);
                             }
                             $t->setModificationDate(time()); //ignore modificationDate from file

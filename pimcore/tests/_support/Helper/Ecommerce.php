@@ -2,22 +2,18 @@
 
 namespace Pimcore\Tests\Helper;
 
-class Ecommerce extends AbstractDefinitionHelper
+use Codeception\Module;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
+
+class Ecommerce extends Module
 {
-    public function initializeDefinitions()
+
+    public function _beforeSuite($settings = [])
     {
-        $installSources = __DIR__ . '/../../../lib/Pimcore/Bundle/EcommerceFrameworkBundle/install';
+        parent::_beforeSuite($settings);
 
-        $cm = $this->getClassManager();
-
-        $cm->setupFieldcollection(
-            'TaxEntry',
-            $installSources . '/fieldcollection_sources/fieldcollection_TaxEntry_export.json'
-        );
-
-        $cm->setupClass(
-            'OnlineShopTaxClass',
-            $installSources . '/class_source/class_OnlineShopTaxClass_export.json'
-        );
+        //install ecommerce framework
+        $installer = new Installer();
+        $installer->install();
     }
 }
