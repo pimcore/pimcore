@@ -237,6 +237,9 @@ class Areablock extends Model\Document\Tag
         return $this;
     }
 
+    /**
+     * Called before the block is rendered
+     */
     public function blockConstruct()
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
@@ -244,6 +247,9 @@ class Areablock extends Model\Document\Tag
         $this->getBlockState()->pushIndex($this->indices[$this->current]['key']);
     }
 
+    /**
+     * Called when the block was rendered
+     */
     public function blockDestruct()
     {
         $this->getBlockState()->popIndex();
@@ -338,16 +344,34 @@ class Areablock extends Model\Document\Tag
      */
     public function blockStart()
     {
-        $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current]['key'] . '" type="' . $this->indices[$this->current]['type'] . '">');
-        $this->outputEditmode('<div class="pimcore_block_buttons_' . $this->getName() . ' pimcore_block_buttons">');
-        $this->outputEditmode('<div class="pimcore_block_plus_' . $this->getName() . ' pimcore_block_plus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus_' . $this->getName() . ' pimcore_block_minus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_up_' . $this->getName() . ' pimcore_block_up"></div>');
-        $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
-        $this->outputEditmode('<div class="pimcore_block_type_' . $this->getName() . ' pimcore_block_type"></div>');
-        $this->outputEditmode('<div class="pimcore_block_options_' . $this->getName() . ' pimcore_block_options"></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear_' . $this->getName() . ' pimcore_block_clear"></div>');
-        $this->outputEditmode('</div>');
+        $attributes = [
+            'data-name'      => $this->getName(),
+            'data-real-name' => $this->getRealName(),
+        ];
+
+        $outerAttributes = [
+            'key'  => $this->indices[$this->current]['key'],
+            'type' => $this->indices[$this->current]['type']
+        ];
+
+        $attr  = HtmlUtils::assembleAttributeString($attributes);
+        $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
+
+        // outer element
+        $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
+
+        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
+
+        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
+
+        $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
+
+        $this->outputEditmode('</div>'); // .pimcore_block_buttons
     }
 
     /**
@@ -355,6 +379,7 @@ class Areablock extends Model\Document\Tag
      */
     public function blockEnd()
     {
+        // close outer element
         $this->outputEditmode('</div>');
     }
 
@@ -676,9 +701,13 @@ class Areablock extends Model\Document\Tag
         return $list;
     }
 
+    /**
+     * TODO inject block state via DI
+     *
+     * @return BlockState
+     */
     private function getBlockState(): BlockState
     {
-        // TODO inject block state via DI
         return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 }

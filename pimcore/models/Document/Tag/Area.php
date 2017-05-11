@@ -188,9 +188,13 @@ class Area extends Model\Document\Tag
         return $element;
     }
 
+    /**
+     * TODO inject block state via DI
+     *
+     * @return BlockState
+     */
     private function getBlockState(): BlockState
     {
-        // TODO inject block state via DI
         return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 }

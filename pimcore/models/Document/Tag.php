@@ -172,8 +172,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $attributes = [
-            'id'            => $options['id'],
-            'class'         => implode(' ', $this->getEditmodeElementClasses())
+            'id'             => $options['id'],
+            'class'          => implode(' ', $this->getEditmodeElementClasses()),
+            'data-name'      => $this->getName(),
+            'data-real-name' => $this->getRealName()
         ];
 
         return $attributes;
