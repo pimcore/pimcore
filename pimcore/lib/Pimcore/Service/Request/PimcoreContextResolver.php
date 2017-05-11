@@ -15,9 +15,7 @@
 namespace Pimcore\Service\Request;
 
 use Pimcore\Service\Context\PimcoreContextGuesser;
-use Pimcore\Service\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**

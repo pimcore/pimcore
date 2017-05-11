@@ -48,8 +48,7 @@ class DocumentRenderer implements DocumentRendererInterface
         RequestStack $requestStack,
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer
-    )
-    {
+    ) {
         $this->requestStack     = $requestStack;
         $this->actionRenderer   = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
@@ -58,7 +57,7 @@ class DocumentRenderer implements DocumentRendererInterface
     /**
      * @inheritdoc
      */
-    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []) : string
+    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $uri      = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
         $response = $this->fragmentRenderer->render($uri, $this->requestStack->getCurrentRequest(), $options);

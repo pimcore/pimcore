@@ -31,5 +31,5 @@ interface DocumentRendererInterface
      *
      * @return string
      */
-    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []) : string;
+    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string;
 }

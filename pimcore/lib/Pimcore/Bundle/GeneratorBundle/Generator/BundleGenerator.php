@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\GeneratorBundle\Generator;
 use Sensio\Bundle\GeneratorBundle\Generator\BundleGenerator as BaseBundleGenerator;
 use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
 use Sensio\Bundle\GeneratorBundle\Model\Bundle;
-use Symfony\Component\Filesystem\Filesystem;
 
 class BundleGenerator extends BaseBundleGenerator
 {

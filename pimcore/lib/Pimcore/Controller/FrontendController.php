@@ -14,7 +14,6 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Controller\Configuration\ResponseHeader;
 use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Model\ViewModel;

@@ -14,8 +14,6 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Logger;
-
 class HybridAuth
 {
     /**
