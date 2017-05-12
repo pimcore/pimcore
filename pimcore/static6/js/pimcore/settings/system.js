@@ -1016,6 +1016,12 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("assets.hide_edit_image")
                             },
                             {
+                                fieldLabel: t("disable_text_edit_panel_tab"),
+                                xtype: "checkbox",
+                                name: "assets.disable_text_edit_panel_tab",
+                                checked: this.getValue("assets.disable_text_edit_panel_tab")
+                            },
+                            {
                                 fieldLabel: t("disable_tree_preview"),
                                 xtype: "checkbox",
                                 name: "assets.disable_tree_preview",
