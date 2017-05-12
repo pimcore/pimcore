@@ -286,7 +286,7 @@ return [
                  */
 
                 /*[
-                    "file" => "/website/var/plugins/EcommerceFramework/additional-index.php",
+                    "file" => "/ecommerce/additional-index.php",
                     "placeholders" => ["%locale%" => "de_AT"]
                 ],*/
                 [
@@ -478,44 +478,40 @@ return [
                 "sampletenant" => [
                     "class" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Config\\DefaultMysqlSubTenantConfig",
                     "generalSearchColumns" => [
-                        "column" => [
-                            [
-                                "name" => "name"
-                            ],
-                            [
-                                "name" => "shortDescription"
-                            ]
+                        [
+                            "name" => "name"
+                        ],
+                        [
+                            "name" => "shortDescription"
                         ]
                     ],
                     "columns" => [
-                        "column" => [
-                            [
-                                "name" => "name",
-                                "type" => "varchar(255)"
-                            ],
-                            [
-                                "name" => "shortDescription",
-                                "type" => "varchar(255)"
-                            ],
-                            [
-                                "name" => "supplierRemoteId",
-                                "type" => "varchar(255)"
-                            ],
-                            [
-                                "name" => "mainImage",
-                                "type" => "int",
-                                "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\AssetId"
-                            ],
-                            [
-                                "name" => "hardDiskDriveCapacity",
-                                "type" => "DOUBLE",
-                                "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
-                                "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DimensionUnitField",
-                                "config" => [
-                                    "brickfield" => "specialFeatures",
-                                    "bricktype" => "Memory",
-                                    "fieldname" => "hardDiskDriveCapacity"
-                                ]
+                        [
+                            "name" => "name",
+                            "type" => "varchar(255)"
+                        ],
+                        [
+                            "name" => "shortDescription",
+                            "type" => "varchar(255)"
+                        ],
+                        [
+                            "name" => "supplierRemoteId",
+                            "type" => "varchar(255)"
+                        ],
+                        [
+                            "name" => "mainImage",
+                            "type" => "int",
+                            "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\AssetId"
+                        ],
+                        [
+                            "name" => "hardDiskDriveCapacity",
+                            "type" => "DOUBLE",
+                            "getter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Getter\\DefaultBrickGetter",
+                            "interpreter" => "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\IndexService\\Interpreter\\DimensionUnitField",
+                            "config" => [
+                                "brickfield" => "specialFeatures",
+                                "bricktype" => "Memory",
+                                "fieldname" => "hardDiskDriveCapacity"
                             ]
                         ]
                     ] */
