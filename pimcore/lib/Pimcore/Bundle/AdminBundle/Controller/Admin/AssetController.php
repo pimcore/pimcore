@@ -79,7 +79,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset->setParent(null);
 
         if ($asset instanceof Asset\Text) {
-            if($asset->getFileSize() < 2000000) {
+            if ($asset->getFileSize() < 2000000) {
                 // it doesn't make sense to show a preview for files bigger than 2MB
                 $asset->data =  \ForceUTF8\Encoding::toUTF8($asset->getData());
             } else {

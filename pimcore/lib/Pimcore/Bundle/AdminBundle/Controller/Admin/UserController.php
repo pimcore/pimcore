@@ -253,10 +253,10 @@ class UserController extends AdminController implements EventedControllerInterfa
                     if ($user instanceof User\Role) {
                         // #1431 remove user-role relations
                         $userRoleRelationListing = new User\Listing();
-                        $userRoleRelationListing->setCondition("FIND_IN_SET(" . $user->getId() . ",roles)");
+                        $userRoleRelationListing->setCondition('FIND_IN_SET(' . $user->getId() . ',roles)');
                         $userRoleRelationListing = $userRoleRelationListing->load();
                         if ($userRoleRelationListing) {
-                            /** @var  $relatedUser User */
+                            /** @var $relatedUser User */
                             foreach ($userRoleRelationListing as $relatedUser) {
                                 $userRoles = $relatedUser->getRoles();
                                 if (is_array($userRoles)) {
