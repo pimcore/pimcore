@@ -14,12 +14,17 @@
 pimcore.registerNS("pimcore.document.tags.areablock");
 pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
+    namingStrategies: {},
+    namingStrategy: null,
+
     initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.elements = [];
         this.options = this.parseOptions(options);
+
+        this.initNamingStrategies();
 
         this.toolbarGlobalVar = this.getType() + "toolbar";
 
@@ -218,6 +223,123 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
     },
 
+    initNamingStrategies: function() {
+        this.namingStrategies.abstract = Class.create({
+            createItem: function (editable, parents) {
+                parents = parents || [];
+
+                return {
+                    name: editable.getName(),
+                    realName: editable.getRealName(),
+                    data: editable.getValue(),
+                    type: editable.getType(),
+                    parents: parents
+                };
+            }
+        });
+
+        this.namingStrategies.legacy = Class.create(this.namingStrategies.abstract, {
+            copyData: function (areaIdentifier, editable) {
+                if (!(editable.getName().indexOf(areaIdentifier.name + areaIdentifier.key) > 0)) {
+                    return false;
+                }
+
+                return this.createItem(editable);
+            },
+
+            getPasteName: function(areaIdentifier, item, editableData) {
+                var newKey = editableData.name.replace(new RegExp(item.identifier.name + item.identifier.key, 'g'), areaIdentifier.name + areaIdentifier.key);
+                var tmpKey;
+
+                while('undefined' === typeof tmpKey || tmpKey !== newKey) {
+                    tmpKey = newKey;
+                    newKey = newKey.replace(new RegExp(item.identifier.name + "_(.*)" + item.identifier.key + "_", "g"), areaIdentifier.name + "_$1" + areaIdentifier.key + "_");
+                }
+
+                return newKey;
+            }
+        });
+
+        this.namingStrategies.nested = Class.create(this.namingStrategies.abstract, {
+            copyData: function (areaIdentifier, editable) {
+                var areaBaseName = areaIdentifier.name + ':' + areaIdentifier.key + '.';
+
+                if (editable.getName().indexOf(areaBaseName) !== 0) {
+                    return false; // editable is not inside area
+                }
+
+                // remove common base name (= parent area identifier) from relative name
+                var relativeName = editable.getName().replace(new RegExp('^' + areaBaseName), '');
+                var itemParts = relativeName.split('.');
+
+                // last part is the real name
+                itemParts.pop();
+
+                var parents = [];
+                if (itemParts.length > 0) {
+                    Ext.each(itemParts, function(parent) {
+                        var parentParts = parent.split(':');
+                        var parentEntry = {
+                            name: parentParts[0],
+                            key: null
+                        };
+
+                        if (parentParts.length > 1) {
+                            parentEntry.key = parentParts[1];
+                        }
+
+                        parents.push(parentEntry);
+                    });
+                }
+
+                return this.createItem(editable, parents);
+            },
+
+            getPasteName: function(areaIdentifier, item, editableData) {
+                var editableName;
+
+                // base name is area identifier + key
+                var editableParts = [
+                    areaIdentifier.name + ':' + areaIdentifier.key
+                ];
+
+                // add relative parent paths as parsed when copying
+                if (editableData.parents.length > 0) {
+                    Ext.each(editableData.parents, function (parentEntry) {
+                        var pathPart = parentEntry.name;
+                        if (null !== parentEntry.key) {
+                            pathPart += ':' + parentEntry.key;
+                        }
+
+                        editableParts.push(pathPart);
+                    });
+                }
+
+                // add the real name as last part
+                editableParts.push(editableData.realName);
+
+                // join parts together with .
+                editableName = editableParts.join('.');
+
+                return editableName;
+            }
+        });
+    },
+
+    getNamingStrategy: function() {
+        if (null !== this.namingStrategy) {
+            return this.namingStrategy;
+        }
+
+        var namingStrategyName = pimcore.settings.document_naming_strategy;
+        if ('undefined' === typeof this.namingStrategies[namingStrategyName]) {
+            throw new Error('Unsupported naming strategy "' + namingStrategyName + '"');
+        }
+
+        this.namingStrategy = new this.namingStrategies[namingStrategyName]();
+
+        return this.namingStrategy;
+    },
 
     applyFallbackIcons: function() {
         // this contains fallback-icons
@@ -242,29 +364,43 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     copyToClipboard: function (element) {
         var ea;
-        var areaIdentifier = {name: this.getName(), key: element.getAttribute("key")};
+        var areaIdentifier = {
+            name: this.getName(),
+            realName: this.getRealName(),
+            key: element.getAttribute("key")
+        };
+
         var item = {
             identifier: areaIdentifier,
             type: element.getAttribute("type"),
             values: {}
         };
 
+        var namingStrategy = this.getNamingStrategy();
+
         // check which editables are inside this area and get the data
         for (var i = 0; i < editables.length; i++) {
             try {
                 ea = editables[i];
-                if (ea.getName().indexOf(areaIdentifier["name"] + areaIdentifier["key"]) > 0 && ea.getName() && !ea.getInherited()) {
-                    item.values[ea.getName()] = {};
-                    item.values[ea.getName()].data = ea.getValue();
-                    item.values[ea.getName()].type = ea.getType();
+
+                if (!(ea.getName() && !ea.getInherited())) {
+                    continue;
                 }
-            } catch (e) { }
+
+                var editableData = namingStrategy.copyData(areaIdentifier, ea);
+                if (editableData) {
+                    item.values[ea.getName()] = editableData;
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         pimcore.globalmanager.add("areablock_clipboard", item);
     },
 
     optionsClickhandler: function (element, btn, e) {
+        var self = this;
         var menu = new Ext.menu.Menu();
 
         if(element != false) {
@@ -294,32 +430,35 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_paste",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    var item = pimcore.globalmanager.get("areablock_clipboard");
-                    var areaIdentifier = {name: this.getName(), key: (this.getNextKey()+1)};
+                    item = pimcore.globalmanager.get("areablock_clipboard");
+
+                    var areaIdentifier = {
+                        name: this.getName(),
+                        key: (this.getNextKey() + 1)
+                    };
+
+                    var namingStrategy = this.getNamingStrategy();
 
                     // push the data as an object compatible to the pimcore.document.tag interface to the rest of
                     // available editables so that they get read by pimcore.document.edit.getValues()
                     Ext.iterate(item.values, function (key, value, object) {
+                        var editableName = namingStrategy.getPasteName(areaIdentifier, item, value);
+
                         editables.push({
                             getName: function () {
-                                var newKey = key.replace(new RegExp(item["identifier"]["name"] + item["identifier"]["key"], "g"), areaIdentifier["name"] + areaIdentifier["key"]);
-                                var tmpKey;
-
-                                while(tmpKey != newKey) {
-                                    tmpKey = newKey;
-                                    newKey = newKey.replace(new RegExp(item["identifier"]["name"] + "_(.*)" + item["identifier"]["key"] + "_", "g"), areaIdentifier["name"] + "_$1" + areaIdentifier["key"] + "_");
-                                }
-
-                                return newKey;
+                                return editableName;
+                            },
+                            getRealName: function() {
+                                return value.realName;
                             },
                             getValue: function () {
-                                return value["data"];
+                                return value.data;
                             },
                             getInherited: function () {
                                 return false;
                             },
                             getType: function () {
-                                return value["type"];
+                                return value.type;
                             }
                         });
                     });

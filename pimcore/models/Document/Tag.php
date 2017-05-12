@@ -132,6 +132,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $options = [
             'id'        => 'pimcore_editable_' . $this->getName(),
             'name'      => $this->getName(),
+            'realName'  => $this->getRealName(),
             'options'   => $this->getOptions(),
             'data'      => $this->getEditmodeData(),
             'type'      => $this->getType(),
@@ -175,7 +176,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'id'             => $options['id'],
             'class'          => implode(' ', $this->getEditmodeElementClasses()),
             'data-name'      => $this->getName(),
-            'data-real-name' => $this->getRealName()
+            'data-real-name' => $this->getRealName(),
+            'data-type'      => $this->getType()
         ];
 
         return $attributes;
