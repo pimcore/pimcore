@@ -1,24 +1,18 @@
 <?php
-namespace EcommerceFramework;
+
+namespace Pimcore\Tests\Ecommerce;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
+use Pimcore\Tests\Test\TestCase;
 
-class SessionCartTest extends \Codeception\Test\Unit
+class SessionCartTest extends TestCase
 {
     /**
      * @var \EcommerceFramework\UnitTester
      */
     protected $tester;
-
-    protected function _before()
-    {
-    }
-
-    protected function _after()
-    {
-    }
 
     // tests
 
@@ -28,17 +22,17 @@ class SessionCartTest extends \Codeception\Test\Unit
         $product->method('getId')->willReturn(5);
 
         /**
-         * @var $cart SessionCart
+         * @var $cart    SessionCart
          * @var $product AbstractProduct
          */
         $cart = Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
-            'getSession' => function () {
+            'getSession'     => function () {
                 return [];
             },
             'isCartReadOnly' => function () {
                 return false;
             },
-            'modified' => function () {
+            'modified'       => function () {
             }
         ]);
 

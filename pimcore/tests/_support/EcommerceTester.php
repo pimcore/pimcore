@@ -1,10 +1,8 @@
 <?php
-
-namespace EcommerceFramework;
+namespace Pimcore\Tests;
 
 /**
  * Inherited Methods
- *
  * @method void wantToTest($text)
  * @method void wantTo($text)
  * @method void execute($callable)
@@ -17,10 +15,10 @@ namespace EcommerceFramework;
  * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
  *
  * @SuppressWarnings(PHPMD)
- */
-class UnitTester extends \Codeception\Actor
+*/
+class EcommerceTester extends \Codeception\Actor
 {
-    use _generated\UnitTesterActions;
+    use _generated\EcommerceTesterActions;
 
    /**
     * Define custom actions here

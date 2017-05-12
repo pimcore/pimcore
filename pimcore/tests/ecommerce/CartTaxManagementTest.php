@@ -1,5 +1,6 @@
 <?php
-namespace EcommerceFramework;
+
+namespace Pimcore\Tests\Ecommerce;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
@@ -12,21 +13,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Tests\Test\TestCase;
 
-class CartTaxManagementTest extends \Codeception\Test\Unit
+class CartTaxManagementTest extends TestCase
 {
     /**
      * @var \EcommerceFramework\UnitTester
      */
     protected $tester;
-
-    protected function _before()
-    {
-    }
-
-    protected function _after()
-    {
-    }
 
     private function buildTaxClass($taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
     {

@@ -989,6 +989,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
+                $definition = null;
                 try {
                     $definition = Object\Objectbrick\Definition::getByKey($allowedType);
                 } catch (\Exception $e) {

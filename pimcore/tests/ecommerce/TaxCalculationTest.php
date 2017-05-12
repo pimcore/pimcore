@@ -1,5 +1,6 @@
 <?php
-namespace EcommerceFramework;
+
+namespace Pimcore\Tests\Ecommerce;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
@@ -9,21 +10,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Tests\Test\TestCase;
 
-class TaxCalculationTest extends \Codeception\Test\Unit
+class TaxCalculationTest extends TestCase
 {
     /**
      * @var \EcommerceFramework\UnitTester
      */
     protected $tester;
-
-    protected function _before()
-    {
-    }
-
-    protected function _after()
-    {
-    }
 
     // tests
     public function testTaxCalculationService()

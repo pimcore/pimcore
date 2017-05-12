@@ -6,6 +6,7 @@ use Codeception\Module;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\Object\Objectbrick\Definition as ObjectbrickDefinition;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ClassManager extends Module
 {
@@ -241,7 +242,13 @@ class ClassManager extends Module
      */
     protected function resolveFilePath($filename)
     {
-        $path = __DIR__ . '/../Resources/objects/' . $filename;
+        $fs   = new Filesystem();
+        $path = $filename;
+
+        // prepend standard resources dir if relative path
+        if (!$fs->isAbsolutePath($filename)) {
+            $path = __DIR__ . '/../Resources/objects/' . $filename;
+        }
 
         $this->assertFileExists($path);
 
