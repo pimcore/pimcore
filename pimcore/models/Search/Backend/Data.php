@@ -445,9 +445,12 @@ class Data extends \Pimcore\Model\AbstractModel
                 }
             } elseif ($element instanceof Asset\Text) {
                 try {
-                    $contentText = $element->getData();
-                    $contentText = Encoding::toUTF8($contentText);
-                    $this->data .= ' ' . $contentText;
+                    if($element->getFileSize() < 2000000) {
+                        // it doesn't make sense to add text files bigger than 2MB to the full text index (performance)
+                        $contentText = $element->getData();
+                        $contentText = Encoding::toUTF8($contentText);
+                        $this->data .= ' ' . $contentText;
+                    }
                 } catch (\Exception $e) {
                     Logger::error($e);
                 }
