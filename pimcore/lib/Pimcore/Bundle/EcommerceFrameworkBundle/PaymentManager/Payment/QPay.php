@@ -311,6 +311,9 @@ class QPay implements IPayment
     /**
      * execute payment
      *
+     *  if price is given, recurPayment command is executed
+     *  if no price is given, amount from authorized Data is used and deposit command is executed
+     *
      * @param IPrice $price
      * @param string                      $reference
      *
@@ -401,7 +404,7 @@ class QPay implements IPayment
         ]);
 
         // execute request
-        $response = $this->wirecardServerRequest('/page/toolkit.php', $request);
+        $response = $this->serverToServerRequest('/page/toolkit.php', $request);
 
         // check response
         if ($response['status'] === '0') {
