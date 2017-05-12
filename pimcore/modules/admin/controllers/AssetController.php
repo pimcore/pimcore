@@ -68,7 +68,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $asset->setParent(null);
 
         if ($asset instanceof Asset\Text) {
-            $asset->data =  \ForceUTF8\Encoding::toUTF8($asset->getData());
+            if($asset->getFileSize() < 2000000) {
+                // it doesn't make sense to show a preview for files bigger than 2MB
+                $asset->data =  \ForceUTF8\Encoding::toUTF8($asset->getData());
+            } else {
+                $asset->data = false;
+            }
         }
 
         if ($asset instanceof Asset\Image) {
