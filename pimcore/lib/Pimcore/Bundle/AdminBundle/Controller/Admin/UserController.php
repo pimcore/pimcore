@@ -250,6 +250,27 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             } else {
                 if ($user->getId()) {
+                    if ($user instanceof User\Role) {
+                        // #1431 remove user-role relations
+                        $userRoleRelationListing = new User\Listing();
+                        $userRoleRelationListing->setCondition("FIND_IN_SET(" . $user->getId() . ",roles)");
+                        $userRoleRelationListing = $userRoleRelationListing->load();
+                        if ($userRoleRelationListing) {
+                            /** @var  $relatedUser User */
+                            foreach ($userRoleRelationListing as $relatedUser) {
+                                $userRoles = $relatedUser->getRoles();
+                                if (is_array($userRoles)) {
+                                    $key = array_search($user->getId(), $userRoles);
+                                    if (false !== $key) {
+                                        unset($userRoles[$key]);
+                                        $relatedUser->setRoles($userRoles);
+                                        $relatedUser->save();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     $user->delete();
                 }
             }
