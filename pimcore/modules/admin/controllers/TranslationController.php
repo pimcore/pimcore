@@ -808,11 +808,13 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             ]];
         }
 
-        $this->_helper->json([
+        $responseData = $this->_helper->json([
             "success" => true,
             "jobs" => $jobs,
             "id" => $id
         ], false);
+
+        $this->getResponse()->setBody($responseData);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
