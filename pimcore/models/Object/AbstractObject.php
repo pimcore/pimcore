@@ -266,7 +266,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $object = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($object) {
+            if ($object && static::typeMatch($object)) {
                 return $object;
             }
         }
@@ -301,15 +301,7 @@ class AbstractObject extends Model\Element\AbstractElement
             return null;
         }
 
-        // check for type
-        $staticType = get_called_class();
-        if ($staticType != 'Pimcore\Model\Object\Concrete' && $staticType != 'Pimcore\Model\Object\AbstractObject') {
-            if (!$object instanceof $staticType) {
-                return null;
-            }
-        }
-
-        if (!$object) {
+        if (!$object || !static::typeMatch($object)) {
             return null;
         }
 
@@ -403,6 +395,21 @@ class AbstractObject extends Model\Element\AbstractElement
 
             return $count;
         }
+    }
+
+    /**
+     * @param AbstractObject $object
+     * @return bool
+     */
+    protected static function typeMatch(AbstractObject $object) {
+        $staticType = get_called_class();
+        if ($staticType != 'Pimcore\Model\Object\Concrete' && $staticType != 'Pimcore\Model\Object\AbstractObject') {
+            if (!$object instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
