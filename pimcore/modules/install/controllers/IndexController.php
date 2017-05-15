@@ -28,8 +28,6 @@ class Install_IndexController extends \Pimcore\Controller\Action
         @ini_set("display_errors", "On");
         $front = \Zend_Controller_Front::getInstance();
         $front->throwExceptions(true);
-        
-        \Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
         if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
             $this->redirect("/admin");
