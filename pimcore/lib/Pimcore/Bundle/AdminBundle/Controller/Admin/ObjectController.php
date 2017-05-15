@@ -1863,15 +1863,17 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $message = '';
         $sourceId = intval($request->get('sourceId'));
         $source = Object::getById($sourceId);
+
         $session = Tool\Session::get('pimcore_copy');
+        $sessionBag = $session->get($request->get('transactionId'));
 
         $targetId = intval($request->get('targetId'));
         if ($request->get('targetParentId')) {
             $sourceParent = Object::getById($request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
-            if ($session->{$request->get('transactionId')}['parentId']) {
-                $targetParent = Object::getById($session->{$request->get('transactionId')}['parentId']);
+            if ($sessionBag['parentId']) {
+                $targetParent = Object::getById($sessionBag['parentId']);
             } else {
                 $targetParent = Object::getById($request->get('targetParentId'));
             }
@@ -1889,16 +1891,18 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     if ($request->get('type') == 'child') {
                         $newObject = $this->_objectService->copyAsChild($target, $source);
 
-                        $session->{$request->get('transactionId')}['idMapping'][(int)$source->getId()] = (int)$newObject->getId();
+                        $sessionBag['idMapping'][(int)$source->getId()] = (int)$newObject->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists
                         if ($request->get('saveParentId')) {
-                            $session->{$request->get('transactionId')}['parentId'] = $newObject->getId();
-                            Tool\Session::writeClose();
+                            $sessionBag['parentId'] = $newObject->getId();
                         }
                     } elseif ($request->get('type') == 'replace') {
                         $this->_objectService->copyContents($target, $source);
                     }
+
+                    $session->set($request->get('transactionId'), $sessionBag);
+                    Tool\Session::writeClose();
 
                     $success = true;
                 } catch (\Exception $e) {

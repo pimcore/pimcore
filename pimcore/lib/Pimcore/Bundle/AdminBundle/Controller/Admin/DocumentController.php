@@ -869,12 +869,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $session = Session::get('pimcore_copy');
 
         $targetId = intval($request->get('targetId'));
+
+        $sessionBag = $session->get($request->get('transactionId'));
+
         if ($request->get('targetParentId')) {
             $sourceParent = Document::getById($request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
-            if ($session->{$request->get('transactionId')}['parentId']) {
-                $targetParent = Document::getById($session->{$request->get('transactionId')}['parentId']);
+            if ($sessionBag['parentId']) {
+                $targetParent = Document::getById($sessionBag['parentId']);
             } else {
                 $targetParent = Document::getById($request->get('targetParentId'));
             }
@@ -893,13 +896,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
                         $resetIndex = ($request->get('resetIndex') == 'true') ? true : false;
 
                         $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex);
-                        $session->{$request->get('transactionId')}['idMapping'][(int)$source->getId()] = (int)$newDocument->getId();
+
+                        $sessionBag['idMapping'][(int)$source->getId()] = (int)$newDocument->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists
                         if ($request->get('saveParentId')) {
-                            $session->{$request->get('transactionId')}['parentId'] = $newDocument->getId();
+                            $sessionBag['parentId'] = $newDocument->getId();
                         }
-
+                        $session->set($request->get('transactionId'), $sessionBag);
                         Session::writeClose();
                     } elseif ($request->get('type') == 'replace') {
                         $this->_documentService->copyContents($target, $source);

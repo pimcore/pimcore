@@ -1510,15 +1510,17 @@ class AssetController extends ElementControllerBase implements EventedController
         $success = false;
         $sourceId = intval($request->get('sourceId'));
         $source = Asset::getById($sourceId);
+
         $session = Tool\Session::get('pimcore_copy');
+        $sessionBag = $session->get($request->get('transactionId'));
 
         $targetId = intval($request->get('targetId'));
         if ($request->get('targetParentId')) {
             $sourceParent = Asset::getById($request->get('sourceParentId'));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
-            if ($session->{$request->get('transactionId')}['parentId']) {
-                $targetParent = Asset::getById($session->{$request->get('transactionId')}['parentId']);
+            if ($sessionBag['parentId']) {
+                $targetParent = Asset::getById($sessionBag['parentId']);
             } else {
                 $targetParent = Asset::getById($request->get('targetParentId'));
             }
@@ -1537,11 +1539,14 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     // this is because the key can get the prefix "_copy" if the target does already exists
                     if ($request->get('saveParentId')) {
-                        $session->{$request->get('transactionId')}['parentId'] = $newAsset->getId();
+                        $sessionBag['parentId'] = $newAsset->getId();
                     }
                 } elseif ($request->get('type') == 'replace') {
                     $this->_assetService->copyContents($target, $source);
                 }
+
+                $session->set($request->get('transactionId'), $sessionBag);
+                Tool\Session::writeClose();
 
                 $success = true;
             } else {
