@@ -1193,8 +1193,20 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $start = $this->getParam("start");
         }
 
-        $condition = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'") ." AND type != 'folder'";
+        $conditionFilters = array();
+        $conditionFilters[] = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'") ." AND type != 'folder'";
 
+        if (!$this->getUser()->isAdmin()) {
+            $userIds = $this->getUser()->getRoles();
+            $userIds[] = $this->getUser()->getId();
+            $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+        }
+
+        $condition = implode(" AND ", $conditionFilters);
         $list = Asset::getList([
             "condition" => $condition,
             "limit" => $limit,
@@ -1780,6 +1792,16 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                     $conditionFilters[] =  $field . $operator . " " . $db->quote($value);
                 }
+            }
+
+            if (!$this->getUser()->isAdmin()) {
+                $userIds = $this->getUser()->getRoles();
+                $userIds[] = $this->getUser()->getId();
+                $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
             }
 
             $list = new Asset\Listing();
