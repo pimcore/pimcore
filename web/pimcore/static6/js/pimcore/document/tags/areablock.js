@@ -25,6 +25,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.options = this.parseOptions(options);
 
         this.initNamingStrategies();
+        var namingStrategy = this.getNamingStrategy();
 
         this.toolbarGlobalVar = this.getType() + "toolbar";
 
@@ -200,16 +201,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
 
                 // option button
-                optionsDiv = Ext.get(this.elements[i]).query('.pimcore_block_options[data-name="' + this.name + '"]')[0];
-                optionsButton = new Ext.Button({
-                    cls: "pimcore_block_button_options",
-                    iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
-                    listeners: {
-                        "click": this.optionsClickhandler.bind(this, this.elements[i])
-                    }
-                });
-                optionsButton.render(optionsDiv);
-
+                if (namingStrategy.supportsCopyPaste()) {
+                    optionsDiv = Ext.get(this.elements[i]).query('.pimcore_block_options[data-name="' + this.name + '"]')[0];
+                    optionsButton = new Ext.Button({
+                        cls: "pimcore_block_button_options",
+                        iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
+                        listeners: {
+                            "click": this.optionsClickhandler.bind(this, this.elements[i])
+                        }
+                    });
+                    optionsButton.render(optionsDiv);
+                }
 
                 /*
                 Ext.get(this.elements[i]).on("mouseenter", function () {
@@ -225,6 +227,16 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     initNamingStrategies: function() {
         this.namingStrategies.abstract = Class.create({
+            name: null,
+
+            initialize: function(name) {
+                this.name = name;
+            },
+
+            getName: function() {
+                return this.name;
+            },
+
             createItem: function (editable, parents) {
                 parents = parents || [];
 
@@ -239,28 +251,16 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         });
 
         this.namingStrategies.legacy = Class.create(this.namingStrategies.abstract, {
-            copyData: function (areaIdentifier, editable) {
-                if (!(editable.getName().indexOf(areaIdentifier.name + areaIdentifier.key) > 0)) {
-                    return false;
-                }
-
-                return this.createItem(editable);
-            },
-
-            getPasteName: function(areaIdentifier, item, editableData) {
-                var newKey = editableData.name.replace(new RegExp(item.identifier.name + item.identifier.key, 'g'), areaIdentifier.name + areaIdentifier.key);
-                var tmpKey;
-
-                while('undefined' === typeof tmpKey || tmpKey !== newKey) {
-                    tmpKey = newKey;
-                    newKey = newKey.replace(new RegExp(item.identifier.name + "_(.*)" + item.identifier.key + "_", "g"), areaIdentifier.name + "_$1" + areaIdentifier.key + "_");
-                }
-
-                return newKey;
+            supportsCopyPaste: function () {
+                return false;
             }
         });
 
         this.namingStrategies.nested = Class.create(this.namingStrategies.abstract, {
+            supportsCopyPaste: function() {
+                return true;
+            },
+
             copyData: function (areaIdentifier, editable) {
                 var areaBaseName = areaIdentifier.name + ':' + areaIdentifier.key + '.';
 
@@ -336,7 +336,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             throw new Error('Unsupported naming strategy "' + namingStrategyName + '"');
         }
 
-        this.namingStrategy = new this.namingStrategies[namingStrategyName]();
+        this.namingStrategy = new this.namingStrategies[namingStrategyName](namingStrategyName);
 
         return this.namingStrategy;
     },
@@ -363,6 +363,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     copyToClipboard: function (element) {
+        var namingStrategy = this.getNamingStrategy();
+        if (!namingStrategy.supportsCopyPaste()) {
+            console.error('Naming strategy ' + namingStrategy.getName() + ' does not support copy/paste');
+            return;
+        }
+
         var ea;
         var areaIdentifier = {
             name: this.getName(),
@@ -375,8 +381,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             type: element.getAttribute("type"),
             values: {}
         };
-
-        var namingStrategy = this.getNamingStrategy();
 
         // check which editables are inside this area and get the data
         for (var i = 0; i < editables.length; i++) {
@@ -400,6 +404,13 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     optionsClickhandler: function (element, btn, e) {
+        var namingStrategy = this.getNamingStrategy();
+        if (!namingStrategy.supportsCopyPaste()) {
+            console.error('Naming strategy ' + namingStrategy.getName() + ' does not support copy/paste');
+            e.stopEvent();
+            return;
+        }
+
         var self = this;
         var menu = new Ext.menu.Menu();
 
@@ -436,8 +447,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         name: this.getName(),
                         key: (this.getNextKey() + 1)
                     };
-
-                    var namingStrategy = this.getNamingStrategy();
 
                     // push the data as an object compatible to the pimcore.document.tag interface to the rest of
                     // available editables so that they get read by pimcore.document.edit.getValues()
@@ -572,6 +581,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     createInitalControls: function () {
 
+        var namingStrategy = this.getNamingStrategy();
+
         var plusEl = document.createElement("div");
         plusEl.setAttribute("class", "pimcore_block_plus");
         plusEl.setAttribute("data-name", this.name);
@@ -596,15 +607,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         });
         plusButton.render(plusEl);
 
-        // plus button
-        var optionsButton = new Ext.Button({
-            cls: "pimcore_block_button_options",
-            iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
-            listeners: {
-                click: this.optionsClickhandler.bind(this, false)
-            }
-        });
-        optionsButton.render(optionsEl);
+        if (namingStrategy.supportsCopyPaste()) {
+            // options button
+            var optionsButton = new Ext.Button({
+                cls: "pimcore_block_button_options",
+                iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
+                listeners: {
+                    click: this.optionsClickhandler.bind(this, false)
+                }
+            });
+            optionsButton.render(optionsEl);
+        }
 
         Ext.get(this.id).addCls("pimcore_block_buttons");
     },
