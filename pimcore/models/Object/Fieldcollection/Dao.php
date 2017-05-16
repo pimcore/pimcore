@@ -166,7 +166,7 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->delete("object_relations_" . $object->getClassId(),
             "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()) . ")"
-            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $this->model->getFieldname() . "/%") . ")"
+            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $this->model->getFieldname() . "/%") . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()). ")"
         );
     }
 }
