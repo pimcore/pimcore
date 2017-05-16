@@ -1003,6 +1003,11 @@ class AssetController extends ElementControllerBase implements EventedController
     public function downloadImageThumbnailAction(Request $request)
     {
         $image = Asset\Image::getById($request->get('id'));
+
+        if (!$image->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
         $config = null;
 
         if ($request->get('config')) {
@@ -1100,6 +1105,11 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $fileinfo = $request->get('fileinfo');
         $image = Asset\Image::getById(intval($request->get('id')));
+
+        if (!$image->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
         $thumbnail = null;
 
         if ($request->get('thumbnail')) {
@@ -1173,6 +1183,11 @@ class AssetController extends ElementControllerBase implements EventedController
             $video = Asset::getByPath($request->get('path'));
         }
 
+        if (!$video->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
+
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
@@ -1222,6 +1237,11 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getDocumentThumbnailAction(Request $request)
     {
         $document = Asset::getById(intval($request->get('id')));
+
+        if (!$document->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
         $thumbnail = Asset\Image\Thumbnail\Config::getByAutoDetect(array_merge($request->request->all(), $request->query->all()));
 
         $format = strtolower($thumbnail->getFormat());
@@ -1277,6 +1297,10 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to preview");
+        }
+
         return ['asset' => $asset];
     }
 
@@ -1291,6 +1315,11 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getPreviewVideoAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
+
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to preview");
+        }
+
         $previewData = ['asset' => $asset];
 
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
@@ -1326,6 +1355,10 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to preview");
+        }
+
         return ['asset' => $asset];
     }
 
@@ -1339,6 +1372,11 @@ class AssetController extends ElementControllerBase implements EventedController
     public function imageEditorSaveAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
+
+        if (!$asset->isAllowed("publish")) {
+            throw new \Exception("not allowed to publish");
+        }
+
         $asset->setData(Tool::getHttpData($request->get('url')));
         $asset->setUserModification($this->getUser()->getId());
         $asset->save();
@@ -1583,10 +1621,25 @@ class AssetController extends ElementControllerBase implements EventedController
                 $parentPath = '';
             }
 
+            $db = \Pimcore\Db::get();
+            $conditionFilters = array();
+            $conditionFilters[] .= "path LIKE " . $db->quote($parentPath . "/%") ." AND type != " . $db->quote("folder");
+            if (!$this->getUser()->isAdmin()) {
+                $userIds = $this->getUser()->getRoles();
+                $userIds[] = $this->getUser()->getId();
+                $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+            }
+
+            $condition = implode(" AND ", $conditionFilters);
+
             $assetList = new Asset\Listing();
-            $assetList->setCondition('path LIKE ? AND type != ?', [$parentPath . '/%', 'folder']);
-            $assetList->setOrderKey('LENGTH(path)', false);
-            $assetList->setOrder('ASC');
+            $assetList->setCondition($condition);
+            $assetList->setOrderKey("LENGTH(path)", false);
+            $assetList->setOrder("ASC");
 
             for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
                 $jobs[] = [[
@@ -1635,9 +1688,24 @@ class AssetController extends ElementControllerBase implements EventedController
                     $parentPath = '';
                 }
 
+                $db = \Pimcore\Db::get();
+                $conditionFilters = [];
+                $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . "/%");
+                if (!$this->getUser()->isAdmin()) {
+                    $userIds = $this->getUser()->getRoles();
+                    $userIds[] = $this->getUser()->getId();
+                    $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+                }
+
+                $condition = implode(" AND ", $conditionFilters);
+
                 $assetList = new Asset\Listing();
-                $assetList->setCondition("type != 'folder' AND path LIKE ?", $parentPath . '/%');
-                $assetList->setOrderKey('LENGTH(path) ASC, id ASC', false);
+                $assetList->setCondition($condition);
+                $assetList->setOrderKey("LENGTH(path) ASC, id ASC", false);
                 $assetList->setOffset((int)$request->get('offset'));
                 $assetList->setLimit((int)$request->get('limit'));
 
@@ -1699,6 +1767,11 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $asset = Asset::getById($request->get('parentId'));
+
+        if (!$asset->isAllowed("create")) {
+            throw new \Exception("not allowed to create");
+        }
+
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $jobId . '.zip';
 
         copy($_FILES['Filedata']['tmp_name'], $zipFile);
@@ -1944,7 +2017,13 @@ class AssetController extends ElementControllerBase implements EventedController
         $success = false;
 
         if ($asset = Asset::getById($request->get('id'))) {
+
             if (method_exists($asset, 'clearThumbnails')) {
+
+                if (!$asset->isAllowed("publish")) {
+                    throw new \Exception("not allowed to publish");
+                }
+
                 $asset->clearThumbnails(true); // force clear
                 $asset->save();
 
@@ -2101,6 +2180,11 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getTextAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
+
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to view");
+        }
+
         $page = $request->get('page');
         if ($asset instanceof Asset\Document) {
             $text = $asset->getText($page);
