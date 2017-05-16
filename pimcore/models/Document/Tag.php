@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy;
-use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;

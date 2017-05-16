@@ -17,12 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Tag\NamingStrategy;
 
-use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
-use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
-use Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 
 class NestedNamingStrategyTest extends AbstractNamingStrategyTest
 {

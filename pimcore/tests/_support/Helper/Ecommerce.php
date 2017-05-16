@@ -7,7 +7,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 
 class Ecommerce extends Module
 {
-
     public function _beforeSuite($settings = [])
     {
         parent::_beforeSuite($settings);

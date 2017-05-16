@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 
 namespace Pimcore\Document\Tag\Block;
+
 use Pimcore\Model\Document\Tag;
 
 /**

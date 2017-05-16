@@ -294,10 +294,10 @@ class ElementController extends AdminController
         if ($element) {
             $elements = $element->getDependencies()->getRequiredBy();
             foreach ($elements as $el) {
-                $item = Element\Service::getElementById($el["type"], $el["id"]);
+                $item = Element\Service::getElementById($el['type'], $el['id']);
                 if ($item instanceof Element\ElementInterface) {
-                    if ($item->isAllowed("list")) {
-                        $el["path"] = $item->getRealFullPath();
+                    if ($item->isAllowed('list')) {
+                        $el['path'] = $item->getRealFullPath();
                         $results[] = $el;
                     } else {
                         $hasHidden = true;
@@ -308,9 +308,9 @@ class ElementController extends AdminController
         }
 
         return $this->json([
-            "data" => $results,
-            "hasHidden" => $hasHidden,
-            "success" => $success
+            'data' => $results,
+            'hasHidden' => $hasHidden,
+            'success' => $success
         ]);
     }
 

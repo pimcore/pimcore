@@ -399,9 +399,11 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param AbstractObject $object
+     *
      * @return bool
      */
-    protected static function typeMatch(AbstractObject $object) {
+    protected static function typeMatch(AbstractObject $object)
+    {
         $staticType = get_called_class();
         if ($staticType != 'Pimcore\Model\Object\Concrete' && $staticType != 'Pimcore\Model\Object\AbstractObject') {
             if (!$object instanceof $staticType) {
