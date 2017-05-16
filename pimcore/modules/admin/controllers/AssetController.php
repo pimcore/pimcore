@@ -882,6 +882,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function downloadImageThumbnailAction()
     {
         $image = Asset\Image::getById($this->getParam("id"));
+
+        if (!$image->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
         $config = null;
 
         if ($this->getParam("config")) {
@@ -980,6 +985,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     {
         $fileinfo = $this->getParam("fileinfo");
         $image = Asset\Image::getById(intval($this->getParam("id")));
+
+        if (!$image->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
         $thumbnail = null;
 
         if ($this->getParam("thumbnail")) {
@@ -1046,6 +1056,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $video = Asset::getByPath($this->getParam("path"));
         }
 
+        if (!$video->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
         $thumbnail = $this->getAllParams();
 
         if ($this->getParam("treepreview")) {
@@ -1089,6 +1103,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function getDocumentThumbnailAction()
     {
         $document = Asset::getById(intval($this->getParam("id")));
+
+        if (!$document->isAllowed("view")) {
+            throw new \Exception("not allowed to view thumbnail");
+        }
+
+
         $thumbnail = Asset\Image\Thumbnail\Config::getByAutoDetect($this->getAllParams());
 
         $format = strtolower($thumbnail->getFormat());
@@ -1135,6 +1155,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function getPreviewDocumentAction()
     {
         $asset = Asset::getById($this->getParam("id"));
+
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to preview");
+        }
+
         $this->view->asset = $asset;
     }
 
@@ -1142,6 +1167,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function getPreviewVideoAction()
     {
         $asset = Asset::getById($this->getParam("id"));
+
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to preview");
+        }
 
         $this->view->asset = $asset;
 
@@ -1166,12 +1195,22 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function imageEditorAction()
     {
         $asset = Asset::getById($this->getParam("id"));
+
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to preview");
+        }
+
         $this->view->asset = $asset;
     }
 
     public function imageEditorSaveAction()
     {
         $asset = Asset::getById($this->getParam("id"));
+
+        if (!$asset->isAllowed("publish")) {
+            throw new \Exception("not allowed to publish");
+        }
+
         $asset->setData(Tool::getHttpData($this->getParam("url")));
         $asset->setUserModification($this->getUser()->getId());
         $asset->save();
@@ -1386,8 +1425,23 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $parentPath = "";
             }
 
+            $db = \Pimcore\Db::get();
+            $conditionFilters = array();
+            $conditionFilters[] .= "path LIKE " . $db->quote($parentPath . "/%") ." AND type != " . $db->quote("folder");
+            if (!$this->getUser()->isAdmin()) {
+                $userIds = $this->getUser()->getRoles();
+                $userIds[] = $this->getUser()->getId();
+                $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+            }
+
+            $condition = implode(" AND ", $conditionFilters);
+
             $assetList = new Asset\Listing();
-            $assetList->setCondition("path LIKE ? AND type != ?", [$parentPath . "/%", "folder"]);
+            $assetList->setCondition($condition);
             $assetList->setOrderKey("LENGTH(path)", false);
             $assetList->setOrder("ASC");
 
@@ -1432,8 +1486,23 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     $parentPath = "";
                 }
 
+                $db = \Pimcore\Db::get();
+                $conditionFilters = [];
+                $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . "/%");
+                if (!$this->getUser()->isAdmin()) {
+                    $userIds = $this->getUser()->getRoles();
+                    $userIds[] = $this->getUser()->getId();
+                    $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+                }
+
+                $condition = implode(" AND ", $conditionFilters);
+
                 $assetList = new Asset\Listing();
-                $assetList->setCondition("type != 'folder' AND path LIKE ?", $parentPath . "/%");
+                $assetList->setCondition($condition);
                 $assetList->setOrderKey("LENGTH(path) ASC, id ASC", false);
                 $assetList->setOffset((int)$this->getParam("offset"));
                 $assetList->setLimit((int)$this->getParam("limit"));
@@ -1487,6 +1556,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $filesPerJob = 5;
         $jobs = [];
         $asset = Asset::getById($this->getParam("parentId"));
+
+        if (!$asset->isAllowed("create")) {
+            throw new \Exception("not allowed to create");
+        }
+
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $jobId . ".zip";
 
         copy($_FILES["Filedata"]["tmp_name"], $zipFile);
@@ -1695,6 +1769,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
         if ($asset = Asset::getById($this->getParam("id"))) {
             if (method_exists($asset, "clearThumbnails")) {
+
+                if (!$asset->isAllowed("publish")) {
+                    throw new \Exception("not allowed to publish");
+                }
+
                 $asset->clearThumbnails(true); // force clear
                 $asset->save();
 
@@ -1839,6 +1918,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function getTextAction()
     {
         $asset = Asset::getById($this->getParam('id'));
+
+        if (!$asset->isAllowed("view")) {
+            throw new \Exception("not allowed to view");
+        }
+
         $page = $this->getParam('page');
         if ($asset instanceof Asset\Document) {
             $text = $asset->getText($page);
