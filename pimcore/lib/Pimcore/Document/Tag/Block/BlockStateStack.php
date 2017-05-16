@@ -37,10 +37,16 @@ final class BlockStateStack implements \Countable
 
     /**
      * Adds a new state to the stack
+     *
+     * @param BlockState|null $blockState
      */
-    public function push()
+    public function push(BlockState $blockState = null)
     {
-        array_push($this->states, new BlockState());
+        if (null === $blockState) {
+            $blockState = new BlockState();
+        }
+
+        array_push($this->states, $blockState);
     }
 
     /**
