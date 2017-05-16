@@ -285,4 +285,14 @@ abstract class AbstractModel
 
         return $data;
     }
+
+    /**
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        $result = get_object_vars($this);
+        unset($result['dao']);
+        return $result;
+    }
 }
