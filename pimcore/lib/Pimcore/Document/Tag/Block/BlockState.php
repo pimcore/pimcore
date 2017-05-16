@@ -24,7 +24,7 @@ namespace Pimcore\Document\Tag\Block;
  * On sub requests, a new BlockState is added to the state stack which is valid
  * for the sub request.
  */
-final class BlockState
+final class BlockState implements \JsonSerializable
 {
     /**
      * @var BlockName[]
@@ -88,5 +88,16 @@ final class BlockState
         }
 
         return array_pop($this->indexes);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'blocks'  => $this->blocks,
+            'indexes' => $this->indexes
+        ];
     }
 }

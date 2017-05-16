@@ -23,7 +23,7 @@ use Pimcore\Model\Document\Tag;
  * Simple value object containing both name and real name of
  * a block.
  */
-final class BlockName
+final class BlockName implements \JsonSerializable
 {
     /**
      * @var string
@@ -84,5 +84,16 @@ final class BlockName
     public function getRealName(): string
     {
         return $this->realName;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'name'     => $this->name,
+            'realName' => $this->realName
+        ];
     }
 }
