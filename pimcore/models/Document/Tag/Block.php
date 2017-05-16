@@ -17,7 +17,10 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Model;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -177,51 +180,37 @@ class Block extends Model\Document\Tag
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementAttributes(array $options): array
+    {
+        $attributes = parent::getEditmodeElementAttributes($options);
+
+        $attributes = array_merge($attributes, [
+            'name' => $this->getName(),
+            'type' => $this->getType()
+        ]);
+
+        return $attributes;
+    }
+
+    /**
      * Is executed at the beginning of the loop and setup some general settings
      *
      * @return $this
      */
     public function start()
     {
-        $this->setupStaticEnvironment();
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
-        // get configuration data for admin
-        if (method_exists($this, 'getDataEditmode')) {
-            $data = $this->getDataEditmode();
-        } else {
-            $data = $this->getData();
-        }
+        // set name suffix for the whole block element, this will be added to all child elements of the block
+        $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
-        $options = [
-            'options' => $this->getOptions(),
-            'data' => $data,
-            'name' => $this->getName(),
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'type' => $this->getType(),
-            'inherited' => $this->getInherited()
-        ];
-        $options = json_encode($options);
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $this->outputEditmode('
-            <script type="text/javascript">
-                editableConfigurations.push('.$options.');
-            </script>
-        ');
-
-        // set name suffix for the whole block element, this will be addet to all child elements of the block
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-        }
-        $suffixes[] = $this->getName();
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
-
-        $class = 'pimcore_editable pimcore_tag_' . $this->getType();
-        if (array_key_exists('class', $this->getOptions())) {
-            $class .= (' ' . $this->getOptions()['class']);
-        }
-
-        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="' . $class . '" type="' . $this->getType() . '">');
+        $this->outputEditmode('<div ' . $attributeString . '>');
 
         return $this;
     }
@@ -233,31 +222,28 @@ class Block extends Model\Document\Tag
     {
         $this->current = 0;
 
-        // remove the suffix which was set by self::start()
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            array_pop($suffixes);
-        }
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // remove the current block which was set by $this->start()
+        $this->getBlockState()->popBlock();
 
         $this->outputEditmode('</div>');
     }
 
+    /**
+     * Called before the block is rendered
+     */
     public function blockConstruct()
     {
-
-        // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-        $suffixes[] = $this->indices[$this->current];
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
+        // set the current block suffix for the child elements (0, 1, 3, ...)
+        // this will be removed in blockDestruct
+        $this->getBlockState()->pushIndex($this->indices[$this->current]);
     }
 
+    /**
+     * Called when the block was rendered
+     */
     public function blockDestruct()
     {
-        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-        array_pop($suffixes);
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
+        $this->getBlockState()->popIndex();
     }
 
     /**
@@ -265,15 +251,31 @@ class Block extends Model\Document\Tag
      */
     public function blockStart()
     {
-        $this->outputEditmode('<div class="pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current] . '">');
-        $this->outputEditmode('<div class="pimcore_block_buttons_' . $this->getName() . ' pimcore_block_buttons">');
-        $this->outputEditmode('<div class="pimcore_block_amount_' . $this->getName() . ' pimcore_block_amount"></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus_' . $this->getName() . ' pimcore_block_plus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus_' . $this->getName() . ' pimcore_block_minus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_up_' . $this->getName() . ' pimcore_block_up"></div>');
-        $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear"></div>');
-        $this->outputEditmode('</div>');
+        $attributes = [
+            'data-name'      => $this->getName(),
+            'data-real-name' => $this->getRealName(),
+        ];
+
+        $outerAttributes = [
+            'key' => $this->indices[$this->current]
+        ];
+
+        $attr  = HtmlUtils::assembleAttributeString($attributes);
+        $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
+
+        // outer element
+        $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
+
+        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
+
+        $this->outputEditmode('<div class="pimcore_block_amount" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
+
+        $this->outputEditmode('</div>'); // .pimcore_block_buttons
 
         $this->current++;
     }
@@ -283,48 +285,8 @@ class Block extends Model\Document\Tag
      */
     public function blockEnd()
     {
+        // close outer element
         $this->outputEditmode('</div>');
-    }
-
-    /**
-     * Sends data to the output stream
-     *
-     * @param string $v
-     */
-    public function outputEditmode($v)
-    {
-        if ($this->getEditmode()) {
-            echo $v . "\n";
-        }
-    }
-
-    /**
-     * Setup some settings that are needed for blocks
-     */
-    public function setupStaticEnvironment()
-    {
-
-        // setup static environment for blocks
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $current = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            if (!is_array($current)) {
-                $current = [];
-            }
-        } else {
-            $current = [];
-        }
-
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            if (!is_array($numeration)) {
-                $numeration = [];
-            }
-        } else {
-            $numeration = [];
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $numeration);
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $current);
     }
 
     /**
@@ -429,5 +391,15 @@ class Block extends Model\Document\Tag
         }
 
         return $list;
+    }
+
+    /**
+     * TODO inject block state via DI
+     *
+     * @return BlockState
+     */
+    private function getBlockState(): BlockState
+    {
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 }

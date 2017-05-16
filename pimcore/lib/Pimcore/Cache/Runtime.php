@@ -21,6 +21,18 @@ final class Runtime extends \ArrayObject
     protected static $tempInstance;
 
     /**
+     * Array of indexes which are blocked from cache. If a given
+     * index is queried or set, an exception with the given message
+     * is thrown.
+     *
+     * @var array
+     */
+    private static $blockedIndexes = [
+        'pimcore_tag_block_current'    => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service',
+        'pimcore_tag_block_numeration' => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service'
+    ];
+
+    /**
      * Retrieves the default registry instance.
      *
      * @return self
@@ -101,6 +113,8 @@ final class Runtime extends \ArrayObject
      */
     public static function set($index, $value)
     {
+        self::checkIndexes($index);
+
         $instance = self::getInstance();
         $instance->offsetSet($index, $value);
     }
@@ -129,7 +143,19 @@ final class Runtime extends \ArrayObject
      */
     public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
     {
+        self::checkIndexes(array_keys($array));
+
         parent::__construct($array, $flags);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetSet($index, $value)
+    {
+        self::checkIndexes($index);
+
+        parent::offsetSet($index, $value);
     }
 
     /**
@@ -183,5 +209,32 @@ final class Runtime extends \ArrayObject
         }
 
         \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
+    }
+
+    /**
+     * Check if index is in list of blocked indexes
+     *
+     * @param string|array $indexes
+     */
+    private static function checkIndexes($indexes)
+    {
+        if (!is_array($indexes)) {
+            $indexes = [$indexes];
+        }
+
+        foreach ($indexes as $index) {
+            if (isset(self::$blockedIndexes[$index])) {
+                $message = self::$blockedIndexes[$index];
+                if (!$message) {
+                    $message = 'Index "%s" is blocked by configuration';
+                }
+
+                if (false !== strpos($message, '%s')) {
+                    $message = sprintf($message, $index);
+                }
+
+                throw new \InvalidArgumentException($message);
+            }
+        }
     }
 }

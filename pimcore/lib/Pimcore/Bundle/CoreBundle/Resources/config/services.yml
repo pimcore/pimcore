@@ -283,6 +283,17 @@ services:
     # DOCUMENT TAG HANDLING (EDITABLES)
     #
 
+    # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
+    # the pimcore.documents.editables.naming_strategy config value
+    pimcore.document.tag.naming.strategy.legacy:
+        class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
+
+    pimcore.document.tag.naming.strategy.nested:
+        class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
+
+    pimcore.document.tag.block_state_stack:
+        class: Pimcore\Document\Tag\Block\BlockStateStack
+
     pimcore.document.tag.handler:
         class: Pimcore\Document\Tag\DelegatingTagHandler
         calls:

@@ -16,6 +16,7 @@ pimcore.document.tag = Class.create({
 
     id: null,
     name: null,
+    realName: null,
     inherited: false,
 
     setupWrapper: function (styleOptions) {
@@ -36,6 +37,14 @@ pimcore.document.tag = Class.create({
 
     getName: function () {
         return this.name;
+    },
+
+    setRealName: function(realName) {
+        this.realName = realName;
+    },
+
+    getRealName: function() {
+        return this.realName;
     },
 
     reloadDocument: function () {

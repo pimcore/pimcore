@@ -106,7 +106,7 @@ Ext.onReady(function () {
 
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;
-    
+
     function getEditable(config) {
         var id = config.id;
         var type = config.type;
@@ -117,20 +117,21 @@ Ext.onReady(function () {
         if(typeof config["inherited"] != "undefined") {
             inherited = config["inherited"];
         }
-        
+
         if(in_array(name,editableNames)) {
             pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
         }
         editableNames.push(name);
 
         var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
+        tag.setRealName(config.realName);
         tag.setInherited(inherited);
 
         return tag;
     }
-    
+
     if (typeof Ext == "object" && typeof pimcore == "object") {
-    
+
         for (var i = 0; i < editableConfigurations.length; i++) {
             try {
                 editables.push(getEditable(editableConfigurations[i]));
@@ -138,7 +139,7 @@ Ext.onReady(function () {
                 console.log(e);
             }
         }
-    
+
         if (editWindow.lastScrollposition) {
             if (editWindow.lastScrollposition.top > 100) {
                 window.scrollTo(editWindow.lastScrollposition.left, editWindow.lastScrollposition.top);
@@ -199,7 +200,7 @@ Ext.onReady(function () {
             if(tmpIncEl) {
                 if(tmpIncEl.getAttribute("pimcore_id") && tmpIncEl.getAttribute("pimcore_type")) {
                     tmpIncEl.on("contextmenu", function (e) {
-                        
+
                         var menu = new Ext.menu.Menu();
                         menu.add(new Ext.menu.Item({
                             text: t('open'),
@@ -232,5 +233,5 @@ Ext.onReady(function () {
 
 
 
-       
+
 

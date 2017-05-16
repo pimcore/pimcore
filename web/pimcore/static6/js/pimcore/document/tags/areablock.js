@@ -14,12 +14,18 @@
 pimcore.registerNS("pimcore.document.tags.areablock");
 pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
+    namingStrategies: {},
+    namingStrategy: null,
+
     initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.elements = [];
         this.options = this.parseOptions(options);
+
+        this.initNamingStrategies();
+        var namingStrategy = this.getNamingStrategy();
 
         this.toolbarGlobalVar = this.getType() + "toolbar";
 
@@ -30,8 +36,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
 
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typemenu, typeDiv, typebuttontext, editDiv, editButton;
-        this.elements = Ext.get(id).query("div." + name + "[key]");
+            typemenu, typeDiv, typeButton, typebuttontext, editDiv, editButton;
+
+        this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
         // reload or not => default not
         if(typeof this.options["reload"] == "undefined") {
@@ -67,7 +74,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                 // edit button
                 try {
-                    editDiv = Ext.get(this.elements[i]).query(".pimcore_area_edit_button_" + this.name)[0];
+                    editDiv = Ext.get(this.elements[i]).query('.pimcore_area_edit_button[data-name="' + this.name + '"]')[0];
                     if(editDiv) {
                     editButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
@@ -82,7 +89,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                 if(!limitReached) {
                     // plus button
-                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus_" + this.name)[0];
+                    plusDiv = Ext.get(this.elements[i]).query('.pimcore_block_plus[data-name="' + this.name + '"]')[0];
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus",
@@ -100,7 +107,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 }
 
                 // minus button
-                minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus_" + this.name)[0];
+                minusDiv = Ext.get(this.elements[i]).query('.pimcore_block_minus[data-name="' + this.name + '"]')[0];
                 minusButton = new Ext.Button({
                     cls: "pimcore_block_button_minus",
                     iconCls: "pimcore_icon_minus",
@@ -111,7 +118,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 minusButton.render(minusDiv);
 
                 // up button
-                upDiv = Ext.get(this.elements[i]).query(".pimcore_block_up_" + this.name)[0];
+                upDiv = Ext.get(this.elements[i]).query('.pimcore_block_up[data-name="' + this.name + '"]')[0];
                 upButton = new Ext.Button({
                     cls: "pimcore_block_button_up",
                     iconCls: "pimcore_icon_up",
@@ -122,7 +129,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 upButton.render(upDiv);
 
                 // down button
-                downDiv = Ext.get(this.elements[i]).query(".pimcore_block_down_" + this.name)[0];
+                downDiv = Ext.get(this.elements[i]).query('.pimcore_block_down[data-name="' + this.name + '"]')[0];
                 downButton = new Ext.Button({
                     cls: "pimcore_block_button_down",
                     iconCls: "pimcore_icon_down",
@@ -140,8 +147,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                                                 + typeNameMappings[this.elements[i].type].description;
                 }
 
-                typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type_" + this.name)[0];
-                var typeButton = new Ext.Button({
+                typeDiv = Ext.get(this.elements[i]).query('.pimcore_block_type[data-name="' + this.name + '"]')[0];
+                typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
                     text: typebuttontext,
                     handleMouseEvents: false,
@@ -194,16 +201,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
 
                 // option button
-                optionsDiv = Ext.get(this.elements[i]).query(".pimcore_block_options_" + this.name)[0];
-                optionsButton = new Ext.Button({
-                    cls: "pimcore_block_button_options",
-                    iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
-                    listeners: {
-                        "click": this.optionsClickhandler.bind(this, this.elements[i])
-                    }
-                });
-                optionsButton.render(optionsDiv);
-
+                if (namingStrategy.supportsCopyPaste()) {
+                    optionsDiv = Ext.get(this.elements[i]).query('.pimcore_block_options[data-name="' + this.name + '"]')[0];
+                    optionsButton = new Ext.Button({
+                        cls: "pimcore_block_button_options",
+                        iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
+                        listeners: {
+                            "click": this.optionsClickhandler.bind(this, this.elements[i])
+                        }
+                    });
+                    optionsButton.render(optionsDiv);
+                }
 
                 /*
                 Ext.get(this.elements[i]).on("mouseenter", function () {
@@ -217,6 +225,121 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
     },
 
+    initNamingStrategies: function() {
+        this.namingStrategies.abstract = Class.create({
+            name: null,
+
+            initialize: function(name) {
+                this.name = name;
+            },
+
+            getName: function() {
+                return this.name;
+            },
+
+            createItem: function (editable, parents) {
+                parents = parents || [];
+
+                return {
+                    name: editable.getName(),
+                    realName: editable.getRealName(),
+                    data: editable.getValue(),
+                    type: editable.getType(),
+                    parents: parents
+                };
+            }
+        });
+
+        this.namingStrategies.legacy = Class.create(this.namingStrategies.abstract, {
+            supportsCopyPaste: function () {
+                return false;
+            }
+        });
+
+        this.namingStrategies.nested = Class.create(this.namingStrategies.abstract, {
+            supportsCopyPaste: function() {
+                return true;
+            },
+
+            copyData: function (areaIdentifier, editable) {
+                var areaBaseName = areaIdentifier.name + ':' + areaIdentifier.key + '.';
+
+                if (editable.getName().indexOf(areaBaseName) !== 0) {
+                    return false; // editable is not inside area
+                }
+
+                // remove common base name (= parent area identifier) from relative name
+                var relativeName = editable.getName().replace(new RegExp('^' + areaBaseName), '');
+                var itemParts = relativeName.split('.');
+
+                // last part is the real name
+                itemParts.pop();
+
+                var parents = [];
+                if (itemParts.length > 0) {
+                    Ext.each(itemParts, function(parent) {
+                        var parentParts = parent.split(':');
+                        var parentEntry = {
+                            name: parentParts[0],
+                            key: null
+                        };
+
+                        if (parentParts.length > 1) {
+                            parentEntry.key = parentParts[1];
+                        }
+
+                        parents.push(parentEntry);
+                    });
+                }
+
+                return this.createItem(editable, parents);
+            },
+
+            getPasteName: function(areaIdentifier, item, editableData) {
+                var editableName;
+
+                // base name is area identifier + key
+                var editableParts = [
+                    areaIdentifier.name + ':' + areaIdentifier.key
+                ];
+
+                // add relative parent paths as parsed when copying
+                if (editableData.parents.length > 0) {
+                    Ext.each(editableData.parents, function (parentEntry) {
+                        var pathPart = parentEntry.name;
+                        if (null !== parentEntry.key) {
+                            pathPart += ':' + parentEntry.key;
+                        }
+
+                        editableParts.push(pathPart);
+                    });
+                }
+
+                // add the real name as last part
+                editableParts.push(editableData.realName);
+
+                // join parts together with .
+                editableName = editableParts.join('.');
+
+                return editableName;
+            }
+        });
+    },
+
+    getNamingStrategy: function() {
+        if (null !== this.namingStrategy) {
+            return this.namingStrategy;
+        }
+
+        var namingStrategyName = pimcore.settings.document_naming_strategy;
+        if ('undefined' === typeof this.namingStrategies[namingStrategyName]) {
+            throw new Error('Unsupported naming strategy "' + namingStrategyName + '"');
+        }
+
+        this.namingStrategy = new this.namingStrategies[namingStrategyName](namingStrategyName);
+
+        return this.namingStrategy;
+    },
 
     applyFallbackIcons: function() {
         // this contains fallback-icons
@@ -240,8 +363,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     copyToClipboard: function (element) {
+        var namingStrategy = this.getNamingStrategy();
+        if (!namingStrategy.supportsCopyPaste()) {
+            console.error('Naming strategy ' + namingStrategy.getName() + ' does not support copy/paste');
+            return;
+        }
+
         var ea;
-        var areaIdentifier = {name: this.getName(), key: element.getAttribute("key")};
+        var areaIdentifier = {
+            name: this.getName(),
+            realName: this.getRealName(),
+            key: element.getAttribute("key")
+        };
+
         var item = {
             identifier: areaIdentifier,
             type: element.getAttribute("type"),
@@ -252,18 +386,32 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         for (var i = 0; i < editables.length; i++) {
             try {
                 ea = editables[i];
-                if (ea.getName().indexOf(areaIdentifier["name"] + areaIdentifier["key"]) > 0 && ea.getName() && !ea.getInherited()) {
-                    item.values[ea.getName()] = {};
-                    item.values[ea.getName()].data = ea.getValue();
-                    item.values[ea.getName()].type = ea.getType();
+
+                if (!(ea.getName() && !ea.getInherited())) {
+                    continue;
                 }
-            } catch (e) { }
+
+                var editableData = namingStrategy.copyData(areaIdentifier, ea);
+                if (editableData) {
+                    item.values[ea.getName()] = editableData;
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         pimcore.globalmanager.add("areablock_clipboard", item);
     },
 
     optionsClickhandler: function (element, btn, e) {
+        var namingStrategy = this.getNamingStrategy();
+        if (!namingStrategy.supportsCopyPaste()) {
+            console.error('Naming strategy ' + namingStrategy.getName() + ' does not support copy/paste');
+            e.stopEvent();
+            return;
+        }
+
+        var self = this;
         var menu = new Ext.menu.Menu();
 
         if(element != false) {
@@ -293,32 +441,33 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 iconCls: "pimcore_icon_paste",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    var item = pimcore.globalmanager.get("areablock_clipboard");
-                    var areaIdentifier = {name: this.getName(), key: (this.getNextKey()+1)};
+                    item = pimcore.globalmanager.get("areablock_clipboard");
+
+                    var areaIdentifier = {
+                        name: this.getName(),
+                        key: (this.getNextKey() + 1)
+                    };
 
                     // push the data as an object compatible to the pimcore.document.tag interface to the rest of
                     // available editables so that they get read by pimcore.document.edit.getValues()
                     Ext.iterate(item.values, function (key, value, object) {
+                        var editableName = namingStrategy.getPasteName(areaIdentifier, item, value);
+
                         editables.push({
                             getName: function () {
-                                var newKey = key.replace(new RegExp(item["identifier"]["name"] + item["identifier"]["key"], "g"), areaIdentifier["name"] + areaIdentifier["key"]);
-                                var tmpKey;
-
-                                while(tmpKey != newKey) {
-                                    tmpKey = newKey;
-                                    newKey = newKey.replace(new RegExp(item["identifier"]["name"] + "_(.*)" + item["identifier"]["key"] + "_", "g"), areaIdentifier["name"] + "_$1" + areaIdentifier["key"] + "_");
-                                }
-
-                                return newKey;
+                                return editableName;
+                            },
+                            getRealName: function() {
+                                return value.realName;
                             },
                             getValue: function () {
-                                return value["data"];
+                                return value.data;
                             },
                             getInherited: function () {
                                 return false;
                             },
                             getType: function () {
-                                return value["type"];
+                                return value.type;
                             }
                         });
                     });
@@ -336,7 +485,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     setInherited: function ($super, inherited) {
-        var elements = Ext.get(this.id).query(".pimcore_block_buttons_" + this.name);
+        var elements = Ext.get(this.id).query('.pimcore_block_buttons[data-name="' + this.name + '"]');
         if(elements.length > 0) {
             for(var i=0; i<elements.length; i++) {
                 $super(inherited, Ext.get(elements[i]));
@@ -429,17 +578,22 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             Ext.get(dropZones[i]).remove();
         }
     },
-    
+
     createInitalControls: function () {
-        
+
+        var namingStrategy = this.getNamingStrategy();
+
         var plusEl = document.createElement("div");
         plusEl.setAttribute("class", "pimcore_block_plus");
+        plusEl.setAttribute("data-name", this.name);
 
         var optionsEl = document.createElement("div");
         optionsEl.setAttribute("class", "pimcore_block_options");
+        optionsEl.setAttribute("data-name", this.name);
 
         var clearEl = document.createElement("div");
         clearEl.setAttribute("class", "pimcore_block_clear");
+        clearEl.setAttribute("data-name", this.name);
 
         Ext.get(this.id).appendChild(plusEl);
         Ext.get(this.id).appendChild(optionsEl);
@@ -453,19 +607,21 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         });
         plusButton.render(plusEl);
 
-        // plus button
-        var optionsButton = new Ext.Button({
-            cls: "pimcore_block_button_options",
-            iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
-            listeners: {
-                click: this.optionsClickhandler.bind(this, false)
-            }
-        });
-        optionsButton.render(optionsEl);
+        if (namingStrategy.supportsCopyPaste()) {
+            // options button
+            var optionsButton = new Ext.Button({
+                cls: "pimcore_block_button_options",
+                iconCls: "pimcore_icon_area pimcore_icon_overlay_edit",
+                listeners: {
+                    click: this.optionsClickhandler.bind(this, false)
+                }
+            });
+            optionsButton.render(optionsEl);
+        }
 
         Ext.get(this.id).addCls("pimcore_block_buttons");
     },
-    
+
     getTypeMenu: function (scope, element) {
         var menu = [];
         var groupMenu;
@@ -540,7 +696,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     addBlock : function (element, type) {
-        
+
         var index = this.getElementIndex(element) + 1;
         this.addBlockAt(type, index)
     },
@@ -662,7 +818,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     editmodeOpen: function (element) {
 
-        var content = Ext.get(element).down(".pimcore_area_editmode_" + this.name);
+        var content = Ext.get(element).down('.pimcore_area_editmode[data-name="' + this.name + '"]');
         if( content === null && element.getAttribute('data-editmmode-button-ref') !== null)
         {
             content = Ext.getBody().down( '#' + element.getAttribute('data-editmmode-button-ref' ) );
@@ -698,7 +854,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                     var elements = win.body.query(".pimcore_editable");
                     for (var i=0; i<elements.length; i++) {
-                        var name = elements[i].getAttribute("id").split("pimcore_editable_").join("");
+                        var name = elements[i].getAttribute("data-name");
                         for (var e=0; e<editables.length; e++) {
                             if(editables[e].getName() == name) {
                                 if(editables[e].element) {

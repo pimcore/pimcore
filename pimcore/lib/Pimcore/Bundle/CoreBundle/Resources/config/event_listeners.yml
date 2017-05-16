@@ -66,13 +66,14 @@ services:
     # STATE HANDLING/INITIALIZING
     #
 
-    pimcore.event_listener.areablock_state:
-        class: Pimcore\Bundle\CoreBundle\EventListener\AreablockStateListener
+    # handles block state (current block, current index) for sub-requests
+    pimcore.event_listener.block_state:
+        class: Pimcore\Bundle\CoreBundle\EventListener\BlockStateListener
+        arguments: ['@pimcore.document.tag.block_state_stack']
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_subscriber }
-
 
     # Adds Meta Data entries of document to HeadMeta view helper
     pimcore.event_listener.frontend.document_meta_data:

@@ -81,6 +81,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
+        $this->configureDocumentEditableNamingStrategy($container, $config);
         $this->configureCache($container, $loader, $config);
         $this->configurePasswordEncoders($container, $config);
 
@@ -115,6 +116,16 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $container->setDefinition($classMapLoaderId, $classMapLoader);
 
         $service->addMethodCall('addLoader', [new Reference($classMapLoaderId)]);
+    }
+
+    private function configureDocumentEditableNamingStrategy(ContainerBuilder $container, array $config)
+    {
+        $strategyName = $config['documents']['editables']['naming_strategy'];
+
+        $container->setAlias(
+            'pimcore.document.tag.naming.strategy',
+            sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
+        );
     }
 
     /**
