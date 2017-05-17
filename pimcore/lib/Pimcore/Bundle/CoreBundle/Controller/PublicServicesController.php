@@ -53,7 +53,7 @@ class PublicServicesController extends FrameworkController
 
                 if (!$thumbnailConfig) {
                     // check if there's an item in the TmpStore
-                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5($request->getPathInfo());
+                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5(urldecode($request->getPathInfo()));
                     if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                         $thumbnailConfig = $thumbnailConfigItem->getData();
                         TmpStore::delete($deferredConfigId);
