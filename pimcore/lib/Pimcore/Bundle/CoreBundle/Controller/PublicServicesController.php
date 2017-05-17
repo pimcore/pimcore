@@ -106,7 +106,7 @@ class PublicServicesController extends FrameworkController
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
 
                 Logger::error($message);
-                throw $this->createNotFoundException($message);
+                throw $this->createNotFoundException($message, $e);
             }
         }
     }
