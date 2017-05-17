@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolverAwarePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
@@ -56,6 +57,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new PimcoreContextResolverAwarePass());
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());
+        $container->addCompilerPass(new CacheCollectorPass());
         $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());
         $container->addCompilerPass(new TemplateVarsProviderPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
