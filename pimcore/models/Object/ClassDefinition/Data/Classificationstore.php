@@ -1222,6 +1222,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {
+        $parts = [];
         if (is_string($allowedGroupIds) && !empty($allowedGroupIds)) {
             $allowedGroupIds = str_replace([' ', "\n"], '', $allowedGroupIds);
             $parts = explode(',', $allowedGroupIds);
