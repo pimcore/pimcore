@@ -253,6 +253,8 @@ class AssetController extends ElementControllerBase implements EventedController
             File::put($sourcePath, base64_decode($data));
         }
 
+        $parentId = $request->get('parentId');
+
         if ($request->get('dir') && $request->get('parentId')) {
             // this is for uploading folders with Drag&Drop
             // param "dir" contains the relative path of the file
@@ -281,18 +283,17 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
                 }
             }
-
-            $this->setParam('parentId', $newParent->getId());
+            $parentId = $newParent->getId();
         } elseif (!$request->get('parentId') && $request->get('parentPath')) {
             $parent = Asset::getByPath($request->get('parentPath'));
             if ($parent instanceof Asset\Folder) {
-                $this->setParam('parentId', $parent->getId());
+                $parentId = $parent->getId();
             } else {
-                $this->setParam('parentId', 1);
+                $parentId = 1;
             }
         } elseif (!$request->get('parentId')) {
             // set the parent to the root folder
-            $this->setParam('parentId', 1);
+            $parentId = 1;
         }
 
         $filename = Element\Service::getValidKey($filename, 'asset');
@@ -300,7 +301,7 @@ class AssetController extends ElementControllerBase implements EventedController
             throw new \Exception('The filename of the asset is empty');
         }
 
-        $parentAsset = Asset::getById(intval($request->get('parentId')));
+        $parentAsset = Asset::getById(intval($parentId));
 
         // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
@@ -310,7 +311,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
             }
 
-            $asset = Asset::create($request->get('parentId'), [
+            $asset = Asset::create($parentId, [
                 'filename' => $filename,
                 'sourcePath' => $sourcePath,
                 'userOwner' => $this->getUser()->getId(),
