@@ -126,7 +126,8 @@ class Update
         $xmlRaw = Tool::getHttpData('https://' . self::$updateHost . '/getDownloads.php?from=' . $currentRev . '&to=' . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
-        $jobs = [];
+        $downloadJobs = [];
+        $updateJobs = [];
         $updateScripts = [];
         $composerUpdateRevisions = [];
         $revisions = [];
@@ -150,7 +151,7 @@ class Update
 
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
-                $jobs['parallel'][] = [
+                $downloadJobs[] = [
                     'type' => 'download',
                     'revision' => (string) $download->revision,
                     'url' => (string) $download->url
@@ -162,48 +163,51 @@ class Update
 
         $revisions = array_unique($revisions);
 
-        $jobs['procedural'][] = [
+        $updateJobs[] = [
             'type' => 'composer-invalidate-classmaps'
         ];
 
         foreach ($revisions as $revision) {
             if ($updateScripts[$revision]['preupdate']) {
-                $jobs['procedural'][] = $updateScripts[$revision]['preupdate'];
+                $updateJobs[] = $updateScripts[$revision]['preupdate'];
             }
 
-            $jobs['procedural'][] = [
+            $updateJobs[] = [
                 'type' => 'files',
                 'revision' => $revision,
                 'updateScript' => json_encode(isset($updateScripts[$revision]['update']))
             ];
 
             if (in_array($revision, $composerUpdateRevisions)) {
-                $jobs['procedural'][] = [
+                $updateJobs[] = [
                     'type' => 'composer-update'
                 ];
-                $jobs['procedural'][] = [
+                $updateJobs[] = [
                     'type' => 'composer-invalidate-classmaps'
                 ];
             }
 
             if ($updateScripts[$revision]['postupdate']) {
-                $jobs['procedural'][] = $updateScripts[$revision]['postupdate'];
+                $updateJobs[] = $updateScripts[$revision]['postupdate'];
             }
         }
 
-        $jobs['procedural'][] = [
+        $updateJobs[] = [
             'type' => 'clearcache'
         ];
 
-        $jobs['procedural'][] = [
+        $updateJobs[] = [
             'type' => 'cleanup'
         ];
 
-        $jobs['procedural'][] = [
+        $updateJobs[] = [
             'type' => 'composer-dump-autoload'
         ];
 
-        return $jobs;
+        return [
+            'update' => $updateJobs,
+            'download' => $downloadJobs
+        ];
     }
 
     /**

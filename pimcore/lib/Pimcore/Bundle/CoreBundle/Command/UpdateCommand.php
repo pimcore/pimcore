@@ -141,12 +141,12 @@ class UpdateCommand extends AbstractCommand
 
             $jobs = Update::getJobs($build, $currentRevision);
 
-            $steps = count($jobs['parallel']) + count($jobs['procedural']);
+            $steps = count($jobs['download']) + count($jobs['update']);
 
             $progress = new ProgressBar($output, $steps);
             $progress->start();
 
-            foreach ($jobs['parallel'] as $job) {
+            foreach ($jobs['download'] as $job) {
                 if ($job['type'] == 'download') {
                     Update::downloadData($job['revision'], $job['url']);
                 }
@@ -158,7 +158,7 @@ class UpdateCommand extends AbstractCommand
             Admin::activateMaintenanceMode($maintenanceModeId);
 
             $stoppedByError = false;
-            foreach ($jobs['procedural'] as $job) {
+            foreach ($jobs['update'] as $job) {
                 if ($input->getOption('dry-run')) {
                     $job['dry-run'] = true;
                 }
