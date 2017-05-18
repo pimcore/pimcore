@@ -459,7 +459,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
     public function collectionRelationsAction()
     {
-        if ($this->getParam("data")) {
+        if ($this->getParam("xaction") == "update" && $this->getParam("data")) {
             $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
 
@@ -692,7 +692,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
     public function relationsAction()
     {
-        if ($this->getParam("data")) {
+        if ($this->getParam("xaction") == "update" && $this->getParam("data")) {
             $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
 
