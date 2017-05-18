@@ -3,7 +3,7 @@
 Pimcore supports some *magic parameters* which can be added as parameter to every request.
 
 ### pimcore_nocache
-Setting this parameter disables every kind of cache, eg.: `http://www.example.com/my/page?nocache=1`  
+Setting this parameter disables every kind of cache, eg.: `http://www.example.com/my/page?pimcore_nocache`  
 This parameter only works if [`DEBUG MODE`](../18_Tools_and_Features/25_System_Settings.md) is on.
 
 ### pimcore_outputfilters_disabled
