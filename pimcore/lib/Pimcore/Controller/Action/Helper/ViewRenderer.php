@@ -38,7 +38,7 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
                 }
             }
         }
-        
+
         parent::postDispatch();
     }
 
@@ -104,6 +104,3 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
         return $this->isInitialized;
     }
 }
-
-// unfortunately we need this alias here, since ZF plugin loader isn't able to handle namespaces correctly
-class_alias("Pimcore\\Controller\\Action\\Helper\\ViewRenderer", "Pimcore_Controller_Action_Helper_ViewRenderer");

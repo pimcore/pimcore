@@ -84,24 +84,33 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
-            
-            this.editArea = new Ext.form.TextArea({
-                xtype: "textarea",
-                name: "data",
-                value: this.data.data,
-                style: "font-family: 'Courier New', Courier, monospace;"
-            });
-            
-            this.editPanel = new Ext.Panel({
-                title: t("edit"),
-                iconCls: "pimcore_icon_edit",
-                bodyStyle: "padding: 10px;",
-                items: [this.editArea]
-            });
-            this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                this.editArea.setWidth(width-20);
-                this.editArea.setHeight(height-20);
-            }.bind(this));
+            if(this.data.data !== false) {
+                this.editArea = new Ext.form.TextArea({
+                    xtype: "textarea",
+                    name: "data",
+                    value: this.data.data,
+                    style: "font-family: 'Courier New', Courier, monospace;"
+                });
+
+                this.editPanel = new Ext.Panel({
+                    title: t("edit"),
+                    iconCls: "pimcore_icon_edit",
+                    bodyStyle: "padding: 10px;",
+                    items: [this.editArea]
+                });
+
+                this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
+                    this.editArea.setWidth(width-20);
+                    this.editArea.setHeight(height-20);
+                }.bind(this));
+            } else {
+                this.editPanel = new Ext.Panel({
+                    title: t("preview"),
+                    html: t("preview_not_available"),
+                    bodyCls: "pimcore_panel_body_centered",
+                    iconCls: "pimcore_icon_edit"
+                });
+            }
         }
 
         return this.editPanel;
@@ -111,7 +120,7 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
     getSaveData : function ($super, only) {
         var parameters = $super(only);
         
-        if(!Ext.isString(only)) {
+        if(!Ext.isString(only) && this.data.data !== false) {
             parameters.data = this.editArea.getValue();
         }
         

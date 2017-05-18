@@ -428,13 +428,14 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id") . "_original";
         File::put($importFileOriginal, $data);
 
-        $this->_helper->json([
-            "success" => true
-        ], false);
-
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        header("Content-Type: text/html", true);
+        $result = json_encode([
+            "success" => true
+        ]);
+        echo($result);
+        die();
     }
 
     public function importGetFileInfoAction()

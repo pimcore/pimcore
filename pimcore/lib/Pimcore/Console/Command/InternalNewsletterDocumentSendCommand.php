@@ -87,8 +87,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
      */
     protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
     {
-        $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $hostUrl);
-        $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
+       $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
 
         $currentCount = 0;
         $totalCount = $addressAdapter->getTotalRecordCount();
@@ -98,6 +97,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $pageSize = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
 
         foreach ($sendingParamContainers as $sendingParamContainer) {
+            $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
             if (empty($tmpStore)) {

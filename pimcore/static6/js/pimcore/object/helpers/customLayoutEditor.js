@@ -124,12 +124,25 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 var view = this.selectionPanel.getView();
                 var nodeEl = Ext.fly(view.getNodeByRecord(node));
 
+                var containerAwareDataName = data.name;
+                var parentNode = node.parentNode;
+                while (parentNode) {
+                    if (parentNode.data.editor && Ext.isFunction(parentNode.data.editor.getData)) {
+                        var parentData = parentNode.data.editor.getData();
+                        if (parentData.datatype == "data" && parentNode.data.editor.type == "block") {
+                            containerAwareDataName = "block-" + parentData.name + "-" + containerAwareDataName;
+                            break;
+                        }
+                    }
+
+                    parentNode = parentNode.parentNode;
+                }
+
                 // check if the name is unique, localizedfields can be used more than once
-                if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false)
-                    || data.name == "localizedfields") {
+                if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields") {
 
                     if(data.datatype == "data") {
-                        this.usedFieldNames.push(data.name);
+                        this.usedFieldNames.push(containerAwareDataName);
                     }
 
                     if (nodeEl) {
@@ -142,12 +155,14 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         nodeEl.removeCls("tree_node_error");
                     }
 
-                    var invalidFieldsText = null;
+                    var invalidFieldsText = '';
 
                     if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
-                        +(implode(',',node.data.editor.forbiddenNames));
+                            +(implode(',',node.data.editor.forbiddenNames));
                     }
+
+                    invalidFieldsText += containerAwareDataName;
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
                         invalidFieldsText);
 

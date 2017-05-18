@@ -779,9 +779,13 @@ class Pimcore
             $_SERVER[$key] = PIMCORE_CACHE_DIRECTORY;
         }
 
-        // set custom view renderer
+        // set custom action helpers
+        // we cannot use \Zend_Controller_Action_HelperBroker::addPrefix() since the classes are not within the include path
         $pimcoreViewHelper = new Controller\Action\Helper\ViewRenderer();
         \Zend_Controller_Action_HelperBroker::addHelper($pimcoreViewHelper);
+
+        $pimcoreJsonHelper = new Controller\Action\Helper\Json();
+        \Zend_Controller_Action_HelperBroker::addHelper($pimcoreJsonHelper);
     }
 
     /**
