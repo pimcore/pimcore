@@ -1084,7 +1084,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         getDragData: function(e) {
                             var sourceEl = v.getEl().dom;
                             if (sourceEl) {
-                                d = sourceEl.cloneNode(true);
+                                var d = sourceEl.cloneNode(true);
                                 d.id = Ext.id();
                                 return v.dragData = {
                                     sourceEl: sourceEl,
