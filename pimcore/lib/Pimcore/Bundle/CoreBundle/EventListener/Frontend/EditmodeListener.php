@@ -281,7 +281,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
             '/pimcore/static6/js/pimcore/namespace.js',
             '/pimcore/static6/js/lib/prototype-light.js',
             '/pimcore/static6/js/lib/jquery.min.js',
-            '/pimcore/static6/js/lib/ext/ext-all.js',
+            '/pimcore/static6/js/lib/ext/ext-all' . (PIMCORE_DEVMODE ? '-debug' : '') . '.js',
             '/pimcore/static6/js/lib/ckeditor/ckeditor.js'
         ];
     }
