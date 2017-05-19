@@ -53,6 +53,11 @@ if (pimcore_document_id) {
     window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
 }
 
+// we need to disable touch support here, otherwise drag & drop of new & existing areablock doesn't work on hybrid devices
+// see also https://github.com/pimcore/pimcore/issues/1542
+// this should be removed in later ExtJS version ( > 6.0) as this should be hopefully fixed by then
+Ext.supports.Touch = false;
+
 // overwrite default z-index of windows, this ensures that CKEditor is above ExtJS Windows
 Ext.WindowManager.zseed = 200;
 
