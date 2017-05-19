@@ -87,7 +87,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
      */
     protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
     {
-       $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
+        $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
 
         $currentCount = 0;
         $totalCount = $addressAdapter->getTotalRecordCount();

@@ -287,6 +287,7 @@ abstract class AbstractModel
     {
         $result = get_object_vars($this);
         unset($result['dao']);
+
         return $result;
     }
 }

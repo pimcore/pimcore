@@ -1232,7 +1232,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $start = $this->getParam("start");
         }
 
-        $conditionFilters = array();
+        $conditionFilters = [];
         $conditionFilters[] = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'") ." AND type != 'folder'";
 
         if (!$this->getUser()->isAdmin()) {
@@ -1426,7 +1426,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $db = \Pimcore\Db::get();
-            $conditionFilters = array();
+            $conditionFilters = [];
             $conditionFilters[] .= "path LIKE " . $db->quote($parentPath . "/%") ." AND type != " . $db->quote("folder");
             if (!$this->getUser()->isAdmin()) {
                 $userIds = $this->getUser()->getRoles();
@@ -1769,7 +1769,6 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
         if ($asset = Asset::getById($this->getParam("id"))) {
             if (method_exists($asset, "clearThumbnails")) {
-
                 if (!$asset->isAllowed("publish")) {
                     throw new \Exception("not allowed to publish");
                 }

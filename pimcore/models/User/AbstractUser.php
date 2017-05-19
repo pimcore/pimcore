@@ -208,7 +208,7 @@ class AbstractUser extends Model\AbstractModel
      */
     public function delete()
     {
-        if($this->getId() < 1) {
+        if ($this->getId() < 1) {
             throw new \Exception("Deleting the system user is not allowed!");
         }
 
