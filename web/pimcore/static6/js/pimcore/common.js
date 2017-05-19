@@ -34,3 +34,41 @@ pimcore.registerNS = function(namespace) {
     }
     return currentLevel;
 };
+
+
+
+pimcore.registerNS("pimcore.globalmanager");
+pimcore.globalmanager = {
+    store: {},
+
+    add: function (key, value) {
+        this.store[key] = value;
+    },
+
+    remove: function (key) {
+        try {
+            if (this.store[key]) {
+                delete this.store[key];
+            }
+        }
+        catch (e) {
+            console.log("failed to remove " + key + " from cache");
+        }
+
+    },
+
+    exists: function (key) {
+        if (this.store[key]) {
+            return true;
+        }
+        return false;
+    },
+
+    get: function (key) {
+        if (this.store[key]) {
+            return this.store[key];
+        }
+        return false;
+    }
+};
+

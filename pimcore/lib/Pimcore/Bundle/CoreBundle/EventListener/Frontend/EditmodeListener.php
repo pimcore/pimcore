@@ -278,7 +278,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
     protected function getEditmodeLibraries()
     {
         return [
-            '/pimcore/static6/js/pimcore/namespace.js',
+            '/pimcore/static6/js/pimcore/common.js',
             '/pimcore/static6/js/lib/prototype-light.js',
             '/pimcore/static6/js/lib/jquery.min.js',
             '/pimcore/static6/js/lib/ext/ext-all' . (PIMCORE_DEVMODE ? '-debug' : '') . '.js',
@@ -294,6 +294,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
         return array_merge(
             [
                 '/pimcore/static6/js/pimcore/functions.js',
+                '/pimcore/static6/js/pimcore/overrides.js',
                 '/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js',
                 '/pimcore/static6/js/pimcore/element/tag/imagecropper.js',
                 '/pimcore/static6/js/pimcore/document/edit/helper.js',

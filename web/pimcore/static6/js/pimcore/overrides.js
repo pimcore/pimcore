@@ -782,3 +782,17 @@ Ext.define('Ext.scroll.TouchScroller', {
     extend: 'Ext.scroll.DomScroller',
     alias: 'scroller.touch'
 });
+
+
+// Chrome fix for XMLHttpRequest.sendAsBinary()
+if (Ext.isChrome) {
+    XMLHttpRequest.prototype.sendAsBinary = function(datastr) {
+        function byteValue(x) {
+            return x.charCodeAt(0) & 0xff;
+        }
+
+        var ords = Array.prototype.map.call(datastr, byteValue);
+        var ui8a = new Uint8Array(ords);
+        this.send(ui8a);
+    };
+}
