@@ -571,6 +571,14 @@ class Requirements
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
+        // APCu
+        $checks[] = new Check([
+            'name' => 'APCu',
+            'link' => 'http://www.php.net/apcu',
+            'state' => (function_exists('apcu_fetch') && ini_get('apc.enabled')) ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => "It's highly recommended to have the APCu extension installed and enabled."
+        ]);
+
         // OPcache
         $checks[] = new Check([
             'name' => 'OPcache',

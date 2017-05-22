@@ -29,6 +29,7 @@
   },
   "config": {
     "optimize-autoloader": true,
+    "apcu-autoloader": true,
     "sort-packages": true
   },
   "require": {
