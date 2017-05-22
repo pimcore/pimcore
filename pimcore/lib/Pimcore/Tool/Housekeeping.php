@@ -44,7 +44,7 @@ class Housekeeping
                 @unlink($file->getPathname());
             }
 
-            if(is_dir_empty($file->getPath())) {
+            if (is_dir_empty($file->getPath())) {
                 @rmdir($file->getPath());
             }
         }

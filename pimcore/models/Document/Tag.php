@@ -118,6 +118,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $code .= ('<div ' . $attributeString . '></div>');
+
         return $code;
     }
 
@@ -225,6 +226,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      *
      * @param array $options
      * @param bool $return
+     *
      * @return string
      */
     protected function outputEditmodeOptions(array $options, $return = false)
@@ -235,7 +237,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             </script>
         ';
 
-        if($return) {
+        if ($return) {
             return $code;
         }
 

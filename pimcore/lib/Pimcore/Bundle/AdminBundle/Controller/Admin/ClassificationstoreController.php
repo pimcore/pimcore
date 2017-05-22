@@ -533,7 +533,7 @@ class ClassificationstoreController extends AdminController
      */
     public function collectionRelationsAction(Request $request)
     {
-        if ($request->get("xaction") == "update" && $request->get("data")) {
+        if ($request->get('xaction') == 'update' && $request->get('data')) {
             $dataParam = $request->get('data');
             $data = $this->decodeJson($dataParam);
 
@@ -784,7 +784,7 @@ class ClassificationstoreController extends AdminController
      */
     public function relationsAction(Request $request)
     {
-        if ($request->get("xaction") == "update" && $request->get("data")) {
+        if ($request->get('xaction') == 'update' && $request->get('data')) {
             $dataParam = $request->get('data');
             $data = $this->decodeJson($dataParam);
 
