@@ -112,12 +112,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function admin()
     {
         $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $code = $this->outputEditmodeOptions($options, true);
 
         $attributes      = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $this->outputEditmode('<div ' . $attributeString . '></div>');
+        $code .= ('<div ' . $attributeString . '></div>');
+        return $code;
     }
 
     /**
@@ -223,14 +224,22 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * Push editmode options into the JS config array
      *
      * @param array $options
+     * @param bool $return
+     * @return string
      */
-    protected function outputEditmodeOptions(array $options)
+    protected function outputEditmodeOptions(array $options, $return = false)
     {
-        $this->outputEditmode('
+        $code = '
             <script type="text/javascript">
                 editableConfigurations.push(' . json_encode($options) . ');
             </script>
-        ');
+        ';
+
+        if($return) {
+            return $code;
+        }
+
+        $this->outputEditmode($code);
     }
 
     /**
