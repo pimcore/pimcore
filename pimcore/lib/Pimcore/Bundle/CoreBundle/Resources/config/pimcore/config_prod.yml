@@ -6,6 +6,7 @@ monolog:
         main:
             type:         fingers_crossed
             action_level: error
+            buffer_size: 2000
             handler:      nested
         nested:
             type:  stream
