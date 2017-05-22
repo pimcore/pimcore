@@ -8,6 +8,7 @@ This example uses the profile `demo-cms`, so for other profiles you may change t
 ```
 ln -sr app/config/parameters.example.yml app/config/parameters.yml
 ln -sr install-profiles/demo-cms/app/Resources/views app/Resources/views
+ln -sr install-profiles/demo-cms/app/config/local/* app/config/local/
 ln -sr install-profiles/demo-cms/src/AppBundle src/AppBundle
 ln -sr install-profiles/demo-cms/web/var web/var 
 ln -sr install-profiles/demo-cms/var/* var/
