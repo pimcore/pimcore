@@ -118,6 +118,9 @@ if (!defined("PIMCORE_USERIMAGE_DIRECTORY")) {
 // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
 // it also improves the performance when reducing the amount of include paths, you can of course add additional paths anywhere in your code (/website)
 $includePaths = [
+    PIMCORE_PATH . "/lib",
+    PIMCORE_WEBSITE_PATH . "/lib",
+    PIMCORE_WEBSITE_PATH . "/models",
     // we need to include the path to the ZF1, because we cannot remove all require_once() out of the source
     // see also: Pimcore\Composer::zendFrameworkOptimization()
     // actually the problem is 'require_once 'Zend/Loader.php';' in Zend/Loader/Autoloader.php
