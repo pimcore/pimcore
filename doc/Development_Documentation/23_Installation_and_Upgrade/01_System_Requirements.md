@@ -11,7 +11,6 @@ For production we highly recommend a *nix based system.
 
 ### PHP >= 7.0
 Both **mod_php** and **FCGI (FPM)** are supported.  
-**HHVM** should work quite well even though it's not tested.  
 
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M
