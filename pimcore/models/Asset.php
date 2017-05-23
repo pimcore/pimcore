@@ -223,10 +223,11 @@ class Asset extends Element\AbstractElement
      * Static helper to get an asset by the passed path
      *
      * @param string $path
+     * @param bool $force
      *
      * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      */
-    public static function getByPath($path)
+    public static function getByPath($path, $force = false)
     {
         $path = Element\Service::correctPath($path);
 
@@ -236,7 +237,7 @@ class Asset extends Element\AbstractElement
             if (Tool::isValidPath($path)) {
                 $asset->getDao()->getByPath($path);
 
-                return self::getById($asset->getId());
+                return self::getById($asset->getId(), $force);
             }
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());

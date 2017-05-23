@@ -237,10 +237,11 @@ class Document extends Element\AbstractElement
      * Static helper to get a Document by it's path
      *
      * @param string $path
+     * @param bool $force
      *
      * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet
      */
-    public static function getByPath($path)
+    public static function getByPath($path, $force = false)
     {
         $path = Element\Service::correctPath($path);
 
@@ -259,7 +260,7 @@ class Document extends Element\AbstractElement
                 $helperDoc->getDao()->getByPath($path);
             }
 
-            $doc = self::getById($helperDoc->getId());
+            $doc = self::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
             Logger::debug($e->getMessage());

@@ -310,10 +310,11 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param string $path
+     * @param bool $force
      *
      * @return self
      */
-    public static function getByPath($path)
+    public static function getByPath($path, $force = false)
     {
         $path = Model\Element\Service::correctPath($path);
 
@@ -323,7 +324,7 @@ class AbstractObject extends Model\Element\AbstractElement
             if (Tool::isValidPath($path)) {
                 $object->getDao()->getByPath($path);
 
-                return self::getById($object->getId());
+                return self::getById($object->getId(), $force);
             }
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
