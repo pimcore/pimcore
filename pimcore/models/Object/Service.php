@@ -982,23 +982,26 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * Returns the fields of a datatype container (e.g. block or localized fields)
+     *
      * @param $layout
+     * @param $targetClass
      * @param $targetList
-     * @param $insideLocalizedField
+     * @param $insideDataType
      * @return mixed
      */
-    public static function extractLocalizedFieldDefinitions($layout, $targetList, $insideLocalizedField)
+    public static function extractFieldDefinitions($layout, $targetClass, $targetList, $insideDataType)
     {
-        if ($insideLocalizedField && $layout instanceof ClassDefinition\Data and !$layout instanceof ClassDefinition\Data\Localizedfields) {
+        if ($insideDataType && $layout instanceof ClassDefinition\Data and !is_a($layout, $targetClass)) {
             $targetList[$layout->getName()] = $layout;
         }
 
-        if (method_exists($layout, "getChilds")) {
-            $children = $layout->getChilds();
-            $insideLocalizedField |= ($layout instanceof ClassDefinition\Data\Localizedfields);
+        if (method_exists($layout, "getChildren")) {
+            $children = $layout->getChildren();
+            $insideDataType |= is_a($layout, $targetClass);
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    $targetList = self::extractLocalizedFieldDefinitions($child, $targetList, $insideLocalizedField);
+                    $targetList = self::extractFieldDefinitions($child, $targetClass, $targetList, $insideDataType);
                 }
             }
         }
@@ -1097,8 +1100,11 @@ class Service extends Model\Element\Service
         if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-            $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), [], false);
-            $masterDefinition = array_merge($masterDefinition, $targetList);
+
+            foreach(['Localizedfields','Block'] as $dataType){
+                $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(),'\Pimcore\Model\Object\ClassDefinition\Data\\' . $dataType, [], false);
+                $masterDefinition = array_merge($masterDefinition, $targetList);
+            }
 
             self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $customLayoutDefinition);
             $customLayout->save();
