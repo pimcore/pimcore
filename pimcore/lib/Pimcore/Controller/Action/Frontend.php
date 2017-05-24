@@ -256,7 +256,7 @@ abstract class Frontend extends Action
             }
 
             // check if document is a wrapped hardlink, if this is the case send a rel=canonical header to the source document
-            if ($this->getDocument() instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+            if ($this->getDocument() instanceof Document\Hardlink\Wrapper\WrapperInterface && !Model\Staticroute::getCurrentRoute()) {
                 // get the cononical (source) document
                 $hardlinkCanonicalSourceDocument = Document::getById($this->getDocument()->getId());
                 $request = $this->getRequest();
