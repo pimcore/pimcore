@@ -20,7 +20,6 @@ namespace Pimcore\Model\User;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
-use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()

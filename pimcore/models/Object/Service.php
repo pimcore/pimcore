@@ -952,6 +952,7 @@ class Service extends Model\Element\Service
      * @param $targetClass
      * @param $targetList
      * @param $insideDataType
+     *
      * @return mixed
      */
     public static function extractFieldDefinitions($layout, $targetClass, $targetList, $insideDataType)
@@ -960,7 +961,7 @@ class Service extends Model\Element\Service
             $targetList[$layout->getName()] = $layout;
         }
 
-        if (method_exists($layout, "getChildren")) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             $insideDataType |= is_a($layout, $targetClass);
             if (is_array($children)) {
@@ -1063,8 +1064,8 @@ class Service extends Model\Element\Service
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
 
-            foreach(['Localizedfields','Block'] as $dataType){
-                $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(),'\Pimcore\Model\Object\ClassDefinition\Data\\' . $dataType, [], false);
+            foreach (['Localizedfields', 'Block'] as $dataType) {
+                $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(), '\Pimcore\Model\Object\ClassDefinition\Data\\' . $dataType, [], false);
                 $masterDefinition = array_merge($masterDefinition, $targetList);
             }
 

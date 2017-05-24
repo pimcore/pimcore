@@ -152,7 +152,7 @@ class MvcConfigNormalizer
             return $template;
         }
 
-        if(strpos($template, ":") !== false) {
+        if (strpos($template, ':') !== false) {
             // already normalized
             return $template;
         }
