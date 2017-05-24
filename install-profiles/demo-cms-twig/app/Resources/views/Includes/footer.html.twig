@@ -1,0 +1,20 @@
+{% if editmode %}
+    {# styles only for editmode #}
+    <link rel="stylesheet" href="{{ asset('static/css/global.css') }}">
+{% endif %}
+
+<!-- FOOTER -->
+<footer>
+    <p class="pull-right">
+        <a href="#">{{ "Back to top"|trans }}</a>
+    </p>
+
+    <p class="links">
+        &copy; {{ "now"|date('Y') }} pimcore GmbH &middot;
+        {% set linksBlock = pimcore_block('links') %}
+        {% for i in (0..(linksBlock.count-1)) %}
+            {% do linksBlock.loop() %}
+            {{ pimcore_link('link') }}
+        {% endfor %}
+    </p>
+</footer>

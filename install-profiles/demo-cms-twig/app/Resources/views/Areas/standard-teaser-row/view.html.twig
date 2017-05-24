@@ -1,0 +1,32 @@
+<section class="area-standard-teaser-row">
+    <div class="row">
+        {% for t in 0..2 %}
+            {% set select = pimcore_select('type_' ~ t, {
+                width: 90,
+                reload: true,
+                store: [
+                    ['direct','direct'],
+                    ['snippet','snippet']
+                ]
+            }) %}
+
+            <div class="col-md-4">
+                {% if editmode %}
+                    <div class="editmode-label">
+                        <label>Type:</label>
+                        {{ select|raw }}
+                    </div>
+                {% endif %}
+
+                {% set type = select.getData() %}
+                {% if type == "direct" %}
+                    {{ include(':Snippets:standard-teaser.html.twig', {
+                        suffix: (t+1)
+                    }) }}
+                {% else %}
+                    {{ pimcore_snippet('teaser_' ~ t) }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>

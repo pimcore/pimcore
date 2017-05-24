@@ -41,3 +41,10 @@ services:
         arguments:
             - Pimcore\Security\Encoder\PasswordFieldEncoder
             - ['password']
+
+    # adds uniqid function to twig
+    website_demo.twig.uniqid_extension:
+        class: AppBundle\Twig\UniqidExtension
+        public: false
+        tags:
+            - { name: twig.extension }

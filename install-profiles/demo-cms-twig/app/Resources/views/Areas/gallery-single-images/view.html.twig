@@ -1,0 +1,26 @@
+{% set galleryBlock = pimcore_block('gallery') %}
+
+<section class="area-gallery-single-images">
+    <div class="row">
+
+        {% for i in (0..(galleryBlock.count-1)) %}
+            {% do galleryBlock.loop() %}
+
+            <div class="col-md-3 col-xs-6">
+                {% if not editmode %}
+                    <a href="{{ pimcore_image('image').getThumbnail('galleryLightbox') }}" class="thumbnail">
+                {% endif %}
+
+                {{ pimcore_image('image', {
+                    thumbnail: 'galleryThumbnail'
+                }) }}
+
+                {% if not editmode %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+    </div>
+</section>
+

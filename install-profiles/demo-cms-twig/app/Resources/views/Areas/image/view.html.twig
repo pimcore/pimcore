@@ -1,0 +1,15 @@
+<section class="area-image">
+
+    {% if not editmode %}
+        <a href="{{ pimcore_image('image').getThumbnail('galleryLightbox') }}" class="thumbnail">
+    {% endif %}
+
+    {{ pimcore_image('image', {
+        thumbnail: 'content'
+    }) }}
+
+    {% if not editmode %}
+        </a>
+    {% endif %}
+
+</section>

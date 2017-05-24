@@ -1,0 +1,21 @@
+<section class="area-embed" style="margin-top:20px;">
+    <div class="row">
+
+        {% for i in 1..2 %}
+            {% set contentBlock = pimcore_block('contents_' ~ i) %}
+
+            {% for i in (0..(contentBlock.count-1)) %}
+                {% do contentBlock.loop() %}
+
+                <div class="embed">
+                    {{ pimcore_embed('socialContent', {
+                        width: 426,
+                        height: 300
+                    }) }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+    </div>
+</section>
+

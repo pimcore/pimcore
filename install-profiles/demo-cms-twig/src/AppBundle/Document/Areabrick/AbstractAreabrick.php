@@ -25,4 +25,12 @@ abstract class AbstractAreabrick extends AbstractTemplateAreabrick
     {
         return static::TEMPLATE_LOCATION_GLOBAL;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplateSuffix()
+    {
+        return static::TEMPLATE_SUFFIX_TWIG;
+    }
 }

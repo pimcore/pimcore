@@ -1,0 +1,76 @@
+{% set featuretteBlock = pimcore_block('block') %}
+
+<section class="area-featurette">
+    {% for i in (0..(featuretteBlock.count-1)) %}
+        {% do featuretteBlock.loop() %}
+
+        {% set positionSelect = pimcore_select('position', {
+            store: [["left","left"],["right","right"]]
+        }) %}
+
+        {% set typeSelect = pimcore_select('type', {
+            reload: true,
+            store: [["video","video"], ["image","image"]]
+        }) %}
+
+        {% set position = positionSelect.getData() ?: 'right' %}
+
+        <div class="row featurette">
+            <div class="col-sm-7 {{ position == 'right' ? 'col-sm-push-5' }}">
+                <h2 class="featurette-heading">
+                    {{ pimcore_input('headline') }}
+                    <span class="text-muted">{{ pimcore_input('subline') }}</span>
+                </h2>
+
+                <div class="lead">
+                    {{ pimcore_wysiwyg('content', {
+                        height: 200
+                    }) }}
+                </div>
+            </div>
+
+            <div class="col-sm-5 {{ position == 'right' ? 'col-sm-pull-7' }}">
+                {% if editmode %}
+
+                    <div class="editmode-label">
+                        <label>Orientation:</label>
+                        {{ positionSelect|raw }}
+                    </div>
+
+                    <div class="editmode-label">
+                        <label>Type:</label>
+                        {{ typeSelect|raw }}
+                    </div>
+
+                {% endif %}
+
+                {% set type = typeSelect.getData() %}
+
+                {% if type == 'video' %}
+
+                    {{ pimcore_video('video', {
+                        thumbnail: 'featurerette',
+                        attributes: {
+                            class: 'video-js vjs-default-skin vjs-big-play-centered',
+                            'data-setup': '{}'
+                        }
+                    }) }}
+
+                {% else %}
+
+                    {{ pimcore_image('image', {
+                        class: 'featurette-image img-responsive',
+                        thumbnail: 'featurerette'
+                    }) }}
+
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% if featuretteBlock.getCurrent() < (featuretteBlock.getCount - 1) %}
+            <hr class="featurette-divider">
+        {% endif %}
+
+    {% endfor %}
+</section>

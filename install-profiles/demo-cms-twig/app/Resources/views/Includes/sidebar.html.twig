@@ -1,0 +1,36 @@
+{% use ':Includes:editmode-layout.html.twig' %}
+
+{{ block('editmode_header') }}
+
+{% set teaserBlock = pimcore_block('teasers') %}
+
+<div class="teasers">
+    {% for i in (0..(teaserBlock.count-1)) %}
+        {% do teaserBlock.loop() %}
+        {{ pimcore_snippet('teaser') }}
+    {% endfor %}
+</div>
+
+{% set articleSelect = pimcore_select('blogArticles', {
+    width: 70,
+    store: [[1,1],[2,2],[3,3]]
+}) %}
+
+{% if editmode %}
+    <br />
+    <hr />
+    <div class="alert alert-info" style="margin-top: 30px">
+        <h3>How many blog articles should be listed (set 0 to hide the box):</h3>
+        <br />
+        {{ articleSelect|raw }}
+    </div>
+{% else %}
+    {% set count = articleSelect.getData() %}
+    {% if count is defined and count > 0 %}
+        {{ pimcore_action('sidebarBox', 'Blog', null, {
+            items: count
+        }) }}
+    {% endif %}
+{% endif %}
+
+{{ block('editmode_footer') }}

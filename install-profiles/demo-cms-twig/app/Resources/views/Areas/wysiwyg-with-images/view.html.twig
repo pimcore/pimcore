@@ -1,0 +1,30 @@
+{# TODO headmeta #}
+{# TODO glossary #}
+
+{% set content = pimcore_wysiwyg('content') %}
+{% set imageBlock = pimcore_block('images') %}
+
+<section class="area-wysiwyg">
+    <div class="row">
+        <div class="col-sm-8">
+            {{ content|raw }}
+        </div>
+        <div class="col-sm-4">
+            {% for i in (0..(imageBlock.count-1)) %}
+                {% do imageBlock.loop() %}
+
+                {% if not editmode %}
+                    <a href="{{ pimcore_image('image').getThumbnail('galleryLightbox') }}" class="thumbnail">
+                {% endif %}
+
+                {{ pimcore_image('image', {
+                thumbnail: 'galleryThumbnail'
+                }) }}
+
+                {% if not editmode %}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
