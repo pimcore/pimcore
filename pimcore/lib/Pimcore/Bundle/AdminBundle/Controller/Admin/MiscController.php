@@ -201,8 +201,13 @@ class MiscController extends AdminController
      */
     protected function getControllers($bundle)
     {
-        $reflector = $this->getBundleReflector($bundle);
         $controllers = [];
+
+        try {
+            $reflector = $this->getBundleReflector($bundle);
+        } catch (\Exception $e) {
+            return $controllers;
+        }
 
         $controllerDirectory = dirname($reflector->getFileName()) . '/Controller';
         if (file_exists($controllerDirectory)) {
