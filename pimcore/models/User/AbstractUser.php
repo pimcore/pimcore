@@ -20,6 +20,7 @@ namespace Pimcore\Model\User;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
+use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
@@ -187,6 +188,10 @@ class AbstractUser extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_UPDATE, new UserRoleEvent($this));
         } else {
             \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_ADD, new UserRoleEvent($this));
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9\-\.~_@]+$/', $this->getName())) {
+            throw new \Exception('Invalid name for user/role `' . $this->getName() . '` (allowed characters: a-z A-Z 0-9 -.~_@)');
         }
 
         $this->beginTransaction();
