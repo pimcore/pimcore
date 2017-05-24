@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Site;
+use Pimcore\Model\Staticroute;
 use Pimcore\Service\Request\DocumentResolver;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool\Frontend;
@@ -71,7 +72,7 @@ class HardlinkCanonicalListener extends AbstractFrontendListener implements Even
             return;
         }
 
-        if ($document instanceof WrapperInterface) {
+        if ($document instanceof WrapperInterface && !Staticroute::getCurrentRoute()) {
             $this->handleHardlink($request, $event->getResponse(), $document);
         }
     }
