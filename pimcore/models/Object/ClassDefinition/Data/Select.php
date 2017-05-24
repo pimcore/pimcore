@@ -46,6 +46,16 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public $defaultValue;
 
+    /** Options provider class
+     * @var string
+     */
+    public $optionsProviderClass;
+
+    /** Options provider data
+     * @var string
+     */
+    public $optionsProviderData;
+
     /**
      * Type for the column to query
      *
@@ -283,5 +293,76 @@ class Select extends Model\Object\ClassDefinition\Data
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = $defaultValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOptionsProviderClass()
+    {
+        return $this->optionsProviderClass;
+    }
+
+    /**
+     * @param string $optionsProviderClass
+     */
+    public function setOptionsProviderClass($optionsProviderClass)
+    {
+        $this->optionsProviderClass = $optionsProviderClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOptionsProviderData()
+    {
+        return $this->optionsProviderData;
+    }
+
+    /**
+     * @param string $optionsProviderData
+     */
+    public function setOptionsProviderData($optionsProviderData)
+    {
+        $this->optionsProviderData = $optionsProviderData;
+    }
+
+    public function enrichFieldDefinition($context = array())
+    {
+        if ($this->getOptionsProviderClass()) {
+            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
+                $context["fieldname"] = $this->getName();
+                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
+                $this->setOptions($options);
+            }
+
+        }
+        return $this;
+    }
+
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Object\Concrete
+     * @param array $context additional contextual data
+     */
+    public function enrichLayoutDefinition($object, $context = [])
+    {
+        if ($this->getOptionsProviderClass()) {
+            $context["object"] = $object;
+            $context["class"] = $object->getClass();
+            $context["fieldname"] = $this->getName();
+            $context["purpose"] = "layout";
+
+            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
+                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
+                $this->setOptions($options);
+            }
+
+            if (method_exists($this->getOptionsProviderClass(), 'getDefaultValue')) {
+                $defaultValue = call_user_func($this->getOptionsProviderClass().'::getDefaultValue', $context, $this);
+                $this->setDefaultValue($defaultValue);
+            }
+
+            return $this;
+        }
     }
 }

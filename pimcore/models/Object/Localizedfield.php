@@ -349,7 +349,7 @@ class Localizedfield extends Model\AbstractModel
             }
 
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition('localizedfields');
-            $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name);
+            $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name, array("object" => $this->getObject()));
         }
 
         if (method_exists($fieldDefinition, 'preSetData')) {

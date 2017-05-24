@@ -372,7 +372,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($data as $row) {
-            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions() as $key => $fd) {
+            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(array("object" => $object)) as $key => $fd) {
                 if ($fd) {
                     if (method_exists($fd, 'load')) {
                         // datafield has it's own loader

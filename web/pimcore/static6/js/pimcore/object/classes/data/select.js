@@ -229,6 +229,20 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 name: "defaultValue",
                 value: this.datax.defaultValue
             },
+            {
+                xtype: "textfield",
+                fieldLabel: t("options_provider_class"),
+                width: 600,
+                name: "optionsProviderClass",
+                value: this.datax.optionsProviderClass
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("options_provider_data"),
+                width: 600,
+                value: this.datax.optionsProviderData,
+                name: "optionsProviderData"
+            },
             this.valueGrid
         ]);
 
@@ -260,7 +274,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             Ext.apply(this.datax,
                 {
                     options: source.datax.options,
-                    width: source.datax.width
+                    width: source.datax.width,
+                    optionsProviderClass: source.datax.optionsProviderClass,
+                    optionsProviderData: source.datax.optionsProviderData
                 });
         }
     },

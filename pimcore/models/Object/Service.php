@@ -1334,8 +1334,17 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
+        if ($layout instanceof  Model\Object\ClassDefinition\Data\Localizedfields) {
+            if ($context['containerType'] == 'fieldcollection') {
+                $context['subContainerType'] = 'localizedfield';
+            } else {
+                $context["ownerType"] = "localizedfield";
+            }
+            $context["ownerName"]= "localizedfields";
+        }
+
         if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);

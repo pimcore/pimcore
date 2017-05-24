@@ -107,11 +107,20 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @param array $context additional contextual data
      * @return array
      */
-    public function getFieldDefinitions()
+    public function getFieldDefinitions($context = array())
     {
-        return $this->fieldDefinitions;
+        $enrichedFieldDefinitions = array();
+        if (is_array($this->fieldDefinitions)) {
+            foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
+                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+                $enrichedFieldDefinitions[$key] = $fieldDefinition;
+            }
+        }
+
+        return $enrichedFieldDefinitions;
     }
 
     /**
@@ -141,16 +150,26 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param $key
-     *
+     * @param array $context additional contextual data
      * @return Object\ClassDefinition\Data|bool
      */
-    public function getFieldDefinition($key)
+    public function getFieldDefinition($key, $context = array())
     {
         if (array_key_exists($key, $this->fieldDefinitions)) {
-            return $this->fieldDefinitions[$key];
+            $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
+            return $fieldDefinition;
         }
 
         return false;
+    }
+
+    public function doEnrichFieldDefinition($fieldDefinition, $context = array()) {
+        if (method_exists($fieldDefinition, "enrichFieldDefinition")) {
+            $context["containerType"] = "fieldcollection";
+            $context["containerKey"] = $this->getKey();
+            $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
+        }
+        return $fieldDefinition;
     }
 
     /**
@@ -178,6 +197,7 @@ class Definition extends Model\AbstractModel
      */
     public static function getByKey($key)
     {
+        /** @var $fc Definition */
         $fc = null;
         $cacheKey = 'fieldcollection_' . $key;
 

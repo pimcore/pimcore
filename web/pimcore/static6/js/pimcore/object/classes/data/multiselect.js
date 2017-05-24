@@ -225,6 +225,20 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 value: this.datax.maxItems,
                 minValue: 0
             },
+            {
+                xtype: "textfield",
+                fieldLabel: t("options_provider_class"),
+                width: 600,
+                name: "optionsProviderClass",
+                value: this.datax.optionsProviderClass
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("options_provider_data"),
+                width: 600,
+                value: this.datax.optionsProviderData,
+                name: "optionsProviderData"
+            },
             this.valueGrid
         ]);
 

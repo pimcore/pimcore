@@ -1509,5 +1509,7 @@
     "classificationstore_tag_col_keyDesc": "Key Description",
     "classificationstore_tag_col_value": "Value",
     "classificationstore_tag_col_group": "Group",
-    "classificationstore_col_groupdescription": "Group"
+    "classificationstore_col_groupdescription": "Group",
+    "options_provider_class": "Options Provider Class",
+    "options_provider_data": "Options Provider Data"
 }
