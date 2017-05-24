@@ -152,6 +152,11 @@ class MvcConfigNormalizer
             return $template;
         }
 
+        if(strpos($template, ":") !== false) {
+            // already normalized
+            return $template;
+        }
+
         // if we find Bundle in the template name we assume it's properly formatted
         if (false !== strpos($template, 'Bundle')) {
             return $template;
@@ -183,7 +188,7 @@ class MvcConfigNormalizer
         if ($bundle) {
             return sprintf('%s:%s:%s', $bundle, $path, $template);
         } else {
-            return sprintf('%s:%s', $path, $template);
+            return sprintf(':%s:%s', $path, $template);
         }
     }
 }
