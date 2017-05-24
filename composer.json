@@ -79,6 +79,7 @@
     "symfony/swiftmailer-bundle": "^2.3.10",
     "symfony/symfony": "3.3.*",
     "tijsverkoyen/css-to-inline-styles": "~1.5",
+    "twig/twig": "^2.0",
     "vrana/adminer": "~4.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2"
