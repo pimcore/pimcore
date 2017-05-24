@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Category;
 
-use Pimcore\Controller\FrontendController;
+use AppBundle\Controller\FrontendController;
 
 class ExampleController extends FrontendController
 {

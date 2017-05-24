@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use Pimcore\Controller\Configuration\ResponseHeader;
-use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;

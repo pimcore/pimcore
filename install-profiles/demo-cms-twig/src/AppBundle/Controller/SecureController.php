@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Model\Object\User;
 use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Controller\FrontendController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

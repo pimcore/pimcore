@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\ContactFormType;
 use AppBundle\Form\PersonInquiryType;
-use Pimcore\Controller\FrontendController;
 use Pimcore\File;
 use Pimcore\Mail;
 use Pimcore\Model\Asset;
