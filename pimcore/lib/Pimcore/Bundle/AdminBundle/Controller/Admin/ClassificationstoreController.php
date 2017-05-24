@@ -921,6 +921,9 @@ class ClassificationstoreController extends AdminController
     public function addCollectionsAction(Request $request)
     {
         $ids = $this->decodeJson($request->get('collectionIds'));
+        $oid = $request->get("oid");
+        $object = Object\AbstractObject::getById($oid);
+        $fieldname = $request->get("fieldname");
 
         if ($ids) {
             $db = \Pimcore\Db::get();
@@ -981,12 +984,29 @@ class ClassificationstoreController extends AdminController
                     $groupId = $keyData->getGroupId();
 
                     $keyList = $data[$groupId]['keys'];
-                    $definition = $keyData->getDefinition();
+                    $type = $keyData->getType();
+                    $definition = json_decode($keyData->getDefinition());
+                    $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                    if (method_exists($definition, '__wakeup')) {
+                        $definition->__wakeup();
+                    }
+
+                    $context["object"] = $object;
+                    $context["class"] = $object ? $object->getClass() : null;
+                    $context["ownerType"] = "classificationstore";
+                    $context["ownerName"] = $fieldname;
+                    $context["keyId"] =  $keyData->getKeyId();
+                    $context["groupId"] = $groupId;
+                    $context["keyDefinition"] = $definition;
+                    $definition = $definition->enrichLayoutDefinition($object, $context);
+
+
                     $keyList[] = [
                         'name' => $keyData->getName(),
                         'id' => $keyData->getKeyId(),
                         'description' => $keyData->getDescription(),
-                        'definition' => json_decode($definition)
+                        'definition' => $definition
                     ];
                     $data[$groupId]['keys'] = $keyList;
                 }
@@ -1006,6 +1026,9 @@ class ClassificationstoreController extends AdminController
     public function addGroupsAction(Request $request)
     {
         $ids = $this->decodeJson($request->get('groupIds'));
+        $oid = $request->get("oid");
+        $object = Object\AbstractObject::getById($oid);
+        $fieldname = $request->get("fieldname");
 
         $keyCondition = 'groupId in (' . implode(',', $ids) . ')';
 
@@ -1045,6 +1068,15 @@ class ClassificationstoreController extends AdminController
             if (method_exists($definition, '__wakeup')) {
                 $definition->__wakeup();
             }
+
+            $context["object"] = $object;
+            $context["class"] = $object ? $object->getClass() : null;
+            $context["ownerType"] = "classificationstore";
+            $context["ownerName"] = $fieldname;
+            $context["keyId"] =  $keyData->getKeyId();
+            $context["groupId"] = $groupId;
+            $context["keyDefinition"] = $definition;
+            $definition = $definition->enrichLayoutDefinition($object, $context);
 
             $keyList[] = [
                 'name' => $keyData->getName(),

@@ -348,9 +348,14 @@ class Select extends Model\Object\ClassDefinition\Data
     {
         if ($this->getOptionsProviderClass()) {
             $context["object"] = $object;
-            $context["class"] = $object->getClass();
+            if ($object) {
+                $context["class"] = $object->getClass();
+            }
+
             $context["fieldname"] = $this->getName();
-            $context["purpose"] = "layout";
+            if (!isset($context["purpose"])) {
+                $context["purpose"] = "layout";
+            };
 
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
                 $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);

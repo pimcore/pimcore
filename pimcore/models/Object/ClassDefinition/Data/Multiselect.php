@@ -472,7 +472,9 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     {
         if ($this->getOptionsProviderClass()) {
             $context["object"] = $object;
-            $context["class"] = $object->getClass();
+            if ($object) {
+                $context["class"] = $object->getClass();
+            }
             $context["fieldname"] = $this->getName();
 
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {

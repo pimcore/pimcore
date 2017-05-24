@@ -63,6 +63,14 @@ Note that depending the use case not all of the infos will be available.
 Especially the existence of the object paramater cannot be guaranteed because the provider class will also be called when a class is saved or if you programmatically call $class->getFieldDefinitions().
 Layout definition calls can be distinguished from other ones by checking if the `purpose` parameter is set to `layout`
 
+The `purpose` parameter can take the following values:
+
+| Value | Description |
+| --- | ---- |
+| null | unknown |
+| layout | edit mode layout |
+| grid | grid view |
+
 #### Object (top-level)
 
 | Name | Description |
