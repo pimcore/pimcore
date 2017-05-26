@@ -1,0 +1,33 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    {{ include(':Includes:content-default.html.twig') }}
+
+    {% for newsArticle in news %}
+
+        <div class="media">
+            {% set detailLink = path('news', {
+                id: newsArticle.id,
+                text: newsArticle.title,
+                prefix: document.fullPath
+            }) %}
+
+            {% if newsArticle.getImage_1() is not empty %}
+                <a href="{{ detailLink }}" class="pull-left">
+                    {{ newsArticle.getImage_1().getThumbnail('newsList').getHTML({ class: 'media-object' })|raw }}
+                </a>
+            {% endif %}
+
+            <div class="media-body">
+                <div class="media-heading">
+                    <a href="{{ detailLink }}">{{ newsArticle.title }}</a>
+                    <br>
+                    <small><i class="glyphicon glyphicon-calendar"></i> {{ newsArticle.date|date('d/m/Y') }}</small>
+                </div>
+            </div>
+
+            {{ newsArticle.shortText }}
+        </div>
+
+    {% endfor %}
+{% endblock %}
