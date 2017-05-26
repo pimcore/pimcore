@@ -50,7 +50,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="">
+                    <a class="navbar-brand" href="{{ mainNavStartNode }}">
                         <img src="{{ asset('static/img/logo-white.svg') }}" alt="pimcore Demo">
                     </a>
                 </div>
@@ -121,8 +121,8 @@
 {{ pimcore_inc('/' ~ app.request.locale ~ '/shared/includes/footer') }}
 
 {% block scripts %}
-    <script type="text/javascript" src="{{ asset('static/bootstrap/js/bootstrap.js') }}"></script>
     <script type="text/javascript" src="{{ asset('static/js/jquery-1.11.0.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('static/bootstrap/js/bootstrap.js') }}"></script>
     <script type="text/javascript" src="{{ asset('static/lib/magnific/magnific.js') }}"></script>
     <script type="text/javascript" src="{{ asset('static/lib/video-js/video.js') }}"></script>
     <script type="text/javascript" src="{{ asset('static/js/srcset-polyfill.min.js') }}"></script>

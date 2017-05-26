@@ -1,0 +1,77 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div id="portalHeader" class="carousel header slide" data-ride="carousel" {{ editmode ? 'data-interval="false"' }}>
+
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#portalHeader" data-slide-to="0" class="active"></li>
+            <li data-target="#portalHeader" data-slide-to="1"></li>
+            <li data-target="#portalHeader" data-slide-to="2"></li>
+        </ol>
+
+        {% set carouselSlides = pimcore_select('carouselSlides', {
+            width: 70,
+            reload: true,
+            store: [[1, 1], [2, 2], [3, 3], [4, 4]]
+        }) %}
+
+        <div class="carousel-inner">
+            {% set count = carouselSlides.getData() %}
+
+            {% if count is empty or count == 0 %}
+                {% set count = 1 %}
+            {% endif %}
+
+            {% for i in 0..(count - 1) %}
+
+                <div class="item {{ 'portal-slide-' ~ (i + 1) }} {{ loop.first ? 'active' }}">
+                    {% set cImage = pimcore_image('cImage_' ~ i, {
+                        thumbnail: 'portalCarousel',
+                        reload: true,
+                        hidetext: true,
+                        title: 'Drag Image Here',
+                        width: 150,
+                        height: 70,
+                        dropClass: 'portal-slide-' ~ (i + 1)
+                    }) %}
+
+                    {{ cImage.frontend|raw }}
+
+                    <div class="container">
+                        <div class="carousel-caption">
+                            {% if editmode %}
+                                {{ cImage|raw }}
+                                <br><br>
+                            {% endif %}
+
+                            <h1>{{ pimcore_input('cHeadline_' ~ i) }}</h1>
+                            <div class="caption">{{ pimcore_textarea('cText_' ~ i) }}</div>
+                            <div class="margin-bottom-10">
+                                {{ pimcore_link('cLink_' ~ i, {
+                                    class: 'btn btn-large btn-default'
+                                }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
+        <a class="left carousel-control" href="#portalHeader" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+        <a class="right carousel-control" href="#portalHeader" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div>
+
+    {% if editmode %}
+
+        <div class="container" style="padding-bottom: 40px">
+            Number of Slides: {{ carouselSlides|raw }}
+        </div>
+
+    {% endif %}
+
+    <div class="container">
+        {{ pimcore_areablock('content') }}
+    </div>
+{% endblock %}
