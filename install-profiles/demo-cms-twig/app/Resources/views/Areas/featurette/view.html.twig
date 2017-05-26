@@ -1,9 +1,7 @@
 {% set featuretteBlock = pimcore_block('block') %}
 
 <section class="area-featurette">
-    {% for i in (0..(featuretteBlock.count-1)) %}
-        {% do featuretteBlock.loop() %}
-
+    {% for i in pimcore_iterate_block(featuretteBlock) %}
         {% set positionSelect = pimcore_select('position', {
             store: [["left","left"],["right","right"]]
         }) %}
@@ -68,7 +66,7 @@
             </div>
         </div>
 
-        {% if featuretteBlock.getCurrent() < (featuretteBlock.getCount - 1) %}
+        {% if featuretteBlock.getCurrent() < (featuretteBlock.getCount() - 1) %}
             <hr class="featurette-divider">
         {% endif %}
 

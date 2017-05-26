@@ -11,9 +11,7 @@
 
     <p class="links">
         &copy; {{ "now"|date('Y') }} pimcore GmbH &middot;
-        {% set linksBlock = pimcore_block('links') %}
-        {% for i in (0..(linksBlock.count-1)) %}
-            {% do linksBlock.loop() %}
+        {% for i in pimcore_iterate_block(pimcore_block('links')) %}
             {{ pimcore_link('link') }}
         {% endfor %}
     </p>

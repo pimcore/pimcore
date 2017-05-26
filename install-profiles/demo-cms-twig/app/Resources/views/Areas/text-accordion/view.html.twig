@@ -4,9 +4,7 @@
 <section class="area-text-accordion">
     <div class="panel-group" id="{{ id }}">
 
-        {% for i in (0..(accordionBlock.count-1)) %}
-            {% do accordionBlock.loop() %}
-
+        {% for i in pimcore_iterate_block(accordionBlock) %}
             {% set entryId = id ~ '-' ~ accordionBlock.getCurrent() %}
             {% set stateClass = (editmode or (accordionBlock.getCurrent() == 0)) ? 'in' %}
 

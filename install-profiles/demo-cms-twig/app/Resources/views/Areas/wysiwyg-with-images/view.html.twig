@@ -2,7 +2,6 @@
 {# TODO glossary #}
 
 {% set content = pimcore_wysiwyg('content') %}
-{% set imageBlock = pimcore_block('images') %}
 
 <section class="area-wysiwyg">
     <div class="row">
@@ -10,15 +9,13 @@
             {{ content|raw }}
         </div>
         <div class="col-sm-4">
-            {% for i in (0..(imageBlock.count-1)) %}
-                {% do imageBlock.loop() %}
-
+            {% for i in pimcore_iterate_block(pimcore_block('images')) %}
                 {% if not editmode %}
                     <a href="{{ pimcore_image('image').getThumbnail('galleryLightbox') }}" class="thumbnail">
                 {% endif %}
 
                 {{ pimcore_image('image', {
-                thumbnail: 'galleryThumbnail'
+                    thumbnail: 'galleryThumbnail'
                 }) }}
 
                 {% if not editmode %}
