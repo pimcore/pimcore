@@ -18,3 +18,10 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    pimcore.twig.extension.navigation:
+        class: Pimcore\Twig\NavigationExtension
+        arguments: ['@pimcore.templating.view_helper.navigation']
+        public: false
+        tags:
+            - { name: twig.extension }

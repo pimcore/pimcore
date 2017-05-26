@@ -33,6 +33,14 @@
 <body{% if isPortal %} class="portal-page"{% endif %}>
 
 <div class="navbar-wrapper">
+
+    {% set mainNavStartNode = document.getProperty('mainNavStartNode') %}
+    {% if mainNavStartNode is empty %}
+        {% set mainNavStartNode = pimcore_document(1) %}
+    {% endif %}
+
+    {% set mainNav = pimcore_build_nav(document, mainNavStartNode) %}
+
     <div class="container">
         <div class="navbar navbar-inverse navbar-static-top">
             <div class="container">
@@ -47,6 +55,11 @@
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
+                    {{ pimcore_render_nav(mainNav, 'menu', 'renderMenu', {
+                        maxDepth: 1,
+                        ulClass: 'nav navbar-nav'
+                    }) }}
+
                     <ul class="nav navbar-nav navbar-right">
                         {{ include(':Includes:login.html.twig') }}
                         {{ include(':Includes:language.html.twig') }}
@@ -71,9 +84,11 @@
             {{ block('content') }}
 
             {% if showBreadcrumbs %}
+                {% do pimcore_nav_renderer('breadcrumbs').setMinDepth(null) %}
+
                 <div>
                     <a href="/">{{ "Home"|trans }}</a> &gt;
-                    TODO BREADCRUMBS
+                    {{ pimcore_render_nav(mainNav, 'breadcrumbs') }}
                 </div>
             {% endif %}
         </div>
@@ -81,7 +96,19 @@
         {% if not hideLeftNav %}
             <div class="col-md-3 col-md-pull-9 sidebar">
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
-                    <h3>TODO LEFTNAV</h3>
+                    {% set leftStartNode = document.getProperty('leftNavStartNode') %}
+                    {% if leftStartNode is empty %}
+                        {% set leftStartNode = mainNavStartNode %}
+                    {% endif %}
+
+                    {% set leftNav = pimcore_build_nav(document, leftStartNode) %}
+
+                    <h3>{{ leftStartNode.getProperty('navigation_name') }}</h3>
+
+                    {{ pimcore_render_nav(leftNav, 'menu', 'renderMenu', {
+                        ulClass: 'nav bs-sidenav',
+                        expandSiblingNodesOfActiveBranch: true
+                    }) }}
                 </div>
 
                 {{ pimcore_inc(document.getProperty('sidebar')) }}
