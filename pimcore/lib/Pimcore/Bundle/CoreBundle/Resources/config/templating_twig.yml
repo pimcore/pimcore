@@ -1,4 +1,10 @@
 services:
+    pimcore.twig.extension.helpers:
+        class: Pimcore\Twig\HelpersExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+
     pimcore.twig.extension.document_tag:
         class: Pimcore\Twig\DocumentTagExtension
         arguments: ['@pimcore.templating.tag_renderer']
