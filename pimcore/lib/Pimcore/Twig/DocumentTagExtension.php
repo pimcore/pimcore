@@ -15,6 +15,7 @@
 namespace Pimcore\Twig;
 
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Document\Tag\BlockInterface;
 use Pimcore\Templating\Renderer\TagRenderer;
 
 class DocumentTagExtension extends \Twig_Extension
@@ -41,7 +42,8 @@ class DocumentTagExtension extends \Twig_Extension
             new \Twig_SimpleFunction('pimcore_*', [$this, 'renderTag'], [
                 'needs_context' => true,
                 'is_safe'       => ['html'],
-            ])
+            ]),
+            new \Twig_SimpleFunction('pimcore_iterate_block', [$this, 'getBlockIterator'])
         ];
     }
 
@@ -63,5 +65,19 @@ class DocumentTagExtension extends \Twig_Extension
         }
 
         return $this->tagRenderer->render($document, $name, $inputName, $options);
+    }
+
+    /**
+     * Returns an iterator which can be used instead of while($block->loop())
+     *
+     * @param BlockInterface $block
+     *
+     * @return \Generator|int[]
+     */
+    public function getBlockIterator(BlockInterface $block): \Generator
+    {
+        while ($block->loop()) {
+            yield $block->getCurrentIndex();
+        }
     }
 }
