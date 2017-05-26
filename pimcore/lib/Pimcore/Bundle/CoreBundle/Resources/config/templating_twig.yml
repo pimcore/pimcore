@@ -1,14 +1,20 @@
 services:
-    pimcore.twig.document_tag_extension:
+    pimcore.twig.extension.document_tag:
         class: Pimcore\Twig\DocumentTagExtension
         arguments: ['@pimcore.templating.tag_renderer']
         public: false
         tags:
             - { name: twig.extension }
 
-    pimcore.twig.subrequest_extension:
+    pimcore.twig.extension.subrequest:
         class: Pimcore\Twig\SubrequestExtension
         arguments: ['@pimcore.templating.view_helper.inc', '@pimcore.templating.view_helper.action']
+        public: false
+        tags:
+            - { name: twig.extension }
+
+    pimcore.twig.extension.pimcore_object:
+        class: Pimcore\Twig\PimcoreObjectExtension
         public: false
         tags:
             - { name: twig.extension }
