@@ -11,15 +11,16 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#<?= $id ?>" href="# {{ entryId }}">
+                        <a data-toggle="collapse" data-parent="#{{ id }}" href="#{{ entryId }}">
                             {{ pimcore_input('headline') }}
                         </a>
                     </h4>
                 </div>
 
                 <div id="{{ editmode ? '' : entryId }}" class="panel-collapse collapse {{ stateClass }}">
-                <div class="panel-body">
-                    {{ pimcore_wysiwyg('text') }}
+                    <div class="panel-body">
+                        {{ pimcore_wysiwyg('text') }}
+                    </div>
                 </div>
             </div>
 
