@@ -1,0 +1,28 @@
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="help-block">
+            {%- for error in errors -%}
+                <li>{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block form_row -%}
+    <div class="form-group{{ not form.vars.valid ? ' has-error' }}">
+        {{- form_label(form, null, {
+            label_attr: {
+                class: 'col-lg-2 control-label'
+            }
+        }) -}}
+
+        <div class="col-lg-10">
+            {{- form_widget(form, {
+                attr: {
+                    class: 'form-control'
+                }
+            }) -}}
+            {{- form_errors(form) -}}
+        </div>
+    </div>
+{%- endblock form_row -%}
