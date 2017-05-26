@@ -89,7 +89,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method HeadTitle headTitle($title = null, $setType = null)
  * @method string inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
  * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
- * @method Navigation navigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
+ * @method Navigation navigation()
  * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
  * @method string translate($key, $parameters = [], $domain = null, $locale = null)
  *

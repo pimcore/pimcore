@@ -15,22 +15,40 @@
 namespace Pimcore\Navigation;
 
 use Pimcore\Cache as CacheManager;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Navigation\Page\Document as DocumentUrl;
-use Symfony\Component\HttpFoundation\Request;
+use Pimcore\Navigation\Page\Document as DocumentPage;
 
 class Builder
 {
     /**
-     * @var string
+     * @var RequestHelper
      */
-    protected $_htmlMenuIdPrefix;
+    private $requestHelper;
 
     /**
      * @var string
      */
-    protected $_pageClass = '\\Pimcore\\Navigation\\Page\\Document';
+    protected $htmlMenuIdPrefix;
+
+    /**
+     * @var string
+     */
+    protected $pageClass = DocumentPage::class;
+
+    /**
+     * @param RequestHelper $requestHelper
+     * @param string|null $pageClass
+     */
+    public function __construct(RequestHelper $requestHelper, string $pageClass = null)
+    {
+        $this->requestHelper = $requestHelper;
+
+        if (null !== $pageClass) {
+            $this->pageClass = $pageClass;
+        }
+    }
 
     /**
      * @param Document $activeDocument
@@ -46,7 +64,8 @@ class Builder
     public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
     {
         $cacheEnabled = (bool) $cache;
-        $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
+
+        $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
 
         if (!$navigationRootDocument) {
             $navigationRootDocument = Document::getById(1);
@@ -86,8 +105,7 @@ class Builder
         }
 
         // set active path
-        $requestStack = \Pimcore::getKernel()->getContainer()->get('request_stack');
-        $request = $requestStack->getMasterRequest();
+        $request = $this->requestHelper->getMasterRequest();
 
         // try to find a page matching exactly the request uri
         $activePages = $navigation->findAllBy('uri', $request->getRequestUri());
@@ -111,7 +129,7 @@ class Builder
         // pages have priority, if we don't find any active page, we use all we found
         $tmpPages = [];
         foreach ($activePages as $page) {
-            if ($page instanceof DocumentUrl && $page->getDocumentType() != 'link') {
+            if ($page instanceof DocumentPage && $page->getDocumentType() != 'link') {
                 $tmpPages[] = $page;
             }
         }
@@ -128,6 +146,7 @@ class Builder
             // we don't have an active document, so we try to build the trail on our own
             $allPages = $navigation->findAllBy('uri', '/.*/', true);
 
+            /** @var Page|Page\Document $page */
             foreach ($allPages as $page) {
                 $activeTrail = false;
 
@@ -135,7 +154,7 @@ class Builder
                     $activeTrail = true;
                 }
 
-                if ($page instanceof DocumentUrl) {
+                if ($page instanceof DocumentPage) {
                     if ($page->getDocumentType() == 'link') {
                         if ($page->getUri() && strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0) {
                             $activeTrail = true;
@@ -154,10 +173,10 @@ class Builder
     }
 
     /**
-     * @param \Pimcore\Navigation\Page\Uri $page
+     * @param Page $page
      * @param bool $isActive
      */
-    protected function addActiveCssClasses($page, $isActive = false)
+    protected function addActiveCssClasses(Page $page, $isActive = false)
     {
         $page->setActive(true);
 
@@ -165,7 +184,7 @@ class Builder
         $isRoot = false;
         $classes = '';
 
-        if ($parent instanceof \Pimcore\Navigation\Page\Document) {
+        if ($parent instanceof DocumentPage) {
             $this->addActiveCssClasses($parent);
         } else {
             $isRoot = true;
@@ -189,9 +208,9 @@ class Builder
      *
      * @return $this
      */
-    public function setPageClass($pageClass)
+    public function setPageClass(string $pageClass)
     {
-        $this->_pageClass = $pageClass;
+        $this->pageClass = $pageClass;
 
         return $this;
     }
@@ -203,7 +222,7 @@ class Builder
      */
     public function getPageClass()
     {
-        return $this->_pageClass;
+        return $this->pageClass;
     }
 
     /**
@@ -211,9 +230,9 @@ class Builder
      *
      * @return Document[]
      */
-    protected function getChilds($parentDocument)
+    protected function getChilds(Document $parentDocument)
     {
-        return $parentDocument->getChilds();
+        return $parentDocument->getChildren();
     }
 
     /**
@@ -225,57 +244,60 @@ class Builder
      */
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null)
     {
-        $pages = [];
-
+        $pages  = [];
         $childs = $this->getChilds($parentDocument);
-        if (is_array($childs)) {
-            foreach ($childs as $child) {
-                $classes = '';
 
-                if ($child instanceof Document\Hardlink) {
-                    $child = Document\Hardlink\Service::wrap($child);
+        if (!is_array($childs)) {
+            return $pages;
+        }
+
+        foreach ($childs as $child) {
+            $classes = '';
+
+            if ($child instanceof Document\Hardlink) {
+                $child = Document\Hardlink\Service::wrap($child);
+            }
+
+            if (($child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty('navigation_name')) {
+                $path = $child->getFullPath();
+                if ($child instanceof Document\Link) {
+                    $path = $child->getHref();
                 }
 
-                if (($child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty('navigation_name')) {
-                    $path = $child->getFullPath();
-                    if ($child instanceof Document\Link) {
-                        $path = $child->getHref();
-                    }
+                /** @var DocumentPage $page */
+                $page = new $this->pageClass();
+                $page->setUri($path . $child->getProperty('navigation_parameters') . $child->getProperty('navigation_anchor'));
+                $page->setLabel($child->getProperty('navigation_name'));
+                $page->setActive(false);
+                $page->setId($this->htmlMenuIdPrefix . $child->getId());
+                $page->setClass($child->getProperty('navigation_class'));
+                $page->setTarget($child->getProperty('navigation_target'));
+                $page->setTitle($child->getProperty('navigation_title'));
+                $page->setAccesskey($child->getProperty('navigation_accesskey'));
+                $page->setTabindex($child->getProperty('navigation_tabindex'));
+                $page->setRelation($child->getProperty('navigation_relation'));
+                $page->setDocument($child);
 
-                    $page = new $this->_pageClass();
-                    $page->setUri($path . $child->getProperty('navigation_parameters') . $child->getProperty('navigation_anchor'));
-                    $page->setLabel($child->getProperty('navigation_name'));
-                    $page->setActive(false);
-                    $page->setId($this->_htmlMenuIdPrefix . $child->getId());
-                    $page->setClass($child->getProperty('navigation_class'));
-                    $page->setTarget($child->getProperty('navigation_target'));
-                    $page->setTitle($child->getProperty('navigation_title'));
-                    $page->setAccesskey($child->getProperty('navigation_accesskey'));
-                    $page->setTabindex($child->getProperty('navigation_tabindex'));
-                    $page->setRelation($child->getProperty('navigation_relation'));
-                    $page->setDocument($child);
-
-                    if ($child->getProperty('navigation_exclude') || !$child->getPublished()) {
-                        $page->setVisible(false);
-                    }
-
-                    if ($isRoot) {
-                        $classes .= ' main';
-                    }
-
-                    $page->setClass($page->getClass() . $classes);
-
-                    if ($child->hasChildren()) {
-                        $childPages = $this->buildNextLevel($child, false, $pageCallback);
-                        $page->setPages($childPages);
-                    }
-
-                    if ($pageCallback instanceof \Closure) {
-                        $pageCallback($page, $child);
-                    }
-
-                    $pages[] = $page;
+                if ($child->getProperty('navigation_exclude') || !$child->getPublished()) {
+                    $page->setVisible(false);
                 }
+
+                if ($isRoot) {
+                    $classes .= ' main';
+                }
+
+                $page->setClass($page->getClass() . $classes);
+
+                if ($child->hasChildren()) {
+                    $childPages = $this->buildNextLevel($child, false, $pageCallback);
+                    $page->setPages($childPages);
+                }
+
+                if ($pageCallback instanceof \Closure) {
+                    $pageCallback($page, $child);
+                }
+
+                $pages[] = $page;
             }
         }
 

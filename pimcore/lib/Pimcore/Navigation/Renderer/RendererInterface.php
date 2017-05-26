@@ -35,17 +35,12 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-namespace Pimcore\Templating\Helper\Navigation\Renderer;
+namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
 
-interface HelperInterface
+interface RendererInterface
 {
-    /**
-     * @return mixed
-     */
-    public function getContainer();
-
     /**
      * @return bool
      */
@@ -54,26 +49,16 @@ interface HelperInterface
     /**
      * @param  bool
      *
-     * @return AbstractHelper
+     * @return AbstractRenderer
      */
-    public function setRenderInvisible($renderInvisible = true);
+    public function setRenderInvisible(bool $renderInvisible = true);
 
     /**
-     * @return bool
-     */
-    public function hasContainer();
-
-    /**
-     * @return string
-     */
-    public function __toString();
-
-    /**
-     * @param  Container $container
+     * @param Container $container
      *
      * @return string
      *
      * @throws \Exception
      */
-    public function render(Container $container = null);
+    public function render(Container $container);
 }

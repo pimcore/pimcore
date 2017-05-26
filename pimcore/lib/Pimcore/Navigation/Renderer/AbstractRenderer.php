@@ -35,18 +35,18 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-namespace Pimcore\Templating\Helper\Navigation\Renderer;
+namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
-use Pimcore\Templating\Helper\Navigation;
+use Symfony\Component\Templating\EngineInterface;
 
-abstract class AbstractHelper implements HelperInterface
+abstract class AbstractRenderer implements RendererInterface
 {
     /**
-     * @var Navigation
+     * @var EngineInterface
      */
-    protected $helper = null;
+    protected $templatingEngine;
 
     /**
      * The minimum depth a page must have to be included when rendering
@@ -90,37 +90,15 @@ abstract class AbstractHelper implements HelperInterface
      */
     protected $_renderInvisible = false;
 
+    /**
+     * @param EngineInterface $templatingEngine
+     */
+    public function __construct(EngineInterface $templatingEngine)
+    {
+        $this->templatingEngine = $templatingEngine;
+    }
+
     // Accessors:
-
-    /**
-     * @return Container  navigation container
-     */
-    public function getContainer()
-    {
-        $container = $this->getHelper()->getContainer();
-
-        if (null === $container) {
-            $container = new Container();
-        }
-
-        return $container;
-    }
-
-    /**
-     * @return Navigation
-     */
-    public function getHelper()
-    {
-        return $this->helper;
-    }
-
-    /**
-     * @param Navigation $helper
-     */
-    public function setHelper($helper)
-    {
-        $this->helper = $helper;
-    }
 
     /**
      * Sets the minimum depth a page must have to be included when rendering
@@ -258,50 +236,11 @@ abstract class AbstractHelper implements HelperInterface
      *
      * @return $this
      */
-    public function setRenderInvisible($renderInvisible = true)
+    public function setRenderInvisible(bool $renderInvisible = true)
     {
         $this->_renderInvisible = (bool) $renderInvisible;
 
         return $this;
-    }
-
-    // Magic overloads:
-
-    /**
-     * Magic overload: Proxy calls to the navigation container
-     *
-     * @param  string $method             method name in container
-     * @param  array  $arguments          [optional] arguments to pass
-     *
-     * @return mixed                      returns what the container returns
-     *
-     * @throws \Exception  if method does not exist in container
-     */
-    public function __call($method, array $arguments = [])
-    {
-        return call_user_func_array(
-                [$this->getContainer(), $method],
-                $arguments);
-    }
-
-    /**
-     * Magic overload: Proxy to {@link render()}.
-     *
-     * This method will trigger an E_USER_ERROR if rendering the helper causes
-     * an exception to be thrown.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        try {
-            return $this->render();
-        } catch (\Exception $e) {
-            $msg = get_class($e) . ': ' . $e->getMessage();
-            trigger_error($msg, E_USER_ERROR);
-
-            return '';
-        }
     }
 
     // Public methods:
@@ -361,14 +300,6 @@ abstract class AbstractHelper implements HelperInterface
         } else {
             return [];
         }
-    }
-
-    /**
-     * @return bool  whether the helper has a container or not
-     */
-    public function hasContainer()
-    {
-        return null !== $this->_container;
     }
 
     /**
@@ -533,13 +464,5 @@ abstract class AbstractHelper implements HelperInterface
         }
 
         return $value;
-    }
-
-    /**
-     * @return \Pimcore\Templating\PhpEngine
-     */
-    protected function getTemplatingEngine()
-    {
-        return $this->getHelper()->getTemplatingEngine();
     }
 }

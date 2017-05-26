@@ -3,7 +3,14 @@
 ## Basics
 
 Pimcore comes with a standard navigation implementation in the form of a templating helper (`$this->navigation()`). 
-It builds a navigation container based on the existing document structure.
+It builds a navigation container based on the existing document structure. The process of rendering is divided into 2 steps:
+
+1. Build the navigation: `$nav = $this->navigation()->buildNavigation($activeDocument, $navigationRootDocument)`
+2. Render the navigation: `$this->navigation()->render($nav)` or `$this->navigation()->getRenderer('menu')->render($nav)`
+
+> The building step does not necessarily need to happen in the view script. In fact the view helper just forwards the
+ `buildNavigation()` call to the `pimcore.navigation.builder` service. You can also build the navigation in your controller
+ or a service and pass the navigation object to the view.
 
 **Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.
 
@@ -19,8 +26,8 @@ if(!$navStartNode instanceof \Pimcore\Model\Document\Page) {
     $navStartNode = \Pimcore\Model\Document\Page::getById(1);
 }
 
-// this returns us the navigation helper containing the generated container
-$mainNavigation = $this->navigation($document, $mainNavStartNode);
+// this returns us the navigation container we can use to render the navigation
+$mainNavigation = $this->navigation()->buildNavigation($document, $mainNavStartNode);
 ```
 
 Having set up the navigation container as shown above, you can easily use it to render a navigation tree, menus, or breadcrumbs.
@@ -29,7 +36,17 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 ```php
 <div class="my-menu">
-    <?= $mainNavigation->menu()->renderMenu(null, [
+    <?php
+    // $this->navigation()->menu() is a shortcut to $this->navigation()->getRenderer('menu')
+    echo $this->navigation()->menu()->renderMenu($mainNavigation, [
+        'maxDepth' => 1,
+        'ulClass'  => 'nav navbar-nav'
+    ]);
+    ?>
+
+    <?php
+    // alternatively, you can use the render function to use the given renderer and render method
+    $this->navigation()->render($mainNavigation, 'menu', 'renderMenu', [
         'maxDepth' => 1,
         'ulClass'  => 'nav navbar-nav'
     ]); ?>
@@ -41,7 +58,7 @@ Having set up the navigation container as shown above, you can easily use it to 
 ```php
 <div class="my-breadcrumbs">
     <a href="/"><?= $this->translate("Home") ?></a>
-    <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
+    <?= $this->navigation()->breadcrumbs()->setMinDepth(null)->render($mainNavigation); ?>
 </div>
 ```
 
@@ -49,7 +66,7 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 ```php
 <div class="my-sidebar-menu">
-    <?= $mainNavigation->menu()->renderMenu(); ?>
+    <?= $this->navigation()->menu()->renderMenu($mainNavigation); ?>
 </div>
 ```
 
@@ -58,10 +75,12 @@ Having set up the navigation container as shown above, you can easily use it to 
 ```php
 <div class="my-sidebar-menu">
     <?php
-        echo $this->navigation($this->document, $navStartNode, 'my-nav-')->menu()->renderMenu(null, [
-            'ulClass' => 'nav my-sidenav',
-            'expandSiblingNodesOfActiveBranch' => true
-        ]);
+    $sideNav = $this->navigation()->buildNavigation($this->document, $navStartNode, 'my-nav-');
+
+    echo $this->navigation()->menu()->renderMenu($sideNav, [
+        'ulClass' => 'nav my-sidenav',
+        'expandSiblingNodesOfActiveBranch' => true
+    ]);
     ?>
 </div>
 ```
@@ -129,7 +148,15 @@ For example, inside your view:
 
 ```php
 <?php
-    echo $this->navigation($this->document, $mainNavStartNode)->menu()->setPartial('Includes/navigation.html.php')->render();
+/** @var \Pimcore\Navigation\Renderer\Menu $menuRenderer */
+$menuRenderer = $this->navigation()->menu();
+
+// either use the renderPartial method to use a partial once
+echo $menuRenderer->renderPartial($mainNavigation, 'Includes/navigation.html.php');
+
+// or set the partial on the renderer (will be valid for all subsequent render calls)
+$menuRenderer->setPartial('Includes/navigation.html.php');
+echo $menuRenderer->render($mainNavigation);
 ?>
 ```
 
@@ -151,6 +178,7 @@ For example, inside your view:
 
 For example:
 ```php
+<?php
 $navStartNode = $this->document->getProperty("navigationRoot");
 if(!$navStartNode instanceof Document\Page) {
     if(Site::isSiteRequest()) {
@@ -160,11 +188,12 @@ if(!$navStartNode instanceof Document\Page) {
         $navStartNode = Document::getById(1);
     }
 }
- 
-<?= $this->navigation($this->document, $navStartNode)->menu()->renderMenu(null, [
-        "maxDepth" => 1,
-        "ulClass" => "nav navbar-nav"
-    ]);
+
+$navigation = $this->navigation()->buildNavigation($this->document, $navStartNode);
+echo $this->navigation()->menu()->renderMenu($navigation, [
+    "maxDepth" => 1,
+    "ulClass" => "nav navbar-nav"
+]);
 ?>
 ```
 
@@ -183,6 +212,11 @@ if(!$navStartNode instanceof Document\Page) {
         $navStartNode = Document::getById(1);
     }
 }
+
+$mainNavigation = $this->navigation()->buildNavigation($this->document, $navStartNode);
+
+/** @var \Pimcore\Navigation\Renderer\Menu $menuRenderer */
+$menuRenderer = $this->navigation()->menu();
 ?>
 <nav class="navbar-inverse navbar-static-top" role="navigation">
 <div class="container-fluid">
@@ -195,11 +229,10 @@ if(!$navStartNode instanceof Document\Page) {
     </div>
     <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
         <ul class="nav navbar-nav">
-        <?php $mainNavigation = $this->navigation()->getNavigation($this->document, $navStartNode); ?>
         <?php foreach ($mainNavigation as $page) { ?>
             <?php /* @var $page \Pimcore\Navigation\Page\Document */ ?>
             <?php // here need to manually check for ACL conditions ?>
-            <?php if (!$page->isVisible() || !$this->navigation()->accept($page)) { continue; } ?>
+            <?php if (!$page->isVisible() || !$menuRenderer->accept($page)) { continue; } ?>
             <?php $hasChildren = $page->hasPages(); ?>
             <?php if (!$hasChildren) { ?>
                 <li>
@@ -212,7 +245,7 @@ if(!$navStartNode instanceof Document\Page) {
                 <a href="<?= $page->getHref(); ?>"><?= $this->translate($page->getLabel()) ?></a>
                 <ul class="dropdown-menu">
                     <?php foreach ($page->getPages() as $child) { ?>
-                        <?php if(!$child->isVisible() || !$this->navigation()->accept($child)) { continue; } ?>
+                        <?php if(!$child->isVisible() || !$menuRenderer->accept($child)) { continue; } ?>
                         <li>
                             <a href="<?= $child->getHref() ?>">
                                 <?= $this->translate($child->getLabel()) ?>
@@ -235,7 +268,7 @@ In the following example we're adding news items (objects) to the navigation usi
 
 ```php
 <?php
-$navigation = $this->navigation($this->document, $navStartNode, null, function($page, $document){
+$navigation = $this->navigation()->buildNavigation($this->document, $navStartNode, null, function($page, $document) {
     /** @var $document \Pimcore\Model\Document */
     /** @var \Pimcore\Navigation\Page\Document $page */
     if($document->getProperty("templateType") == "news") {
@@ -261,7 +294,7 @@ $navigation = $this->navigation($this->document, $navStartNode, null, function($
 ?>
 
 <div class="my-navigation">
-    <?= $navigation->menu()->renderMenu(null, [
+    <?= $this->navigation()->menu()->renderMenu($navigation, [
         'ulClass' => 'nav my-sidenav',
         'expandSiblingNodesOfActiveBranch' => true
     ]); ?>
@@ -281,14 +314,15 @@ For that we've introduced a new parameter for the navigation view helper, which 
 
 ```php
 <?php
-$mainNavigation = $this->navigation($this->document, $mainNavStartNode, null, function ($page, $document) {
+$mainNavigation = $this->navigation()->buildNavigation($this->document, $mainNavStartNode, null, function ($page, $document) {
     $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
     $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
     $page->setCustomSetting("title", $document->getTitle());
     $page->setCustomSetting("headline", $document->getElement("headline")->getData());
 });
-$mainNavigation->menu()->setPartial("/Navigation/partials/navigation.html.php");
-echo $mainNavigation->render();
+
+$this->navigation()->menu()->setPartial("/Navigation/partials/navigation.html.php");
+echo $this->navigation()->menu()->render($mainNavigation);
 ?>
 ```
 
@@ -314,7 +348,7 @@ Using this method will dramatically improve the performance of your navigation.
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
 ```php
-$this->navigation($this->document, $mainNavStartNode, null, null, "yourindividualkey");
+$this->navigation()->buildNavigation($this->document, $mainNavStartNode, null, null, "yourindividualkey");
 ```
 
 ### Disabling the Navigation Cache
@@ -322,7 +356,7 @@ $this->navigation($this->document, $mainNavStartNode, null, null, "yourindividua
 You can disable the navigation cache by setting the 5th argument to `false`.
 
 ```php
-$this->navigation($this->document, $mainNavStartNode, null, null, false);  
+$this->navigation()->buildNavigation($this->document, $mainNavStartNode, null, null, false);
 ```
 
 ## FAQ

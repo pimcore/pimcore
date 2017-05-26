@@ -35,12 +35,12 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-namespace Pimcore\Templating\Helper\Navigation\Renderer;
+namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
 
-class Menu extends AbstractHelper
+class Menu extends AbstractRenderer
 {
     /**
      * CSS class to use for the ul element
@@ -118,25 +118,6 @@ class Menu extends AbstractHelper
      * @var string
      */
     protected $_innerIndent = '    ';
-
-    /**
-     * View helper entry point:
-     * Retrieves helper and optionally sets container to operate on
-     *
-     * @param  Container $container  [optional] container to
-     *                                               operate on
-     *
-     * @return self      fluent interface,
-     *                                               returns self
-     */
-    public function menu(Container $container = null)
-    {
-        if (null !== $container) {
-            $this->setContainer($container);
-        }
-
-        return $this;
-    }
 
     // Accessors:
 
@@ -446,7 +427,7 @@ class Menu extends AbstractHelper
      * @param  string|int $indent                          indentation string or
      *                                                     number of spaces
      *
-     * @return AbstractHelper  fluent interface,
+     * @return AbstractRenderer  fluent interface,
      *                                                     returns self
      */
     public function setInnerIndent($indent)
@@ -682,6 +663,7 @@ class Menu extends AbstractHelper
         // Reset prefix for IDs
         $this->_skipPrefixForId = $skipValue;
 
+        /** @var Page $subPage */
         foreach ($active['page'] as $subPage) {
             if (!$this->accept($subPage)) {
                 continue;
@@ -734,19 +716,21 @@ class Menu extends AbstractHelper
      *
      * @return string                                       rendered menu (HTML)
      */
-    protected function _renderMenu(Container $container,
-                                   $ulClass,
-                                   $indent,
-                                   $innerIndent,
-                                   $minDepth,
-                                   $maxDepth,
-                                   $onlyActive,
-                                   $expandSibs,
-                                   $ulId,
-                                   $addPageClassToLi,
-                                   $activeClass,
-                                   $parentClass,
-                                   $renderParentClass)
+    protected function _renderMenu(
+        Container $container,
+        $ulClass,
+        $indent,
+        $innerIndent,
+        $minDepth,
+        $maxDepth,
+        $onlyActive,
+        $expandSibs,
+        $ulId,
+        $addPageClassToLi,
+        $activeClass,
+        $parentClass,
+        $renderParentClass
+    )
     {
         $html = '';
 
@@ -903,24 +887,13 @@ class Menu extends AbstractHelper
      *
      * Available $options:
      *
+     * @param  Container $container
+     * @param  array $options    [optional] options for controlling rendering
      *
-     * @param  Container $container  [optional] container to
-     *                                               create menu from. Default
-     *                                               is to use the container
-     *                                               retrieved from
-     *                                               {@link getContainer()}.
-     * @param  array                     $options    [optional] options for
-     *                                               controlling rendering
-     *
-     * @return string                                rendered menu
+     * @return string rendered menu
      */
-    public function renderMenu(Container $container = null,
-                               array $options = [])
+    public function renderMenu(Container $container, array $options = [])
     {
-        if (null === $container) {
-            $container = $this->getContainer();
-        }
-
         $options = $this->_normalizeOptions($options);
 
         if ($options['onlyActiveBranch'] && !$options['renderParents']) {
@@ -973,10 +946,7 @@ class Menu extends AbstractHelper
      * ));
      * </code>
      *
-     * @param  Container $container  [optional] container to
-     *                                               render. Default is to render
-     *                                               the container registered in
-     *                                               the helper.
+     * @param  Container $container
      * @param  string|null               $ulClass    [optional] CSS class to
      *                                               use for UL element. Default
      *                                               is to use the value from
@@ -998,12 +968,14 @@ class Menu extends AbstractHelper
      *
      * @return string                                   rendered content
      */
-    public function renderSubMenu(Container $container = null,
-                                  $ulClass = null,
-                                  $indent = null,
-                                  $ulId   = null,
-                                  $addPageClassToLi = false,
-                                  $innerIndent = null)
+    public function renderSubMenu(
+        Container $container,
+        $ulClass = null,
+        $indent = null,
+        $ulId   = null,
+        $addPageClassToLi = false,
+        $innerIndent = null
+    )
     {
         return $this->renderMenu($container, [
             'indent'           => $indent,
@@ -1025,10 +997,7 @@ class Menu extends AbstractHelper
      * as-is, and will be available in the partial script as 'container', e.g.
      * <code>echo 'Number of pages: ', count($this->container);</code>.
      *
-     * @param  Container $container  [optional] container to
-     *                                               pass to view script. Default
-     *                                               is to use the container
-     *                                               registered in the helper.
+     * @param  Container $container
      * @param  string|array             $partial     [optional] partial view
      *                                               script to use. Default is to
      *                                               use the partial registered
@@ -1043,12 +1012,8 @@ class Menu extends AbstractHelper
      *
      * @throws \Exception   When no partial script is set
      */
-    public function renderTemplate(Container $container = null, $partial = null)
+    public function renderTemplate(Container $container, $partial = null)
     {
-        if (null === $container) {
-            $container = $this->getContainer();
-        }
-
         if (null === $partial) {
             $partial = $this->getTemplate();
         }
@@ -1062,28 +1027,24 @@ class Menu extends AbstractHelper
             'pages' => $container, // we can't use `container` as index name, since this is used by the DI-container
         ];
 
-        return $this->getTemplatingEngine()->render($partial, $model);
+        return $this->templatingEngine->render($partial, $model);
     }
 
     /**
      * Alias of renderTemplate()
      *
-     * @param Container|null $container
+     * @param Container $container
      * @param null $partial
      *
      * @return string
      */
-    public function renderPartial(Container $container = null, $partial = null)
+    public function renderPartial(Container $container, $partial = null)
     {
         return $this->renderTemplate($container, $partial);
     }
 
-    // Zend_View_Helper_Navigation_Helper:
-
     /**
      * Renders menu
-     *
-     * Implements {@link Zend_View_Helper_Navigation_Helper::render()}.
      *
      * If a partial view is registered in the helper, the menu will be rendered
      * using the given partial script. If no partial is registered, the menu
@@ -1092,14 +1053,11 @@ class Menu extends AbstractHelper
      * @see renderTemplate()
      * @see renderMenu()
      *
-     * @param  Container $container  [optional] container to
-     *                                               render. Default is to
-     *                                               render the container
-     *                                               registered in the helper.
+     * @param  Container $container
      *
-     * @return string                                helper output
+     * @return string
      */
-    public function render(Container $container = null)
+    public function render(Container $container)
     {
         if ($partial = $this->getTemplate()) {
             return $this->renderTemplate($container, $partial);

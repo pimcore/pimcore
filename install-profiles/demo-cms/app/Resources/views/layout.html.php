@@ -104,8 +104,9 @@ use Pimcore\Model\Document\Page;
                 </div>
                 <div class="navbar-collapse collapse">
                     <?php
-                    $mainNavigation = $this->navigation($document, $mainNavStartNode);
-                    echo $mainNavigation->menu()->renderMenu(null, [
+                    $mainNavigation = $this->navigation()->buildNavigation($document, $mainNavStartNode);
+
+                    echo $this->navigation()->render($mainNavigation, 'menu', 'renderMenu', [
                         'maxDepth' => 1,
                         'ulClass'  => 'nav navbar-nav'
                     ]);
@@ -142,7 +143,14 @@ use Pimcore\Model\Document\Page;
             <?php if ($showBreadcrumbs): ?>
                 <div>
                     <a href="/"><?= $this->translate('Home'); ?></a> &gt;
-                    <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
+
+                    <?php
+                    /** @var \Pimcore\Navigation\Renderer\Breadcrumbs $breadcrumbsRenderer */
+                    $breadcrumbsRenderer = $this->navigation()->getRenderer('breadcrumbs');
+                    $breadcrumbsRenderer->setMinDepth(null);
+
+                    echo $breadcrumbsRenderer->render($mainNavigation);
+                    ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -151,17 +159,19 @@ use Pimcore\Model\Document\Page;
             <div class="col-md-3 col-md-pull-9 sidebar">
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
                     <?php
-                    $startNode = $document->getProperty('leftNavStartNode');
-                    if (!$startNode) {
-                        $startNode = $mainNavStartNode;
+                    $leftNavStartNode = $document->getProperty('leftNavStartNode');
+                    if (!$leftNavStartNode) {
+                        $leftNavStartNode = $mainNavStartNode;
                     }
+
+                    $leftNav = $this->navigation()->buildNavigation($document, $leftNavStartNode);
                     ?>
 
-                    <h3><?= $startNode->getProperty('navigation_name'); ?></h3>
-                    <?= $this->navigation($document, $startNode)->menu()->renderMenu(null, [
+                    <h3><?= $leftNavStartNode->getProperty('navigation_name'); ?></h3>
+                    <?= $this->navigation()->render($leftNav, 'menu', 'renderMenu', [
                         'ulClass'                          => 'nav bs-sidenav',
                         'expandSiblingNodesOfActiveBranch' => true
-                    ]); ?>
+                    ]) ?>
                 </div>
                 <?= $this->inc($document->getProperty('sidebar')); ?>
             </div>
