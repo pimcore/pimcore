@@ -38,3 +38,13 @@ services:
         parent: pimcore.navigation.base_renderer
         tags:
             - { name: pimcore.navigation.renderer, alias: breadcrumbs }
+
+
+    # GLOSSARY
+
+    pimcore.glossary.processor:
+        class: Pimcore\Glossary\Processor
+        arguments:
+            - '@pimcore.http.request_helper'
+            - '@pimcore.service.request.editmode_resolver'
+            - '@pimcore.service.request.document_resolver'
