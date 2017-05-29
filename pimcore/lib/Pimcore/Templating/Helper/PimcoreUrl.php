@@ -51,10 +51,9 @@ class PimcoreUrl extends Helper
      */
     public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
     {
-
         // merge all parameters from request to parameters
         if (!$reset) {
-            $urlOptions = array_replace($_GET, $urlOptions);
+            $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
         }
 
         return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH);
