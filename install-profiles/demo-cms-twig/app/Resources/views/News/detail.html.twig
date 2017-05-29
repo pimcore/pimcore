@@ -1,9 +1,9 @@
 {% extends '::layout.html.twig' %}
 
-{% block content %}
-    {# TODO headTitle #}
-    {# TODO headMeta #}
+{% do pimcore_head_title().set(news.getTitle()) %}
+{% do pimcore_head_meta().setDescription(news.getShortText, 160) %}
 
+{% block content %}
     <section class="area-wysiwyg">
         <div class="page-header">
             <h1>{{ news.title }}</h1>

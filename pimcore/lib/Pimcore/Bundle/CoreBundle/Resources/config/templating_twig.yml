@@ -25,6 +25,13 @@ services:
         tags:
             - { name: twig.extension }
 
+    pimcore.twig.extension.placeholder_helper:
+        class: Pimcore\Twig\Extension\PlaceholderHelperExtension
+        arguments: ['@templating.engine.php']
+        public: false
+        tags:
+            - { name: twig.extension }
+
     pimcore.twig.extension.navigation:
         class: Pimcore\Twig\Extension\NavigationExtension
         arguments: ['@pimcore.templating.view_helper.navigation']

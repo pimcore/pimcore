@@ -1,6 +1,5 @@
 {% set headline = pimcore_input('headline') %}
-
-{# TODO head title #}
+{% do pimcore_head_title(headline.getData()) %}
 
 <div class="page-header">
     {# we need to pipe the editable through the raw filter here as we saved it to a variable #}

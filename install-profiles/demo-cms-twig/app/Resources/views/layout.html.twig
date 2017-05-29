@@ -7,9 +7,32 @@
 
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
 
-    <title>{% block title %} : pimcore Demo{% endblock %}</title>
-
     {% set isPortal = ((isPortal is defined) and isPortal) %}
+
+    {% if not document is defined or not document %}
+        {% set document = pimcore_document(1) %}
+    {% endif %}
+
+    {% if document is instanceof('\\Pimcore\\Model\\Document\\Link') %}
+        {# @var document \Pimcore\Model\Document\Link #}
+        {% set document = document.getObject() %}
+    {% endif %}
+
+    {% if document.getTitle() is not empty %}
+        {% do pimcore_head_title().set(document.getTitle()) %}
+    {% endif %}
+
+    {% if document.getDescription() is not empty %}
+        {% do pimcore_head_meta().setDescription(document.getDescription()) %}
+    {% endif %}
+
+    {% do pimcore_head_title().append('pimcore Demo') %}
+    {% do pimcore_head_title().setSeparator(' : ') %}
+
+    {% block layout_head %}
+        {{ pimcore_head_title() }}
+        {{ pimcore_head_meta() }}
+    {% endblock %}
 
     {% block stylesheets %}
         <link rel="stylesheet" type="text/css" href="{{ asset('static/bootstrap/css/bootstrap.css') }}">
