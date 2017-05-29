@@ -1,6 +1,7 @@
 {# TODO headMeta #}
-{# TODO glossary #}
 
 <section class="area-wysiwyg">
-    {{ pimcore_wysiwyg('content') }}
+    {% pimcoreglossary %}
+        {{ pimcore_wysiwyg('content') }}
+    {% endpimcoreglossary %}
 </section>

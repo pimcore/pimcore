@@ -1,14 +1,15 @@
 {% import ':Includes:macros.html.twig' as macros %}
 
 {# TODO headmeta #}
-{# TODO glossary #}
 
 {% set content = pimcore_wysiwyg('content') %}
 
 <section class="area-wysiwyg">
     <div class="row">
         <div class="col-sm-8">
-            {{ content|raw }}
+            {% pimcoreglossary %}
+                {{ content.frontend()|raw }}
+            {% endpimcoreglossary %}
         </div>
         <div class="col-sm-4">
             {% for i in pimcore_iterate_block(pimcore_block('images')) %}

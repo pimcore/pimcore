@@ -31,3 +31,10 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    pimcore.twig.extension.glossary:
+        class: Pimcore\Twig\Extension\GlossaryExtension
+        arguments: ['@pimcore.templating.view_helper.glossary']
+        public: false
+        tags:
+            - { name: twig.extension }
