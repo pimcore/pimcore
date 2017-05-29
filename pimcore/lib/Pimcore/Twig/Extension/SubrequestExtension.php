@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Twig;
+namespace Pimcore\Twig\Extension;
 
 use Pimcore\Templating\Helper\Action;
 use Pimcore\Templating\Helper\Inc;

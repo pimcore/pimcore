@@ -1,32 +1,32 @@
 services:
     pimcore.twig.extension.helpers:
-        class: Pimcore\Twig\HelpersExtension
+        class: Pimcore\Twig\Extension\HelpersExtension
         public: false
         tags:
             - { name: twig.extension }
 
     pimcore.twig.extension.document_tag:
-        class: Pimcore\Twig\DocumentTagExtension
+        class: Pimcore\Twig\Extension\DocumentTagExtension
         arguments: ['@pimcore.templating.tag_renderer']
         public: false
         tags:
             - { name: twig.extension }
 
     pimcore.twig.extension.subrequest:
-        class: Pimcore\Twig\SubrequestExtension
+        class: Pimcore\Twig\Extension\SubrequestExtension
         arguments: ['@pimcore.templating.view_helper.inc', '@pimcore.templating.view_helper.action']
         public: false
         tags:
             - { name: twig.extension }
 
     pimcore.twig.extension.pimcore_object:
-        class: Pimcore\Twig\PimcoreObjectExtension
+        class: Pimcore\Twig\Extension\PimcoreObjectExtension
         public: false
         tags:
             - { name: twig.extension }
 
     pimcore.twig.extension.navigation:
-        class: Pimcore\Twig\NavigationExtension
+        class: Pimcore\Twig\Extension\NavigationExtension
         arguments: ['@pimcore.templating.view_helper.navigation']
         public: false
         tags:

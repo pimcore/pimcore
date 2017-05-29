@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Twig;
+namespace Pimcore\Twig\Extension;
 
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag\BlockInterface;
