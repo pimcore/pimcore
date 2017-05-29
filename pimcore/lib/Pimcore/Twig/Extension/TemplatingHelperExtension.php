@@ -17,11 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
-use function foo\func;
 use Pimcore\Templating\PhpEngine;
 use Symfony\Component\Templating\Helper\HelperInterface;
 
-class PlaceholderHelperExtension extends \Twig_Extension
+/**
+ * Delegates calls to PHP templating helpers. Use this only with templating helpers which do not rely
+ * on PHP rendering!
+ */
+class TemplatingHelperExtension extends \Twig_Extension
 {
     /**
      * @var PhpEngine
@@ -36,7 +39,7 @@ class PlaceholderHelperExtension extends \Twig_Extension
         $this->phpEngine = $phpEngine;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         $helperNames = [
             'headLink'     => 'pimcore_head_link',
@@ -45,18 +48,38 @@ class PlaceholderHelperExtension extends \Twig_Extension
             'headStyle'    => 'pimcore_head_style',
             'headTitle'    => 'pimcore_head_title',
             'inlineScript' => 'pimcore_inline_script',
-            'placeholder'  => 'pimcore_placeholder'
+            'placeholder'  => 'pimcore_placeholder',
+            'pimcoreUrl'   => [
+                'name'    => 'pimcore_url',
+                'is_safe' => null
+            ]
         ];
 
         $functions = [];
-        foreach ($helperNames as $helperName => $functionName) {
+        foreach ($helperNames as $helperName => $helperOptions) {
+            $functionName = null;
+            $options      = [
+                'is_safe' => ['html']
+            ];
+
+            if (is_string($helperOptions)) {
+                $functionName = $helperOptions;
+            } else {
+                if (!isset($helperOptions['name'])) {
+                    throw new \LogicException('A helper declaration needs to define a Twig function name');
+                }
+
+                $functionName = $helperOptions['name'];
+                unset($helperOptions['name']);
+
+                $options = array_merge($options, $helperOptions);
+            }
+
             $callable = function () use ($helperName) {
                 return $this->callHelper($helperName, func_get_args());
             };
 
-            $functions[] = new \Twig_SimpleFunction($functionName, $callable, [
-                'is_safe' => ['html']
-            ]);
+            $functions[] = new \Twig_SimpleFunction($functionName, $callable, $options);
         }
 
         return $functions;
