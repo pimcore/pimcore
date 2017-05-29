@@ -38,6 +38,9 @@
 
             {% endfor %}
 
+            <!-- pagination start -->
+            {% include ':Includes:paging.html.twig' with { paginator: articles } only %}
+            <!-- pagination end -->
         </div>
 
         <div class="col-md-4 filters">

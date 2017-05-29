@@ -42,9 +42,10 @@ class BlogController extends FrontendController
             $blogList->setCondition(implode(' AND ', $conditions));
         }
 
+        // we're using Zend\Paginator here, but you can use any other paginator (e.g. Pagerfanta)
         $paginator = new Paginator($blogList);
         $paginator->setCurrentPageNumber($request->get('page'));
-        $paginator->setItemCountPerPage(5);
+        $paginator->setItemCountPerPage(2);
 
         $this->view->articles = $paginator;
 
