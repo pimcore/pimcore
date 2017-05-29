@@ -22,10 +22,10 @@ use Pimcore\Navigation\Renderer\RendererInterface;
 class InvalidRendererException extends \LogicException
 {
     /**
-     * @param string $id
+     * @param string $name
      * @param mixed $renderer
      *
-     * @return self
+     * @return InvalidRendererException
      */
     public static function create(string $name, $renderer): self
     {
