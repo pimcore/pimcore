@@ -7,45 +7,59 @@
 
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
 
-    {% set isPortal = ((isPortal is defined) and isPortal) %}
+    {% spaceless -%}
+        {# add global stylesheets and scripts outside of any blocsk to add them to the helpers before any others assets are added #}
+        {# we use the view helper to have cache buster functionality #}
+        {% do pimcore_head_link().appendStylesheet(asset('static/bootstrap/css/bootstrap.css')) %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/css/global.css')) %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/lib/video-js/video-js.min.css'), 'screen') %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/lib/magnific/magnific.css'), 'screen') %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/bootstrap/css/bootstrap.css')) %}
 
-    {% if not document is defined or not document %}
-        {% set document = pimcore_document(1) %}
-    {% endif %}
+        {% if editmode %}
+            {% do pimcore_head_link().appendStylesheet(asset('static/css/editmode.css')) %}
+        {% endif %}
 
-    {% if document is instanceof('\\Pimcore\\Model\\Document\\Link') %}
-        {# @var document \Pimcore\Model\Document\Link #}
-        {% set document = document.getObject() %}
-    {% endif %}
+        {% do pimcore_head_script().appendFile(asset('static/js/jquery-1.11.0.min.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/bootstrap/js/bootstrap.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/lib/magnific/magnific.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/lib/video-js/video.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/js/srcset-polyfill.min.js')) %}
 
-    {% if document.getTitle() is not empty %}
-        {% do pimcore_head_title().set(document.getTitle()) %}
-    {% endif %}
+        {% set isPortal = ((isPortal is defined) and isPortal) %}
 
-    {% if document.getDescription() is not empty %}
-        {% do pimcore_head_meta().setDescription(document.getDescription()) %}
-    {% endif %}
+        {% if not document is defined or not document %}
+            {% set document = pimcore_document(1) %}
+        {% endif %}
 
-    {% do pimcore_head_title().append('pimcore Demo') %}
-    {% do pimcore_head_title().setSeparator(' : ') %}
+        {% if document is instanceof('\\Pimcore\\Model\\Document\\Link') %}
+            {# @var document \Pimcore\Model\Document\Link #}
+            {% set document = document.getObject() %}
+        {% endif %}
 
-    {% block layout_head %}
+        {% if document.getTitle() is not empty %}
+            {% do pimcore_head_title().set(document.getTitle()) %}
+        {% endif %}
+
+        {% if document.getDescription() is not empty %}
+            {% do pimcore_head_meta().setDescription(document.getDescription()) %}
+        {% endif %}
+
+        {% do pimcore_head_title().append('pimcore Demo') %}
+        {% do pimcore_head_title().setSeparator(' : ') %}
+    {%- endspaceless %}
+
+    {# we're using the deferred extension here to make sure this block is rendered after all helper calls #}
+    {% block layout_head_meta deferred %}
         {{ pimcore_head_title() }}
         {{ pimcore_head_meta() }}
     {% endblock %}
 
-    {% block stylesheets %}
-        <link rel="stylesheet" type="text/css" href="{{ asset('static/bootstrap/css/bootstrap.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('static/css/global.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('static/lib/video-js/video-js.min.css') }}" media="screen">
-        <link rel="stylesheet" type="text/css" href="{{ asset('static/lib/magnific/magnific.css') }}" media="screen">
-
-        {% if editmode %}
-            <link rel="stylesheet" type="text/css" href="{{ asset('static/css/editmode.css') }}" media="screen">
-        {% endif %}
+    {% block head_stylesheets deferred %}
+        {{ pimcore_head_link() }}
     {% endblock %}
 
-    {% block ie_stylesheets %}
+    {% block head_ie_stylesheets %}
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="{{ asset('static/js/html5shiv.js') }}"></script>
@@ -143,12 +157,9 @@
 {# include a document-snippet - in this case the footer document #}
 {{ pimcore_inc('/' ~ app.request.locale ~ '/shared/includes/footer') }}
 
-{% block scripts %}
-    <script type="text/javascript" src="{{ asset('static/js/jquery-1.11.0.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('static/bootstrap/js/bootstrap.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('static/lib/magnific/magnific.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('static/lib/video-js/video.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('static/js/srcset-polyfill.min.js') }}"></script>
+{# output scripts added before #}
+{% block scripts deferred %}
+    {{ pimcore_head_script() }}
 {% endblock %}
 
 <script>

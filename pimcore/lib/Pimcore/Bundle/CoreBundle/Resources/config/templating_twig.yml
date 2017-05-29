@@ -45,3 +45,12 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    # the deferred extension is needed for placeholder helpers to work
+    # as otherwise the placeholder block would be rendered before any
+    # content was added (e.g. headTitle)
+    twig.extension.deferred:
+        class: Phive\Twig\Extensions\Deferred\DeferredExtension
+        public: false
+        tags:
+            - { name: twig.extension }
