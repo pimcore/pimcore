@@ -244,6 +244,7 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($object);
 
         if ($object instanceof Concrete) {
+            $context = array("object" => $object);
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -299,7 +300,8 @@ class Service extends Model\Element\Service
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
 
                     $brickClass = Objectbrick\Definition::getByKey($brickType);
-                    $def = $brickClass->getFieldDefinition($brickKey);
+                    $context["outerFieldname"] = $key;
+                    $def = $brickClass->getFieldDefinition($brickKey, $context);
                 }
 
                 if (!empty($key)) {
@@ -313,7 +315,7 @@ class Service extends Model\Element\Service
                     // if the definition is not set try to get the definition from localized fields
                     if (!$def) {
                         if ($locFields = $object->getClass()->getFieldDefinition('localizedfields')) {
-                            $def = $locFields->getFieldDefinition($key);
+                            $def = $locFields->getFieldDefinition($key, $context);
                             if ($def) {
                                 $needLocalizedPermissions = true;
                             }
@@ -327,11 +329,18 @@ class Service extends Model\Element\Service
                         if (in_array($key, Concrete::$systemColumnNames)) {
                             $data[$dataKey] = $object->$getter();
                         } else {
-                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def);
+                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
                             if (method_exists($def, 'getDataForGrid')) {
-                                $tempData = $def->getDataForGrid($valueObject->value, $object);
+                                if ($brickKey) {
+                                    $context["containerType"] = "objectbrick";
+                                    $context["containerKey"] = $brickType;
+                                    $context["outerFieldname"] = $key;
+                                }
+
+                                $params = array("context" => $context, "purpose" => "gridview");
+                                $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
@@ -482,7 +491,7 @@ class Service extends Model\Element\Service
      *
      * @return \stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null)
+    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = array())
     {
         $getter = 'get'.ucfirst($key);
         $value = $object->$getter();
@@ -496,18 +505,19 @@ class Service extends Model\Element\Service
         }
 
         if (!$fieldDefinition) {
-            $fieldDefinition = $object->getClass()->getFieldDefinition($key);
+            $fieldDefinition = $object->getClass()->getFieldDefinition($key, $context);
         }
 
         if (!empty($brickType) && !empty($brickKey)) {
             $brickClass = Objectbrick\Definition::getByKey($brickType);
-            $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
+            $context = array("object" => $object, "outerFieldname" => $key);
+            $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
         }
 
         if ($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if (!empty($parent)) {
-                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context);
             }
         }
 

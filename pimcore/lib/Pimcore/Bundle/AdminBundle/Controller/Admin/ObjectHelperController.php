@@ -80,7 +80,7 @@ class ObjectHelperController extends AdminController
             $fields = Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
         }
 
-        $context = array("purpose" => "grid");
+        $context = array("purpose" => "gridconfig");
         if ($class) {
             $context["class"] = $class;
         }
@@ -445,7 +445,7 @@ class ObjectHelperController extends AdminController
         }
 
         if (!$field->getInvisible() && ($force || $visible)) {
-            $context = array("purpose" => "grid");
+            $context = array("purpose" => "gridconfig");
             if ($class) {
                 $context["class"] = $class;
             }

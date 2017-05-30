@@ -40,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load(Object\Concrete $object)
     {
-        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), array("suppressEnrichment" => true));
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
                 $results = [];
             }
 
-            $fieldDefinitions = $definition->getFieldDefinitions();
+            $fieldDefinitions = $definition->getFieldDefinitions(array("suppressEnrichment" => true));
             $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($type);
 
             foreach ($results as $result) {
@@ -116,7 +116,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(Object\Concrete $object)
     {
         // empty or create all relevant tables
-        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), array("suppressEnrichment" => true));
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -138,7 +138,7 @@ class Dao extends Model\Dao\AbstractDao
                 $definition->createUpdateTable($object->getClass());
             }
 
-            if ($definition->getFieldDefinition('localizedfields')) {
+            if ($definition->getFieldDefinition('localizedfields', array("suppressEnrichment" => true))) {
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
@@ -151,7 +151,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $childDefinitions = $definition->getFielddefinitions();
+            $childDefinitions = $definition->getFielddefinitions(array("suppressEnrichment" => true));
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {

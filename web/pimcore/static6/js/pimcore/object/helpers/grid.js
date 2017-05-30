@@ -49,7 +49,7 @@ pimcore.object.helpers.grid = Class.create({
         this.baseParams['fields[]'] = fieldParam;
     },
 
-    getStore: function() {
+    getStore: function(noBatchColumns) {
 
         // the store
         var readerFields = [];
@@ -67,9 +67,39 @@ pimcore.object.helpers.grid = Class.create({
         readerFields.push({name: "metadata", allowBlank: true});
         readerFields.push({name: "#kv-tr", allowBlank: true});
 
+        this.noBatchColumns = [];
+
         for (var i = 0; i < this.fields.length; i++) {
             if (!in_array(this.fields[i].key, ["creationDate", "modificationDate"])) {
-                readerFields.push({name: this.fields[i].key, allowBlank: true});
+
+                var fieldConfig = this.fields[i];
+                var type = fieldConfig.type;
+                var key = fieldConfig.key;
+                var readerFieldConfig = {name: key, allowBlank: true};
+                // dynamic select returns data + options on cell level
+                if ((type == "select" || type == "multiselect") && fieldConfig.layout.optionsProviderClass) {
+                    if (typeof noBatchColumns != "undefined") {
+                        if (fieldConfig.layout.dynamicOptions) {
+                            noBatchColumns.push(key);
+                        }
+                    }
+
+                    if (type == "select") {
+                        readerFieldConfig["convert"] = function (key, v, rec) {
+                            if (v && typeof v.options !== "undefined") {
+                                // split it up and store the options in a separate field
+                                rec.set(key + "%options", v.options, {convert: false, dirty: false});
+                                return v.value;
+                            }
+                            return v;
+                        }.bind(this, key)
+                        var readerFieldConfigOptions = {name: key + "%options", allowBlank: true, persist: false};
+                    }
+
+                    readerFields.push(readerFieldConfigOptions);
+                }
+
+                readerFields.push(readerFieldConfig);
             }
         }
 

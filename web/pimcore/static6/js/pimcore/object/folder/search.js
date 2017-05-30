@@ -25,6 +25,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.object = object;
         this.element = object;
         this.searchType = searchType;
+        this.noBatchColumns = [];
     },
 
     getLayout: function () {
@@ -159,8 +160,17 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         }
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function(editor, context, eOpts) {
+                    //need to clear cached editors of cell-editing editor in order to
+                    //enable different editors per row
+                    editor.editors.each(Ext.destroy, Ext);
+                    editor.editors.clear();
+                }
+            }
         });
+
 
         var plugins = [this.cellEditing, 'pimcore.gridfilters'];
 
@@ -186,7 +196,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         var propertyVisibility = klass.get("propertyVisibility");
 
-        this.store = gridHelper.getStore();
+        this.store = gridHelper.getStore(this.noBatchColumns);
         if (this.sortinfo) {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }

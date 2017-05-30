@@ -29,7 +29,38 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
     },
 
-    getGridColumnConfig:function (field) {
+    getGridColumnConfigDynamic: function(field) {
+        var renderer = function (key, data, metaData, record) {
+            var value = data;
+            var options = record.data[key + "%options"]
+
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                try {
+                    metaData.tdCls += " grid_value_inherited";
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
+            if (options) {
+                for (var i = 0; i < options.length; i++) {
+                    if (options[i]["value"] == value) {
+                        return options[i]["key"];
+                    }
+                }
+            }
+
+            return value;
+        }.bind(this, field.key);
+
+        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+            getEditor:this.getCellEditor.bind(this, field)
+        };
+    },
+
+    getGridColumnConfigStatic: function(field) {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
@@ -51,8 +82,59 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
         }.bind(this, field.key);
 
-        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
-            editor:this.getGridColumnEditor(field)};
+        return {
+            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            editor: this.getGridColumnEditor(field)
+        };
+    },
+
+    getGridColumnConfig:function (field) {
+        if (field.layout.optionsProviderClass) {
+            return this.getGridColumnConfigDynamic(field);
+        } else {
+            return this.getGridColumnConfigStatic(field);
+        }
+    },
+
+    getCellEditor: function ( field, record) {
+        var key = field.key;
+        if(field.layout.noteditable) {
+            return null;
+        }
+
+        var value = record.data[key];
+        var options = record.data[key +  "%options"];
+
+        var store = new Ext.data.Store({
+            autoDestroy: true,
+            fields: ['key',"value"],
+            data: options
+        });
+
+        var editorConfig = {};
+
+        if (field.config) {
+            if (field.config.width) {
+                if (intval(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        editorConfig = Object.extend(editorConfig, {
+            store: store,
+            triggerAction: "all",
+            editable: false,
+            mode: "local",
+            valueField: 'value',
+            displayField: 'key',
+            value: value
+        });
+
+        var combo = new Ext.form.ComboBox(editorConfig);;
+        var currentValue = combo.getValue();
+        console.log(currentValue);
+        return combo;
     },
 
     getGridColumnEditor: function(field) {
@@ -97,18 +179,22 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
-        var store = Ext.create('Ext.data.JsonStore', {
-            fields: ['key',"value"],
-            data: field.layout.options
-        });
+        if (field.layout.dynamicOptions) {
+            return {type: 'string', dataIndex: field.key};
+        } else {
+            var store = Ext.create('Ext.data.JsonStore', {
+                fields: ['key', "value"],
+                data: field.layout.options
+            });
 
-        return {
-            type: 'list',
-            dataIndex: field.key,
-            labelField: "key",
-            idField: "value",
-            options: store
-        };
+            return {
+                type: 'list',
+                dataIndex: field.key,
+                labelField: "key",
+                idField: "value",
+                options: store
+            };
+        }
     },
 
     getLayoutEdit: function () {

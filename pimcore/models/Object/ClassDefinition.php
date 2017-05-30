@@ -749,6 +749,9 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function getFieldDefinitions($context = array())
     {
+        if ($context["suppressEnrichment"]) {
+            return $this->fieldDefinitions;
+        }
 
         $enrichedFieldDefinitions = array();
         if (is_array($this->fieldDefinitions)) {
@@ -811,6 +814,9 @@ class ClassDefinition extends Model\AbstractModel
     public function getFieldDefinition($key, $context = array())
     {
         if (array_key_exists($key, $this->fieldDefinitions)) {
+            if ($context["suppressEnrichment"]) {
+                return $this->fieldDefinitions[$key];
+            }
             $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
             return $fieldDefinition;
         }

@@ -558,6 +558,10 @@ class Block extends Model\Object\ClassDefinition\Data
             $this->fieldDefinitionsCache = $definitions;
         }
 
+        if ($context["suppressEnrichment"]) {
+            return $this->fieldDefinitionsCache;
+        }
+
         $enrichedFieldDefinitions = array();
         if (is_array($this->fieldDefinitionsCache)) {
             foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
@@ -578,6 +582,9 @@ class Block extends Model\Object\ClassDefinition\Data
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
+            if ($context["suppressEnrichment"]) {
+                return $fds[$name];
+            }
             $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
             return $fieldDefinition;
         }

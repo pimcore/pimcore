@@ -367,7 +367,47 @@ class Select extends Model\Object\ClassDefinition\Data
                 $this->setDefaultValue($defaultValue);
             }
 
+            if (method_exists($this->getOptionsProviderClass(), 'hasStaticOptions')) {
+                $hasStaticOptions = call_user_func($this->getOptionsProviderClass().'::hasStaticOptions', $context, $this);
+                $this->dynamicOptions = !$hasStaticOptions;
+            } else {
+                $this->dynamicOptions = true;
+            }
+
             return $this;
+        }
+    }
+
+    /**
+     * @param $data
+     * @param null $object
+     * @param array $params
+     *
+     * @return array
+     */
+    public function getDataForGrid($data, $object = null, $params = []) {
+
+        if ($this->getOptionsProviderClass()) {
+            $context = $params['context'] ? $params['context'] : array();
+            $context["object"] = $object;
+            if ($object) {
+                $context["class"] = $object->getClass();
+            }
+
+            $context["fieldname"] = $this->getName();
+
+            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
+                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
+                $this->setOptions($options);
+            }
+
+            $result = array("value" => null, "options" => $this->getOptions());
+            if ($data) {
+                $result["value"] = $data;
+            }
+            return $result;
+        } else {
+            return $data;
         }
     }
 }

@@ -253,7 +253,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             $key = $fd->getName();
             $result->$key = $object->{'get'.ucfirst($fd->getName())}();
             if (method_exists($fd, 'getDataForGrid')) {
-                $result->$key = $fd->getDataForGrid($result->$key);
+                $result->$key = $fd->getDataForGrid($result->$key, $object, $params);
             }
         }
 
@@ -723,6 +723,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
             $fieldDefinition = $fds[$name];
+            if ($context["suppressEnrichment"]) {
+                return $fieldDefinition;
+            }
+
             $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
             return $fieldDefinition;
         }
@@ -745,6 +749,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
 
             $this->fieldDefinitionsCache = $definitions;
+        }
+
+        if ($context["suppressEnrichment"]) {
+            return $this->fieldDefinitionsCache;
         }
 
         $enrichedFieldDefinitions = array();

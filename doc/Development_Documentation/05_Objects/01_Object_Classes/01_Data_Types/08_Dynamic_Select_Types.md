@@ -13,6 +13,9 @@ You can also add some additional static data which will be passed to the data pr
 Provide a options provider class which implements at least the getOptions method as shown below.
 For the select datatype you can also provide a getDefaultValue implementation.
 
+The optional hasStaticOptions method allows you to define whether your options are depending on the object context or not.
+For object-context depending option there will be no batch assignment mode. Also, filtering can only be done through a text field instead of the options list.
+
 ```php
 <?php
 
@@ -49,6 +52,15 @@ class OptionsProvider
     public static function getDefaultValue($context, $fieldDefinition) {
         return 4;
     }
+    
+    /**
+     * @param $context array
+     * @param $fieldDefinition Data
+     * @return bool
+     */
+    public static function hasStaticOptions($context, $fieldDefinition) {
+        return true;
+    }
 
 }
 ```
@@ -69,7 +81,8 @@ The `purpose` parameter can take the following values:
 | --- | ---- |
 | null | unknown |
 | layout | edit mode layout |
-| grid | grid view |
+| gridconfig | grid configuration - usually no need to specify dynamic options|
+| gridview | grid view |
 
 #### Object (top-level)
 

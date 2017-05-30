@@ -482,6 +482,13 @@ class Multiselect extends Model\Object\ClassDefinition\Data
                 $this->setOptions($options);
             }
 
+            if (method_exists($this->getOptionsProviderClass(), 'hasStaticOptions')) {
+                $hasStaticOptions = call_user_func($this->getOptionsProviderClass().'::hasStaticOptions', $context, $this);
+                $this->dynamicOptions = !$hasStaticOptions;
+            } else {
+                $this->dynamicOptions = true;
+            }
+
             return $this;
         }
     }
