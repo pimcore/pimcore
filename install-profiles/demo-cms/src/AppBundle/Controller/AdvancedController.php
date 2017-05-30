@@ -84,29 +84,23 @@ class AdvancedController extends FrontendController
 
     public function searchAction(Request $request)
     {
-        if ($request->get('q')) {
-            try {
-                $page = $request->get('page');
-                if (empty($page)) {
-                    $page = 1;
-                }
-                $perPage = 10;
+        $queryString = $request->get('q');
 
-                $result = \Pimcore\Google\Cse::search($request->get('q'), (($page - 1) * $perPage), null, [
-                    'cx' => '002859715628130885299:baocppu9mii'
-                ], $request->get('facet'));
+        if (!empty($queryString)) {
+            $page    = (int)$request->get('page', 1);
+            $perPage = 10;
 
-                $paginator = new Paginator($result);
-                $paginator->setCurrentPageNumber($page);
-                $paginator->setItemCountPerPage($perPage);
-                $this->view->paginator = $paginator;
-                $this->view->result = $result;
-            } catch (\Exception $e) {
-                // something went wrong: eg. limit exceeded, wrong configuration, ...
-                \Pimcore\Logger::err($e);
-                echo $e->getMessage();
-                exit;
-            }
+            $result = \Pimcore\Google\Cse::search($queryString, (($page - 1) * $perPage), null, [
+                'cx' => '002859715628130885299:baocppu9mii'
+            ], $request->get('facet'));
+
+            $paginator = new Paginator($result);
+            $paginator->setCurrentPageNumber($page);
+            $paginator->setItemCountPerPage($perPage);
+
+            $this->view->queryString = $queryString;
+            $this->view->paginator   = $paginator;
+            $this->view->result      = $result;
         }
     }
 
