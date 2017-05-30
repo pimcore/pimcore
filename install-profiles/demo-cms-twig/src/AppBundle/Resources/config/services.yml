@@ -11,6 +11,10 @@ services:
     #    tags:
     #        - { name: kernel.event_listener, event: pimcore.object.preUpdate, method: onObjectPreUpdate }
 
+    #
+    # TEMPLATING
+    #
+
     website_demo.area.brick.blockquote:
         class: AppBundle\Document\Areabrick\Blockquote
         tags:
@@ -19,6 +23,14 @@ services:
     website_demo.language_switcher:
         class: AppBundle\Templating\LanguageSwitcher
         arguments: ['@pimcore.document_service']
+
+    # adds uniqid function to twig
+    website_demo.twig.uniqid_extension:
+        class: AppBundle\Twig\UniqidExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+
 
     #
     # SECURITY/LOGIN SERVICES
@@ -41,10 +53,3 @@ services:
         arguments:
             - Pimcore\Security\Encoder\PasswordFieldEncoder
             - ['password']
-
-    # adds uniqid function to twig
-    website_demo.twig.uniqid_extension:
-        class: AppBundle\Twig\UniqidExtension
-        public: false
-        tags:
-            - { name: twig.extension }

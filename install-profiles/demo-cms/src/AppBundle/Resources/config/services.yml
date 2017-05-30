@@ -11,6 +11,10 @@ services:
     #    tags:
     #        - { name: kernel.event_listener, event: pimcore.object.preUpdate, method: onObjectPreUpdate }
 
+    #
+    # TEMPLATING
+    #
+
     website_demo.area.brick.blockquote:
         class: AppBundle\Document\Areabrick\Blockquote
         tags:

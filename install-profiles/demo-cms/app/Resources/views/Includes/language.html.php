@@ -7,7 +7,7 @@
 ?>
 
 <?php
-/** @var \WebsiteDemoBundle\Templating\LanguageSwitcher $languageSwitcher */
+/** @var \AppBundle\Templating\LanguageSwitcher $languageSwitcher */
 $languageSwitcher = $this->app->getContainer()->get('website_demo.language_switcher');
 ?>
 
