@@ -73,21 +73,21 @@
     "sabre/dav": "~3.1",
     "sensio/distribution-bundle": "^5.0.19",
     "sensio/framework-extra-bundle": "^3.0.2",
-    "sensio/generator-bundle": "^3.0",
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/polyfill-apcu": "^1.0",
-    "symfony/swiftmailer-bundle": "^2.4",
-    "symfony/symfony": "3.3.0-RC1",
+    "symfony/swiftmailer-bundle": "^2.3.10",
+    "symfony/symfony": "3.3.*",
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "vrana/adminer": "~4.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2"
   },
   "require-dev": {
-    "symfony/phpunit-bridge": "^3.0",
-    "codeception/codeception": "^2.2",
-    "cache/integration-tests": "^0.15.0"
+    "cache/integration-tests": "^0.15.0",
+    "codeception/codeception": "2.2.*",
+    "sensio/generator-bundle": "^3.0",
+    "symfony/phpunit-bridge": "^3.0"
   },
   "suggest": {
     "ext-curl": "*",
