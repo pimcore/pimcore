@@ -18,6 +18,7 @@
         </p>
 
     {% else %}
+        {# see comment on advanced/objectForm template regarding the form theme #}
         {% form_theme form ':Form:default.html.twig' %}
 
         {{ form_start(form, {

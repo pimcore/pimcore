@@ -1,0 +1,80 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    {% if (not error and not success) or editmode %}
+        {{ include(':Includes:content-default.html.twig') }}
+    {% endif %}
+
+    {% if error or editmode %}
+        <br/>
+        <div class="alert alert-error">
+            {{ pimcore_input('errorMessage') }}
+        </div>
+    {% endif %}
+
+    {% if not success %}
+
+        {#
+            We created a custom form theme, where we override the parts we want to change with bootstrap markup. See:
+
+            * http://symfony.com/doc/current/form/form_customization.html and
+            * http://symfony.com/doc/current/form/rendering.html
+            * http://symfony.com/doc/current/form/form_themes.html
+        #}
+        {% form_theme form ':Form:default.html.twig' %}
+
+        {{ form_start(form, {
+            attr: {
+                class: 'form-horizontal',
+                role: 'form'
+            }
+        }) }}
+
+        {# call form_row() for normal inputs #}
+        {{ form_row(form.gender) }}
+        {{ form_row(form.firstname) }}
+        {{ form_row(form.lastname) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.message) }}
+
+        {# render checkbox manually as we need custom markup #}
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <div class="checkbox">
+                    <label>
+                        {{ form_widget(form.terms) }} {{ form.terms.vars['label'] }}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                {{ form_widget(form.submit, {
+                    attr: {
+                        class: 'btn btn-default'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+
+    {% else %}
+
+        <h2>{{ "Thank you very much"|trans }}</h2>
+        <p>
+            We received the following information from you:
+
+            <br/>
+            <br/>
+
+            <b>Firstname: </b> {{ firstname }}<br/>
+            <b>Lastname: </b> {{ lastname }}<br/>
+            <b>E-Mail: </b> {{ email }}<br/>
+        </p>
+
+    {% endif %}
+{% endblock %}
