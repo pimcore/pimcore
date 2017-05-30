@@ -127,7 +127,7 @@ class ViewModel implements ViewModelInterface
      */
     public function offsetExists($offset)
     {
-        return $this->getIterator()->offsetExists($offset);
+        return $this->parameters->has($offset);
     }
 
     /**
@@ -137,7 +137,7 @@ class ViewModel implements ViewModelInterface
      */
     public function offsetGet($offset)
     {
-        return $this->getIterator()->offsetGet($offset);
+        return $this->parameters->get($offset);
     }
 
     /**
@@ -146,7 +146,7 @@ class ViewModel implements ViewModelInterface
      */
     public function offsetSet($offset, $value)
     {
-        $this->getIterator()->offsetSet($offset, $value);
+        $this->parameters->set($offset, $value);
     }
 
     /**
@@ -154,7 +154,7 @@ class ViewModel implements ViewModelInterface
      */
     public function offsetUnset($offset)
     {
-        $this->getIterator()->offsetUnset($offset);
+        $this->parameters->remove($offset);
     }
 
     /**
