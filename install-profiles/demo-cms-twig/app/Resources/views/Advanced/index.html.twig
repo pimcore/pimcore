@@ -1,0 +1,22 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    {{ include(':Includes:content-default.html.twig') }}
+
+    {% if documents.getTotalCount() > 0 %}
+        {# we use the Pimcore 4 compatible placeholder notation here (indexed array) #}
+        <h3>{% trans with [documents.getTotalCount()] %}Total: %s{% endtrans %}</h3>
+
+        {# for new developments/translation keys you should use the native Symfony translator syntax: #}
+        {# {% trans with { '%count%': documents.getTotalCount() } %}Total: %count%{% endtrans %} #}
+
+        <ul>
+            {% for doc in documents %}
+                <li>
+                    <a href="{{ doc }}">{{ doc.getProperty('navigation_name') }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+{% endblock %}

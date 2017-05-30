@@ -30,6 +30,7 @@ class PimcoreObjectExtension extends \Twig_Extension
             new \Twig_SimpleFunction('pimcore_document', [Document::class, 'getById']),
             new \Twig_SimpleFunction('pimcore_asset', [Asset::class, 'getById']),
             new \Twig_SimpleFunction('pimcore_object', [Object\AbstractObject::class, 'getById']),
+            new \Twig_SimpleFunction('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
         ];
     }
 }
