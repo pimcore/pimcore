@@ -1,0 +1,31 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    {% set admin = admin is defined and admin %}
+
+    <h3>{{ admin ? 'Admin' : 'User' }}</h3>
+
+    {% if admin %}
+        <p>{{ "This page can only be seen as admin user."|trans }}</p>
+    {% else %}
+        <p>{{ "This page can only be seen as logged in user."|trans }}</p>
+    {% endif %}
+
+    <p class="alert alert-success">
+        {{ "Currently logged in as"|trans }}
+        <strong>
+            <span class="glyphicon glyphicon-user"></span>
+            {{ app.user.username }}
+        </strong>
+
+        {{ "with roles"|trans }}
+        <strong>{{ app.user.roles|join(', ') }}</strong>.
+    </p>
+
+    <p>
+        <a href="{{ path('demo_logout') }}" class="btn btn-primary">
+            {{ "Logout"|trans }}
+        </a>
+    </p>
+
+{% endblock %}
