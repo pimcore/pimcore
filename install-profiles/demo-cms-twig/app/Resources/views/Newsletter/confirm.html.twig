@@ -1,0 +1,13 @@
+{% if success %}
+
+    <div class="alert alert-success">
+        <h2>{{ "Thanks for confirming your address!"|trans }}</h2>
+    </div>
+
+{% else %}
+
+    <div class="alert alert-danger">
+        <h2>{{ "Sorry, something went wrong, please sign up again!"|trans }}</h2>
+    </div>
+
+{% endif %}
