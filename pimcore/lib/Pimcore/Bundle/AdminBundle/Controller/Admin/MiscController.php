@@ -18,11 +18,13 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -41,14 +43,53 @@ class MiscController extends AdminController
     public function getAvailableTemplatesAction(Request $request)
     {
         $templates = [];
+        $viewPaths = [];
 
-        $viewPath = PIMCORE_APP_ROOT . '/Resources/views/';
-        if (is_dir($viewPath)) {
-            $files = rscandir($viewPath);
-            foreach ($files as $file) {
-                if (is_file($file)) {
-                    $relativePath = preg_replace('@^' . preg_quote($viewPath, '@') . '@', '/', $file);
-                    $templates[] = ['path' => $relativePath];
+        $appPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_APP_ROOT, 'Resources', 'views']));
+        if ($appPath && file_exists($appPath) && is_dir($appPath)) {
+            $viewPaths['_app'] = $appPath;
+        }
+
+        foreach ($this->getBundles() as $bundleName => $bundleClass) {
+            $bundle = $this->get('kernel')->getBundle($bundleName);
+
+            $bundlePath = realpath(implode(DIRECTORY_SEPARATOR, [$bundle->getPath(), 'Resources', 'views']));
+            if ($bundlePath && file_exists($bundlePath) && is_dir($bundlePath)) {
+                $viewPaths[$bundleName] = $bundlePath;
+            }
+        }
+
+        $fs = new Filesystem();
+        foreach ($viewPaths as $type => $viewPath) {
+            $finder = new Finder();
+            $finder
+                ->files()
+                ->name('*.php')
+                ->name('*.twig')
+                ->in($viewPath);
+
+            foreach ($finder as $file) {
+                $relativePath = $fs->makePathRelative($file->getRealPath(), $viewPath);
+
+                $relativeDir  = str_replace($file->getFilename(), '', $relativePath);
+                $relativeDir = trim($relativeDir, DIRECTORY_SEPARATOR);
+                $relativeDir = trim($relativeDir, '/');
+
+                $template = null;
+                if ('_app' === $type) {
+                    if (empty($relativeDir)) {
+                        $template = $file->getFilename();
+                    } else {
+                        $template = sprintf('%s/%s', $relativeDir, $file->getFilename());
+                    }
+                } else {
+                    $template = sprintf('%s:%s:%s', $type, $relativeDir, $file->getFilename());
+                }
+
+                if ($template) {
+                    $templates[] = [
+                        'path' => $template
+                    ];
                 }
             }
         }
@@ -160,8 +201,13 @@ class MiscController extends AdminController
      */
     protected function getControllers($bundle)
     {
-        $reflector = $this->getBundleReflector($bundle);
         $controllers = [];
+
+        try {
+            $reflector = $this->getBundleReflector($bundle);
+        } catch (\Exception $e) {
+            return $controllers;
+        }
 
         $controllerDirectory = dirname($reflector->getFileName()) . '/Controller';
         if (file_exists($controllerDirectory)) {
@@ -227,6 +273,7 @@ class MiscController extends AdminController
             if (preg_match('/^(Symfony|Doctrine|Pimcore|Sensio)/', $class)) {
                 continue;
             }
+
             $filteredBundles[$bundle] = $class;
         }
 
