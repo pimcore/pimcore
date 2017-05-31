@@ -22,6 +22,7 @@ use Doctrine\DBAL\Driver\Statement;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Application;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\MigrationListener;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
@@ -30,10 +31,12 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\User;
+use Pimcore\Tool\Frontend;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class MigrateTagNamingStrategyCommand extends AbstractCommand
 {
@@ -129,22 +132,13 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $dispatcher = $this->getContainer()->get('event_dispatcher');
         $dispatcher->addSubscriber($subscriber);
 
-        $mainRequest = Request::createFromGlobals();
-
-        $stack = $this->getContainer()->get('request_stack');
-        $stack->push($mainRequest);
+        /** @var Application $app */
+        $app    = $this->getApplication();
+        $kernel = $app->getKernel();
 
         $documentIds = $this->getDocumentIds($input);
-
         foreach ($this->getDocuments($documentIds) as $document) {
-            $output->writeln('');
-            $this->io->comment(sprintf(
-                'Rendering document <comment>%s</comment> with ID <info>%d</info>',
-                $document->getRealFullPath(),
-                $document->getId()
-            ));
-
-            Document\Service::render($document);
+            $this->processDocument($kernel, $document, $mainDomain);
         }
 
         $this->io->success('All documents were rendered successfully, now proceeding to update names based on the gathered mapping');
@@ -157,14 +151,14 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 $strategy->getName()
             ));
 
-            return;
+            return 0;
         }
 
         $this->checkDbRenamePrerequisites($nameMapping);
         $this->processNameMapping($nameMapping);
 
         $this->io->success(sprintf(
-            'Names were successfully migrated! Please reconfigure Pimcore now th use the "%s" strategy and clear the cache.',
+            'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" strategy and clear the cache.',
             $strategy->getName()
         ));
     }
@@ -190,6 +184,39 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $loader = $this->getContainer()->get('pimcore_admin.security.user_loader');
         $loader->setUser($user);
     }
+
+    private function processDocument(HttpKernelInterface $kernel, Document $document, string $mainDomain)
+    {
+        $host = $mainDomain;
+        $path = $document->getRealFullPath();
+
+        $uri     = sprintf('http://%s%s', $host, $path);
+        $request = Request::create($uri, 'GET', [
+            'pimcore_preview' => true
+        ]);
+
+        $request->attributes->set('MASTER', $uri);
+
+        $this->io->comment(sprintf(
+            'Rendering document <comment>%s</comment> with ID <info>%d</info> and URI <comment>%s</comment>',
+            $document->getRealFullPath(),
+            $document->getId(),
+            $request->getUri()
+        ));
+
+        ob_start();
+
+        try {
+            $kernel->handle($request, HttpKernelInterface::MASTER_REQUEST, false);
+        } catch (\Exception $e) {
+            $this->io->error($e->getMessage());
+            throw $e;
+        } finally {
+            ob_get_contents();
+            ob_end_clean();
+        }
+    }
+
     private function processNameMapping(array $nameMapping)
     {
         $this->io->section('Processing editable renames');
@@ -283,9 +310,17 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                     'name'       => $oldName
                 ]);
 
-                if (!$oldResult || count($stmt->fetchAll()) !== 1) {
+                if (!$oldResult) {
                     throw new \RuntimeException(sprintf(
                         'Failed to load old editable (document ID: %d, name: %s)',
+                        $documentId,
+                        $oldName
+                    ));
+                }
+
+                if (count($stmt->fetchAll()) === 0) {
+                    $this->io->warning(sprintf(
+                        'Ignoring old editable (document ID: %d, name: %s) as it was not found',
                         $documentId,
                         $oldName
                     ));
