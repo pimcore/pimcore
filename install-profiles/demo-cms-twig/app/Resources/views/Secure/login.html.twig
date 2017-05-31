@@ -1,4 +1,4 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block content %}
 
@@ -40,7 +40,7 @@
                     {% endfor %}
                 </ul>
 
-                {% form_theme form ':Form:login.html.twig' %}
+                {% form_theme form 'Form/login.html.twig' %}
                 {{ form_start(form) }}
                 {{ form_row(form._username) }}
                 {{ form_row(form._password) }}

@@ -1,7 +1,7 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block content %}
-    {{ include(':Includes:content-default.html.twig') }}
+    {{ include('Includes/content-default.html.twig') }}
 
     <hr />
 
@@ -23,7 +23,7 @@
                             <a href="{{ detailLink }}">{{ article.getTitle() }}</a>
                         </h2>
 
-                        {% include ':Blog:meta.html.twig' with { article: article } only %}
+                        {% include 'Blog/meta.html.twig' with { article: article } only %}
 
                         <hr />
 
@@ -39,7 +39,7 @@
             {% endfor %}
 
             <!-- pagination start -->
-            {% include ':Includes:paging.html.twig' with { paginator: articles } only %}
+            {% include 'Includes/paging.html.twig' with { paginator: articles } only %}
             <!-- pagination end -->
         </div>
 

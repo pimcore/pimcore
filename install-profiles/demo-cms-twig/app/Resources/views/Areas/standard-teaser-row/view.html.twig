@@ -20,7 +20,7 @@
 
                 {% set type = select.getData() %}
                 {% if type == "direct" %}
-                    {{ include(':Snippets:standard-teaser.html.twig', {
+                    {{ include('Snippets/standard-teaser.html.twig', {
                         suffix: (t+1)
                     }) }}
                 {% else %}

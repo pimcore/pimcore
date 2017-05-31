@@ -11,7 +11,7 @@
             {% for child in doc.getChildren() %}
 
                 {% if child.getType() in ['page', 'link'] %}
-                    {% include ':Advanced:sitemapPartial.html.twig' with { doc: child } only %}
+                    {% include 'Advanced/sitemapPartial.html.twig' with { doc: child } only %}
                 {% endif %}
 
             {% endfor %}

@@ -1,8 +1,8 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block content %}
     {% if (not error and not success) or editmode %}
-        {{ include(':Includes:content-default.html.twig') }}
+        {{ include('Includes/content-default.html.twig') }}
     {% endif %}
 
     {% if error or editmode %}
@@ -21,7 +21,7 @@
             * http://symfony.com/doc/current/form/rendering.html
             * http://symfony.com/doc/current/form/form_themes.html
         #}
-        {% form_theme form ':Form:default.html.twig' %}
+        {% form_theme form 'Form/default.html.twig' %}
 
         {{ form_start(form, {
             attr: {

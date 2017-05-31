@@ -1,7 +1,7 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block content %}
-    {{ include(':Includes:content-default.html.twig') }}
+    {{ include('Includes/content-default.html.twig') }}
 
     {% if not success %}
         {% if unsubscribeMethod is not empty %}
@@ -15,7 +15,7 @@
         {% endif %}
 
         {# see comment on advanced/objectForm template regarding the form theme #}
-        {% form_theme form ':Form:default.html.twig' %}
+        {% form_theme form 'Form/default.html.twig' %}
 
         {{ form_start(form, {
             attr: {

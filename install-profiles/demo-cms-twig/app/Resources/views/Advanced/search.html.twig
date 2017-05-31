@@ -1,10 +1,10 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block content %}
     {% if queryString is defined and queryString is not empty %}
-        {{ include(':Includes:content-headline.html.twig') }}
+        {{ include('Includes/content-headline.html.twig') }}
     {% else %}
-        {{ include(':Includes:content-default.html.twig') }}
+        {{ include('Includes/content-default.html.twig') }}
     {% endif %}
 
     <div>
@@ -73,7 +73,7 @@
             {% endfor %}
 
             <!-- pagination start -->
-            {% include ':Includes:paging.html.twig' with { paginator: paginator } only %}
+            {% include 'Includes/paging.html.twig' with { paginator: paginator } only %}
             <!-- pagination end -->
 
         {% elseif queryString is defined and queryString is not empty %}

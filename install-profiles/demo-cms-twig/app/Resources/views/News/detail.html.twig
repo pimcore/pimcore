@@ -1,4 +1,4 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% do pimcore_head_title().set(news.getTitle()) %}
 {% do pimcore_head_meta().setDescription(news.getShortText, 160) %}

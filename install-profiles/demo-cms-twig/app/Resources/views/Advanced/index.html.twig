@@ -1,7 +1,7 @@
-{% extends '::layout.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% block content %}
-    {{ include(':Includes:content-default.html.twig') }}
+    {{ include('Includes/content-default.html.twig') }}
 
     {% if documents.getTotalCount() > 0 %}
         {# we use the Pimcore 4 compatible placeholder notation here (indexed array) #}
