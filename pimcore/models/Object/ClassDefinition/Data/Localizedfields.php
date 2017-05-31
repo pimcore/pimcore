@@ -723,7 +723,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
             $fieldDefinition = $fds[$name];
-            if ($context["suppressEnrichment"]) {
+            if (isset($context["suppressEnrichment"]) && $context["suppressEnrichment"]) {
                 return $fieldDefinition;
             }
 
@@ -751,7 +751,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if ($context["suppressEnrichment"]) {
+        if (isset($context["suppressEnrichment"]) && $context["suppressEnrichment"]) {
             return $this->fieldDefinitionsCache;
         }
 
