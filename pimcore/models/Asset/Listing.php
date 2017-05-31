@@ -26,8 +26,6 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int getTotalCount()
  * @method int getCount()
  * @method int loadIdList()
- */
-/**
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  */
 class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
