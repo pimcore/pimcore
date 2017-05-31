@@ -35,12 +35,12 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-namespace Pimcore\Templating\Helper\Navigation\Renderer;
+namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
 
-class Breadcrumbs extends AbstractHelper
+class Breadcrumbs extends AbstractRenderer
 {
     /**
      * Breadcrumbs separator string
@@ -69,20 +69,6 @@ class Breadcrumbs extends AbstractHelper
      * @var string|array
      */
     protected $_template;
-
-    /**
-     * @param Container|null $container
-     *
-     * @return $this
-     */
-    public function breadcrumbs(Container $container = null)
-    {
-        if (null !== $container) {
-            $this->setContainer($container);
-        }
-
-        return $this;
-    }
 
     // Accessors:
 
@@ -182,17 +168,14 @@ class Breadcrumbs extends AbstractHelper
      *
      * @return string
      */
-    public function renderStraight(Container $container = null)
+    public function renderStraight(Container $container)
     {
-        if (null === $container) {
-            $container = $this->getContainer();
-        }
-
         // find deepest active
         if (!$active = $this->findActive($container)) {
             return '';
         }
 
+        /** @var Page $active */
         $active = $active['page'];
 
         // put the deepest active page last in breadcrumbs
@@ -224,19 +207,15 @@ class Breadcrumbs extends AbstractHelper
     }
 
     /**
-     * @param Container|null $container
-     * @param string $partial
+     * @param Container $container
+     * @param string|null $partial
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public function renderTemplate(Container $container = null, $partial = null)
+    public function renderTemplate(Container $container, string $partial = null)
     {
-        if (null === $container) {
-            $container = $this->getContainer();
-        }
-
         if (null === $partial) {
             $partial = $this->getTemplate();
         }
@@ -248,8 +227,10 @@ class Breadcrumbs extends AbstractHelper
         // put breadcrumb pages in model
         $model = ['pages' => []];
         if ($active = $this->findActive($container)) {
+            /** @var Page $active */
             $active = $active['page'];
             $model['pages'][] = $active;
+
             while ($parent = $active->getParent()) {
                 if ($parent instanceof Page) {
                     $model['pages'][] = $parent;
@@ -267,28 +248,28 @@ class Breadcrumbs extends AbstractHelper
             $model['pages'] = array_reverse($model['pages']);
         }
 
-        return $this->getTemplatingEngine()->render($partial, $model);
+        return $this->templatingEngine->render($partial, $model);
     }
 
     /**
      * Alias of renderTemplate() for ZF1 backward compatibility
      *
      * @param Container|null $container
-     * @param null $partial
+     * @param string|null $partial
      *
      * @return mixed
      */
-    public function renderPartial(Container $container = null, $partial = null)
+    public function renderPartial(Container $container, string $partial = null)
     {
         return $this->renderTemplate($container, $partial);
     }
 
     /**
-     * @param Container|null $container
+     * @param Container $container
      *
      * @return string
      */
-    public function render(Container $container = null)
+    public function render(Container $container)
     {
         if ($partial = $this->getTemplate()) {
             return $this->renderPartial($container, $partial);

@@ -14,3 +14,27 @@ services:
             - '@pimcore.service.request.editmode_resolver'
         calls:
             - [setLogger, ['@logger']]
+
+
+    # NAVIGATION
+
+    pimcore.navigation.builder:
+        class: Pimcore\Navigation\Builder
+        arguments: ['@pimcore.http.request_helper']
+        public: false
+
+    pimcore.navigation.base_renderer:
+        abstract: true
+        arguments: ['@templating.engine.delegating']
+
+    pimcore.navigation.renderer.menu:
+        class: Pimcore\Navigation\Renderer\Menu
+        parent: pimcore.navigation.base_renderer
+        tags:
+            - { name: pimcore.navigation.renderer, alias: menu }
+
+    pimcore.navigation.renderer.breadcrumbs:
+        class: Pimcore\Navigation\Renderer\Breadcrumbs
+        parent: pimcore.navigation.base_renderer
+        tags:
+            - { name: pimcore.navigation.renderer, alias: breadcrumbs }
