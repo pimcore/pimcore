@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use Pimcore\Cache;
+use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\MigrationListener;
@@ -28,6 +29,7 @@ use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
+use Pimcore\Model\User;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -69,6 +71,12 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 'ignore', 'i',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Document IDs to ignore.'
+            )
+            ->addOption(
+                'user', 'u',
+                InputOption::VALUE_REQUIRED,
+                'Run command under given user name',
+                'admin'
             );
 
         $this->configureDryRunOption('Do not update editables. Just render documents and gather name mapping');
@@ -81,12 +89,17 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     {
         parent::initialize($input, $output);
 
+        // initialize admin mode
         Cache::disable();
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
         AbstractObject::setHideUnpublished(false);
         AbstractObject::setGetInheritedValues(false);
         Localizedfield::setGetFallbackValues(false);
+
+        /** @var User $user */
+        $user = User::getByName('admin');
+        $this->getContainer()->get('pimcore_admin.security.user_loader')->setUser($user);
     }
 
     /**
@@ -94,8 +107,23 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $strategy = $this->getNamingStrategy($input);
+        try {
+            $this->initializeUser($input);
+        } catch (\InvalidArgumentException $e) {
+            $this->io->error($e->getMessage());
+            return 1;
+        }
 
+        $systemConfig = Config::getSystemConfig()->toArray();
+        $mainDomain   = $systemConfig['general']['domain'];
+
+        if (!$mainDomain) {
+            $this->io->error('No domain set in "Settings" -> "System" -> "Website" -> "Domain". Please set a domain before proceeding.');
+            return 2;
+        }
+
+        // register migration listener with new naming strategy
+        $strategy   = $this->getNamingStrategy($input);
         $subscriber = new MigrationListener($strategy);
 
         $dispatcher = $this->getContainer()->get('event_dispatcher');
@@ -141,6 +169,27 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         ));
     }
 
+    private function initializeUser(InputInterface $input)
+    {
+        $username = $input->getOption('user');
+
+        /** @var User $user */
+        $user = User::getByName($username);
+
+        if (!$user) {
+            throw new \InvalidArgumentException(sprintf('User "%s" could not be loaded'));
+        }
+
+        if (!$user->isAdmin()) {
+            throw new \InvalidArgumentException(sprintf('User "%s" does not have admin rights'));
+        }
+
+        // See ElementListener. The UserLoader will be used to fetch the admin user when rendering
+        // documents to make sure unpublished documents can't be seen by non-admin requests. By setting
+        // the user on the loader, no session lookup will be done and this user will be used instead.
+        $loader = $this->getContainer()->get('pimcore_admin.security.user_loader');
+        $loader->setUser($user);
+    }
     private function processNameMapping(array $nameMapping)
     {
         $this->io->section('Processing editable renames');
