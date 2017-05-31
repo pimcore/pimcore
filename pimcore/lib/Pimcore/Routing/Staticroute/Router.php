@@ -255,7 +255,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         if ($this->container->has($controllerParams['controller'])) {
             $controller = sprintf(
-                '%s:%s',
+                '%s:%sAction',
                 $controllerParams['controller'],
                 $controllerParams['action']
             );

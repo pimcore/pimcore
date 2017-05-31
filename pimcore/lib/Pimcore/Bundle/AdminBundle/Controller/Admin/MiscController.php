@@ -70,7 +70,7 @@ class MiscController extends AdminController
             foreach ($finder as $file) {
                 $relativePath = $fs->makePathRelative($file->getRealPath(), $viewPath);
 
-                $relativeDir  = str_replace($file->getFilename(), '', $relativePath);
+                $relativeDir = str_replace($file->getFilename(), '', $relativePath);
                 $relativeDir = trim($relativeDir, DIRECTORY_SEPARATOR);
                 $relativeDir = trim($relativeDir, '/');
 
@@ -116,7 +116,14 @@ class MiscController extends AdminController
 
         $actions = [];
         if ($controller) {
-            foreach ($this->getControllerActions($bundle, $controller) as $reflector) {
+            if ($this->has($controller)) {
+                $classActions = $this->getServiceControllerActions($controller);
+            }
+            else {
+                $classActions = $this->getControllerActions($bundle, $controller);
+            }
+
+            foreach ($classActions as $reflector) {
                 $name = $reflector->getName();
                 $name = preg_replace('/Action$/', '', $name);
 
@@ -231,6 +238,30 @@ class MiscController extends AdminController
         }
 
         return $controllers;
+    }
+
+    /**
+     * @param $service
+     * @return \ReflectionMethod[]
+     */
+    protected function getServiceControllerActions($service)
+    {
+        if ($this->has($service)) {
+            $controllerService = $this->get($service);
+            $methods = [];
+
+            $controllerReflector = new \ReflectionClass(get_class($controllerService));
+
+            foreach ($controllerReflector->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_STATIC) as $method) {
+                if (preg_match('/^(.*)Action$/', $method->getName())) {
+                    $methods[] = $method;
+                }
+            }
+
+            return $methods;
+        }
+
+        return [];
     }
 
     /**
@@ -521,8 +552,8 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-                                  'success' => $success
-                             ]);
+            'success' => $success
+        ]);
     }
 
     /**
@@ -544,7 +575,7 @@ class MiscController extends AdminController
             $path = $this->getFileexplorerPath($request, 'path');
             $file = $path . '/' . $request->get('filename');
 
-            $file= resolvePath($file);
+            $file = resolvePath($file);
             if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
                 throw new \Exception('not allowed');
             }
@@ -557,8 +588,8 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-                                  'success' => $success
-                             ]);
+            'success' => $success
+        ]);
     }
 
     /**
@@ -580,7 +611,7 @@ class MiscController extends AdminController
             $path = $this->getFileexplorerPath($request, 'path');
             $file = $path . '/' . $request->get('filename');
 
-            $file= resolvePath($file);
+            $file = resolvePath($file);
             if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
                 throw new \Exception('not allowed');
             }
@@ -617,7 +648,7 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-              'success' => $success
+            'success' => $success
         ]);
     }
 
@@ -661,7 +692,7 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-              'success' => true
+            'success' => true
         ]);
     }
 
