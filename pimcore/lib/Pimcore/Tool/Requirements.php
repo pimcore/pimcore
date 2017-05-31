@@ -33,7 +33,7 @@ class Requirements
             $varWritable = true;
 
             try {
-                if(!is_dir($varDir)) {
+                if (!is_dir($varDir)) {
                     File::mkdir($varDir);
                 }
 
