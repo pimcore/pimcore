@@ -60,9 +60,7 @@ services:
 
     pimcore.templating.view_helper.glossary:
         class: Pimcore\Templating\Helper\Glossary
-        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver', '@pimcore.http.request_helper']
-        calls:
-            - [setLogger, ['@logger']]
+        arguments: ['@pimcore.glossary.processor']
         tags:
             - { name: templating.helper, alias: glossary }
 

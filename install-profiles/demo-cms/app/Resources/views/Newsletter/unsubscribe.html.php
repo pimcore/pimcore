@@ -23,24 +23,28 @@ $this->extend('layout.html.php');
         </div>
     <?php } ?>
 
+    <?php $this->form()->setTheme($form, ':Form/default'); ?>
 
-    <form class="form-horizontal" role="form" action="" method="post">
+    <?= $this->form()->start($form, [
+        'attr' => [
+            'class' => 'form-horizontal',
+            'role'  => 'form'
+        ]
+    ]); ?>
 
-        <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
-            <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
-            </div>
+    <?= $this->form()->row($form['email']) ?>
+
+    <br/>
+
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <?= $this->form()->widget($form['submit'], [
+                'attr' => ['class' => 'btn btn-default']
+            ]) ?>
         </div>
+    </div>
 
-        <br />
-
-        <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->translate("Submit"); ?>">
-            </div>
-        </div>
-    </form>
+    <?= $this->form()->end($form); ?>
 <?php } else { ?>
     <div class="alert alert-success">
         <h2>Unsubscribed</h2>

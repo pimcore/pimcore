@@ -2,16 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\LoginFormType;
 use AppBundle\Model\Object\User;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\FrontendController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SecureController extends FrontendController
 {
-    public function loginAction()
+    public function loginAction(Request $request)
     {
         $authenticationUtils = $this->get('security.authentication_utils');
 
@@ -21,10 +23,19 @@ class SecureController extends FrontendController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
+        $formData = [
+            '_username'    => $lastUsername,
+            '_target_path' => '/' . $request->getLocale()
+        ];
+
+        $form = $this->createForm(LoginFormType::class, $formData, [
+            'action' => $this->generateUrl('demo_login'),
+        ]);
+
         return [
             'hideLeftNav'     => true,
             'showBreadcrumbs' => false,
-            'lastUsername'    => $lastUsername,
+            'form'            => $form->createView(),
             'error'           => $error,
             'availableUsers'  => $this->loadAvailableUsers()
         ];

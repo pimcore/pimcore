@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
+
+    {% spaceless -%}
+        {# add global stylesheets and scripts outside of any blocsk to add them to the helpers before any others assets are added #}
+        {# we use the view helper to have cache buster functionality #}
+        {% do pimcore_head_link().appendStylesheet(asset('static/bootstrap/css/bootstrap.css')) %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/css/global.css')) %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/lib/video-js/video-js.min.css'), 'screen') %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/lib/magnific/magnific.css'), 'screen') %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/bootstrap/css/bootstrap.css')) %}
+
+        {% if editmode %}
+            {% do pimcore_head_link().appendStylesheet(asset('static/css/editmode.css')) %}
+        {% endif %}
+
+        {% do pimcore_head_script().appendFile(asset('static/js/jquery-1.11.0.min.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/bootstrap/js/bootstrap.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/lib/magnific/magnific.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/lib/video-js/video.js')) %}
+        {% do pimcore_head_script().appendFile(asset('static/js/srcset-polyfill.min.js')) %}
+
+        {% set isPortal = ((isPortal is defined) and isPortal) %}
+
+        {% if not document is defined or not document %}
+            {% set document = pimcore_document(1) %}
+        {% endif %}
+
+        {% if document is instanceof('\\Pimcore\\Model\\Document\\Link') %}
+            {# @var document \Pimcore\Model\Document\Link #}
+            {% set document = document.getObject() %}
+        {% endif %}
+
+        {% if document.getTitle() is not empty %}
+            {% do pimcore_head_title().set(document.getTitle()) %}
+        {% endif %}
+
+        {% if document.getDescription() is not empty %}
+            {% do pimcore_head_meta().setDescription(document.getDescription()) %}
+        {% endif %}
+
+        {% do pimcore_head_title().append('pimcore Demo') %}
+        {% do pimcore_head_title().setSeparator(' : ') %}
+    {%- endspaceless %}
+
+    {# we're using the deferred extension here to make sure this block is rendered after all helper calls #}
+    {% block layout_head_meta deferred %}
+        {{ pimcore_head_title() }}
+        {{ pimcore_head_meta() }}
+    {% endblock %}
+
+    {% block head_stylesheets deferred %}
+        {{ pimcore_head_link() }}
+    {% endblock %}
+
+    {% block head_ie_stylesheets %}
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="{{ asset('static/js/html5shiv.js') }}"></script>
+        <script src="{{ asset('static/js/respond.min.js') }}"></script>
+        <![endif]-->
+    {% endblock %}
+</head>
+<body{% if isPortal %} class="portal-page"{% endif %}>
+
+<div class="navbar-wrapper">
+
+    {% set mainNavStartNode = document.getProperty('mainNavStartNode') %}
+    {% if mainNavStartNode is empty %}
+        {% set mainNavStartNode = pimcore_document(1) %}
+    {% endif %}
+
+    {% set mainNav = pimcore_build_nav(document, mainNavStartNode) %}
+
+    <div class="container">
+        <div class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ mainNavStartNode }}">
+                        <img src="{{ asset('static/img/logo-white.svg') }}" alt="pimcore Demo">
+                    </a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    {{ pimcore_render_nav(mainNav, 'menu', 'renderMenu', {
+                        maxDepth: 1,
+                        ulClass: 'nav navbar-nav'
+                    }) }}
+
+                    <ul class="nav navbar-nav navbar-right">
+                        {{ include('Includes/login.html.twig') }}
+                        {{ include('Includes/language.html.twig') }}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if isPortal %}
+    {{ block('content') }}
+{% else %}
+    {{ include('Includes/jumbotron.html.twig') }}
+
+    <div id="content" class="container">
+        {% set hideLeftNav = false %}
+        {% set showBreadcrumbs = true %}
+        {% set mainColClass = hideLeftNav ? 'col-md-12': 'col-md-9 col-md-push-3' %}
+
+        <div class="{{ mainColClass }}">
+            {{ block('content') }}
+
+            {% if showBreadcrumbs %}
+                {% do pimcore_nav_renderer('breadcrumbs').setMinDepth(null) %}
+
+                <div>
+                    <a href="/">{{ "Home"|trans }}</a> &gt;
+                    {{ pimcore_render_nav(mainNav, 'breadcrumbs') }}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if not hideLeftNav %}
+            <div class="col-md-3 col-md-pull-9 sidebar">
+                <div class="bs-sidebar hidden-print affix-top" role="complementary">
+                    {% set leftStartNode = document.getProperty('leftNavStartNode') %}
+                    {% if leftStartNode is empty %}
+                        {% set leftStartNode = mainNavStartNode %}
+                    {% endif %}
+
+                    {% set leftNav = pimcore_build_nav(document, leftStartNode) %}
+
+                    <h3>{{ leftStartNode.getProperty('navigation_name') }}</h3>
+
+                    {{ pimcore_render_nav(leftNav, 'menu', 'renderMenu', {
+                        ulClass: 'nav bs-sidenav',
+                        expandSiblingNodesOfActiveBranch: true
+                    }) }}
+                </div>
+
+                {{ pimcore_inc(document.getProperty('sidebar')) }}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
+
+{# include a document-snippet - in this case the footer document #}
+{{ pimcore_inc('/' ~ app.request.locale ~ '/shared/includes/footer') }}
+
+{# output scripts added before #}
+{% block scripts deferred %}
+    {{ pimcore_head_script() }}
+{% endblock %}
+
+<script>
+    videojs.options.flash.swf = "/static/lib/video-js/video-js.swf";
+
+    {% verbatim %}
+    // main menu
+    $(".navbar-wrapper ul.nav>li>ul").each(function () {
+        var li = $(this).parent();
+        var a = $("a.main", li);
+
+        $(this).addClass("dropdown-menu");
+        li.addClass("dropdown");
+        a.addClass("dropdown-toggle");
+        li.on("mouseenter", function () {
+            $("ul", $(this)).show();
+        });
+        li.on("mouseleave", function () {
+            $("ul", $(this)).hide();
+        });
+    });
+
+    // side menu
+    $(".bs-sidenav ul").each(function () {
+        $(this).addClass("nav");
+    });
+
+    // gallery carousel: do not auto-start
+    $('.gallery').carousel('pause');
+
+    // tabbed slider text
+    var clickEvent = false;
+    $('.tabbed-slider').on('click', '.nav a', function () {
+        clickEvent = true;
+        $('.nav li').removeClass('active');
+        $(this).parent().addClass('active');
+    }).on('slid.bs.carousel', function (e) {
+        if (!clickEvent) {
+            var count = $('.nav').children().length - 1;
+            var current = $('.nav li.active');
+            current.removeClass('active').next().addClass('active');
+            var id = parseInt(current.data('slide-to'));
+            if (count == id) {
+                $('.nav li').first().addClass('active');
+            }
+        }
+        clickEvent = false;
+    });
+
+    $("#portalHeader img, #portalHeader .item, #portalHeader").height($(window).height());
+    {% endverbatim %}
+
+    {% if not editmode %}
+    {% verbatim %}
+        // center the caption on the portal page
+        $("#portalHeader .carousel-caption").css("bottom", Math.round(($(window).height() - $("#portalHeader .carousel-caption").height()) / 3) + "px");
+
+        $(document).ready(function () {
+
+            // lightbox (magnific)
+            $('a.thumbnail').magnificPopup({
+                type: 'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+
+            $(".image-hotspot").tooltip();
+            $(".image-marker").tooltip();
+        });
+        {% endverbatim %}
+    {% endif %}
+</script>
+
+</body>
+</html>

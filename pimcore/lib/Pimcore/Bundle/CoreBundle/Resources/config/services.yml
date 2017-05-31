@@ -221,22 +221,6 @@ services:
             - { name: controller.argument_value_resolver }
 
     #
-    # OBJECT SERVICES
-    #
-    # simple services exposing get() API for documents, objects and assets
-    # this is only necessary if loading objects directly with only access to the container, e.g. templates
-
-    pimcore.service.document:
-        class: Pimcore\Service\Document\DocumentService
-
-    pimcore.service.asset:
-        class: Pimcore\Service\Asset\AssetService
-
-    pimcore.service.object:
-        class: Pimcore\Service\Object\ObjectService
-
-
-    #
     # EXTENSIONS
     #
 

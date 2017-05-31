@@ -1,0 +1,91 @@
+<section class="area-gallery-carousel">
+
+    {% set selectStore = [] %}
+    {% for i in 2..29 %}
+        {% set selectStore = selectStore|merge([i , i]) %}
+    {% endfor %}
+
+    {% set slidesSelect = pimcore_select('slides', {
+        store: selectStore,
+        reload: true,
+        width: 70
+    }) %}
+
+    {% set showPreviewsCheckbox = pimcore_checkbox('showPreviews') %}
+    {% set showPreviews = showPreviewsCheckbox.isChecked and not editmode %}
+
+    {% set id = 'gallery-carousel-' ~ uniqid() %}
+    {% set slides = slidesSelect.getData()|default(2) %}
+
+    {% if editmode %}
+
+        <div class="alert alert-info" style="height: 75px">
+            <div class="col-xs-6">
+                How many images you want to show?
+                {{ slidesSelect|raw }}
+            </div>
+            <div class="col-xs-6">
+                Show Previews
+                {{ showPreviewsCheckbox|raw }}
+            </div>
+        </div>
+
+        <style type="text/css">
+            .gallery .item {
+                min-height: 200px;
+            }
+        </style>
+
+    {% endif %}
+
+    <div id="{{ id }}" class="gallery carousel slide">
+        <!-- Indicators -->
+        <ol class="carousel-indicators {{ showPreviews ? 'preview visible-lg' }}">
+
+            {% for i in 0..(slides-1) %}
+
+                <li data-target="#{{ id }}" data-slide-to="{{ i }}" class="{{ loop.first ? 'active' }}">
+                    {% if showPreviews %}
+                        {{ pimcore_image('image_' ~ i, {
+                            thumbnail: 'galleryCarouselPreview',
+                        }) }}
+                    {% endif %}
+                </li>
+
+            {% endfor %}
+        </ol>
+
+        <div class="carousel-inner">
+            {% for i in 0..(slides-1) %}
+                <div class="item {{ id ~ '-' ~ i }} {{ loop.first ? 'active' }}">
+                    {{ pimcore_image('image_' ~ i, {
+                        thumbnail: 'galleryCarousel',
+                        dropClass: id ~ '-' ~ i,
+                        defaultHeight: 200
+                    }) }}
+
+                    <div class="carousel-caption">
+                        {% set captionTitle = pimcore_input('caption-title-' ~ i, { width: 400 }) %}
+                        {% set captionText = pimcore_textarea('caption-text-' ~ i, { width: 400 }) %}
+
+                        {% if editmode or not captionTitle.isEmpty() %}
+                            <h3>{{ captionTitle|raw }}</h3>
+                        {% endif %}
+
+                        {% if editmode or not captionText.isEmpty() %}
+                            <p>{{ captionText|raw }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <a class="left carousel-control" href="#{{ id }}" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="right carousel-control" href="#{{ id }}" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+</section>
+

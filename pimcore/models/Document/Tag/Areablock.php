@@ -31,7 +31,7 @@ use Pimcore\Tool\HtmlUtils;
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Areablock extends Model\Document\Tag
+class Areablock extends Model\Document\Tag implements BlockInterface
 {
     /**
      * Contains an array of indices, which represent the order of the elements in the block

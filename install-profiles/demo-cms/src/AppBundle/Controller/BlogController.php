@@ -16,23 +16,37 @@ class BlogController extends FrontendController
         $blogList->setOrderKey('date');
         $blogList->setOrder('DESC');
 
+        // selected category
+        $selectedCategory = null;
+        if ($selectedCategoryId = $request->get('category')) {
+            $selectedCategory = Object\BlogCategory::getById((int)$selectedCategoryId);
+            $this->view->selectedCategory = $selectedCategory;
+        }
+
+        // selected archive
+        $selectedArchive = null;
+        if ($selectedArchive = $request->get('archive')) {
+            $this->view->selectedArchive = $selectedArchive;
+        }
+
         $conditions = [];
 
-        if ($request->get('category')) {
-            $conditions[] = 'categories LIKE ' . $blogList->quote('%,' . (int) $request->get('category') . ',%');
+        if ($selectedCategory) {
+            $conditions[] = 'categories LIKE ' . $blogList->quote('%,' . $selectedCategory->getId() . ',%');
         }
 
         if ($request->get('archive')) {
-            $conditions[] = "DATE_FORMAT(FROM_UNIXTIME(date), '%Y-%c') = " . $blogList->quote($request->get('archive'));
+            $conditions[] = "DATE_FORMAT(FROM_UNIXTIME(date), '%Y-%c') = " . $blogList->quote($selectedArchive);
         }
 
         if (!empty($conditions)) {
             $blogList->setCondition(implode(' AND ', $conditions));
         }
 
+        // we're using Zend\Paginator here, but you can use any other paginator (e.g. Pagerfanta)
         $paginator = new Paginator($blogList);
         $paginator->setCurrentPageNumber($request->get('page'));
-        $paginator->setItemCountPerPage(5);
+        $paginator->setItemCountPerPage(2);
 
         $this->view->articles = $paginator;
 

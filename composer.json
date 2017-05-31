@@ -68,6 +68,7 @@
     "ocramius/proxy-manager": "2.0.*",
     "oyejorge/less.php": "~1.7",
     "pear/net_url2": "~2.2",
+    "phive/twig-extensions-deferred": "^2.0",
     "pimcore/core-version": "5.0.0-alpha.1",
     "ramsey/uuid": "~3",
     "sabre/dav": "~3.1",
@@ -79,6 +80,7 @@
     "symfony/swiftmailer-bundle": "^2.3.10",
     "symfony/symfony": "3.3.*",
     "tijsverkoyen/css-to-inline-styles": "~1.5",
+    "twig/twig": "^2.0",
     "vrana/adminer": "~4.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2"

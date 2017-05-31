@@ -10,7 +10,7 @@ $this->extend('layout.html.php');
 ?>
 
 <?php
-    $queryString = $this->getParam("q");
+    $queryString = $this->queryString;
 ?>
 
 <?= $this->template('Includes/content-headline.html.php'); ?>
@@ -82,7 +82,7 @@ $this->extend('layout.html.php');
         <?= $this->render("Includes/paging.html.php", get_object_vars($this->paginator->getPages("Sliding"))); ?>
     <?php } else if ($queryString) { ?>
         <div class="alert alert-error" style="margin-top: 30px">
-            Sorry, something seems to went wrong ...
+            Sorry, something went wrong ...
         </div>
     <?php } else { ?>
         <div class="alert alert-info" style="margin-top: 30px">

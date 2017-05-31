@@ -1,0 +1,95 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    {% if queryString is defined and queryString is not empty %}
+        {{ include('Includes/content-headline.html.twig') }}
+    {% else %}
+        {{ include('Includes/content-default.html.twig') }}
+    {% endif %}
+
+    <div>
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <input type="text" name="q" class="form-control" placeholder="{{ "Keyword"|trans }}" value="{{ queryString|default('') }}">
+            </div>
+            <button type="submit" name="submit" class="btn btn-default">{{ "Search"|trans }}</button>
+        </form>
+
+        {% if paginator is defined %}
+
+            {% set facets = result.getFacets() %}
+            {% if facets is not empty %}
+                <div style="margin-top: 20px">
+                    Facets:
+                    {% for label, anchor in facets %}
+                        <a class="btn btn-default btn-xs" href="{{ pimcore_url({ 'facet': label, 'page': null}) }}">
+                            {{ anchor }}
+                        </a>
+                    {% endfor %}
+                </div>
+                <hr />
+            {% endif %}
+
+            {% for item in paginator %}
+
+                {# @var item \Pimcore\Google\Cse\Item #}
+
+                <!-- see class Pimcore_Google_Cse_Item for all possible properties -->
+                <div class="media {{ item.getType() }}">
+                    {% if item.getImage() is not empty %}
+                        <!-- if an image is present this can be simply a string or an internal asset object -->
+                        {% if item.getImage() is instanceof('\\Pimcore\\Model\\Asset') %}
+                            <a href="{{ item.getLink() }}" class="pull-left">
+                                {{ item.getImage().getThumbnail('newsList').getHTML({
+                                    class: 'media-object'
+                                })|raw }}
+                            </a>
+                        {% else %}
+                            <a href="{{ item.getLink() }}" class="pull-left">
+                                <img width="64" src="{{ item.getImage() }}" />
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            <a href="{{ item.getLink() }}">
+                                <!-- if there's a document set for this result use the original title without suffixes ... -->
+                                <!-- the same can be done with the description and every other element relating to the document -->
+                                {% if item.getDocument() is not empty and item.getDocument().getTitle() is not empty %}
+                                    {{ item.getDocument().getTitle() }}
+                                {% else %}
+                                    {{ item.getTitle() }}
+                                {% endif %}
+                            </a>
+                        </h4>
+
+                        {{ item.getHtmlSnippet()|raw }}
+                        <br />
+                        <small>{{ item.getHtmlFormattedUrl()|raw }}</small>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+            <!-- pagination start -->
+            {% include 'Includes/paging.html.twig' with { paginator: paginator } only %}
+            <!-- pagination end -->
+
+        {% elseif queryString is defined and queryString is not empty %}
+
+            {# no paginator, but a query string #}
+            <div class="alert alert-error" style="margin-top: 30px">
+                Sorry, something went wrong ...
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-info" style="margin-top: 30px">
+                Type your keyword and press search
+            </div>
+
+        {% endif %}
+
+    </div>
+{% endblock %}

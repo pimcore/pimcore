@@ -1,0 +1,16 @@
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle" id="languageSelector" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+        {{ "Language"|trans }}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="languageSelector">
+        {# the language_switcher is injected as global in src/AppBundle/Resources/config/pimcore/config.yml #}
+        {% for link, text in language_switcher.getLocalizedLinks(document) %}
+
+            <li>
+                <a href="{{ link }}">{{ text }}</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</li>

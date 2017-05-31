@@ -1,0 +1,50 @@
+{% import _self as local_macros %}
+
+{% macro image_marker(el, class, attributes) %}
+
+    {# extract title #}
+    {% set title = '' %}
+    {% for d in el['data'] %}
+        {% if d['name'] == 'title' %}
+            {% set title = d['value'] %}
+        {% endif %}
+    {% endfor %}
+
+    {# build style attributes #}
+    {% set styleAttributes = [] %}
+    {% for attribute in attributes %}
+        {% if el[attribute] is defined %}
+            {% set attributePair = attribute ~ ': ' ~ el[attribute] ~ '%' %}
+            {% set styleAttributes = styleAttributes|merge([attributePair]) %}
+        {% endif %}
+    {% endfor %}
+
+    {% set style = styleAttributes|join('; ') %}
+
+    <div class="{{ class }}" style="{{ style }}" data-toggle="tooltip" title="{{ title }}"></div>
+
+{% endmacro %}
+
+<section class="area-image">
+    <div style="position: relative;">
+        {% set image = pimcore_image('image', {
+            thumbnail: 'content'
+        }) %}
+
+        {{ image|raw }}
+
+        {% if not editmode %}
+
+            {# markers #}
+            {% for marker in image.getMarker() %}
+                {{ local_macros.image_marker(marker, 'image-marker', ['top', 'left']) }}
+            {% endfor %}
+
+            {# hotspots #}
+            {% for hotspot in image.getHotspots() %}
+                {{ local_macros.image_marker(hotspot, 'image-hotspot', ['width', 'height', 'top', 'left']) }}
+            {% endfor %}
+
+        {% endif %}
+    </div>
+</section>
