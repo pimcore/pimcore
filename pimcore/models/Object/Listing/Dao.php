@@ -100,7 +100,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->reset(QueryBuilder::COLUMNS);
         $query->reset(QueryBuilder::LIMIT_COUNT);
         $query->reset(QueryBuilder::LIMIT_OFFSET);
-        $query->columns(['totalCount' => new Expression('COUNT(*)')]);
+
+        try {
+            $query->getPart(QueryBuilder::DISTINCT);
+            $countIdentifier = 'DISTINCT oo_id';
+        } catch (\Exception $e) {
+            $countIdentifier = '*';
+        }
+
+        $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
+
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
