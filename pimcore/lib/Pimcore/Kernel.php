@@ -176,10 +176,12 @@ abstract class Kernel extends SymfonyKernel
         ], 100);
 
         // environment specific bundles dev + test bundles
-        $collection->addBundle(
-            new SensioGeneratorBundle(),
-            80, ['dev']
-        );
+        if(class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+            $collection->addBundle(
+                new SensioGeneratorBundle(),
+                80, ['dev']
+            );
+        }
 
         $collection->addBundles([
             new DebugBundle(),
