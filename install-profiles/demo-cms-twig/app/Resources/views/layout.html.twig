@@ -212,7 +212,7 @@
     $("#portalHeader img, #portalHeader .item, #portalHeader").height($(window).height());
     {% endverbatim %}
 
-    {% if editmode %}
+    {% if not editmode %}
     {% verbatim %}
         // center the caption on the portal page
         $("#portalHeader .carousel-caption").css("bottom", Math.round(($(window).height() - $("#portalHeader .carousel-caption").height()) / 3) + "px");
