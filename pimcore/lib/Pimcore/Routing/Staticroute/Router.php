@@ -22,6 +22,7 @@ use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -58,13 +59,24 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $supportedNames;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * @param RequestContext $context
      * @param MvcConfigNormalizer $configNormalizer
+     * @param ContainerInterface $container
      */
-    public function __construct(RequestContext $context, MvcConfigNormalizer $configNormalizer)
+    public function __construct(
+        RequestContext $context,
+        MvcConfigNormalizer $configNormalizer,
+        ContainerInterface $container
+    )
     {
         $this->context          = $context;
         $this->configNormalizer = $configNormalizer;
+        $this->container = $container;
     }
 
     /**
@@ -241,11 +253,20 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $controllerParams[$key] = $value;
         }
 
-        $controller = $this->configNormalizer->formatController(
-            $controllerParams['module'],
-            $controllerParams['controller'],
-            $controllerParams['action']
-        );
+        if ($this->container->has($controllerParams['controller'])) {
+            $controller = sprintf(
+                '%s:%s',
+                $controllerParams['controller'],
+                $controllerParams['action']
+            );
+        }
+        else {
+            $controller = $this->configNormalizer->formatController(
+                $controllerParams['module'],
+                $controllerParams['controller'],
+                $controllerParams['action']
+            );
+        }
 
         $routeParams['_controller'] = $controller;
 

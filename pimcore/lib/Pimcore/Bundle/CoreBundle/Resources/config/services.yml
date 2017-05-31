@@ -33,7 +33,7 @@ services:
     # dedicated router for static routes
     pimcore.routing.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
-        arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
+        arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer', '@service_container']
         calls:
             - [setLogger, ['@logger']]
         tags:

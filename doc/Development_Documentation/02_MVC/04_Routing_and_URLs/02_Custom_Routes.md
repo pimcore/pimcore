@@ -25,7 +25,7 @@ Following options are relevant:
 * *Pattern* - URL pattern configured with a regex
 * *Reverse* - reverse pattern that is used to build URLs for this route, see also [Building URLs](#building-urls-based-on-custom-routes).
 * *Bundle* - When this column is filled, Pimcore routes the request to a different bundle than the standard bundle (AppBundle). 
-* *Controller*, *Action* - configuration for which controller/action the request is delegated to. 
+* *Controller*, *Action* - configuration for which controller/action the request is delegated to. You can use a Service as Controller Name as well. In this case, the Bundle Setting will be ignored
 * *Variables* - comma-seperated list of names for the placeholders in the pattern regex. At least all variables used in the reverse pattern must be listed here.  
 * *Defaults* - defaults for variables separated by | - e.g. key=value|key2=value2 
 * *Site* - Site for which this route should be applied to. 
@@ -196,7 +196,29 @@ The following configuration should explain the way how it works:
 In that case, you have few valid URL's:
 * `/news/list` - `NewsController::listAction`
 * `/events/detail` - `EventsController::detailAction`
- 
+
+## Using Controller as Service in Custom Routes
+
+Pimcore supports Controller as Services in Custom Routes. To add them, set the Controller Setting to your Service name.
+
+Service Definition:
+
+```yml
+services:
+  app.controller.default:
+    class: AppBundle\Controller\DefaultController
+    calls:
+      - [setContainer, ['@service_container']]
+
+```
+
+It works similar to the reverse route, you can place your placeholders directly into the controller.
+The following configuration should explain the way how it works:
+
+| Name          | Pattern     | Reverse  | Bundle | Controller             | Action        | Variables             | Defaults             | Site             | Priority             |
+|---------------|-------------|----------|--------|------------------------|---------------|-----------------------|----------------------|------------------|----------------------|
+| service_route | /\/default/ | /default |        | app.controller.default | defaultAction |                       |                      |                  | 10                   |
+
 
 ## Responding 404 Status Code
 
