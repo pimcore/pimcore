@@ -15,6 +15,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Db\Connection;
+use Pimcore\File;
 use Pimcore\Tool\Requirements\Check;
 use Pimcore\Update;
 
@@ -32,6 +33,10 @@ class Requirements
             $varWritable = true;
 
             try {
+                if(!is_dir($varDir)) {
+                    File::mkdir($varDir);
+                }
+
                 $files = self::rscandir($varDir);
 
                 foreach ($files as $file) {
