@@ -327,16 +327,16 @@ class Select extends Model\Object\ClassDefinition\Data
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    public function enrichFieldDefinition($context = array())
+    public function enrichFieldDefinition($context = [])
     {
         if ($this->getOptionsProviderClass()) {
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $context["fieldname"] = $this->getName();
+                $context['fieldname'] = $this->getName();
                 $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
                 $this->setOptions($options);
             }
-
         }
+
         return $this;
     }
 
@@ -347,15 +347,15 @@ class Select extends Model\Object\ClassDefinition\Data
     public function enrichLayoutDefinition($object, $context = [])
     {
         if ($this->getOptionsProviderClass()) {
-            $context["object"] = $object;
+            $context['object'] = $object;
             if ($object) {
-                $context["class"] = $object->getClass();
+                $context['class'] = $object->getClass();
             }
 
-            $context["fieldname"] = $this->getName();
-            if (!isset($context["purpose"])) {
-                $context["purpose"] = "layout";
-            };
+            $context['fieldname'] = $this->getName();
+            if (!isset($context['purpose'])) {
+                $context['purpose'] = 'layout';
+            }
 
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
                 $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
@@ -385,26 +385,27 @@ class Select extends Model\Object\ClassDefinition\Data
      *
      * @return array
      */
-    public function getDataForGrid($data, $object = null, $params = []) {
-
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
         if ($this->getOptionsProviderClass()) {
-            $context = $params['context'] ? $params['context'] : array();
-            $context["object"] = $object;
+            $context = $params['context'] ? $params['context'] : [];
+            $context['object'] = $object;
             if ($object) {
-                $context["class"] = $object->getClass();
+                $context['class'] = $object->getClass();
             }
 
-            $context["fieldname"] = $this->getName();
+            $context['fieldname'] = $this->getName();
 
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
                 $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
                 $this->setOptions($options);
             }
 
-            $result = array("value" => null, "options" => $this->getOptions());
+            $result = ['value' => null, 'options' => $this->getOptions()];
             if ($data) {
-                $result["value"] = $data;
+                $result['value'] = $data;
             }
+
             return $result;
         } else {
             return $data;

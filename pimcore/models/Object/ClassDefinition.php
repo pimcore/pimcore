@@ -745,15 +745,16 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param array|mixed $context
+     *
      * @return Object\ClassDefinition\Data[]
      */
-    public function getFieldDefinitions($context = array())
+    public function getFieldDefinitions($context = [])
     {
-        if (isset($context["suppressEnrichment"]) && $context["suppressEnrichment"]) {
+        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
             return $this->fieldDefinitions;
         }
 
-        $enrichedFieldDefinitions = array();
+        $enrichedFieldDefinitions = [];
         if (is_array($this->fieldDefinitions)) {
             foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
                 $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
@@ -762,14 +763,15 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         return $enrichedFieldDefinitions;
-
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = array()) {
-        if (method_exists($fieldDefinition, "enrichFieldDefinition")) {
-            $context["class"] = $this;
+    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    {
+        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
+
         return $fieldDefinition;
     }
 
@@ -811,13 +813,14 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @return Object\ClassDefinition\Data|bool
      */
-    public function getFieldDefinition($key, $context = array())
+    public function getFieldDefinition($key, $context = [])
     {
         if (array_key_exists($key, $this->fieldDefinitions)) {
-            if (isset($context["suppressEnrichment"]) && $context["suppressEnrichment"]) {
+            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
                 return $this->fieldDefinitions[$key];
             }
             $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
+
             return $fieldDefinition;
         }
 

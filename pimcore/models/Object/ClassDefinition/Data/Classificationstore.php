@@ -1160,14 +1160,14 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
                 if ($definition) {
                     $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
-                    if (method_exists($definition, "enrichLayoutDefinition")) {
-                        $context["object"] = $object;
-                        $context["class"] = $object->getClass();
-                        $context["ownerType"] = "classificationstore";
-                        $context["ownerName"] = $this->getName();
-                        $context["keyId"] =  $keyGroupRelation->getKeyId();
-                        $context["groupId"] = $keyGroupRelation->getGroupId();
-                        $context["keyDefinition"] = $definition;
+                    if (method_exists($definition, 'enrichLayoutDefinition')) {
+                        $context['object'] = $object;
+                        $context['class'] = $object->getClass();
+                        $context['ownerType'] = 'classificationstore';
+                        $context['ownerName'] = $this->getName();
+                        $context['keyId'] =  $keyGroupRelation->getKeyId();
+                        $context['groupId'] = $keyGroupRelation->getGroupId();
+                        $context['keyDefinition'] = $definition;
                         $definition = $definition->enrichLayoutDefinition($object, $context);
                     }
                 }

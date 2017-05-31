@@ -796,7 +796,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     $context = [
                         'containerType' => 'fieldcollection',
                         'containerKey' => $type->getKey(),
-                        "outerFieldname" => $request->get("field_name")
+                        'outerFieldname' => $request->get('field_name')
                     ];
 
                     $object = Object\AbstractObject::getById($request->get('object_id'));
@@ -1071,7 +1071,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $type->getKey(),
-                    "outerFieldname" => $request->get("field_name")
+                    'outerFieldname' => $request->get('field_name')
                 ];
 
                 $object = Object\AbstractObject::getById($request->get('object_id'));

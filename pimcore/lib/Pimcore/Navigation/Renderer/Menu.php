@@ -730,8 +730,7 @@ class Menu extends AbstractRenderer
         $activeClass,
         $parentClass,
         $renderParentClass
-    )
-    {
+    ) {
         $html = '';
 
         // find deepest active
@@ -975,8 +974,7 @@ class Menu extends AbstractRenderer
         $ulId   = null,
         $addPageClassToLi = false,
         $innerIndent = null
-    )
-    {
+    ) {
         return $this->renderMenu($container, [
             'indent'           => $indent,
             'innerIndent'      => $innerIndent,

@@ -244,7 +244,7 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($object);
 
         if ($object instanceof Concrete) {
-            $context = array("object" => $object);
+            $context = ['object' => $object];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -300,7 +300,7 @@ class Service extends Model\Element\Service
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
 
                     $brickClass = Objectbrick\Definition::getByKey($brickType);
-                    $context["outerFieldname"] = $key;
+                    $context['outerFieldname'] = $key;
                     $def = $brickClass->getFieldDefinition($brickKey, $context);
                 }
 
@@ -334,12 +334,12 @@ class Service extends Model\Element\Service
 
                             if (method_exists($def, 'getDataForGrid')) {
                                 if ($brickKey) {
-                                    $context["containerType"] = "objectbrick";
-                                    $context["containerKey"] = $brickType;
-                                    $context["outerFieldname"] = $key;
+                                    $context['containerType'] = 'objectbrick';
+                                    $context['containerKey'] = $brickType;
+                                    $context['outerFieldname'] = $key;
                                 }
 
-                                $params = array("context" => $context, "purpose" => "gridview");
+                                $params = ['context' => $context, 'purpose' => 'gridview'];
                                 $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
@@ -491,7 +491,7 @@ class Service extends Model\Element\Service
      *
      * @return \stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = array())
+    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = [])
     {
         $getter = 'get'.ucfirst($key);
         $value = $object->$getter();
@@ -510,7 +510,7 @@ class Service extends Model\Element\Service
 
         if (!empty($brickType) && !empty($brickKey)) {
             $brickClass = Objectbrick\Definition::getByKey($brickType);
-            $context = array("object" => $object, "outerFieldname" => $key);
+            $context = ['object' => $object, 'outerFieldname' => $key];
             $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
         }
 
@@ -1348,9 +1348,9 @@ class Service extends Model\Element\Service
             if ($context['containerType'] == 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
             } else {
-                $context["ownerType"] = "localizedfield";
+                $context['ownerType'] = 'localizedfield';
             }
-            $context["ownerName"]= "localizedfields";
+            $context['ownerName']= 'localizedfields';
         }
 
         if (method_exists($layout, 'getChilds')) {

@@ -92,8 +92,7 @@ class Navigation extends Helper
         string $htmlMenuPrefix = null,
         callable $pageCallback = null,
         $cache = true
-    ): Container
-    {
+    ): Container {
         return $this->builder->getNavigation(
             $activeDocument,
             $navigationRootDocument,
@@ -146,8 +145,7 @@ class Navigation extends Helper
         string $rendererName = 'menu',
         string $renderMethod = 'render',
         ...$rendererArguments
-    )
-    {
+    ) {
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {

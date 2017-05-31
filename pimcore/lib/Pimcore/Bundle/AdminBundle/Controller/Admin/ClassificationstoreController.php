@@ -921,9 +921,9 @@ class ClassificationstoreController extends AdminController
     public function addCollectionsAction(Request $request)
     {
         $ids = $this->decodeJson($request->get('collectionIds'));
-        $oid = $request->get("oid");
+        $oid = $request->get('oid');
         $object = Object\AbstractObject::getById($oid);
-        $fieldname = $request->get("fieldname");
+        $fieldname = $request->get('fieldname');
 
         if ($ids) {
             $db = \Pimcore\Db::get();
@@ -992,15 +992,14 @@ class ClassificationstoreController extends AdminController
                         $definition->__wakeup();
                     }
 
-                    $context["object"] = $object;
-                    $context["class"] = $object ? $object->getClass() : null;
-                    $context["ownerType"] = "classificationstore";
-                    $context["ownerName"] = $fieldname;
-                    $context["keyId"] =  $keyData->getKeyId();
-                    $context["groupId"] = $groupId;
-                    $context["keyDefinition"] = $definition;
+                    $context['object'] = $object;
+                    $context['class'] = $object ? $object->getClass() : null;
+                    $context['ownerType'] = 'classificationstore';
+                    $context['ownerName'] = $fieldname;
+                    $context['keyId'] =  $keyData->getKeyId();
+                    $context['groupId'] = $groupId;
+                    $context['keyDefinition'] = $definition;
                     $definition = $definition->enrichLayoutDefinition($object, $context);
-
 
                     $keyList[] = [
                         'name' => $keyData->getName(),
@@ -1026,9 +1025,9 @@ class ClassificationstoreController extends AdminController
     public function addGroupsAction(Request $request)
     {
         $ids = $this->decodeJson($request->get('groupIds'));
-        $oid = $request->get("oid");
+        $oid = $request->get('oid');
         $object = Object\AbstractObject::getById($oid);
-        $fieldname = $request->get("fieldname");
+        $fieldname = $request->get('fieldname');
 
         $keyCondition = 'groupId in (' . implode(',', $ids) . ')';
 
@@ -1069,13 +1068,13 @@ class ClassificationstoreController extends AdminController
                 $definition->__wakeup();
             }
 
-            $context["object"] = $object;
-            $context["class"] = $object ? $object->getClass() : null;
-            $context["ownerType"] = "classificationstore";
-            $context["ownerName"] = $fieldname;
-            $context["keyId"] =  $keyData->getKeyId();
-            $context["groupId"] = $groupId;
-            $context["keyDefinition"] = $definition;
+            $context['object'] = $object;
+            $context['class'] = $object ? $object->getClass() : null;
+            $context['ownerType'] = 'classificationstore';
+            $context['ownerName'] = $fieldname;
+            $context['keyId'] =  $keyData->getKeyId();
+            $context['groupId'] = $groupId;
+            $context['keyDefinition'] = $definition;
             $definition = $definition->enrichLayoutDefinition($object, $context);
 
             $keyList[] = [

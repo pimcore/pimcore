@@ -446,7 +446,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      */
     private function getDataForObject(Object\Concrete $object, $objectFromVersion = false)
     {
-        foreach ($object->getClass()->getFieldDefinitions(array("object" => $object)) as $key => $def) {
+        foreach ($object->getClass()->getFieldDefinitions(['object' => $object]) as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
         }
     }

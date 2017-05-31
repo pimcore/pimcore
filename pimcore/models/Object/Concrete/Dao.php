@@ -140,7 +140,7 @@ class Dao extends Model\Object\AbstractObject\Dao
     {
         $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
 
-        $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(array("object" => $this->model));
+        $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
             if (method_exists($value, 'load')) {
                 // datafield has it's own loader

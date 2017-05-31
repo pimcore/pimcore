@@ -80,14 +80,14 @@ class ObjectHelperController extends AdminController
             $fields = Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
         }
 
-        $context = array("purpose" => "gridconfig");
+        $context = ['purpose' => 'gridconfig'];
         if ($class) {
-            $context["class"] = $class;
+            $context['class'] = $class;
         }
 
         if ($objectId) {
             $object = Object\AbstractObject::getById($objectId);
-            $context["object"] = $object;
+            $context['object'] = $object;
         }
 
         if (!$fields) {
@@ -236,7 +236,7 @@ class ObjectHelperController extends AdminController
                                     $keyFieldDef = json_decode($keyDef->getDefinition(), true);
                                     if ($keyFieldDef) {
                                         $keyFieldDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($keyFieldDef, $keyDef->getType());
-                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true, null,$class, $objectId);
+                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true, null, $class, $objectId);
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
                                             $fieldConfig['label'] = '#' . $keyFieldDef->getTitle();
@@ -445,14 +445,14 @@ class ObjectHelperController extends AdminController
         }
 
         if (!$field->getInvisible() && ($force || $visible)) {
-            $context = array("purpose" => "gridconfig");
+            $context = ['purpose' => 'gridconfig'];
             if ($class) {
-                $context["class"] = $class;
+                $context['class'] = $class;
             }
 
             if ($objectId) {
                 $object = Object\AbstractObject::getById($objectId);
-                $context["object"] = $object;
+                $context['object'] = $object;
             }
             Object\Service::enrichLayoutDefinition($field, null, $context);
 

@@ -455,12 +455,14 @@ class Definition extends Model\Object\Fieldcollection\Definition
         }
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = array()) {
-        if (method_exists($fieldDefinition, "enrichFieldDefinition")) {
-            $context["containerType"] = "objectbrick";
-            $context["containerKey"] = $this->getKey();
+    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    {
+        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            $context['containerType'] = 'objectbrick';
+            $context['containerKey'] = $this->getKey();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
+
         return $fieldDefinition;
     }
 

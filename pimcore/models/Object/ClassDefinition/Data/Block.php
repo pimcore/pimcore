@@ -543,9 +543,10 @@ class Block extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $context additional contextual data
+     *
      * @return array
      */
-    public function getFieldDefinitions($context = array())
+    public function getFieldDefinitions($context = [])
     {
         if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
@@ -558,11 +559,11 @@ class Block extends Model\Object\ClassDefinition\Data
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context["suppressEnrichment"]) && $context["suppressEnrichment"]) {
+        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
             return $this->fieldDefinitionsCache;
         }
 
-        $enrichedFieldDefinitions = array();
+        $enrichedFieldDefinitions = [];
         if (is_array($this->fieldDefinitionsCache)) {
             foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
                 $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
@@ -576,31 +577,34 @@ class Block extends Model\Object\ClassDefinition\Data
     /**
      * @param $name
      * @param array $context additional contextual data
+     *
      * @return mixed
      */
-    public function getFielddefinition($name, $context = array())
+    public function getFielddefinition($name, $context = [])
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
-            if (isset($context["suppressEnrichment"]) && $context["suppressEnrichment"]) {
+            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
                 return $fds[$name];
             }
             $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
+
             return $fieldDefinition;
         }
 
         return;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = array()) {
-        if (method_exists($fieldDefinition, "enrichFieldDefinition")) {
-            $context["containerType"] = "block";
-            $context["containerKey"] = $this->getName();
+    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    {
+        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            $context['containerType'] = 'block';
+            $context['containerKey'] = $this->getName();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
+
         return $fieldDefinition;
     }
-
 
     /**
      * @param array $referencedFields

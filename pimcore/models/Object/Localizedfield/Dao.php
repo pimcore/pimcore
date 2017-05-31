@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
             $container = $this->model->getClass();
         }
 
-        $fieldDefinitions = $container->getFielddefinition('localizedfields')->getFielddefinitions(array("suppressEnrichment" => true));
+        $fieldDefinitions = $container->getFielddefinition('localizedfields')->getFielddefinitions(['suppressEnrichment' => true]);
 
         /**
          * We temporary enable the runtime cache so we don't have to calculate the tree for each language
@@ -300,7 +300,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $childDefinitions = $container->getFieldDefinition('localizedfields', array("suppressEnrichment" => true))->getFielddefinitions(array("suppressEnrichment" => true));
+            $childDefinitions = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true])->getFielddefinitions(['suppressEnrichment' => true]);
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
@@ -372,7 +372,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($data as $row) {
-            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(array("object" => $object, "suppressEnrichment" => true)) as $key => $fd) {
+            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(['object' => $object, 'suppressEnrichment' => true]) as $key => $fd) {
                 if ($fd) {
                     if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
@@ -531,7 +531,7 @@ QUERY;
             $container = $this->model->getClass();
         }
 
-        foreach ($container->getFielddefinition('localizedfields', array("suppressEnrichment" => true))->getFielddefinitions(array("suppressEnrichment" => true)) as $value) {
+        foreach ($container->getFielddefinition('localizedfields', ['suppressEnrichment' => true])->getFielddefinitions(['suppressEnrichment' => true]) as $value) {
             if ($value->getColumnType()) {
                 $key = $value->getName();
 
@@ -576,7 +576,7 @@ QUERY;
 
                 Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$queryTable]);
 
-                $fieldDefinitions = $this->model->getClass()->getFielddefinition('localizedfields', array("suppressEnrichment" => true))->getFielddefinitions(array("suppressEnrichment" => true));
+                $fieldDefinitions = $this->model->getClass()->getFielddefinition('localizedfields', ['suppressEnrichment' => true])->getFielddefinitions(['suppressEnrichment' => true]);
 
                 // add non existing columns in the table
                 if (is_array($fieldDefinitions) && count($fieldDefinitions)) {

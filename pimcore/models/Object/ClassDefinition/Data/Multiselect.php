@@ -451,16 +451,16 @@ class Multiselect extends Model\Object\ClassDefinition\Data
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    public function enrichFieldDefinition($context = array())
+    public function enrichFieldDefinition($context = [])
     {
         if ($this->getOptionsProviderClass()) {
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $context["fieldname"] = $this->getName();
+                $context['fieldname'] = $this->getName();
                 $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
                 $this->setOptions($options);
             }
-
         }
+
         return $this;
     }
 
@@ -471,11 +471,11 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     public function enrichLayoutDefinition($object, $context = [])
     {
         if ($this->getOptionsProviderClass()) {
-            $context["object"] = $object;
+            $context['object'] = $object;
             if ($object) {
-                $context["class"] = $object->getClass();
+                $context['class'] = $object->getClass();
             }
-            $context["fieldname"] = $this->getName();
+            $context['fieldname'] = $this->getName();
 
             if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
                 $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
@@ -492,5 +492,4 @@ class Multiselect extends Model\Object\ClassDefinition\Data
             return $this;
         }
     }
-
 }
