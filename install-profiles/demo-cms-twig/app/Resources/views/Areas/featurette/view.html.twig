@@ -11,7 +11,7 @@
             store: [["video","video"], ["image","image"]]
         }) %}
 
-        {% set position = positionSelect.getData() ?: 'right' %}
+        {% set position = positionSelect.getData()|default('right') %}
 
         <div class="row featurette">
             <div class="col-sm-7 {{ position == 'right' ? 'col-sm-push-5' }}">
