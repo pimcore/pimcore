@@ -273,22 +273,22 @@ class Tool
 
         if ($config) {
             // system default
-            $routeingDefaults = [
-                'controller' => 'default',
-                'action' => 'default',
-                'module' => PIMCORE_FRONTEND_MODULE
+            $routingDefaults = [
+                'controller' => 'Default',
+                'action'     => 'default',
+                'module'     => defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle'
             ];
 
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
 
-            foreach ($routeingDefaults as $key => $value) {
+            foreach ($routingDefaults as $key => $value) {
                 if (isset($systemRoutingDefaults['default_' . $key]) && $systemRoutingDefaults['default_' . $key]) {
-                    $routeingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
+                    $routingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
                 }
             }
 
-            return $routeingDefaults;
+            return $routingDefaults;
         } else {
             return [];
         }
