@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
+use Pimcore\Bundle\AdminBundle\Session\Handler\SimpleAdminSessionHandler;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
@@ -36,6 +37,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class MigrateTagNamingStrategyCommand extends AbstractCommand
@@ -117,6 +120,8 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             return 1;
         }
 
+        $this->initializeSession();
+
         $systemConfig = Config::getSystemConfig()->toArray();
         $mainDomain   = $systemConfig['general']['domain'];
 
@@ -161,6 +166,21 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" strategy and clear the cache.',
             $strategy->getName()
         ));
+    }
+
+    /**
+     * Sets admin session to a mock array session to make sure any session related functionality works
+     */
+    private function initializeSession()
+    {
+        $session = new Session(new MockArraySessionStorage());
+
+        $configurator = $this->getContainer()->get('pimcore_admin.session.configurator.admin_session_bags');
+        $configurator->configure($session);
+
+        $handler = new SimpleAdminSessionHandler($session);
+
+        \Pimcore\Tool\Session::setHandler($handler);
     }
 
     private function initializeUser(InputInterface $input)
