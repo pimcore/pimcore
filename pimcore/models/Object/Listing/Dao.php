@@ -100,7 +100,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->reset(\Zend_Db_Select::COLUMNS);
         $query->reset(\Zend_Db_Select::LIMIT_COUNT);
         $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
-        $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(*)')]);
+
+        try {
+            $query->getPart(\Zend_Db_Select::DISTINCT);
+            $countIdentifier = 'DISTINCT oo_id';
+        } catch (\Exception $e) {
+            $countIdentifier = '*';
+        }
+
+        $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(' . $countIdentifier . ')')]);
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
