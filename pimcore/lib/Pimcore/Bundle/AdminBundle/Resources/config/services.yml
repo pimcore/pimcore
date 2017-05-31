@@ -27,7 +27,7 @@ services:
         arguments: ['@pimcore_admin.session.storage']
 
     pimcore_admin.session.handler:
-        class: Pimcore\Bundle\AdminBundle\Session\AdminSessionHandler
+        class: Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler
         arguments: ['@pimcore_admin.session', '@pimcore_admin.session.storage', '@pimcore_admin.session.storage_factory']
         calls:
             - [setLogger, ['@logger']]

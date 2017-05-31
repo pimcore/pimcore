@@ -12,18 +12,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Session;
+namespace Pimcore\Bundle\AdminBundle\Session\Handler;
 
-use Pimcore\Session\Attribute\LockableAttributeBag;
-use Pimcore\Session\Attribute\LockableAttributeBagInterface;
+use Pimcore\Bundle\AdminBundle\Session\AdminSessionStorageFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
-class AdminSessionHandler implements LoggerAwareInterface
+class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -50,11 +47,6 @@ class AdminSessionHandler implements LoggerAwareInterface
     private $foreignSessionStack = [];
 
     /**
-     * @var SessionInterface
-     */
-    private $session;
-
-    /**
      * @var NativeSessionStorage
      */
     private $storage;
@@ -78,134 +70,33 @@ class AdminSessionHandler implements LoggerAwareInterface
         SessionInterface $session,
         NativeSessionStorage $storage,
         AdminSessionStorageFactory $storageFactory
-    ) {
+    )
+    {
         $this->session        = $session;
         $this->storage        = $storage;
         $this->storageFactory = $storageFactory;
     }
 
     /**
-     * @param string $name
-     *
-     * @return mixed|null
+     * @inheritdoc
      */
-    public function getOption($name)
+    public function getOption(string $name)
     {
         return $this->storageFactory->getOption($name);
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getSessionName()
+    public function getSessionName(): string
     {
         return $this->getOption('name');
     }
 
     /**
-     * Use the admin session and immediately close it after usage. The callable gets the session as its first argument.
-     *
-     * @param callable $callable
-     *
-     * @return mixed
+     * @inheritdoc
      */
-    public function useSession(callable $callable)
-    {
-        $session = $this->loadSession();
-
-        $result = call_user_func_array($callable, [$session]);
-
-        $this->writeClose();
-
-        return $result;
-    }
-
-    /**
-     * Use an attribute bag and close the session immediately after usage. The callable gets the attribute bag and the session
-     * as arguments.
-     *
-     * @param callable $callable
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function useSessionAttributeBag(callable $callable, $name = 'pimcore_admin')
-    {
-        $session      = $this->loadSession();
-        $attributeBag = $this->loadAttributeBag($name, $session);
-
-        $result = call_user_func_array($callable, [$attributeBag, $session]);
-
-        $this->writeClose();
-
-        return $result;
-    }
-
-    /**
-     * Loads an attribute bag, optionally lock it if supported and close the session.
-     *
-     * @param string $name
-     *
-     * @return AttributeBagInterface
-     */
-    public function getReadOnlyAttributeBag($name = 'pimcore_admin')
-    {
-        $bag = $this->useSessionAttributeBag(function (AttributeBagInterface $bag) {
-            if ($bag instanceof LockableAttributeBagInterface) {
-                $bag->lock();
-            }
-
-            return $bag;
-        }, $name);
-
-        return $bag;
-    }
-
-    /**
-     * Returns the session ID
-     *
-     * @see SessionInterface::getId()
-     *
-     * @return string
-     */
-    public function getSessionId()
-    {
-        return $this->useSession(function (SessionInterface $session) {
-            return $session->getId();
-        });
-    }
-
-    /**
-     * @param int|null $lifetime
-     *
-     * @return bool
-     */
-    public function invalidate($lifetime = null)
-    {
-        return $this->session->invalidate($lifetime);
-    }
-
-    /**
-     * Regenerates the session ID
-     *
-     * @see SessionInterface::migrate()
-     *
-     * @return bool
-     */
-    public function regenerateId()
-    {
-        return $this->useSession(function (SessionInterface $session) {
-            return $session->migrate(true);
-        });
-    }
-
-    /**
-     * Loads the admin session and backs up a currently open foreign session. You MUST call writeClose() after usage
-     * to make sure the admin session is written and foreign sessions are restored.
-     *
-     * @return SessionInterface
-     */
-    public function loadSession()
+    public function loadSession(): SessionInterface
     {
         $sessionName = $this->getSessionName();
 
@@ -241,31 +132,7 @@ class AdminSessionHandler implements LoggerAwareInterface
     }
 
     /**
-     * Directly loads an attribute bag from the session. You MUST call writeClose() after usage
-     * to make sure the admin session is written and foreign sessions are restored.
-     *
-     * @param $name
-     * @param SessionInterface|null $session
-     *
-     * @return LockableAttributeBag|\Symfony\Component\HttpFoundation\Session\SessionBagInterface
-     */
-    public function loadAttributeBag($name, SessionInterface $session = null)
-    {
-        if (null === $session) {
-            $session = $this->loadSession();
-        }
-
-        $attributeBag = $session->getBag($name);
-        if ($attributeBag instanceof LockableAttributeBagInterface) {
-            $attributeBag->unlock();
-        }
-
-        return $attributeBag;
-    }
-
-    /**
-     * Saves the session if it it the last admin session which was opened and restore a foreign session if there is one
-     * available.
+     * @inheritdoc
      */
     public function writeClose()
     {
@@ -288,70 +155,11 @@ class AdminSessionHandler implements LoggerAwareInterface
     }
 
     /**
-     * Check if the request has a cookie or a param matching the session name.
-     *
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return bool
-     */
-    public function requestHasSessionId(Request $request, $checkRequestParams = false)
-    {
-        $sessionName = $this->getSessionName();
-
-        $properties = ['cookies'];
-
-        if ($checkRequestParams) {
-            $properties[] = 'request';
-            $properties[] = 'query';
-        }
-
-        foreach ($properties as $property) {
-            if ($request->$property->has($sessionName) && !empty($request->$property->get($sessionName))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get session ID from request cookie/param
-     *
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return string
-     */
-    public function getSessionIdFromRequest(Request $request, $checkRequestParams = false)
-    {
-        if (static::requestHasSessionId($request, $checkRequestParams)) {
-            $sessionName = static::getSessionName();
-
-            if ($sessionId = $request->cookies->get($sessionName)) {
-                return $sessionId;
-            }
-
-            if ($checkRequestParams) {
-                if ($sessionId = $request->request->get($sessionName)) {
-                    return $sessionId;
-                }
-
-                if ($sessionId = $request->query->get($sessionName)) {
-                    return $sessionId;
-                }
-            }
-        }
-
-        throw new \RuntimeException('Failed to get session ID from request');
-    }
-
-    /**
      * Backs up currently open foreign sessions
      *
      * @return bool
      */
-    private function backupForeignSession()
+    private function backupForeignSession(): bool
     {
         $sessionName      = session_name();
         $adminSessionName = $this->getSessionName();
@@ -404,7 +212,7 @@ class AdminSessionHandler implements LoggerAwareInterface
      *
      * @return bool
      */
-    private function restoreForeignSession()
+    private function restoreForeignSession(): bool
     {
         if (empty($this->foreignSessionStack)) {
             return false;
