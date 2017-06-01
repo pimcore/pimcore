@@ -104,9 +104,49 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         AbstractObject::setGetInheritedValues(false);
         Localizedfield::setGetFallbackValues(false);
 
+        $this->initializeSession();
+    }
+
+    /**
+     * Sets admin session to a mock array session to make sure any session related functionality works
+     */
+    private function initializeSession()
+    {
+        $session = new Session(new MockArraySessionStorage());
+
+        $configurator = $this->getContainer()->get('pimcore_admin.session.configurator.admin_session_bags');
+        $configurator->configure($session);
+
+        $handler = new SimpleAdminSessionHandler($session);
+
+        \Pimcore\Tool\Session::setHandler($handler);
+    }
+
+    /**
+     * Initializes given user and checks if the user is admin
+     *
+     * @param InputInterface $input
+     */
+    private function initializeUser(InputInterface $input)
+    {
+        $username = $input->getOption('user');
+
         /** @var User $user */
-        $user = User::getByName('admin');
-        $this->getContainer()->get('pimcore_admin.security.user_loader')->setUser($user);
+        $user = User::getByName($username);
+
+        if (!$user) {
+            throw new \InvalidArgumentException(sprintf('User "%s" could not be loaded'));
+        }
+
+        if (!$user->isAdmin()) {
+            throw new \InvalidArgumentException(sprintf('User "%s" does not have admin rights'));
+        }
+
+        // See ElementListener. The UserLoader will be used to fetch the admin user when rendering
+        // documents to make sure unpublished documents can't be seen by non-admin requests. By setting
+        // the user on the loader, no session lookup will be done and this user will be used instead.
+        $loader = $this->getContainer()->get('pimcore_admin.security.user_loader');
+        $loader->setUser($user);
     }
 
     /**
@@ -118,16 +158,16 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             $this->initializeUser($input);
         } catch (\InvalidArgumentException $e) {
             $this->io->error($e->getMessage());
+
             return 1;
         }
-
-        $this->initializeSession();
 
         $systemConfig = Config::getSystemConfig()->toArray();
         $mainDomain   = $systemConfig['general']['domain'];
 
         if (!$mainDomain) {
             $this->io->error('No domain set in "Settings" -> "System" -> "Website" -> "Domain". Please set a domain before proceeding.');
+
             return 2;
         }
 
@@ -149,7 +189,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         foreach ($this->getDocuments($documentIds) as $document) {
             try {
-                $this->processDocument($kernel, $document, $mainDomain);
+                $this->renderDocument($kernel, $document, $mainDomain);
             } catch (\Exception $e) {
                 $renderingErrors[$document->getId()] = [
                     'documentId'   => $document->getId(),
@@ -195,9 +235,10 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->title('[STEP 2] Rename preflight...checking if none of the new tag names already exist in the DB');
 
         try {
-            $this->checkDbRenamePrerequisites($nameMapping);
+            $this->testRenames($nameMapping);
         } catch (\Exception $e) {
             $this->io->error(sprintf('Rename prerequisites failed. Error: %s', $e->getMessage()));
+
             return 4;
         }
 
@@ -206,7 +247,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->title('[STEP 3] Renaming editables to their new names');
 
         try {
-            $this->processNameMapping($nameMapping);
+            $this->processRenames($nameMapping);
         } catch (\Exception $e) {
             $this->io->writeln('');
             $this->io->error($e->getMessage());
@@ -223,77 +264,15 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     }
 
     /**
-     * @param array $errors
+     * Renders a document by dispatching a new master request for the document URI
      *
-     * @return bool
+     * @param HttpKernelInterface $kernel
+     * @param Document $document
+     * @param string $mainDomain
+     *
+     * @throws \Exception
      */
-    private function confirmProceedAfterRenderingErrors(array $errors): bool
-    {
-        $messages = [];
-        foreach ($errors as $documentId => $error) {
-            $messages[] = sprintf(
-                '<comment>%s</comment> (ID <info>%d</info>): %s',
-                $error['documentPath'],
-                $documentId,
-                $error['exception']->getMessage()
-            );
-        }
-
-        $this->io->writeln('The following errors were encountered while rendering the selected documents:');
-        $this->io->writeln('');
-
-        $this->io->listing($messages);
-
-        $this->io->writeln('');
-        $this->io->writeln('<comment>WARNING:</comment> You can proceed the migration for all other documents, but your unmigrated documents will potentially lose their data. It\'s strongly advised to fix any rendering issues before proceeding');
-
-        $helper   = $this->getHelper('question');
-        $question = new ConfirmationQuestion(
-            'Proceed the migration for successfully rendered documents?  (y/n) ',
-            false
-        );
-
-        return $helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
-    }
-
-    /**
-     * Sets admin session to a mock array session to make sure any session related functionality works
-     */
-    private function initializeSession()
-    {
-        $session = new Session(new MockArraySessionStorage());
-
-        $configurator = $this->getContainer()->get('pimcore_admin.session.configurator.admin_session_bags');
-        $configurator->configure($session);
-
-        $handler = new SimpleAdminSessionHandler($session);
-
-        \Pimcore\Tool\Session::setHandler($handler);
-    }
-
-    private function initializeUser(InputInterface $input)
-    {
-        $username = $input->getOption('user');
-
-        /** @var User $user */
-        $user = User::getByName($username);
-
-        if (!$user) {
-            throw new \InvalidArgumentException(sprintf('User "%s" could not be loaded'));
-        }
-
-        if (!$user->isAdmin()) {
-            throw new \InvalidArgumentException(sprintf('User "%s" does not have admin rights'));
-        }
-
-        // See ElementListener. The UserLoader will be used to fetch the admin user when rendering
-        // documents to make sure unpublished documents can't be seen by non-admin requests. By setting
-        // the user on the loader, no session lookup will be done and this user will be used instead.
-        $loader = $this->getContainer()->get('pimcore_admin.security.user_loader');
-        $loader->setUser($user);
-    }
-
-    private function processDocument(HttpKernelInterface $kernel, Document $document, string $mainDomain)
+    private function renderDocument(HttpKernelInterface $kernel, Document $document, string $mainDomain)
     {
         $host = $mainDomain;
         $path = $document->getRealFullPath();
@@ -302,9 +281,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $request = Request::create($uri, 'GET', [
             'pimcore_preview' => true
         ]);
-
-        // DEBUG
-        $request->attributes->set('MASTER', $uri);
 
         $this->writeSimpleSection(sprintf(
             'Rendering document %s with ID <info>%d</info>',
@@ -329,75 +305,12 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->writeln('');
     }
 
-    private function processNameMapping(array $nameMapping)
-    {
-        $db = $this->getContainer()->get('database_connection');
-
-        /** @var Statement $stmt */
-        $stmt = null;
-        if (!$this->isDryRun()) {
-            $stmt = $db->prepare('UPDATE documents_elements SET name = :newName WHERE documentId = :documentId and name = :oldName');
-            $db->beginTransaction();
-        }
-
-        try {
-            foreach ($nameMapping as $documentId => $mapping) {
-                $this->writeSimpleSection(sprintf('Processing document %d', $documentId));
-
-                foreach ($mapping as $oldName => $newName) {
-                    $message = sprintf(
-                        'Renaming editable <info>%s</info> to <info>%s</info>',
-                        $oldName,
-                        $newName
-                    );
-
-                    if ($this->isDryRun()) {
-                        $message = $this->prefixDryRun($message, '[DRY-RUN]');
-                    } else {
-                        $message = '  <comment>*</comment> ' . $message;
-                    }
-
-                    $this->io->writeln($message);
-
-                    if ($this->isDryRun()) {
-                        continue;
-                    }
-
-                    $result = $stmt->execute([
-                        'documentId' => $documentId,
-                        'oldName'    => $oldName,
-                        'newName'    => $newName,
-                    ]);
-
-                    if (!$result) {
-                        throw new \RuntimeException(sprintf(
-                            'Failed to update name from %s to %s for document %d',
-                            $oldName,
-                            $newName,
-                            $documentId
-                        ));
-                    }
-                }
-            }
-
-            if (!$this->isDryRun()) {
-                $db->commit();
-            }
-        } catch (\Exception $e) {
-            if (!$this->isDryRun()) {
-                $db->rollBack();
-            }
-
-            throw $e;
-        }
-    }
-
     /**
-     * Test if rename can safely be done. Check if old names exist in the DB and if the new name does not.
+     * Tests if renames can safely be done. Check if old names exist in the DB and if the new name does not.
      *
      * @param array $nameMapping
      */
-    private function checkDbRenamePrerequisites(array $nameMapping)
+    private function testRenames(array $nameMapping)
     {
         $db   = $this->getContainer()->get('database_connection');
         $stmt = $db->prepare('SELECT documentId, name FROM documents_elements WHERE documentId = :documentId AND name = :name');
@@ -458,6 +371,76 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             }
 
             $this->output->writeln('');
+        }
+    }
+
+    /**
+     * Updates elements with their new names
+     *
+     * @param array $nameMapping
+     *
+     * @throws \Exception
+     */
+    private function processRenames(array $nameMapping)
+    {
+        $db = $this->getContainer()->get('database_connection');
+
+        /** @var Statement $stmt */
+        $stmt = null;
+        if (!$this->isDryRun()) {
+            $stmt = $db->prepare('UPDATE documents_elements SET name = :newName WHERE documentId = :documentId and name = :oldName');
+            $db->beginTransaction();
+        }
+
+        try {
+            foreach ($nameMapping as $documentId => $mapping) {
+                $this->writeSimpleSection(sprintf('Processing document %d', $documentId));
+
+                foreach ($mapping as $oldName => $newName) {
+                    $message = sprintf(
+                        'Renaming editable <info>%s</info> to <info>%s</info>',
+                        $oldName,
+                        $newName
+                    );
+
+                    if ($this->isDryRun()) {
+                        $message = $this->prefixDryRun($message, '[DRY-RUN]');
+                    } else {
+                        $message = '  <comment>*</comment> ' . $message;
+                    }
+
+                    $this->io->writeln($message);
+
+                    if ($this->isDryRun()) {
+                        continue;
+                    }
+
+                    $result = $stmt->execute([
+                        'documentId' => $documentId,
+                        'oldName'    => $oldName,
+                        'newName'    => $newName,
+                    ]);
+
+                    if (!$result) {
+                        throw new \RuntimeException(sprintf(
+                            'Failed to update name from %s to %s for document %d',
+                            $oldName,
+                            $newName,
+                            $documentId
+                        ));
+                    }
+                }
+            }
+
+            if (!$this->isDryRun()) {
+                $db->commit();
+            }
+        } catch (\Exception $e) {
+            if (!$this->isDryRun()) {
+                $db->rollBack();
+            }
+
+            throw $e;
         }
     }
 
@@ -575,6 +558,35 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
             yield $document;
         }
+    }
+
+    private function confirmProceedAfterRenderingErrors(array $errors): bool
+    {
+        $messages = [];
+        foreach ($errors as $documentId => $error) {
+            $messages[] = sprintf(
+                '<comment>%s</comment> (ID <info>%d</info>): %s',
+                $error['documentPath'],
+                $documentId,
+                $error['exception']->getMessage()
+            );
+        }
+
+        $this->io->writeln('The following errors were encountered while rendering the selected documents:');
+        $this->io->writeln('');
+
+        $this->io->listing($messages);
+
+        $this->io->writeln('');
+        $this->io->writeln('<comment>WARNING:</comment> You can proceed the migration for all other documents, but your unmigrated documents will potentially lose their data. It\'s strongly advised to fix any rendering issues before proceeding');
+
+        $helper   = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            'Proceed the migration for successfully rendered documents?  (y/n) ',
+            false
+        );
+
+        return $helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
     }
 
     private function writeSimpleSection(string $message)
