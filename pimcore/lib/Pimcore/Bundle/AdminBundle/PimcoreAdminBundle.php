@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle;
 
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
+use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -28,6 +29,7 @@ class PimcoreAdminBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new SerializerPass());
+        $container->addCompilerPass(new ServiceControllersPass());
 
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');

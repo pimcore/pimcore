@@ -157,6 +157,10 @@ class MiscController extends AdminController
             $controllers[] = ['name' => $name];
         }
 
+        foreach ($this->getParameter('pimcore_admin.service_controllers') as $serviceController) {
+            $controllers[] = ['name' => sprintf('@%s', $serviceController)];
+        }
+
         return $this->json([
             'data' => $controllers
         ]);
