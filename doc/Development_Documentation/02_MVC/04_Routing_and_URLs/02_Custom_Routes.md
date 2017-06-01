@@ -215,9 +215,9 @@ services:
 It works similar to the reverse route, you can place your placeholders directly into the controller.
 The following configuration should explain the way how it works:
 
-| Name          | Pattern     | Reverse  | Bundle | Controller             | Action        | Variables             | Defaults             | Site             | Priority             |
-|---------------|-------------|----------|--------|------------------------|---------------|-----------------------|----------------------|------------------|----------------------|
-| service_route | /\/default/ | /default |        | app.controller.default | default       |                       |                      |                  | 10                   |
+| Name          | Pattern     | Reverse  | Bundle | Controller              | Action        | Variables             | Defaults             | Site             | Priority             |
+|---------------|-------------|----------|--------|-------------------------|---------------|-----------------------|----------------------|------------------|----------------------|
+| service_route | /\/default/ | /default |        | @app.controller.default | default       |                       |                      |                  | 10                   |
 
 
 ## Responding 404 Status Code

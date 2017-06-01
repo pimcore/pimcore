@@ -59,24 +59,13 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $supportedNames;
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @param RequestContext $context
      * @param MvcConfigNormalizer $configNormalizer
-     * @param ContainerInterface $container
      */
-    public function __construct(
-        RequestContext $context,
-        MvcConfigNormalizer $configNormalizer,
-        ContainerInterface $container
-    )
+    public function __construct(RequestContext $context, MvcConfigNormalizer $configNormalizer)
     {
         $this->context          = $context;
         $this->configNormalizer = $configNormalizer;
-        $this->container = $container;
     }
 
     /**
@@ -253,10 +242,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $controllerParams[$key] = $value;
         }
 
-        if ($this->container->has($controllerParams['controller'])) {
+        if (0 === strpos($controllerParams['controller'], '@')) {
             $controller = sprintf(
                 '%s:%sAction',
-                $controllerParams['controller'],
+                substr($controllerParams['controller'], 1),
                 $controllerParams['action']
             );
         }
