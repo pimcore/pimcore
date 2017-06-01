@@ -116,8 +116,14 @@ class MiscController extends AdminController
 
         $actions = [];
         if ($controller) {
-            if ($this->has($controller)) {
-                $classActions = $this->getServiceControllerActions($controller);
+            $classActions = [];
+            
+            if (0 === strpos($controller, '@')) {
+                $serviceController = substr($controller, 1);
+
+                if ($this->has($serviceController)) {
+                    $classActions = $this->getServiceControllerActions($serviceController);
+                }
             }
             else {
                 $classActions = $this->getControllerActions($bundle, $controller);
