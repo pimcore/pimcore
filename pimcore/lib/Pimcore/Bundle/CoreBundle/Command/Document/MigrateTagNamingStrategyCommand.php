@@ -32,10 +32,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\User;
-use Pimcore\Tool\Frontend;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -74,7 +75,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 'Document IDs to process. If none are given, all documents will be processed'
             )
             ->addOption(
-                'ignore', 'i',
+                'ignore', 'D',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Document IDs to ignore.'
             )
@@ -141,31 +142,118 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $app    = $this->getApplication();
         $kernel = $app->getKernel();
 
-        $documentIds = $this->getDocumentIds($input);
+        $documentIds     = $this->getDocumentIds($input);
+        $renderingErrors = [];
+
+        $this->io->title('[STEP 1] Rendering all documents to gather new element mapping');
+
         foreach ($this->getDocuments($documentIds) as $document) {
-            $this->processDocument($kernel, $document, $mainDomain);
+            try {
+                $this->processDocument($kernel, $document, $mainDomain);
+            } catch (\Exception $e) {
+                $renderingErrors[$document->getId()] = [
+                    'documentId'   => $document->getId(),
+                    'documentPath' => $document->getRealFullPath(),
+                    'exception'    => $e,
+                ];
+
+                $this->io->error($e->getMessage());
+            }
         }
 
-        $this->io->success('All documents were rendered successfully, now proceeding to update names based on the gathered mapping');
+        if (count($renderingErrors) === 0) {
+            $this->io->success('All documents were rendered successfully, now proceeding to update names based on the gathered mapping');
+        } else {
+            $this->io->warning('Not all documents could be rendered.');
+
+            if (!$this->confirmProceedAfterRenderingErrors($renderingErrors)) {
+                return 3;
+            }
+        }
 
         $nameMapping = $subscriber->getNameMapping();
 
+        // do not migrate any element in errored documents
+        foreach (array_keys($renderingErrors) as $documentId) {
+            //
+            if (isset($nameMapping[$documentId])) {
+                unset($nameMapping[$documentId]);
+            }
+        }
+
         if (empty($nameMapping)) {
+            $this->io->writeln('');
             $this->io->success(sprintf(
-                'Noting to migrate. You can reconfigure Pimcore now to use the "%s" strategy.',
+                'Nothing to migrate.',
                 $strategy->getName()
             ));
 
             return 0;
         }
 
-        $this->checkDbRenamePrerequisites($nameMapping);
-        $this->processNameMapping($nameMapping);
+        $this->io->writeln(PHP_EOL . PHP_EOL);
+        $this->io->title('[STEP 2] Rename preflight...checking if none of the new tag names already exist in the DB');
 
+        try {
+            $this->checkDbRenamePrerequisites($nameMapping);
+        } catch (\Exception $e) {
+            $this->io->error(sprintf('Rename prerequisites failed. Error: %s', $e->getMessage()));
+            return 4;
+        }
+
+
+        $this->io->writeln(PHP_EOL . PHP_EOL);
+        $this->io->title('[STEP 3] Renaming editables to their new names');
+
+        try {
+            $this->processNameMapping($nameMapping);
+        } catch (\Exception $e) {
+            $this->io->writeln('');
+            $this->io->error($e->getMessage());
+            $this->io->warning('All changes were rolled back. Please fix any problems and try again.');
+
+            return 5;
+        }
+
+        $this->io->writeln(PHP_EOL . PHP_EOL);
         $this->io->success(sprintf(
             'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" strategy and clear the cache.',
             $strategy->getName()
         ));
+    }
+
+    /**
+     * @param array $errors
+     *
+     * @return bool
+     */
+    private function confirmProceedAfterRenderingErrors(array $errors): bool
+    {
+        $messages = [];
+        foreach ($errors as $documentId => $error) {
+            $messages[] = sprintf(
+                '<comment>%s</comment> (ID <info>%d</info>): %s',
+                $error['documentPath'],
+                $documentId,
+                $error['exception']->getMessage()
+            );
+        }
+
+        $this->io->writeln('The following errors were encountered while rendering the selected documents:');
+        $this->io->writeln('');
+
+        $this->io->listing($messages);
+
+        $this->io->writeln('');
+        $this->io->writeln('<comment>WARNING:</comment> You can proceed the migration for all other documents, but your unmigrated documents will potentially lose their data. It\'s strongly advised to fix any rendering issues before proceeding');
+
+        $helper   = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            'Proceed the migration for successfully rendered documents?  (y/n) ',
+            false
+        );
+
+        return $helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
     }
 
     /**
@@ -215,14 +303,16 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             'pimcore_preview' => true
         ]);
 
+        // DEBUG
         $request->attributes->set('MASTER', $uri);
 
-        $this->io->comment(sprintf(
-            'Rendering document <comment>%s</comment> with ID <info>%d</info> and URI <comment>%s</comment>',
+        $this->writeSimpleSection(sprintf(
+            'Rendering document %s with ID <info>%d</info>',
             $document->getRealFullPath(),
-            $document->getId(),
-            $request->getUri()
+            $document->getId()
         ));
+
+        $this->io->writeln(sprintf('URI: <comment>%s</comment>', $request->getUri()));
 
         ob_start();
 
@@ -235,12 +325,12 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             ob_get_contents();
             ob_end_clean();
         }
+
+        $this->io->writeln('');
     }
 
     private function processNameMapping(array $nameMapping)
     {
-        $this->io->section('Processing editable renames');
-
         $db = $this->getContainer()->get('database_connection');
 
         /** @var Statement $stmt */
@@ -252,7 +342,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         try {
             foreach ($nameMapping as $documentId => $mapping) {
-                $this->io->comment(sprintf('Processing document %d', $documentId));
+                $this->writeSimpleSection(sprintf('Processing document %d', $documentId));
 
                 foreach ($mapping as $oldName => $newName) {
                     $message = sprintf(
@@ -309,17 +399,15 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
      */
     private function checkDbRenamePrerequisites(array $nameMapping)
     {
-        $this->io->section('Rename preflight...checking if none of the new tag names already exist in the DB');
-
         $db   = $this->getContainer()->get('database_connection');
         $stmt = $db->prepare('SELECT documentId, name FROM documents_elements WHERE documentId = :documentId AND name = :name');
 
         foreach ($nameMapping as $documentId => $mapping) {
-            $this->io->comment(sprintf('Checking document %d', $documentId));
+            $this->writeSimpleSection(sprintf('Checking document %d', $documentId));
 
             foreach ($mapping as $oldName => $newName) {
                 $this->io->writeln(sprintf(
-                    '  <comment>*</comment> Checking rename from <info>%s</info> to <info>%s</info>',
+                    'Checking rename from <info>%s</info> to <info>%s</info>',
                     $oldName,
                     $newName
                 ));
@@ -339,11 +427,11 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 }
 
                 if (count($stmt->fetchAll()) === 0) {
-                    $this->io->warning(sprintf(
+                    $this->io->writeln(sprintf('<error>%s</error>' . PHP_EOL, sprintf(
                         'Ignoring old editable (document ID: %d, name: %s) as it was not found',
                         $documentId,
                         $oldName
-                    ));
+                    )));
                 }
 
                 // check if there is no new editable
@@ -368,6 +456,8 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                     ));
                 }
             }
+
+            $this->output->writeln('');
         }
     }
 
@@ -485,5 +575,15 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
             yield $document;
         }
+    }
+
+    private function writeSimpleSection(string $message)
+    {
+        $this->io->writeln([
+            '',
+            $message,
+            str_repeat('-', Helper::strlenWithoutDecoration($this->io->getFormatter(), $message)),
+            ''
+        ]);
     }
 }
