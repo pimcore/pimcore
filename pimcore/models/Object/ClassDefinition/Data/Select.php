@@ -373,9 +373,8 @@ class Select extends Model\Object\ClassDefinition\Data
             } else {
                 $this->dynamicOptions = true;
             }
-
-            return $this;
         }
+        return $this;
     }
 
     /**
