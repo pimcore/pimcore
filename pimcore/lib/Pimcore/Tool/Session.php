@@ -14,27 +14,29 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Bundle\AdminBundle\Session\AdminSessionHandler;
+use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Session
 {
     /**
-     * @var AdminSessionHandler
+     * @var AdminSessionHandlerInterface
      */
     private static $handler;
 
-    /**
-     * @return AdminSessionHandler
-     */
-    public static function getHandler()
+    public static function getHandler(): AdminSessionHandlerInterface
     {
         if (null === static::$handler) {
             static::$handler = \Pimcore::getContainer()->get('pimcore_admin.session.handler');
         }
 
         return static::$handler;
+    }
+
+    public static function setHandler(AdminSessionHandlerInterface $handler)
+    {
+        static::$handler = $handler;
     }
 
     /**
