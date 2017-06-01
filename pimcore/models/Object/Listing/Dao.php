@@ -110,6 +110,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
 
+        try {
+            $query->getPart(QueryBuilder::GROUP);
+            $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
+        } catch (\Exception $e) {
+            // do nothing
+        }
+
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
