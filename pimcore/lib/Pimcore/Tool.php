@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 
 class Tool
 {
@@ -272,75 +273,77 @@ class Tool
 
         if ($config) {
             // system default
-            $routeingDefaults = [
-                'controller' => 'default',
-                'action' => 'default',
-                'module' => PIMCORE_FRONTEND_MODULE
+            $routingDefaults = [
+                'controller' => 'Default',
+                'action'     => 'default',
+                'module'     => defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle'
             ];
 
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
 
-            foreach ($routeingDefaults as $key => $value) {
+            foreach ($routingDefaults as $key => $value) {
                 if (isset($systemRoutingDefaults['default_' . $key]) && $systemRoutingDefaults['default_' . $key]) {
-                    $routeingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
+                    $routingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
                 }
             }
 
-            return $routeingDefaults;
+            return $routingDefaults;
         } else {
             return [];
         }
     }
 
     /**
-     * @static
+     * @param Request|null $request
      *
-     * @return bool
+     * @return null|Request
      */
-    public static function isFrontend()
+    private static function resolveRequest(Request $request = null)
     {
-        if (self::$isFrontend !== null) {
-            return self::$isFrontend;
+        if (null === $request) {
+            $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
         }
 
-        $isFrontend = true;
-
-        if ($isFrontend && php_sapi_name() == 'cli') {
-            $isFrontend = false;
-        }
-
-        if ($isFrontend && \Pimcore::inAdmin()) {
-            $isFrontend = false;
-        }
-
-        if ($isFrontend && isset($_SERVER['REQUEST_URI'])) {
-            $excludePatterns = [
-                "/^\/admin.*/",
-                "/^\/install.*/",
-                "/^\/plugin.*/",
-                "/^\/webservice.*/"
-            ];
-
-            foreach ($excludePatterns as $pattern) {
-                if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
-                    $isFrontend = false;
-                    break;
-                }
-            }
-        }
-
-        self::$isFrontend = $isFrontend;
-
-        return $isFrontend;
+        return $request;
     }
 
     /**
+     * @static
+     *
+     * @param Request|null $request
+     *
      * @return bool
      */
-    public static function isInstaller()
+    public static function isFrontend(Request $request = null): bool
     {
-        if (isset($_SERVER['REQUEST_URI']) && preg_match('@^/install@', $_SERVER['REQUEST_URI'])) {
+        if (null === $request) {
+            $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+        }
+
+        if (null === $request) {
+            return false;
+        }
+
+        return \Pimcore::getContainer()
+            ->get('pimcore.http.request_helper')
+            ->isFrontendRequest($request);
+    }
+
+    /**
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public static function isInstaller(Request $request = null)
+    {
+        $request = self::resolveRequest($request);
+
+        if (null === $request) {
+            return false;
+        }
+
+        if (preg_match('@^/install@', $request->getRequestUri())) {
             return true;
         }
 
@@ -349,40 +352,66 @@ class Tool
 
     /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
+     *
+     * @param Request|null $request
+     *
+     * @return bool
      */
-    public static function isFrontentRequestByAdmin()
+    public static function isFrontendRequestByAdmin(Request $request = null)
     {
-        if (array_key_exists('pimcore_editmode', $_REQUEST)
-            || array_key_exists('pimcore_preview', $_REQUEST)
-            || array_key_exists('pimcore_admin', $_REQUEST)
-            || array_key_exists('pimcore_object_preview', $_REQUEST)
-            || array_key_exists('pimcore_version', $_REQUEST)
-            || (isset($_SERVER['REQUEST_URI']) && preg_match('@^/admin/document_tag/renderlet@', $_SERVER['REQUEST_URI']))) {
-            return true;
+        $request = self::resolveRequest($request);
+
+        if (null === $request) {
+            return false;
         }
 
-        return false;
+        return \Pimcore::getContainer()
+            ->get('pimcore.http.request_helper')
+            ->isFrontendRequestByAdmin($request);
+    }
+
+    /**
+     * @deprecated Just a BC compatibility method
+     *
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public static function isFrontentRequestByAdmin(Request $request = null)
+    {
+        return self::isFrontendRequestByAdmin($request);
     }
 
     /**
      * @static
      *
+     * @param Request|null $request
+     *
      * @return bool
      */
-    public static function useFrontendOutputFilters()
+    public static function useFrontendOutputFilters(Request $request = null)
     {
+        $request = self::resolveRequest($request);
 
-        // check for module
-        if (!self::isFrontend()) {
+        if (null === $request) {
             return false;
         }
 
-        if (self::isFrontentRequestByAdmin()) {
+        if (!self::isFrontend($request)) {
             return false;
         }
+
+        if (self::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        $requestKeys = array_merge([
+            array_keys($request->query->all()),
+            array_keys($request->request->all()),
+        ]);
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists('pimcore_outputfilters_disabled', $_REQUEST) && PIMCORE_DEBUG) {
+        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && PIMCORE_DEBUG) {
             return false;
         }
 
@@ -392,62 +421,65 @@ class Tool
     /**
      * @static
      *
+     * @param Request|null $request
+     *
      * @return string
      */
-    public static function getHostname()
+    public static function getHostname(Request $request = null)
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_HOST']) && !empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
-            $hostParts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
-            $hostname = trim(end($hostParts));
-        } else {
-            $hostname = $_SERVER['HTTP_HOST'];
+        $request = self::resolveRequest($request);
+
+        if (null === $request) {
+            return null;
         }
 
-        // remove port if set
-        if (strpos($hostname, ':') !== false) {
-            $hostname = preg_replace('@:[0-9]+@', '', $hostname);
-        }
-
-        return $hostname;
+        return $request->getHost();
     }
 
     /**
      * @return string
      */
-    public static function getRequestScheme()
+    public static function getRequestScheme(Request $request = null)
     {
-        $requestScheme = 'http';
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-            $requestScheme = 'https';
+        $request = self::resolveRequest($request);
+
+        if (null === $request) {
+            return '';
         }
 
-        return $requestScheme;
+        return $request->getScheme();
     }
 
     /**
      * Returns the host URL
      *
      * @param string $useProtocol use a specific protocol
+     * @param Request|null $request
      *
      * @return string
      */
-    public static function getHostUrl($useProtocol = null)
+    public static function getHostUrl($useProtocol = null, Request $request = null)
     {
-        $protocol = self::getRequestScheme();
-        $port = '';
+        $request = self::resolveRequest($request);
 
-        if (isset($_SERVER['SERVER_PORT'])) {
-            if (!in_array((int) $_SERVER['SERVER_PORT'], [443, 80])) {
-                $port = ':' . $_SERVER['SERVER_PORT'];
+        $protocol = 'http';
+        $hostname = '';
+        $port     = '';
+
+        if (null !== $request) {
+            $protocol = $request->getScheme();
+            $hostname = $request->getHost();
+
+            if (!in_array($request->getPort(), [443, 80])) {
+                $port = ':' . $request->getPort();
             }
         }
 
-        $hostname = self::getHostname();
-
-        //get it from System settings
+        // get it from System settings
         if (!$hostname) {
             $systemConfig = Config::getSystemConfig()->toArray();
             $hostname = $systemConfig['general']['domain'];
+
             if (!$hostname) {
                 Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
 
@@ -460,6 +492,42 @@ class Tool
         }
 
         return $protocol . '://' . $hostname . $port;
+    }
+
+    /**
+     * @static
+     *
+     * @param Request|null $request
+     *
+     * @return string
+     */
+    public static function getClientIp(Request $request = null)
+    {
+        $request = self::resolveRequest($request);
+
+        if (null === $request) {
+            return null;
+        }
+
+        return $request->getClientIp();
+    }
+
+    /**
+     * @param Request|null $request
+     *
+     * @return string
+     */
+    public static function getAnonymizedClientIp(Request $request = null)
+    {
+        $request = self::resolveRequest($request);
+
+        if (null === $request) {
+            return null;
+        }
+
+        return \Pimcore::getContainer()
+            ->get('pimcore.http.request_helper')
+            ->getAnonymizedClientIp($request);
     }
 
     /**
@@ -569,45 +637,6 @@ class Tool
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated Use Request::getClientIp() instead
-     *
-     * @static
-     *
-     * @return mixed
-     */
-    public static function getClientIp()
-    {
-        $ip = '';
-
-        if (isset($_SERVER['HTTP_CLIENT_IP']) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-
-        $ips = explode(',', $ip);
-        $ip = trim(array_shift($ips));
-
-        return $ip;
-    }
-
-    /**
-     * @deprecated Use RequestHelper::getAnonymizedClientIp() instead
-     *
-     * @return string
-     */
-    public static function getAnonymizedClientIp()
-    {
-        $ip = self::getClientIp();
-        $aip = substr($ip, 0, strrpos($ip, '.') + 1);
-        $aip .= '255';
-
-        return $aip;
     }
 
     /**
