@@ -775,6 +775,24 @@ Ext.define('EXTJS_23846.Gesture', {
     }
 });
 
+/**
+ * Fixes ID validation to include more characters as we need the colon for nested editable names
+ *
+ * See:
+ *
+ * - http://www.sencha.com/forum/showthread.php?296173-validIdRe-throwing-Invalid-Element-quot-id-quot-for-valid-ids-containing-colons
+ * - https://github.com/JarvusInnovations/sencha-hotfixes/blob/ext/5/0/1/1255/overrides/dom/Element/ValidId.js
+ */
+Ext.define('EXTJS-17231.ext.dom.Element.validIdRe', {
+    override: 'Ext.dom.Element',
+
+    validIdRe: /^[a-z][a-z0-9\-_:.]*$/i,
+
+    getObservableId: function () {
+        return (this.observableId = this.callParent().replace(/([.:])/g, "\\$1"));
+    }
+});
+
 // use only native scroll bar, the touch-scroller causes issues on hybrid touch devices when using with a mouse
 // this ist fixed in ExtJS 6.2.0 since there's no TouchScroller anymore, see:
 // http://docs.sencha.com/extjs/6.2.0/guides/whats_new/extjs_upgrade_guide.html
