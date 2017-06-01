@@ -103,7 +103,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         try {
             $query->getPart(QueryBuilder::DISTINCT);
-            $countIdentifier = 'DISTINCT oo_id';
+            $countIdentifier = 'DISTINCT o_id';
         } catch (\Exception $e) {
             $countIdentifier = '*';
         }
