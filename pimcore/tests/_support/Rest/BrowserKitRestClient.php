@@ -5,6 +5,8 @@ namespace Pimcore\Tests\Rest;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Pimcore\Tool\RestClient\AbstractRestClient;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\BrowserKit\Client;
 use Symfony\Component\BrowserKit\Request as BrowserKitRequest;
 use Symfony\Component\BrowserKit\Response as BrowserKitResponse;
@@ -29,6 +31,25 @@ class BrowserKitRestClient extends AbstractRestClient
     /**
      * @inheritDoc
      */
+    public function getJsonResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null, $expectedStatus = 200)
+    {
+        try {
+            return parent::getJsonResponse($method, $uri, $parameters, $files, $server, $content, $expectedStatus);
+        } catch (\Exception $e) {
+            codecept_debug(sprintf(
+                '[BrowserKitRestClient] Failed response with message "%s" and status code %d. Body: %s',
+                $e->getMessage(),
+                $this->lastResponse->getStatusCode(),
+                (string)$this->lastResponse->getBody()
+            ));
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null)
     {
         $uri        = $this->prepareUri($uri);
@@ -44,6 +65,8 @@ class BrowserKitRestClient extends AbstractRestClient
                 $uri .= '&' . $query;
             }
         }
+
+        codecept_debug('[BrowserKitRestClient] Requesting URI ' . $uri);
 
         $this->client->request($method, $uri, $parameters, $files, $server, $content);
 
