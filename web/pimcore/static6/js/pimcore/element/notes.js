@@ -73,7 +73,7 @@ pimcore.element.notes = Class.create({
                         if (key.getKey() == key.ENTER) {
                             var input = field;
                             var proxy = this.store.getProxy();
-                            proxy.extraParams.filter = input.getValue();
+                            proxy.extraParams.filterText = input.getValue();
 
                             this.store.load();
                         }
@@ -109,8 +109,8 @@ pimcore.element.notes = Class.create({
             });
 
             var columns = [
-                {header: "ID", sortable: true, dataIndex: 'id', hidden: true, flex: 60},
-                {header: t("type"), sortable: true, dataIndex: 'type', flex: 60},
+                {header: "ID", sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
+                {header: t("type"), sortable: true, dataIndex: 'type', filter: 'string', flex: 60},
                 {header: t("element"), sortable: false, dataIndex: 'cpath', flex: 200,
                     hidden: this.inElementContext,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
@@ -120,21 +120,21 @@ pimcore.element.notes = Class.create({
                         return "";
                     }
                 },
-                {header: t("title"), sortable: true, dataIndex: 'title', flex: 200},
-                {header: t("description"), sortable: true, dataIndex: 'description'},
+                {header: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200},
+                {header: t("description"), sortable: true, dataIndex: 'description', filter: 'string'},
                 {header: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
                     if(v) {
                         return v.length;
                     }
                     return "";
                 }},
-                {header: t("user"), sortable: true, dataIndex: 'user', flex: 100, renderer: function(v) {
+                {header: t("user"), sortable: true, dataIndex: 'user', flex: 100, filter: 'string', renderer: function(v) {
                     if(v && v["name"]) {
                         return v["name"];
                     }
                     return "";
                 }},
-                {header: t("date"), sortable: true, dataIndex: 'date', flex: 100, renderer: function(d) {
+                {header: t("date"), sortable: true, dataIndex: 'date', flex: 100, filter: 'date', renderer: function(d) {
                     var date = new Date(d * 1000);
                     return Ext.Date.format(date, "Y-m-d H:i:s");
                 }}
@@ -171,6 +171,8 @@ pimcore.element.notes = Class.create({
                 }]
             });
 
+            var plugins = ['pimcore.gridfilters'];
+
             this.grid = new Ext.grid.GridPanel({
                 store: this.store,
                 region: "center",
@@ -181,6 +183,7 @@ pimcore.element.notes = Class.create({
                 autoExpandColumn: "description",
                 stripeRows: true,
                 autoScroll: true,
+                plugins: plugins,
                 viewConfig: {
                     forceFit: true
                 },
