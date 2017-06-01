@@ -433,7 +433,8 @@ $scripts = array(
                             labelWidth: 116,
                             store: [
                                 ["empty", "Empty Installation"],
-                                ["demo-cms", "CMS Demo Package"]
+                                ["demo-cms", "CMS Demo Package"],
+                                ["demo-cms-twig", "CMS Demo Package (Twig)"]
                             ],
                             mode: "local",
                             emptyText: "Please select a profile",
