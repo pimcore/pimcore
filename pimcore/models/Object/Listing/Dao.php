@@ -109,7 +109,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(' . $countIdentifier . ')')]);
-        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
+        if(!$query->getPart(\Zend_Db_Select::GROUP)){
+            $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
+        }else{
+            $result = $this->db->fetchCol($query, $this->model->getConditionVariables());
+            $totalCount = count($result);
+        }
 
         return (int) $totalCount;
     }
