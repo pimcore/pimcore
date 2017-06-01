@@ -196,6 +196,7 @@ pimcore.element.notes = Class.create({
             this.detailView = new Ext.Panel({
                 region: "east",
                 minWidth: 350,
+                width: 350,
                 split: true,
                 layout: "fit"
             });
