@@ -22,6 +22,7 @@ use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -241,11 +242,20 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $controllerParams[$key] = $value;
         }
 
-        $controller = $this->configNormalizer->formatController(
-            $controllerParams['module'],
-            $controllerParams['controller'],
-            $controllerParams['action']
-        );
+        if (0 === strpos($controllerParams['controller'], '@')) {
+            $controller = sprintf(
+                '%s:%sAction',
+                substr($controllerParams['controller'], 1),
+                $controllerParams['action']
+            );
+        }
+        else {
+            $controller = $this->configNormalizer->formatController(
+                $controllerParams['module'],
+                $controllerParams['controller'],
+                $controllerParams['action']
+            );
+        }
 
         $routeParams['_controller'] = $controller;
 
