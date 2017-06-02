@@ -241,20 +241,11 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $controllerParams[$key] = $value;
         }
 
-        if (0 === strpos($controllerParams['controller'], '@')) {
-            $controller = sprintf(
-                '%s:%sAction',
-                substr($controllerParams['controller'], 1),
-                $controllerParams['action']
-            );
-        }
-        else {
-            $controller = $this->configNormalizer->formatControllerReference(
-                $controllerParams['module'],
-                $controllerParams['controller'],
-                $controllerParams['action']
-            );
-        }
+        $controller = $this->configNormalizer->formatControllerReference(
+            $controllerParams['module'],
+            $controllerParams['controller'],
+            $controllerParams['action']
+        );
 
         $routeParams['_controller'] = $controller;
 

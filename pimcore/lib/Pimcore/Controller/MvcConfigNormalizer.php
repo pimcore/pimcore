@@ -60,16 +60,26 @@ class MvcConfigNormalizer
      */
     public function formatControllerReference(string $bundle = null, string $controller = null, string $action = null): string
     {
-        $bundle     = $this->normalizeBundleName($bundle);
-        $controller = $this->normalizeControllerName($controller);
-        $action     = $this->normalizeActionName($action);
+        $action = $this->normalizeActionName($action);
 
-        return sprintf(
-            '%s:%s:%s',
-            $bundle,
-            $controller,
-            $action
-        );
+        // check if controller is a service (prefixed with @)
+        if (null !== $controller && 0 === strpos($controller, '@')) {
+            return sprintf(
+                '%s:%sAction',
+                substr($controller, 1),
+                $action
+            );
+        } else {
+            $bundle     = $this->normalizeBundleName($bundle);
+            $controller = $this->normalizeControllerName($controller);
+
+            return sprintf(
+                '%s:%s:%s',
+                $bundle,
+                $controller,
+                $action
+            );
+        }
     }
 
     /**
