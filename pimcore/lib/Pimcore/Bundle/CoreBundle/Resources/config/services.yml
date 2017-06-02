@@ -1,6 +1,6 @@
 services:
     pimcore.mvc_config_normalizer:
-        class: Pimcore\Service\MvcConfigNormalizer
+        class: Pimcore\Controller\MvcConfigNormalizer
         arguments: ['@kernel']
 
     pimcore.bundle_locator:

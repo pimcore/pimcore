@@ -15,14 +15,13 @@
 namespace Pimcore\Routing\Staticroute;
 
 use Pimcore\Config;
+use Pimcore\Controller\MvcConfigNormalizer;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
-use Pimcore\Service\MvcConfigNormalizer;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -250,7 +249,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             );
         }
         else {
-            $controller = $this->configNormalizer->formatController(
+            $controller = $this->configNormalizer->formatControllerReference(
                 $controllerParams['module'],
                 $controllerParams['controller'],
                 $controllerParams['action']

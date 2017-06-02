@@ -14,8 +14,8 @@
 
 namespace Pimcore\Templating\Renderer;
 
+use Pimcore\Controller\MvcConfigNormalizer;
 use Pimcore\Model\Document;
-use Pimcore\Service\MvcConfigNormalizer;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -75,7 +75,7 @@ class ActionRenderer
      */
     public function createControllerReference($bundle, $controller, $action, array $attributes = [], array $query = [])
     {
-        $controller = $this->configNormalizer->formatController(
+        $controller = $this->configNormalizer->formatControllerReference(
             $bundle,
             $controller,
             $action
@@ -130,7 +130,7 @@ class ActionRenderer
         $attributes[DynamicRouter::CONTENT_KEY] = $document;
 
         if ($document->getTemplate()) {
-            $template                                    = $this->configNormalizer->normalizeTemplate($document->getTemplate());
+            $template                                    = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
             $attributes[DynamicRouter::CONTENT_TEMPLATE] = $template;
         }
 
