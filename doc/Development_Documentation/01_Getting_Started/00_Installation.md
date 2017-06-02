@@ -78,4 +78,4 @@ the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 - [Database Setup](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
 - [Additional Tools Installation](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 
-Next up - [Directories Structure](./02_Directories_Structure.md)
+Next up - [Directories Structure](./02_Directory_Structure.md)
