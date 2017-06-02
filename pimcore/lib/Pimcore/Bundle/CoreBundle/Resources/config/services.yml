@@ -59,6 +59,10 @@ services:
         class: Pimcore\Controller\Config\ConfigNormalizer
         arguments: ['@kernel']
 
+    pimcore.controller.config.controller_data_provider:
+        class: Pimcore\Controller\Config\ControllerDataProvider
+        arguments: ['@kernel', '%pimcore.service_controllers%']
+
     #
     # SESSION
     #
