@@ -149,7 +149,7 @@ pimcore.report.custom.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_custom_report'), t('enter_the_name_of_the_new_report') + "(a-zA-Z-_)",
+       Ext.MessageBox.prompt(t('add_custom_report'), t('enter_the_name_of_the_new_report') + " (a-zA-Z-_)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
