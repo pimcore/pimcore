@@ -145,11 +145,18 @@ pimcore.report.custom.panel = Class.create({
             handler: this.deleteField.bind(this, tree, record)
         }));
 
+        menu.add(new Ext.menu.Item({
+            text: t('duplicate'),
+            iconCls: "pimcore_icon_clone",
+            hideOnClick: true,
+            handler: this.cloneField.bind(this, tree, record)
+        }));
+
         menu.showAt(e.pageX, e.pageY);
     },
 
     addField: function () {
-       Ext.MessageBox.prompt(t('add_custom_report'), t('enter_the_name_of_the_new_report') + " (a-zA-Z-_)",
+        Ext.MessageBox.prompt(t('add_custom_report'), t('enter_the_name_of_the_new_report') + " (a-zA-Z-_)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -205,6 +212,34 @@ pimcore.report.custom.panel = Class.create({
 
         this.getEditPanel().removeAll();
         record.remove();
+    },
+
+
+    cloneField: function (tree, record) {
+        Ext.MessageBox.prompt(t('clone_custom_report'), t('enter_the_name_of_the_new_report') + " (a-zA-Z-_)",
+            this.doCloneField.bind(this, tree, record));
+    },
+
+    doCloneField: function (tree, record, button, value) {
+        if (button == "ok") {
+            Ext.Ajax.request({
+                url: "/admin/reports/custom-report/clone",
+                params: {
+                    name: record.data.id,
+                    newName: value
+                },
+                success: function () {
+                    this.tree.getStore().reload(
+                        {
+                            callback: function(newName) {
+                                this.openConfig(newName);
+                            }.bind(this, value)
+                        }
+                    );
+                }.bind(this)
+
+            });
+        }
     }
 });
 

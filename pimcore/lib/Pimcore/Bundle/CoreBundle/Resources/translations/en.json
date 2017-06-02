@@ -1511,5 +1511,6 @@
     "classificationstore_tag_col_group": "Group",
     "classificationstore_col_groupdescription": "Group",
     "options_provider_class": "Options Provider Class",
-    "options_provider_data": "Options Provider Data"
+    "options_provider_data": "Options Provider Data",
+    "clone_custom_report": "Clone this custom report"
 }
