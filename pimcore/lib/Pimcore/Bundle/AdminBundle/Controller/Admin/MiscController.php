@@ -18,13 +18,11 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -33,99 +31,26 @@ use Symfony\Component\Routing\Annotation\Route;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-templates")
-     *
-     * @param Request $request
+     * @Route("/get-available-modules")
      *
      * @return JsonResponse
      */
-    public function getAvailableTemplatesAction(Request $request)
+    public function getAvailableModulesAction()
     {
-        $templates = [];
-        $viewPaths = [];
+        // TODO define admin controllers as services and use action injection
+        $provider = $this->get('pimcore.controller.config.controller_data_provider');
 
-        $appPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_APP_ROOT, 'Resources', 'views']));
-        if ($appPath && file_exists($appPath) && is_dir($appPath)) {
-            $viewPaths['_app'] = $appPath;
-        }
+        // convert to normal array
+        $bundles = array_values($provider->getBundles());
 
-        foreach ($this->getBundles() as $bundleName => $bundleClass) {
-            $bundle = $this->get('kernel')->getBundle($bundleName);
-
-            $bundlePath = realpath(implode(DIRECTORY_SEPARATOR, [$bundle->getPath(), 'Resources', 'views']));
-            if ($bundlePath && file_exists($bundlePath) && is_dir($bundlePath)) {
-                $viewPaths[$bundleName] = $bundlePath;
-            }
-        }
-
-        $fs = new Filesystem();
-        foreach ($viewPaths as $type => $viewPath) {
-            $finder = new Finder();
-            $finder
-                ->files()
-                ->name('*.php')
-                ->name('*.twig')
-                ->in($viewPath);
-
-            foreach ($finder as $file) {
-                $relativePath = $fs->makePathRelative($file->getRealPath(), $viewPath);
-
-                $relativeDir  = str_replace($file->getFilename(), '', $relativePath);
-                $relativeDir = trim($relativeDir, DIRECTORY_SEPARATOR);
-                $relativeDir = trim($relativeDir, '/');
-
-                $template = null;
-                if ('_app' === $type) {
-                    if (empty($relativeDir)) {
-                        $template = $file->getFilename();
-                    } else {
-                        $template = sprintf('%s/%s', $relativeDir, $file->getFilename());
-                    }
-                } else {
-                    $template = sprintf('%s:%s:%s', $type, $relativeDir, $file->getFilename());
-                }
-
-                if ($template) {
-                    $templates[] = [
-                        'path' => $template
-                    ];
-                }
-            }
-        }
+        $result = array_map(function (BundleInterface $bundle) {
+            return [
+                'name' => $bundle->getName()
+            ];
+        }, $bundles);
 
         return $this->json([
-            'data' => $templates
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-actions")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableActionsAction(Request $request)
-    {
-        $bundle = $request->get('moduleName');
-        if (empty($bundle)) {
-            $bundle = 'AppBundle';
-        }
-
-        $controller = $request->get('controllerName');
-
-        $actions = [];
-        if ($controller) {
-            foreach ($this->getControllerActions($bundle, $controller) as $reflector) {
-                $name = $reflector->getName();
-                $name = preg_replace('/Action$/', '', $name);
-
-                $actions[] = ['name' => $name];
-            }
-        }
-
-        return $this->json([
-            'data' => $actions
+            'data' => $result
         ]);
     }
 
@@ -138,145 +63,76 @@ class MiscController extends AdminController
      */
     public function getAvailableControllersAction(Request $request)
     {
+        $provider = $this->get('pimcore.controller.config.controller_data_provider');
+
         $bundle = $request->get('moduleName');
         if (empty($bundle)) {
             $bundle = 'AppBundle';
         }
 
-        $controllers = [];
-        foreach ($this->getControllers($bundle) as $className => $reflector) {
-            $name = preg_replace('/Controller$/', '', $className);
+        $controllers = $provider->getControllers($bundle);
 
-            $controllers[] = ['name' => $name];
-        }
+        $result = array_map(function($controller) {
+            return [
+                'name' => $controller
+            ];
+        }, $controllers);
 
         return $this->json([
-            'data' => $controllers
+            'data' => $result
         ]);
     }
 
     /**
-     * @Route("/get-available-modules")
+     * @Route("/get-available-actions")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getAvailableModulesAction(Request $request)
+    public function getAvailableActionsAction(Request $request)
     {
-        $modules = [];
+        $provider = $this->get('pimcore.controller.config.controller_data_provider');
 
-        foreach ($this->getBundles() as $bundle => $class) {
-            $modules[] = ['name' => $bundle];
+        $bundle = $request->get('moduleName');
+        if (empty($bundle)) {
+            $bundle = 'AppBundle';
         }
 
+        $controller = $request->get('controllerName');
+        $actions    = $provider->getActions($controller, $bundle);
+
+        $result = array_map(function($action) {
+            return [
+                'name' => $action
+            ];
+        }, $actions);
+
         return $this->json([
-            'data' => $modules
+            'data' => $result
         ]);
     }
 
     /**
-     * @param string $bundle
+     * @Route("/get-available-templates")
      *
-     * @return \ReflectionClass
+     * @return JsonResponse
      */
-    protected function getBundleReflector($bundle)
+    public function getAvailableTemplatesAction()
     {
-        $bundles = $this->getBundles();
-        if (!isset($bundles[$bundle])) {
-            throw new NotFoundHttpException();
-        }
+        $provider = $this->get('pimcore.controller.config.controller_data_provider');
 
-        $bundleClass = $bundles[$bundle];
-        $reflector = new \ReflectionClass($bundleClass);
+        $templates = $provider->getTemplates();
 
-        return $reflector;
-    }
+        $result = array_map(function($template) {
+            return [
+                'path' => $template
+            ];
+        }, $templates);
 
-    /**
-     * @param string $bundle
-     *
-     * @return \ReflectionClass[]
-     */
-    protected function getControllers($bundle)
-    {
-        $controllers = [];
-
-        try {
-            $reflector = $this->getBundleReflector($bundle);
-        } catch (\Exception $e) {
-            return $controllers;
-        }
-
-        $controllerDirectory = dirname($reflector->getFileName()) . '/Controller';
-        if (file_exists($controllerDirectory)) {
-            $finder = new Finder();
-            $finder
-                ->files()
-                ->name('*Controller.php')
-                ->in($controllerDirectory);
-
-            foreach ($finder as $controllerFile) {
-                $className = str_replace(['.php', '/'], ['', '\\'], $controllerFile->getRelativePathname());
-                $fullClassName = $reflector->getNamespaceName() . '\\Controller\\' . $className;
-
-                if (class_exists($fullClassName)) {
-                    $controllerReflector = new \ReflectionClass($fullClassName);
-
-                    if ($controllerReflector->isInstantiable()) {
-                        $controllers[$className] = $controllerReflector;
-                    }
-                }
-            }
-        }
-
-        return $controllers;
-    }
-
-    /**
-     * @param string $bundle
-     * @param string $controller
-     *
-     * @return \ReflectionMethod[]
-     */
-    protected function getControllerActions($bundle, $controller)
-    {
-        $controller = ucfirst($controller) . 'Controller';
-        $controllers = $this->getControllers($bundle);
-        if (!isset($controllers[$controller])) {
-            return [];
-        }
-
-        /** @var \ReflectionClass $controllerReflector */
-        $controllerReflector = $controllers[$controller];
-
-        $methods = [];
-        foreach ($controllerReflector->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_STATIC) as $method) {
-            if (preg_match('/^(.*)Action$/', $method->getName())) {
-                $methods[] = $method;
-            }
-        }
-
-        return $methods;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getBundles()
-    {
-        $allBundles = $this->getParameter('kernel.bundles');
-        $filteredBundles = [];
-
-        foreach ($allBundles as $bundle => $class) {
-            if (preg_match('/^(Symfony|Doctrine|Pimcore|Sensio)/', $class)) {
-                continue;
-            }
-
-            $filteredBundles[$bundle] = $class;
-        }
-
-        return $filteredBundles;
+        return $this->json([
+            'data' => $result
+        ]);
     }
 
     /**
@@ -521,8 +377,8 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-                                  'success' => $success
-                             ]);
+            'success' => $success
+        ]);
     }
 
     /**
@@ -544,7 +400,7 @@ class MiscController extends AdminController
             $path = $this->getFileexplorerPath($request, 'path');
             $file = $path . '/' . $request->get('filename');
 
-            $file= resolvePath($file);
+            $file = resolvePath($file);
             if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
                 throw new \Exception('not allowed');
             }
@@ -557,8 +413,8 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-                                  'success' => $success
-                             ]);
+            'success' => $success
+        ]);
     }
 
     /**
@@ -580,7 +436,7 @@ class MiscController extends AdminController
             $path = $this->getFileexplorerPath($request, 'path');
             $file = $path . '/' . $request->get('filename');
 
-            $file= resolvePath($file);
+            $file = resolvePath($file);
             if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
                 throw new \Exception('not allowed');
             }
@@ -617,7 +473,7 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-              'success' => $success
+            'success' => $success
         ]);
     }
 
@@ -661,7 +517,7 @@ class MiscController extends AdminController
         }
 
         return $this->json([
-              'success' => true
+            'success' => true
         ]);
     }
 

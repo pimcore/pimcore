@@ -18,10 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Config;
+use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\DocumentRoute;
-use Pimcore\Service\MvcConfigNormalizer;
 use Pimcore\Service\Request\SiteResolver;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
@@ -44,7 +44,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private $requestHelper;
 
     /**
-     * @var MvcConfigNormalizer
+     * @var ConfigNormalizer
      */
     private $configNormalizer;
 
@@ -57,13 +57,13 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
-     * @param MvcConfigNormalizer $configNormalizer
+     * @param ConfigNormalizer $configNormalizer
      */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
         RequestHelper $requestHelper,
-        MvcConfigNormalizer $configNormalizer
+        ConfigNormalizer $configNormalizer
     ) {
         $this->documentService  = $documentService;
         $this->siteResolver     = $siteResolver;
@@ -317,7 +317,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route)
     {
-        $controller = $this->configNormalizer->formatController(
+        $controller = $this->configNormalizer->formatControllerReference(
             $document->getModule(),
             $document->getController(),
             $document->getAction()
@@ -326,7 +326,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $route->setDefault('_controller', $controller);
 
         if ($document->getTemplate()) {
-            $template = $this->configNormalizer->normalizeTemplate($document->getTemplate());
+            $template = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
             $route->setDefault('_template', $template);
         }
 

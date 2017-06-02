@@ -14,8 +14,8 @@
 
 namespace Pimcore\Templating\Renderer;
 
+use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Model\Document;
-use Pimcore\Service\MvcConfigNormalizer;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -29,15 +29,15 @@ class ActionRenderer
     protected $actionsHelper;
 
     /**
-     * @var MvcConfigNormalizer
+     * @var ConfigNormalizer
      */
     protected $configNormalizer;
 
     /**
      * @param ActionsHelper $actionsHelper
-     * @param MvcConfigNormalizer $configNormalizer
+     * @param ConfigNormalizer $configNormalizer
      */
-    public function __construct(ActionsHelper $actionsHelper, MvcConfigNormalizer $configNormalizer)
+    public function __construct(ActionsHelper $actionsHelper, ConfigNormalizer $configNormalizer)
     {
         $this->actionsHelper    = $actionsHelper;
         $this->configNormalizer = $configNormalizer;
@@ -75,7 +75,7 @@ class ActionRenderer
      */
     public function createControllerReference($bundle, $controller, $action, array $attributes = [], array $query = [])
     {
-        $controller = $this->configNormalizer->formatController(
+        $controller = $this->configNormalizer->formatControllerReference(
             $bundle,
             $controller,
             $action
@@ -130,7 +130,7 @@ class ActionRenderer
         $attributes[DynamicRouter::CONTENT_KEY] = $document;
 
         if ($document->getTemplate()) {
-            $template                                    = $this->configNormalizer->normalizeTemplate($document->getTemplate());
+            $template                                    = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
             $attributes[DynamicRouter::CONTENT_TEMPLATE] = $template;
         }
 
