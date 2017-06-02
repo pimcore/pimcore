@@ -737,6 +737,12 @@ pimcore.object.classes.klass = Class.create({
                     value: this.data.group
                 },
                 {
+                    xtype: "checkbox",
+                    fieldLabel: t("show_applogger_tab"),
+                    name: "showAppLoggerTab",
+                    checked: this.data.showAppLoggerTab
+                },
+                {
                     xtype: "displayfield",
                     hideLabel: true,
                     width: 600,

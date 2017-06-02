@@ -119,6 +119,13 @@ class ClassDefinition extends Model\AbstractModel
      */
     public $group;
 
+
+    /**
+     * @var bool
+     */
+    public $showAppLoggerTab;
+
+
     /**
      * @var array
      */
@@ -1081,4 +1088,22 @@ class ClassDefinition extends Model\AbstractModel
     {
         return $this->showVariants;
     }
+
+    /**
+     * @return bool
+     */
+    public function getShowAppLoggerTab()
+    {
+        return $this->showAppLoggerTab;
+    }
+
+    /**
+     * @param bool $showAppLoggerTab
+     */
+    public function setShowAppLoggerTab($showAppLoggerTab)
+    {
+        $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+    }
+
+
 }

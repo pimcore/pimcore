@@ -352,6 +352,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $objectData['scheduledTasks'] = $object->getScheduledTasks();
             $objectData['general']['allowVariants'] = $object->getClass()->getAllowVariants();
             $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
+            $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
             $objectData['general']['fullpath'] = $object->getRealFullPath();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
