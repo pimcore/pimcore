@@ -1,4 +1,4 @@
-# Directories Structure
+# Directory Structure
 
 After extracting the installation package of Pimcore you should see the folder structure described below.  
 The following tables should give you a quick overview about the purpose of this folders.  
