@@ -75,12 +75,12 @@ Similar to the Href editable, Multihref also could specify allowed `types`, `sub
 For example:
 ```php
 <?= $this->multihref("objectPaths", [
-    "types" => ["asset","object"],
-        "subtypes" => [
-            "asset" => ["video","image"],
-            "object" => ["object"]
-         ],
-        "classes" => ["person"]
+     "types" => ["asset","object"],
+     "subtypes" => [
+         "asset" => ["video","image"],
+         "object" => ["object"]
+     ],
+     "classes" => ["person"]
 ]); ?>
 ```
 
