@@ -38,7 +38,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
+        this.appLogger = new pimcore.log.admin({
+            localMode: true,
+            searchParams: {
+                relatedobject: this.id
+            }
+        });
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
+
+
+
         this.getData();
     },
 
@@ -290,6 +299,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 console.log(e);
             }
         }
+
+
+        if (user.isAllowed("application_logging")) {
+            try {
+                var appLoggerTab = this.appLogger.getTabPanel();
+                items.push(appLoggerTab);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
 
         this.tabbar = Ext.create('Ext.tab.Panel', {
             tabPosition: "top",
