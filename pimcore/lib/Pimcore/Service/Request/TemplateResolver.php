@@ -14,7 +14,7 @@
 
 namespace Pimcore\Service\Request;
 
-use Pimcore\Controller\MvcConfigNormalizer;
+use Pimcore\Controller\Config\ConfigNormalizer;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,15 +22,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class TemplateResolver extends AbstractRequestResolver
 {
     /**
-     * @var MvcConfigNormalizer
+     * @var ConfigNormalizer
      */
     protected $configNormalizer;
 
     /**
      * @param RequestStack $requestStack
-     * @param MvcConfigNormalizer $configNormalizer
+     * @param ConfigNormalizer $configNormalizer
      */
-    public function __construct(RequestStack $requestStack, MvcConfigNormalizer $configNormalizer)
+    public function __construct(RequestStack $requestStack, ConfigNormalizer $configNormalizer)
     {
         parent::__construct($requestStack);
 

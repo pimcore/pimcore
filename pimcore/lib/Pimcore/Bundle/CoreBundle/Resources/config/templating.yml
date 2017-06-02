@@ -1,7 +1,7 @@
 services:
     pimcore.templating.action_renderer:
         class: Pimcore\Templating\Renderer\ActionRenderer
-        arguments: ['@templating.helper.actions', '@pimcore.mvc_config_normalizer']
+        arguments: ['@templating.helper.actions', '@pimcore.controller.config.config_normalizer']
 
     pimcore.templating.include_renderer:
         class: Pimcore\Templating\Renderer\IncludeRenderer

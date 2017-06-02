@@ -14,7 +14,7 @@
 
 namespace Pimcore\Templating\Renderer;
 
-use Pimcore\Controller\MvcConfigNormalizer;
+use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Model\Document;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
@@ -29,15 +29,15 @@ class ActionRenderer
     protected $actionsHelper;
 
     /**
-     * @var MvcConfigNormalizer
+     * @var ConfigNormalizer
      */
     protected $configNormalizer;
 
     /**
      * @param ActionsHelper $actionsHelper
-     * @param MvcConfigNormalizer $configNormalizer
+     * @param ConfigNormalizer $configNormalizer
      */
-    public function __construct(ActionsHelper $actionsHelper, MvcConfigNormalizer $configNormalizer)
+    public function __construct(ActionsHelper $actionsHelper, ConfigNormalizer $configNormalizer)
     {
         $this->actionsHelper    = $actionsHelper;
         $this->configNormalizer = $configNormalizer;

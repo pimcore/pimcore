@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Controller;
+namespace Pimcore\Controller\Config;
 
 use Doctrine\Common\Util\Inflector;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  * TODO use a config switch to enable/disable ZF1 compatibility
  */
-class MvcConfigNormalizer
+class ConfigNormalizer
 {
     /**
      * @var KernelInterface

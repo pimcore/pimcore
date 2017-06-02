@@ -15,7 +15,7 @@
 namespace Pimcore\Routing\Staticroute;
 
 use Pimcore\Config;
-use Pimcore\Controller\MvcConfigNormalizer;
+use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
 use Pimcore\Tool;
@@ -43,7 +43,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $context;
 
     /**
-     * @var MvcConfigNormalizer
+     * @var ConfigNormalizer
      */
     protected $configNormalizer;
 
@@ -59,9 +59,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param RequestContext $context
-     * @param MvcConfigNormalizer $configNormalizer
+     * @param ConfigNormalizer $configNormalizer
      */
-    public function __construct(RequestContext $context, MvcConfigNormalizer $configNormalizer)
+    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer)
     {
         $this->context          = $context;
         $this->configNormalizer = $configNormalizer;
