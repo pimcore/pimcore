@@ -29,7 +29,6 @@ class PimcoreAdminBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new SerializerPass());
-        $container->addCompilerPass(new ServiceControllersPass());
 
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
