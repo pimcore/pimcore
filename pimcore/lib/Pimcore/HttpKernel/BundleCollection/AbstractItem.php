@@ -19,32 +19,44 @@ namespace Pimcore\HttpKernel\BundleCollection;
 
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class Item extends AbstractItem
+abstract class AbstractItem implements ItemInterface
 {
     /**
-     * @var BundleInterface
+     * @var int
      */
-    private $bundle;
+    private $priority;
 
     /**
-     * @param BundleInterface $bundle
+     * @var array
+     */
+    private $environments = [];
+
+    /**
      * @param int $priority
      * @param array $environments
      */
-    public function __construct(BundleInterface $bundle, int $priority = 0, array $environments = [])
+    public function __construct(int $priority = 0, array $environments = [])
     {
-        $this->bundle = $bundle;
-
-        parent::__construct($priority, $environments);
+        $this->priority     = $priority;
+        $this->environments = $environments;
     }
 
-    public function getBundleIdentifier(): string
+    public function getPriority(): int
     {
-        return get_class($this->bundle);
+        return $this->priority;
     }
 
-    public function getBundle(): BundleInterface
+    public function getEnvironments(): array
     {
-        return $this->bundle;
+        return $this->environments;
+    }
+
+    public function matchesEnvironment(string $environment): bool
+    {
+        if (empty($this->environments)) {
+            return true;
+        }
+
+        return in_array($environment, $this->environments, true);
     }
 }

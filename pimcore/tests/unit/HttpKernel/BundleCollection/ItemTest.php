@@ -23,6 +23,21 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ItemTest extends TestCase
 {
+    public function testGetBundle()
+    {
+        $bundle = new ItemTestBundle();
+        $item   = new Item(new ItemTestBundle());
+
+        $this->assertEquals($bundle, $item->getBundle());
+    }
+
+    public function testGetBundleIdentifier()
+    {
+        $item = new Item(new ItemTestBundle());
+
+        $this->assertEquals(ItemTestBundle::class, $item->getBundleIdentifier());
+    }
+
     public function testEmptyEnvironmentsMatchesAnyEnvironment()
     {
         $item = new Item(new ItemTestBundle(), 0, []);

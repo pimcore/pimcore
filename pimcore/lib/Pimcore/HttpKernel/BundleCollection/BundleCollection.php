@@ -22,30 +22,30 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 class BundleCollection
 {
     /**
-     * @var Item[]
+     * @var ItemInterface[]
      */
     private $items = [];
 
     /**
      * @var array
      */
-    private $names = [];
+    private $bundleIdentifiers = [];
 
     /**
      * Adds a collection item
      *
-     * @param Item $item
+     * @param ItemInterface $item
      *
      * @return self
      */
-    public function add(Item $item): self
+    public function add(ItemInterface $item): self
     {
-        $name = $item->getBundle()->getName();
-        if (in_array($name, $this->names)) {
-            throw new \LogicException(sprintf('Trying to register two bundles with the same name "%s"', $name));
+        $identifier = $item->getBundleIdentifier();
+        if (in_array($identifier, $this->bundleIdentifiers)) {
+            throw new \LogicException(sprintf('Trying to register the bundle "%s" multiple times', $identifier));
         }
 
-        $this->names[] = $name;
+        $this->bundleIdentifiers[] = $identifier;
         $this->items[$item->getPriority()][] = $item;
 
         return $this;

@@ -23,6 +23,7 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -175,26 +176,34 @@ abstract class Kernel extends SymfonyKernel
             new CmfRoutingBundle(),
         ], 100);
 
-        // environment specific bundles dev + test bundles
-        if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
-            $collection->addBundle(
-                new SensioGeneratorBundle(),
-                80, ['dev']
-            );
-        }
-
-        $collection->addBundles([
-            new DebugBundle(),
-            new WebProfilerBundle(),
-            new SensioDistributionBundle()
-        ], 80, ['dev', 'test']);
-
         // pimcore bundles
         $collection->addBundles([
             new PimcoreCoreBundle(),
-            new PimcoreAdminBundle(),
-            new PimcoreGeneratorBundle()
+            new PimcoreAdminBundle()
         ], 60);
+
+        // environment specific dev + test bundles
+        if (in_array($this->getEnvironment(), ['dev', 'test'])) {
+            $collection->addBundles([
+                new DebugBundle(),
+                new WebProfilerBundle(),
+                new SensioDistributionBundle()
+            ], 80);
+
+            // add generator bundle only if installed
+            if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+                $collection->addBundle(
+                    new SensioGeneratorBundle(),
+                    80, ['dev']
+                );
+
+                // PimcoreGeneratorBundle depends on SensioGeneratorBundle
+                $collection->addBundle(
+                    new PimcoreGeneratorBundle(),
+                    60, ['dev']
+                );
+            }
+        }
     }
 
     /**
@@ -211,7 +220,8 @@ abstract class Kernel extends SymfonyKernel
                 continue;
             }
 
-            $collection->addBundle(new $className, $options['priority'], $options['environments']);
+            // use lazy loaded item to instantiate the bundle only if environment matches
+            $collection->add(new LazyLoadedItem($className, $options['priority'], $options['environments']));
         }
     }
 

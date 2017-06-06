@@ -19,32 +19,46 @@ namespace Pimcore\HttpKernel\BundleCollection;
 
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class Item extends AbstractItem
+class LazyLoadedItem extends AbstractItem
 {
+    /**
+     * @var string
+     */
+    private $className;
+
     /**
      * @var BundleInterface
      */
     private $bundle;
 
     /**
-     * @param BundleInterface $bundle
+     * @param string $className
      * @param int $priority
      * @param array $environments
      */
-    public function __construct(BundleInterface $bundle, int $priority = 0, array $environments = [])
+    public function __construct(string $className, int $priority = 0, array $environments = [])
     {
-        $this->bundle = $bundle;
+        $this->className = $className;
 
         parent::__construct($priority, $environments);
     }
 
     public function getBundleIdentifier(): string
     {
-        return get_class($this->bundle);
+        return $this->className;
     }
 
     public function getBundle(): BundleInterface
     {
+        if (null === $this->bundle) {
+            $className = $this->className;
+            if (!class_exists($className)) {
+                throw new \InvalidArgumentException(sprintf('The class "%s" does not exist', $className));
+            }
+
+            $this->bundle = new $className;
+        }
+
         return $this->bundle;
     }
 }
