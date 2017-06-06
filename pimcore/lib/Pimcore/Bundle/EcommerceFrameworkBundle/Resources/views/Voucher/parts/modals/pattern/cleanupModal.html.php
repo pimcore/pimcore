@@ -68,7 +68,7 @@
                         <?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-infotext')?>
                     </p>
                 </div>
-                <button onclick="$('.js-cleanup-modal-form').submit()" type="submit" class="btn btn-primary js-loading" data-msg="<?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-loadingtext')?>">
+                <button type="submit" class="btn btn-primary js-loading" data-msg="<?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-loadingtext')?>">
                     <?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-submit-button')?>
                 </button>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cancel')?></button>
