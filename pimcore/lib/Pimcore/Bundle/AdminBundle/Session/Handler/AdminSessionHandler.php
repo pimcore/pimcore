@@ -70,8 +70,7 @@ class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerA
         SessionInterface $session,
         NativeSessionStorage $storage,
         AdminSessionStorageFactory $storageFactory
-    )
-    {
+    ) {
         $this->session        = $session;
         $this->storage        = $storage;
         $this->storageFactory = $storageFactory;

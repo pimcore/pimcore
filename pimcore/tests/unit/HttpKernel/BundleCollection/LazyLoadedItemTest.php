@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
-use Pimcore\HttpKernel\BundleCollection\Item;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

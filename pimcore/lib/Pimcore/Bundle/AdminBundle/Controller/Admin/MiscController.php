@@ -72,7 +72,7 @@ class MiscController extends AdminController
 
         $controllers = $provider->getControllers($bundle);
 
-        $result = array_map(function($controller) {
+        $result = array_map(function ($controller) {
             return [
                 'name' => $controller
             ];
@@ -102,7 +102,7 @@ class MiscController extends AdminController
         $controller = $request->get('controllerName');
         $actions    = $provider->getActions($controller, $bundle);
 
-        $result = array_map(function($action) {
+        $result = array_map(function ($action) {
             return [
                 'name' => $action
             ];
@@ -124,7 +124,7 @@ class MiscController extends AdminController
 
         $templates = $provider->getTemplates();
 
-        $result = array_map(function($template) {
+        $result = array_map(function ($template) {
             return [
                 'path' => $template
             ];

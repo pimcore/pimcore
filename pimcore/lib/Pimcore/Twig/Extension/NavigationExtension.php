@@ -67,8 +67,7 @@ class NavigationExtension extends \Twig_Extension
         Document $navigationRootDocument = null,
         string $htmlMenuPrefix = null,
         bool $cache = true
-    ): Container
-    {
+    ): Container {
         return $this->navigationHelper->buildNavigation(
             $activeDocument,
             $navigationRootDocument,

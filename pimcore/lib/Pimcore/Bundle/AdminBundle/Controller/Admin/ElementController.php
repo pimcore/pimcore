@@ -154,7 +154,6 @@ class ElementController extends AdminController
         $filterText = $request->get('filterText');
 
         if ($filterText) {
-
             $conditions[] = '('
                 . '`title` LIKE ' . $list->quote('%'. $filterText .'%')
                 . ' OR `description` LIKE ' . $list->quote('%'.$filterText.'%')
@@ -170,7 +169,6 @@ class ElementController extends AdminController
             $filters = $this->decodeJson($filterJson);
             $propertyKey = 'property';
             $comparisonKey = 'operator';
-
 
             foreach ($filters as $filter) {
                 $operator = '=';
@@ -206,8 +204,8 @@ class ElementController extends AdminController
                     $value = '%' . $value . '%';
                 }
 
-                if ($filter[$propertyKey] == "user") {
-                    $conditions[] = "`user` IN (SELECT `id` FROM `users` WHERE `name` LIKE " . $list->quote('%'.$filter['value'].'%') . ")";
+                if ($filter[$propertyKey] == 'user') {
+                    $conditions[] = '`user` IN (SELECT `id` FROM `users` WHERE `name` LIKE ' . $list->quote('%'.$filter['value'].'%') . ')';
                 } else {
                     if ($filter['type'] == 'date' && $filter[$comparisonKey] == 'eq') {
                         $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition

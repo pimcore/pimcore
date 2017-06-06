@@ -111,7 +111,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
 
         try {
-            if($query->getPart(QueryBuilder::GROUP)) {
+            if ($query->getPart(QueryBuilder::GROUP)) {
                 $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
             }
         } catch (\Exception $e) {

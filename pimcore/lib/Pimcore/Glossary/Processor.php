@@ -57,8 +57,7 @@ class Processor
         RequestHelper $requestHelper,
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver
-    )
-    {
+    ) {
         $this->requestHelper    = $requestHelper;
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;

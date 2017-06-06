@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-
 abstract class AbstractItem implements ItemInterface
 {
     /**

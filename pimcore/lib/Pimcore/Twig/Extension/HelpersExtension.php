@@ -25,7 +25,7 @@ class HelpersExtension extends \Twig_Extension
     public function getTests()
     {
         return [
-            new \Twig_SimpleTest('instanceof', function($object, $class) {
+            new \Twig_SimpleTest('instanceof', function ($object, $class) {
                 return is_object($object) && $object instanceof $class;
             })
         ];

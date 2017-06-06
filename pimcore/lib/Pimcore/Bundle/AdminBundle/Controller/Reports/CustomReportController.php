@@ -98,15 +98,15 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $newName = $request->get('newName');
         $report = CustomReport\Config::getByName($newName);
         if ($report) {
-            throw new \Exception("report already exists");
+            throw new \Exception('report already exists');
         }
 
         $report = CustomReport\Config::getByName($request->get('name'));
         $reportData = $this->encodeJson($report);
         $reportData = $this->decodeJson($reportData);
 
-        unset($reportData["name"]);
-        $reportData["name"] = $newName;
+        unset($reportData['name']);
+        $reportData['name'] = $newName;
 
         foreach ($reportData as $key => $value) {
             $setter = 'set' . ucfirst($key);
@@ -119,7 +119,6 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         return $this->json(['success' => true]);
     }
-
 
     /**
      * @Route("/get")

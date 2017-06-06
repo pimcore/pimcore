@@ -119,12 +119,10 @@ class ClassDefinition extends Model\AbstractModel
      */
     public $group;
 
-
     /**
      * @var bool
      */
     public $showAppLoggerTab;
-
 
     /**
      * @var array
@@ -1104,6 +1102,4 @@ class ClassDefinition extends Model\AbstractModel
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
     }
-
-
 }

@@ -51,4 +51,3 @@ class GlossaryTokenParser extends \Twig_TokenParser
         return 'pimcoreglossary';
     }
 }
-

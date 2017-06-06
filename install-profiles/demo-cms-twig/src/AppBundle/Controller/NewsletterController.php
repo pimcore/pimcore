@@ -92,7 +92,7 @@ class NewsletterController extends FrontendController
         if (null !== $email) {
             $unsubscribeMethod = 'email';
             $success = $newsletter->unsubscribeByEmail($email);
-        } else if (null !== $token) {
+        } elseif (null !== $token) {
             $unsubscribeMethod = 'token';
             $success = $newsletter->unsubscribeByToken($token);
         }
