@@ -15,6 +15,7 @@
 namespace Pimcore\Service\Request;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Pimcore\Cache\Runtime;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Templating\Vars\TemplateVarsProviderInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -39,6 +40,11 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
     protected $requestHelper;
 
     /**
+     * @var bool
+     */
+    private $forceEditmode = false;
+
+    /**
      * @param RequestStack $requestStack
      * @param UserLoader $userLoader
      * @param RequestHelper $requestHelper
@@ -52,12 +58,28 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
     }
 
     /**
+     * @param bool $forceEditmode
+     *
+     * @return $this
+     */
+    public function setForceEditmode(bool $forceEditmode)
+    {
+        $this->forceEditmode = $forceEditmode;
+    }
+
+    /**
      * @param Request $request
      *
      * @return bool
      */
     public function isEditmode(Request $request = null)
     {
+        if ($this->forceEditmode) {
+            $this->logger->debug('Resolved editmode to true as force editmode is set');
+
+            return true;
+        }
+
         if (null === $request) {
             $request = $this->getCurrentRequest();
         }
@@ -105,7 +127,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
         $request->attributes->set(static::ATTRIBUTE_EDITMODE, $result);
 
         // TODO this can be removed later
-        \Pimcore\Cache\Runtime::set('pimcore_editmode', $result);
+        Runtime::set('pimcore_editmode', $result);
 
         return $result;
     }
