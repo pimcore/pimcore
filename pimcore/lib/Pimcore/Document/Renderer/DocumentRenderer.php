@@ -17,17 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Renderer;
 
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
+use Pimcore\Routing\DocumentRoute;
+use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Templating\Renderer\ActionRenderer;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer implements DocumentRendererInterface
 {
     /**
-     * @var RequestStack
+     * @var RequestHelper
      */
-    private $requestStack;
+    private $requestHelper;
 
     /**
      * @var ActionRenderer
@@ -40,18 +42,27 @@ class DocumentRenderer implements DocumentRendererInterface
     private $fragmentRenderer;
 
     /**
-     * @param RequestStack $requestStack
+     * @var DocumentRouteHandler
+     */
+    private $documentRouteHandler;
+
+    /**
+     * @param RequestHelper $requestHelper
      * @param ActionRenderer $actionRenderer
      * @param FragmentRendererInterface $fragmentRenderer
+     * @param DocumentRouteHandler $documentRouteHandler
      */
     public function __construct(
-        RequestStack $requestStack,
+        RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
-        FragmentRendererInterface $fragmentRenderer
-    ) {
-        $this->requestStack     = $requestStack;
-        $this->actionRenderer   = $actionRenderer;
-        $this->fragmentRenderer = $fragmentRenderer;
+        FragmentRendererInterface $fragmentRenderer,
+        DocumentRouteHandler $documentRouteHandler
+    )
+    {
+        $this->requestHelper        = $requestHelper;
+        $this->actionRenderer       = $actionRenderer;
+        $this->fragmentRenderer     = $fragmentRenderer;
+        $this->documentRouteHandler = $documentRouteHandler;
     }
 
     /**
@@ -59,8 +70,15 @@ class DocumentRenderer implements DocumentRendererInterface
      */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
+        // add document route to request if no route is set
+        // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)
+        if (!isset($attributes['_route'])) {
+            $route = $this->documentRouteHandler->buildRouteForDocument($document);
+            $attributes['_route'] = $route->getRouteKey();
+        }
+
         $uri      = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
-        $response = $this->fragmentRenderer->render($uri, $this->requestStack->getCurrentRequest(), $options);
+        $response = $this->fragmentRenderer->render($uri, $this->requestHelper->getCurrentRequest(), $options);
 
         return $response->getContent();
     }
