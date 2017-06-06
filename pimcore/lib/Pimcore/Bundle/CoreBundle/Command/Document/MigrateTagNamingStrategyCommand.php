@@ -31,6 +31,7 @@ use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\User;
 use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -81,6 +82,11 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 InputOption::VALUE_REQUIRED,
                 'Run command under given user name',
                 'admin'
+            )
+            ->addOption(
+                'force', 'f',
+                InputOption::VALUE_NONE,
+                'Do not ask for confirmation'
             );
 
         $this->configureDryRunOption('Do not update editables. Just render documents and gather name mapping');
@@ -146,6 +152,33 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $loader->setUser($user);
     }
 
+    private function askRunConfirmation(NamingStrategyInterface $strategy): bool
+    {
+        $message = <<<EOF
+This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please be aware that
+only elements which can be rendered and which are currently used on your templates can and will
+be migrated. If you have any elements which are not used in the template (e.g. because they are
+commented out or depend on a certain logic) they can't be automatically migrated and will be
+removed the next time you save the document in the admin interface. To make the transition as
+smooth as possible it's recommended to update all your templates to render any needed editables
+at least in editmode. The command simulates the editmode, so you can rely on the editmode parameter
+to be set.
+EOF;
+
+        $this->writeSimpleSection('<comment>WARNING</comment>', '=');
+        $this->io->writeln(sprintf($message, $strategy->getName()) . PHP_EOL);
+
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
+
+        $question = new ConfirmationQuestion(
+            'Do you wish to continue? (y/n) ',
+            false
+        );
+
+        return (bool)$helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
+    }
+
     /**
      * @inheritDoc
      */
@@ -169,29 +202,10 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $documentIds     = $this->getDocumentIds($input);
         $renderingErrors = [];
 
-
-        $message = <<<EOF
-This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please be aware that
-only elements which can be rendered and which are currently used on your templates can and will
-be migrated. If you have any elements which are not used in the template (e.g. because they are
-commented out or depend on a certain logic) they can't be automatically migrated and will be
-removed the next time you save the document in the admin interface. To make the transition as
-smooth as possible it's recommended to update all your templates to render any needed editables
-at least in editmode. The command simulates the editmode, so you can rely on the editmode parameter
-to be set.
-EOF;
-
-        $this->writeSimpleSection('<comment>WARNING</comment>', '=');
-        $this->io->writeln(sprintf($message, $strategy->getName()) . PHP_EOL);
-
-        $helper   = $this->getHelper('question');
-        $question = new ConfirmationQuestion(
-            'Do you wish to continue? (y/n) ',
-            false
-        );
-
-        if (!$helper->ask($this->io->getInput(), $this->io->getOutput(), $question)) {
-            return 0;
+        if (!$input->getOption('force')) {
+            if (!$this->askRunConfirmation($strategy)) {
+                return 0;
+            }
         }
 
         $this->io->writeln(PHP_EOL);
@@ -219,7 +233,7 @@ EOF;
         } else {
             $this->io->warning('Not all documents could be rendered.');
 
-            if (!$this->confirmProceedAfterRenderingErrors($renderingErrors)) {
+            if (!$input->getOption('force') && !$this->confirmProceedAfterRenderingErrors($renderingErrors)) {
                 return 3;
             }
         }
