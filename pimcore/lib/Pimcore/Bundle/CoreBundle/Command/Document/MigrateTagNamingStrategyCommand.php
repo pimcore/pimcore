@@ -222,7 +222,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->title('[STEP 2] Rename preflight...checking if none of the new tag names already exist in the DB');
 
         try {
-            $this->testRenames($nameMapping);
+            $nameMapping = $this->prepareRenames($nameMapping);
         } catch (\Exception $e) {
             $this->io->error(sprintf('Rename prerequisites failed. Error: %s', $e->getMessage()));
 
@@ -263,18 +263,26 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             $document->getId()
         ));
 
-        Document\Service::render($document);
+        Document\Service::render($document, [], false, [
+            'pimcore_editmode' => true
+        ]);
     }
 
     /**
-     * Tests if renames can safely be done. Check if old names exist in the DB and if the new name does not.
+     * Tests if renames can safely be done. Check if old names exist in the DB and if the new name does not. If elements
+     * do not exist for the current document (inheritance), the will be ignored.
      *
      * @param array $nameMapping
+     *
+     * @return array
      */
-    private function testRenames(array $nameMapping)
+    private function prepareRenames(array $nameMapping): array
     {
         $db   = $this->getContainer()->get('database_connection');
         $stmt = $db->prepare('SELECT documentId, name FROM documents_elements WHERE documentId = :documentId AND name = :name');
+
+        // keep a blacklist of all not existing elements (inheritance)
+        $blacklist = [];
 
         foreach ($nameMapping as $documentId => $mapping) {
             $this->writeSimpleSection(sprintf('Checking document %d', $documentId));
@@ -301,11 +309,13 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 }
 
                 if (count($stmt->fetchAll()) === 0) {
-                    $this->io->writeln(sprintf('<error>%s</error>' . PHP_EOL, sprintf(
-                        'Ignoring old editable (document ID: %d, name: %s) as it was not found',
+                    $this->io->writeln(sprintf('<comment>%s</comment>' . PHP_EOL, sprintf(
+                        'WARNING: Ignoring old editable (document ID: %d, name: %s) as it was not found (probably due to inheritance)',
                         $documentId,
                         $oldName
                     )));
+
+                    $blacklist[$documentId][] = $oldName;
                 }
 
                 // check if there is no new editable
@@ -333,6 +343,19 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
             $this->output->writeln('');
         }
+
+        // unset blacklisted names which were not found in the DB (inheritance)
+        foreach ($blacklist as $documentId => $blacklistedNames) {
+            foreach ($blacklistedNames as $blacklistedName) {
+                unset($nameMapping[$documentId][$blacklistedName]);
+            }
+
+            if (empty($nameMapping[$documentId])) {
+                unset($nameMapping[$documentId]);
+            }
+        }
+
+        return $nameMapping;
     }
 
     /**
