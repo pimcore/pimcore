@@ -169,6 +169,32 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $documentIds     = $this->getDocumentIds($input);
         $renderingErrors = [];
 
+
+        $message = <<<EOF
+This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please be aware that
+only elements which can be rendered and which are currently used on your templates can and will
+be migrated. If you have any elements which are not used in the template (e.g. because they are
+commented out or depend on a certain logic) they can't be automatically migrated and will be
+removed the next time you save the document in the admin interface. To make the transition as
+smooth as possible it's recommended to update all your templates to render any needed editables
+at least in editmode. The command simulates the editmode, so you can rely on the editmode parameter
+to be set.
+EOF;
+
+        $this->writeSimpleSection('<comment>WARNING</comment>', '=');
+        $this->io->writeln(sprintf($message, $strategy->getName()) . PHP_EOL);
+
+        $helper   = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            'Do you wish to continue? (y/n) ',
+            false
+        );
+
+        if (!$helper->ask($this->io->getInput(), $this->io->getOutput(), $question)) {
+            return 0;
+        }
+
+        $this->io->writeln(PHP_EOL);
         $this->io->title('[STEP 1] Rendering all documents to gather new element mapping');
 
         // push dummy request to stack to make document renderer work
@@ -573,12 +599,12 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         return $helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
     }
 
-    private function writeSimpleSection(string $message)
+    private function writeSimpleSection(string $message, string $underlineChar = '-')
     {
         $this->io->writeln([
             '',
             $message,
-            str_repeat('-', Helper::strlenWithoutDecoration($this->io->getFormatter(), $message)),
+            str_repeat($underlineChar, Helper::strlenWithoutDecoration($this->io->getFormatter(), $message)),
             ''
         ]);
     }
