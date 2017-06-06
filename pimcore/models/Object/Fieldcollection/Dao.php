@@ -40,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load(Object\Concrete $object)
     {
-        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
                 $results = [];
             }
 
-            $fieldDefinitions = $definition->getFieldDefinitions();
+            $fieldDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
             $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($type);
 
             foreach ($results as $result) {
@@ -116,7 +116,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete(Object\Concrete $object)
     {
         // empty or create all relevant tables
-        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -138,7 +138,7 @@ class Dao extends Model\Dao\AbstractDao
                 $definition->createUpdateTable($object->getClass());
             }
 
-            if ($definition->getFieldDefinition('localizedfields')) {
+            if ($definition->getFieldDefinition('localizedfields', ['suppressEnrichment' => true])) {
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
@@ -151,7 +151,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $childDefinitions = $definition->getFielddefinitions();
+            $childDefinitions = $definition->getFielddefinitions(['suppressEnrichment' => true]);
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
@@ -172,7 +172,7 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(),
             "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname()) . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
-            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $this->model->getFieldname() . '/%') . ')'
+            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $this->model->getFieldname() . '/%') . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')'
         );
     }
 }

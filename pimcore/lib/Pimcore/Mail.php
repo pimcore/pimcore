@@ -149,6 +149,11 @@ class Mail extends \Swift_Message
     protected $originalData;
 
     /**
+     * @var Model\Tool\Email\Log
+     */
+    protected $lastLogEntry;
+
+    /**
      * @param $url
      *
      * @return $this
@@ -658,7 +663,7 @@ class Mail extends \Swift_Message
 
         if ($this->loggingIsEnabled()) {
             try {
-                MailHelper::logEmail($this);
+                $this->lastLogEntry = MailHelper::logEmail($this);
             } catch (\Exception $e) {
                 Logger::emerg("Couldn't log Email");
             }
@@ -993,5 +998,13 @@ class Mail extends \Swift_Message
         } else {
             parent::addTo($address, $name);
         }
+    }
+
+    /**
+     * @return Model\Tool\Email\Log
+     */
+    public function getLastLogEntry()
+    {
+        return $this->lastLogEntry;
     }
 }

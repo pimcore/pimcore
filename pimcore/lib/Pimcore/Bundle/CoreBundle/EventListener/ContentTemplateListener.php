@@ -61,17 +61,16 @@ class ContentTemplateListener implements EventSubscriberInterface
     public function onKernelView(GetResponseForControllerResultEvent $event)
     {
         $request = $event->getRequest();
-
-        $resolvedTemplate = $this->templateResolver->getTemplate($request);
-        if (null === $resolvedTemplate) {
-            // no contentTemplate on the request -> nothing to do
-            return;
-        }
-
         $template = $request->attributes->get('_template');
 
         // no @Template present -> nothing to do
         if (null === $template || !($template instanceof Template)) {
+            return;
+        }
+
+        $resolvedTemplate = $this->templateResolver->getTemplate($request);
+        if (null === $resolvedTemplate) {
+            // no contentTemplate on the request -> nothing to do
             return;
         }
 

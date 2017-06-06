@@ -46,5 +46,16 @@ The value can be updated in a similar way.
 ```
 
 
+Create a Block:
+
+```php
+/** 
+ * @var  $blockElement Object\Data\BlockElement
+ * 
+ * BlockElement( name, type, data )
+ */
+$blockElement = new BlockElement( 'date', 'date', Carbon::now() );
+```
+
 
 

@@ -1,0 +1,16 @@
+{% macro image_link(image, editmode = false, linkThumbnail = 'galleryLightbox') %}
+
+    {# @var image \Pimcore\Model\Document\Tag\Image #}
+    {% set hasLink = not editmode and linkThumbnail is not empty %}
+
+    {% if hasLink %}
+        <a href="{{ image.getThumbnail(linkThumbnail) }}" class="thumbnail">
+    {% endif %}
+
+    {{ image|raw }}
+
+    {% if hasLink %}
+        </a>
+    {% endif %}
+
+{% endmacro %}

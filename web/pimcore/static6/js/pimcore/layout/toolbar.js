@@ -1447,7 +1447,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get("pimcore_applicationlog_admin").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
+            var appLogger = new pimcore.log.admin();
+            pimcore.globalmanager.add("pimcore_applicationlog_admin", appLogger.getTabPanel());
         }
     },
 

@@ -80,6 +80,16 @@ class ObjectHelperController extends AdminController
             $fields = Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
         }
 
+        $context = ['purpose' => 'gridconfig'];
+        if ($class) {
+            $context['class'] = $class;
+        }
+
+        if ($objectId) {
+            $object = Object\AbstractObject::getById($objectId);
+            $context['object'] = $object;
+        }
+
         if (!$fields) {
             $fields = $class->getFieldDefinitions();
         }
@@ -152,9 +162,9 @@ class ObjectHelperController extends AdminController
 
             foreach ($fields as $key => $field) {
                 if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
-                    foreach ($field->getFieldDefinitions() as $fd) {
+                    foreach ($field->getFieldDefinitions($context) as $fd) {
                         if (empty($types) || in_array($fd->getFieldType(), $types)) {
-                            $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count);
+                            $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count, false, null, $class, $objectId);
                             if (!empty($fieldConfig)) {
                                 $availableFields[] = $fieldConfig;
                                 $count++;
@@ -163,7 +173,7 @@ class ObjectHelperController extends AdminController
                     }
                 } elseif ($field instanceof Object\ClassDefinition\Data\Objectbricks && $includeBricks) {
                     if (in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count);
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, false, null, $class, $objectId);
                         if (!empty($fieldConfig)) {
                             $availableFields[] = $fieldConfig;
                             $count++;
@@ -173,10 +183,10 @@ class ObjectHelperController extends AdminController
                         if (!empty($allowedTypes)) {
                             foreach ($allowedTypes as $t) {
                                 $brickClass = Object\Objectbrick\Definition::getByKey($t);
-                                $brickFields = $brickClass->getFieldDefinitions();
+                                $brickFields = $brickClass->getFieldDefinitions($context);
                                 if (!empty($brickFields)) {
                                     foreach ($brickFields as $bf) {
-                                        $fieldConfig = $this->getFieldGridConfig($bf, $gridType, $count, false, $t . '~');
+                                        $fieldConfig = $this->getFieldGridConfig($bf, $gridType, $count, false, $t . '~', $class, $objectId);
                                         if (!empty($fieldConfig)) {
                                             $availableFields[] = $fieldConfig;
                                             $count++;
@@ -188,7 +198,7 @@ class ObjectHelperController extends AdminController
                     }
                 } else {
                     if (empty($types) || in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types));
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types), null, $class, $objectId);
                         if (!empty($fieldConfig)) {
                             $availableFields[] = $fieldConfig;
                             $count++;
@@ -226,7 +236,7 @@ class ObjectHelperController extends AdminController
                                     $keyFieldDef = json_decode($keyDef->getDefinition(), true);
                                     if ($keyFieldDef) {
                                         $keyFieldDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($keyFieldDef, $keyDef->getType());
-                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true);
+                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true, null, $class, $objectId);
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
                                             $fieldConfig['label'] = '#' . $keyFieldDef->getTitle();
@@ -242,7 +252,7 @@ class ObjectHelperController extends AdminController
                             $brickClass = Object\Objectbrick\Definition::getByKey($brick);
                             $fd = $brickClass->getFieldDefinition($key);
                             if (!empty($fd)) {
-                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . '~');
+                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . '~', $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
@@ -263,7 +273,7 @@ class ObjectHelperController extends AdminController
                             }
 
                             if (!empty($fd)) {
-                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true);
+                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, null, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
@@ -401,7 +411,7 @@ class ObjectHelperController extends AdminController
      *
      * @return array|null
      */
-    protected function getFieldGridConfig($field, $gridType, $position, $force = false, $keyPrefix = null)
+    protected function getFieldGridConfig($field, $gridType, $position, $force = false, $keyPrefix = null, $class = null, $objectId = null)
     {
         $key = $keyPrefix . $field->getName();
         $config = null;
@@ -435,7 +445,16 @@ class ObjectHelperController extends AdminController
         }
 
         if (!$field->getInvisible() && ($force || $visible)) {
-            Object\Service::enrichLayoutDefinition($field);
+            $context = ['purpose' => 'gridconfig'];
+            if ($class) {
+                $context['class'] = $class;
+            }
+
+            if ($objectId) {
+                $object = Object\AbstractObject::getById($objectId);
+                $context['object'] = $object;
+            }
+            Object\Service::enrichLayoutDefinition($field, null, $context);
 
             return [
                 'key' => $key,

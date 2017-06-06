@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -150,14 +151,72 @@ class ElementController extends AdminController
         }
 
         $conditions = [];
-        if ($request->get('filter')) {
+        $filterText = $request->get('filterText');
+
+        if ($filterText) {
             $conditions[] = '('
-                . '`title` LIKE ' . $list->quote('%'.$request->get('filter').'%')
-                . ' OR `description` LIKE ' . $list->quote('%'.$request->get('filter').'%')
-                . ' OR `type` LIKE ' . $list->quote('%'.$request->get('filter').'%')
-                . ' OR `user` IN (SELECT `id` FROM `users` WHERE `name` LIKE ' . $list->quote('%'.$request->get('filter').'%') . ')'
-                . " OR DATE_FORMAT(FROM_UNIXTIME(`date`), '%Y-%m-%d') LIKE " . $list->quote('%'.$request->get('filter').'%')
+                . '`title` LIKE ' . $list->quote('%'. $filterText .'%')
+                . ' OR `description` LIKE ' . $list->quote('%'.$filterText.'%')
+                . ' OR `type` LIKE ' . $list->quote('%'.$filterText.'%')
+                . ' OR `user` IN (SELECT `id` FROM `users` WHERE `name` LIKE ' . $list->quote('%'.$filterText.'%') . ')'
+                . " OR DATE_FORMAT(FROM_UNIXTIME(`date`), '%Y-%m-%d') LIKE " . $list->quote('%'.$filterText.'%')
                 . ')';
+        }
+
+        $filterJson = $request->get('filter');
+        if ($filterJson) {
+            $db = Db::get();
+            $filters = $this->decodeJson($filterJson);
+            $propertyKey = 'property';
+            $comparisonKey = 'operator';
+
+            foreach ($filters as $filter) {
+                $operator = '=';
+
+                if ($filter['type'] == 'string') {
+                    $operator = 'LIKE';
+                } elseif ($filter['type'] == 'numeric') {
+                    if ($filter[$comparisonKey] == 'lt') {
+                        $operator = '<';
+                    } elseif ($filter[$comparisonKey] == 'gt') {
+                        $operator = '>';
+                    } elseif ($filter[$comparisonKey] == 'eq') {
+                        $operator = '=';
+                    }
+                } elseif ($filter['type'] == 'date') {
+                    if ($filter[$comparisonKey] == 'lt') {
+                        $operator = '<';
+                    } elseif ($filter[$comparisonKey] == 'gt') {
+                        $operator = '>';
+                    } elseif ($filter[$comparisonKey] == 'eq') {
+                        $operator = '=';
+                    }
+                    $filter['value'] = strtotime($filter['value']);
+                } elseif ($filter[$comparisonKey] == 'list') {
+                    $operator = '=';
+                } elseif ($filter[$comparisonKey] == 'boolean') {
+                    $operator = '=';
+                    $filter['value'] = (int) $filter['value'];
+                }
+                // system field
+                $value = $filter['value'];
+                if ($operator == 'LIKE') {
+                    $value = '%' . $value . '%';
+                }
+
+                if ($filter[$propertyKey] == 'user') {
+                    $conditions[] = '`user` IN (SELECT `id` FROM `users` WHERE `name` LIKE ' . $list->quote('%'.$filter['value'].'%') . ')';
+                } else {
+                    if ($filter['type'] == 'date' && $filter[$comparisonKey] == 'eq') {
+                        $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                        $dateCondition =  '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                        $conditions[] = $dateCondition;
+                    } else {
+                        $field = '`'.$filter[$propertyKey].'` ';
+                        $conditions[] = $field.$operator.' '.$db->quote($value);
+                    }
+                }
+            }
         }
 
         if ($request->get('cid') && $request->get('ctype')) {
@@ -165,7 +224,8 @@ class ElementController extends AdminController
         }
 
         if (!empty($conditions)) {
-            $list->setCondition(implode(' AND ', $conditions));
+            $condition = implode(' AND ', $conditions);
+            $list->setCondition($condition);
         }
 
         $list->load();
@@ -294,10 +354,10 @@ class ElementController extends AdminController
         if ($element) {
             $elements = $element->getDependencies()->getRequiredBy();
             foreach ($elements as $el) {
-                $item = Element\Service::getElementById($el["type"], $el["id"]);
+                $item = Element\Service::getElementById($el['type'], $el['id']);
                 if ($item instanceof Element\ElementInterface) {
-                    if ($item->isAllowed("list")) {
-                        $el["path"] = $item->getRealFullPath();
+                    if ($item->isAllowed('list')) {
+                        $el['path'] = $item->getRealFullPath();
                         $results[] = $el;
                     } else {
                         $hasHidden = true;
@@ -308,9 +368,9 @@ class ElementController extends AdminController
         }
 
         return $this->json([
-            "data" => $results,
-            "hasHidden" => $hasHidden,
-            "success" => $success
+            'data' => $results,
+            'hasHidden' => $hasHidden,
+            'success' => $success
         ]);
     }
 

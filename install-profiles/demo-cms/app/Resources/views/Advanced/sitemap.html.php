@@ -9,5 +9,5 @@ $this->extend('layout.html.php');
 ?>
 
 <ul>
-    <?= $this->render(':Advanced:sitemapPartial.html.php', ['doc' => $this->doc]); ?>
+    <?= $this->render('Advanced/sitemapPartial.html.php', ['doc' => $this->doc]); ?>
 </ul>

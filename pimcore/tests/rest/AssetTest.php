@@ -36,10 +36,10 @@ class AssetTest extends RestTestCase
 
         $result = $this->restClient->createAsset($asset);
 
-        $this->assertTrue($result->id > 0, 'request not successful');
+        $this->assertTrue($result->data->id > 0, 'request not successful');
         $this->assertEquals(2, TestHelper::getAssetCount());
 
-        $id = $result->id;
+        $id = $result->data->id;
         $this->assertTrue($id > 1, 'id must be greater than 1');
 
         $assetDirect  = Asset::getById($id);
@@ -92,9 +92,9 @@ class AssetTest extends RestTestCase
         $this->assertNull($fitem);
 
         $response = $this->restClient->createAssetFolder($folder);
-        $this->assertTrue($response->id > 0, "request wasn't successful");
+        $this->assertTrue($response->data->id > 0, "request wasn't successful");
 
-        $id = $response->id;
+        $id = $response->data->id;
         $this->assertTrue($id > 1, 'id not set');
 
         $folderDirect = Asset::getById($id);

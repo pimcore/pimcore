@@ -31,6 +31,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     protected $onCreateQueryCallback;
 
     /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return "objects";
+    }
+
+    /**
      * get select query
      *
      * @return QueryBuilder
@@ -43,7 +51,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->db->select();
 
         // create base
-        $select->from([ 'objects' ]);
+        $select->from([ $this->getTableName() ]);
 
         // add joins
         $this->addJoins($select);
@@ -100,7 +108,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->reset(QueryBuilder::COLUMNS);
         $query->reset(QueryBuilder::LIMIT_COUNT);
         $query->reset(QueryBuilder::LIMIT_OFFSET);
-        $query->columns(['totalCount' => new Expression('COUNT(*)')]);
+
+        try {
+            $query->getPart(QueryBuilder::DISTINCT);
+            $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
+        } catch (\Exception $e) {
+            $countIdentifier = '*';
+        }
+
+        $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
+
+        try {
+            if ($query->getPart(QueryBuilder::GROUP)) {
+                $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
+            }
+        } catch (\Exception $e) {
+            // do nothing
+        }
+
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
@@ -151,7 +176,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
 
-        $tableName = method_exists($this, 'getTableName') ? $this->getTableName() : 'objects';
+        $tableName = $this->getTableName();
 
         if (!empty($objectTypes)) {
             if (!empty($condition)) {

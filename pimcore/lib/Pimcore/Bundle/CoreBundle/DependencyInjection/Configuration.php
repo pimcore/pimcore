@@ -78,11 +78,11 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @param ArrayNodeDefinition $extensionsNode
+     * @param ArrayNodeDefinition $rootNode
      */
-    protected function addModelsNode(ArrayNodeDefinition $extensionsNode)
+    private function addModelsNode(ArrayNodeDefinition $rootNode)
     {
-        $extensionsNode
+        $rootNode
             ->children()
             ->arrayNode('models')
             ->addDefaultsIfNotSet()
@@ -95,11 +95,11 @@ class Configuration implements ConfigurationInterface
     /**
      * Add object specific extension config
      *
-     * @param ArrayNodeDefinition $extensionsNode
+     * @param ArrayNodeDefinition $rootNode
      */
-    protected function addObjectsNode(ArrayNodeDefinition $extensionsNode)
+    private function addObjectsNode(ArrayNodeDefinition $rootNode)
     {
-        $objectsNode = $extensionsNode
+        $objectsNode = $rootNode
             ->children()
                 ->arrayNode('objects')
                     ->addDefaultsIfNotSet();
@@ -116,11 +116,11 @@ class Configuration implements ConfigurationInterface
     /**
      * Add document specific extension config
      *
-     * @param ArrayNodeDefinition $extensionsNode
+     * @param ArrayNodeDefinition $rootNode
      */
-    protected function addDocumentsNode(ArrayNodeDefinition $extensionsNode)
+    private function addDocumentsNode(ArrayNodeDefinition $rootNode)
     {
-        $documentsNode = $extensionsNode
+        $documentsNode = $rootNode
             ->children()
                 ->arrayNode('documents')
                     ->addDefaultsIfNotSet();
@@ -129,6 +129,16 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                ->arrayNode('editables')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->enumNode('naming_strategy')
+                            ->info('Sets naming strategy used to build editable names')
+                            ->values(['legacy', 'nested'])
+                            ->defaultValue('nested')
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
                         ->children()
@@ -147,7 +157,7 @@ class Configuration implements ConfigurationInterface
      * @param ArrayNodeDefinition $node
      * @param string $name
      */
-    protected function addImplementationLoaderNode(ArrayNodeDefinition $node, $name)
+    private function addImplementationLoaderNode(ArrayNodeDefinition $node, $name)
     {
         $node
             ->children()
@@ -171,7 +181,7 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    protected function addContextNode(ArrayNodeDefinition $rootNode)
+    private function addContextNode(ArrayNodeDefinition $rootNode)
     {
         $contextNode = $rootNode->children()
             ->arrayNode('context');
@@ -188,7 +198,7 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    protected function addAdminNode(ArrayNodeDefinition $rootNode)
+    private function addAdminNode(ArrayNodeDefinition $rootNode)
     {
         $adminNode = $rootNode->children()
             ->arrayNode('admin')
@@ -214,7 +224,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @param ArrayNodeDefinition $adminNode
      */
-    protected function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode)
+    private function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode)
     {
         // Normalizes session bag config. Allows the following formats (all formats will be
         // normalized to the third format.
@@ -310,7 +320,7 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    protected function addSecurityNode(ArrayNodeDefinition $rootNode)
+    private function addSecurityNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
             ->children()
@@ -345,7 +355,7 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    protected function addWebProfilerNode(ArrayNodeDefinition $rootNode)
+    private function addWebProfilerNode(ArrayNodeDefinition $rootNode)
     {
         $webProfilerNode = $rootNode->children()
             ->arrayNode('web_profiler')
@@ -371,7 +381,7 @@ class Configuration implements ConfigurationInterface
      * @param ArrayNodeDefinition $parent
      * @param $name
      */
-    protected function addRoutesChild(ArrayNodeDefinition $parent, $name)
+    private function addRoutesChild(ArrayNodeDefinition $parent, $name)
     {
         $node = $parent->children()->arrayNode($name);
 
@@ -398,7 +408,7 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    protected function addCacheNode(ArrayNodeDefinition $rootNode)
+    private function addCacheNode(ArrayNodeDefinition $rootNode)
     {
         $defaultOptions = ConnectionFactory::getDefaultOptions();
 

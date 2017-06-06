@@ -38,7 +38,7 @@ get to know it [here](http://symfony.com/what-is-symfony) :)
 
 
 ### Where do I find what? 
-Have a look at our [directories structure docs](./02_Directories_Structure.md). 
+Have a look at our [directories structure docs](./02_Directory_Structure.md). 
 
 
 ### What are the breaking changes I need to know about besides MVC?

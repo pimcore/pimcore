@@ -1146,26 +1146,36 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
             $relation = $relation->load();
-            /** @var $key Object\Classificationstore\KeyGroupRelation */
-            foreach ($relation as $key) {
-                if (!$key->isEnabled()) {
+            /** @var $keyGroupRelation Object\Classificationstore\KeyGroupRelation */
+            foreach ($relation as $keyGroupRelation) {
+                if (!$keyGroupRelation->isEnabled()) {
                     continue;
                 }
-                $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
-                $definition->setTooltip($definition->getName() . ' - ' . $key->getDescription());
+                $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
+                $definition->setTooltip($definition->getName() . ' - ' . $keyGroupRelation->getDescription());
 
                 if (method_exists($definition, '__wakeup')) {
                     $definition->__wakeup();
                 }
 
                 if ($definition) {
-                    $definition->setMandatory($definition->getMandatory() || $key->isMandatory());
+                    $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
+                    if (method_exists($definition, 'enrichLayoutDefinition')) {
+                        $context['object'] = $object;
+                        $context['class'] = $object->getClass();
+                        $context['ownerType'] = 'classificationstore';
+                        $context['ownerName'] = $this->getName();
+                        $context['keyId'] =  $keyGroupRelation->getKeyId();
+                        $context['groupId'] = $keyGroupRelation->getGroupId();
+                        $context['keyDefinition'] = $definition;
+                        $definition = $definition->enrichLayoutDefinition($object, $context);
+                    }
                 }
 
                 $keyList[] = [
-                    'name' => $key->getName(),
-                    'id' => $key->getKeyId(),
-                    'description' => $key->getDescription(),
+                    'name' => $keyGroupRelation->getName(),
+                    'id' => $keyGroupRelation->getKeyId(),
+                    'description' => $keyGroupRelation->getDescription(),
                     'definition' => $definition
                 ];
             }
@@ -1222,6 +1232,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {
+        $parts = [];
         if (is_string($allowedGroupIds) && !empty($allowedGroupIds)) {
             $allowedGroupIds = str_replace([' ', "\n"], '', $allowedGroupIds);
             $parts = explode(',', $allowedGroupIds);

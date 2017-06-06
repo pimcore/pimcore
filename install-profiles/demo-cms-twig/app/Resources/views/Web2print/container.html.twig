@@ -1,0 +1,7 @@
+{% for child in allChildren %}
+    {% if child is instanceof('\\Pimcore\\Model\\Document\\Hardlink') %}
+        {% set child = pimcore_document_wrap_hardlink(child) %}
+    {% endif %}
+
+    {{ pimcore_inc(child) }}
+{% endfor %}

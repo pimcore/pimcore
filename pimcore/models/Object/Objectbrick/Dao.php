@@ -50,7 +50,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
                 $results = [];
             }
 
-            $fieldDefinitions = $definition->getFieldDefinitions();
+            $fieldDefinitions = $definition->getFieldDefinitions(['object' => $object, 'suppressEnrichment' => true]);
             $brickClass = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($type);
 
             foreach ($results as $result) {

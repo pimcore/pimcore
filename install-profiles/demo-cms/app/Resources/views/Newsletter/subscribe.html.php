@@ -7,13 +7,14 @@
 
 $this->extend('layout.html.php');
 
+/** @var \Symfony\Component\Form\FormView $form */
+$form = $this->form;
 ?>
 
 <?= $this->template('Includes/content-default.html.php') ?>
 
 <?php if(!$this->success) { ?>
-
-    <?php if($this->getParam("submit")) { ?>
+    <?php if ($this->submitted) { ?>
         <div class="alert alert-danger">
             <?= $this->translate("Sorry, something went wrong, please check the data in the form and try again!"); ?>
         </div>
@@ -21,43 +22,31 @@ $this->extend('layout.html.php');
         <br />
     <?php } ?>
 
-    <form class="form-horizontal" role="form" action="" method="post">
-        <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("Gender"); ?></label>
-            <div class="col-lg-10">
-                <select name="gender" class="form-control">
-                    <option value="male"<?php if($this->getParam("gender") == "male") { ?> selected="selected"<?php } ?>>Male</option>
-                    <option value="female"<?php if($this->getParam("gender") == "female") { ?> selected="selected"<?php } ?>>Female</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("Firstname"); ?></label>
-            <div class="col-lg-10">
-                <input name="firstname" type="text" class="form-control" placeholder="" value="<?= $this->escape($this->getParam("firstname")); ?>">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("Lastname"); ?></label>
-            <div class="col-lg-10">
-                <input name="lastname" type="text" class="form-control" placeholder="" value="<?= $this->escape($this->getParam("lastname")); ?>">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
-            <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
-            </div>
-        </div>
+    <?php $this->form()->setTheme($form, ':Form/default'); ?>
 
-        <br />
+    <?= $this->form()->start($form, [
+        'attr' => [
+            'class' => 'form-horizontal',
+            'role'  => 'form'
+        ]
+    ]); ?>
 
-        <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->translate("Submit"); ?>">
-            </div>
+    <?= $this->form()->row($form['gender']) ?>
+    <?= $this->form()->row($form['firstname']) ?>
+    <?= $this->form()->row($form['lastname']) ?>
+    <?= $this->form()->row($form['email']) ?>
+
+    <br/>
+
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <?= $this->form()->widget($form['submit'], [
+                'attr' => ['class' => 'btn btn-default']
+            ]) ?>
         </div>
-    </form>
+    </div>
+
+    <?= $this->form()->end($form); ?>
 <?php } else { ?>
     <div class="alert alert-success"><?= $this->translate("Success, Please check your mailbox!"); ?></div>
 <?php } ?>

@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\Item;
+use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -79,7 +80,7 @@ class BundleCollectionTest extends TestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Trying to register two bundles with the same name "BundleA"
+     * @expectedExceptionMessage Trying to register the bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" multiple times
      */
     public function testExceptionOnDoubleBundle()
     {
@@ -89,12 +90,34 @@ class BundleCollectionTest extends TestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Trying to register two bundles with the same name "BundleA"
+     * @expectedExceptionMessage Trying to register the bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" multiple times
      */
     public function testExceptionOnDoubleBundleWithDifferentInstance()
     {
         $this->collection->addBundle(new BundleA);
         $this->collection->addBundle(new BundleA);
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Trying to register the bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" multiple times
+     */
+    public function testExceptionOnDoubleBundleWithItem()
+    {
+        $this->collection->add(new Item($this->bundles[0]));
+        $this->collection->add(new Item($this->bundles[0]));
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Trying to register the bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" multiple times
+     */
+    public function testExceptionOnDoubleLazyLoadedBundle()
+    {
+        $bundleClass = get_class($this->bundles[0]);
+
+        $this->collection->add(new LazyLoadedItem($bundleClass));
+        $this->collection->add(new LazyLoadedItem($bundleClass));
     }
 
     public function testBundlesAreOrderedByPriority()

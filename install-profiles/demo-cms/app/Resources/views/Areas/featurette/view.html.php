@@ -11,7 +11,7 @@
         <div class="row featurette">
 
             <?php
-                $position = $this->select("postition")->getData();
+                $position = $this->select("position")->getData();
                 if(!$position) {
                     $position = "right";
                 }
@@ -31,7 +31,7 @@
                 <?php if($this->editmode) { ?>
                     <div class="editmode-label">
                         <label>Orientation:</label>
-                        <?= $this->select("postition", ["store" => [["left","left"],["right","right"]]]); ?>
+                        <?= $this->select("position", ["store" => [["left","left"],["right","right"]]]); ?>
                     </div>
                     <div class="editmode-label">
                         <label>Type:</label>

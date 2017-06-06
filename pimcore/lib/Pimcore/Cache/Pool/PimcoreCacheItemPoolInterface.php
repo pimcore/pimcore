@@ -16,8 +16,9 @@ namespace Pimcore\Cache\Pool;
 
 use Cache\TagInterop\TaggableCacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
-interface PimcoreCacheItemPoolInterface extends TaggableCacheItemPoolInterface, LoggerAwareInterface
+interface PimcoreCacheItemPoolInterface extends AdapterInterface, TaggableCacheItemPoolInterface, LoggerAwareInterface
 {
     /**
      * {@inheritdoc}

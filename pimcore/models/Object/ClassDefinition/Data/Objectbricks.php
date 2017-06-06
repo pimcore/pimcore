@@ -643,7 +643,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                     continue;
                 }
 
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                foreach ($collectionDef->getFieldDefinitions(['suppressEnrichment' => true]) as $fd) {
                     $key = $fd->getName();
                     $getter = 'get' . ucfirst($key);
                     $tags = $fd->getCacheTags($item->$getter(), $tags);

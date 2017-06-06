@@ -1,8 +1,4 @@
 services:
-    pimcore.mvc_config_normalizer:
-        class: Pimcore\Service\MvcConfigNormalizer
-        arguments: ['@kernel']
-
     pimcore.bundle_locator:
         class: Pimcore\HttpKernel\BundleLocator\BundleLocator
         arguments: ['@kernel']
@@ -28,12 +24,12 @@ services:
             - '@pimcore.document_service'
             - '@pimcore.service.request.site_resolver'
             - '@pimcore.http.request_helper'
-            - '@pimcore.mvc_config_normalizer'
+            - '@pimcore.controller.config.config_normalizer'
 
     # dedicated router for static routes
     pimcore.routing.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
-        arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
+        arguments: ['@router.request_context', '@pimcore.controller.config.config_normalizer']
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -54,6 +50,18 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: routing }
+
+    #
+    # CONTROLLERS
+    #
+
+    pimcore.controller.config.config_normalizer:
+        class: Pimcore\Controller\Config\ConfigNormalizer
+        arguments: ['@kernel']
+
+    pimcore.controller.config.controller_data_provider:
+        class: Pimcore\Controller\Config\ControllerDataProvider
+        arguments: ['@kernel', '%pimcore.service_controllers%']
 
     #
     # SESSION
@@ -184,7 +192,7 @@ services:
 
     pimcore.service.request.template_resolver:
         class: Pimcore\Service\Request\TemplateResolver
-        arguments: ['@request_stack', '@pimcore.mvc_config_normalizer']
+        arguments: ['@request_stack', '@pimcore.controller.config.config_normalizer']
 
     pimcore.service.request.template_vars_resolver:
         class: Pimcore\Service\Request\TemplateVarsResolver
@@ -219,22 +227,6 @@ services:
         arguments: ['@pimcore.service.request.template_vars_resolver']
         tags:
             - { name: controller.argument_value_resolver }
-
-    #
-    # OBJECT SERVICES
-    #
-    # simple services exposing get() API for documents, objects and assets
-    # this is only necessary if loading objects directly with only access to the container, e.g. templates
-
-    pimcore.service.document:
-        class: Pimcore\Service\Document\DocumentService
-
-    pimcore.service.asset:
-        class: Pimcore\Service\Asset\AssetService
-
-    pimcore.service.object:
-        class: Pimcore\Service\Object\ObjectService
-
 
     #
     # EXTENSIONS
@@ -282,6 +274,17 @@ services:
     #
     # DOCUMENT TAG HANDLING (EDITABLES)
     #
+
+    # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
+    # the pimcore.documents.editables.naming_strategy config value
+    pimcore.document.tag.naming.strategy.legacy:
+        class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
+
+    pimcore.document.tag.naming.strategy.nested:
+        class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
+
+    pimcore.document.tag.block_state_stack:
+        class: Pimcore\Document\Tag\Block\BlockStateStack
 
     pimcore.document.tag.handler:
         class: Pimcore\Document\Tag\DelegatingTagHandler

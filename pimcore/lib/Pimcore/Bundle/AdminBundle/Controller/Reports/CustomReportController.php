@@ -87,6 +87,40 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
     }
 
     /**
+     * @Route("/clone")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function cloneAction(Request $request)
+    {
+        $newName = $request->get('newName');
+        $report = CustomReport\Config::getByName($newName);
+        if ($report) {
+            throw new \Exception('report already exists');
+        }
+
+        $report = CustomReport\Config::getByName($request->get('name'));
+        $reportData = $this->encodeJson($report);
+        $reportData = $this->decodeJson($reportData);
+
+        unset($reportData['name']);
+        $reportData['name'] = $newName;
+
+        foreach ($reportData as $key => $value) {
+            $setter = 'set' . ucfirst($key);
+            if (method_exists($report, $setter)) {
+                $report->$setter($value);
+            }
+        }
+
+        $report->save();
+
+        return $this->json(['success' => true]);
+    }
+
+    /**
      * @Route("/get")
      *
      * @param Request $request

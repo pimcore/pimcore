@@ -1,0 +1,35 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/security.html
+#
+# Note: the names demo_cms_provider and demo_cms_fw were only used to clarify what is used. You can safely name them
+# both demo_cms or anything else. Just make sure the firewall is configured to use your desired user provider.
+
+pimcore:
+    security:
+        # the encoder factory as defined in services.yml
+        encoder_factories:
+            AppBundle\Model\Object\User: website_demo.security.password_encoder_factory
+
+security:
+    providers:
+        # we use a custom user provider which loads users from the User class
+        # the user provider is defined as service in services.yml
+        demo_cms_provider:
+            id: website_demo.security.user_provider
+
+    firewalls:
+        # demo_cms firewall is valid for the whole site
+        demo_cms_fw:
+            anonymous: ~
+            # the provider defined above
+            provider: demo_cms_provider
+            form_login:
+                login_path: demo_login
+                check_path: demo_login
+            logout:
+                path:   demo_logout
+                target: demo_login
+
+    # ROLE_ADMIN inherits ROLE_USER (is allowed everything a user is allowed)
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]

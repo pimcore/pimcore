@@ -62,7 +62,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
             $request = $this->getCurrentRequest();
         }
 
-        // try to ready attribute from request - this allows sub-requests to define their
+        // try to read attribute from request - this allows sub-requests to define their
         // own editmode state
         if ($request->attributes->has(static::ATTRIBUTE_EDITMODE)) {
             return $request->attributes->get(static::ATTRIBUTE_EDITMODE);

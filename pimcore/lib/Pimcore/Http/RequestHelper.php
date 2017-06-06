@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestHelper
 {
+    const ATTRIBUTE_FRONTEND_REQUEST = '_pimcore_frontend_request';
+
     /**
      * @var RequestStack
      */
@@ -72,13 +74,63 @@ class RequestHelper
     }
 
     /**
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public function isFrontendRequest(Request $request = null): bool
+    {
+        $request   = $this->getRequest($request);
+        $attribute = self::ATTRIBUTE_FRONTEND_REQUEST;
+
+        if ($request->attributes->has($attribute) && $request->attributes->get($attribute)) {
+            return true;
+        }
+
+        $frontendRequest = $this->detectFrontendRequest($request);
+
+        $request->attributes->set($attribute, $frontendRequest);
+
+        return $frontendRequest;
+    }
+
+    /**
+     * TODO use pimcore context here?
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    protected function detectFrontendRequest(Request $request): bool
+    {
+        if (\Pimcore::inAdmin()) {
+            return false;
+        }
+
+        $excludePatterns = [
+            "/^\/admin.*/",
+            "/^\/install.*/",
+            "/^\/plugin.*/",
+            "/^\/webservice.*/"
+        ];
+
+        foreach ($excludePatterns as $pattern) {
+            if (preg_match($pattern, $request->getRequestUri())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * E.g. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      *
      * @param Request|null $request
      *
      * @return bool
      */
-    public function isFrontendRequestByAdmin(Request $request = null)
+    public function isFrontendRequestByAdmin(Request $request = null): bool
     {
         $request = $this->getRequest($request);
 
@@ -124,7 +176,7 @@ class RequestHelper
      *
      * @return string
      */
-    public function anonymizeIp($ip)
+    public function anonymizeIp(string $ip)
     {
         $aip = substr($ip, 0, strrpos($ip, '.') + 1);
         $aip .= '255';

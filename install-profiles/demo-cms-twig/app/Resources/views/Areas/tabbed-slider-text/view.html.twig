@@ -1,0 +1,65 @@
+<section class="area-tabbed-slider-text">
+
+    {% set selectStore = [] %}
+    {% for i in 2..5 %}
+        {% set selectStore = selectStore|merge([i , i]) %}
+    {% endfor %}
+
+    {% set slidesSelect = pimcore_select('slides', {
+        store: selectStore,
+        reload: true,
+        width: 70
+    }) %}
+
+    {% set id = 'tabbed-slider-' ~ uniqid() %}
+    {% set slides = slidesSelect.getData()|default(2) %}
+
+    {% if editmode %}
+
+        <div class="alert alert-info">
+            How many tabs you want to show?
+            {{ slidesSelect|raw }}
+        </div>
+
+    {% endif %}
+
+    <div id="{{ id }}" class="tabbed-slider carousel slide">
+        <div class="carousel-inner">
+
+            {% for i in 0..(slides-1) %}
+                <div class="item item-{{ i }} {{ id ~ '-' ~ i }} {{ loop.first ? 'active' }}">
+                    {% set image = pimcore_image('image_' ~ i, {
+                        dropClass: id ~ '-' ~ i,
+                        thumbnail: 'portalCarousel'
+                    }) %}
+
+                    {% if editmode or not image.isEmpty() %}
+                        {{ image|raw }}
+                    {% endif %}
+
+                    <div class="carousel-caption">
+                        <h1>{{ pimcore_input('headline_' ~ i) }}</h1>
+                        <p>{{ pimcore_textarea('description_' ~ i, { nl2br: true }) }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+        <!-- End Carousel Inner -->
+
+        <ul class="nav nav-pills nav-justified">
+
+            {% for i in 0..(slides-1) %}
+                <li data-target="#{{ id }}" data-slide-to="{{ i }}" class="item-{{ i }} {{ loop.first ? 'active' }}">
+                    <a href="#">
+                        {{ pimcore_input('pill-title_' ~ i) }}
+                        <small>{{ pimcore_input('pill-small_' ~ i) }}</small>
+                    </a>
+                </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+
+</section>
+

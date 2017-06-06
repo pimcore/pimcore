@@ -2879,6 +2879,8 @@ pimcore.helpers.requestNicePathData = function(source, targets, config, fieldCon
 
                     var responseData = rdata.data;
                     responseHandler(responseData);
+
+                    pimcore.layout.refresh();
                 }
             } catch (e) {
                 console.log(e);

@@ -1,0 +1,23 @@
+{# @var doc \Pimcore\Model\Document\PageSnippet #}
+
+<li>
+    <a href="{{ doc.getFullPath() }}">
+        {{ doc.getProperty('navigation_name') }}
+    </a>
+
+    {% if doc.hasChildren() %}
+
+        <ul>
+            {% for child in doc.getChildren() %}
+
+                {% if child.getType() in ['page', 'link'] %}
+                    {% include 'Advanced/sitemapPartial.html.twig' with { doc: child } only %}
+                {% endif %}
+
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+</li>
+
+

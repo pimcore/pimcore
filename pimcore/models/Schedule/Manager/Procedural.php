@@ -96,6 +96,11 @@ class Procedural
         $this->setLastExecution();
 
         foreach ($this->jobs as $job) {
+            if ($job->isLocked() && !$this->getForce()) {
+                Logger::info('Skipped job with ID: ' . $job->getId() . ' because it already being executed.');
+                continue;
+            }
+
             $job->lock();
             Logger::info('Executing job with ID: ' . $job->getId());
             try {

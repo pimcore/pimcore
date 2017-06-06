@@ -1,4 +1,11 @@
 services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+
     # Example custom templating helper
     # app.templating.helper.foobar:
     #    class: AppBundle\Templating\Helper\Example
@@ -10,6 +17,16 @@ services:
     #    class: AppBundle\EventListener\TestListener
     #    tags:
     #        - { name: kernel.event_listener, event: pimcore.object.preUpdate, method: onObjectPreUpdate }
+
+    # auto-register all controllers as services
+    AppBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    #
+    # TEMPLATING
+    #
 
     website_demo.area.brick.blockquote:
         class: AppBundle\Document\Areabrick\Blockquote

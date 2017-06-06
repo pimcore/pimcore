@@ -17,8 +17,11 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\ExtensionManager;
 use Pimcore\Model;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -50,42 +53,17 @@ class Area extends Model\Document\Tag
      */
     public function admin()
     {
-        // get configuration data for admin
-        if (method_exists($this, 'getDataEditmode')) {
-            $data = $this->getDataEditmode();
-        } else {
-            $data = $this->getData();
-        }
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
-        $options = [
-            'options' => $this->getOptions(),
-            'data' => $data,
-            'name' => $this->getName(),
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'type' => $this->getType(),
-            'inherited' => $this->getInherited()
-        ];
-        $options = $options = json_encode($options);
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        if ($this->editmode) {
-            $class = 'pimcore_editable pimcore_tag_' . $this->getType();
-            if (array_key_exists('class', $this->getOptions())) {
-                $class .= (' ' . $this->getOptions()['class']);
-            }
-
-            echo '
-                <script type="text/javascript">
-                    editableConfigurations.push(' . $options . ');
-                </script>
-                <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '">
-            ';
-        }
+        $this->outputEditmode('<div ' . $attributeString . '>');
 
         $this->frontend();
 
-        if ($this->editmode) {
-            echo '</div>';
-        }
+        $this->outputEditmode('</div>');
     }
 
     /**
@@ -104,13 +82,9 @@ class Area extends Model\Document\Tag
             return;
         }
 
-        $this->setupStaticEnvironment();
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-        }
-        $suffixes[] = $this->getName();
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // push current block name
+        $blockState = $this->getBlockState();
+        $blockState->pushBlock(BlockName::createFromTag($this));
 
         $this->current = $count;
 
@@ -125,9 +99,8 @@ class Area extends Model\Document\Tag
             $info = null;
         }
 
-        $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-        $suffixes[] = 1;
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
+        // start at first index
+        $blockState->pushIndex(1);
 
         $params = [];
         if (is_array($options['params']) && array_key_exists($options['type'], $options['params'])) {
@@ -140,19 +113,9 @@ class Area extends Model\Document\Tag
 
         $tagHandler->renderAreaFrontend($info);
 
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            array_pop($suffixes);
-        }
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $suffixes);
-
-        $suffixes = [];
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            array_pop($suffixes);
-        }
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $suffixes);
+        // remove current block and index from stack
+        $blockState->popIndex();
+        $blockState->popBlock();
     }
 
     /**
@@ -177,35 +140,6 @@ class Area extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         return $this;
-    }
-
-    /**
-     * Setup some settings that are needed for blocks
-     */
-    public function setupStaticEnvironment()
-    {
-
-        // setup static environment for blocks
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $current = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
-            if (!is_array($current)) {
-                $current = [];
-            }
-        } else {
-            $current = [];
-        }
-
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
-            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            if (!is_array($numeration)) {
-                $numeration = [];
-            }
-        } else {
-            $numeration = [];
-        }
-
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $numeration);
-        \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $current);
     }
 
     /**
@@ -252,5 +186,15 @@ class Area extends Model\Document\Tag
         }
 
         return $element;
+    }
+
+    /**
+     * TODO inject block state via DI
+     *
+     * @return BlockState
+     */
+    private function getBlockState(): BlockState
+    {
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 }

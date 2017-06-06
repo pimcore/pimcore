@@ -335,7 +335,7 @@ class AssetController extends AbstractElementController
         if (null !== $id) {
             return $this->createSuccessResponse([
                 'id' => $id
-            ], false);
+            ], true);
         } else {
             return $this->createErrorResponse();
         }

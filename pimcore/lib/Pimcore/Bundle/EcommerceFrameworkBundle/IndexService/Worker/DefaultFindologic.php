@@ -143,7 +143,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
             if ((string)$value === '') {
                 continue;
             }
-            $value = is_string($value) ? htmlspecialchars($value) : $value;
+            $value = is_string($value) ? htmlspecialchars(strip_tags($value)) : $value;
 
             if (in_array($field, $this->supportedFields)) {
                 // supported field

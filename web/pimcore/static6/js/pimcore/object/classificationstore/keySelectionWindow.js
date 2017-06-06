@@ -128,8 +128,8 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 url: "/admin/classificationstore/add-collections",
                 params: {
                     collectionIds: Ext.util.JSON.encode(collectionIds),
-                    oid: this.config.object.id,
-                    fieldname: this.config.fieldname
+                    oid: this.config.objec ? this.config.object.id : null,
+                    fieldname: this.config ? this.config.fieldname : null
                 },
                 success: function(response) {
                     this.config.parent.handleAddGroups.call(this.config.parent, response);
@@ -155,7 +155,9 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-groups",
                 params: {
-                    groupIds: Ext.util.JSON.encode(groupIds)
+                    groupIds: Ext.util.JSON.encode(groupIds),
+                    oid: this.config.objec ? this.config.object.id : null,
+                    fieldname: this.config ? this.config.fieldname : null
                 },
                 success: function(response) {
                     this.config.parent.handleAddGroups.call(this.config.parent, response);

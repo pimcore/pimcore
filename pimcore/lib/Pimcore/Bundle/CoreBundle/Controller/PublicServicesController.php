@@ -53,7 +53,7 @@ class PublicServicesController extends FrameworkController
 
                 if (!$thumbnailConfig) {
                     // check if there's an item in the TmpStore
-                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5($request->getPathInfo());
+                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5(urldecode($request->getPathInfo()));
                     if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                         $thumbnailConfig = $thumbnailConfigItem->getData();
                         TmpStore::delete($deferredConfigId);
@@ -65,7 +65,7 @@ class PublicServicesController extends FrameworkController
                 }
 
                 if (!$thumbnailConfig) {
-                    throw new \Exception("Thumbnail '" . $thumbnailName . "' file doesn't exists");
+                    throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
                 }
 
                 if ($asset instanceof Asset\Document) {
@@ -103,8 +103,10 @@ class PublicServicesController extends FrameworkController
                     ]);
                 }
             } catch (\Exception $e) {
-                // nothing to do
-                Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
+                $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
+
+                Logger::error($message);
+                throw $this->createNotFoundException($message, $e);
             }
         }
     }

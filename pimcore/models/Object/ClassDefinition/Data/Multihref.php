@@ -502,6 +502,10 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     throw new Element\ValidationException('Invalid multihref relation', null, null);
                 }
             }
+
+            if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {
+                throw new Element\ValidationException('Number of allowed relations in field `' . $this->getName() . '` exceeded (max. ' . $this->getMaxItems() . ')');
+            }
         }
     }
 

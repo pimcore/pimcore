@@ -88,8 +88,6 @@ class FrontendRoutingListener extends AbstractFrontendListener implements EventS
 
         $path = urldecode($request->getPathInfo());
 
-        // TODO http_auth omitted -> handle in security component
-
         // resolve current site from request
         $this->resolveSite($request, $path);
 

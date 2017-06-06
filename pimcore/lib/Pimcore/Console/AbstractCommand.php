@@ -16,7 +16,7 @@ namespace Pimcore\Console;
 
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Tool\Admin;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
  */
-abstract class AbstractCommand extends Command
+abstract class AbstractCommand extends ContainerAwareCommand
 {
     /**
      * @var PimcoreStyle

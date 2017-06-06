@@ -15,9 +15,12 @@
 namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolverAwarePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplateVarsProviderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
@@ -56,8 +59,11 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new PimcoreContextResolverAwarePass());
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());
+        $container->addCompilerPass(new NavigationRendererPass());
+        $container->addCompilerPass(new CacheCollectorPass());
         $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());
         $container->addCompilerPass(new TemplateVarsProviderPass());
+        $container->addCompilerPass(new ServiceControllersPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
         $container->addCompilerPass(new WebDebugToolbarListenerPass());
     }

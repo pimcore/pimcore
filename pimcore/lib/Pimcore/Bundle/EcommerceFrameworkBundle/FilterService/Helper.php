@@ -61,7 +61,7 @@ class Helper
 
         $offset = 0;
 
-        $pageLimit = intval($params['perPage']);
+        $pageLimit = isset($params['perPage']) ? intval($params['perPage']) : null;
         if (!$pageLimit) {
             $pageLimit = $filterDefinition->getPageLimit();
         }
@@ -73,7 +73,7 @@ class Helper
             $limitOnFirstLoad = 6;
         }
 
-        if ($params['page']) {
+        if (isset($params['page'])) {
             $viewModel->currentPage = intval($params['page']);
             $offset = $pageLimit * ($params['page'] - 1);
         }
@@ -93,16 +93,26 @@ class Helper
 
         $viewModel->pageLimit = $pageLimit;
 
-        $orderBy = $params['orderBy'];
-        $orderBy = explode('#', $orderBy);
-        $orderByField = $orderBy[0];
-        $orderByDirection = $orderBy[1];
+        $orderByField     = null;
+        $orderByDirection = null;
+
+        if (isset($params['orderBy'])) {
+            $orderBy = explode('#', $params['orderBy']);
+            $orderByField = $orderBy[0];
+
+            if (count($orderBy) > 1) {
+                $orderByDirection = $orderBy[1];
+            }
+        }
 
         if (array_key_exists($orderByField, $orderByOptions)) {
             $viewModel->currentOrderBy = htmlentities($params['orderBy']);
 
             $productList->setOrderKey($orderByField);
-            $productList->setOrder($orderByDirection);
+
+            if ($orderByDirection) {
+                $productList->setOrder($orderByDirection);
+            }
         } else {
             $orderByCollection = $filterDefinition->getDefaultOrderBy();
             $orderByList = [];

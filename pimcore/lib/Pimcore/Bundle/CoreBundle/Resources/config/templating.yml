@@ -1,7 +1,7 @@
 services:
     pimcore.templating.action_renderer:
         class: Pimcore\Templating\Renderer\ActionRenderer
-        arguments: ['@templating.helper.actions', '@pimcore.mvc_config_normalizer']
+        arguments: ['@templating.helper.actions', '@pimcore.controller.config.config_normalizer']
 
     pimcore.templating.include_renderer:
         class: Pimcore\Templating\Renderer\IncludeRenderer
@@ -14,3 +14,37 @@ services:
             - '@pimcore.service.request.editmode_resolver'
         calls:
             - [setLogger, ['@logger']]
+
+
+    # NAVIGATION
+
+    pimcore.navigation.builder:
+        class: Pimcore\Navigation\Builder
+        arguments: ['@pimcore.http.request_helper']
+        public: false
+
+    pimcore.navigation.base_renderer:
+        abstract: true
+        arguments: ['@templating.engine.delegating']
+
+    pimcore.navigation.renderer.menu:
+        class: Pimcore\Navigation\Renderer\Menu
+        parent: pimcore.navigation.base_renderer
+        tags:
+            - { name: pimcore.navigation.renderer, alias: menu }
+
+    pimcore.navigation.renderer.breadcrumbs:
+        class: Pimcore\Navigation\Renderer\Breadcrumbs
+        parent: pimcore.navigation.base_renderer
+        tags:
+            - { name: pimcore.navigation.renderer, alias: breadcrumbs }
+
+
+    # GLOSSARY
+
+    pimcore.glossary.processor:
+        class: Pimcore\Glossary\Processor
+        arguments:
+            - '@pimcore.http.request_helper'
+            - '@pimcore.service.request.editmode_resolver'
+            - '@pimcore.service.request.document_resolver'

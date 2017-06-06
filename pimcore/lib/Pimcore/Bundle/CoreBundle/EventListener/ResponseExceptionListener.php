@@ -117,10 +117,8 @@ class ResponseExceptionListener implements EventSubscriberInterface, PimcoreCont
             $document = Document::getById(1);
         }
 
-        $controller = $this->actionRenderer->createDocumentReference($document);
-
         try {
-            $response = $this->actionRenderer->render($controller);
+            $response = $this->actionRenderer->render($document);
         } catch (\Exception $e) {
             // we are even not able to render the error page, so we send the client a unicorn
             $response = 'Page not found. 🦄';

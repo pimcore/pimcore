@@ -253,7 +253,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             $key = $fd->getName();
             $result->$key = $object->{'get'.ucfirst($fd->getName())}();
             if (method_exists($fd, 'getDataForGrid')) {
-                $result->$key = $fd->getDataForGrid($result->$key);
+                $result->$key = $fd->getDataForGrid($result->$key, $object, $params);
             }
         }
 
@@ -715,23 +715,33 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $name
+     * @param array $context additional contextual data
      *
      * @return mixed
      */
-    public function getFielddefinition($name)
+    public function getFielddefinition($name, $context = [])
     {
-        $fds = $this->getFieldDefinitions();
+        $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
-            return $fds[$name];
+            $fieldDefinition = $fds[$name];
+            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+                return $fieldDefinition;
+            }
+
+            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+
+            return $fieldDefinition;
         }
 
         return;
     }
 
     /**
+     * @param array $context additional contextual data
+     *
      * @return array
      */
-    public function getFieldDefinitions()
+    public function getFieldDefinitions($context = [])
     {
         if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
@@ -744,7 +754,29 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        return $this->fieldDefinitionsCache;
+        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            return $this->fieldDefinitionsCache;
+        }
+
+        $enrichedFieldDefinitions = [];
+        if (is_array($this->fieldDefinitionsCache)) {
+            foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
+                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+                $enrichedFieldDefinitions[$key] = $fieldDefinition;
+            }
+        }
+
+        return $enrichedFieldDefinitions;
+    }
+
+    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    {
+        if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
+            $context['class'] = $this;
+            $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
+        }
+
+        return $fieldDefinition;
     }
 
     /**

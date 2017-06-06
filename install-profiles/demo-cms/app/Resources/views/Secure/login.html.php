@@ -6,6 +6,9 @@
  */
 
 $this->extend('layout.html.php');
+
+/** @var \Symfony\Component\Form\FormView $form */
+$form = $this->form;
 ?>
 
 <div class="row">
@@ -45,26 +48,20 @@ $this->extend('layout.html.php');
                     <?php endforeach; ?>
                 </ul>
 
-                <form action="<?php echo $this->path('demo_login') ?>" method="post">
-                    <div class="form-group">
-                        <label for="login-username">
-                            <?= $this->translate('Username') ?>
-                        </label>
-                        <input type="text" id="login-username" class="form-control" name="_username" value="<?php echo $this->lastUsername ?>" placeholder="<?= $this->translate('Username:') ?>" />
-                    </div>
+                <?php
+                $this->form()->setTheme($form, ':Form/login');
+                ?>
 
-                    <div class="form-group">
-                        <label for="login-password">
-                            <?= $this->translate('Password') ?>
-                        </label>
-                        <input type="password" id="login-password" class="form-control" name="_password" placeholder="<?= $this->translate('Password') ?>" />
-                    </div>
-
-                    <input type="hidden" name="_target_path" value="/<?= $this->getLocale() ?>" />
-
-                    <button type="submit" class="btn btn-primary pull-right">Login</button>
-                </form>
-
+                <?= $this->form()->start($form); ?>
+                <?= $this->form()->row($form['_username']) ?>
+                <?= $this->form()->row($form['_password']) ?>
+                <?= $this->form()->widget($form['_target_path']) ?>
+                <?= $this->form()->widget($form['_submit'], [
+                    'attr' => [
+                        'class' => 'btn btn-primary pull-right'
+                    ]
+                ]) ?>
+                <?= $this->form()->end($form); ?>
             </div>
         </div>
     </div>

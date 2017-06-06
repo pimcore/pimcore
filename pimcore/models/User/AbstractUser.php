@@ -189,6 +189,10 @@ class AbstractUser extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_ADD, new UserRoleEvent($this));
         }
 
+        if (!preg_match('/^[a-zA-Z0-9\-\.~_@]+$/', $this->getName())) {
+            throw new \Exception('Invalid name for user/role `' . $this->getName() . '` (allowed characters: a-z A-Z 0-9 -.~_@)');
+        }
+
         $this->beginTransaction();
         try {
             if (!$this->getId()) {
@@ -214,6 +218,10 @@ class AbstractUser extends Model\AbstractModel
 
     public function delete()
     {
+        if ($this->getId() < 1) {
+            throw new \Exception('Deleting the system user is not allowed!');
+        }
+
         \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_DELETE, new UserRoleEvent($this));
 
         // delete all childs

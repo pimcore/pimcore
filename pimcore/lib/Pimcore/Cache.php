@@ -56,6 +56,10 @@ class Cache
             \Pimcore::getContainer()
                 ->get('event_dispatcher')
                 ->dispatch(CoreCacheEvents::INIT, new Event());
+
+            if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
+                self::getHandler()->disable();
+            }
         }
     }
 

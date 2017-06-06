@@ -87,7 +87,8 @@ pimcore.settings.web2print = Class.create({
                         value: this.getValue("pdfreactorVersion"),
                         store: [
                             ["8.0", "8.0"],
-                            ["8.1", "8.1"]
+                            ["8.1", "8.1"],
+                            ["9.0", "9.0"]
                         ],
                         mode: "local",
                         triggerAction: "all"

@@ -16,14 +16,12 @@ pimcore.settings.update = Class.create({
 
     initialize: function () {
 
-
-
         Ext.MessageBox.confirm("CONFIRMATION",
             'You are about to update the system. <br />'
             + 'Please do not update this pimcore installation unless you are sure what you are doing.<br/>'
             + '<b style="color:red;"><u>Updates should be performed only by developers!</u></b><br />'
             + 'Please read the '
-            + ' <a href="http://www.pimcore.org/wiki/display/PIMCORE/Upgrade+Notes" target="_blank">'
+            + ' <a href="https://www.pimcore.org/docs/latest/Installation_and_Upgrade/Upgrade_Notes/index.html" target="_blank">'
             + 'upgrade notes</a> before you start the update.<br /><br />Are you sure?',
             function (buttonValue) {
                 if (buttonValue == "yes") {
@@ -42,9 +40,6 @@ pimcore.settings.update = Class.create({
                     this.checkFilePermissions();
                 }
             }.bind(this));
-
-
-
     },
 
     checkFilePermissions: function () {
@@ -311,9 +306,6 @@ pimcore.settings.update = Class.create({
         }));
         this.window.updateLayout();
 
-
-        pimcore.helpers.activateMaintenance();
-
         Ext.Ajax.request({
             url: "/admin/update/index/get-jobs",
             success: this.prepareJobs.bind(this),
@@ -322,12 +314,15 @@ pimcore.settings.update = Class.create({
     },
 
     prepareJobs: function (response)  {
-        this.jobs = Ext.decode(response.responseText);
+        var jobs = Ext.decode(response.responseText);
 
-        this.startParallelJobs();
+        this.downloadJobs = jobs["download"];
+        this.updateJobs = jobs['update'];
+
+        this.startDownloadJobs();
     },
 
-    startParallelJobs: function () {
+    startDownloadJobs: function () {
 
         this.progressBar = new Ext.ProgressBar({
             text: t('initializing')
@@ -348,7 +343,7 @@ pimcore.settings.update = Class.create({
         this.parallelJobsRunning = 0;
         this.parallelJobsFinished = 0;
         this.parallelJobsStarted = 0;
-        this.parallelJobsTotal = this.jobs.parallel.length;
+        this.parallelJobsTotal = this.downloadJobs.length;
 
         this.parallelJobsInterval = window.setInterval(function () {
 
@@ -356,7 +351,16 @@ pimcore.settings.update = Class.create({
 
             if(this.parallelJobsFinished == this.parallelJobsTotal) {
                 clearInterval(this.parallelJobsInterval);
-                this.startProceduralJobs();
+
+                Ext.MessageBox.confirm("CONFIRMATION",
+                    'The update was downloaded, are you ready to apply the update?',
+                    function (buttonValue) {
+                        if (buttonValue == "yes") {
+                            this.startUpdateJobs();
+                        } else {
+                            this.window.close();
+                        }
+                    }.bind(this));
 
                 return;
             }
@@ -404,7 +408,7 @@ pimcore.settings.update = Class.create({
                         this.showErrorMessage("Download fails, see debug.log for more details.<br /><hr />"
                         + this.formatError(response) );
                     }.bind(this),
-                    params: this.jobs.parallel[this.parallelJobsStarted]
+                    params: this.downloadJobs[this.parallelJobsStarted]
                 });
 
                 this.parallelJobsStarted++;
@@ -412,7 +416,10 @@ pimcore.settings.update = Class.create({
         }.bind(this),50);
     },
 
-    startProceduralJobs: function () {
+    startUpdateJobs: function () {
+
+        pimcore.helpers.activateMaintenance();
+
         this.progressBar = new Ext.ProgressBar({
             text: t('initializing')
         });
@@ -432,7 +439,7 @@ pimcore.settings.update = Class.create({
         this.proceduralJobsRunning = 0;
         this.proceduralJobsFinished = 0;
         this.proceduralJobsStarted = 0;
-        this.proceduralJobsTotal = this.jobs.procedural.length;
+        this.proceduralJobsTotal = this.updateJobs.length;
         this.proceduralJobsMessages = [];
 
         this.proceduralJobsInterval = window.setInterval(function () {
@@ -491,7 +498,7 @@ pimcore.settings.update = Class.create({
                         this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><hr />"
                         + this.formatError(response) );
                     }.bind(this),
-                    params: this.jobs.procedural[this.proceduralJobsStarted]
+                    params: this.updateJobs[this.proceduralJobsStarted]
                 });
 
                 this.proceduralJobsStarted++;

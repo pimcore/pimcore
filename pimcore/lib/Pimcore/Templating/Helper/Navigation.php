@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,42 +17,55 @@
 
 namespace Pimcore\Templating\Helper;
 
+use Pimcore\Model\Document;
 use Pimcore\Navigation\Builder;
 use Pimcore\Navigation\Container;
-use Pimcore\Templating\Helper\Navigation\Renderer\Breadcrumbs;
-use Pimcore\Templating\Helper\Navigation\Renderer\Menu;
-use Pimcore\Templating\Helper\Navigation\Renderer\Menu as MenuRenderer;
-use Pimcore\Templating\Helper\Traits\TemplatingEngineAwareHelperTrait;
-use Pimcore\Templating\PhpEngine;
+use Pimcore\Navigation\Renderer\Breadcrumbs;
+use Pimcore\Navigation\Renderer\Menu;
+use Pimcore\Navigation\Renderer\Menu as MenuRenderer;
+use Pimcore\Navigation\Renderer\RendererInterface;
+use Pimcore\Templating\Helper\Navigation\Exception\InvalidRendererException;
+use Pimcore\Templating\Helper\Navigation\Exception\RendererNotFoundException;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Templating\Helper\Helper;
 
 /**
  * @method MenuRenderer menu()
  * @method Breadcrumbs breadcrumbs()
  */
-class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
+class Navigation extends Helper
 {
-    use TemplatingEngineAwareHelperTrait;
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     /**
      * @var Builder
      */
-    protected $builder;
-
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * @var string
-     */
-    protected $defaultRenderer = 'menu';
+    private $builder;
 
     /**
      * @var array
      */
-    protected $renderer = [];
+    private $rendererMap;
+
+    /**
+     * @var RendererInterface[]
+     */
+    private $renderers = [];
+
+    /**
+     * @param ContainerInterface $container
+     * @param Builder $builder
+     * @param array $rendererMap    Map with alias => id mapping for registered renderers
+     */
+    public function __construct(ContainerInterface $container, Builder $builder, array $rendererMap)
+    {
+        $this->container   = $container;
+        $this->builder     = $builder;
+        $this->rendererMap = $rendererMap;
+    }
 
     /**
      * @inheritDoc
@@ -60,107 +76,97 @@ class Navigation extends Helper implements TemplatingEngineAwareHelperInterface
     }
 
     /**
-     * @return Builder
-     */
-    protected function getBuilder()
-    {
-        if (!$this->builder) {
-            $this->builder = new Builder();
-        }
-
-        return $this->builder;
-    }
-
-    /**
-     * @param null $activeDocument
-     * @param null $navigationRootDocument
-     * @param null $htmlMenuIdPrefix
-     * @param null $pageCallback
-     * @param bool $cache
+     * Builds a navigation container
      *
-     * @return $this
-     */
-    public function __invoke($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
-    {
-        if ($activeDocument) {
-            // this is the new more convenient way of creating a navigation
-            $navContainer = $this->getBuilder()->getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache);
-            $this->setContainer($navContainer);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $name
+     * @param Document $activeDocument
+     * @param Document|null $navigationRootDocument
+     * @param string|null $htmlMenuPrefix
+     * @param callable|null $pageCallback
+     * @param bool|string $cache
      *
-     * @return mixed
-     */
-    public function getRenderer($name)
-    {
-        if (!isset($this->renderer[$name])) {
-            $renderClass = 'Pimcore\Templating\Helper\Navigation\Renderer\\' . ucfirst($name);
-            if (class_exists($renderClass)) {
-                $this->renderer[$name] = new $renderClass;
-                $this->renderer[$name]->setHelper($this);
-            } else {
-                $this->renderer[$name] = false;
-            }
-        }
-
-        return $this->renderer[$name];
-    }
-
-    /**
-     * @param Container|null $container
-     *
-     * @return mixed
-     */
-    public function render(Container $container = null)
-    {
-        $helper = $this->getRenderer($this->defaultRenderer);
-
-        return $helper->render($container);
-    }
-
-    /**
      * @return Container
      */
-    public function getContainer()
-    {
-        return $this->container;
+    public function buildNavigation(
+        Document $activeDocument,
+        Document $navigationRootDocument = null,
+        string $htmlMenuPrefix = null,
+        callable $pageCallback = null,
+        $cache = true
+    ): Container {
+        return $this->builder->getNavigation(
+            $activeDocument,
+            $navigationRootDocument,
+            $htmlMenuPrefix,
+            $pageCallback,
+            $cache
+        );
     }
 
     /**
-     * @param Container $container
-     */
-    public function setContainer($container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return PhpEngine
-     */
-    public function getTemplatingEngine()
-    {
-        return $this->templatingEngine;
-    }
-
-    /**
-     * @param $method
-     * @param array $arguments
+     * Get a named renderer
      *
-     * @return mixed
+     * @param string $alias
+     *
+     * @return RendererInterface
      */
-    public function __call($method, array $arguments = [])
+    public function getRenderer(string $alias): RendererInterface
     {
-        // check if call should proxy to another helper
-        if ($helper = $this->getRenderer($method)) {
-            return call_user_func_array([$helper, $method], $arguments);
+        if (isset($this->renderers[$alias])) {
+            return $this->renderers[$alias];
         }
 
-        // default behaviour: proxy call to container
-        return call_user_func_array([$this->getContainer(), $method], $arguments);
+        if (isset($this->rendererMap[$alias])) {
+            $renderer = $this->container->get($this->rendererMap[$alias]);
+
+            if (!$renderer instanceof RendererInterface) {
+                throw InvalidRendererException::create($alias, $renderer);
+            }
+
+            $this->renderers[$alias] = $renderer;
+
+            return $renderer;
+        } else {
+            throw RendererNotFoundException::create($alias);
+        }
+    }
+
+    /**
+     * Renders a navigation with the given renderer
+     *
+     * @param Container $container
+     * @param string $rendererName
+     * @param string|null $renderMethod     Optional render method to use (e.g. menu -> renderMenu)
+     * @param array $rendererArguments      Option arguments to pass to the render method after the container
+     *
+     * @return string
+     */
+    public function render(
+        Container $container,
+        string $rendererName = 'menu',
+        string $renderMethod = 'render',
+        ...$rendererArguments
+    ) {
+        $renderer = $this->getRenderer($rendererName);
+
+        if (!method_exists($renderer, $renderMethod)) {
+            throw new \InvalidArgumentException(sprintf('Method "%s" does not exist on renderer "%s"', $renderMethod, $rendererName));
+        }
+
+        $args = array_merge([$container], array_values($rendererArguments));
+
+        return call_user_func_array([$renderer, $renderMethod], $args);
+    }
+
+    /**
+     * Magic overload is an alias to getRenderer()
+     *
+     * @param string $method
+     * @param array $arguments
+     *
+     * @return RendererInterface
+     */
+    public function __call($method, array $arguments = []): RendererInterface
+    {
+        return $this->getRenderer($method);
     }
 }

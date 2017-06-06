@@ -244,6 +244,7 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($object);
 
         if ($object instanceof Concrete) {
+            $context = ['object' => $object];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -299,7 +300,8 @@ class Service extends Model\Element\Service
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
 
                     $brickClass = Objectbrick\Definition::getByKey($brickType);
-                    $def = $brickClass->getFieldDefinition($brickKey);
+                    $context['outerFieldname'] = $key;
+                    $def = $brickClass->getFieldDefinition($brickKey, $context);
                 }
 
                 if (!empty($key)) {
@@ -313,7 +315,7 @@ class Service extends Model\Element\Service
                     // if the definition is not set try to get the definition from localized fields
                     if (!$def) {
                         if ($locFields = $object->getClass()->getFieldDefinition('localizedfields')) {
-                            $def = $locFields->getFieldDefinition($key);
+                            $def = $locFields->getFieldDefinition($key, $context);
                             if ($def) {
                                 $needLocalizedPermissions = true;
                             }
@@ -327,11 +329,18 @@ class Service extends Model\Element\Service
                         if (in_array($key, Concrete::$systemColumnNames)) {
                             $data[$dataKey] = $object->$getter();
                         } else {
-                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def);
+                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
                             if (method_exists($def, 'getDataForGrid')) {
-                                $tempData = $def->getDataForGrid($valueObject->value, $object);
+                                if ($brickKey) {
+                                    $context['containerType'] = 'objectbrick';
+                                    $context['containerKey'] = $brickType;
+                                    $context['outerFieldname'] = $key;
+                                }
+
+                                $params = ['context' => $context, 'purpose' => 'gridview'];
+                                $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
@@ -482,7 +491,7 @@ class Service extends Model\Element\Service
      *
      * @return \stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null)
+    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = [])
     {
         $getter = 'get'.ucfirst($key);
         $value = $object->$getter();
@@ -496,18 +505,19 @@ class Service extends Model\Element\Service
         }
 
         if (!$fieldDefinition) {
-            $fieldDefinition = $object->getClass()->getFieldDefinition($key);
+            $fieldDefinition = $object->getClass()->getFieldDefinition($key, $context);
         }
 
         if (!empty($brickType) && !empty($brickKey)) {
             $brickClass = Objectbrick\Definition::getByKey($brickType);
-            $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
+            $context = ['object' => $object, 'outerFieldname' => $key];
+            $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
         }
 
         if ($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if (!empty($parent)) {
-                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context);
             }
         }
 
@@ -946,24 +956,27 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * Returns the fields of a datatype container (e.g. block or localized fields)
+     *
      * @param $layout
+     * @param $targetClass
      * @param $targetList
-     * @param $insideLocalizedField
+     * @param $insideDataType
      *
      * @return mixed
      */
-    public static function extractLocalizedFieldDefinitions($layout, $targetList, $insideLocalizedField)
+    public static function extractFieldDefinitions($layout, $targetClass, $targetList, $insideDataType)
     {
-        if ($insideLocalizedField && $layout instanceof ClassDefinition\Data and !$layout instanceof ClassDefinition\Data\Localizedfields) {
+        if ($insideDataType && $layout instanceof ClassDefinition\Data and !is_a($layout, $targetClass)) {
             $targetList[$layout->getName()] = $layout;
         }
 
-        if (method_exists($layout, 'getChilds')) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
-            $insideLocalizedField |= ($layout instanceof ClassDefinition\Data\Localizedfields);
+            $insideDataType |= is_a($layout, $targetClass);
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    $targetList = self::extractLocalizedFieldDefinitions($child, $targetList, $insideLocalizedField);
+                    $targetList = self::extractFieldDefinitions($child, $targetClass, $targetList, $insideDataType);
                 }
             }
         }
@@ -1060,8 +1073,11 @@ class Service extends Model\Element\Service
         if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-            $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), [], false);
-            $masterDefinition = array_merge($masterDefinition, $targetList);
+
+            foreach (['Localizedfields', 'Block'] as $dataType) {
+                $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(), '\Pimcore\Model\Object\ClassDefinition\Data\\' . $dataType, [], false);
+                $masterDefinition = array_merge($masterDefinition, $targetList);
+            }
 
             self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $customLayoutDefinition);
             $customLayout->save();
@@ -1328,8 +1344,17 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
+        if ($layout instanceof  Model\Object\ClassDefinition\Data\Localizedfields) {
+            if ($context['containerType'] == 'fieldcollection') {
+                $context['subContainerType'] = 'localizedfield';
+            } else {
+                $context['ownerType'] = 'localizedfield';
+            }
+            $context['ownerName']= 'localizedfields';
+        }
+
         if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::enrichLayoutDefinition($child, $object, $context);

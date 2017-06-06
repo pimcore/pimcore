@@ -15,6 +15,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Db\Connection;
+use Pimcore\File;
 use Pimcore\Tool\Requirements\Check;
 use Pimcore\Update;
 
@@ -32,6 +33,10 @@ class Requirements
             $varWritable = true;
 
             try {
+                if (!is_dir($varDir)) {
+                    File::mkdir($varDir);
+                }
+
                 $files = self::rscandir($varDir);
 
                 foreach ($files as $file) {
@@ -569,6 +574,14 @@ class Requirements
             'name' => 'Imagick',
             'link' => 'http://www.php.net/imagick',
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING
+        ]);
+
+        // APCu
+        $checks[] = new Check([
+            'name' => 'APCu',
+            'link' => 'http://www.php.net/apcu',
+            'state' => (function_exists('apcu_fetch') && ini_get('apc.enabled')) ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => "It's highly recommended to have the APCu extension installed and enabled."
         ]);
 
         // OPcache

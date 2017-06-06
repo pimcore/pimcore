@@ -13,11 +13,18 @@
 
 pimcore.registerNS("pimcore.log.admin");
 pimcore.log.admin = Class.create({
-    refreshInterval : 5,
 
-    searchParams: {},
-    initialize: function () {
-        this.getTabPanel();
+    initialize: function (config) {
+
+        this.panel = null;
+        this.config = {
+            searchParams: {},
+            refreshInterval: 5
+        };
+
+        Ext.apply(this.config, config);
+        this.searchParams = this.config.searchParams;
+        this.refreshInterval = this.config.refreshInterval;
     },
 
     activate: function () {
@@ -27,14 +34,22 @@ pimcore.log.admin = Class.create({
 
     getTabPanel: function () {
         if(!this.panel) {
-            this.panel = new Ext.Panel({
-                id: "pimcore_applicationlog_admin",
-                title: t("log_applicationlog"),
+
+            var panelConfig = {
                 border: false,
                 layout: "fit",
                 iconCls: "pimcore_icon_log_admin",
-                closable:true
-            });
+            };
+
+            if (!this.config.localMode) {
+                panelConfig.title = t("log_applicationlog");
+                panelConfig.id =  "pimcore_applicationlog_admin";
+                panelConfig.closable = true;
+            } else {
+                panelConfig.tooltip = t("log_applicationlog");
+            }
+
+            this.panel = new Ext.Panel(panelConfig);
 
             this.autoRefreshTask = {
                 run: function(){
@@ -82,15 +97,48 @@ pimcore.log.admin = Class.create({
                 }
             });
 
+            this.priorityStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/log/priority-json',
+                    reader: {
+                        rootProperty: 'priorities',
+                        idProperty: 'key'
+                    }
+                },
+                fields: ['key', 'value']
+            });
 
+            this.componentStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/log/component-json',
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'components',
+                        idProperty: 'key'
+                    }
+                },
+                fields: ['key', 'value']
+            });
 
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.add(this.panel);
-            tabPanel.setActiveItem("pimcore_applicationlog_admin");
+            if (!this.config.localMode) {
+                var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                tabPanel.add(this.panel);
+                tabPanel.setActiveItem("pimcore_applicationlog_admin");
 
-            this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("pimcore_applicationlog_admin");
-            }.bind(this));
+                this.panel.on("destroy", function () {
+                    pimcore.globalmanager.remove("pimcore_applicationlog_admin");
+                }.bind(this));
+            } else {
+                this.panel.on("afterrender", function () {
+                    this.priorityStore.load();
+                    this.componentStore.load();
+                    this.store.load();
+                }.bind(this));
+            }
 
             var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -98,8 +146,13 @@ pimcore.log.admin = Class.create({
                 [
                     'id', 'pid', 'message', 'priority', 'timestamp', 'fileobject', 'filename', 'component', 'relatedobject', 'source'
                 ],
-                itemsPerPage
+                itemsPerPage, {
+                    autoLoad: false
+                }
             );
+            if (this.config.localMode && this.searchParams.relatedobject) {
+                this.store.getProxy().setExtraParam("relatedobject",this.searchParams.relatedobject);
+            }
             var reader = this.store.getProxy().getReader();
             reader.setRootProperty('p_results');
             reader.setTotalProperty('p_totalCount');
@@ -131,7 +184,6 @@ pimcore.log.admin = Class.create({
                     sortable: true,
                     hidden: true
                 },{
-                    id: 'p_message',
                     header: t("log_message"),
                     dataIndex: 'message',
                     flex: 220,
@@ -187,28 +239,24 @@ pimcore.log.admin = Class.create({
             });
 
             this.fromDate = new Ext.form.DateField({
-                id: 'from_date',
                 name: 'from_date',
                 width: 130,
                 xtype: 'datefield'
             });
 
             this.fromTime = new Ext.form.TimeField({
-                id: 'from_time',
                 name: 'from_time',
                 width: 100,
                 xtype: 'timefield'
             });
 
             this.toDate = new Ext.form.DateField({
-                id: 'to_date',
                 name: 'to_date',
                 width: 130,
                 xtype: 'datefield'
             });
 
             this.toTime = new Ext.form.TimeField({
-                id: 'to_time',
                 name: 'to_time',
                 width: 100,
                 xtype: 'timefield'
@@ -241,7 +289,6 @@ pimcore.log.admin = Class.create({
                 },
                 items: [ {
                     xtype:'fieldset',
-                    id:'log_search_form',
                     autoHeight:true,
                     labelWidth: 150,
                     items :[
@@ -269,19 +316,7 @@ pimcore.log.admin = Class.create({
                             typeAhead:true,
                             forceSelection: true,
                             triggerAction: 'all',
-                            store: new Ext.data.JsonStore({
-                                autoDestroy: true,
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/admin/log/priority-json',
-                                    reader: {
-                                        rootProperty: 'priorities',
-                                        idProperty: 'key'
-                                    }
-                                },
-                                autoLoad: true,
-                                fields: ['key', 'value']
-                            }),
+                            store: this.priorityStore,
                             displayField: 'value',
                             valueField: 'key'
                         },{
@@ -294,28 +329,17 @@ pimcore.log.admin = Class.create({
                             typeAhead:true,
                             forceSelection: true,
                             triggerAction: 'all',
-                            store: new Ext.data.JsonStore({
-                                autoDestroy: true,
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/admin/log/component-json',
-                                    reader: {
-                                        type: 'json',
-                                        rootProperty: 'components',
-                                        idProperty: 'key'
-                                    }
-                                },
-                                autoLoad: true,
-                                fields: ['key', 'value']
-                            }),
+                            store: this.componentStore,
                             displayField: 'value',
                             valueField: 'key'
                         },{
                             xtype:'numberfield',
                             name: 'relatedobject',
                             fieldLabel: t('log_search_relatedobject'),
+                            value: this.searchParams.relatedobject ? this.searchParams.relatedobject : "",
                             width: 335,
-                            listWidth: 150
+                            listWidth: 150,
+                            disabled: this.config.localMode
                         },{
                             xtype:'textfield',
                             name: 'message',
@@ -331,15 +355,17 @@ pimcore.log.admin = Class.create({
                         }]
                 }]});
 
-            this.layout = new Ext.Panel({
+            var layout = new Ext.Panel({
                 border: false,
                 layout: "border",
                 items: [this.searchpanel, this.resultpanel],
             });
 
 
-            this.panel.add(this.layout);
-            this.store.load();
+            this.panel.add(layout);
+            if (!this.config.localMode) {
+                this.store.load();
+            }
             pimcore.layout.refresh();
         }
         return this.panel;
@@ -363,7 +389,7 @@ pimcore.log.admin = Class.create({
     },
 
 
-    find: function(){
+    find: function() {
         var formValues = this.searchpanel.getForm().getFieldValues();
 
         this.searchParams.fromDate = this.fromDate.getValue();
@@ -372,16 +398,15 @@ pimcore.log.admin = Class.create({
         this.searchParams.toTime = this.toTime.getValue();
         this.searchParams.priority = formValues.priority;
         this.searchParams.component = formValues.component;
-        this.searchParams.relatedobject = formValues.relatedobject;
+        if (!this.config.localMode) {
+            this.searchParams.relatedobject = formValues.relatedobject;
+        }
         this.searchParams.message = formValues.message;
         this.searchParams.pid = formValues.pid;
 
         var proxy = this.store.getProxy();
         proxy.extraParams = this.searchParams;
-        //this.store.baseParams = this.searchParams;
-
         this.pagingToolbar.moveFirst();
     }
-
 
 });

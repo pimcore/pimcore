@@ -212,13 +212,9 @@ $scriptLibs = array(
 // PIMCORE SCRIPTS
 $scripts = array(
 
-    // fixes for browsers
-    "pimcore/browserfixes.js",
-
     // runtime
-    "pimcore/namespace.js",
     "pimcore/functions.js",
-    "pimcore/globalmanager.js",
+    "pimcore/common.js",
     "pimcore/elementservice.js",
     "pimcore/helpers.js",
 

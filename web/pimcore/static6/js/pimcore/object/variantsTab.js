@@ -19,6 +19,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     fieldObject: {},
     initialize: function(element) {
         this.element = element;
+        this.noBatchColumns = [];
     },
 
     getLayout: function () {
@@ -89,7 +90,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridHelper.enableEditor = true;
         gridHelper.baseParams.objectId = this.element.id;
 
-        this.store = gridHelper.getStore();
+        this.store = gridHelper.getStore(this.noBatchColumns);
         this.store.setPageSize(itemsPerPage);
 
         var gridColumns = gridHelper.getGridColumns();

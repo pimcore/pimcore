@@ -99,7 +99,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
             var view = grid.getView();
             // no batch for system properties
-            if (Ext.Array.contains(this.systemColumns,columnDataIndex)) {
+            if (Ext.Array.contains(this.systemColumns,columnDataIndex) || Ext.Array.contains(this.noBatchColumns, columnDataIndex)) {
                 batchAllMenu.hide();
                 batchSelectedMenu.hide();
             } else {

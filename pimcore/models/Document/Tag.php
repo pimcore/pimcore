@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\Tool\HtmlUtils;
 use Pimcore\View;
 
 /**
@@ -110,7 +111,44 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function admin()
     {
+        $options = $this->getEditmodeOptions();
+        $code = $this->outputEditmodeOptions($options, true);
 
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
+
+        $code .= ('<div ' . $attributeString . '></div>');
+
+        return $code;
+    }
+
+    /**
+     * Builds options passed to editmode frontend as JSON config
+     *
+     * @return array
+     */
+    protected function getEditmodeOptions(): array
+    {
+        $options = [
+            'id'        => 'pimcore_editable_' . $this->getName(),
+            'name'      => $this->getName(),
+            'realName'  => $this->getRealName(),
+            'options'   => $this->getOptions(),
+            'data'      => $this->getEditmodeData(),
+            'type'      => $this->getType(),
+            'inherited' => $this->getInherited()
+        ];
+
+        return $options;
+    }
+
+    /**
+     * Builds data used for editmode
+     *
+     * @return mixed
+     */
+    protected function getEditmodeData()
+    {
         // get configuration data for admin
         if (method_exists($this, 'getDataEditmode')) {
             $data = $this->getDataEditmode();
@@ -118,27 +156,92 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             $data = $this->getData();
         }
 
-        $options = [
-            'options' => $this->getOptions(),
-            'data' => $data,
-            'name' => $this->getName(),
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'type' => $this->getType(),
-            'inherited' => $this->getInherited()
-        ];
-        $options = json_encode($options);
+        return $data;
+    }
 
-        $class = 'pimcore_editable pimcore_tag_' . $this->getType();
-        if (array_key_exists('class', $this->getOptions())) {
-            $class .= (' ' . $this->getOptions()['class']);
+    /**
+     * Builds attributes used on the editmode HTML element
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function getEditmodeElementAttributes(array $options): array
+    {
+        if (!isset($options['id'])) {
+            throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable options array', $this->getName()));
         }
 
-        return '
+        $attributes = [
+            'id'             => $options['id'],
+            'class'          => implode(' ', $this->getEditmodeElementClasses()),
+            'data-name'      => $this->getName(),
+            'data-real-name' => $this->getRealName(),
+            'data-type'      => $this->getType()
+        ];
+
+        return $attributes;
+    }
+
+    /**
+     * Builds classes used on the editmode HTML element
+     *
+     * @return array
+     */
+    protected function getEditmodeElementClasses(): array
+    {
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        $editableOptions = $this->getOptions();
+        if (isset($editableOptions['class'])) {
+            if (is_array($editableOptions['class'])) {
+                $classes = array_merge($classes, $editableOptions['class']);
+            } else {
+                $classes[] = (string)$editableOptions['class'];
+            }
+
+            $classes[] = (string)$editableOptions['class'];
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Sends data to the output stream
+     *
+     * @param string $value
+     */
+    protected function outputEditmode($value)
+    {
+        if ($this->getEditmode()) {
+            echo $value . "\n";
+        }
+    }
+
+    /**
+     * Push editmode options into the JS config array
+     *
+     * @param array $options
+     * @param bool $return
+     *
+     * @return string
+     */
+    protected function outputEditmodeOptions(array $options, $return = false)
+    {
+        $code = '
             <script type="text/javascript">
-                editableConfigurations.push(' . $options . ');
+                editableConfigurations.push(' . json_encode($options) . ');
             </script>
-            <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '"></div>
         ';
+
+        if ($return) {
+            return $code;
+        }
+
+        $this->outputEditmode($code);
     }
 
     /**
@@ -452,18 +555,25 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @param null $document
+     * Builds a tag name for an editable, taking current
+     * block state (block, index) into account.
+     *
+     * @param string $type
+     * @param string $name
+     * @param Document|null $document
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function buildTagName($type, $name, $document = null)
+    public static function buildTagName(string $type, string $name, Document $document = null)
     {
+        // do NOT allow dots (.) and colons (:) here as they act as delimiters
+        // for block hierarchy in the new naming scheme (see #1467)!
         if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
-            throw new \Exception("Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+), your name was: " . $name);
+            throw new \InvalidArgumentException(
+                'Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+). Your name was: ' . $name
+            );
         }
 
         // check for persona content
@@ -473,35 +583,20 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
-            $blocks = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
 
-            $numeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
-            if (is_array($blocks) and count($blocks) > 0) {
-                if ($type == 'block') {
-                    $tmpBlocks = $blocks;
-                    $tmpNumeration = $numeration;
-                    array_pop($tmpBlocks);
-                    array_pop($tmpNumeration);
+        $container      = \Pimcore::getContainer();
+        $blockState     = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
-                    $tmpName = $name;
-                    if (is_array($tmpBlocks)) {
-                        $tmpName = $name . implode('_', $tmpBlocks) . implode('_', $tmpNumeration);
-                    }
+        $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
 
-                    if ($blocks[count($blocks) - 1] == $tmpName) {
-                        array_pop($blocks);
-                        array_pop($numeration);
-                    }
-                }
-                $name = $name . implode('_', $blocks) . implode('_', $numeration);
-            }
+        if (strlen($tagName) > 750) {
+            throw new \Exception(sprintf(
+                'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
+                $name, $tagName
+            ));
         }
 
-        if (strlen($name) > 750) {
-            throw new \Exception('Composite name is longer than 750 characters - use shorter names for your editables or reduce amount of nesting levels. Name is: ' . $name);
-        }
-
-        return $name;
+        return $tagName;
     }
 }

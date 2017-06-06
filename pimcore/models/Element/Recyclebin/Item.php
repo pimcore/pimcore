@@ -259,6 +259,9 @@ class Item extends Model\AbstractModel
 
         $restoreBinaryData($element, $this);
 
+        if ($element instanceof Object\Concrete) {
+            $element->setOmitMandatoryCheck(true);
+        }
         $element->save();
 
         if (method_exists($element, 'getChilds')) {

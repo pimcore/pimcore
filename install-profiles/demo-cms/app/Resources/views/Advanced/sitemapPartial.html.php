@@ -12,7 +12,7 @@
     <ul>
         <?php foreach ($this->doc->getChilds() as $child) { ?>
             <?php if (in_array($child->getType(), ["page", "link"])) { ?>
-                <?= $this->render(':Advanced:sitemapPartial.html.php', ['doc' => $child]); ?>
+                <?= $this->render('Advanced/sitemapPartial.html.php', ['doc' => $child]); ?>
             <?php } ?>
         <?php } ?>
     </ul>
