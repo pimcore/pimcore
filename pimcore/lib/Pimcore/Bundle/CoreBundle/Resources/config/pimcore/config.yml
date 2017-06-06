@@ -161,6 +161,9 @@ pimcore:
         plugin:
             routes:
                 - { path: ^/plugin }
+        install:
+            routes:
+                - { path: ^/install }
     admin:
         session:
             attribute_bags:
