@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
+use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\TagNameEvent;
@@ -70,11 +72,12 @@ class MigrationListener implements EventSubscriberInterface
             ? $this->nameMapping[$document->getId()]
             : [];
 
+        $mappedBlockState = $this->buildMappedBlockState($event->getBlockState(), $documentNames);
 
         $newName = $this->namingStrategy->buildTagName(
             $event->getInputName(),
             $event->getType(),
-            $event->getBlockState()
+            $mappedBlockState
         );
 
         // only set the new name if it is not the same as the existing one
@@ -85,6 +88,38 @@ class MigrationListener implements EventSubscriberInterface
         if (!empty($documentNames)) {
             $this->nameMapping[$document->getId()] = $documentNames;
         }
+    }
+
+    /**
+     * As the block building logic relies on the parent block name, we need to make sure the block
+     * state for the new name contains also new names in previous states.
+     *
+     * @param BlockState $blockState
+     * @param array $mapping
+     *
+     * @return BlockState
+     */
+    private function buildMappedBlockState(BlockState $blockState, array $mapping): BlockState
+    {
+        $mappedState = clone $blockState;
+
+        $mappedBlocks = [];
+        foreach ($mappedState->getBlocks() as $block) {
+            $name = $block->getName();
+            if (isset($mapping[$name])) {
+                $name = $mapping[$name];
+            }
+
+            $mappedBlocks[] = BlockName::createFromNames($name, $block->getRealName());
+        }
+
+        $mappedState->clearBlocks();
+
+        foreach ($mappedBlocks as $mappedBlock) {
+            $mappedState->pushBlock($mappedBlock);
+        }
+
+        return $mappedState;
     }
 
     /**
