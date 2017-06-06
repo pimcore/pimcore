@@ -20,18 +20,14 @@ namespace Pimcore\Cache\Pool;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\TraceableAdapter;
 
+/**
+ * @property PimcoreCacheItemPoolInterface $pool
+ */
 class TraceablePimcoreAdapter extends TraceableAdapter implements PimcoreCacheItemPoolInterface
 {
-    /**
-     * @var PimcoreCacheItemPoolInterface
-     */
-    private $pool;
-
     public function __construct(PimcoreCacheItemPoolInterface $pool)
     {
         parent::__construct($pool);
-
-        $this->pool = $pool;
     }
 
     /**
