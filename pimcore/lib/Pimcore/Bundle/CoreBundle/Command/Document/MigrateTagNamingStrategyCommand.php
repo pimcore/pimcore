@@ -21,9 +21,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use Pimcore\Bundle\AdminBundle\Session\Handler\SimpleAdminSessionHandler;
 use Pimcore\Cache;
-use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Console\Application;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\MigrationListener;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
@@ -40,7 +38,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class MigrateTagNamingStrategyCommand extends AbstractCommand
 {
@@ -162,15 +159,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             return 1;
         }
 
-        $systemConfig = Config::getSystemConfig()->toArray();
-        $mainDomain   = $systemConfig['general']['domain'];
-
-        if (!$mainDomain) {
-            $this->io->error('No domain set in "Settings" -> "System" -> "Website" -> "Domain". Please set a domain before proceeding.');
-
-            return 2;
-        }
-
         // register migration listener with new naming strategy
         $strategy   = $this->getNamingStrategy($input);
         $subscriber = new MigrationListener($strategy);
@@ -178,18 +166,17 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $dispatcher = $this->getContainer()->get('event_dispatcher');
         $dispatcher->addSubscriber($subscriber);
 
-        /** @var Application $app */
-        $app    = $this->getApplication();
-        $kernel = $app->getKernel();
-
         $documentIds     = $this->getDocumentIds($input);
         $renderingErrors = [];
 
         $this->io->title('[STEP 1] Rendering all documents to gather new element mapping');
 
+        // push dummy request to stack to make document renderer work
+        $this->getContainer()->get('request_stack')->push(Request::create('/'));
+
         foreach ($this->getDocuments($documentIds) as $document) {
             try {
-                $this->renderDocument($kernel, $document, $mainDomain);
+                $this->renderDocument($document);
             } catch (\Exception $e) {
                 $renderingErrors[$document->getId()] = [
                     'documentId'   => $document->getId(),
@@ -266,43 +253,17 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     /**
      * Renders a document by dispatching a new master request for the document URI
      *
-     * @param HttpKernelInterface $kernel
-     * @param Document $document
-     * @param string $mainDomain
-     *
-     * @throws \Exception
+     * @param Document\PageSnippet $document
      */
-    private function renderDocument(HttpKernelInterface $kernel, Document $document, string $mainDomain)
+    private function renderDocument(Document\PageSnippet $document)
     {
-        $host = $mainDomain;
-        $path = $document->getRealFullPath();
-
-        $uri     = sprintf('http://%s%s', $host, $path);
-        $request = Request::create($uri, 'GET', [
-            'pimcore_preview' => true
-        ]);
-
-        $this->writeSimpleSection(sprintf(
-            'Rendering document %s with ID <info>%d</info>',
+        $this->io->writeln(sprintf(
+            'Rendering document <info>%s</info> with ID <info>%d</info>',
             $document->getRealFullPath(),
             $document->getId()
         ));
 
-        $this->io->writeln(sprintf('URI: <comment>%s</comment>', $request->getUri()));
-
-        ob_start();
-
-        try {
-            $kernel->handle($request, HttpKernelInterface::MASTER_REQUEST, false);
-        } catch (\Exception $e) {
-            $this->io->error($e->getMessage());
-            throw $e;
-        } finally {
-            ob_get_contents();
-            ob_end_clean();
-        }
-
-        $this->io->writeln('');
+        Document\Service::render($document);
     }
 
     /**
