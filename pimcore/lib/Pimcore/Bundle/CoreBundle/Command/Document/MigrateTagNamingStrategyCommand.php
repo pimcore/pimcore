@@ -26,6 +26,7 @@ use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\MigrationListener;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
@@ -37,6 +38,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
@@ -214,6 +216,9 @@ EOF;
         // push dummy request to stack to make document renderer work
         $this->getContainer()->get('request_stack')->push(Request::create('/'));
 
+        // set editmode resolver to force editmode
+        $this->getContainer()->get('pimcore.service.request.editmode_resolver')->setForceEditmode(true);
+
         foreach ($this->getDocuments($documentIds) as $document) {
             try {
                 $this->renderDocument($document);
@@ -303,9 +308,7 @@ EOF;
             $document->getId()
         ));
 
-        Document\Service::render($document, [], false, [
-            'pimcore_editmode' => true
-        ]);
+        Document\Service::render($document);
     }
 
     /**
