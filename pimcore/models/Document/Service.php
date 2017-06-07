@@ -80,7 +80,7 @@ class Service extends Model\Element\Service
             $serviceId = 'pimcore.legacy.document.renderer';
             if (!$container->has($serviceId)) {
                 throw new MissingDependencyException(sprintf(
-                    'Document %d (%s) is expected to be renderer with the legacy renderer, but legacy renderer does not exist as service "%s"',
+                    'Document %d (%s) is expected to be rendered with the legacy renderer, but legacy renderer does not exist as service "%s"',
                     $document->getId(),
                     $document->getFullPath(),
                     $serviceId
