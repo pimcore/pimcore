@@ -34,7 +34,7 @@ class ProductDiscount implements IProductDiscount
     public function executeOnProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
     {
         $priceinfo = $environment->getPriceInfo();
-        $amount = $this->getAmount() !== 0 ? $this->getAmount() : ($priceinfo->getAmount() * ($this->getPercent() / 100));
+        $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceinfo->getAmount() * ($this->getPercent() / 100)), 2);
         $amount = $priceinfo->getAmount() - $amount;
         $priceinfo->setAmount($amount > 0 ? $amount : 0);
 
