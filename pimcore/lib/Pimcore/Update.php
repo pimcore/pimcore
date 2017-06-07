@@ -180,7 +180,8 @@ class Update
 
             if (in_array($revision, $composerUpdateRevisions)) {
                 $updateJobs[] = [
-                    'type' => 'composer-update'
+                    'type' => 'composer-update',
+                    'no-scripts' => 'true'
                 ];
                 $updateJobs[] = [
                     'type' => 'composer-invalidate-classmaps'
@@ -201,7 +202,7 @@ class Update
         ];
 
         $updateJobs[] = [
-            'type' => 'composer-dump-autoload'
+            'type' => 'composer-update'
         ];
 
         return [
@@ -409,32 +410,10 @@ class Update
     }
 
     /**
+     * @param array $options
      * @return array
      */
-    public static function composerDumpAutoload()
-    {
-        $outputMessage = '';
-
-        try {
-            $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
-            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_PROJECT_ROOT);
-            $process->setTimeout(300);
-            $process->mustRun();
-        } catch (\Exception $e) {
-            Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer dumpautoload</pre> Please run it manually on commandline!";
-        }
-
-        return [
-            'message' => $outputMessage,
-            'success' => true
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public static function composerUpdate()
+    public static function composerUpdate($options = [])
     {
         $composerLock = PIMCORE_PROJECT_ROOT . '/composer.lock';
         if (file_exists($composerLock)) {
@@ -445,7 +424,10 @@ class Update
 
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
-            $process = new Process($composerPath . ' update -d ' . PIMCORE_PROJECT_ROOT);
+
+            $composerOptions = array_merge(["-n"], $options);
+
+            $process = new Process($composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_PROJECT_ROOT);
             $process->setTimeout(900);
             $process->mustRun();
         } catch (\Exception $e) {

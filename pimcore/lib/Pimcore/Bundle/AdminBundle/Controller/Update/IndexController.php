@@ -139,10 +139,12 @@ class IndexController extends AdminController implements EventedControllerInterf
             $status = Update::executeScript($request->get('revision'), 'postupdate');
         } elseif ($request->get('type') == 'cleanup') {
             Update::cleanup();
-        } elseif ($request->get('type') == 'composer-dump-autoload') {
-            $status = Update::composerDumpAutoload();
         } elseif ($request->get('type') == 'composer-update') {
-            $status = Update::composerUpdate();
+            $options = [];
+            if($request->get('no-scripts')) {
+                $options[] = '--no-scripts';
+            }
+            $status = Update::composerUpdate($options);
         } elseif ($request->get('type') == 'composer-invalidate-classmaps') {
             $status = Update::invalidateComposerAutoloadClassmap();
         }
