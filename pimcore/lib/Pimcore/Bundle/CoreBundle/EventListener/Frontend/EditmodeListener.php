@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\Document;
@@ -48,6 +49,11 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
     protected $documentResolver;
 
     /**
+     * @var UserLoader
+     */
+    protected $userLoader;
+
+    /**
      * @var PimcoreBundleManager
      */
     protected $bundleManager;
@@ -67,10 +73,12 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
     public function __construct(
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
+        UserLoader $userLoader,
         PimcoreBundleManager $bundleManager
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
+        $this->userLoader       = $userLoader;
         $this->bundleManager    = $bundleManager;
     }
 
@@ -175,7 +183,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
                 return;
             }
 
-            $user = Authentication::authenticateSession();
+            $user = $this->userLoader->getUser();
 
             $htmlElement = preg_match('/<html[^a-zA-Z]?( [^>]+)?>/', $html);
             $headElement = preg_match('/<head[^a-zA-Z]?( [^>]+)?>/', $html);

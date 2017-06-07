@@ -156,7 +156,11 @@ services:
 
     pimcore.event_listener.editmode_listener:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener
-        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver', '@pimcore.extension.bundle_manager']
+        arguments:
+            - '@pimcore.service.request.editmode_resolver'
+            - '@pimcore.service.request.document_resolver'
+            - '@pimcore_admin.security.user_loader'
+            - '@pimcore.extension.bundle_manager'
         calls:
             - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
             - [setLogger, ['@logger']]
