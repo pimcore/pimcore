@@ -63,6 +63,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     {
         $this
             ->setName('pimcore:documents:migrate-naming-strategy')
+            ->setDescription('Migrates document editable naming strategy')
             ->addOption(
                 'strategy', 's',
                 InputOption::VALUE_REQUIRED,
@@ -222,7 +223,7 @@ EOF;
         foreach ($this->getDocuments($documentIds) as $document) {
             try {
                 $this->renderDocument($document);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $renderingErrors[$document->getId()] = [
                     'documentId'   => $document->getId(),
                     'documentPath' => $document->getRealFullPath(),
