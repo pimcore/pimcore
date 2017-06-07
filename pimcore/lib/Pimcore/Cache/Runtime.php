@@ -44,7 +44,7 @@ final class Runtime extends \ArrayObject
 
             /** @var self $instance */
             $instance = null;
-            if ($container->has(self::SERVICE_ID)) {
+            if ($container->initialized(self::SERVICE_ID)) {
                 $instance = $container->get(self::SERVICE_ID);
             } else {
                 $instance = new self;
