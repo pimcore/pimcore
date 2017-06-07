@@ -416,7 +416,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             var reloadConfig = {
-                xtype: "splitbutton",
                 tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
                 scale: "medium",
@@ -424,6 +423,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             };
 
             if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
+                reloadConfig.xtype = "splitbutton";
+
                 var menu = [];
                 for (var i = 0; i < this.data.validLayouts.length; i++) {
                     var menuLabel = ts(this.data.validLayouts[i].name);
@@ -437,6 +438,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     });
                 }
                 reloadConfig.menu = menu;
+            } else {
+                reloadConfig.xtype = "button";
             }
 
             buttons.push(reloadConfig);
