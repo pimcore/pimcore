@@ -178,16 +178,6 @@ class Update
                 'updateScript' => json_encode(isset($updateScripts[$revision]['update']))
             ];
 
-            if (in_array($revision, $composerUpdateRevisions)) {
-                $updateJobs[] = [
-                    'type' => 'composer-update',
-                    'no-scripts' => 'true'
-                ];
-                $updateJobs[] = [
-                    'type' => 'composer-invalidate-classmaps'
-                ];
-            }
-
             if ($updateScripts[$revision]['postupdate']) {
                 $updateJobs[] = $updateScripts[$revision]['postupdate'];
             }
@@ -308,6 +298,10 @@ class Update
                         copy($srcFile, $destFile);
                     }
                 }
+
+                // set the timestamp 10s to the future, to ensure the container refreshes if there's any relevant change
+                touch($destFile, time()+10);
+
             } elseif ($file['action'] == 'delete') {
                 if (!self::$dryRun) {
                     if (file_exists(PIMCORE_PROJECT_ROOT . $file['path'])) {
@@ -389,8 +383,13 @@ class Update
             $newJson = \Pimcore\Helper\JsonFormatter::format($newJson, true, true);
             File::put($oldFile, $newJson);
         }
+
+        self::composerUpdate(['--no-scripts']);
     }
 
+    /**
+     *
+     */
     public static function clearOPCaches()
     {
         if (function_exists('opcache_reset')) {
@@ -398,6 +397,9 @@ class Update
         }
     }
 
+    /**
+     *
+     */
     public static function cleanup()
     {
 
@@ -441,6 +443,32 @@ class Update
         ];
     }
 
+    /**
+     * @return array
+     */
+    public static function composerDumpAutoload()
+    {
+        $outputMessage = '';
+
+        try {
+            $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
+            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_PROJECT_ROOT);
+            $process->setTimeout(300);
+            $process->mustRun();
+        } catch (\Exception $e) {
+            Logger::error($e);
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer dumpautoload</pre> Please run it manually on commandline!";
+        }
+
+        return [
+            'message' => $outputMessage,
+            'success' => true
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public static function invalidateComposerAutoloadClassmap()
     {
 
@@ -472,6 +500,9 @@ class Update
         return (bool) \Pimcore\Tool\Console::getExecutable('composer');
     }
 
+    /**
+     *
+     */
     public static function updateMaxmindDb()
     {
         $downloadUrl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz';
