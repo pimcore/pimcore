@@ -329,12 +329,13 @@ class Select extends Model\Object\ClassDefinition\Data
 
     public function enrichFieldDefinition($context = [])
     {
-        if ($this->getOptionsProviderClass()) {
-            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $context['fieldname'] = $this->getName();
-                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
-                $this->setOptions($options);
-            }
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+
+        if ($optionsProvider) {
+            $context['fieldname'] = $this->getName();
+            $options = $optionsProvider->{'getOptions'}($context, $this);
+            $this->setOptions($options);
         }
 
         return $this;
@@ -346,7 +347,9 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        if ($this->getOptionsProviderClass()) {
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        if ($optionsProvider) {
             $context['object'] = $object;
             if ($object) {
                 $context['class'] = $object->getClass();
@@ -357,24 +360,15 @@ class Select extends Model\Object\ClassDefinition\Data
                 $context['purpose'] = 'layout';
             }
 
-            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
-                $this->setOptions($options);
-            }
+            $options = $optionsProvider->{'getOptions'}($context, $this);
+            $this->setOptions($options);
 
-            if (method_exists($this->getOptionsProviderClass(), 'getDefaultValue')) {
-                $defaultValue = call_user_func($this->getOptionsProviderClass().'::getDefaultValue', $context, $this);
-                $this->setDefaultValue($defaultValue);
-            }
+            $defaultValue = $optionsProvider->{'getDefaultValue'}($context, $this);
+            $this->setDefaultValue($defaultValue);
 
-            if (method_exists($this->getOptionsProviderClass(), 'hasStaticOptions')) {
-                $hasStaticOptions = call_user_func($this->getOptionsProviderClass().'::hasStaticOptions', $context, $this);
-                $this->dynamicOptions = !$hasStaticOptions;
-            } else {
-                $this->dynamicOptions = true;
-            }
+            $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
+            $this->dynamicOptions = !$hasStaticOptions;
         }
-
         return $this;
     }
 
@@ -387,7 +381,10 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($this->getOptionsProviderClass()) {
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+
+        if ($optionsProvider) {
             $context = $params['context'] ? $params['context'] : [];
             $context['object'] = $object;
             if ($object) {
@@ -395,11 +392,8 @@ class Select extends Model\Object\ClassDefinition\Data
             }
 
             $context['fieldname'] = $this->getName();
-
-            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
-                $this->setOptions($options);
-            }
+            $options = $optionsProvider->{'getOptions'}($context, $this);
+            $this->setOptions($options);
 
             $result = ['value' => null, 'options' => $this->getOptions()];
             if ($data) {
