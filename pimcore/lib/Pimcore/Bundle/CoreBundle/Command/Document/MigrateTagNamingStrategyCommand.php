@@ -26,7 +26,6 @@ use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\MigrationListener;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
-use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
@@ -38,9 +37,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class MigrateTagNamingStrategyCommand extends AbstractCommand
 {
@@ -220,7 +219,14 @@ EOF;
         // set editmode resolver to force editmode
         $this->getContainer()->get('pimcore.service.request.editmode_resolver')->setForceEditmode(true);
 
+        $stopwatch = new Stopwatch();
+
+        // TODO can this be read directly from Stopwatch?
+        $totalDuration = 0;
+
         foreach ($this->getDocuments($documentIds) as $document) {
+            $event = $stopwatch->start('document_' . $document->getId());
+
             try {
                 $this->renderDocument($document);
             } catch (\Throwable $e) {
@@ -232,6 +238,18 @@ EOF;
 
                 $this->io->error($e->getMessage());
             }
+
+            $event->stop();
+            $totalDuration += $event->getDuration();
+
+            $this->io->writeln(sprintf(
+                'Duration: <comment>%d ms</comment> - Total duration: <comment>%d ms</comment> - Current Memory: <comment>%f MB</comment>',
+                $event->getDuration(),
+                $totalDuration,
+                round($event->getMemory() / 1000 / 1000, 2)
+            ));
+
+            $this->io->writeln('');
         }
 
         if (count($renderingErrors) === 0) {
