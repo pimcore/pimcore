@@ -125,9 +125,12 @@ class Pimcore
             if ($conf['ip'] && $debug) {
                 $debug = false;
 
-                $debugIpAddresses = explode_and_trim(',', $conf['ip']);
-                if (in_array(Tool::getClientIp(), $debugIpAddresses)) {
-                    $debug = true;
+                $clientIp = Tool::getClientIp();
+                if (null !== $clientIp) {
+                    $debugIpAddresses = explode_and_trim(',', $conf['ip']);
+                    if (in_array($clientIp, $debugIpAddresses)) {
+                        $debug = true;
+                    }
                 }
             }
         }
