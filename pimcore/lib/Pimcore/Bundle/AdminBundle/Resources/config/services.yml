@@ -140,9 +140,9 @@ services:
         public: false
         abstract: true
         arguments:
-            - '@?' # user provider will be set by factory
+            - '' # user provider will be set by factory
             - '@pimcore_admin.security.user_checker'
-            - '@?' # provider key will be set by factory
+            - '' # provider key will be set by factory
 
     pimcore.security.authentication.listener.admin_pre_auth:
         class: Pimcore\Bundle\AdminBundle\Security\Firewall\PreAuthenticatedAdminSessionListener
@@ -151,7 +151,7 @@ services:
         arguments:
             - '@security.token_storage'
             - '@security.authentication.manager'
-            - '@?' # provider key will be set by factory
+            - '' # provider key will be set by factory
 
     #
     # API
