@@ -16,14 +16,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
-use Pimcore\Logger;
+use Psr\Log\LoggerInterface;
 
 class Installer extends AbstractInstaller
 {
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var array - contains all tables that need to be created
      */
-    private static $tables = [
+    private $tables = [
         'ecommerceframework_cart' =>
             'CREATE TABLE `ecommerceframework_cart` (
               `id` int(20) NOT NULL AUTO_INCREMENT,
@@ -101,7 +106,7 @@ class Installer extends AbstractInstaller
     /**
      * @var array - contains all classes that need to be created
      */
-    private static $classes = [
+    private $classes = [
         'FilterDefinition' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_FilterDefinition_export.json',
         'OnlineShopOrderItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopOrderItem_export.json',
         'OnlineShopVoucherSeries' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopVoucherSeries_export.json',
@@ -114,9 +119,17 @@ class Installer extends AbstractInstaller
     ];
 
     /**
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * @return array - contains all fieldcollections that need to be created
      */
-    private static function getFieldCollections()
+    private function getFieldCollections()
     {
         $fieldCollections = [];
 
@@ -135,7 +148,7 @@ class Installer extends AbstractInstaller
     /**
      * @return array - contains all objectbricks that need to be created
      */
-    private static function getObjectBricks()
+    private function getObjectBricks()
     {
         $objectBricks = [];
 
@@ -185,7 +198,9 @@ class Installer extends AbstractInstaller
 
             return true;
         } catch (\Exception $e) {
-            Logger::warn('Ecommerce Framework cannot be installed because: ' . $e);
+            $this->logger->error('Ecommerce Framework cannot be installed because: {exception}', [
+                'exception' => $e
+            ]);
         }
 
         return false;
@@ -202,7 +217,7 @@ class Installer extends AbstractInstaller
         //check tables
         $db = \Pimcore\Db::get();
         $existingTables = [];
-        foreach (self::$tables as $name => $statement) {
+        foreach ($this->tables as $name => $statement) {
             try {
                 $result = $db->query('DESCRIBE TABLE ' . $db->quoteIdentifier($name))->fetchAll;
             } catch (\Exception $e) {
@@ -218,7 +233,7 @@ class Installer extends AbstractInstaller
 
         //check classes
         $existingClasses = [];
-        foreach (self::$classes as $name => $file) {
+        foreach ($this->classes as $name => $file) {
             $class = \Pimcore\Model\Object\ClassDefinition::getByName($name);
             if (!empty($class)) {
                 $existingClasses[] = $name;
@@ -230,7 +245,7 @@ class Installer extends AbstractInstaller
 
         //check fieldcollections
         $existingFieldCollections = [];
-        foreach (self::getFieldCollections() as $key => $file) {
+        foreach ($this->getFieldCollections() as $key => $file) {
             try {
                 $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
             } catch (\Exception $e) {
@@ -247,7 +262,7 @@ class Installer extends AbstractInstaller
 
         //check object bricks
         $existingObjectBricks = [];
-        foreach (self::getObjectBricks() as $key => $file) {
+        foreach ($this->getObjectBricks() as $key => $file) {
             try {
                 $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
             } catch (\Exception $e) {
@@ -268,7 +283,7 @@ class Installer extends AbstractInstaller
      */
     private function createFieldCollections()
     {
-        $fieldCollections = self::getFieldCollections();
+        $fieldCollections = $this->getFieldCollections();
         foreach ($fieldCollections as $key => $filename) {
             try {
                 $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
@@ -283,7 +298,9 @@ class Installer extends AbstractInstaller
             $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/fieldcollection_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
             if (!$success) {
-                Logger::err("Could not import $key FieldCollection.");
+                $this->logger->error('Could not import FieldCollection "{name}".', [
+                    'name' => $key
+                ]);
             }
         }
     }
@@ -295,7 +312,7 @@ class Installer extends AbstractInstaller
      */
     private function createClasses()
     {
-        foreach (self::$classes as $classname => $filepath) {
+        foreach ($this->classes as $classname => $filepath) {
             $class = \Pimcore\Model\Object\ClassDefinition::getByName($classname);
             if (!$class) {
                 $class = new \Pimcore\Model\Object\ClassDefinition();
@@ -307,7 +324,9 @@ class Installer extends AbstractInstaller
 
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
             if (!$success) {
-                Logger::err("Could not import $classname Class.");
+                $this->logger->error('Could not import Class "{name}".', [
+                    'name' => $classname
+                ]);
             }
         }
     }
@@ -317,7 +336,7 @@ class Installer extends AbstractInstaller
      */
     private function createObjectBricks()
     {
-        $bricks = self::getObjectBricks();
+        $bricks = $this->getObjectBricks();
         foreach ($bricks as $key => $filename) {
             preg_match('/_(.*)_/', $filename, $matches);
             $key = $matches[1];
@@ -335,7 +354,9 @@ class Installer extends AbstractInstaller
             $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/objectbrick_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
             if (!$success) {
-                Logger::err("Could not import $key ObjectBrick.");
+                $this->logger->error('Could not import ObjectBrick "{name}".', [
+                    'name' => $key
+                ]);
             }
         }
     }
@@ -346,7 +367,7 @@ class Installer extends AbstractInstaller
     private function createTables()
     {
         $db = \Pimcore\Db::get();
-        foreach (self::$tables as $name => $statement) {
+        foreach ($this->tables as $name => $statement) {
             $db->query($statement);
         }
     }

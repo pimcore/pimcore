@@ -35,7 +35,7 @@ class IndexFieldSelectionCombo extends Select
 
     public function __construct()
     {
-        $installer = new Installer();
+        $installer = \Pimcore::getContainer()->get('pimcore.ecommerceframework.installer');
         if ($installer->isInstalled()) {
             $indexColumns = [];
             try {

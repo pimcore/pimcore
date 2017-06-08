@@ -54,8 +54,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 
     public function boot()
     {
-        parent::boot();
-
         //load legacy class mapping
         LegacyClassMappingTool::loadMapping();
     }
@@ -65,6 +63,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
      */
     public function getInstaller()
     {
-        return new Installer();
+        return $this->container->get('pimcore.ecommerceframework.installer');
     }
 }
