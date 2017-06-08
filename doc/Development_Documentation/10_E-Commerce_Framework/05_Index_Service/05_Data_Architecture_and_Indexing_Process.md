@@ -114,3 +114,5 @@ the export table. Valid parameters for this endpoint are:
 - `start`: Pagination start.
 - `count`: Count of delivered entries.
 - `shopKey`: Shop key to identify the shop. 
+- `id`: Filter for Product-ID
+- `type`: Filter for type
