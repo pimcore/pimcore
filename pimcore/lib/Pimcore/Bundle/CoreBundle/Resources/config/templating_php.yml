@@ -1,4 +1,8 @@
 services:
+    # public alias to PHP engine
+    pimcore.templating.engine.php:
+        alias: templating.engine.php
+        public: true
 
     #
     # TOOLS
