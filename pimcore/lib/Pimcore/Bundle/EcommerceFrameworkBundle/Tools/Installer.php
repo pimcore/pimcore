@@ -119,15 +119,15 @@ class Installer extends AbstractInstaller
      * @var array - contains all classes that need to be created
      */
     private $classes = [
-        'FilterDefinition' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_FilterDefinition_export.json',
-        'OnlineShopOrderItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopOrderItem_export.json',
-        'OnlineShopVoucherSeries' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopVoucherSeries_export.json',
-        'OnlineShopVoucherToken' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopVoucherToken_export.json',
-        'OnlineShopOrder' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopOrder_export.json',
-        'OfferToolCustomProduct' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OfferToolCustomProduct_export.json',
-        'OfferToolOfferItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OfferToolOfferItem_export.json',
-        'OfferToolOffer' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OfferToolOffer_export.json',
-        'OnlineShopTaxClass' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopTaxClass_export.json'
+        'FilterDefinition',
+        'OnlineShopOrderItem',
+        'OnlineShopVoucherSeries',
+        'OnlineShopVoucherToken',
+        'OnlineShopOrder',
+        'OfferToolCustomProduct',
+        'OfferToolOfferItem',
+        'OfferToolOffer',
+        'OnlineShopTaxClass',
     ];
 
     /**
@@ -187,7 +187,6 @@ class Installer extends AbstractInstaller
      */
     protected function checkCanBeInstalled()
     {
-
         //check tables
         $db = \Pimcore\Db::get();
         $existingTables = [];
@@ -207,7 +206,7 @@ class Installer extends AbstractInstaller
 
         //check classes
         $existingClasses = [];
-        foreach ($this->classes as $name => $file) {
+        foreach ($this->getClasses() as $name => $file) {
             $class = ClassDefinition::getByName($name);
             if (!empty($class)) {
                 $existingClasses[] = $name;
@@ -250,6 +249,32 @@ class Installer extends AbstractInstaller
         if (!empty($existingObjectBricks)) {
             throw new \Exception('Fieldcollection(s) ' . implode(', ', $existingObjectBricks) . ' already exist. Please remove them first.');
         }
+    }
+
+    /**
+     * Returns a list of all class exports indexed by class name
+     *
+     * @return array
+     */
+    private function getClasses(): array
+    {
+        $result = [];
+        foreach ($this->classes as $className) {
+            $filename = sprintf('class_%s_export.json', $className);
+            $path     = $this->installSourcesPath . '/class_sources/' . $filename;
+            $path     = realpath($path);
+
+            if (false === $path || !is_file($path)) {
+                throw new \RuntimeException(sprintf(
+                    'Class export for class "%s" was expected in "%s" but file does not exist',
+                    $className, $path
+                ));
+            }
+
+            $result[$className] = $path;
+        }
+
+        return $result;
     }
 
     /**
@@ -337,7 +362,7 @@ class Installer extends AbstractInstaller
      */
     private function createClasses()
     {
-        foreach ($this->classes as $classname => $path) {
+        foreach ($this->getClasses() as $classname => $path) {
             $class = ClassDefinition::getByName($classname);
             if (!$class) {
                 $class = new ClassDefinition();
