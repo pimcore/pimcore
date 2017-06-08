@@ -61,18 +61,27 @@ Finish the Pimcore installation by accessing the URL (eg. `https://your-host.com
 3. Click ***Install Now!*** 
 4. Ensure the the file `web/install.php` was moved out of `web/` by the installer, if not, (re)move it manually. 
 
+## 5. Installing Composer
 
-## 5. Maintenance Cron Job
+Next step requires to install composer:
+
+```bash
+curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+cd /your/project
+composer install --optimize-autoloader
+```
+
+## 6. Maintenance Cron Job
 ```text
 */5 * * * * /your/project/bin/console maintenance
 ```
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 
-## 6. Additional Information & Help
+## 7. Additional Information & Help
 If you would like to know more about installation process or if you are having problems getting Pimcore up and running, visit 
 the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
-## 7. Further Reading
+## 8. Further Reading
 - [Apache Configuration](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
 - [Nginx Configuration](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 - [Database Setup](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
