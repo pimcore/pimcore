@@ -80,7 +80,7 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
             }
 
             text = htmlentities(text, 'ENT_NOQUOTES', null, false);
-            text = str_replace(" ", "&nbsp;", text);
+            text = trim(text);
 
             try {
                 pimcore.edithelpers.pasteHtmlAtCaret(text);
