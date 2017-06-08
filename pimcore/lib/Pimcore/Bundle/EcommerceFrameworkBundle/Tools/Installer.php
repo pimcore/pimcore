@@ -193,7 +193,7 @@ class Installer extends AbstractInstaller
         $existingTables = [];
         foreach ($this->tables as $name => $statement) {
             try {
-                $result = $db->query('DESCRIBE TABLE ' . $db->quoteIdentifier($name))->fetchAll;
+                $result = $db->fetchAll('SHOW TABLES LIKE ?', [$name]);
             } catch (\Exception $e) {
                 //nothing to do
             }
