@@ -518,7 +518,7 @@ class Installer extends AbstractInstaller
         $result = null;
         try {
             if (Config::getSystemConfig()) {
-                $result = \Pimcore\Db::get()->query('DESCRIBE ecommerceframework_cartitem')->fetchAll();
+                $result = \Pimcore\Db::get()->fetchAll('SHOW TABLES LIKE "ecommerceframework_cartitem"');
             }
         } catch (\Exception $e) {
             $this->logger->error($e);
