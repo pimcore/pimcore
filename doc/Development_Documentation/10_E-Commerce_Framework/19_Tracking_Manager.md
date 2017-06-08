@@ -41,7 +41,7 @@ trackers.
 
 ## Configuration in `EcommerceFrameworkConfig.php`
 
-The configuration takes place in the [`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L701).
+The configuration takes place in the [`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L701).
 If no `TrackingItemBuilder` is configured, the `TrackingItemBuilder` will fall back to the default implementation 
 `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder`. Further information about `TrackingItemBuilder`
 see below. 
@@ -117,7 +117,7 @@ class CheckoutController extends AbstractCartAware {
 ## Project Specific Data
 
 Adding project specific data to tracking items by extending the `TrackingItemBuilder` class. The extending class has to
-be configured in the [`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L708).
+be configured in the [`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L708).
 
 ### Example for Additional Data in Product Impressions
 

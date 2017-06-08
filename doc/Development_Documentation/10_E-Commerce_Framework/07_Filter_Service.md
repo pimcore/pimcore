@@ -27,7 +27,7 @@ Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Abs
 
 
 The configuration of the Filter Types takes place in the 
-[`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L528-L528)
+[`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L528-L528)
 
 ```php
  /*  assign backend implementations and views to filter type field collections

@@ -13,7 +13,7 @@ In terms of product availabilities and stocks, the very similar concept of Avail
 There are two places where the configuration of Price Systems takes place: 
 - **Product class**: Each product has to implement the method ```getPriceSystemName()``` which returns the name of its 
   Price System. 
-- [**EcommerceFrameworkConfig.php**](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L56-L56):
+- [**EcommerceFrameworkConfig.php**](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L56-L56):
   In the `pricesystems` section the mapping between Price System names and their implementation classes takes place. 
   Price System implementations at least need to implement the interface `\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`, 
   but [there](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem) 
