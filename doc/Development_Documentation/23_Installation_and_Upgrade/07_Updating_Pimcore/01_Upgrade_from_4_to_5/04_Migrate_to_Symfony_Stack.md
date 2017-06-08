@@ -102,9 +102,23 @@ This will result in data loss!
      as attributes in sub request then. 
 
   - Navigation Changes
-     - Replace `$this->pimcoreNavigation` with `$this->navigation`.
-     - The navigation helper is now handles building and rendering a navigation without an own internal state. Please see
-       the [navigation documentation](../../../03_Documents/03_Navigation.md) for details.
+     - Replace `$this->pimcoreNavigation()` with `$this->navigation()`.
+     - The navigation view helper signature has changed and now uses a different syntax to render navigations. In short,
+       building the navigation container and rendering the navigation is now split up into 2 distinct calls and needs to be adapted
+       in templates. This applies to all navigation types (menu, breadcrumbs, ...).
+
+        ```php
+        <?php
+        // previously
+        echo $this->navigation($this->document, $navStartNode)->menu()->renderMenu(null, ['maxDepth' => 1]);
+
+        // now
+        $nav = $this->navigation()->buildNavigation($this->document, $navStartNode);
+        echo $this->navigation()->menu()->renderMenu($nav, ['maxDepth' => 1]);
+        ```
+
+        See the [navigation documentation](./../../03_Documents/03_Navigation.md) for details.
+
      - In your navigation partial scripts, use `$this->pages` instead of `$this->container` (reserved for DI-container)
      - Replace `Pimcore\Navigation\Page\Uri` with `Pimcore\Navigation\Page\Document`. 
 
