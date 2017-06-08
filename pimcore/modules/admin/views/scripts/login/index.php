@@ -6,6 +6,7 @@
 
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
 
