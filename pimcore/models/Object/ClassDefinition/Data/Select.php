@@ -369,6 +369,7 @@ class Select extends Model\Object\ClassDefinition\Data
             $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
             $this->dynamicOptions = !$hasStaticOptions;
         }
+
         return $this;
     }
 

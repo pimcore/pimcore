@@ -58,7 +58,7 @@ class InternalUpdateProcessorCommand extends AbstractCommand
                     Update::cleanup();
                 } elseif ($job['type'] == 'composer-update') {
                     $options = [];
-                    if(isset($job['no-scripts'])) {
+                    if (isset($job['no-scripts'])) {
                         $options[] = '--no-scripts';
                     }
                     $status = Update::composerUpdate($options);

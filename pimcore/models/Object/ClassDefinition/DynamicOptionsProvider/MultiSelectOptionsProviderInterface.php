@@ -19,10 +19,10 @@ namespace Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider;
 
 interface MultiSelectOptionsProviderInterface
 {
-
     /**
      * @param $context array
      * @param $fieldDefinition Data
+     *
      * @return array
      */
     public function getOptions($context, $fieldDefinition);
@@ -30,8 +30,8 @@ interface MultiSelectOptionsProviderInterface
     /**
      * @param $context array
      * @param $fieldDefinition Data
+     *
      * @return bool
      */
     public function hasStaticOptions($context, $fieldDefinition);
-
 }

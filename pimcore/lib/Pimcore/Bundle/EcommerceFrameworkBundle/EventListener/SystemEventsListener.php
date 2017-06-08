@@ -19,8 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Event\SystemEvents;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SystemEventsListener implements EventSubscriberInterface

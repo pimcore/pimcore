@@ -207,14 +207,14 @@ return [
                         'config' => [
                             'sandbox' => [
                                 'customerId' => 'D200001',
-                                "customerStatement" => "Pimcore Shop",
+                                'customerStatement' => 'Pimcore Shop',
                                 'shopId' => 'qmore',
                                 'secret' => 'B8AKTPWBRMNBV455FG6M2DANE99WU2',
                                 'password' => 'jcv45z',
                                 //define hash algorithm - possbile values are sha512 and hmac_sha512
-                                "hashAlgorithm" => "hmac_sha512",
+                                'hashAlgorithm' => 'hmac_sha512',
                                 //activates delivery of all cart items to wirecard for paypal integration
-                                "paypalActivateItemLevel" => true,
+                                'paypalActivateItemLevel' => true,
                                 'iframeCssUrl' => '/website/static/css/payment-iframe.css',
                                 'paymentMethods' => [
                                     'PREPAYMENT' => [
@@ -239,14 +239,14 @@ return [
                             ],
                             'live' => [
                                 'customerId' => '',
-                                "customerStatement" => "Pimcore Shop",
+                                'customerStatement' => 'Pimcore Shop',
                                 'shopId' => '',
                                 'secret' => '',
                                 'password' => '',
                                 //define hash algorithm - possbile values are sha512 and hmac_sha512
-                                "hashAlgorithm" => "hmac_sha512",
+                                'hashAlgorithm' => 'hmac_sha512',
                                 //activates delivery of all cart items to wirecard for paypal integration
-                                "paypalActivateItemLevel" => true,
+                                'paypalActivateItemLevel' => true,
                                 'iframeCssUrl' => '/website/static/css/payment-iframe.css?elementsclientauth=disabled',
                                 'paymentMethods' => [
                                     'PREPAYMENT' => [

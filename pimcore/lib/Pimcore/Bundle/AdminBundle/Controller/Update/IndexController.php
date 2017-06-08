@@ -141,7 +141,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             Update::cleanup();
         } elseif ($request->get('type') == 'composer-update') {
             $options = [];
-            if($request->get('no-scripts')) {
+            if ($request->get('no-scripts')) {
                 $options[] = '--no-scripts';
             }
             $status = Update::composerUpdate($options);

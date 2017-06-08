@@ -453,7 +453,6 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
     public function enrichFieldDefinition($context = [])
     {
-
         $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
                 Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT);
         if ($optionsProvider) {
@@ -476,7 +475,6 @@ class Multiselect extends Model\Object\ClassDefinition\Data
             Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT);
 
         if ($optionsProvider) {
-
             $context['object'] = $object;
             if ($object) {
                 $context['class'] = $object->getClass();

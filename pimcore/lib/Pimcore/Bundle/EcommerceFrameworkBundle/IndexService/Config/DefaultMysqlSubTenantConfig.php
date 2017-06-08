@@ -129,7 +129,6 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         return $subTenantData;
     }
 
-
     /**
      * populates index for tenant relations based on given data
      *

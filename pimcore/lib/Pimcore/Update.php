@@ -300,8 +300,7 @@ class Update
                 }
 
                 // set the timestamp 10s to the future, to ensure the container refreshes if there's any relevant change
-                touch($destFile, time()+10);
-
+                touch($destFile, time() + 10);
             } elseif ($file['action'] == 'delete') {
                 if (!self::$dryRun) {
                     if (file_exists(PIMCORE_PROJECT_ROOT . $file['path'])) {
@@ -387,9 +386,6 @@ class Update
         self::composerUpdate(['--no-scripts']);
     }
 
-    /**
-     *
-     */
     public static function clearOPCaches()
     {
         if (function_exists('opcache_reset')) {
@@ -397,9 +393,6 @@ class Update
         }
     }
 
-    /**
-     *
-     */
     public static function cleanup()
     {
 
@@ -413,6 +406,7 @@ class Update
 
     /**
      * @param array $options
+     *
      * @return array
      */
     public static function composerUpdate($options = [])
@@ -427,7 +421,7 @@ class Update
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
 
-            $composerOptions = array_merge(["-n"], $options);
+            $composerOptions = array_merge(['-n'], $options);
 
             $process = new Process($composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_PROJECT_ROOT);
             $process->setTimeout(900);
@@ -500,9 +494,6 @@ class Update
         return (bool) \Pimcore\Tool\Console::getExecutable('composer');
     }
 
-    /**
-     *
-     */
     public static function updateMaxmindDb()
     {
         $downloadUrl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz';

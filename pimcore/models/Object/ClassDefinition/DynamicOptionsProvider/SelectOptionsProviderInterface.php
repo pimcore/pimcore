@@ -17,15 +17,13 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider;
 
-
 interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
-
     /**
      * @param $context array
      * @param $fieldDefinition Data
+     *
      * @return mixed
      */
     public function getDefaultValue($context, $fieldDefinition);
-
 }

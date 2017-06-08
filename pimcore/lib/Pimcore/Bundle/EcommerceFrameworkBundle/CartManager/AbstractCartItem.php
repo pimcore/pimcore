@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem
 {

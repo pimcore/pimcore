@@ -23,12 +23,11 @@ use Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\SelectOptionsPro
 
 class OptionsProviderResolver
 {
-
     const MODE_SELECT = 1;
 
     const MODE_MULTISELECT = 2;
 
-    static $providerCache = [];
+    public static $providerCache = [];
 
     public static function resolveProvider($providerClass, $mode)
     {
@@ -57,6 +56,4 @@ class OptionsProviderResolver
 
         return null;
     }
-
-
 }
