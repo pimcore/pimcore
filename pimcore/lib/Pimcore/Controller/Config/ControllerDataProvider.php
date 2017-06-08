@@ -125,12 +125,30 @@ class ControllerDataProvider
         $controllers = [];
         $classNames  = [];
 
+        $bundle = null;
+        if (null !== $bundleName) {
+            $bundle = $this->getBundle($bundleName);
+        }
+
         foreach ($this->serviceControllers as $id => $className) {
-            $controllers[] = '@' . $id;
+            $controllerId = '@' . $id;
+
+            // exclude controllers from known core namespaces
+            if (!$this->isValidController($controllerId)) {
+                continue;
+            }
+
+            // controllers not defined in any bundle (library controllers defined as services) are always included
+            // for all other service controllers, just include them if they match the selected bundle
+            if (null !== $bundle && false !== strpos($className, 'Bundle') && !$this->isInBundle($className, $bundle)) {
+                continue;
+            }
+
+            $controllers[] = $controllerId;
             $classNames[]  = $className;
         }
 
-        if (null === $bundleName || null === $bundle = $this->getBundle($bundleName)) {
+        if (null === $bundle) {
             return $controllers;
         }
 
@@ -338,6 +356,19 @@ class ControllerDataProvider
     }
 
     /**
+     * Deternmines if the controller should be taken into consideration in controller list
+     *
+     * @param string $controller
+     * @param string|null $bundle
+     *
+     * @return bool
+     */
+    protected function isValidController(string $controller, string $bundle = null)
+    {
+        return $this->isValidNamespace($this->getControllerReflector($controller, $bundle)->getName());
+    }
+
+    /**
      * Determines if bundle should be taken into consideration
      *
      * @param BundleInterface $bundle
@@ -346,12 +377,35 @@ class ControllerDataProvider
      */
     protected function isValidBundle(BundleInterface $bundle): bool
     {
-        $reflector = $this->getReflector($bundle);
-        if (preg_match('/^(Symfony|Doctrine|Pimcore|Sensio)/', $reflector->getName())) {
+        return $this->isValidNamespace($this->getReflector($bundle)->getName());
+    }
+
+    /**
+     * Checks if bundle/controller namespace is not excluded (all core bundles should be excluded here)
+     *
+     * @param $namespace
+     *
+     * @return bool
+     */
+    protected function isValidNamespace(string $namespace): bool
+    {
+        if (preg_match('/^(Symfony|Doctrine|Pimcore|Sensio)/', $namespace)) {
             return false;
         }
 
         return true;
+    }
+
+    protected function isInBundle(string $className, BundleInterface $bundle): bool
+    {
+        $reflector = $this->getReflector($className);
+        if (null === $reflector) {
+            return false;
+        }
+
+        $bundleReflector = $this->getReflector($bundle);
+
+        return 0 === strpos($reflector->getNamespaceName(), $bundleReflector->getNamespaceName());
     }
 
     /**

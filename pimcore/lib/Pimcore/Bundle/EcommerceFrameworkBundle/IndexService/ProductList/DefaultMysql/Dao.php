@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
 use Monolog\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 
 class Dao
@@ -25,7 +26,7 @@ class Dao
     private $db;
 
     /**
-     * @var IProductList
+     * @var DefaultMysql
      */
     private $model;
 

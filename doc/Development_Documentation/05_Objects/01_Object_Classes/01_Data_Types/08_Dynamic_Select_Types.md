@@ -8,13 +8,30 @@ The select datatype also allows you to define the default option at runtime.
 
 You can also add some additional static data which will be passed to the data provider.
 
+Note that there are two ways to define an options provider. 
+
+Either simply specify the class name ...
+
 ![Select Field](../../../img/dynselect1.png)
 
-Provide a options provider class which implements at least the getOptions method as shown below.
-For the select datatype you can also provide a getDefaultValue implementation.
+... or the name of a Symfony service (notice the prefix).
+![Select Field](../../../img/dynselect1b.png)
 
-The optional hasStaticOptions method allows you to define whether your options are depending on the object context or not.
-For object-context depending option there will be no batch assignment mode. Also, filtering can only be done through a text field instead of the options list.
+The services.yml would then look like this one ...
+
+![Select Field](../../../img/dynselect1a.png)
+
+Depending on your datatype you have to implement the appropriate interface.
+ 
+ * `Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options,
+ * `Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface` for the Multiselect options 
+ 
+ Implement the following methods:
+ * `getOptions` should return a list of valid options in the format indicated below
+ * `getDefaultValue` (Select data type only) returning the default value
+ * `hasStaticOptions` should return whether your options are depending on the object context (i.e. different options for different objects) or not.
+ This is especially important for the object grid. For object-context depending option there will be no batch assignment mode.
+ Also, filtering can only be done through a text field instead of the options list.
 
 ```php
 <?php
@@ -22,23 +39,24 @@ For object-context depending option there will be no batch assignment mode. Also
 namespace Website;
 
 use Pimcore\Model\Object\ClassDefinition\Data;
+use Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 
 
-class OptionsProvider
+class OptionsProvider implements SelectOptionsProviderInterface
 {
     /**
      * @param $context array
      * @param $fieldDefinition Data
      * @return array
      */
-    public static function getOptions($context, $fieldDefinition) {
+    public function getOptions($context, $fieldDefinition) {
         $object = $context["object"];
         $fieldname = "id: " . ($object ? $object->getId() : "unknown") . " - " .$context["fieldname"];
         $result = array(
 
-                array("key" => $fieldname .' == A', "value" => 2),
-                array("key" => $fieldname .' == C', "value" => 4),
-                array("key" => $fieldname .' == F', "value" => 5)
+            array("key" => $fieldname .' == A', "value" => 2),
+            array("key" => $fieldname .' == C', "value" => 4),
+            array("key" => $fieldname .' == F', "value" => 5)
 
         );
         return $result;
@@ -49,16 +67,16 @@ class OptionsProvider
      * @param $fieldDefinition Data
      * @return mixed
      */
-    public static function getDefaultValue($context, $fieldDefinition) {
+    public function getDefaultValue($context, $fieldDefinition) {
         return 4;
     }
-    
+
     /**
      * @param $context array
      * @param $fieldDefinition Data
      * @return bool
      */
-    public static function hasStaticOptions($context, $fieldDefinition) {
+    public function hasStaticOptions($context, $fieldDefinition) {
         return true;
     }
 

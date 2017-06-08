@@ -188,7 +188,7 @@ class UpdateCommand extends AbstractCommand
 
             $progress->finish();
 
-            Update::composerDumpAutoload();
+            Update::composerUpdate();
 
             Admin::deactivateMaintenanceMode();
 

@@ -4,7 +4,7 @@
 
 The navigation view helper signature has changed and now uses a different syntax to render navigations. In short,
 building the navigation container and rendering the navigation is now split up into 2 distinct calls and needs to be adapted
-in templates:
+in templates. This applies to all navigation types (menu, breadcrumbs, ...).
 
 ```php
 <?php

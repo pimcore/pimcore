@@ -192,7 +192,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
 
-        if ($priceInfo instanceof IPriceInfo) {
+        if ($priceInfo instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo) {
             $priceInfo->getEnvironment()->setCart($this->getCart());
             $priceInfo->getEnvironment()->setCartItem($this);
         }

@@ -302,7 +302,10 @@ class Tool
     private static function resolveRequest(Request $request = null)
     {
         if (null === $request) {
-            $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+            // do an extra check for the container as we might be in a state where no container is set yet
+            if (\Pimcore::hasContainer()) {
+                $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+            }
         }
 
         return $request;

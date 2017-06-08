@@ -453,12 +453,14 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
     public function enrichFieldDefinition($context = [])
     {
-        if ($this->getOptionsProviderClass()) {
-            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $context['fieldname'] = $this->getName();
-                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
-                $this->setOptions($options);
-            }
+
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
+                Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT);
+        if ($optionsProvider) {
+            $context['fieldname'] = $this->getName();
+
+            $options = $optionsProvider->{'getOptions'}($context, $this);
+            $this->setOptions($options);
         }
 
         return $this;
@@ -470,24 +472,22 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        if ($this->getOptionsProviderClass()) {
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT);
+
+        if ($optionsProvider) {
+
             $context['object'] = $object;
             if ($object) {
                 $context['class'] = $object->getClass();
             }
             $context['fieldname'] = $this->getName();
 
-            if (method_exists($this->getOptionsProviderClass(), 'getOptions')) {
-                $options = call_user_func($this->getOptionsProviderClass().'::getOptions', $context, $this);
-                $this->setOptions($options);
-            }
+            $options = $optionsProvider->{'getOptions'}($context, $this);
+            $this->setOptions($options);
 
-            if (method_exists($this->getOptionsProviderClass(), 'hasStaticOptions')) {
-                $hasStaticOptions = call_user_func($this->getOptionsProviderClass().'::hasStaticOptions', $context, $this);
-                $this->dynamicOptions = !$hasStaticOptions;
-            } else {
-                $this->dynamicOptions = true;
-            }
+            $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
+            $this->dynamicOptions = !$hasStaticOptions;
 
             return $this;
         }

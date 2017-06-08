@@ -17,7 +17,7 @@ By default the system always uses one heavy-weight tenant (= `DefaultMysql`), bu
 
 
 ### Configuration of Assortment Tenants
-For setting up a Assortment Tenant, following steps are necessary: 
+For setting up an Assortment Tenant, following steps are necessary: 
 - **Implementation of a Tenant Config:**
 The Tenant Config class is the central configuration of an assortment tenant, defines which products are available for 
 the tenant and provides the connection to the used *Product Index* implementation. It needs to implement 
@@ -96,3 +96,63 @@ The Index Service provides the corresponding Product List implementation based o
   $productlist = $factory->getIndexService()->getProductListForCurrentTenant();
   //doing stuff with product list
 ```
+
+
+### Implementing an Assortment Subtenant
+Subtenants are light-weight tenants, which share the same Product Index with the same attributes as their parent 
+assortment tenant.
+The mapping which product is assigned to with subtenant is done with an additional mapping table. The necessary 
+joins and conditions are implemented within additional methods within 
+[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IndexService/Config/IMysqlConfig.php): 
+ 
+```php
+    /**
+     * return table name of product index tenant relations for subtenants
+     *
+     * @return string
+     */
+    public function getTenantRelationTablename();
+
+    /**
+     * return join statement in case of subtenants
+     *
+     * @return string
+     */
+    public function getJoins();
+
+    /**
+     * returns additional condition in case of subtenants
+     *
+     * @return string
+     */
+    public function getCondition();
+``` 
+
+In order to populate the additional mapping data, also following methods have to be implemented: 
+
+```php
+    /**
+     * in case of subtenants returns a data structure containing all sub tenants
+     *
+     * @param IIndexable $object
+     * @param null $subObjectId
+     *
+     * @return mixed $subTenantData
+     */
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
+
+    /**
+     * populates index for tenant relations based on given data
+     *
+     * @param mixed $objectId
+     * @param mixed $subTenantData
+     * @param mixed $subObjectId
+     *
+     * @return void
+     */
+    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null);
+```
+
+For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php).
+
+> Note: This is currently only implemented for mysql based Product Index Implementations. 

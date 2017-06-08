@@ -178,15 +178,6 @@ class Update
                 'updateScript' => json_encode(isset($updateScripts[$revision]['update']))
             ];
 
-            if (in_array($revision, $composerUpdateRevisions)) {
-                $updateJobs[] = [
-                    'type' => 'composer-update'
-                ];
-                $updateJobs[] = [
-                    'type' => 'composer-invalidate-classmaps'
-                ];
-            }
-
             if ($updateScripts[$revision]['postupdate']) {
                 $updateJobs[] = $updateScripts[$revision]['postupdate'];
             }
@@ -201,7 +192,7 @@ class Update
         ];
 
         $updateJobs[] = [
-            'type' => 'composer-dump-autoload'
+            'type' => 'composer-update'
         ];
 
         return [
@@ -307,6 +298,10 @@ class Update
                         copy($srcFile, $destFile);
                     }
                 }
+
+                // set the timestamp 10s to the future, to ensure the container refreshes if there's any relevant change
+                touch($destFile, time()+10);
+
             } elseif ($file['action'] == 'delete') {
                 if (!self::$dryRun) {
                     if (file_exists(PIMCORE_PROJECT_ROOT . $file['path'])) {
@@ -388,8 +383,13 @@ class Update
             $newJson = \Pimcore\Helper\JsonFormatter::format($newJson, true, true);
             File::put($oldFile, $newJson);
         }
+
+        self::composerUpdate(['--no-scripts']);
     }
 
+    /**
+     *
+     */
     public static function clearOPCaches()
     {
         if (function_exists('opcache_reset')) {
@@ -397,6 +397,9 @@ class Update
         }
     }
 
+    /**
+     *
+     */
     public static function cleanup()
     {
 
@@ -406,6 +409,38 @@ class Update
 
         //delete tmp data
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update', true);
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    public static function composerUpdate($options = [])
+    {
+        $composerLock = PIMCORE_PROJECT_ROOT . '/composer.lock';
+        if (file_exists($composerLock)) {
+            @unlink($composerLock);
+        }
+
+        $outputMessage = '';
+
+        try {
+            $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
+
+            $composerOptions = array_merge(["-n"], $options);
+
+            $process = new Process($composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_PROJECT_ROOT);
+            $process->setTimeout(900);
+            $process->mustRun();
+        } catch (\Exception $e) {
+            Logger::error($e);
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update</pre> Please run it manually on commandline!";
+        }
+
+        return [
+            'message' => $outputMessage,
+            'success' => true
+        ];
     }
 
     /**
@@ -434,31 +469,6 @@ class Update
     /**
      * @return array
      */
-    public static function composerUpdate()
-    {
-        $composerLock = PIMCORE_PROJECT_ROOT . '/composer.lock';
-        if (file_exists($composerLock)) {
-            @unlink($composerLock);
-        }
-
-        $outputMessage = '';
-
-        try {
-            $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
-            $process = new Process($composerPath . ' update -d ' . PIMCORE_PROJECT_ROOT);
-            $process->setTimeout(900);
-            $process->mustRun();
-        } catch (\Exception $e) {
-            Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update</pre> Please run it manually on commandline!";
-        }
-
-        return [
-            'message' => $outputMessage,
-            'success' => true
-        ];
-    }
-
     public static function invalidateComposerAutoloadClassmap()
     {
 
@@ -490,6 +500,9 @@ class Update
         return (bool) \Pimcore\Tool\Console::getExecutable('composer');
     }
 
+    /**
+     *
+     */
     public static function updateMaxmindDb()
     {
         $downloadUrl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz';

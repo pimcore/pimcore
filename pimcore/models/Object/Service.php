@@ -937,7 +937,7 @@ class Service extends Model\Element\Service
         $list = new ClassDefinition\CustomLayout\Listing();
         $list->setOrderKey('name');
         $condition = 'classId = ' . $list->quote($classId);
-        if (count($layoutPermissions) && !$isMasterAllowed) {
+        if (count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
             $condition .= ' AND id IN (' . implode(',', $layoutIds) . ')';
         }

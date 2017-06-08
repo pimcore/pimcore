@@ -8,37 +8,24 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
+ * @category   Pimcore
+ * @package    Object
+ *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore;
+namespace Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider;
 
-class Version
+
+interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
-    /**
-     * @var string
-     */
-    public static $version = '5.0.0-BETA1';
 
     /**
-     * @var int
+     * @param $context array
+     * @param $fieldDefinition Data
+     * @return mixed
      */
-    public static $revision = 63;
+    public function getDefaultValue($context, $fieldDefinition);
 
-    /**
-     * @return string
-     */
-    public static function getVersion()
-    {
-        return self::$version;
-    }
-
-    /**
-     * @return int
-     */
-    public static function getRevision()
-    {
-        return self::$revision;
-    }
 }

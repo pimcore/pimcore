@@ -48,11 +48,13 @@ $(document).ready(function ($) {
      */
     documentBody.on('click', '.modal .js-loading', function (e) {
         var text = $(this).data('msg');
-        $(this).parent().html(
+        $(this).parent().children().hide();
+        $('.modal-footer').append(
             "<div class='text-left row'> <div class='col col-sm-12'> <span>"
             + text +
             "</span>&nbsp;<img class='pull-right' src='/pimcore/static6/img/video-loading.gif' alt='loading' style='margin-right: 40px;'><div><div>"
         );
+        return true;
     });
 
 });

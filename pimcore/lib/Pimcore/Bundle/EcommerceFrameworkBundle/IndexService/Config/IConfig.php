@@ -89,7 +89,7 @@ interface IConfig
     public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
 
     /**
-     * populates index for tenant relations based on gived data
+     * populates index for tenant relations based on given data
      *
      * @param mixed $objectId
      * @param mixed $subTenantData
