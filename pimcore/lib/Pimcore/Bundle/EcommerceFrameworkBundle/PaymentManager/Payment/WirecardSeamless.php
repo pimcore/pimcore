@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
 use Pimcore\Logger;
+use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
 
 class WirecardSeamless implements IPayment
@@ -176,26 +177,38 @@ class WirecardSeamless implements IPayment
             // 'duplicateRequestCheck' => 'yes'
         ];
 
+        if ($this->settings->customerStatement) {
+            $fields['customerStatement'] = $this->settings->customerStatement;
+        }
+
         if ($config['orderReference']) {
             $fields['orderReference'] = $config['orderReference'];
         }
+
 
         if ($paymentType == 'INVOICE') {
             $fields = $this->addPayolutionRequestFields($fields, $config['paymentInfo']->getObject(), $config);
         }
 
+        if ($paymentType == 'PAYPAL' && $this->settings->paypalActivateItemLevel) {
+            $fields = $this->addPaypalFields($fields, $config['paymentInfo']->getObject(), $config);
+        }
+
         list($requestFingerprint, $requestFingerprintOrder) = $this->generateFingerprint($fields, true);
 
+
         $postFields = array_merge($fields, [
-            'requestFingerprint' => $requestFingerprint,
-            'requestFingerprintOrder' => $requestFingerprintOrder,
+            'requestFingerprint'        => $requestFingerprint,
+            'requestFingerprintOrder'   => $requestFingerprintOrder,
         ]);
+
 
         $result = $this->serverToServerRequest($this->URL_FRONTEND_INIT, $postFields);
 
         $redirectURL = $result['redirectUrl'];
 
         if (!$redirectURL) {
+
             if (PIMCORE_DEBUG) {
                 Logger::error('seamless result: ' . var_export($result, true));
             }
@@ -228,6 +241,67 @@ class WirecardSeamless implements IPayment
             'consumerShippingZipCode' => $order->getDeliveryZip(),
         ]);
 
+        return $fields;
+    }
+
+    /**
+     * This method adds additional fields to Wirecard Seamless, so that order items
+     * can be transmitted and visualized in Paypal (during the payment process and in the Paypal invoice email).
+     * @param $fields
+     * @param \Pimcore\Model\Object\OnlineShopOrder $order
+     * @param $config
+     * @return array
+     */
+    protected function addPaypalFields($fields, \Pimcore\Model\Object\OnlineShopOrder $order, $config)
+    {
+        $priceCheckSum = 0.0;
+        $priceCheckSumNet = 0.0;
+        $iCounter = 1;
+
+        foreach ($order->getItems() as $i => $item) {
+            $grossPrice = round($item->getTotalPrice() / $item->getAmount(),2) ;
+            $netPrice = round($item->getTotalNetPrice() / $item->getAmount(),2);
+            $taxRate = round((($grossPrice / $netPrice) - 1) * 100, 2);
+
+            $fields = array_merge($fields,[
+                sprintf("basketItem%dArticleNumber",$iCounter) => $item->getProductNumber(),
+                sprintf("basketItem%dName",$iCounter)          => $item->getProductName(),
+                sprintf("basketItem%dDescription",$iCounter) =>  $item->getProductName(),
+                sprintf("basketItem%dQuantity",$iCounter) => $item->getAmount(),
+                sprintf("basketItem%dUnitNetAmount",$iCounter) => $netPrice,
+                sprintf("basketItem%dUnitTaxRate",$iCounter) => $taxRate,
+                sprintf("basketItem%dUnitGrossAmount",$iCounter) => $grossPrice,
+                //not supported, must be implemented project-specifically.
+                //sprintf("basketItem%dImageUrl",$iCounter)      => $mainDomain.$product->getMainImageUrlForExportWithoutHost(),
+            ]);
+
+            $iCounter++;
+            $priceCheckSum+= $grossPrice*$item->getAmount();
+            $priceCheckSumNet+= $netPrice*$item->getAmount();
+        }
+
+        $priceModifications = $order->getPriceModifications();
+        foreach ($priceModifications as $modification) {
+            /** @var $modification OrderPriceModifications */
+            $net = $modification->getNetAmount();
+            $amount = $modification->getAmount();
+            $taxRate = round((($amount / $net) - 1) * 100, 2);
+            $name = $modification->getName(); //TODO translation?
+
+            $fields = array_merge($fields,[
+                sprintf("basketItem%dArticleNumber",$iCounter) => $name,
+                sprintf("basketItem%dName",$iCounter)          => $name,
+                sprintf("basketItem%dDescription",$iCounter) => $name,
+                sprintf("basketItem%dQuantity",$iCounter) => 1,
+                sprintf("basketItem%dUnitNetAmount",$iCounter) => $net,
+                sprintf("basketItem%dUnitTaxRate",$iCounter) => $taxRate,
+                sprintf("basketItem%dUnitGrossAmount",$iCounter) => $amount,
+            ]);
+            $priceCheckSum+= $amount;
+            $priceCheckSumNet+= $net;
+            $iCounter++;
+        }
+        $fields["basketItems"] = $iCounter - 1;
         return $fields;
     }
 
@@ -272,8 +346,8 @@ class WirecardSeamless implements IPayment
         Logger::debug('wirecard seamless response' . var_export($response, true));
 
         // check required fields
-        $required = ['responseFingerprintOrder' => null, 'responseFingerprint' => null
-        ];
+        $required = ['responseFingerprintOrder' => null, 'responseFingerprint' => null];
+
 
         if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
             $status = new Status(
@@ -326,10 +400,7 @@ class WirecardSeamless implements IPayment
         }
 
         // computes the fingerprint from the fingerprint string
-        $fingerprint = hash('sha512', $fingerprintString);
-
-        Logger::debug('#wirecard fingerprint: ' . $fingerprintString);
-        Logger::debug('#wirecard response fingerprint: ' . $response['responseFingerprint']);
+        $fingerprint = $this->calculateFingerprint($fingerprintString,$this->settings->secret);
 
         if (!((strcmp($fingerprint, $response['responseFingerprint']) == 0)
             && ($mandatoryFingerPrintFields == 3)
@@ -501,9 +572,9 @@ class WirecardSeamless implements IPayment
         for ($i = 0; $i < func_num_args(); $i++) {
             $seed .= func_get_arg($i);
         }
-
-        return hash('sha512', $seed);
+        return $this->calculateFingerprint($seed);
     }
+
 
     /**
      * @param $url
@@ -563,6 +634,21 @@ class WirecardSeamless implements IPayment
         return str_replace(self::ENCODED_ORDERIDENT_DELIMITER, '~', $orderIdent);
     }
 
+    /**
+     * Calculate fingerprint based on algorithm in settings.
+     */
+    protected function calculateFingerprint($requestFingerprintSeed) {
+        $secret = $this->settings->secret;
+        if ($this->settings->hashAlgorithm != 'hmac_sha512') {
+            $requestFingerprint = hash("sha512", $requestFingerprintSeed);
+            \Logger::debug('#wirecard generateFingerprint: ' . $requestFingerprintSeed);
+        } else {
+            $requestFingerprint= hash_hmac('sha512',$requestFingerprintSeed, $secret);
+            \Logger::debug('#wirecard generateFingerprint (hmac): '.$requestFingerprintSeed);
+        }
+        return $requestFingerprint;
+    }
+
     protected function generateFingerprint($fields, $withOrder = false, $ignoreSecret = false)
     {
         $requestFingerprintSeed = '';
@@ -583,8 +669,7 @@ class WirecardSeamless implements IPayment
             $requestFingerprintSeed .= $requestFingerprintOrder;
         }
 
-        $requestFingerprint = hash('sha512', $requestFingerprintSeed);
-
+        $requestFingerprint = $this->calculateFingerprint($requestFingerprintSeed);
         if ($withOrder) {
             return [$requestFingerprint, $requestFingerprintOrder];
         }
