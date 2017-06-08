@@ -39,7 +39,7 @@ and may be extended:
 Each tenant has to be configured within `EcommerceFrameworkConfig.php` by defining the tenant config class and index 
 attributes. Depending on the *Product Index* implementation, additional configuration may be necessary. The configuration 
 also can be outsourced into an additional configuration file. For more information and samples see the 
-[Sample EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L472). 
+[Sample EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L472). 
 
 
 ### Setting current Assortment Tenant for Frontend

@@ -107,15 +107,15 @@ class Installer extends AbstractInstaller
      * @var array - contains all classes that need to be created
      */
     private $classes = [
-        'FilterDefinition' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_FilterDefinition_export.json',
-        'OnlineShopOrderItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopOrderItem_export.json',
-        'OnlineShopVoucherSeries' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopVoucherSeries_export.json',
-        'OnlineShopVoucherToken' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopVoucherToken_export.json',
-        'OnlineShopOrder' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopOrder_export.json',
-        'OfferToolCustomProduct' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OfferToolCustomProduct_export.json',
-        'OfferToolOfferItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OfferToolOfferItem_export.json',
-        'OfferToolOffer' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OfferToolOffer_export.json',
-        'OnlineShopTaxClass' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/class_source/class_OnlineShopTaxClass_export.json'
+        'FilterDefinition' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_FilterDefinition_export.json',
+        'OnlineShopOrderItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopOrderItem_export.json',
+        'OnlineShopVoucherSeries' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopVoucherSeries_export.json',
+        'OnlineShopVoucherToken' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopVoucherToken_export.json',
+        'OnlineShopOrder' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopOrder_export.json',
+        'OfferToolCustomProduct' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OfferToolCustomProduct_export.json',
+        'OfferToolOfferItem' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OfferToolOfferItem_export.json',
+        'OfferToolOffer' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OfferToolOffer_export.json',
+        'OnlineShopTaxClass' => PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/class_source/class_OnlineShopTaxClass_export.json'
     ];
 
     /**
@@ -133,7 +133,7 @@ class Installer extends AbstractInstaller
     {
         $fieldCollections = [];
 
-        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/fieldcollection_sources');
+        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/fieldcollection_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
                 preg_match('/_(.*)_/', $filename, $matches);
@@ -152,7 +152,7 @@ class Installer extends AbstractInstaller
     {
         $objectBricks = [];
 
-        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/objectbrick_sources');
+        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/objectbrick_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
                 preg_match('/_(.*)_/', $filename, $matches);
@@ -295,7 +295,7 @@ class Installer extends AbstractInstaller
                 $fieldCollection->setKey($key);
             }
 
-            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/fieldcollection_sources/' . $filename);
+            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/fieldcollection_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
             if (!$success) {
                 $this->logger->error('Could not import FieldCollection "{name}".', [
@@ -351,7 +351,7 @@ class Installer extends AbstractInstaller
                 $brick->setKey($key);
             }
 
-            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/objectbrick_sources/' . $filename);
+            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/objectbrick_sources/' . $filename);
             $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
             if (!$success) {
                 $this->logger->error('Could not import ObjectBrick "{name}".', [
@@ -379,7 +379,7 @@ class Installer extends AbstractInstaller
     {
         //copy config file
         if (!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php')) {
-            copy(__DIR__ . '/../install/EcommerceFrameworkConfig_sample.php', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php');
+            copy(__DIR__ . '/../Resources/install/EcommerceFrameworkConfig_sample.php', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php');
         }
     }
 
@@ -390,7 +390,7 @@ class Installer extends AbstractInstaller
      */
     private function importTranslations()
     {
-        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(__DIR__ . '/../install/admin-translations/init.csv', true);
+        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(__DIR__ . '/../Resources/install/admin-translations/init.csv', true);
     }
 
     /**

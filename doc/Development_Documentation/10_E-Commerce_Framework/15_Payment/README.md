@@ -16,7 +16,7 @@ For more information about integrating Payment into checkout processes see
 
 ## Configuration
 
-Configuration of Payment Manager takes place in [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L127-L127). 
+Configuration of Payment Manager takes place in [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L127-L127). 
 
 ```php
 'paymentmanager' => [

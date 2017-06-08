@@ -86,7 +86,7 @@ $grandTotal = $cart->getPriceCalculator()->getGrandTotal();
 
 ## Configuration of Cart Manager
 
-The configuration takes place in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L13-L13): 
+The configuration takes place in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L13-L13): 
 ```php
  /* general settings for cart manager */
  'cartmanager' => [
@@ -149,7 +149,7 @@ $environment->save();
 ```
 
 Once set, the cart manager uses all specific settings of the currently active checkout tenant which are configured
-in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L41-L41)
+in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L41-L41)
 as follows: 
 
 ```php

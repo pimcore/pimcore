@@ -12,7 +12,7 @@ Following methods have to be implemented:
 
 
 ## Configuration of Checkout Steps: 
-See [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/install/EcommerceFrameworkConfig_sample.php#L86-L86)
+See [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L86-L86)
 for checkout step configuration.  
 
 
