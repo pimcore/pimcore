@@ -139,18 +139,13 @@ class HeadTitle extends AbstractHelper
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        $items = [];
-
-        foreach ($this as $item) {
-            $items[] = $item;
-        }
-
-        $separator = $this->getSeparator();
         $output = '';
         if (($prefix = $this->getPrefix())) {
             $output .= $prefix;
         }
-        $output .= implode($separator, $items);
+
+        $output .= $this->getRawContent();
+
         if (($postfix = $this->getPostfix())) {
             $output .= $postfix;
         }
@@ -158,5 +153,18 @@ class HeadTitle extends AbstractHelper
         $output = ($this->_autoEscape) ? $this->_escape($output) : $output;
 
         return $indent . '<title>' . $output . '</title>';
+    }
+
+    /**
+     * Get container content without indentation, prefix or postfix
+     *
+     * @return string
+     */
+    public function getRawContent()
+    {
+        return implode(
+            $this->getContainer()->getSeparator(),
+            $this->getContainer()->getArrayCopy()
+        );
     }
 }
