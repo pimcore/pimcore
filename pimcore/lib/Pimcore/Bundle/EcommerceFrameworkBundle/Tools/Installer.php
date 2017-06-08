@@ -16,7 +16,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
+use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\Object\ClassDefinition\Service;
+use Pimcore\Model\Object\Fieldcollection;
+use Pimcore\Model\Object\Objectbrick;
+use Pimcore\Model\Translation\Admin;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class Installer extends AbstractInstaller
 {
@@ -24,6 +31,11 @@ class Installer extends AbstractInstaller
      * @var LoggerInterface
      */
     private $logger;
+
+    /**
+     * @var string
+     */
+    private $installSourcesPath;
 
     /**
      * @var array - contains all tables that need to be created
@@ -123,45 +135,8 @@ class Installer extends AbstractInstaller
      */
     public function __construct(LoggerInterface $logger)
     {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @return array - contains all fieldcollections that need to be created
-     */
-    private function getFieldCollections()
-    {
-        $fieldCollections = [];
-
-        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/fieldcollection_sources');
-        foreach ($sourceFiles as $filename) {
-            if (!is_dir($filename)) {
-                preg_match('/_(.*)_/', $filename, $matches);
-                $key = $matches[1];
-                $fieldCollections[$key] = $filename;
-            }
-        }
-
-        return $fieldCollections;
-    }
-
-    /**
-     * @return array - contains all objectbricks that need to be created
-     */
-    private function getObjectBricks()
-    {
-        $objectBricks = [];
-
-        $sourceFiles = scandir(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/objectbrick_sources');
-        foreach ($sourceFiles as $filename) {
-            if (!is_dir($filename)) {
-                preg_match('/_(.*)_/', $filename, $matches);
-                $key = $matches[1];
-                $fieldCollections[$key] = $filename;
-            }
-        }
-
-        return $objectBricks;
+        $this->logger             = $logger;
+        $this->installSourcesPath = __DIR__ . '/../Resources/install';
     }
 
     /**
@@ -195,7 +170,6 @@ class Installer extends AbstractInstaller
     {
         try {
             $this->checkCanBeInstalled();
-
             return true;
         } catch (\Exception $e) {
             $this->logger->error('Ecommerce Framework cannot be installed because: {exception}', [
@@ -234,7 +208,7 @@ class Installer extends AbstractInstaller
         //check classes
         $existingClasses = [];
         foreach ($this->classes as $name => $file) {
-            $class = \Pimcore\Model\Object\ClassDefinition::getByName($name);
+            $class = ClassDefinition::getByName($name);
             if (!empty($class)) {
                 $existingClasses[] = $name;
             }
@@ -247,7 +221,7 @@ class Installer extends AbstractInstaller
         $existingFieldCollections = [];
         foreach ($this->getFieldCollections() as $key => $file) {
             try {
-                $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
+                $fieldCollection = Fieldcollection\Definition::getByKey($key);
             } catch (\Exception $e) {
                 //nothing to do
             }
@@ -264,7 +238,7 @@ class Installer extends AbstractInstaller
         $existingObjectBricks = [];
         foreach ($this->getObjectBricks() as $key => $file) {
             try {
-                $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
+                $brick = Objectbrick\Definition::getByKey($key);
             } catch (\Exception $e) {
                 //nothing to do
             }
@@ -279,24 +253,75 @@ class Installer extends AbstractInstaller
     }
 
     /**
+     * @return array - contains all fieldcollections that need to be created
+     */
+    private function getFieldCollections(): array
+    {
+        return $this->findInstallFiles(
+            $this->installSourcesPath . '/fieldcollection_sources',
+            '/^fieldcollection_(.*)_export\.json$/'
+        );
+    }
+
+    /**
+     * @return array - contains all objectbricks that need to be created
+     */
+    private function getObjectBricks(): array
+    {
+        return $this->findInstallFiles(
+            $this->installSourcesPath . '/objectbrick_sources',
+            '/^objectbrick_(.*)_export\.json$/'
+        );
+    }
+
+    /**
+     * Finds objectbrick/fieldcollection sources by path returns a result list
+     * indexed by element name.
+     *
+     * @param string $directory
+     * @param string $pattern
+     *
+     * @return array
+     */
+    private function findInstallFiles(string $directory, string $pattern): array
+    {
+        $finder = new Finder();
+        $finder
+            ->files()
+            ->in($directory)
+            ->name($pattern);
+
+        $results = [];
+        foreach ($finder as $file) {
+            if (preg_match($pattern, $file->getFilename(), $matches)) {
+                $key           = $matches[1];
+                $results[$key] = $file->getRealPath();
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * installs all field collections
      */
     private function createFieldCollections()
     {
         $fieldCollections = $this->getFieldCollections();
-        foreach ($fieldCollections as $key => $filename) {
+        foreach ($fieldCollections as $key => $path) {
             try {
-                $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($key);
+                $fieldCollection = Fieldcollection\Definition::getByKey($key);
                 if ($fieldCollection) {
                     throw new \Exception("Fieldcollection $key already exists");
                 }
             } catch (\Exception $e) {
-                $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
+                $fieldCollection = new Fieldcollection\Definition();
                 $fieldCollection->setKey($key);
             }
 
-            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/fieldcollection_sources/' . $filename);
-            $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
+            $data    = file_get_contents($path);
+            $success = Service::importFieldCollectionFromJson($fieldCollection, $data);
+
             if (!$success) {
                 $this->logger->error('Could not import FieldCollection "{name}".', [
                     'name' => $key
@@ -312,17 +337,18 @@ class Installer extends AbstractInstaller
      */
     private function createClasses()
     {
-        foreach ($this->classes as $classname => $filepath) {
-            $class = \Pimcore\Model\Object\ClassDefinition::getByName($classname);
+        foreach ($this->classes as $classname => $path) {
+            $class = ClassDefinition::getByName($classname);
             if (!$class) {
-                $class = new \Pimcore\Model\Object\ClassDefinition();
+                $class = new ClassDefinition();
                 $class->setName($classname);
             } else {
                 throw new \Exception("Class $classname already exists, ");
             }
-            $json = file_get_contents($filepath);
 
-            $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
+            $data    = file_get_contents($path);
+            $success = Service::importClassDefinitionFromJson($class, $data);
+
             if (!$success) {
                 $this->logger->error('Could not import Class "{name}".', [
                     'name' => $classname
@@ -337,22 +363,20 @@ class Installer extends AbstractInstaller
     private function createObjectBricks()
     {
         $bricks = $this->getObjectBricks();
-        foreach ($bricks as $key => $filename) {
-            preg_match('/_(.*)_/', $filename, $matches);
-            $key = $matches[1];
-
+        foreach ($bricks as $key => $path) {
             try {
-                $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($key);
+                $brick = Objectbrick\Definition::getByKey($key);
                 if ($brick) {
                     throw new \Exception("Brick $key already exists");
                 }
             } catch (\Exception $e) {
-                $brick = new \Pimcore\Model\Object\Objectbrick\Definition();
+                $brick = new Objectbrick\Definition();
                 $brick->setKey($key);
             }
 
-            $data = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/objectbrick_sources/' . $filename);
-            $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, $data);
+            $data    = file_get_contents($path);
+            $success = Service::importObjectBrickFromJson($brick, $data);
+
             if (!$success) {
                 $this->logger->error('Could not import ObjectBrick "{name}".', [
                     'name' => $key
@@ -377,9 +401,15 @@ class Installer extends AbstractInstaller
      */
     private function copyConfigFile()
     {
-        //copy config file
-        if (!is_file(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php')) {
-            copy(__DIR__ . '/../Resources/install/EcommerceFrameworkConfig_sample.php', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php');
+        $target = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php';
+        $fs     = new Filesystem();
+
+        // copy config file
+        if (!$fs->exists($target)) {
+            $fs->copy(
+                $this->installSourcesPath . '/EcommerceFrameworkConfig_sample.php',
+                $target
+            );
         }
     }
 
@@ -390,7 +420,7 @@ class Installer extends AbstractInstaller
      */
     private function importTranslations()
     {
-        \Pimcore\Model\Translation\Admin::importTranslationsFromFile(__DIR__ . '/../Resources/install/admin-translations/init.csv', true);
+        Admin::importTranslationsFromFile($this->installSourcesPath . '/admin-translations/init.csv', true);
     }
 
     /**
@@ -465,6 +495,7 @@ class Installer extends AbstractInstaller
                 $result = \Pimcore\Db::get()->query('DESCRIBE ecommerceframework_cartitem')->fetchAll();
             }
         } catch (\Exception $e) {
+            $this->logger->error($e);
         }
 
         return !empty($result);
