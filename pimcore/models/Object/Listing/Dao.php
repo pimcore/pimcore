@@ -111,10 +111,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(' . $countIdentifier . ')')]);
 
         try {
-            if($query->getPart(\Zend_Db_Select::GROUP)){
+            if ($query->getPart(\Zend_Db_Select::GROUP)) {
                 $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             // do nothing
         }
 

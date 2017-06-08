@@ -1101,8 +1101,8 @@ class Service extends Model\Element\Service
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
 
-            foreach(['Localizedfields','Block'] as $dataType){
-                $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(),'\Pimcore\Model\Object\ClassDefinition\Data\\' . $dataType, [], false);
+            foreach (['Localizedfields', 'Block'] as $dataType) {
+                $targetList = self::extractFieldDefinitions($class->getLayoutDefinitions(), '\Pimcore\Model\Object\ClassDefinition\Data\\' . $dataType, [], false);
                 $masterDefinition = array_merge($masterDefinition, $targetList);
             }
 
