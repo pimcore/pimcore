@@ -34,6 +34,11 @@ class MaintenanceCommand extends AbstractCommand
                 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, versioncompress, redirectcleanup, cleanupbrokenviews, usagestatistics, downloadmaxminddb, tmpstorecleanup, imageoptimize and plugin classes if you want to call a plugin maintenance)'
             )
             ->addOption(
+                'excludedJobs', 'ej',
+                InputOption::VALUE_OPTIONAL,
+                'exclude specific job(s), use "," (comma) to exclude more than one job (valid options: '.$validOptions.')'
+            )
+            ->addOption(
                 'force', 'f',
                 InputOption::VALUE_NONE,
                 "run the jobs, regardless if they're locked or not"
@@ -51,9 +56,15 @@ class MaintenanceCommand extends AbstractCommand
             $validJobs = explode(",", $input->getOption("job"));
         }
 
+        $excludedJobs =[];
+        if ($input->getOption('excludedJobs')) {
+            $excludedJobs = explode(",", $input->getOption("excludedJobs"));
+        }
+
         // create manager
         $manager = Schedule\Manager\Factory::getManager("maintenance.pid");
         $manager->setValidJobs($validJobs);
+        $manager->setExcludedJobs($excludedJobs);
         $manager->setForce((bool) $input->getOption("force"));
 
         // register scheduled tasks
