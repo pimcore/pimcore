@@ -55,6 +55,11 @@ class MaintenanceCommand extends AbstractCommand
         if ($input->getOption("job")) {
             $validJobs = explode(",", $input->getOption("job"));
         }
+        
+        $excludedJobs =[];
+        if ($input->getOption('excludedJobs')) {
+            $excludedJobs = explode(",", $input->getOption("job"));
+        }
 
         $excludedJobs =[];
         if ($input->getOption('excludedJobs')) {
