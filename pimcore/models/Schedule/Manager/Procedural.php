@@ -33,6 +33,11 @@ class Procedural
     protected $validJobs = [];
 
     /**
+     * @var array
+     */
+    protected $excludedJobs = [];
+    
+    /**
      * @var
      */
     protected $_pidFileName;
@@ -64,6 +69,19 @@ class Procedural
     }
 
     /**
+     * @param $excludedJobs
+     * @return $this
+     */
+    public function setExcludedJobs($excludedJobs)
+    {
+        if (is_array($excludedJobs)) {
+            $this->excludedJobs = $excludedJobs;
+        }
+
+        return $this;
+    }
+    
+    /**
      * @param Model\Schedule\Maintenance\Job $job
      * @param bool $force
      * @return bool
@@ -72,7 +90,11 @@ class Procedural
     {
         if (!empty($this->validJobs) and !in_array($job->getId(), $this->validJobs)) {
             Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+            return false;
+        }
 
+        if (!empty($this->excludedJobs) and in_array($job->getId(), $this->excludedJobs)) {
+            Logger::info("Skipped job with ID: " . $job->getId() . " because it has been excluded.");
             return false;
         }
 
