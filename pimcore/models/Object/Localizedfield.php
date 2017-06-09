@@ -52,6 +52,10 @@ class Localizedfield extends Model\AbstractModel
     /** @var mixed */
     public $context;
 
+    /** @var int */
+    protected $objectId;
+
+
     /**
      * @var bool
      */
@@ -148,7 +152,8 @@ class Localizedfield extends Model\AbstractModel
             throw new \Exception('must be instance of object concrete');
         }
         $this->object = $object;
-        //$this->setClass($this->getObject()->getClass());
+        $this->objectId = $object ? $object->getId() : null;
+
         return $this;
     }
 
@@ -157,6 +162,10 @@ class Localizedfield extends Model\AbstractModel
      */
     public function getObject()
     {
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
+        }
+
         return $this->object;
     }
 
@@ -369,7 +378,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public function __sleep()
     {
-        return ['items', 'context'];
+        return ['items', 'context', 'objectId'];
     }
 
     /**
