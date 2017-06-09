@@ -78,6 +78,7 @@
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/polyfill-apcu": "^1.0",
     "symfony/swiftmailer-bundle": "^2.3.10",
+    "sensio/generator-bundle": "^3.0",
     "symfony/symfony": "3.3.*",
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "twig/twig": "^2.0",
@@ -87,8 +88,7 @@
   },
   "require-dev": {
     "cache/integration-tests": "^0.15.0",
-    "codeception/codeception": "2.2.*",
-    "sensio/generator-bundle": "^3.0"
+    "codeception/codeception": "2.2.*"
   },
   "suggest": {
     "ext-curl": "*",
