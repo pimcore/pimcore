@@ -1054,12 +1054,15 @@ class ClassController extends AdminController implements EventedControllerInterf
             $filteredList = [];
             $classId = $request->get('class_id');
             $fieldname = $request->get('field_name');
+            $classDefinition = Object\ClassDefinition::getById($classId);
+            $className = $classDefinition->getName();
+
             foreach ($list as $type) {
                 /** @var $type Object\Objectbrick\Definition */
                 $clsDefs = $type->getClassDefinitions();
                 if (!empty($clsDefs)) {
                     foreach ($clsDefs as $cd) {
-                        if ($cd['classname'] == $classId && $cd['fieldname'] == $fieldname) {
+                        if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
                             $filteredList[] = $type;
                             continue;
                         }
