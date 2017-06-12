@@ -81,11 +81,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 InputOption::VALUE_REQUIRED,
                 'Run command under given user name (only needed for the render migration strategy)',
                 'admin'
-            )
-            ->addOption(
-                'force', 'f',
-                InputOption::VALUE_NONE,
-                'Do not ask for confirmation'
             );
 
         $this->configureDryRunOption('Do not update editables. Just process and output name mapping');

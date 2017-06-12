@@ -119,10 +119,8 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         $this->initializeAdminMode();
         $this->initializeSession();
 
-        if (!$this->io->getInput()->getOption('force')) {
-            if (!$this->askRunConfirmation()) {
-                throw new NameMappingException('Aborting migration', 0);
-            }
+        if (!$this->askRunConfirmation()) {
+            throw new NameMappingException('Aborting migration', 0);
         }
 
         // register migration subscriber which renders tags through new naming strategy and
