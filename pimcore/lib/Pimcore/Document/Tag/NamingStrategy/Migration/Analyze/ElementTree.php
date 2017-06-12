@@ -22,6 +22,8 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\AbstractElemen
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Areablock;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Block;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditableException;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
 
 final class ElementTree
 {
@@ -209,20 +211,25 @@ final class ElementTree
         /** @var Editable[] $editables */
         $editables = [];
 
+        $errors = [];
         foreach ($parentBlocks as $parentBlock) {
             try {
                 $editables[] = new Editable($name, $this->map[$name], $parentBlock);
-            } catch (\LogicException $e) {
-                // noop - failed to build editable
-                // dump('ERROR: ' . $e->getMessage() . PHP_EOL);
+            } catch (LogicException $e) {
+                // noop - failed to build editable (e.g. because indexes do not match)
+                $errors[] = $e;
             }
         }
 
         if (count($editables) === 0) {
-            throw new \RuntimeException(sprintf(
+            $exception = new BuildEditableException(sprintf(
                 'Failed to build an editable for element "%s"',
                 $name
             ));
+
+            $exception->setErrors($errors);
+
+            throw $exception;
         } elseif (count($editables) > 1) {
             $parentNames = array_map(function (Editable $ed) {
                 return $ed->getParent() ? $ed->getParent()->getName() : null;
@@ -239,12 +246,16 @@ final class ElementTree
                 ]);
             }
 
-            throw new \LogicException(sprintf(
+            $exception = new BuildEditableException(sprintf(
                 'Ambiguous results. Built %d editables for element "%s". Parents: %s',
                 count($editables),
                 $name,
                 json_encode($parentNames)
             ));
+
+            $exception->setErrors($errors);
+
+            throw $exception;
         }
 
         return $editables[0];

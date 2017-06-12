@@ -20,6 +20,7 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element;
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 
 /**
@@ -172,7 +173,7 @@ abstract class AbstractElement
 
         /*
         if (null === $parent->getIndex()) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'The parent element for "%s" has no index. Parent is "%s"',
                 $this->name,
                 $parent->getName()
@@ -185,19 +186,19 @@ abstract class AbstractElement
         $pattern         = ElementTree::buildNameMatchingPattern($parentNames);
 
         if (!preg_match_all($pattern, $this->name, $matches, PREG_SET_ORDER)) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'Failed to match "%s" against pattern "%s"',
                 $this->name, $pattern
             ));
         }
 
         if (count($matches) === 0) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'No matches found for name "%s" and pattern "%s"',
                 $this->name, $pattern
             ));
         } elseif (count($matches) > 1) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'Ambiguous amount of %s matches found for name "%s" and pattern "%s"',
                 count($matches),
                 $this->name, $pattern
@@ -221,7 +222,7 @@ abstract class AbstractElement
             // e.g. indexes resulted in 3_2_1 -> our index is 1 and we expect
             // parent indexes to be [3, 2]
             if ($indexes !== $parentIndexes) {
-                throw new \LogicException(sprintf(
+                throw new LogicException(sprintf(
                     'Parent indexes do not match index hierarchy for block "%s". Indexes: %s, Parent: %s',
                     $this->name,
                     json_encode($indexes),
@@ -231,7 +232,7 @@ abstract class AbstractElement
         }
 
         if (null === $index) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'Nested element "%s" is expected to have an index, but no index was found',
                 $this->name
             ));
@@ -239,7 +240,7 @@ abstract class AbstractElement
 
         /** @var int $index */
         if (!$parent->hasChildIndex($index)) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'Element "%s" has index %d, but parent "%s" does not have this index in its child list',
                 $this->name,
                 $index,
