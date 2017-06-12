@@ -30,6 +30,7 @@ use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class MigrateTagNamingStrategyCommand extends AbstractCommand
 {
@@ -51,6 +52,11 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     private $validMigrationStrategies = [
         'analyze', 'render'
     ];
+
+    /**
+     * @var array
+     */
+    private $updateQueries = [];
 
     /**
      * @inheritDoc
@@ -81,6 +87,11 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 InputOption::VALUE_REQUIRED,
                 'Run command under given user name (only needed for the render migration strategy)',
                 'admin'
+            )
+            ->addOption(
+                'dump-sql', null,
+                InputOption::VALUE_REQUIRED,
+                'Dump SQL queries (pass stdout as value to print the queries)'
             );
 
         $this->configureDryRunOption('Do not update editables. Just process and output name mapping');
@@ -142,11 +153,48 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             return 5;
         }
 
+        $this->dumpQueries();
+
         $this->io->writeln(PHP_EOL . PHP_EOL);
         $this->io->success(sprintf(
             'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" naming strategy and clear the cache.',
             $namingStrategy->getName()
         ));
+    }
+
+    private function dumpQueries()
+    {
+        $dumpOption = $this->input->getOption('dump-sql');
+        if (!$dumpOption) {
+            return;
+        }
+
+        $this->io->writeln('');
+        $this->io->writeln('[SQL] Dumping SQL queries as --dump-sql option was passed');
+
+        if ($dumpOption === 'stdout') {
+            foreach ($this->updateQueries as $query) {
+                $this->io->writeln($query);
+            }
+        } else {
+            $fs       = new Filesystem();
+            $tempfile = $fs->tempnam(sys_get_temp_dir(), 'migrate-sql-');
+
+            $this->io->writeln(sprintf('[SQL] Dumping SQL queries to temp file <comment>%s</comment>', $tempfile));
+            $fs->dumpFile($tempfile, implode(PHP_EOL, $this->updateQueries) . PHP_EOL);
+
+            if (file_exists($dumpOption)) {
+                $this->io->error(sprintf(
+                    '[SQL] Can\'t move temp file to %s as file already exists',
+                    $dumpOption
+                ));
+
+                return;
+            }
+
+            $this->io->writeln(sprintf('[SQL] Moving temp file to <comment>%s</comment>', $dumpOption));
+            $fs->rename($tempfile, $dumpOption);
+        }
     }
 
     /**
@@ -248,18 +296,25 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
      */
     private function processRenames(array $nameMapping)
     {
-        $db = $this->getContainer()->get('database_connection');
+        $db    = $this->getContainer()->get('database_connection');
+        $query = 'UPDATE documents_elements SET name = :newName WHERE documentId = :documentId and name = :oldName';
 
         /** @var Statement $stmt */
         $stmt = null;
         if (!$this->isDryRun()) {
-            $stmt = $db->prepare('UPDATE documents_elements SET name = :newName WHERE documentId = :documentId and name = :oldName');
+            $stmt = $db->prepare($query);
             $db->beginTransaction();
         }
+
+        // sort by document ID
+        ksort($nameMapping);
 
         try {
             foreach ($nameMapping as $documentId => $mapping) {
                 $this->writeSimpleSection(sprintf('Processing document %d', $documentId));
+
+                // sort by old name
+                ksort($mapping);
 
                 foreach ($mapping as $oldName => $newName) {
                     $message = sprintf(
@@ -275,6 +330,16 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                     }
 
                     $this->io->writeln($message);
+
+                    $this->updateQueries[] = str_replace([
+                        ':documentId',
+                        ':oldName',
+                        ':newName',
+                    ], [
+                        $documentId,
+                        sprintf('"%s"', $oldName),
+                        sprintf('"%s"', $newName),
+                    ], $query) . ';';
 
                     if ($this->isDryRun()) {
                         continue;
