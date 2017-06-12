@@ -194,8 +194,7 @@ final class ElementTree
     {
         $parentBlocks = [];
         foreach ($blocks as $block) {
-            $matchString = $block->getEditableMatchString();
-            $pattern     = '/^(?<realName>.+)' . self::escapeRegexString($matchString) . '(?<indexes>[\d_]*)$/';
+            $pattern = self::buildNameMatchingPattern($block->getEditableMatchString());
 
             if (preg_match($pattern, $name, $matches)) {
                 $parentBlocks[] = $block;
@@ -321,7 +320,7 @@ final class ElementTree
     {
         $parentCandidates = [];
         foreach ($blockNames as $blockName) {
-            $pattern = '/^(?<realName>.+)' . self::escapeRegexString($blockName) . '(?<indexes>[\d_]*)$/';
+            $pattern = self::buildNameMatchingPattern($blockName);
 
             foreach ($blockNames as $matchingBlockName) {
                 if ($blockName === $matchingBlockName) {
@@ -477,6 +476,11 @@ final class ElementTree
     private function isBlock(string $type): bool
     {
         return in_array($type, array_keys($this->blockTypes));
+    }
+
+    public static function buildNameMatchingPattern(string $identifier): string
+    {
+        return '/^(?<realName>.+)' . self::escapeRegexString($identifier) . '(?<indexes>[\d_]*)$/';
     }
 
     public static function escapeRegexString(string $string): string

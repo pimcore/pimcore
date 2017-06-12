@@ -182,7 +182,7 @@ abstract class AbstractElement
 
         $parentNameParts = array_reverse($parentNameParts);
         $parentNames     = implode('_', array_reverse($parentNameParts));
-        $pattern         = '/^(?<realName>.+)' . ElementTree::escapeRegexString($parentNames) . '(?<indexes>[\d_]*)$/';
+        $pattern         = ElementTree::buildNameMatchingPattern($parentNames);
 
         if (!preg_match_all($pattern, $this->name, $matches, PREG_SET_ORDER)) {
             throw new \LogicException(sprintf(
