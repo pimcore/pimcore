@@ -55,7 +55,6 @@ class Localizedfield extends Model\AbstractModel
     /** @var int */
     protected $objectId;
 
-
     /**
      * @var bool
      */

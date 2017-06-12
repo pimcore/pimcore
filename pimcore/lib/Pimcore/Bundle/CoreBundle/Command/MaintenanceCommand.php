@@ -61,7 +61,7 @@ class MaintenanceCommand extends AbstractCommand
 
         $excludedJobs =[];
         if ($input->getOption('excludedJobs')) {
-            $excludedJobs = explode(",", $input->getOption('excludedJobs'));
+            $excludedJobs = explode(',', $input->getOption('excludedJobs'));
         }
 
         // create manager
