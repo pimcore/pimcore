@@ -66,13 +66,23 @@ final class ElementTree
      * @param string $name
      * @param string $type
      * @param mixed $data
+     * @param bool $inherited
      */
-    public function add(string $name, string $type, $data)
+    public function add(string $name, string $type, $data, bool $inherited = false)
     {
+        // do not overwrite document elements with inherited ones
+        if ($inherited && isset($this->map[$name])) {
+            return;
+        }
+
         $this->map[$name] = $type;
 
         if ($this->isBlock($type)) {
             $this->addBlockData($name, $data);
+        }
+
+        if ($inherited && !in_array($name, $this->inheritedElements)) {
+            $this->inheritedElements[] = $name;
         }
 
         $this->reset();
@@ -132,6 +142,10 @@ final class ElementTree
         }
 
         ksort($this->map);
+
+        $this->inheritedElements = array_unique($this->inheritedElements);
+        sort($this->inheritedElements);
+
         $blockNames            = $this->getBlockNames();
         $blockParentCandidates = $this->findBlockParentCandidates($blockNames);
         $blockParents          = $this->resolveBlockParents($blockParentCandidates);
@@ -141,6 +155,10 @@ final class ElementTree
         // just add not inherited elements to elements array
         $this->elements = [];
         foreach (array_merge($blocks, $editables) as $name => $element) {
+            if (in_array($name, $this->inheritedElements)) {
+                continue;
+            }
+
             $this->elements[$name] = $element;
         }
 

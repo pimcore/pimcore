@@ -94,11 +94,19 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         return $mapping;
     }
 
-    private function processDocument(Document $document): array
+    private function processDocument(Document\PageSnippet $document): array
     {
-        $result = $this->db->fetchAll('SELECT name, type, data FROM documents_elements WHERE documentId = :documentId', [
-            'documentId' => $document->getId()
-        ]);
+        $tree = new ElementTree();
+
+        // add document elements
+        $documentElements = $this->addDocumentElements($tree, $document);
+
+        // add inherited elements from content master documents
+        $master = $document->getContentMasterDocument();
+        while ($master && $master instanceof Document\PageSnippet) {
+            $this->addDocumentElements($tree, $master, true);
+            $master = $master->getContentMasterDocument();
+        }
 
         $table = new Table($this->io->getOutput());
         $table->setHeaders([
@@ -106,14 +114,14 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
             ['Legacy', 'Nested']
         ]);
 
-        $tree = new ElementTree();
-        foreach ($result as $row) {
-            $tree->add($row['name'], $row['type'], $row['data']);
+        $elements = $tree->getElements();
+
+        if (count($elements) !== count($documentElements)) {
+            throw new \RuntimeException('Failed to resolve the same amount of elements as fetched from DB');
         }
 
         $mapping = [];
-        foreach ($result as $row) {
-            $element = $tree->getElement($row['name']);
+        foreach ($elements as $element) {
             $newName = $element->getNameForStrategy($this->namingStrategy);
 
             if ($newName === $element->getName()) {
@@ -131,5 +139,18 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         $table->render();
 
         return $mapping;
+    }
+
+    private function addDocumentElements(ElementTree $tree, Document\PageSnippet $document, bool $inherited = false): array
+    {
+        $result = $this->db->fetchAll('SELECT name, type, data FROM documents_elements WHERE documentId = :documentId', [
+            'documentId' => $document->getId()
+        ]);
+
+        foreach ($result as $row) {
+            $tree->add($row['name'], $row['type'], $row['data'], $inherited);
+        }
+
+        return $result;
     }
 }
