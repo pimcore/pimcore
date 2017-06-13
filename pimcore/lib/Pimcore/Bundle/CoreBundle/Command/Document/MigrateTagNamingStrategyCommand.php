@@ -111,7 +111,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->title(sprintf('[STEP 1] %s', $migrationStrategy->getStepDescription()));
 
         try {
-            $migrationStrategy->initialize($this, $namingStrategy);
+            $migrationStrategy->initialize($this->io, $namingStrategy);
             $nameMapping = $migrationStrategy->getNameMapping($documents);
         } catch (NameMappingException $e) {
             if ($e->getShowMessage()) {
@@ -122,7 +122,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         }
 
         if (empty($nameMapping)) {
-            $this->io->writeln('');
+            $this->io->newLine();
             $this->io->success('Nothing to migrate.');
 
             return 0;
@@ -146,7 +146,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         try {
             $this->processRenames($nameMapping);
         } catch (\Exception $e) {
-            $this->io->writeln('');
+            $this->io->newLine();
             $this->io->error($e->getMessage());
             $this->io->warning('All changes were rolled back. Please fix any problems and try again.');
 
@@ -169,7 +169,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             return;
         }
 
-        $this->io->writeln('');
+        $this->io->newLine();
         $this->io->writeln('[SQL] Dumping SQL queries as --dump-sql option was passed');
 
         if ($dumpOption === 'stdout') {
@@ -214,7 +214,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $blacklist = [];
 
         foreach ($nameMapping as $documentId => $mapping) {
-            $this->writeSimpleSection(sprintf('Checking document %d', $documentId));
+            $this->io->simpleSection(sprintf('Checking document %d', $documentId));
 
             foreach ($mapping as $oldName => $newName) {
                 $this->io->writeln(sprintf(
@@ -311,7 +311,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         try {
             foreach ($nameMapping as $documentId => $mapping) {
-                $this->writeSimpleSection(sprintf('Processing document %d', $documentId));
+                $this->io->simpleSection(sprintf('Processing document %d', $documentId));
 
                 // sort by old name
                 ksort($mapping);
@@ -506,40 +506,5 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
             yield $document;
         }
-    }
-
-    /**
-     * Console helper to output an underlined title without prepending block and/or formatting output
-     *
-     * @param string $message
-     * @param string $underlineChar
-     * @param string|null $style
-     */
-    public function writeSimpleSection(string $message, string $underlineChar = '-', string $style = null)
-    {
-        $underline = str_repeat($underlineChar, Helper::strlenWithoutDecoration($this->io->getFormatter(), $message));
-
-        if (null !== $style) {
-            $format    = '<%s>%s</>';
-            $message   = sprintf($format, $style, $message);
-            $underline = sprintf($format, $style, $underline);
-        }
-
-        $this->io->writeln([
-            '',
-            $message,
-            $underline,
-            ''
-        ]);
-    }
-
-    /**
-     * Exposes IO for migration strategies
-     *
-     * @return PimcoreStyle
-     */
-    public function getIo(): PimcoreStyle
-    {
-        return $this->io;
     }
 }

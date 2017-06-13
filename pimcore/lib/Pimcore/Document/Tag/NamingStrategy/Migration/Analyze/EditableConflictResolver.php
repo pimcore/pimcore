@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy\Migration\Analyze;
 
-use Pimcore\Bundle\CoreBundle\Command\Document\MigrateTagNamingStrategyCommand;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\AbstractElement;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
@@ -29,11 +28,6 @@ use Pimcore\Model\Document;
 final class EditableConflictResolver
 {
     /**
-     * @var MigrateTagNamingStrategyCommand
-     */
-    private $command;
-
-    /**
      * @var PimcoreStyle
      */
     private $io;
@@ -43,10 +37,9 @@ final class EditableConflictResolver
      */
     private $namingStrategy;
 
-    public function __construct(MigrateTagNamingStrategyCommand $command, NamingStrategyInterface $namingStrategy)
+    public function __construct(PimcoreStyle $io, NamingStrategyInterface $namingStrategy)
     {
-        $this->command        = $command;
-        $this->io             = $command->getIo();
+        $this->io             = $io;
         $this->namingStrategy = $namingStrategy;
     }
 

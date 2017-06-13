@@ -22,7 +22,6 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\EditableConflictResolv
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 
 class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
@@ -71,7 +70,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
             }
         }
 
-        $this->io->writeln('');
+        $this->io->newLine();
 
         if (count($errors) === 0) {
             $this->io->success('All elements were successfully mapped, now proceeding to update names based on the gathered mapping.');
@@ -98,7 +97,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
     private function processDocument(Document\PageSnippet $document): array
     {
         $editableConflictResolver = new EditableConflictResolver(
-            $this->command,
+            $this->io,
             $this->namingStrategy
         );
 
@@ -106,6 +105,9 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
 
         // add document elements
         $documentElements = $this->addDocumentElements($tree, $document);
+        if (count($documentElements) === 0) {
+            return [];
+        }
 
         // add inherited elements from content master documents
         $master = $document->getContentMasterDocument();
@@ -114,17 +116,18 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
             $master = $master->getContentMasterDocument();
         }
 
-        $table = new Table($this->io->getOutput());
-        $table->setHeaders([
-            [new TableCell('Document ' . $document->getId(), ['colspan' => 2])],
-            ['Legacy', 'Nested']
-        ]);
-
         $elements = $tree->getElements();
 
         if (count($elements) !== count($documentElements)) {
             throw new \RuntimeException('Failed to resolve the same amount of elements as fetched from DB');
         }
+
+        $tableHeaders = [
+            [new TableCell('Document ' . $document->getId(), ['colspan' => 2])],
+            ['Legacy', 'Nested']
+        ];
+
+        $tableRows = [];
 
         $mapping = [];
         foreach ($elements as $element) {
@@ -136,13 +139,15 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
 
             $mapping[$element->getName()] = $newName;
 
-            $table->addRow([
+            $tableRows[] = [
                 $element->getName(),
                 $mapping[$element->getName()]
-            ]);
+            ];
         }
 
-        $table->render();
+        if (count($mapping) > 0) {
+            $this->io->table($tableHeaders, $tableRows);
+        }
 
         return $mapping;
     }

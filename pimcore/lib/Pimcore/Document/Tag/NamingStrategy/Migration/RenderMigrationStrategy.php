@@ -268,17 +268,12 @@ at least in editmode. The command simulates the editmode, so you can rely on the
 to be set.
 EOF;
 
-        $this->command->writeSimpleSection('WARNING', '=', 'comment');
+        $this->io->simpleSection('WARNING', '=', 'comment');
         $this->io->writeln(sprintf($message, $this->namingStrategy->getName()) . PHP_EOL);
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->command->getHelper('question');
-
-        $question = new ConfirmationQuestion(
+        return (bool)$this->io->confirm(
             'Do you wish to continue? (y/n) ',
             false
         );
-
-        return (bool)$helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
     }
 }

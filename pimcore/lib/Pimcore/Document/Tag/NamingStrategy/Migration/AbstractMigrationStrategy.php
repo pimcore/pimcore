@@ -17,12 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
-use Pimcore\Bundle\CoreBundle\Command\Document\MigrateTagNamingStrategyCommand;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Model\Document;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 abstract class AbstractMigrationStrategy
 {
@@ -30,11 +27,6 @@ abstract class AbstractMigrationStrategy
      * @var PimcoreStyle
      */
     protected $io;
-
-    /**
-     * @var MigrateTagNamingStrategyCommand
-     */
-    protected $command;
 
     /**
      * @var NamingStrategyInterface
@@ -47,7 +39,7 @@ abstract class AbstractMigrationStrategy
     protected $initialized = false;
 
     public function initialize(
-        MigrateTagNamingStrategyCommand $command,
+        PimcoreStyle $io,
         NamingStrategyInterface $namingStrategy
     )
     {
@@ -55,8 +47,7 @@ abstract class AbstractMigrationStrategy
             throw new \LogicException('Strategy is already initialized');
         }
 
-        $this->command        = $command;
-        $this->io             = $command->getIo();
+        $this->io             = $io;
         $this->namingStrategy = $namingStrategy;
 
         $this->initializeEnvironment();
@@ -119,20 +110,13 @@ abstract class AbstractMigrationStrategy
         }
 
         $this->io->writeln($title);
-        $this->io->writeln('');
+        $this->io->newLine();
 
         $this->io->listing($messages);
 
-        $this->io->writeln('');
+        $this->io->newLine();
         $this->io->writeln($description);
 
-        /** @var QuestionHelper $helper */
-        $helper   = $this->command->getHelper('question');
-        $question = new ConfirmationQuestion(
-            $question . ' (y/n) ',
-            false
-        );
-
-        return $helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
+        return (bool)$this->io->confirm($question . ' (y/n) ', false);
     }
 }
