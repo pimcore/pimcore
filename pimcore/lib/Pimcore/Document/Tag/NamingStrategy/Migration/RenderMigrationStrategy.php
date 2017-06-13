@@ -271,6 +271,10 @@ so you can rely on the editmode parameter to be set.
 EOF
         );
 
+        if (!$this->io->getInput()->isInteractive()) {
+            return true;
+        }
+
         return (bool)$this->io->confirm(
             'Do you wish to continue?',
             false

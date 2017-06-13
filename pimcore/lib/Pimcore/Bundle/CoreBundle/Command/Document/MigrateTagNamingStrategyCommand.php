@@ -105,9 +105,17 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $migrationStrategy = $this->getMigrationStrategy();
         $namingStrategy    = $this->getNamingStrategy();
 
+        if ($input->isInteractive()) {
+            $this->io->newLine();
+            $this->io->writeln('<comment>[WARNING]</comment> This command is going to update all editables names. Please make sure you have a proper backup before continuing!');
+            if (!$this->io->confirm('Do you wish to continue?', false)) {
+                return 0;
+            }
+        }
+
         $documents = $this->getDocuments($this->getDocumentIds());
 
-        $this->io->writeln(PHP_EOL);
+        $this->io->newLine();
         $this->io->title(sprintf('[STEP 1] %s', $migrationStrategy->getStepDescription()));
 
         try {
@@ -128,7 +136,8 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             return 0;
         }
 
-        $this->io->writeln(PHP_EOL . PHP_EOL);
+
+        $this->io->newLine(3);
         $this->io->title('[STEP 2] Rename preflight...checking if none of the new tag names already exist in the DB');
 
         try {
@@ -140,7 +149,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         }
 
 
-        $this->io->writeln(PHP_EOL . PHP_EOL);
+        $this->io->newLine(3);
         $this->io->title('[STEP 3] Renaming editables to their new names');
 
         try {
@@ -155,7 +164,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         $this->dumpQueries();
 
-        $this->io->writeln(PHP_EOL . PHP_EOL);
+        $this->io->newLine(3);
         $this->io->success(sprintf(
             'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" naming strategy and clear the cache.',
             $namingStrategy->getName()
@@ -395,7 +404,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $strategy = $container->get($strategyId);
 
         $this->io->comment(sprintf(
-            'Running migration with the <comment>%s</comment> strategy',
+            'Running migration with the <comment>%s</comment> migration strategy',
             $strategy->getName()
         ));
 
@@ -421,6 +430,11 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 $strategy->getName()
             ));
         }
+
+        $this->io->comment(sprintf(
+            'Migrating to the <comment>%s</comment> naming strategy',
+            $strategy->getName()
+        ));
 
         return $strategy;
     }

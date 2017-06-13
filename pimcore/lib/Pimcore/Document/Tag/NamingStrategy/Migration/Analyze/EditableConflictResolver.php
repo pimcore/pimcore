@@ -53,18 +53,24 @@ final class EditableConflictResolver
 
         /** @var Editable[] $editables */
         $editables = array_values($editables);
-        $choices   = $this->buildChoices($editables);
 
         $leaveUnresolved = 'Leave unresolved';
-        $choices[]       = $leaveUnresolved;
+        $resultChoice    = $leaveUnresolved;
+        $result          = null;
 
-        $inverseChoices = array_flip($choices);
-        $resultChoice   = $this->io->choice(
-            'Please choose the resolution matching your template structure',
-            $choices
-        );
+        if ($this->io->getInput()->isInteractive()) {
+            $choices   = $this->buildChoices($editables);
+            $choices[] = $leaveUnresolved;
 
-        $result = $inverseChoices[$resultChoice];
+            $inverseChoices = array_flip($choices);
+
+            $resultChoice = $this->io->choice(
+                'Please choose the resolution matching your template structure',
+                $choices
+            );
+
+            $result = $inverseChoices[$resultChoice];
+        }
 
         if ($resultChoice === $leaveUnresolved) {
             $possibleNames = [];
