@@ -319,6 +319,7 @@ services:
             - '@pimcore.service.request.editmode_resolver'
             - '@pimcore_admin.security.user_loader'
             - '@pimcore_admin.session.configurator.admin_session_bags'
+            - '@pimcore.routing.dynamic.document_route_handler'
 
     #
     # IMPLEMENTATION FACTORIES

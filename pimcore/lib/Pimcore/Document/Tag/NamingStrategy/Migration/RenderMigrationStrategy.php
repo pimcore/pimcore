@@ -27,6 +27,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\User;
+use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Service\Request\EditmodeResolver;
 use Pimcore\Tool;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -67,9 +68,15 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
     private $adminSessionConfigurator;
 
     /**
+     * @var DocumentRouteHandler
+     */
+    private $documentRouteHandler;
+
+    /**
      * @var MigrationSubscriber
      */
     private $subscriber;
+
 
     /**
      * @param EventDispatcherInterface $dispatcher
@@ -77,13 +84,15 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
      * @param EditmodeResolver $editmodeResolver
      * @param UserLoader $userLoader
      * @param AdminSessionBagConfigurator $adminSessionConfigurator
+     * @param DocumentRouteHandler $documentRouteHandler
      */
     public function __construct(
         EventDispatcherInterface $dispatcher,
         RequestStack $requestStack,
         EditmodeResolver $editmodeResolver,
         UserLoader $userLoader,
-        AdminSessionBagConfigurator $adminSessionConfigurator
+        AdminSessionBagConfigurator $adminSessionConfigurator,
+        DocumentRouteHandler $documentRouteHandler
     )
     {
         $this->dispatcher               = $dispatcher;
@@ -91,6 +100,7 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         $this->editmodeResolver         = $editmodeResolver;
         $this->userLoader               = $userLoader;
         $this->adminSessionConfigurator = $adminSessionConfigurator;
+        $this->documentRouteHandler     = $documentRouteHandler;
     }
 
     public function getName(): string
@@ -133,6 +143,9 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
 
         // set editmode resolver to force editmode (always resolves to editmode no matter if request params are set or not)
         $this->editmodeResolver->setForceEditmode(true);
+
+        // configure document route handler to build routes for unpublished documents
+        $this->documentRouteHandler->setForceHandleUnpublishedDocuments(true);
     }
 
     /**
