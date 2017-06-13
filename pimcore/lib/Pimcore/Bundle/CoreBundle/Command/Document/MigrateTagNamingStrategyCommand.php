@@ -102,6 +102,9 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // disable profiler for performance reasons (there are a LOT of DB queries being processed during this command)
+        $this->getContainer()->get('profiler')->disable();
+
         $migrationStrategy = $this->getMigrationStrategy();
         $namingStrategy    = $this->getNamingStrategy();
 
