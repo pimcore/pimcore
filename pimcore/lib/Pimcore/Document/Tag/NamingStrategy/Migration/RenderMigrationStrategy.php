@@ -218,10 +218,10 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
             $totalDuration += $event->getDuration();
 
             $this->io->writeln(sprintf(
-                'Duration: <comment>%d ms</comment> - Total duration: <comment>%d ms</comment> - Current Memory: <comment>%f MB</comment>',
+                'Duration: <comment>%d ms</comment> - Total duration: <comment>%s</comment> - Current Memory: <comment>%s</comment>',
                 $event->getDuration(),
-                $totalDuration,
-                round($event->getMemory() / 1000 / 1000, 2)
+                Helper::formatTime($totalDuration / 1000),
+                Helper::formatMemory($event->getMemory())
             ));
 
             $this->io->newLine();
