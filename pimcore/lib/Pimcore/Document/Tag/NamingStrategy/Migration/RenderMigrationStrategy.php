@@ -211,30 +211,26 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
                 round($event->getMemory() / 1000 / 1000, 2)
             ));
 
-            $this->io->writeln('');
+            $this->io->newLine();
         }
 
-        $this->io->writeln('');
+        $this->io->newLine();
 
-        if (count($errors) === 0) {
-            $this->io->success('All documents were rendered successfully, now proceeding to update names based on the gathered mapping');
-        } else {
-            $this->io->warning('Not all documents could be rendered.');
+        if (count($errors) > 0) {
+            $this->io->error('Not all documents could be rendered.');
 
-            $confirmation = $this->confirmProceedAfterRenderingErrors(
+            $this->showMappingErrors(
                 $errors,
                 'The following errors were encountered while rendering the selected documents:',
-                '<comment>WARNING:</comment> You can proceed the migration for all other documents, but your unmigrated documents will potentially lose their data. It\'s strongly advised to fix any rendering issues before proceeding',
-                'Proceed the migration for successfully rendered documents?'
+                'Please fix any rendering issues before proceeding. You can try if rendering works on single documents by passing the --document and --dry-run options.'
             );
 
-            if (!$confirmation) {
-                throw new NameMappingException('Aborting migration as not all documents could be rendered', 3);
-            }
+            throw new NameMappingException('Aborting migration as not all documents could be rendered', 3);
         }
 
+        $this->io->success('All documents were rendered successfully, now proceeding to update names based on the gathered mapping');
+
         $mapping = $this->subscriber->getNameMapping();
-        $mapping = $this->removeMappingForErroredDocuments($mapping, $errors);
 
         return $mapping;
     }

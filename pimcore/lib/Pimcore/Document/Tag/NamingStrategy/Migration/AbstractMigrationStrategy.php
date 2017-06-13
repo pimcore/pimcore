@@ -93,11 +93,8 @@ abstract class AbstractMigrationStrategy
      * @param MappingError[] $errors
      * @param string $title
      * @param string $description
-     * @param string $question
-     *
-     * @return bool
      */
-    protected function confirmProceedAfterRenderingErrors(array $errors, string $title, string $description, string $question): bool
+    protected function showMappingErrors(array $errors, string $title, string $description)
     {
         $messages = [];
         foreach ($errors as $documentId => $error) {
@@ -116,7 +113,5 @@ abstract class AbstractMigrationStrategy
 
         $this->io->newLine();
         $this->io->writeln($description);
-
-        return (bool)$this->io->confirm($question . ' (y/n) ', false);
     }
 }

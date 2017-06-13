@@ -72,24 +72,19 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
 
         $this->io->newLine();
 
-        if (count($errors) === 0) {
-            $this->io->success('All elements were successfully mapped, now proceeding to update names based on the gathered mapping.');
-        } else {
-            $this->io->warning('Errors were encountered while building element mapping.');
+        if (count($errors) > 0) {
+            $this->io->error('Not all elements could be mapped.');
 
-            $confirmation = $this->confirmProceedAfterRenderingErrors(
+            $this->showMappingErrors(
                 $errors,
-                'The following errors were encountered while mapping elements for the selected documents:',
-                '<comment>WARNING:</comment> You can proceed the migration for all other documents, but your unmigrated documents will potentially lose their data. It\'s strongly advised to fix any issues before proceeding. Errors can be caused by orphaned elements which do not belong to the document anymore. You can try to open a document with errors in the admin interface and trying to re-save it to cleanup orphaned elements.',
-                'Proceed the migration for successfully mapped elements?'
+                'The following errors were encountered while while building element mapping:',
+                'Errors can be caused by orphaned elements which do not belong to the document anymore. You can try to open a document with errors in the admin interface and trying to re-save it to cleanup orphaned elements.'
             );
 
-            if (!$confirmation) {
-                throw new NameMappingException('Aborting migration as not all elements could be mapped', 3);
-            }
+            throw new NameMappingException('Aborting migration as not all elements could be mapped', 3);
         }
 
-        $mapping = $this->removeMappingForErroredDocuments($mapping, $errors);
+        $this->io->success('All elements were successfully mapped, now proceeding to update names based on the gathered mapping.');
 
         return $mapping;
     }
