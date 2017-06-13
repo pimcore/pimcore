@@ -24,9 +24,20 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Block;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditableException;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
+use Pimcore\Model\Document;
 
 final class ElementTree
 {
+    /**
+     * @var Document\PageSnippet
+     */
+    private $document;
+
+    /**
+     * @var EditableConflictResolver
+     */
+    private $editableConflictResolver;
+
     /**
      * Map of elements by name => type
      *
@@ -63,6 +74,19 @@ final class ElementTree
         'block'     => Block::class,
         'areablock' => Areablock::class
     ];
+
+    /**
+     * @param Document\PageSnippet $document
+     * @param EditableConflictResolver $editableConflictResolver
+     */
+    public function __construct(
+        Document\PageSnippet $document,
+        EditableConflictResolver $editableConflictResolver
+    )
+    {
+        $this->document                 = $document;
+        $this->editableConflictResolver = $editableConflictResolver;
+    }
 
     /**
      * Add an element mapping
@@ -214,35 +238,11 @@ final class ElementTree
             $exception->setErrors($errors);
 
             throw $exception;
+        } elseif (count($editables) === 1) {
+            return $editables[0];
         } elseif (count($editables) > 1) {
-            $parentNames = array_map(function (Editable $ed) {
-                return $ed->getParent() ? $ed->getParent()->getName() : null;
-            }, $editables);
-
-            $nestedStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy.nested');
-            $legacyStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy.legacy');
-
-            foreach ($editables as $editable) {
-                dump([
-                    'editable'   => $editable,
-                    'nestedName' => $editable->getNameForStrategy($nestedStrategy),
-                    'legacyName' => $editable->getNameForStrategy($legacyStrategy),
-                ]);
-            }
-
-            $exception = new BuildEditableException(sprintf(
-                'Ambiguous results. Built %d editables for element "%s". Parents: %s',
-                count($editables),
-                $name,
-                json_encode($parentNames)
-            ));
-
-            $exception->setErrors($errors);
-
-            throw $exception;
+            return $this->editableConflictResolver->resolve($this->document, $name, $this->map[$name], $editables, $errors);
         }
-
-        return $editables[0];
     }
 
     private function buildBlocks(array $blockNames, array $blockParents): array
