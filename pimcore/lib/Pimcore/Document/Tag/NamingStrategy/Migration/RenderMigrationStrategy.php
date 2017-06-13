@@ -24,15 +24,12 @@ use Pimcore\Cache;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Render\MigrationSubscriber;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model\User;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Service\Request\EditmodeResolver;
 use Pimcore\Tool;
-use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -179,9 +176,6 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         Cache::disable();
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
-        AbstractObject::setHideUnpublished(false);
-        AbstractObject::setGetInheritedValues(false);
-        Localizedfield::setGetFallbackValues(false);
     }
 
     /**
@@ -261,7 +255,7 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
             $document->getId()
         ));
 
-        Document\Service::render($document);
+        Document\Service::render($document, [], false, ['pimcore_editmode' => true]);
     }
 
     private function askRunConfirmation(): bool
@@ -285,6 +279,8 @@ EOF
         );
 
         if (!$this->io->getInput()->isInteractive()) {
+            $this->io->newLine(2);
+
             return true;
         }
 
