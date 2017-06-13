@@ -22,8 +22,18 @@ final class Areablock extends AbstractBlock
     /**
      * @inheritdoc
      */
-    protected function resolveChildIndexes(array $data): array
+    protected function resolveChildIndexes(): array
     {
+        $data = $this->getData();
+        if (empty($data)) {
+            return [];
+        }
+
+        $data = unserialize($data);
+        if (!$data) {
+            return [];
+        }
+
         // areablock indexes are rows with key and type
         $indexes = [];
         foreach ($data as $item) {

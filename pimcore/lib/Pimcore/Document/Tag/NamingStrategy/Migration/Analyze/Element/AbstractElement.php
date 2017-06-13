@@ -44,6 +44,11 @@ abstract class AbstractElement
     private $type;
 
     /**
+     * @var mixed
+     */
+    private $data;
+
+    /**
      * @var int|null
      */
     private $index;
@@ -58,10 +63,11 @@ abstract class AbstractElement
      */
     private $parents = [];
 
-    public function __construct(string $name, string $type, AbstractBlock $parent = null)
+    public function __construct(string $name, string $type, $data = null, AbstractBlock $parent = null)
     {
         $this->name = $name;
         $this->type = $type;
+        $this->data = $data;
 
         // process and validate parent
         $this->setParent($parent);
@@ -80,6 +86,11 @@ abstract class AbstractElement
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**

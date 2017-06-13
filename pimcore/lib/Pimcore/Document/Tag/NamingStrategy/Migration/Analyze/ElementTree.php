@@ -35,14 +35,16 @@ final class ElementTree
     private $map = [];
 
     /**
+     * Element data indexed by name
+     *
      * @var array
      */
-    private $inheritedElements = [];
+    private $data = [];
 
     /**
      * @var array
      */
-    private $blockData = [];
+    private $inheritedElements = [];
 
     /**
      * @var AbstractElement[]
@@ -77,32 +79,14 @@ final class ElementTree
             return;
         }
 
-        $this->map[$name] = $type;
-
-        if ($this->isBlock($type)) {
-            $this->addBlockData($name, $data);
-        }
+        $this->map[$name]  = $type;
+        $this->data[$name] = $data;
 
         if ($inherited && !in_array($name, $this->inheritedElements)) {
             $this->inheritedElements[] = $name;
         }
 
         $this->reset();
-    }
-
-    /**
-     * @param string $name
-     * @param mixed $data
-     */
-    private function addBlockData(string $name, $data)
-    {
-        if (!empty($data)) {
-            $data = unserialize($data);
-        } else {
-            $data = [];
-        }
-
-        $this->blockData[$name] = $data;
     }
 
     /**
@@ -205,7 +189,7 @@ final class ElementTree
 
         // no parent blocks -> root element without parent
         if (count($parentBlocks) === 0) {
-            return new Editable($name, $this->map[$name]);
+            return new Editable($name, $this->map[$name], $this->data[$name]);
         }
 
         /** @var Editable[] $editables */
@@ -214,7 +198,7 @@ final class ElementTree
         $errors = [];
         foreach ($parentBlocks as $parentBlock) {
             try {
-                $editables[] = new Editable($name, $this->map[$name], $parentBlock);
+                $editables[] = new Editable($name, $this->map[$name], $this->data[$name], $parentBlock);
             } catch (LogicException $e) {
                 // noop - failed to build editable (e.g. because indexes do not match)
                 $errors[] = $e;
@@ -303,7 +287,7 @@ final class ElementTree
 
             $blockClass = $this->blockTypes[$blockType];
 
-            $blocks[$blockName] = new $blockClass($blockName, $this->map[$blockName], $this->blockData[$blockName], $parent);
+            $blocks[$blockName] = new $blockClass($blockName, $this->map[$blockName], $this->data[$blockName], $parent);
         }
 
         return $blocks;

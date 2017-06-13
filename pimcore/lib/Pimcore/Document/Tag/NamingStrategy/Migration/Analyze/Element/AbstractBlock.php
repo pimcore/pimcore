@@ -25,23 +25,14 @@ abstract class AbstractBlock extends AbstractElement
     /**
      * @var int[]
      */
-    private $childIndexes = [];
-
-    public function __construct($name, $type, array $data, AbstractBlock $parent = null)
-    {
-        parent::__construct($name, $type, $parent);
-
-        $this->childIndexes = $this->resolveChildIndexes($data);
-    }
+    private $childIndexes;
 
     /**
      * Get a list of available child indexes from block data
      *
-     * @param array $data
-     *
      * @return array
      */
-    abstract protected function resolveChildIndexes(array $data): array;
+    abstract protected function resolveChildIndexes(): array;
 
     /**
      * Get available indexes
@@ -50,6 +41,10 @@ abstract class AbstractBlock extends AbstractElement
      */
     public function getChildIndexes()
     {
+        if (null === $this->childIndexes) {
+            $this->childIndexes = $this->resolveChildIndexes();
+        }
+
         return $this->childIndexes;
     }
 
@@ -62,9 +57,14 @@ abstract class AbstractBlock extends AbstractElement
      */
     public function hasChildIndex(int $index)
     {
-        return in_array($index, $this->childIndexes, true);
+        return in_array($index, $this->getChildIndexes(), true);
     }
 
+    /**
+     * Build a regex match string for all parents
+     *
+     * @return string
+     */
     public function getEditableMatchString(): string
     {
         $parts = [];

@@ -22,8 +22,18 @@ final class Block extends AbstractBlock
     /**
      * @inheritdoc
      */
-    protected function resolveChildIndexes(array $data): array
+    protected function resolveChildIndexes(): array
     {
+        $data = $this->getData();
+        if (empty($data)) {
+            return [];
+        }
+
+        $data = unserialize($data);
+        if (!$data) {
+            return [];
+        }
+
         // block indexes is just a plain array of indexes
         return array_map(function ($index) {
             return (int)$index;
