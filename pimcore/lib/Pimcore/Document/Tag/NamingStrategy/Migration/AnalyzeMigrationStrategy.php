@@ -22,6 +22,7 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\EditableConflictResolv
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 
 class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
@@ -117,12 +118,14 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
             throw new \RuntimeException('Failed to resolve the same amount of elements as fetched from DB');
         }
 
-        $tableHeaders = [
-            [new TableCell('Document ' . $document->getId(), ['colspan' => 2])],
+        $table = new Table($this->io);
+        $table->setHeaders([
+            [new TableCell(
+                sprintf('Document <comment>%s</comment> (ID: %d)', $document->getRealFullPath(), $document->getId()),
+                ['colspan' => 2]
+            )],
             ['Legacy', 'Nested']
-        ];
-
-        $tableRows = [];
+        ]);
 
         $mapping = [];
         foreach ($elements as $element) {
@@ -134,14 +137,15 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
 
             $mapping[$element->getName()] = $newName;
 
-            $tableRows[] = [
+            $table->addRow([
                 $element->getName(),
                 $mapping[$element->getName()]
-            ];
+            ]);
         }
 
         if (count($mapping) > 0) {
-            $this->io->table($tableHeaders, $tableRows);
+            $table->render();
+            $this->io->newLine();
         }
 
         return $mapping;

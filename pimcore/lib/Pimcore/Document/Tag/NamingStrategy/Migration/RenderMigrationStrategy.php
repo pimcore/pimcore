@@ -254,21 +254,25 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
     private function askRunConfirmation(): bool
     {
         $message = <<<EOF
-This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please be aware that
-only elements which can be rendered and which are currently used on your templates can and will
-be migrated. If you have any elements which are not used in the template (e.g. because they are
-commented out or depend on a certain logic) they can't be automatically migrated and will be
-removed the next time you save the document in the admin interface. To make the transition as
-smooth as possible it's recommended to update all your templates to render any needed editables
-at least in editmode. The command simulates the editmode, so you can rely on the editmode parameter
-to be set.
+<comment>[WARNING]</comment> This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please
+be aware that only elements which can be rendered and which are currently used on your templates
+can and will be migrated. If you have any elements which are not used in the template (e.g. because
+they are commented out or depend on a certain logic) they can't be automatically migrated and will be
+removed the next time you save the document in the admin interface.
 EOF;
 
-        $this->io->simpleSection('WARNING', '=', 'comment');
-        $this->io->writeln(sprintf($message, $this->namingStrategy->getName()) . PHP_EOL);
+        $this->io->writeln(sprintf($message, $this->namingStrategy->getName()));
+        $this->io->newLine();
+
+        $this->io->writeln(<<<EOF
+To make the transition as smooth as possible it\'s recommended to update all your templates
+to render any needed editables at least in editmode. The command simulates the editmode,
+so you can rely on the editmode parameter to be set.
+EOF
+        );
 
         return (bool)$this->io->confirm(
-            'Do you wish to continue? (y/n) ',
+            'Do you wish to continue?',
             false
         );
     }
