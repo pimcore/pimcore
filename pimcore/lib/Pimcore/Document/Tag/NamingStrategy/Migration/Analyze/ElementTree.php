@@ -451,23 +451,6 @@ final class ElementTree
         return $blocks;
     }
 
-    public function debugElement(AbstractElement $element)
-    {
-        $parents = [];
-        foreach ($element->getParents() as $parent) {
-            $parents[] = $parent->getRealName();
-        }
-
-        dump([
-            'parents'  => $parents,
-            'type'     => $element->getType(),
-            'name'     => $element->getName(),
-            'realName' => $element->getRealName(),
-            'index'    => $element->getIndex(),
-            'level'    => $element->getLevel(),
-        ]);
-    }
-
     private function isBlock(string $type): bool
     {
         return in_array($type, array_keys($this->blockTypes));
