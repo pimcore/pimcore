@@ -198,6 +198,7 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
 
         $errors = [];
 
+        $i = 0;
         foreach ($documents as $document) {
             $event = $stopwatch->start('document_' . $document->getId());
 
@@ -219,6 +220,10 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
             ));
 
             $this->io->newLine();
+
+            if ($i++ % 25 === 0) {
+                \Pimcore::collectGarbage();
+            }
         }
 
         $this->io->newLine();
