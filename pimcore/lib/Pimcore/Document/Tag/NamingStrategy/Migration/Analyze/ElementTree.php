@@ -236,6 +236,7 @@ final class ElementTree
             ));
 
             $exception->setErrors($errors);
+            $exception->setElementData($this->data[$name]);
 
             throw $exception;
         } elseif (count($editables) === 1) {

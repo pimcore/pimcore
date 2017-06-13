@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditableException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Model\Document;
 
@@ -96,20 +97,47 @@ abstract class AbstractMigrationStrategy
      */
     protected function showMappingErrors(array $errors, string $title, string $description)
     {
-        $messages = [];
-        foreach ($errors as $documentId => $error) {
-            $messages[] = sprintf(
-                '<comment>%s</comment> (ID <info>%d</info>): %s',
-                $error->getDocumentPath(),
-                $error->getDocumentId(),
-                $error->getException()->getMessage()
-            );
-        }
-
         $this->io->writeln($title);
         $this->io->newLine();
 
-        $this->io->listing($messages);
+        foreach ($errors as $documentId => $error) {
+            $exception = $error->getException();
+
+            $this->io->writeln(sprintf(
+                ' * <comment>%s</comment> (ID <info>%d</info>): %s',
+                $error->getDocumentPath(),
+                $error->getDocumentId(),
+                $exception->getMessage()
+            ));
+
+            if ($exception instanceof BuildEditableException) {
+                $indent = str_repeat(' ', 6);
+
+                foreach ($exception->getErrors() as $err) {
+                    $this->io->writeln(sprintf(
+                        '%s%s',
+                        $indent,
+                        $err->getMessage()
+                    ));
+                }
+
+                if (!empty($exception->getElementData())) {
+                    $this->io->newLine();
+
+                    $elementData = $exception->getElementData();
+                    if (!is_scalar($elementData)) {
+                        dump($elementData);
+                    } else {
+                        $elementData = explode("\n", $elementData);
+                        $elementData = array_map(function ($line) use ($indent) {
+                            return $indent . $line;
+                        }, $elementData);
+
+                        $this->io->writeln($elementData);
+                    }
+                }
+            }
+        }
 
         $this->io->newLine();
         $this->io->writeln($description);

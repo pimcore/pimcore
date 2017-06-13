@@ -25,6 +25,11 @@ class BuildEditableException extends \RuntimeException
     private $errors = [];
 
     /**
+     * @var mixed
+     */
+    private $elementData;
+
+    /**
      * @param \LogicException[] $errors
      */
     public function setErrors(array $errors)
@@ -38,5 +43,21 @@ class BuildEditableException extends \RuntimeException
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getElementData()
+    {
+        return $this->elementData;
+    }
+
+    /**
+     * @param mixed $elementData
+     */
+    public function setElementData($elementData)
+    {
+        $this->elementData = $elementData;
     }
 }
