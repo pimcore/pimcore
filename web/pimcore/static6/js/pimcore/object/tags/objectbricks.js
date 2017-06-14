@@ -50,7 +50,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 extraParams: {
                     class_id: this.object.data.general.o_classId,
                     object_id: this.object.id,
-                    field_name: this.getName()
+                    field_name: this.getName(),
+                    layoutId: this.object.data.currentLayoutId
                 }
             },
             autoDestroy: false,
