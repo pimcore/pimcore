@@ -63,17 +63,18 @@ class TagRenderer implements LoggerAwareInterface
      * @param $type
      * @param $inputName
      * @param array $options
+     * @param bool|null $editmode
      *
      * @return Tag|null
-     *
-     * @see \Pimcore\View::tag
      */
-    public function getTag(PageSnippet $document, $type, $inputName, array $options = [])
+    public function getTag(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
     {
         $type = strtolower($type);
         $name = Tag::buildTagName($type, $inputName, $document);
 
-        $editmode = $this->editmodeResolver->isEditmode();
+        if (null === $editmode) {
+            $editmode = $this->editmodeResolver->isEditmode();
+        }
 
         try {
             $tag = null;
@@ -116,12 +117,13 @@ class TagRenderer implements LoggerAwareInterface
      * @param $type
      * @param $inputName
      * @param array $options
+     * @param bool|null $editmode
      *
-     * @return Tag|string|null
+     * @return Tag|string
      */
-    public function render(PageSnippet $document, $type, $inputName, array $options = [])
+    public function render(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
     {
-        $tag = $this->getTag($document, $type, $inputName, $options);
+        $tag = $this->getTag($document, $type, $inputName, $options, $editmode);
 
         if ($tag) {
             return $tag;

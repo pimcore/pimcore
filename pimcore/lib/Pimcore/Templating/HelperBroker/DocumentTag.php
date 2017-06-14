@@ -51,6 +51,12 @@ class DocumentTag implements HelperBrokerInterface
     {
         $document = $engine->getViewParameter('document');
 
+        // if editmode is set as parameter override the editmode resolver value
+        $editmode = $engine->getViewParameter('editmode');
+        if (null !== $editmode) {
+            $editmode = (bool)$editmode;
+        }
+
         if (null === $document) {
             throw new \RuntimeException(sprintf('Trying to render the tag "%s", but no document was found', $method));
         }
@@ -64,6 +70,6 @@ class DocumentTag implements HelperBrokerInterface
             $arguments[1] = [];
         }
 
-        return $this->tagRenderer->render($document, $method, $arguments[0], $arguments[1]);
+        return $this->tagRenderer->render($document, $method, $arguments[0], $arguments[1], $editmode);
     }
 }
