@@ -14,7 +14,7 @@
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Extension\Bundle\Exception\RuntimeException;
+use Pimcore\Composer;
 use Pimcore\Tool\ClassUtils;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -22,6 +22,11 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class PimcoreBundleLocator
 {
+    /**
+     * @var Composer\PackageInfo
+     */
+    private $composerPackageInfo;
+
     /**
      * @var array
      */
@@ -33,14 +38,16 @@ class PimcoreBundleLocator
     private $handleComposer = true;
 
     /**
+     * @param Composer\PackageInfo $composerPackageInfo
      * @param array $paths
      * @param bool $handleComposer
      */
-    public function __construct(array $paths = [], $handleComposer = true)
+    public function __construct(Composer\PackageInfo $composerPackageInfo, array $paths = [], $handleComposer = true)
     {
         $this->setPaths($paths);
 
-        $this->handleComposer = $handleComposer;
+        $this->composerPackageInfo = $composerPackageInfo;
+        $this->handleComposer      = $handleComposer;
     }
 
     /**
@@ -124,19 +131,11 @@ class PimcoreBundleLocator
      */
     private function findComposerBundles()
     {
-        $json = $this->readComposerConfig();
-        if (!$json) {
-            return [];
-        }
-
-        $composerPaths = [];
+        $pimcoreBundles = $this->composerPackageInfo->getInstalledPackages('pimcore-bundle');
+        $composerPaths  = [];
 
         $result = [];
-        foreach ($json as $packageInfo) {
-            if ($packageInfo['type'] !== 'pimcore-bundle') {
-                continue;
-            }
-
+        foreach ($pimcoreBundles as $packageInfo) {
             // if bundle explicitely defines bundles, use the config
             if (isset($packageInfo['extra']) && isset($packageInfo['extra']['pimcore'])) {
                 $cfg = $packageInfo['extra']['pimcore'];
@@ -157,43 +156,6 @@ class PimcoreBundleLocator
         }
 
         return $result;
-    }
-
-    /**
-     * @return array|null
-     */
-    private function readComposerConfig()
-    {
-        // try to read composer.lock first
-        $json = $this->readComposerFile([PIMCORE_PROJECT_ROOT, 'composer.lock']);
-        if ($json && isset($json['packages']) && is_array($json['packages'])) {
-            return $json['packages'];
-        }
-
-        // try to read vendor/composer/installed.json as fallback
-        $json = $this->readComposerFile([PIMCORE_COMPOSER_PATH, 'composer', 'installed.json']);
-        if ($json && is_array($json)) {
-            return $json;
-        }
-    }
-
-    /**
-     * @param array $path
-     *
-     * @return array|null
-     */
-    private function readComposerFile(array $path)
-    {
-        $path = implode(DIRECTORY_SEPARATOR, $path);
-        if (file_exists($path) && is_readable($path)) {
-            $json = json_decode(file_get_contents($path), true);
-
-            if (null === $json) {
-                throw new RuntimeException(sprintf('Failed to parse composer file %s', $path));
-            }
-
-            return $json;
-        }
     }
 
     /**
