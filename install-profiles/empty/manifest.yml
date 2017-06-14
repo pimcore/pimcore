@@ -1,0 +1,6 @@
+name: Empty
+files:
+    add:
+        - app/Resources/views
+        - src/AppBundle
+        - var/config/*.*

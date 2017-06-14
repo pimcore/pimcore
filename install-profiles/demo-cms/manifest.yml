@@ -1,0 +1,13 @@
+name: CMS Demo
+files:
+    add:
+        - app/Resources/views
+        - src/AppBundle
+        - var/classes
+        - var/config/*.*
+        - web/static
+        - web/var/assets
+        - foo
+db:
+    data_files:
+        - dump/data.sql
