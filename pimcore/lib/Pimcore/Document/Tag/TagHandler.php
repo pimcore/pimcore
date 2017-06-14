@@ -223,7 +223,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         echo $brick->getHtmlTagOpen($info);
 
         if ($brick->hasEditTemplate() && $editmode) {
-            echo '<div class="pimcore_area_edit_button_' . $tag->getName() . ' pimcore_area_edit_button" data-name="' . $tag->getName() . '"></div>';
+            echo '<div class="pimcore_area_edit_button" data-name="' . $tag->getName() . '" data-real-name="' . $tag->getRealName() . '"></div>';
 
             // forces the editmode in view independent if there's an edit or not
             if (!array_key_exists('forceEditInView', $params) || !$params['forceEditInView']) {
