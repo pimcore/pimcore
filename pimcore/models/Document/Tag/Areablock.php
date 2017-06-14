@@ -682,19 +682,21 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return Areablock\Item[]
      */
-    public function getElement($name)
+    public function getElement(string $name)
     {
-        // init
-        $doc = Model\Document\Page::getById($this->getDocumentId());
+        $document = Model\Document\Page::getById($this->getDocumentId());
+
+        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames[] = $this->getName();
 
         $list = [];
         foreach ($this->getData() as $index => $item) {
-            if ($item['type'] == $name) {
-                $list[$index] = new Areablock\Item($doc, $this->getName(), $item['key']);
+            if ($item['type'] === $name) {
+                $list[$index] = new Areablock\Item($document, $parentBlockNames, (int)$item['key']);
             }
         }
 

@@ -171,18 +171,27 @@ class Area extends Model\Document\Tag
     }
 
     /**
-     * @param $name
+     * Gets an element from the referenced brick. E.g. if you have an area "myArea" which defines "gallery-single-images"
+     * as used areabrick and this areabrick defines a block "gallery", you can use $area->getElement('gallery') to get
+     * an instance of the block element.
+     *
+     * @param string $name
      *
      * @return Model\Document\Tag
      */
-    public function getElement($name)
+    public function getElement(string $name)
     {
-        // init
-        $doc = Model\Document\Page::getById($this->getDocumentId());
-        $id = sprintf('%s%s%d', $name, $this->getName(), 1);
-        $element = $doc->getElement($id);
+        $document       = Model\Document\Page::getById($this->getDocumentId());
+        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
+
+        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames[] = $this->getName();
+
+        $id      = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
+        $element = $document->getElement($id);
+
         if ($element) {
-            $element->suffixes = [ $this->getName() ];
+            $element->setParentBlockNames($parentBlockNames);
         }
 
         return $element;
