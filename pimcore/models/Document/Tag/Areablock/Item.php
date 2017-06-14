@@ -17,56 +17,21 @@
 
 namespace Pimcore\Model\Document\Tag\Areablock;
 
-use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Model\Document\Tag\Block\AbstractBlockItem;
 
-class Item
+class Item extends AbstractBlockItem
 {
-    /**
-     * @var Model\Document\Page
-     */
-    protected $doc;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var int
-     */
-    protected $index;
-
-    /**
-     * @param Model\Document\PageSnippet $doc
-     * @param string                     $name
-     * @param int                        $index
-     */
-    public function __construct(Model\Document\PageSnippet $doc, $name, $index)
+    protected function getItemType(): string
     {
-        $this->doc = $doc;
-        $this->name = $name;
-        $this->index = $index;
+        return 'areablock';
     }
 
     /**
-     * @param $name
+     * @param string $func
+     * @param array $args
      *
-     * @return Model\Document\Page
-     */
-    public function getElement($name)
-    {
-        $id = sprintf('%s%s%d', $name, $this->name, $this->index);
-        $element = $this->doc->getElement($id);
-        $element->suffixes = [ $this->name ];
-
-        return $element;
-    }
-
-    /**
-     * @param $func
-     * @param $args
-     *
-     * @return Model\Document\Page*|null
+     * @return Document\Tag|null
      */
     public function __call($func, $args)
     {

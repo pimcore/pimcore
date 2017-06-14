@@ -379,15 +379,14 @@ class Block extends Model\Document\Tag implements BlockInterface
      */
     public function getElements()
     {
-        // init
-        $doc = Model\Document\Page::getById($this->getDocumentId());
+        $document = Model\Document\Page::getById($this->getDocumentId());
 
-        $suffixes = (array)$this->suffixes;
-        $suffixes[] = $this->getName();
+        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames[] = $this->getName();
 
         $list = [];
         foreach ($this->getData() as $index) {
-            $list[] = new Block\Item($doc, $index, $suffixes);
+            $list[] = new Block\Item($document, $parentBlockNames, (int)$index);
         }
 
         return $list;

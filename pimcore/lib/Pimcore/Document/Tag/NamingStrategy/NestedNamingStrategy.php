@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Tag\NamingStrategy;
 
 use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Tag\NamingStrategy\Exception\TagNameException;
 
 final class NestedNamingStrategy extends AbstractNamingStrategy
 {
@@ -58,5 +59,22 @@ final class NestedNamingStrategy extends AbstractNamingStrategy
         $parts[] = $name;
 
         return implode('.', $parts);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buildChildElementTagName(string $name, string $type, array $parentBlockNames, int $index): string
+    {
+        if (count($parentBlockNames) === 0) {
+            throw new TagNameException(sprintf(
+                'Failed to build child tag name for %s %s at index %d as no parent name was passed',
+                $type, $name, $index
+            ));
+        }
+
+        $parentName = array_pop($parentBlockNames);
+
+        return sprintf('%s:%d.%s', $parentName, $index, $name);
     }
 }

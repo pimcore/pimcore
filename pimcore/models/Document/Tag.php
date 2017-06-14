@@ -51,6 +51,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $realName;
 
     /**
+     * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
+     *
+     * @var array
+     */
+    private $parentBlockNames = [];
+
+    /**
      * Element belongs to the ID of the document
      *
      * @var int
@@ -366,6 +373,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setRealName($realName)
     {
         $this->realName = $realName;
+    }
+
+    final public function setParentBlockNames(array $parentNames)
+    {
+        $this->parentBlockNames = $parentNames;
+    }
+
+    final public function getParentBlockNames(): array
+    {
+        return $this->parentBlockNames;
     }
 
     /**

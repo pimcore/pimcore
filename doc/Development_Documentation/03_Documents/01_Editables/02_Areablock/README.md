@@ -136,3 +136,7 @@ The manual mode offers you the possibility to use areablocks with custom HTML, t
 </table>
 <?php $areaBlock->end(); ?>
 ```
+
+### Accessing Data Within an Areablock Element
+
+See [Block](../06_Block.md) for an example how to get elements from block and areablock editables.

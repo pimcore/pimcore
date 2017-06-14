@@ -17,66 +17,20 @@
 
 namespace Pimcore\Model\Document\Tag\Block;
 
-use Pimcore\Model;
+use Pimcore\Model\Document;
 
-class Item
+class Item extends AbstractBlockItem
 {
-    /**
-     * @var Model\Document\Page
-     */
-    protected $doc;
-
-    /**
-     * @var int
-     */
-    protected $index;
-
-    /**
-     * @var string[]
-     */
-    protected $suffixes = [];
-
-    /**
-     * @param Model\Document\PageSnippet $doc
-     * @param int                        $index
-     * @param array                      $suffixes
-     */
-    public function __construct(Model\Document\PageSnippet $doc, $index, array $suffixes)
+    protected function getItemType(): string
     {
-        $this->doc = $doc;
-        $this->index = $index;
-        $this->suffixes = $suffixes;
-    }
-
-    /**
-     * @param $name
-     *
-     * @return Model\Document\Tag
-     */
-    public function getElement($name)
-    {
-        $root = $name . implode('_', $this->suffixes);
-        foreach ($this->suffixes as $item) {
-            if (preg_match('#[^\d]{1}(?<index>[\d]+)$#i', $item, $match)) {
-                $root .= $match['index'] . '_';
-            }
-        }
-        $root .= $this->index;
-        $id = $root;
-
-        $element = $this->doc->getElement($id);
-        if ($element) {
-            $element->suffixes = $this->suffixes;
-        }
-
-        return $element;
+        return 'block';
     }
 
     /**
      * @param $func
      * @param $args
      *
-     * @return Model\Document\Tag|null
+     * @return Document\Tag|null
      */
     public function __call($func, $args)
     {
