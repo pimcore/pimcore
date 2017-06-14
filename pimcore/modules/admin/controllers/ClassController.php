@@ -845,12 +845,19 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 }
 
                 $layout = $type->getLayoutDefinitions();
+                $currentLayoutId = $this->getParam("layoutId", null);
+
+                $user = $this->getUser();
+                if ($currentLayoutId == -1 && $user->isAdmin()) {
+                    Object\Service::createSuperLayout($layout);
+                    $objectData["layout"] = $layout;
+                }
+
 
                 $context = [
                     "containerType" => "objectbrick",
                     "containerKey" => $type->getKey()
                 ];
-
                 $object = Object\AbstractObject::getById($this->getParam("object_id"));
 
                 Object\Service::enrichLayoutDefinition($layout, $object, $context);
