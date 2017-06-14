@@ -112,16 +112,19 @@ The manual mode offers you the possibility to deal with block the way you like, 
 
 ### Accessing Data Within a Block Element
 
+Bricks and structure refer to the CMS demo (content/default template).
+
 ```php
+<?php
 // load document
-$doc = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
+$document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
  
 // Bsp #1 | get the first picture from the first "gallery-single-images" brick
-$image = $doc
-    ->getElement('content')                             // view.php > $this->areablock('content')
+$image = $document
+    ->getElement('content')                             // view.html.php > $this->areablock('content')
         ->getElement('gallery-single-images')[0]        // get the first entry for this brick
-            ->getBlock('gallery')->getElements()[0]     // view.php > $this->block("gallery")->loop()
-                ->getImage('image')                     // view.php > $this->image("image")
+            ->getBlock('gallery')->getElements()[0]     // view.html.php > $this->block("gallery")->loop()
+                ->getImage('image')                     // view.html.php > $this->image("image")
 ;
  
  

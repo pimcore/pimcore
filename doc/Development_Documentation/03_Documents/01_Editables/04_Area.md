@@ -22,7 +22,7 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```php
 <div>
-    <?= $this->area("myArea", ["type" => "nameofbrick"]); ?>
+    <?= $this->area('myArea', ['type' => 'gallery-single-images']); ?>
 </div>
 ```
 
@@ -30,11 +30,11 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```php
 <div>
-    <?= $this->area("myArea", [
-        "type" => "nameofbrick",
-        "params" => [
-            "nameofbrick" => [
-                "param1" => 123
+    <?= $this->area('myArea', [
+        'type' => 'gallery-single-images',
+        'params' => [
+            'gallery-single-images' => [
+                'param1' => 123
             ]
         ]
     ]); ?>
@@ -48,3 +48,23 @@ Get the params in your brick:
     <?= $this->param1; ?>
 </div>
 ```
+
+
+### Accessing Data Within an Area Element
+
+Assuming your area uses a brick `gallery-single-images` which contains a `gallery` block (see CMS demo):
+
+```php
+<?php
+// load document
+$document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
+
+/** @var \Pimcore\Model|Document\Tag\Area $area */
+$area = $document->getElement('myArea');
+
+/** @var \Pimcore\Model|Document\Tag\Block $block */
+$block = $area->getElement('gallery');
+?>
+```
+
+See [Block](./06_Block.md) for an example how to get elements from a block editable.
