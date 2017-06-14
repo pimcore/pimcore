@@ -1,6 +1,0 @@
-
-# @TODO: migrate demo installation to new naming strategy and remove the following config
-pimcore:
-    documents:
-        editables:
-            naming_strategy: legacy
