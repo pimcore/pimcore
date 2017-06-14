@@ -102,8 +102,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
 
         try {
+            $tableName = method_exists($this, "getTableName") ? $this->getTableName() : "objects";
             $query->getPart(\Zend_Db_Select::DISTINCT);
-            $countIdentifier = 'DISTINCT o_id';
+            $countIdentifier = 'DISTINCT '.$tableName.'.o_id';
         } catch (\Exception $e) {
             $countIdentifier = '*';
         }

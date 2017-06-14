@@ -1588,9 +1588,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
             if (isset($sortingSettings["isFeature"]) && $sortingSettings["isFeature"]) {
-                $orderKey = "cskey_" . $sortingSettings["fieldname"] . "_" . $sortingSettings["groupId"]. "_" . $sortingSettings["keyId"];
+                $orderKey = "cskey_" . $sortingSettings["fieldname"] . "_" . $sortingSettings["groupId"]. "_" . $sortingSettings["keyId"]."`.`value";
                 $list->setOrderKey($orderKey);
-                $list->setGroupBy("o_id");
+                $list->setGroupBy("object_".$this->getParam("classId").".o_id");
 
                 $featureJoins[] = $sortingSettings;
             } else {
