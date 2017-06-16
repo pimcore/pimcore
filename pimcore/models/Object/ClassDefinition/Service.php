@@ -174,12 +174,12 @@ class Service
                 if (is_numeric($cd['classname'])) {
                     $class = Object\ClassDefinition::getById($cd['classname']);
                     if ($class) {
+                        $cd['classname'] = $class->getName();
                         $toAssignClassDefinitions[] = $cd;
                     }
                 } else {
                     $class = Object\ClassDefinition::getByName($cd['classname']);
                     if ($class) {
-                        $cd['classname'] = $class->getId();
                         $toAssignClassDefinitions[] = $cd;
                     }
                 }
