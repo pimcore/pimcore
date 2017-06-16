@@ -110,8 +110,25 @@ pimcore.settings.staticroutes = Class.create({
                 editor:new Ext.form.TextField({})},
             {header:t("reverse"), flex:100, sortable:true, dataIndex:'reverse',
                 editor:new Ext.form.TextField({})},
-            {header:t("bundle_optional"), flex:50, sortable:false, dataIndex:'module',
-                editor:new Ext.form.TextField({})},
+            {
+                header: t("bundle_optional"), flex: 50, sortable: false, dataIndex: 'module',
+                editor: new Ext.form.ComboBox({
+                    store: new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        proxy: {
+                            type: 'ajax',
+                            url: "/admin/misc/get-available-modules",
+                            reader: {
+                                type: 'json',
+                                rootProperty: 'data'
+                            }
+                        },
+                        fields: ["name"]
+                    }),
+                    triggerAction: "all",
+                    displayField: 'name'
+                })
+            },
             {header:t("controller"), flex:50, sortable:false, dataIndex:'controller',
                 editor:new Ext.form.ComboBox({
                     store:new Ext.data.JsonStore({

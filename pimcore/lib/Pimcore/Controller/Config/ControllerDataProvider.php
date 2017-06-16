@@ -114,13 +114,17 @@ class ControllerDataProvider
     }
 
     /**
-     * Returns all service controllers and all controllers matching the selected bundle
+     * Returns all service controllers and all controllers matching the selected bundle. The bundleName will be used
+     * to filter service and non-service controllers (thus, only service controllers defined in the selected bundle
+     * will be used. If no bundleName is passed, all service controllers will be returned and the defaultBundleName will
+     * be used to resolve controllers not defined as service.
      *
      * @param string|null $bundleName
+     * @param string|null $defaultBundleName
      *
      * @return array
      */
-    public function getControllers(string $bundleName = null): array
+    public function getControllers(string $bundleName = null, string $defaultBundleName = null): array
     {
         $controllers = [];
         $classNames  = [];
@@ -148,11 +152,21 @@ class ControllerDataProvider
             $classNames[]  = $className;
         }
 
+        sort($controllers);
+
         if (null === $bundle) {
-            return $controllers;
+            // if set, use default bundle to resolve controllers which are not defined as service
+            if (null !== $defaultBundleName) {
+                $bundle = $this->getBundle($defaultBundleName);
+            }
+
+            if (null === $bundle) {
+                return $controllers;
+            }
         }
 
-        $bundleControllers = $this->findBundleControllers($bundle);
+        $bundleControllers     = $this->findBundleControllers($bundle);
+        $bundleControllerNames = [];
 
         /** @var \ReflectionClass $controllerReflector */
         foreach ($bundleControllers as $controllerName => $controllerReflector) {
@@ -161,8 +175,12 @@ class ControllerDataProvider
                 continue;
             }
 
-            $controllers[] = $controllerName;
+            $bundleControllerNames[] = $controllerName;
         }
+
+        sort($bundleControllerNames);
+
+        $controllers = array_merge($bundleControllerNames, $controllers);
 
         return $controllers;
     }
