@@ -29,7 +29,7 @@ class Model extends AbstractDefinitionHelper
 
         $cm->setupClass('inheritance', 'inheritance.json');
 
-        $cm->setupObjectbrick('unittestBrick', 'brick-import.json', [$unittestClass->getId()]);
+        $cm->setupObjectbrick('unittestBrick', 'brick-import.json');
     }
 
     /**
