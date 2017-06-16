@@ -126,9 +126,23 @@ pimcore.settings.staticroutes = Class.create({
                         },
                         fields:["name"]
                     }),
+                    queryMode: 'local',
                     triggerAction:"all",
                     displayField:'name',
-                    valueField:'name'
+                    valueField:'name',
+                    listeners:{
+                        "focus":function (el) {
+                            var currentRecord = this.grid.getSelection();
+                            el.getStore().reload({
+                                params:{
+                                    moduleName:currentRecord[0].data.module
+                                },
+                                callback: function() {
+                                    el.expand();
+                                }
+                            });
+                        }.bind(this)
+                    }
                 })},
             {header:t("action"), flex:50, sortable:false, dataIndex:'action',
                 editor:new Ext.form.ComboBox({
