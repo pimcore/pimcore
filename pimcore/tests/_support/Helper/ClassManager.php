@@ -162,11 +162,11 @@ class ClassManager extends Module
      *
      * @param string $name
      * @param string $filename
-     * @param array $classIds
+     * @param array $classNames
      *
      * @return ObjectbrickDefinition
      */
-    public function setupObjectbrick($name, $filename, array $classIds = [])
+    public function setupObjectbrick($name, $filename, array $classNames = [])
     {
         if (!$this->hasObjectbrick($name)) {
             $this->debug(sprintf('[CLASSMANAGER] Setting up objectbrick %s', $name));
@@ -180,7 +180,7 @@ class ClassManager extends Module
 
             $importData       = json_decode($json, true);
 
-            $classIds         = array_values($classIds);
+            $classNames         = array_values($classNames);
             $classDefinitions = is_array($importData['classDefinitions'])
                 ? array_values($importData['classDefinitions'])
                 : [];
@@ -190,7 +190,7 @@ class ClassManager extends Module
             // map class definitions from json to class ids
             // throw an exception if class / definition count doesn't match
             foreach ($classDefinitions as $i => $classDefinition) {
-                if (!isset($classIds[$i])) {
+                if (!isset($classNames[$i])) {
                     throw new \RuntimeException(sprintf(
                         'Failed to build test objectbrick %s. Missing class ID for definition %s',
                         $name,
@@ -199,7 +199,7 @@ class ClassManager extends Module
                 }
 
                 $newClassDefinitions[] = [
-                    'classname' => $classIds[$i],
+                    'classname' => $classNames[$i],
                     'fieldname' => $classDefinition['fieldname']
                 ];
             }
