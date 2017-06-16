@@ -50,7 +50,7 @@ class Installer
     /**
      * @var bool
      */
-    private $symlink = true;
+    private $symlink = false;
 
     /**
      * @param LoggerInterface $logger

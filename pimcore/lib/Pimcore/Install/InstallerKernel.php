@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Install;
 
 use Pimcore\Composer\PackageInfo;
+use Pimcore\Install\Command\InstallCommand;
 use Pimcore\Install\Controller\InstallController;
 use Pimcore\Install\Profile\ProfileLocator;
 use Symfony\Bundle\DebugBundle\DebugBundle;
@@ -104,6 +105,10 @@ class InstallerKernel extends Kernel
         $c->autowire(Installer::class, Installer::class);
         $c->autowire(PackageInfo::class, PackageInfo::class);
         $c->autowire(ProfileLocator::class, ProfileLocator::class);
+
+        // register command and tag it as console.command
+        $c->autowire(InstallCommand::class, InstallCommand::class);
+        $c->findDefinition(InstallCommand::class)->addTag('console.command');
 
         // register controller and tag it with service_arguments to enable action injection
         $c->autowire('pimcore.installer.controller', InstallController::class);
