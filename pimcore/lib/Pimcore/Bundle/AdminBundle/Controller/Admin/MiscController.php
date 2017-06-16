@@ -65,12 +65,8 @@ class MiscController extends AdminController
     {
         $provider = $this->get('pimcore.controller.config.controller_data_provider');
 
-        $bundle = $request->get('moduleName');
-        if (empty($bundle)) {
-            $bundle = 'AppBundle';
-        }
-
-        $controllers = $provider->getControllers($bundle);
+        $bundle      = $request->get('moduleName');
+        $controllers = $provider->getControllers($bundle, 'AppBundle');
 
         $result = array_map(function ($controller) {
             return [
