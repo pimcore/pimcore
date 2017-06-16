@@ -152,6 +152,8 @@ class ControllerDataProvider
             $classNames[]  = $className;
         }
 
+        sort($controllers);
+
         if (null === $bundle) {
             // if set, use default bundle to resolve controllers which are not defined as service
             if (null !== $defaultBundleName) {
@@ -163,7 +165,8 @@ class ControllerDataProvider
             }
         }
 
-        $bundleControllers = $this->findBundleControllers($bundle);
+        $bundleControllers     = $this->findBundleControllers($bundle);
+        $bundleControllerNames = [];
 
         /** @var \ReflectionClass $controllerReflector */
         foreach ($bundleControllers as $controllerName => $controllerReflector) {
@@ -172,8 +175,12 @@ class ControllerDataProvider
                 continue;
             }
 
-            $controllers[] = $controllerName;
+            $bundleControllerNames[] = $controllerName;
         }
+
+        sort($bundleControllerNames);
+
+        $controllers = array_merge($bundleControllerNames, $controllers);
 
         return $controllers;
     }
