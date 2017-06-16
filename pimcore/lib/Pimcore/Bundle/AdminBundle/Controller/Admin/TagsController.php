@@ -316,11 +316,11 @@ class TagsController extends AdminController
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
             $userIds[] = $this->getUser()->getId();
-            $condition .= " AND (
-                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+            $condition .= ' AND (
+                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
-                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-            )";
+                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+            )';
         }
 
         $childsList->setCondition($condition, $asset->getRealFullPath() . '/%');
@@ -340,11 +340,11 @@ class TagsController extends AdminController
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
             $userIds[] = $this->getUser()->getId();
-            $condition .= " AND (
-                (SELECT `view` FROM users_workspaces_document WHERE userId IN (" . implode(',', $userIds) . ") and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+            $condition .= ' AND (
+                (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
-                (SELECT `view` FROM users_workspaces_document WHERE userId IN (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-            )";
+                (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+            )';
         }
 
         $childsList->setCondition($condition, $document->getRealFullPath() . '/%');

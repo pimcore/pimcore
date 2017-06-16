@@ -1071,12 +1071,12 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 $layout = $type->getLayoutDefinitions();
 
-                $currentLayoutId = $request->get("layoutId", null);
+                $currentLayoutId = $request->get('layoutId', null);
 
                 $user = $this->getUser();
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
                     Object\Service::createSuperLayout($layout);
-                    $objectData["layout"] = $layout;
+                    $objectData['layout'] = $layout;
                 }
 
                 $context = [

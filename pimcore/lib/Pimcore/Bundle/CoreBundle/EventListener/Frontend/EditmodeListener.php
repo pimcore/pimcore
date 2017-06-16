@@ -22,7 +22,6 @@ use Pimcore\Model\User;
 use Pimcore\Service\Request\DocumentResolver;
 use Pimcore\Service\Request\EditmodeResolver;
 use Pimcore\Service\Request\PimcoreContextResolver;
-use Pimcore\Tool\Authentication;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
