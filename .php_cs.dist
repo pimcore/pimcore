@@ -4,7 +4,8 @@ $finder = PhpCsFixer\Finder::create()
     ->in([
         __DIR__ . '/app',
         __DIR__ . '/install-profiles',
-        __DIR__ . '/pimcore'
+        __DIR__ . '/pimcore',
+        __DIR__ . '/update-scripts'
     ])
 
     ->exclude([
