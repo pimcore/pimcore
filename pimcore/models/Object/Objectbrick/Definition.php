@@ -202,7 +202,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
         if ($oldObject && !empty($oldObject->classDefinitions)) {
             foreach ($oldObject->classDefinitions as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
-                $class = Object\ClassDefinition::getById($cl['classname']);
+                $class = Object\ClassDefinition::getByName($cl['classname']);
                 if ($class) {
                     $path = $this->getContainerClassFolder($class->getName());
                     @unlink($path . '/' . ucfirst($cl['fieldname'] . '.php'));
@@ -235,7 +235,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
                 if (!isset($processedClasses[$cl['classname']]) || !$processedClasses[$cl['classname']]) {
-                    $class = Object\ClassDefinition::getById($cl['classname']);
+                    $class = Object\ClassDefinition::getByName($cl['classname']);
                     $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;
                 }
@@ -244,7 +244,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
         if (!empty($this->oldClassDefinitions)) {
             foreach ($this->oldClassDefinitions as $cl) {
-                $class = Object\ClassDefinition::getById($cl);
+                $class = Object\ClassDefinition::getByName($cl);
                 if ($class) {
                     $this->getDao()->delete($class);
 
@@ -278,7 +278,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 $containerDefinition[$cl['classname']][$cl['fieldname']][] = $this->key;
 
-                $class = Object\ClassDefinition::getById($cl['classname']);
+                $class = Object\ClassDefinition::getByName($cl['classname']);
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
                 if (!$fd) {
@@ -307,7 +307,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
         }
 
         foreach ($containerDefinition as $classId => $cd) {
-            $class = Object\ClassDefinition::getById($classId);
+            $class = Object\ClassDefinition::getByName($classId);
 
             if (!$class) {
                 continue;
@@ -419,7 +419,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
                 if (!$processedClasses[$cl['classname']]) {
-                    $class = Object\ClassDefinition::getById($cl['classname']);
+                    $class = Object\ClassDefinition::getByName($cl['classname']);
                     $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;
 
