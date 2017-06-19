@@ -20,13 +20,12 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\AbstractMigrationStrategy;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Model\Document;
-use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -70,7 +69,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 'strategy', 's',
                 InputOption::VALUE_REQUIRED,
                 sprintf('The migration strategy to use. Available strategies: %s', implode(', ', $this->validMigrationStrategies)),
-                'analyze'
+                'render'
             )
             ->addOption(
                 'document', 'd',
@@ -100,17 +99,88 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     /**
      * @inheritDoc
      */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
+
+        /** @var FormatterHelper $formatter */
+        $formatter = $this->getHelper('formatter');
+
+        $this->io->newLine();
+        $this->io->writeln($formatter->formatBlock(
+            'Welcome to the naming strategy migration command',
+            'bg=blue;fg=white',
+            true
+        ));
+        $this->io->newLine();
+
+        $this->io->writeln('There are currently 2 different strategies which can be used to migrate your editables:');
+        $this->io->newLine();
+
+        $this->io->writeln([
+            '  * <comment>render</comment>: renders all documents to fetch all editable names. To make the render strategy work',
+            '    you must make sure that all your documents/templates can be rendered without errors.'
+        ]);
+
+        $this->io->newLine();
+
+        $this->io->writeln([
+            '  * <comment>analyze</comment>: analyzes the DB structure and tries to fetch editable names to migrate from the existing',
+            '    editable names. As this can\'t always be reliably determined, you\'ll be prompted to resolve',
+            '    potential conflicts. (<fg=red>experimental!</>).'
+        ]);
+
+        $this->io->newLine();
+
+        $this->io->writeln([
+            'The render strategy is less experimental but as all documents need to be rendered it can take up some time',
+            'and it demands that all documents can be successfully rendered. The analyze strategy is way faster, but can\t',
+            'resolve all conflicts automatically and demands understanding of your template/editable structure. You can',
+            'try what works best for your project by simulating the migration with the --dry-run flag.',
+            '',
+            '<comment>In any case, please make sure you have a proper backup before running the migration!</comment>'
+        ]);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $strategy = $this->io->choice('Please select the naming strategy you want to use', [
+            'render',
+            'analyze',
+        ], $input->getOption('strategy'));
+
+        $input->setOption('strategy', $strategy);
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // disable profiler for performance reasons (there are a LOT of DB queries being processed during this command)
         $this->getContainer()->get('profiler')->disable();
 
         $migrationStrategy = $this->getMigrationStrategy();
-        $namingStrategy    = $this->getNamingStrategy();
+        $this->io->writeln(sprintf(
+            '  <comment>*</comment> Running migration with the <comment>%s</comment> migration strategy',
+            $migrationStrategy->getName()
+        ));
+
+        $namingStrategy = $this->getNamingStrategy();
+        $this->io->writeln(sprintf(
+            '  <comment>*</comment> Migrating to the <comment>%s</comment> naming strategy',
+            $namingStrategy->getName()
+        ));
+
+        $this->io->newLine();
 
         if ($input->isInteractive()) {
             $this->io->newLine();
-            $this->io->writeln('<comment>[WARNING]</comment> This command is going to update all editables names. Please make sure you have a proper backup before continuing!');
+            $this->io->writeln('<comment>[WARNING]</comment> This action is is irreversible. Please make sure you have a proper backup!');
             if (!$this->io->confirm('Do you wish to continue?', false)) {
                 return 0;
             }
@@ -406,11 +476,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         /** @var AbstractMigrationStrategy $strategy */
         $strategy = $container->get($strategyId);
 
-        $this->io->comment(sprintf(
-            'Running migration with the <comment>%s</comment> migration strategy',
-            $strategy->getName()
-        ));
-
         return $strategy;
     }
 
@@ -433,11 +498,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 $strategy->getName()
             ));
         }
-
-        $this->io->comment(sprintf(
-            'Migrating to the <comment>%s</comment> naming strategy',
-            $strategy->getName()
-        ));
 
         return $strategy;
     }

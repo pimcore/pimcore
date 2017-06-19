@@ -265,21 +265,21 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
 
     private function askRunConfirmation(): bool
     {
-        $message = <<<EOF
-<comment>[WARNING]</comment> This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please
-be aware that only elements which can be rendered and which are currently used on your templates
-can and will be migrated. If you have any elements which are not used in the template (e.g. because
-they are commented out or depend on a certain logic) they can't be automatically migrated and will be
-removed the next time you save the document in the admin interface.
-EOF;
+        $this->io->writeln(<<<EOF
+<comment>[WARNING]</comment> Please be aware that the <comment>render</comment> migration
+strategy can only migrate documents which can be successfully rendered and will only handle elements which
+are used in your template. If you have any elements which are not used in the template (e.g. because they
+are commented out or depend on a certain logic) they can't be automatically migrated and will be removed
+the next time you save the document in the admin interface.
+EOF
+        );
 
-        $this->io->writeln(sprintf($message, $this->namingStrategy->getName()));
         $this->io->newLine();
 
         $this->io->writeln(<<<EOF
-To make the transition as smooth as possible it\'s recommended to update all your templates
-to render any needed editables at least in editmode. The command simulates the editmode,
-so you can rely on the editmode parameter to be set.
+To make the transition as smooth as possible it's recommended to update all your templates to render any
+needed editables at least in editmode. The command simulates the editmode, so you can rely on the editmode
+parameter to be set in your views.
 EOF
         );
 
