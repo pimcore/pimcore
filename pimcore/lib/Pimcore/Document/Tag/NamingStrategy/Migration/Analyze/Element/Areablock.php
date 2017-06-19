@@ -22,9 +22,8 @@ final class Areablock extends AbstractBlock
     /**
      * @inheritdoc
      */
-    protected function resolveChildIndexes(): array
+    protected function resolveChildIndexes($data = null): array
     {
-        $data = $this->getData();
         if (empty($data)) {
             return [];
         }

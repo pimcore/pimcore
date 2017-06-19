@@ -27,12 +27,21 @@ abstract class AbstractBlock extends AbstractElement
      */
     private $childIndexes;
 
+    public function __construct($name, $type, $data = null, AbstractBlock $parent = null)
+    {
+        parent::__construct($name, $type, $data, $parent);
+
+        $this->childIndexes = $this->resolveChildIndexes($data);
+    }
+
     /**
      * Get a list of available child indexes from block data
      *
+     * @param null $data
+     *
      * @return array
      */
-    abstract protected function resolveChildIndexes(): array;
+    abstract protected function resolveChildIndexes($data = null): array;
 
     /**
      * Get available indexes
@@ -41,10 +50,6 @@ abstract class AbstractBlock extends AbstractElement
      */
     public function getChildIndexes()
     {
-        if (null === $this->childIndexes) {
-            $this->childIndexes = $this->resolveChildIndexes();
-        }
-
         return $this->childIndexes;
     }
 
@@ -57,7 +62,7 @@ abstract class AbstractBlock extends AbstractElement
      */
     public function hasChildIndex(int $index)
     {
-        return in_array($index, $this->getChildIndexes(), true);
+        return in_array($index, $this->childIndexes, true);
     }
 
     /**

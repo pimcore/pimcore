@@ -19,7 +19,6 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\EditableConflictResolver;
-use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
