@@ -452,13 +452,15 @@ pimcore.object.classes.klass = Class.create({
                 handler: this.copyNode.bind(this, tree, record)
             }));
 
-            if (pimcore && pimcore.classEditor && pimcore.classEditor.clipboard) {
-                menu.add(new Ext.menu.Item({
-                    text: t('paste'),
-                    iconCls: "pimcore_icon_paste",
-                    hideOnClick: true,
-                    handler: this.dropNode.bind(this, tree, record)
-                }));
+            if (childsAllowed) {
+                if (pimcore && pimcore.classEditor && pimcore.classEditor.clipboard) {
+                    menu.add(new Ext.menu.Item({
+                        text: t('paste'),
+                        iconCls: "pimcore_icon_paste",
+                        hideOnClick: true,
+                        handler: this.dropNode.bind(this, tree, record)
+                    }));
+                }
             }
         }
 
