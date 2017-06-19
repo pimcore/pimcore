@@ -90,11 +90,13 @@ class Procedural
     {
         if (!empty($this->validJobs) and !in_array($job->getId(), $this->validJobs)) {
             Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+
             return false;
         }
 
         if (!empty($this->excludedJobs) and in_array($job->getId(), $this->excludedJobs)) {
             Logger::info("Skipped job with ID: " . $job->getId() . " because it has been excluded.");
+
             return false;
         }
 

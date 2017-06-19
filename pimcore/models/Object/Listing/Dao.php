@@ -109,13 +109,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
         $query->reset(\Zend_Db_Select::ORDER);
 
-        if ($this->isQueryPartinUse($query,\Zend_Db_Select::GROUP) || $this->isQueryPartinUse($query, \Zend_Db_Select::HAVING)) {
+        if ($this->isQueryPartinUse($query, \Zend_Db_Select::GROUP) || $this->isQueryPartinUse($query, \Zend_Db_Select::HAVING)) {
             $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
         } else {
             $query->reset(\Zend_Db_Select::COLUMNS);
 
             $countIdentifier = '*';
-            if($this->isQueryPartinUse($query,\Zend_Db_Select::DISTINCT)) {
+            if ($this->isQueryPartinUse($query, \Zend_Db_Select::DISTINCT)) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
             }
 
@@ -132,7 +132,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      * @param string $part
      * @return bool
      */
-    private function isQueryPartinUse($query, $part) {
+    private function isQueryPartinUse($query, $part)
+    {
         try {
             if ($query->getPart($part)) {
                 return true;
