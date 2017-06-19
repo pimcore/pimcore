@@ -29,6 +29,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     protected $onCreateQueryCallback;
 
     /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return "objects";
+    }
+
+    /**
      * get select query
      *
      * @return \Zend_Db_Select
@@ -40,7 +48,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->db->select();
 
         // create base
-        $select->from([ 'objects' ]);
+        $select->from([ $this->getTableName() ]);
 
         // add joins
         $this->addJoins($select);
@@ -103,7 +111,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         try {
             $query->getPart(\Zend_Db_Select::DISTINCT);
-            $countIdentifier = 'DISTINCT o_id';
+            $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
         } catch (\Exception $e) {
             $countIdentifier = '*';
         }
@@ -170,7 +178,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $condition = $this->model->getCondition();
         $objectTypes = $this->model->getObjectTypes();
 
-        $tableName = method_exists($this, "getTableName") ? $this->getTableName() : "objects";
+        $tableName = $this->getTableName();
 
         if (!empty($objectTypes)) {
             if (!empty($condition)) {
