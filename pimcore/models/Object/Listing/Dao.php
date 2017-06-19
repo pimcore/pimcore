@@ -105,30 +105,43 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $query = $this->getQuery();
-        $query->reset(\Zend_Db_Select::COLUMNS);
         $query->reset(\Zend_Db_Select::LIMIT_COUNT);
         $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $query->reset(\Zend_Db_Select::ORDER);
 
-        try {
-            $query->getPart(\Zend_Db_Select::DISTINCT);
-            $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-        } catch (\Exception $e) {
+        if ($this->isQueryPartinUse($query,\Zend_Db_Select::GROUP) || $this->isQueryPartinUse($query, \Zend_Db_Select::HAVING)) {
+            $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
+        } else {
+            $query->reset(\Zend_Db_Select::COLUMNS);
+
             $countIdentifier = '*';
-        }
-
-        $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(' . $countIdentifier . ')')]);
-
-        try {
-            if ($query->getPart(\Zend_Db_Select::GROUP)) {
-                $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
+            if($this->isQueryPartinUse($query,\Zend_Db_Select::DISTINCT)) {
+                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
             }
-        } catch (\Exception $e) {
-            // do nothing
+
+            $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(' . $countIdentifier . ')')]);
         }
 
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
+    }
+
+    /**
+     * @param \Zend_Db_Select $query
+     * @param string $part
+     * @return bool
+     */
+    private function isQueryPartinUse($query, $part) {
+        try {
+            if ($query->getPart($part)) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // do nothing
+        }
+
+        return false;
     }
 
     /**
