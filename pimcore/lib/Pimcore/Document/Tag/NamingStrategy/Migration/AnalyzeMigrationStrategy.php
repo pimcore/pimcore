@@ -19,6 +19,7 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\EditableConflictResolver;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
@@ -59,6 +60,11 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         $errors  = [];
         $mapping = $cache->get('mapping', []);
 
+        $editableConflictResolver = new EditableConflictResolver(
+            $this->io,
+            $this->namingStrategy
+        );
+
         /** @var Document\PageSnippet $document */
         foreach ($documents as $document) {
             if (isset($mapping[$document->getId()])) {
@@ -69,7 +75,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
                 ));
             } else {
                 try {
-                    $documentMapping = $this->processDocument($document);
+                    $documentMapping = $this->processDocument($document, $editableConflictResolver);
                     if (!empty($documentMapping)) {
                         $mapping[$document->getId()] = $documentMapping;
                         $cache->set('mapping', $mapping);
@@ -100,13 +106,8 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         return $mapping;
     }
 
-    private function processDocument(Document\PageSnippet $document): array
+    private function processDocument(Document\PageSnippet $document, EditableConflictResolver $editableConflictResolver): array
     {
-        $editableConflictResolver = new EditableConflictResolver(
-            $this->io,
-            $this->namingStrategy
-        );
-
         $tree = new ElementTree($document, $editableConflictResolver);
 
         // add document elements
@@ -123,8 +124,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         }
 
         $elements = $tree->getElements();
-
-        if (count($elements) !== count($documentElements)) {
+        if (count($elements) !== (count($documentElements) - count($tree->getIgnoredElements()))) {
             throw new \RuntimeException('Failed to resolve the same amount of elements as fetched from DB');
         }
 

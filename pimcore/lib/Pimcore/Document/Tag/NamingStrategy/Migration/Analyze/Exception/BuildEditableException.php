@@ -20,6 +20,16 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception;
 class BuildEditableException extends \RuntimeException
 {
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
      * @var \LogicException[]
      */
     private $errors = [];
@@ -28,6 +38,70 @@ class BuildEditableException extends \RuntimeException
      * @var mixed
      */
     private $elementData;
+
+    /**
+     * @var bool
+     */
+    private $ignoreElement = false;
+
+    public static function create(string $name, string $type, string $message, array $errors, $elementData = null, self $previous = null): self
+    {
+        $exception = new static($message, 1, $previous);
+        $exception->setName($name);
+        $exception->setType($type);
+        $exception->setErrors($errors);
+        $exception->setElementData($elementData);
+
+        return $exception;
+    }
+
+    public static function fromPrevious(self $previous, string $message = null): self
+    {
+        if (null === $message) {
+            $message = $previous->getMessage();
+        }
+
+        return self::create(
+            $previous->getName(),
+            $previous->getType(),
+            $message,
+            $previous->getErrors(),
+            $previous->getElementData(),
+            $previous
+        );
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType(string $type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
 
     /**
      * @param \LogicException[] $errors
@@ -59,5 +133,21 @@ class BuildEditableException extends \RuntimeException
     public function setElementData($elementData)
     {
         $this->elementData = $elementData;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIgnoreElement(): bool
+    {
+        return $this->ignoreElement;
+    }
+
+    /**
+     * @param bool $ignoreElement
+     */
+    public function setIgnoreElement(bool $ignoreElement)
+    {
+        $this->ignoreElement = $ignoreElement;
     }
 }

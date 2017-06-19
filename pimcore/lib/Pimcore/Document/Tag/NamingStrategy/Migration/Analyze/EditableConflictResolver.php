@@ -24,6 +24,8 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditabl
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Model\Document;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\CliDumper;
 
 final class EditableConflictResolver
 {
@@ -43,13 +45,58 @@ final class EditableConflictResolver
         $this->namingStrategy = $namingStrategy;
     }
 
-    public function resolve(Document\PageSnippet $document, string $name, string $type, array $editables, array $errors): Editable
+    public function resolveBuildFailed(Document\PageSnippet $document, BuildEditableException $exception): BuildEditableException
+    {
+        if (!$this->io->getInput()->isInteractive()) {
+            return $exception;
+        }
+
+        $message = [
+            sprintf('<fg=red>[ERROR]</> %s', $exception->getMessage()),
+            '        You can try to open and save the document in the admin interface to clean up orphaned elements.'
+        ];
+
+        $this->showErrorInfo(
+            $document,
+            $exception,
+            $message
+        );
+
+        $choices = [
+            'Leave unresolved',
+            'Ignore editable (<fg=red>data will be lost!</>)'
+        ];
+
+        $result = $this->io->choice(
+            sprintf('Please select how to proceed with editable "<comment>%s</comment>"', $exception->getName()),
+            $choices
+        );
+
+        if ($result === $choices[1]) {
+            $exception->setIgnoreElement(true);
+        }
+
+        return $exception;
+    }
+
+    public function resolveConflict(Document\PageSnippet $document, BuildEditableException $exception, array $editables): Editable
     {
         if (count($editables) < 2) {
             throw new LogicException(sprintf('Expected at least 2 editables, %d given', count($editables)));
         }
 
-        $this->showWarning($document, $name, $type);
+        $message = <<<EOF
+The element <comment>{$exception->getName()}</comment> can't be automatically converted as there is more
+than one possible hierarchy combination. This is probably because of nested elements with
+the same name ("content" inside "content") or blocks with similar names andnumeric suffixes
+("content" and "content1").
+EOF;
+
+        $this->showErrorInfo($document, $exception, $message);
+
+        $this->io->newLine();
+        $this->io->writeln('<comment>[WARNING]</comment> Selecting the wrong option here will rename your elements to a wrong target name!');
+        $this->io->newLine();
 
         /** @var Editable[] $editables */
         $editables = array_values($editables);
@@ -78,36 +125,38 @@ final class EditableConflictResolver
                 $possibleNames[] = $editable->getNameForStrategy($this->namingStrategy);
             }
 
-            $exception = new BuildEditableException(sprintf(
-                'Ambiguous results left unresolved. Built %d editables for element "%s". Possible resolutions: %s',
-                count($editables),
-                $name,
-                implode(', ', $possibleNames)
-            ));
-
-            $exception->setErrors($errors);
-
-            throw $exception;
+            throw BuildEditableException::fromPrevious(
+                $exception,
+                sprintf(
+                    'Ambiguous results left unresolved. Built %d editables for element "%s". Possible resolutions: %s',
+                    count($editables),
+                    $exception->getName(),
+                    implode(', ', $possibleNames)
+                )
+            );
         } else {
             return $editables[$result];
         }
     }
 
-    private function showWarning(Document\PageSnippet $document, string $name, string $type)
+    private function showErrorInfo(Document\PageSnippet $document, BuildEditableException $exception, $message = null)
     {
         $this->io->newLine(2);
         $this->io->writeln(str_repeat('=', 80));
         $this->io->newLine(2);
 
-        $message = <<<EOF
-The element <comment>{$name}</comment> can't be automatically converted as there is more
-than one possible hierarchy combination. This is probably because of nested elements with
-the same name ("content" inside "content") or blocks with similar names andnumeric suffixes
-("content" and "content1").
-EOF;
+        if ($message) {
+            $this->io->writeln($message);
+            $this->io->newLine();
+        }
 
-        $this->io->writeln($message);
-        $this->io->newLine();
+        if (count($exception->getErrors()) > 0) {
+            foreach ($exception->getErrors() as $error) {
+                $this->io->writeln('  <fg=red>*</> ' . $error->getMessage());
+            }
+
+            $this->io->newLine();
+        }
 
         $tableRows = [
             [
@@ -122,7 +171,7 @@ EOF;
                 'Element',
                 sprintf(
                     '<comment>%s</comment> (type <comment>%s</comment>)',
-                    $name, $type
+                    $exception->getName(), $exception->getType()
                 )
             ]
         ];
@@ -137,10 +186,24 @@ EOF;
             ];
         }
 
+        $tableRows[] = [
+            'Data',
+            $this->dumpData($exception->getElementData())
+        ];
+
         $this->io->table([], $tableRows);
-        $this->io->newLine();
-        $this->io->writeln('<comment>[WARNING]</comment> Selecting the wrong option here will rename your elements to a wrong target name!');
-        $this->io->newLine();
+    }
+
+    private function dumpData($data)
+    {
+        $data = trim($data);
+        if (empty($data)) {
+            $data = '<empty>';
+        }
+
+        $dumped = trim((new CliDumper())->dump((new VarCloner())->cloneVar($data), true));
+
+        return $dumped;
     }
 
     /**

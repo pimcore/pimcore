@@ -117,31 +117,16 @@ abstract class AbstractMigrationStrategy
 
                 foreach ($exception->getErrors() as $err) {
                     $this->io->writeln(sprintf(
-                        '%s%s',
+                        '%s<fg=red>*</> %s',
                         $indent,
                         $err->getMessage()
                     ));
-                }
-
-                if (!empty($exception->getElementData())) {
-                    $this->io->newLine();
-
-                    $elementData = $exception->getElementData();
-                    if (!is_scalar($elementData)) {
-                        dump($elementData);
-                    } else {
-                        $elementData = explode("\n", $elementData);
-                        $elementData = array_map(function ($line) use ($indent) {
-                            return $indent . $line;
-                        }, $elementData);
-
-                        $this->io->writeln($elementData);
-                    }
                 }
             }
         }
 
         $this->io->newLine();
         $this->io->writeln($description);
+        $this->io->newLine(2);
     }
 }

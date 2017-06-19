@@ -63,6 +63,11 @@ final class ElementTree
     private $elements = [];
 
     /**
+     * @var BuildEditableException[]
+     */
+    private $ignoredElements = [];
+
+    /**
      * @var bool
      */
     private $processed = false;
@@ -139,10 +144,19 @@ final class ElementTree
         return $this->elements[$name];
     }
 
+    /**
+     * @return BuildEditableException[]
+     */
+    public function getIgnoredElements(): array
+    {
+        return $this->ignoredElements;
+    }
+
     private function reset()
     {
-        $this->processed = false;
-        $this->elements  = [];
+        $this->processed       = false;
+        $this->elements        = [];
+        $this->ignoredElements = [];
     }
 
     private function process()
@@ -188,7 +202,16 @@ final class ElementTree
                 continue;
             }
 
-            $editables[$name] = $this->buildEditable($name, $blocks);
+            try {
+                $editables[$name] = $this->buildEditable($name, $blocks);
+            } catch (BuildEditableException $e) {
+                // do not throw exception is ignoreElement is not set
+                if ($e->getIgnoreElement()) {
+                    $this->ignoredElements[] = $e;
+                } else {
+                    throw $e;
+                }
+            }
         }
 
         return $editables;
@@ -229,20 +252,32 @@ final class ElementTree
             }
         }
 
-        if (count($editables) === 0) {
-            $exception = new BuildEditableException(sprintf(
-                'Failed to build an editable for element "%s"',
-                $name
-            ));
 
-            $exception->setErrors($errors);
-            $exception->setElementData($this->data[$name]);
-
-            throw $exception;
-        } elseif (count($editables) === 1) {
+        if (count($editables) === 1) {
             return $editables[0];
+        }
+
+        $exception = BuildEditableException::create(
+            $name, $this->map[$name],
+            sprintf(
+                'Failed to resolve editable hierarchy for element "%s". Element can\'t be migrated.',
+                $name
+            ),
+            $errors,
+            $this->data[$name]
+        );
+
+        if (count($editables) === 0) {
+            throw $this->editableConflictResolver->resolveBuildFailed(
+                $this->document,
+                $exception
+            );
         } elseif (count($editables) > 1) {
-            return $this->editableConflictResolver->resolve($this->document, $name, $this->map[$name], $editables, $errors);
+            return $this->editableConflictResolver->resolveConflict(
+                $this->document,
+                $exception,
+                $editables
+            );
         }
     }
 
