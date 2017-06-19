@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -179,12 +181,27 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable options array', $this->getName()));
         }
 
+        $attributes = array_merge($this->getEditmodeBlockStateAttributes(), [
+            'id'    => $options['id'],
+            'class' => implode(' ', $this->getEditmodeElementClasses()),
+        ]);
+
+        return $attributes;
+    }
+
+    protected function getEditmodeBlockStateAttributes(): array
+    {
+        $blockState = $this->getBlockState();
+        $blockNames = array_map(function(BlockName $blockName) {
+            return $blockName->getRealName();
+        }, $blockState->getBlocks());
+
         $attributes = [
-            'id'             => $options['id'],
-            'class'          => implode(' ', $this->getEditmodeElementClasses()),
-            'data-name'      => $this->getName(),
-            'data-real-name' => $this->getRealName(),
-            'data-type'      => $this->getType()
+            'data-name'          => $this->getName(),
+            'data-real-name'     => $this->getRealName(),
+            'data-type'          => $this->getType(),
+            'data-block-names'   => implode(', ', $blockNames),
+            'data-block-indexes' => implode(', ', $blockState->getIndexes())
         ];
 
         return $attributes;
@@ -569,6 +586,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function getInherited()
     {
         return $this->inherited;
+    }
+
+    /**
+     * TODO inject block state via DI
+     *
+     * @return BlockState
+     */
+    protected function getBlockState(): BlockState
+    {
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 
     /**
