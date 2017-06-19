@@ -105,30 +105,43 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $query = $this->getQuery();
-        $query->reset(QueryBuilder::COLUMNS);
         $query->reset(QueryBuilder::LIMIT_COUNT);
         $query->reset(QueryBuilder::LIMIT_OFFSET);
+        $query->reset(QueryBuilder::ORDER);
 
-        try {
-            $query->getPart(QueryBuilder::DISTINCT);
-            $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-        } catch (\Exception $e) {
+        if ($this->isQueryPartinUse($query,QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
+            $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
+        } else {
+            $query->reset(QueryBuilder::COLUMNS);
+
             $countIdentifier = '*';
-        }
-
-        $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
-
-        try {
-            if ($query->getPart(QueryBuilder::GROUP)) {
-                $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
+            if($this->isQueryPartinUse($query,QueryBuilder::DISTINCT)) {
+                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
             }
-        } catch (\Exception $e) {
-            // do nothing
+
+            $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
         }
 
         $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
         return (int) $totalCount;
+    }
+
+    /**
+     * @param QueryBuilder $query
+     * @param string $part
+     * @return bool
+     */
+    private function isQueryPartinUse($query, $part) {
+        try {
+            if ($query->getPart($part)) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // do nothing
+        }
+
+        return false;
     }
 
     /**
