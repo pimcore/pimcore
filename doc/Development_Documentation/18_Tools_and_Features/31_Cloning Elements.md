@@ -9,7 +9,7 @@ $new = Pimcore\Model\Element\Service::cloneMe($source)
 to get a safe copy of the original element (everything that implements ElementInterface).
 Note that this will not update any internal references.
 For example: 
-A href inside the source element will still reference the source element
+A href inside the source element pointing to the source element will still reference the source element in the copy.
 
 If you want to get a persistent copy use the `copyAsChild`method of the corresponding service.
 E.g.
