@@ -64,7 +64,7 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->id = null;
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);
@@ -109,7 +109,7 @@ class Service extends Model\Element\Service
     {
         $source->getProperties();
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->id = null;
 
         if ($new instanceof Asset\Folder) {
@@ -159,7 +159,8 @@ class Service extends Model\Element\Service
         }
 
         $target->setUserModification($this->_user->getId());
-        $target->setProperties($source->getProperties());
+        $newProps = Element\Service::cloneMe($source->getProperties());
+        $target->setProperties($newProps);
         $target->save();
 
         return $target;

@@ -152,7 +152,7 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->id = null;
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
@@ -203,7 +203,7 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->id = null;
         $new->setChilds(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
@@ -397,7 +397,7 @@ class Service extends Model\Element\Service
                     $contentMasterElements = $contentMaster->getElements();
                     foreach ($contentMasterElements as $contentMasterElement) {
                         if (method_exists($contentMasterElement, 'rewriteIds')) {
-                            $element = clone $contentMasterElement;
+                            $element = Element\Service::cloneMe($contentMasterElement);
                             $element->rewriteIds($rewriteConfig);
 
                             if (Serialize::serialize($element) != Serialize::serialize($contentMasterElement)) {

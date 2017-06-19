@@ -126,7 +126,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->o_id = null;
         $new->setChilds(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
@@ -170,7 +170,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->o_id = null;
 
         $new->setChildren(null);
@@ -212,7 +212,7 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->setChilds($target->getChilds());
         $new->setId($target->getId());
         $new->setPath($target->getRealPath());

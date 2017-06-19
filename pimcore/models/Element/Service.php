@@ -961,4 +961,62 @@ class Service extends Model\AbstractModel
             return $result;
         }
     }
+
+    /**
+     * @see
+     * @param ElementInterface $element
+     * @return ElementInterface
+     */
+    public static function cloneMe(ElementInterface $element) {
+
+        $deepCopy = new \DeepCopy\DeepCopy();
+        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class ($element) implements \DeepCopy\Matcher\Matcher {
+
+            /**
+             * The element to be cloned
+             * @var  ElementInterface
+             */
+            private $element;
+
+            /**
+             * @param ElementInterface $element
+             */
+            public function __construct($element)
+            {
+                $this->element = $element;
+            }
+
+            /**
+             * {@inheritdoc}
+             */
+            public function matches($object, $property)
+            {
+                try {
+                    $reflectionProperty = new \ReflectionProperty($object, $property);
+                } catch (\Exception $e) {
+                    return false;
+                }
+                $reflectionProperty->setAccessible(true);
+                $myValue = $reflectionProperty->getValue($object);
+
+                if ($myValue instanceof ElementInterface) {
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('dao'));
+        $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('resource'));
+        $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('writeResource'));
+        if ($element instanceof Object\Concrete) {
+            Object\Service::loadAllObjectFields($element);
+        }
+
+        $theCopy = $deepCopy->copy($element);
+        $theCopy->setId(null);
+        $theCopy->setParent(null);
+        return $theCopy;
+    }
 }
