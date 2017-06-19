@@ -21,6 +21,7 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditableException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Model\Document;
+use Psr\SimpleCache\CacheInterface;
 
 abstract class AbstractMigrationStrategy
 {
@@ -66,10 +67,11 @@ abstract class AbstractMigrationStrategy
 
     /**
      * @param \Generator|Document\PageSnippet[] $documents
+     * @param CacheInterface $cache
      *
      * @return array
      */
-    abstract public function getNameMapping(\Generator $documents): array;
+    abstract public function getNameMapping(\Generator $documents, CacheInterface $cache): array;
 
     /**
      * @param array $mapping

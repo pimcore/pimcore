@@ -131,4 +131,12 @@ class MigrationSubscriber implements EventSubscriberInterface
     {
         return $this->nameMapping;
     }
+
+    /**
+     * @param array $nameMapping
+     */
+    public function setNameMapping(array $nameMapping)
+    {
+        $this->nameMapping = $nameMapping;
+    }
 }

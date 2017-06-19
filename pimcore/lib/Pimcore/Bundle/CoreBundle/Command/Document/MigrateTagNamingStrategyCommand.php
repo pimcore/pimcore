@@ -20,11 +20,15 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Application;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Document\Tag\NamingStrategy\Migration\AbstractMigrationStrategy;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Model\Document;
+use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Cache\Simple\ArrayCache;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -48,9 +52,12 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     /**
      * @var array
      */
-    private $validMigrationStrategies = [
-        'analyze', 'render'
-    ];
+    private $validMigrationStrategies = ['render', 'analyze'];
+
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
 
     /**
      * @var array
@@ -91,6 +98,16 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 'dump-sql', null,
                 InputOption::VALUE_REQUIRED,
                 'Dump SQL queries (pass stdout as value to print the queries)'
+            )
+            ->addOption(
+                'clear-cache', 'C',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
+                'Clear the cache to start with a fresh cache (optionally pass a list of document IDs to remove only certain entries)'
+            )
+            ->addOption(
+                'no-cache', null,
+                InputOption::VALUE_NONE,
+                'Do not load/save mapping results from/to cache'
             );
 
         $this->configureDryRunOption('Do not update editables. Just process and output name mapping');
@@ -142,16 +159,16 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         ]);
     }
 
-
     /**
      * @inheritDoc
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
-        $strategy = $this->io->choice('Please select the naming strategy you want to use', [
-            'render',
-            'analyze',
-        ], $input->getOption('strategy'));
+        $strategy = $this->io->choice(
+            'Please select the naming strategy you want to use',
+            $this->validMigrationStrategies,
+            $input->getOption('strategy')
+        );
 
         $input->setOption('strategy', $strategy);
     }
@@ -165,18 +182,23 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->getContainer()->get('profiler')->disable();
 
         $migrationStrategy = $this->getMigrationStrategy();
+
+        $this->io->newLine();
         $this->io->writeln(sprintf(
             '  <comment>*</comment> Running migration with the <comment>%s</comment> migration strategy',
             $migrationStrategy->getName()
         ));
 
         $namingStrategy = $this->getNamingStrategy();
+
         $this->io->writeln(sprintf(
             '  <comment>*</comment> Migrating to the <comment>%s</comment> naming strategy',
             $namingStrategy->getName()
         ));
 
         $this->io->newLine();
+
+        $this->cache = $this->getCache($migrationStrategy);
 
         if ($input->isInteractive()) {
             $this->io->newLine();
@@ -193,7 +215,10 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         try {
             $migrationStrategy->initialize($this->io, $namingStrategy);
-            $nameMapping = $migrationStrategy->getNameMapping($documents);
+            $nameMapping = $migrationStrategy->getNameMapping(
+                $documents,
+                $this->cache
+            );
         } catch (NameMappingException $e) {
             if ($e->getShowMessage()) {
                 $this->io->error($e->getMessage());
@@ -208,7 +233,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
             return 0;
         }
-
 
         $this->io->newLine(3);
         $this->io->title('[STEP 2] Rename preflight...checking if none of the new tag names already exist in the DB');
@@ -456,9 +480,52 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @return AbstractMigrationStrategy
-     */
+    private function getCache(AbstractMigrationStrategy $migrationStrategy): CacheInterface
+    {
+        if (null !== $this->cache) {
+            return $this->cache;
+        }
+
+        /** @var Application $application */
+        $application = $this->getApplication();
+        $kernel      = $application->getKernel();
+
+        $identifier = sprintf('editable-migration');
+        $directory  = $kernel->getCacheDir() . '/' . $identifier;
+
+        if ($this->io->getInput()->getOption('no-cache')) {
+            $this->cache = new ArrayCache();
+        } else {
+            $this->cache = new FilesystemCache($migrationStrategy->getName(), 0, $directory);
+        }
+
+        $clearCache = $this->io->getInput()->getOption('clear-cache');
+        if ((bool)$clearCache) {
+            if (count($clearCache) === 1 && null === $clearCache[0]) {
+                $this->io->comment('Clearing the cache');
+                $this->cache->clear();
+            } else {
+                if (null !== $mapping = $this->cache->get('mapping')) {
+                    foreach ($clearCache as $clearCacheId) {
+                        if (!is_numeric($clearCacheId)) {
+                            throw new \InvalidArgumentException('Invalid document ID "%s"', $clearCacheId);
+                        }
+
+                        $clearCacheId = (int)$clearCacheId;
+                        if (isset($mapping[$clearCacheId])) {
+                            $this->io->comment(sprintf('Deleting mapping for document <comment>%d</comment> from cache', $clearCacheId));
+                            unset($mapping[$clearCacheId]);
+                        }
+                    }
+
+                    $this->cache->set('mapping', $mapping);
+                }
+            }
+        }
+
+        return $this->cache;
+    }
+
     private function getMigrationStrategy(): AbstractMigrationStrategy
     {
         $container = $this->getContainer();
@@ -479,11 +546,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         return $strategy;
     }
 
-    /**
-     * Loads nested naming strategy and checks if it is not the same as the currently configured one
-     *
-     * @return NamingStrategyInterface
-     */
     private function getNamingStrategy(): NamingStrategyInterface
     {
         $container = $this->getContainer();

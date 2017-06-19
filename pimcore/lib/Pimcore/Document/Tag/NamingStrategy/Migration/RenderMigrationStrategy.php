@@ -28,6 +28,7 @@ use Pimcore\Model\User;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Service\Request\EditmodeResolver;
 use Pimcore\Tool;
+use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -191,22 +192,48 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         Tool\Session::setHandler($handler);
     }
 
-    public function getNameMapping(\Generator $documents): array
+    public function getNameMapping(\Generator $documents, CacheInterface $cache): array
     {
         $stopwatch     = new Stopwatch();
         $totalDuration = 0; // TODO can total duration be read directly from Stopwatch?
 
         $errors = [];
 
+        $cachedMapping = $cache->get('mapping', []);
+        if (!empty($cachedMapping)) {
+            $this->subscriber->setNameMapping($cachedMapping);
+        }
+
         $i = 0;
         foreach ($documents as $document) {
             $event = $stopwatch->start('document_' . $document->getId());
 
-            try {
-                $this->renderDocument($document);
-            } catch (\Throwable $e) {
-                $errors[$document->getId()] = new MappingError($document, $e);
-                $this->io->error($e->getMessage());
+            if (isset($cachedMapping[$document->getId()])) {
+                $this->io->writeln(sprintf(
+                    'Loading document <info>%s</info> with ID <info>%d</info> from cache',
+                    $document->getRealFullPath(),
+                    $document->getId()
+                ));
+            } else {
+                $this->io->writeln(sprintf(
+                    'Rendering document <info>%s</info> with ID <info>%d</info>',
+                    $document->getRealFullPath(),
+                    $document->getId()
+                ));
+
+                try {
+                    Document\Service::render(
+                        $document,
+                        [],
+                        false,
+                        ['pimcore_editmode' => true]
+                    );
+
+                    $cache->set('mapping', $this->subscriber->getNameMapping());
+                } catch (\Throwable $e) {
+                    $errors[$document->getId()] = new MappingError($document, $e);
+                    $this->io->error($e->getMessage());
+                }
             }
 
             $event->stop();
@@ -245,22 +272,6 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         $mapping = $this->subscriber->getNameMapping();
 
         return $mapping;
-    }
-
-    /**
-     * Renders a document by dispatching a new master request for the document URI
-     *
-     * @param Document\PageSnippet $document
-     */
-    private function renderDocument(Document\PageSnippet $document)
-    {
-        $this->io->writeln(sprintf(
-            'Rendering document <info>%s</info> with ID <info>%d</info>',
-            $document->getRealFullPath(),
-            $document->getId()
-        ));
-
-        Document\Service::render($document, [], false, ['pimcore_editmode' => true]);
     }
 
     private function askRunConfirmation(): bool

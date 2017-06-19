@@ -22,6 +22,7 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\EditableConflictResolv
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
+use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 
@@ -53,21 +54,30 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
     /**
      * @inheritdoc
      */
-    public function getNameMapping(\Generator $documents): array
+    public function getNameMapping(\Generator $documents, CacheInterface $cache): array
     {
         $errors  = [];
-        $mapping = [];
+        $mapping = $cache->get('mapping', []);
 
         /** @var Document\PageSnippet $document */
         foreach ($documents as $document) {
-            try {
-                $documentMapping = $this->processDocument($document);
-                if (!empty($documentMapping)) {
-                    $mapping[$document->getId()] = $documentMapping;
+            if (isset($mapping[$document->getId()])) {
+                $this->io->writeln(sprintf(
+                    'Loading document <info>%s</info> with ID <info>%d</info> from cache',
+                    $document->getRealFullPath(),
+                    $document->getId()
+                ));
+            } else {
+                try {
+                    $documentMapping = $this->processDocument($document);
+                    if (!empty($documentMapping)) {
+                        $mapping[$document->getId()] = $documentMapping;
+                        $cache->set('mapping', $mapping);
+                    }
+                } catch (\Exception $e) {
+                    $errors[$document->getId()] = new MappingError($document, $e);
+                    $this->io->error(sprintf('Document %d: %s', $document->getId(), $e->getMessage()));
                 }
-            } catch (\Exception $e) {
-                $errors[$document->getId()] = new MappingError($document, $e);
-                $this->io->error(sprintf('Document %d: %s', $document->getId(), $e->getMessage()));
             }
         }
 
