@@ -49,6 +49,14 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private $configNormalizer;
 
     /**
+     * Determines if unpublished documents should be matched, even when not in admin mode. This
+     * is mainly needed for maintencance jobs/scripts.
+     *
+     * @var bool
+     */
+    private $forceHandleUnpublishedDocuments = false;
+
+    /**
      * @var array
      */
     private $directRouteDocumentTypes = ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer'];
@@ -69,6 +77,11 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $this->siteResolver     = $siteResolver;
         $this->requestHelper    = $requestHelper;
         $this->configNormalizer = $configNormalizer;
+    }
+
+    public function setForceHandleUnpublishedDocuments(bool $handle)
+    {
+        $this->forceHandleUnpublishedDocuments = $handle;
     }
 
     /**
@@ -155,7 +168,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      *
      * @return DocumentRoute|null
      */
-    private function buildRouteForDocument(Document $document, DynamicRequestContext $context = null)
+    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null)
     {
         // check for direct hardlink
         if ($document instanceof Document\Hardlink) {
@@ -171,8 +184,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             return null;
         }
 
-        $locale = $document->getProperty('language');
-
         $route = new DocumentRoute($document->getFullPath());
 
         // coming from matching -> set route path the currently matched one
@@ -180,7 +191,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             $route->setPath($context->getOriginalPath());
         }
 
-        $route->setDefault('_locale', $locale);
+        $route->setDefault('_locale', $document->getProperty('language'));
         $route->setDocument($document);
 
         if ($this->isDirectRouteDocument($document)) {
@@ -229,8 +240,11 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $isAdminRequest = null !== $context && $this->requestHelper->isFrontendRequestByAdmin($context->getRequest());
 
         // abort if document is not published and the request is no admin request
-        if (!$document->isPublished() && !$isAdminRequest) {
-            return null;
+        // and matching unpublished documents was not forced
+        if (!$document->isPublished()) {
+            if (!($isAdminRequest || $this->forceHandleUnpublishedDocuments)) {
+                return null;
+            }
         }
 
         if (!$isAdminRequest && null !== $context) {

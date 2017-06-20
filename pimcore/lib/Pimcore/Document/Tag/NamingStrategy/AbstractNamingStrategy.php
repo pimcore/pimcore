@@ -48,7 +48,8 @@ abstract class AbstractNamingStrategy implements NamingStrategyInterface
                 $tmpName = $this->buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
             }
 
-            if ($blocks[count($blocks) - 1]->getName() === $tmpName) {
+            $previousBlockName = $blocks[count($blocks) - 1]->getName();
+            if ($previousBlockName === $tmpName) {
                 array_pop($blocks);
                 array_pop($indexes);
             }

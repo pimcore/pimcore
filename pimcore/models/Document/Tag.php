@@ -19,6 +19,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\Document\TagNameEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -633,6 +635,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
+
+        $event = new TagNameEvent($type, $name, $blockState, $tagName, $document);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::TAG_NAME, $event);
+
+        $tagName = $event->getTagName();
 
         if (strlen($tagName) > 750) {
             throw new \Exception(sprintf(

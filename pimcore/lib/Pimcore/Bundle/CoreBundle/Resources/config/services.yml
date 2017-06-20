@@ -305,6 +305,22 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore }
 
+    # DOCUMENT TAG MIGRATION
+
+    pimcore.document.tag.naming.migration.strategy.analyze:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
+        arguments: ['@database_connection']
+
+    pimcore.document.tag.naming.migration.strategy.render:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy
+        arguments:
+            - '@event_dispatcher'
+            - '@request_stack'
+            - '@pimcore.service.request.editmode_resolver'
+            - '@pimcore_admin.security.user_loader'
+            - '@pimcore_admin.session.configurator.admin_session_bags'
+            - '@pimcore.routing.dynamic.document_route_handler'
+
     #
     # IMPLEMENTATION FACTORIES
     #
@@ -356,9 +372,10 @@ services:
     pimcore.document.renderer:
         class: Pimcore\Document\Renderer\DocumentRenderer
         arguments:
-            - '@request_stack'
+            - '@pimcore.http.request_helper'
             - '@pimcore.templating.action_renderer'
             - '@fragment.renderer.inline'
+            - '@pimcore.routing.dynamic.document_route_handler'
 
     pimcore.http_client:
         class: \GuzzleHttp\Client

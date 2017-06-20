@@ -66,6 +66,22 @@ class BlockStateTest extends TestCase
         $state->popBlock();
     }
 
+    public function testClearBlocks()
+    {
+        $state = new BlockState();
+
+        $state->pushBlock(new BlockName('A', 'realA'));
+        $state->pushBlock(new BlockName('B', 'realB'));
+
+        $this->assertTrue($state->hasBlocks());
+        $this->assertCount(2, $state->getBlocks());
+
+        $state->clearBlocks();
+
+        $this->assertFalse($state->hasBlocks());
+        $this->assertCount(0, $state->getBlocks());
+    }
+
     public function testIndexes()
     {
         $state = new BlockState();
@@ -99,5 +115,21 @@ class BlockStateTest extends TestCase
     {
         $state = new BlockState();
         $state->popIndex();
+    }
+
+    public function testClearIndexes()
+    {
+        $state = new BlockState();
+
+        $state->pushIndex(1);
+        $state->pushIndex(2);
+
+        $this->assertTrue($state->hasIndexes());
+        $this->assertCount(2, $state->getIndexes());
+
+        $state->clearIndexes();
+
+        $this->assertFalse($state->hasIndexes());
+        $this->assertCount(0, $state->getIndexes());
     }
 }
