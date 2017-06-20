@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\EditableConflictResolver;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ConflictResolver;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
@@ -59,7 +59,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         $errors  = [];
         $mapping = $cache->get('mapping', []);
 
-        $editableConflictResolver = new EditableConflictResolver(
+        $conflictResolver = new ConflictResolver(
             $this->io,
             $this->namingStrategy
         );
@@ -74,7 +74,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
                 ));
             } else {
                 try {
-                    $documentMapping = $this->processDocument($document, $editableConflictResolver);
+                    $documentMapping = $this->processDocument($document, $conflictResolver);
                     if (!empty($documentMapping)) {
                         $mapping[$document->getId()] = $documentMapping;
                         $cache->set('mapping', $mapping);
@@ -105,9 +105,9 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         return $mapping;
     }
 
-    private function processDocument(Document\PageSnippet $document, EditableConflictResolver $editableConflictResolver): array
+    private function processDocument(Document\PageSnippet $document, ConflictResolver $conflictResolver): array
     {
-        $tree = new ElementTree($document, $editableConflictResolver);
+        $tree = new ElementTree($document, $conflictResolver);
 
         // add document elements
         $documentElements = $this->addDocumentElements($tree, $document);

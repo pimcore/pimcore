@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Tag\NamingStrategy\Migration\Analyze;
 
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\AbstractBlock;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\AbstractElement;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditableException;
@@ -27,7 +28,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
-final class EditableConflictResolver
+final class ConflictResolver
 {
     /**
      * @var PimcoreStyle
@@ -79,14 +80,38 @@ final class EditableConflictResolver
         return $exception;
     }
 
-    public function resolveConflict(Document\PageSnippet $document, BuildEditableException $exception, array $editables): Editable
+    public function resolveBlockConflict(Document\PageSnippet $document, BuildEditableException $exception, array $blocks): AbstractBlock
     {
-        if (count($editables) < 2) {
-            throw new LogicException(sprintf('Expected at least 2 editables, %d given', count($editables)));
+        /** @var AbstractBlock $block */
+        $block = $this->resolveConflict('block', $document, $exception, $blocks);
+
+        return $block;
+    }
+
+    public function resolveEditableConflict(Document\PageSnippet $document, BuildEditableException $exception, array $editables): Editable
+    {
+        /** @var Editable $editable */
+        $editable = $this->resolveConflict('element', $document, $exception, $editables);
+
+        return $editable;
+    }
+
+    /**
+     * @param string $type
+     * @param Document\PageSnippet $document
+     * @param BuildEditableException $exception
+     * @param AbstractElement[] $elements
+     *
+     * @return AbstractElement
+     */
+    private function resolveConflict(string $type, Document\PageSnippet $document, BuildEditableException $exception, array $elements): AbstractElement
+    {
+        if (count($elements) < 2) {
+            throw new LogicException(sprintf('Expected at least 2 editables, %d given', count($elements)));
         }
 
         $message = <<<EOF
-The element <comment>{$exception->getName()}</comment> can't be automatically converted as there is more
+The {$type} <comment>{$exception->getName()}</comment> can't be automatically converted as there is more
 than one possible hierarchy combination. This is probably because of nested elements with
 the same name ("content" inside "content") or blocks with similar names andnumeric suffixes
 ("content" and "content1").
@@ -98,15 +123,17 @@ EOF;
         $this->io->writeln('<comment>[WARNING]</comment> Selecting the wrong option here will rename your elements to a wrong target name!');
         $this->io->newLine();
 
-        /** @var Editable[] $editables */
-        $editables = array_values($editables);
+        /** @var AbstractElement[] $elements */
+        usort(array_values($elements), function (AbstractElement $a, AbstractElement $b) {
+            return strcasecmp($a->getName(), $b->getName());
+        });
 
         $leaveUnresolved = 'Leave unresolved';
         $resultChoice    = $leaveUnresolved;
         $result          = null;
 
         if ($this->io->getInput()->isInteractive()) {
-            $choices   = $this->buildChoices($editables);
+            $choices   = $this->buildChoices($elements);
             $choices[] = $leaveUnresolved;
 
             $inverseChoices = array_flip($choices);
@@ -121,21 +148,22 @@ EOF;
 
         if ($resultChoice === $leaveUnresolved) {
             $possibleNames = [];
-            foreach ($editables as $editable) {
+            foreach ($elements as $editable) {
                 $possibleNames[] = $editable->getNameForStrategy($this->namingStrategy);
             }
 
             throw BuildEditableException::fromPrevious(
                 $exception,
                 sprintf(
-                    'Ambiguous results left unresolved. Built %d editables for element "%s". Possible resolutions: %s',
-                    count($editables),
+                    'Ambiguous results left unresolved. Built %d %ss for element "%s". Possible resolutions: %s',
+                    count($elements),
+                    $type,
                     $exception->getName(),
                     implode(', ', $possibleNames)
                 )
             );
         } else {
-            return $editables[$result];
+            return $elements[$result];
         }
     }
 

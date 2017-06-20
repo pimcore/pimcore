@@ -27,7 +27,7 @@ abstract class AbstractBlock extends AbstractElement
      */
     private $childIndexes;
 
-    public function __construct($name, $type, $data = null, AbstractBlock $parent = null)
+    public function __construct(string $name, string $type, $data = null, AbstractBlock $parent = null)
     {
         parent::__construct($name, $type, $data, $parent);
 

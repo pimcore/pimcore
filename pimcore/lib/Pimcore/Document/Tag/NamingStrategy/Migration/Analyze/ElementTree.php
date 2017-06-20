@@ -34,9 +34,9 @@ final class ElementTree
     private $document;
 
     /**
-     * @var EditableConflictResolver
+     * @var ConflictResolver
      */
-    private $editableConflictResolver;
+    private $conflictResolver;
 
     /**
      * Map of elements by name => type
@@ -82,15 +82,15 @@ final class ElementTree
 
     /**
      * @param Document\PageSnippet $document
-     * @param EditableConflictResolver $editableConflictResolver
+     * @param ConflictResolver $conflictResolver
      */
     public function __construct(
         Document\PageSnippet $document,
-        EditableConflictResolver $editableConflictResolver
+        ConflictResolver $conflictResolver
     )
     {
-        $this->document                 = $document;
-        $this->editableConflictResolver = $editableConflictResolver;
+        $this->document         = $document;
+        $this->conflictResolver = $conflictResolver;
     }
 
     /**
@@ -172,8 +172,7 @@ final class ElementTree
 
         $blockNames            = $this->getBlockNames();
         $blockParentCandidates = $this->findBlockParentCandidates($blockNames);
-        $blockParents          = $this->resolveBlockParents($blockParentCandidates);
-        $blocks                = $this->buildBlocks($blockNames, $blockParents);
+        $blocks                = $this->buildBlocks($blockNames, $blockParentCandidates);
         $editables             = $this->buildEditables($this->getBlocksSortedByLevel($blocks));
 
         // just add not inherited elements to elements array
@@ -268,12 +267,12 @@ final class ElementTree
         );
 
         if (count($editables) === 0) {
-            throw $this->editableConflictResolver->resolveBuildFailed(
+            throw $this->conflictResolver->resolveBuildFailed(
                 $this->document,
                 $exception
             );
         } elseif (count($editables) > 1) {
-            return $this->editableConflictResolver->resolveConflict(
+            return $this->conflictResolver->resolveEditableConflict(
                 $this->document,
                 $exception,
                 $editables
@@ -281,49 +280,128 @@ final class ElementTree
         }
     }
 
-    private function buildBlocks(array $blockNames, array $blockParents): array
+    private function buildBlocks(array $blockNames, array $parentCandidates): array
     {
-        $hierarchies = [];
+        $blocks = [];
+
+        // build blocks at lowest hierarchy first
         foreach ($blockNames as $blockName) {
-            $hierarchy = [];
-
-            $currentBlockName = $blockName;
-            while (isset($blockParents[$currentBlockName])) {
-                $currentBlockName = $blockParents[$currentBlockName];
-                $hierarchy[] = $currentBlockName;
+            if (!isset($parentCandidates[$blockName])) {
+                $blocks[$blockName] = $this->buildBlock($blockName);
             }
-
-            $hierarchies[$blockName] = array_reverse($hierarchy);
         }
 
-        uasort($hierarchies, function ($a, $b) {
-            if (count($a) === count($b)) {
-                return 0;
+        $blocks = $this->buildBlockHierarchy($blockNames, $parentCandidates, $blocks);
+
+        foreach ($blockNames as $blockName) {
+            if (!isset($blocks[$blockName])) {
+                throw new \RuntimeException(sprintf('Block "%s" could not be built', $blockName));
+            }
+        }
+
+        return $blocks;
+    }
+
+    private function buildBlockHierarchy(array $blockNames, array $parentCandidates, array $blocks): array
+    {
+        $changed = false;
+
+        foreach ($blockNames as $blockName) {
+            // block was already built
+            if (isset($blocks[$blockName])) {
+                continue;
             }
 
-            return count($a) < count($b) ? -1 : 1;
-        });
+            // block has no parents
+            if (!isset($parentCandidates[$blockName])) {
+                continue;
+            }
 
-        $blocks = [];
-        foreach ($hierarchies as $blockName => $parentNames) {
-            $parent = null;
-            if (count($parentNames) > 0) {
-                $lastParentName = (array_reverse($parentNames))[0];
-                if (!isset($blocks[$lastParentName])) {
-                    throw new \LogicException(sprintf('Block info for parent "%s" was not found', $lastParentName));
+            // block has a single parent
+            if (count($parentCandidates[$blockName]) === 1) {
+                try {
+                    // try to add single parent as parent - will fail if index structure does not match
+                    $blocks[$blockName] = $this->buildBlock($blockName, $blocks[$parentCandidates[$blockName][0]]);
+                    $changed = true;
+                } catch (LogicException $e) {
+                    throw BuildEditableException::create(
+                        $blockName, $this->map[$blockName],
+                        sprintf(
+                            'Failed to build block "%s" with parent "%s"',
+                            $blockName,
+                            $parentCandidates[$blockName][0]
+                        ),
+                        [$e->getMessage()],
+                        $this->data[$blockName]
+                    );
+                }
+            }
+
+            // fetch all parent blocks
+            $candidateBlocks = [];
+            foreach ($parentCandidates[$blockName] as $parentCandidate) {
+                if (!isset($blocks[$parentCandidate])) {
+                    continue 2; // parent candidates were not built yet -> continue
                 }
 
-                $parent = $blocks[$lastParentName];
+                $candidateBlocks[] = $blocks[$parentCandidate];
             }
 
-            $blockType = $this->map[$blockName];
-            if (!isset($this->blockTypes[$blockType])) {
-                throw new \InvalidArgumentException(sprintf('Invalid block type "%s"', $blockType));
+            // check if all parent candidates could be resolved
+            if (count($candidateBlocks) !== count($parentCandidates[$blockName])) {
+                throw BuildEditableException::create(
+                    $blockName, $this->map[$blockName],
+                    sprintf(
+                        'Failed to resolve %d parent candidates for block "%s"',
+                        count($parentCandidates[$blockName]),
+                        $blockName
+                    ),
+                    [],
+                    $this->data[$blockName]
+                );
             }
 
-            $blockClass = $this->blockTypes[$blockType];
+            $resolvedBlocks = [];
+            $errors         = [];
 
-            $blocks[$blockName] = new $blockClass($blockName, $this->map[$blockName], $this->data[$blockName], $parent);
+            // try to build a candidate block - set parent check will fail if parent indexes can not match
+            foreach ($candidateBlocks as $candidateBlock) {
+                try {
+                    $resolvedBlocks[] = $this->buildBlock($blockName, $candidateBlock);
+                } catch (LogicException $e) {
+                    $errors[] = $e;
+                }
+            }
+
+            if (count($resolvedBlocks) === 1) {
+                // single parent -> add to list
+                $blocks[$blockName] = $resolvedBlocks[0];
+                $changed = true;
+            } elseif (count($resolvedBlocks) > 1) {
+                // resolve multiple available blocks
+                $exception = BuildEditableException::create(
+                    $blockName, $this->map[$blockName],
+                    sprintf(
+                        'Failed to resolve block hierarchy for block "%s". Block can\'t be migrated.',
+                        $blockName
+                    ),
+                    $errors,
+                    $this->data[$blockName]
+                );
+
+                $blocks[$blockName] = $this->conflictResolver->resolveBlockConflict(
+                    $this->document,
+                    $exception,
+                    $resolvedBlocks
+                );
+
+                $changed = true;
+            }
+        }
+
+        // if anything was changed, iterate the list again
+        if ($changed) {
+            return $this->buildBlockHierarchy($blockNames, $parentCandidates, $blocks);
         }
 
         return $blocks;
@@ -352,6 +430,7 @@ final class ElementTree
         $parentCandidates = [];
         foreach ($blockNames as $blockName) {
             $pattern = self::buildNameMatchingPattern($blockName);
+            $tmpBlock = $this->buildBlock($blockName);
 
             foreach ($blockNames as $matchingBlockName) {
                 if ($blockName === $matchingBlockName) {
@@ -359,65 +438,112 @@ final class ElementTree
                 }
 
                 if (preg_match($pattern, $matchingBlockName, $match)) {
-                    $parentCandidates[$matchingBlockName][] = $blockName;
+                    if (isset($match['indexes']) && !empty($match['indexes'])) {
+                        $indexes = explode('_', $match['indexes']);
+                        $index   = (int)array_pop($indexes);
+
+                        if ($tmpBlock->hasChildIndex($index)) {
+                            $parentCandidates[$matchingBlockName][] = $blockName;
+                        }
+                    }
                 }
             }
+        }
+
+        $parentCandidates = $this->reduceBlockParentCandidates($parentCandidates);
+
+        return $parentCandidates;
+    }
+
+    /**
+     * Reduces block parent candidates by excluding parent candidates which are the parent
+     * of another parent candidate
+     *
+     * @param array $parentCandidates
+     *
+     * @return array
+     */
+    private function reduceBlockParentCandidates(array $parentCandidates): array
+    {
+        $changed       = false;
+        $directParents = $this->buildDirectParents($parentCandidates);
+
+        foreach ($parentCandidates as $name => $candidates) {
+            if (count($candidates) === 1) {
+                continue;
+            }
+
+            $indexesToRemove = [];
+            foreach ($candidates as $candidate) {
+                // check if the parent of the candidate is in our candidates list
+                // if found (array_keys has a result), remove the parent from our candidates list
+                if (isset($directParents[$candidate])) {
+                    $parent          = $directParents[$candidate];
+                    $indexesToRemove = array_merge($indexesToRemove, array_keys($candidates, $parent));
+                }
+            }
+
+            // remove all parent candidates we found
+            if (count($indexesToRemove) > 0) {
+                foreach ($indexesToRemove as $indexToRemove) {
+                    unset($candidates[$indexToRemove]);
+                }
+
+                $parentCandidates[$name] = array_values($candidates);
+                $directParents = $this->buildDirectParents($parentCandidates);
+                $changed = true;
+            }
+        }
+
+        if ($changed) {
+            return $this->reduceBlockParentCandidates($parentCandidates);
         }
 
         return $parentCandidates;
     }
 
     /**
+     * Builds a list of direct block parent candidates if only one match exists
+     *
      * @param array $parentCandidates
      *
      * @return array
      */
-    private function resolveBlockParents(array $parentCandidates): array
+    private function buildDirectParents(array $parentCandidates): array
     {
-        $changed = true;
         $parents = [];
-
-        // iterate list until we narrowed down the list of candidates to 1 for
-        // every block
-        while ($changed) {
-            $changed = false;
-
-            foreach ($parentCandidates as $name => $candidates) {
-                if (count($candidates) === 0) {
-                    throw new \LogicException('Expected at least one parent candidate');
-                }
-
-                if (count($candidates) === 1) {
-                    if (!isset($parents[$name])) {
-                        $parents[$name] = $candidates[0];
-                        $changed = true;
-                    }
-                } else {
-                    $indexesToRemove = [];
-                    foreach ($candidates as $candidate) {
-                        if (isset($parents[$candidate])) {
-                            // check if the parent of the candidate is in our candidates list
-                            // if found (array_keys has a result), remove the parent from our candidates list
-                            $parent = $parents[$candidate];
-                            $indexesToRemove = array_merge($indexesToRemove, array_keys($candidates, $parent));
-                        }
-                    }
-
-                    // remove all parent candidates we found
-                    if (count($indexesToRemove) > 0) {
-                        $changed = true;
-
-                        foreach ($indexesToRemove as $indexToRemove) {
-                            unset($candidates[$indexToRemove]);
-                        }
-
-                        $parentCandidates[$name] = array_values($candidates);
-                    }
-                }
+        foreach ($parentCandidates as $name => $candidates) {
+            if (count($candidates) === 1) {
+                $parents[$name] = $candidates[0];
             }
         }
 
         return $parents;
+    }
+
+    /**
+     * Builds a block instance
+     *
+     * @param string $blockName
+     * @param AbstractBlock|null $parent
+     *
+     * @return AbstractBlock
+     */
+    private function buildBlock(string $blockName, AbstractBlock $parent = null): AbstractBlock
+    {
+        $blockType = $this->map[$blockName];
+        if (!isset($this->blockTypes[$blockType])) {
+            throw new \InvalidArgumentException(sprintf('Invalid block type "%s"', $blockType));
+        }
+
+        $blockClass = $this->blockTypes[$blockType];
+
+        return new $blockClass(
+            $blockName,
+            $this->map[$blockName],
+            $this->data[$blockName],
+            $parent
+        );
     }
 
     /**
@@ -440,7 +566,7 @@ final class ElementTree
     /**
      * Get blocks sorted by deepest level first. If they are on the same level,
      * prefer those which have a number at the end (mitigates errors when
-     * having blocks named something like "content" and "content1" simultaneosly
+     * having blocks named something like "content" and "content1" simultaneously
      *
      * @param AbstractBlock[] $blocks
      *
