@@ -10,8 +10,6 @@ php:
   - 7.1
 
 before_install:
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then sudo apt-get install php5-mysql; sudo php5enmod mysql; fi
-
   # analyze ZF usage before running anything else
   - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
 
