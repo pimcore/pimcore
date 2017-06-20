@@ -28,7 +28,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
-final class ConflictResolver
+class ConflictResolver implements ConflictResolverInterface
 {
     /**
      * @var PimcoreStyle
@@ -46,6 +46,9 @@ final class ConflictResolver
         $this->namingStrategy = $namingStrategy;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function resolveBuildFailed(Document\PageSnippet $document, BuildEditableException $exception): BuildEditableException
     {
         if (!$this->io->getInput()->isInteractive()) {
@@ -80,6 +83,9 @@ final class ConflictResolver
         return $exception;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function resolveBlockConflict(Document\PageSnippet $document, BuildEditableException $exception, array $blocks): AbstractBlock
     {
         /** @var AbstractBlock $block */
@@ -88,6 +94,9 @@ final class ConflictResolver
         return $block;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function resolveEditableConflict(Document\PageSnippet $document, BuildEditableException $exception, array $editables): Editable
     {
         /** @var Editable $editable */

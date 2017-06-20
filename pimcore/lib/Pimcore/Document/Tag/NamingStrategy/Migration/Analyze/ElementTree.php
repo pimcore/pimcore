@@ -34,7 +34,7 @@ final class ElementTree
     private $document;
 
     /**
-     * @var ConflictResolver
+     * @var ConflictResolverInterface
      */
     private $conflictResolver;
 
@@ -82,11 +82,11 @@ final class ElementTree
 
     /**
      * @param Document\PageSnippet $document
-     * @param ConflictResolver $conflictResolver
+     * @param ConflictResolverInterface $conflictResolver
      */
     public function __construct(
         Document\PageSnippet $document,
-        ConflictResolver $conflictResolver
+        ConflictResolverInterface $conflictResolver
     )
     {
         $this->document         = $document;
@@ -250,7 +250,6 @@ final class ElementTree
                 $errors[] = $e;
             }
         }
-
 
         if (count($editables) === 1) {
             return $editables[0];

@@ -19,6 +19,7 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ConflictResolver;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ConflictResolverInterface;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Model\Document;
@@ -105,7 +106,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
         return $mapping;
     }
 
-    private function processDocument(Document\PageSnippet $document, ConflictResolver $conflictResolver): array
+    private function processDocument(Document\PageSnippet $document, ConflictResolverInterface $conflictResolver): array
     {
         $tree = new ElementTree($document, $conflictResolver);
 
