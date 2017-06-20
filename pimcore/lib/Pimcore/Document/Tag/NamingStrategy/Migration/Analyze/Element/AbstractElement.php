@@ -252,7 +252,7 @@ abstract class AbstractElement
         /** @var int $index */
         if (!$parent->hasChildIndex($index)) {
             throw new LogicException(sprintf(
-                'Element "%s" has index %d, but parent "%s" does not have this index in its child list',
+                'Element "%s" has index %d, but parent "%s" does not have this index in its child list (is the element orphaned?)',
                 $this->name,
                 $index,
                 $parent->getName()

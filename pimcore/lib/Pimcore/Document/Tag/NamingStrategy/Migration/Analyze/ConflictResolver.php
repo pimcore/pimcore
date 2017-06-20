@@ -233,7 +233,7 @@ EOF;
 
     private function dumpData($data)
     {
-        $data = trim($data);
+        $data = null !== $data ? trim($data) : null;
         if (empty($data)) {
             $data = '<empty>';
         }

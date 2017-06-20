@@ -144,7 +144,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->writeln([
             '  * <comment>analyze</comment>: analyzes the DB structure and tries to fetch editable names to migrate from the existing',
             '    editable names. As this can\'t always be reliably determined, you\'ll be prompted to resolve',
-            '    potential conflicts. (<fg=red>experimental!</>).'
+            '    potential conflicts (<fg=red>experimental!</>).'
         ]);
 
         $this->io->newLine();
@@ -495,14 +495,16 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         if ($this->io->getInput()->getOption('no-cache')) {
             $this->cache = new ArrayCache();
+            $this->io->writeln('  <comment>*</comment> Using a non-persistent cache');
         } else {
             $this->cache = new FilesystemCache($migrationStrategy->getName(), 0, $directory);
+            $this->io->writeln('  <comment>*</comment> Caching to ' . $directory);
         }
 
         $clearCache = $this->io->getInput()->getOption('clear-cache');
         if ((bool)$clearCache) {
             if (count($clearCache) === 1 && null === $clearCache[0]) {
-                $this->io->comment('Clearing the cache');
+                $this->io->writeln('  <comment>*</comment> Clearing the cache');
                 $this->cache->clear();
             } else {
                 if (null !== $mapping = $this->cache->get('mapping')) {
@@ -513,7 +515,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
                         $clearCacheId = (int)$clearCacheId;
                         if (isset($mapping[$clearCacheId])) {
-                            $this->io->comment(sprintf('Deleting mapping for document <comment>%d</comment> from cache', $clearCacheId));
+                            $this->io->comment(sprintf('  <comment>*</comment> Deleting mapping for document <comment>%d</comment> from cache', $clearCacheId));
                             unset($mapping[$clearCacheId]);
                         }
                     }
