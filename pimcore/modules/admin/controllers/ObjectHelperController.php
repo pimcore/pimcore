@@ -291,7 +291,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $object = Object::getById($this->getParam("id"));
 
 
-        if ($object->isAllowed("publish")) {
+        if ($object->isAllowed("list")) {
             try {
                 $classId = $this->getParam("class_id");
 
@@ -326,7 +326,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $object = Object::getById($this->getParam("id"));
 
 
-        if ($object->isAllowed("publish")) {
+        if ($object->isAllowed("list")) {
             try {
                 $classId = $this->getParam("class_id");
 
