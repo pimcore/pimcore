@@ -10,44 +10,56 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 pimcore.registerNS("pimcore.document.tags.checkbox");
 pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
 
-
     initialize: function(id, name, options, data, inherited) {
+
         this.id = id;
         this.name = name;
+        this.htmlId = this.id + "_editable";
+        this.element = null;
+
         this.setupWrapper();
-        options = this.parseOptions(options);
+
+        var checked = false,
+            domElement = Ext.query("#" + escapeSelector(id)),
+            options = this.parseOptions(options);
 
         if (!data) {
             data = false;
         }
 
-        this.htmlId = id + "_editable";
-        var checked = "";
         if(data) {
-            checked = ' checked="checked"';
+            checked = true;
         }
 
-        $("#" + id).append('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
-
-        if(options["label"]) {
-            $("#" + id).append('<label for="' + this.htmlId + '">' + options["label"] + '</label>');
+        if(domElement.length === 0) {
+            return false;
         }
 
-        // onchange event
-        if (options.onchange) {
-            $("#" + this.htmlId).change(eval(options.onchange));
-        }
-        if (options.reload) {
-            $("#" + this.htmlId).change(this.reloadDocument);
-        }
+        this.element = new Ext.form.field.Checkbox({
+            boxLabel: options["label"] ? options["label"] : "",
+            name: this.htmlId,
+            id: this.htmlId,
+            checked: checked,
+            handler: function(sender, checked) {
+                if (options.reload) {
+                    this.reloadDocument();
+                }
+                if (options.onchange) {
+                    //this is pure evil.
+                    eval(options.onchange);
+                }
+            }.bind(this)
+        });
+
+        this.element.render(domElement);
+
     },
 
     getValue: function () {
-        return ($("#" + this.htmlId + ":checked").val() == "true") ? true : false;
+        return this.element.getValue();
     },
 
     getType: function () {
