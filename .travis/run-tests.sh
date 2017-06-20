@@ -2,8 +2,8 @@
 
 set -e
 
-# switch interpreter
-if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then CMD="hhvm"; else CMD="php"; fi
+# set interpreter
+CMD="php"
 
 CMD="$CMD vendor/bin/codecept run -c pimcore"
 
