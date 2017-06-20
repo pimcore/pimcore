@@ -7,11 +7,7 @@ notifications:
 php:
   - 5.6
   - 7
-  - hhvm
-
-matrix:
-  allow_failures:
-    - php: hhvm
+  - 7.1
 
 before_install:
   # analyze ZF usage before running anything else
