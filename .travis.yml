@@ -10,8 +10,11 @@ php:
   - 7.1
 
 before_install:
+  - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then apt-get install php5-mysql; php5enmod mysql; fi
+
   # analyze ZF usage before running anything else
   - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
+
 
 install:
   - composer install
@@ -21,8 +24,6 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install apache2 libapache2-mod-fastcgi
   - sudo a2enmod rewrite actions fastcgi alias
-
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then apt-get install php5-mysql; php5enmod mysql; fi
 
   # customize php settings
   - sudo chmod 0755 .travis/setup-fpm.sh
