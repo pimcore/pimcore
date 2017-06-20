@@ -19,27 +19,17 @@ namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use Pimcore\Bundle\AdminBundle\Session\Handler\SimpleAdminSessionHandler;
-use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Console\Traits\DryRun;
-use Pimcore\Document\Tag\NamingStrategy\Migration\MigrationListener;
+use Pimcore\Document\Tag\NamingStrategy\Migration\AbstractMigrationStrategy;
+use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
-use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Localizedfield;
-use Pimcore\Model\User;
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class MigrateTagNamingStrategyCommand extends AbstractCommand
 {
@@ -56,33 +46,40 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     ];
 
     /**
+     * @var array
+     */
+    private $validMigrationStrategies = [
+        'analyze', 'render'
+    ];
+
+    /**
      * @inheritDoc
      */
     protected function configure()
     {
         $this
             ->setName('pimcore:documents:migrate-naming-strategy')
-            ->setDescription('Migrates document editable naming strategy')
+            ->setDescription('Migrates document editables to nested naming strategy')
             ->addOption(
                 'strategy', 's',
                 InputOption::VALUE_REQUIRED,
-                'The naming strategy to use',
-                NestedNamingStrategy::STRATEGY_NAME
+                sprintf('The migration strategy to use. Available strategies: %s', implode(', ', $this->validMigrationStrategies)),
+                'analyze'
             )
             ->addOption(
                 'document', 'd',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'Document IDs to process. If none are given, all documents will be processed'
+                'Document ID(s) to process. Defaults to all documents if option is omitted.'
             )
             ->addOption(
-                'ignore', 'D',
+                'ignoreDocument', 'D',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'Document IDs to ignore.'
+                'Document ID(s) to ignore'
             )
             ->addOption(
                 'user', 'u',
                 InputOption::VALUE_REQUIRED,
-                'Run command under given user name',
+                'Run command under given user name (only needed for the render migration strategy)',
                 'admin'
             )
             ->addOption(
@@ -91,94 +88,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 'Do not ask for confirmation'
             );
 
-        $this->configureDryRunOption('Do not update editables. Just render documents and gather name mapping');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        parent::initialize($input, $output);
-
-        // initialize admin mode
-        Cache::disable();
-        \Pimcore::setAdminMode();
-        Document::setHideUnpublished(false);
-        AbstractObject::setHideUnpublished(false);
-        AbstractObject::setGetInheritedValues(false);
-        Localizedfield::setGetFallbackValues(false);
-
-        $this->initializeSession();
-    }
-
-    /**
-     * Sets admin session to a mock array session to make sure any session related functionality works
-     */
-    private function initializeSession()
-    {
-        $session = new Session(new MockArraySessionStorage());
-
-        $configurator = $this->getContainer()->get('pimcore_admin.session.configurator.admin_session_bags');
-        $configurator->configure($session);
-
-        $handler = new SimpleAdminSessionHandler($session);
-
-        \Pimcore\Tool\Session::setHandler($handler);
-    }
-
-    /**
-     * Initializes given user and checks if the user is admin
-     *
-     * @param InputInterface $input
-     */
-    private function initializeUser(InputInterface $input)
-    {
-        $username = $input->getOption('user');
-
-        /** @var User $user */
-        $user = User::getByName($username);
-
-        if (!$user) {
-            throw new \InvalidArgumentException(sprintf('User "%s" could not be loaded'));
-        }
-
-        if (!$user->isAdmin()) {
-            throw new \InvalidArgumentException(sprintf('User "%s" does not have admin rights'));
-        }
-
-        // See ElementListener. The UserLoader will be used to fetch the admin user when rendering
-        // documents to make sure unpublished documents can't be seen by non-admin requests. By setting
-        // the user on the loader, no session lookup will be done and this user will be used instead.
-        $loader = $this->getContainer()->get('pimcore_admin.security.user_loader');
-        $loader->setUser($user);
-    }
-
-    private function askRunConfirmation(NamingStrategyInterface $strategy): bool
-    {
-        $message = <<<EOF
-This command will update your editable names to the "<comment>%s</comment>" naming strategy. Please be aware that
-only elements which can be rendered and which are currently used on your templates can and will
-be migrated. If you have any elements which are not used in the template (e.g. because they are
-commented out or depend on a certain logic) they can't be automatically migrated and will be
-removed the next time you save the document in the admin interface. To make the transition as
-smooth as possible it's recommended to update all your templates to render any needed editables
-at least in editmode. The command simulates the editmode, so you can rely on the editmode parameter
-to be set.
-EOF;
-
-        $this->writeSimpleSection('<comment>WARNING</comment>', '=');
-        $this->io->writeln(sprintf($message, $strategy->getName()) . PHP_EOL);
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        $question = new ConfirmationQuestion(
-            'Do you wish to continue? (y/n) ',
-            false
-        );
-
-        return (bool)$helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
+        $this->configureDryRunOption('Do not update editables. Just process and output name mapping');
     }
 
     /**
@@ -186,98 +96,28 @@ EOF;
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        try {
-            $this->initializeUser($input);
-        } catch (\InvalidArgumentException $e) {
-            $this->io->error($e->getMessage());
+        $migrationStrategy = $this->getMigrationStrategy();
+        $namingStrategy    = $this->getNamingStrategy();
 
-            return 1;
-        }
-
-        // register migration listener with new naming strategy
-        $strategy   = $this->getNamingStrategy($input);
-        $subscriber = new MigrationListener($strategy);
-
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
-        $dispatcher->addSubscriber($subscriber);
-
-        $documentIds     = $this->getDocumentIds($input);
-        $renderingErrors = [];
-
-        if (!$input->getOption('force')) {
-            if (!$this->askRunConfirmation($strategy)) {
-                return 0;
-            }
-        }
+        $documents = $this->getDocuments($this->getDocumentIds());
 
         $this->io->writeln(PHP_EOL);
-        $this->io->title('[STEP 1] Rendering all documents to gather new element mapping');
+        $this->io->title(sprintf('[STEP 1] %s', $migrationStrategy->getStepDescription()));
 
-        // push dummy request to stack to make document renderer work
-        $this->getContainer()->get('request_stack')->push(Request::create('/'));
-
-        // set editmode resolver to force editmode
-        $this->getContainer()->get('pimcore.service.request.editmode_resolver')->setForceEditmode(true);
-
-        $stopwatch = new Stopwatch();
-
-        // TODO can this be read directly from Stopwatch?
-        $totalDuration = 0;
-
-        foreach ($this->getDocuments($documentIds) as $document) {
-            $event = $stopwatch->start('document_' . $document->getId());
-
-            try {
-                $this->renderDocument($document);
-            } catch (\Throwable $e) {
-                $renderingErrors[$document->getId()] = [
-                    'documentId'   => $document->getId(),
-                    'documentPath' => $document->getRealFullPath(),
-                    'exception'    => $e,
-                ];
-
+        try {
+            $migrationStrategy->initialize($this, $namingStrategy);
+            $nameMapping = $migrationStrategy->getNameMapping($documents);
+        } catch (NameMappingException $e) {
+            if ($e->getShowMessage()) {
                 $this->io->error($e->getMessage());
             }
 
-            $event->stop();
-            $totalDuration += $event->getDuration();
-
-            $this->io->writeln(sprintf(
-                'Duration: <comment>%d ms</comment> - Total duration: <comment>%d ms</comment> - Current Memory: <comment>%f MB</comment>',
-                $event->getDuration(),
-                $totalDuration,
-                round($event->getMemory() / 1000 / 1000, 2)
-            ));
-
-            $this->io->writeln('');
-        }
-
-        if (count($renderingErrors) === 0) {
-            $this->io->success('All documents were rendered successfully, now proceeding to update names based on the gathered mapping');
-        } else {
-            $this->io->warning('Not all documents could be rendered.');
-
-            if (!$input->getOption('force') && !$this->confirmProceedAfterRenderingErrors($renderingErrors)) {
-                return 3;
-            }
-        }
-
-        $nameMapping = $subscriber->getNameMapping();
-
-        // do not migrate any element in errored documents
-        foreach (array_keys($renderingErrors) as $documentId) {
-            //
-            if (isset($nameMapping[$documentId])) {
-                unset($nameMapping[$documentId]);
-            }
+            return $e->getCode();
         }
 
         if (empty($nameMapping)) {
             $this->io->writeln('');
-            $this->io->success(sprintf(
-                'Nothing to migrate.',
-                $strategy->getName()
-            ));
+            $this->io->success('Nothing to migrate.');
 
             return 0;
         }
@@ -309,25 +149,9 @@ EOF;
 
         $this->io->writeln(PHP_EOL . PHP_EOL);
         $this->io->success(sprintf(
-            'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" strategy and clear the cache.',
-            $strategy->getName()
+            'Names were successfully migrated!' . PHP_EOL . PHP_EOL . 'Please reconfigure Pimcore now to use the "%s" naming strategy and clear the cache.',
+            $namingStrategy->getName()
         ));
-    }
-
-    /**
-     * Renders a document by dispatching a new master request for the document URI
-     *
-     * @param Document\PageSnippet $document
-     */
-    private function renderDocument(Document\PageSnippet $document)
-    {
-        $this->io->writeln(sprintf(
-            'Rendering document <info>%s</info> with ID <info>%d</info>',
-            $document->getRealFullPath(),
-            $document->getId()
-        ));
-
-        Document\Service::render($document);
     }
 
     /**
@@ -491,30 +315,50 @@ EOF;
     }
 
     /**
-     * Loads given naming strategy and checks if it is not the same as the currently configured one
-     *
-     * @param InputInterface $input
-     *
-     * @return NamingStrategyInterface
+     * @return AbstractMigrationStrategy
      */
-    private function getNamingStrategy(InputInterface $input): NamingStrategyInterface
+    private function getMigrationStrategy(): AbstractMigrationStrategy
     {
         $container = $this->getContainer();
 
-        $strategyName = $input->getOption('strategy');
-        $strategyId   = 'pimcore.document.tag.naming.strategy.' . $strategyName;
+        $strategyName = $this->input->getOption('strategy');
+        $strategyId   = 'pimcore.document.tag.naming.migration.strategy.' . $strategyName;
+
         if (!$container->has($strategyId)) {
-            throw new \InvalidArgumentException(sprintf('The naming strategy "%s" does not exist', $strategyName));
+            throw new \InvalidArgumentException(sprintf(
+                'The migration strategy "%s" does not exist',
+                $strategyName
+            ));
         }
 
+        /** @var AbstractMigrationStrategy $strategy */
+        $strategy = $container->get($strategyId);
+
+        $this->io->comment(sprintf(
+            'Running migration with the <comment>%s</comment> strategy',
+            $strategy->getName()
+        ));
+
+        return $strategy;
+    }
+
+    /**
+     * Loads nested naming strategy and checks if it is not the same as the currently configured one
+     *
+     * @return NamingStrategyInterface
+     */
+    private function getNamingStrategy(): NamingStrategyInterface
+    {
+        $container = $this->getContainer();
+
         /** @var NamingStrategyInterface $strategy */
-        $strategy           = $container->get($strategyId);
+        $strategy           = $container->get('pimcore.document.tag.naming.strategy.nested');
         $configuredStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         if ($strategy === $configuredStrategy) {
             throw new \LogicException(sprintf(
                 'The strategy "%s" is already configured. You can\'t migrate to the same strategy as the configured one.',
-                $strategyName
+                $strategy->getName()
             ));
         }
 
@@ -524,19 +368,17 @@ EOF;
     /**
      * Gets document IDs and filters ignored ones
      *
-     * @param InputInterface $input
-     *
      * @return array
      */
-    private function getDocumentIds(InputInterface $input): array
+    private function getDocumentIds(): array
     {
-        $documentIds = $input->getOption('document');
+        $documentIds = $this->input->getOption('document');
         if (empty($documentIds)) {
             // load all documents if no IDs were passed as option
             $documentIds = $this->getAllDocumentIds();
         }
 
-        $ignoredIds = $input->getOption('ignore');
+        $ignoredIds = $this->input->getOption('ignoreDocument');
         if (!empty($ignoredIds)) {
             $documentIds = array_filter($documentIds, function ($id) use ($ignoredIds) {
                 return !in_array($id, $ignoredIds);
@@ -606,42 +448,38 @@ EOF;
         }
     }
 
-    private function confirmProceedAfterRenderingErrors(array $errors): bool
+    /**
+     * Console helper to output an underlined title without prepending block and/or formatting output
+     *
+     * @param string $message
+     * @param string $underlineChar
+     * @param string|null $style
+     */
+    public function writeSimpleSection(string $message, string $underlineChar = '-', string $style = null)
     {
-        $messages = [];
-        foreach ($errors as $documentId => $error) {
-            $messages[] = sprintf(
-                '<comment>%s</comment> (ID <info>%d</info>): %s',
-                $error['documentPath'],
-                $documentId,
-                $error['exception']->getMessage()
-            );
+        $underline = str_repeat($underlineChar, Helper::strlenWithoutDecoration($this->io->getFormatter(), $message));
+
+        if (null !== $style) {
+            $format    = '<%s>%s</>';
+            $message   = sprintf($format, $style, $message);
+            $underline = sprintf($format, $style, $underline);
         }
 
-        $this->io->writeln('The following errors were encountered while rendering the selected documents:');
-        $this->io->writeln('');
-
-        $this->io->listing($messages);
-
-        $this->io->writeln('');
-        $this->io->writeln('<comment>WARNING:</comment> You can proceed the migration for all other documents, but your unmigrated documents will potentially lose their data. It\'s strongly advised to fix any rendering issues before proceeding');
-
-        $helper   = $this->getHelper('question');
-        $question = new ConfirmationQuestion(
-            'Proceed the migration for successfully rendered documents?  (y/n) ',
-            false
-        );
-
-        return $helper->ask($this->io->getInput(), $this->io->getOutput(), $question);
-    }
-
-    private function writeSimpleSection(string $message, string $underlineChar = '-')
-    {
         $this->io->writeln([
             '',
             $message,
-            str_repeat($underlineChar, Helper::strlenWithoutDecoration($this->io->getFormatter(), $message)),
+            $underline,
             ''
         ]);
+    }
+
+    /**
+     * Exposes IO for migration strategies
+     *
+     * @return PimcoreStyle
+     */
+    public function getIo(): PimcoreStyle
+    {
+        return $this->io;
     }
 }

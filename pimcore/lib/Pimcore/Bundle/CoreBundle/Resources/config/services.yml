@@ -305,6 +305,21 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore }
 
+    # DOCUMENT TAG MIGRATION
+
+    pimcore.document.tag.naming.migration.strategy.analyze:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
+        arguments: ['@database_connection']
+
+    pimcore.document.tag.naming.migration.strategy.render:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy
+        arguments:
+            - '@event_dispatcher'
+            - '@request_stack'
+            - '@pimcore.service.request.editmode_resolver'
+            - '@pimcore_admin.security.user_loader'
+            - '@pimcore_admin.session.configurator.admin_session_bags'
+
     #
     # IMPLEMENTATION FACTORIES
     #

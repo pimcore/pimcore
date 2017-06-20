@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Document\Tag\NamingStrategy\Migration;
+namespace Pimcore\Document\Tag\NamingStrategy\Migration\Render;
 
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
@@ -25,12 +25,12 @@ use Pimcore\Event\Model\Document\TagNameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * This listener is not intended to be always registered on the dispatched, but instead
+ * This listener is not intended to be always registered on the dispatcher, but instead
  * is added manually when needed in the MigrateTagNamingStrategy CLI command. The listener
  * collects all rendered tag names and creates a matching new tag name mapping which can
  * be used to perform tag name migrations after rendering a document.
  */
-class MigrationListener implements EventSubscriberInterface
+class MigrationSubscriber implements EventSubscriberInterface
 {
     /**
      * The new naming strategy to use
