@@ -2,10 +2,7 @@
 
 set -e
 
-# set interpreter
-CMD="php"
-
-CMD="$CMD vendor/bin/codecept run -c pimcore"
+CMD="vendor/bin/codecept run -c pimcore"
 
 # add suite if configured
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then

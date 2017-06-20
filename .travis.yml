@@ -52,6 +52,7 @@ install:
   - cp .travis/system.template.php var/config/system.php
   - cp .travis/extensions.template.php var/config/extensions.php
   - cp app/config/parameters.example.yml app/config/parameters.yml
+  - composer install
 
 before_script:
   - .travis/setup-php.sh
