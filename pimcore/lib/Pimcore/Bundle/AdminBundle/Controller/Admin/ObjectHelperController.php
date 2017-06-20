@@ -332,7 +332,7 @@ class ObjectHelperController extends AdminController
     {
         $object = Object::getById($request->get('id'));
 
-        if ($object->isAllowed('publish')) {
+        if ($object->isAllowed('list')) {
             try {
                 $classId = $request->get('class_id');
 
@@ -372,7 +372,7 @@ class ObjectHelperController extends AdminController
     {
         $object = Object::getById($request->get('id'));
 
-        if ($object->isAllowed('publish')) {
+        if ($object->isAllowed('list')) {
             try {
                 $classId = $request->get('class_id');
 
