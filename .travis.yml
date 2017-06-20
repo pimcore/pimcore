@@ -21,25 +21,25 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install apache2 libapache2-mod-fastcgi
   - sudo a2enmod rewrite actions fastcgi alias
+
+  - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then apt-get install php5-mysql; php5enmod mysql; fi
+
   # customize php settings
-  - sudo chmod 0755 .travis/setup-fpm.sh .travis/setup-hhvm.sh
-  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then .travis/setup-fpm.sh; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then .travis/setup-hhvm.sh; fi
-  # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM/HHVM)
+  - sudo chmod 0755 .travis/setup-fpm.sh
+  - .travis/setup-fpm.sh
+  # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM)
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
   # make tests executable
   - cd tests
-  - sudo chmod 0755 alltests.sh hhvm-all.sh
+  - sudo chmod 0755 alltests.sh
 
 script:
-  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then ./hhvm-all.sh; fi
+  - ./alltests.sh
 
 after_script:
   - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
   - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
   - cat $TRAVIS_BUILD_DIR/apache-error.log
   - cat $TRAVIS_BUILD_DIR/apache-access.log
-  - cat /tmp/hhvm.log
 
