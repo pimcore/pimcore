@@ -356,9 +356,10 @@ services:
     pimcore.document.renderer:
         class: Pimcore\Document\Renderer\DocumentRenderer
         arguments:
-            - '@request_stack'
+            - '@pimcore.http.request_helper'
             - '@pimcore.templating.action_renderer'
             - '@fragment.renderer.inline'
+            - '@pimcore.routing.dynamic.document_route_handler'
 
     pimcore.http_client:
         class: \GuzzleHttp\Client

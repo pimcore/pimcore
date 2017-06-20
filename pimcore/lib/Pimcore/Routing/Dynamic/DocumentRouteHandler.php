@@ -155,7 +155,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      *
      * @return DocumentRoute|null
      */
-    private function buildRouteForDocument(Document $document, DynamicRequestContext $context = null)
+    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null)
     {
         // check for direct hardlink
         if ($document instanceof Document\Hardlink) {
@@ -171,8 +171,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             return null;
         }
 
-        $locale = $document->getProperty('language');
-
         $route = new DocumentRoute($document->getFullPath());
 
         // coming from matching -> set route path the currently matched one
@@ -180,7 +178,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             $route->setPath($context->getOriginalPath());
         }
 
-        $route->setDefault('_locale', $locale);
+        $route->setDefault('_locale', $document->getProperty('language'));
         $route->setDocument($document);
 
         if ($this->isDirectRouteDocument($document)) {

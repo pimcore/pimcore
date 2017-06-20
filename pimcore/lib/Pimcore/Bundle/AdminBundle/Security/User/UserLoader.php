@@ -51,7 +51,7 @@ class UserLoader
     }
 
     /**
-     * @return UserModel
+     * @return UserModel|null
      */
     public function getUser()
     {
@@ -64,6 +64,14 @@ class UserLoader
         }
 
         return $this->user;
+    }
+
+    /**
+     * @param UserModel $user
+     */
+    public function setUser(UserModel $user)
+    {
+        $this->user = $user;
     }
 
     /**

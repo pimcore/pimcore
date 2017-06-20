@@ -63,6 +63,11 @@ final class BlockState implements \JsonSerializable
         return array_pop($this->blocks);
     }
 
+    public function clearBlocks()
+    {
+        $this->blocks = [];
+    }
+
     /**
      * @return int[]
      */
@@ -88,6 +93,11 @@ final class BlockState implements \JsonSerializable
         }
 
         return array_pop($this->indexes);
+    }
+
+    public function clearIndexes()
+    {
+        $this->indexes = [];
     }
 
     /**

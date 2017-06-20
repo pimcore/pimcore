@@ -98,4 +98,11 @@ final class DocumentEvents
      * @var string
      */
     const POST_COPY = 'pimcore.document.postCopy';
+
+    /**
+     * The TAG_NAME event is triggered when a document tag name is built.
+     *
+     * @Event("Pimcore\Event\Model\Document\TagNameEvent")
+     */
+    const TAG_NAME = 'pimcore.document.tag.name';
 }
