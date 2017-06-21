@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Document\Tag\NamingStrategy\Migration\Analyze;
 
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\AbstractBlock;
-use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\AbstractElement;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element\Editable;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditableException;
 use Pimcore\Model\Document;

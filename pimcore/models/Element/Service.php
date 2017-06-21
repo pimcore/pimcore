@@ -964,16 +964,18 @@ class Service extends Model\AbstractModel
 
     /**
      * @see
+     *
      * @param ElementInterface $element
+     *
      * @return ElementInterface
      */
-    public static function cloneMe(ElementInterface $element) {
-
+    public static function cloneMe(ElementInterface $element)
+    {
         $deepCopy = new \DeepCopy\DeepCopy();
-        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class ($element) implements \DeepCopy\Matcher\Matcher {
-
+        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher {
             /**
              * The element to be cloned
+             *
              * @var  ElementInterface
              */
             private $element;
@@ -1017,6 +1019,7 @@ class Service extends Model\AbstractModel
         $theCopy = $deepCopy->copy($element);
         $theCopy->setId(null);
         $theCopy->setParent(null);
+
         return $theCopy;
     }
 }

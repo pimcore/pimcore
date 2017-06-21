@@ -19,7 +19,6 @@ namespace Pimcore\Document\Renderer;
 
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
-use Pimcore\Routing\DocumentRoute;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
@@ -57,8 +56,7 @@ class DocumentRenderer implements DocumentRendererInterface
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler
-    )
-    {
+    ) {
         $this->requestHelper        = $requestHelper;
         $this->actionRenderer       = $actionRenderer;
         $this->fragmentRenderer     = $fragmentRenderer;

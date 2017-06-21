@@ -24,11 +24,11 @@ class Housekeeping
         self::deleteFilesInFolderOlderThanDays(PIMCORE_TEMPORARY_DIRECTORY, $lastAccessGreaterThanDays);
     }
 
-
     /**
      * @param int $olderThanDays
      */
-    public static function cleanupSymfonyProfilingData($olderThanDays = 4) {
+    public static function cleanupSymfonyProfilingData($olderThanDays = 4)
+    {
 
         // currently only for the 'dev' environment which has enabled the profiler by default
         $profilerDir = PIMCORE_PRIVATE_VAR . '/cache/dev/profiler';
@@ -39,8 +39,9 @@ class Housekeeping
      * @param $folder
      * @param $days
      */
-    protected static function deleteFilesInFolderOlderThanDays($folder, $days) {
-        if(!is_dir($folder)) {
+    protected static function deleteFilesInFolderOlderThanDays($folder, $days)
+    {
+        if (!is_dir($folder)) {
             return;
         }
 

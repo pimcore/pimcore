@@ -245,7 +245,6 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             return 4;
         }
 
-
         $this->io->newLine(3);
         $this->io->title('[STEP 3] Renaming editables to their new names');
 

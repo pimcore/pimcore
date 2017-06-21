@@ -98,8 +98,8 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         $list = [];
 
         if (is_array($data) && count($data) > 0) {
-            $targets = array();
-            $existingTargets = array();
+            $targets = [];
+            $existingTargets = [];
 
             foreach ($data as $element) {
                 $targetType = $element['type'];
@@ -109,7 +109,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
             $db = Db::get();
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType == "object" ? "o_id" : "id";
+                $identifier = $targetType == 'object' ? 'o_id' : 'id';
 
                 $result = $db->fetchCol(
                     'SELECT '.$identifier.' FROM '.$targetType.'s'
@@ -118,11 +118,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $existingTargets[$targetType] = $result;
             }
 
-
             foreach ($data as $element) {
                 $destination = null;
                 $source = Object::getById($element['src_id']);
-
 
                 if ($element['type'] && $element['dest_id']) {
                     $destinationType = $element['type'];
@@ -143,7 +141,6 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                             ]
                         );
 
-
                     $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
                     $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
@@ -160,7 +157,6 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                         $destinationType
                     );
                     $objects[] = $metaData;
-
 
                     $list[] = $metaData;
                 }
@@ -221,10 +217,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             $itemData = null;
 
-            $targets = array();
-            $existingTargets = array();
+            $targets = [];
+            $existingTargets = [];
 
-            /** @var  $metaObject Object\Data\ElementMetadata */
+            /** @var $metaObject Object\Data\ElementMetadata */
             foreach ($data as $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
@@ -234,21 +230,21 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             $db = Db::get();
 
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType == "object" ? "o_id" : "id";
-                if ($targetType == "object") {
-                    $pathCol = "o_path";
-                    $keyCol = "o_key";
-                    $typeCol = "o_type";
-                    $className = ", o_ClassName className";
+                $identifier = $targetType == 'object' ? 'o_id' : 'id';
+                if ($targetType == 'object') {
+                    $pathCol = 'o_path';
+                    $keyCol = 'o_key';
+                    $typeCol = 'o_type';
+                    $className = ', o_ClassName className';
                 } else {
-                    $pathCol = "path";
-                    if ($targetType == "asset") {
-                        $keyCol = "filename";
+                    $pathCol = 'path';
+                    if ($targetType == 'asset') {
+                        $keyCol = 'filename';
                     } else {
-                        $keyCol = "`key`";
+                        $keyCol = '`key`';
                     }
-                    $typeCol = "type";
-                    $className = "";
+                    $typeCol = 'type';
+                    $className = '';
                 }
 
                 $result = $db->fetchAll(
@@ -259,41 +255,40 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     .' WHERE '.$identifier.' IN ('.implode(',', $targetIds).')'
                 );
 
-                $resultMap = array();
+                $resultMap = [];
 
                 foreach ($result as $resultItem) {
-                    $resultMap[$resultItem["id"]] = $resultItem;
+                    $resultMap[$resultItem['id']] = $resultItem;
                 }
 
                 $existingTargets[$targetType] = $resultMap;
             }
 
-            /** @var  $metaObject Object\Data\ElementMetadata */
+            /** @var $metaObject Object\Data\ElementMetadata */
             foreach ($data as $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
-                    Logger::error("element ".$targetType." ".$targetId." does not exist anymore");
+                    Logger::error('element '.$targetType.' '.$targetId.' does not exist anymore');
                     continue;
                 }
 
                 $elementData = $existingTargets[$targetType][$targetId];
-                $type = $elementData["type"];
-                $id = $elementData["id"];
-                $fullpath = $elementData["fullpath"];
+                $type = $elementData['type'];
+                $id = $elementData['id'];
+                $fullpath = $elementData['fullpath'];
 
-
-                if ($targetType == "object") {
-                    if ($type == "folder") {
+                if ($targetType == 'object') {
+                    if ($type == 'folder') {
                         $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => 'folder'];
                     } else {
-                        $className = $elementData["className"];
+                        $className = $elementData['className'];
                         $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => $className];
                     }
-                } elseif ($targetType == "asset") {
+                } elseif ($targetType == 'asset') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'asset', 'subtype' => $type];
-                } elseif ($targetType == "document") {
+                } elseif ($targetType == 'document') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'document', 'subtype' => $type];
                 }
 

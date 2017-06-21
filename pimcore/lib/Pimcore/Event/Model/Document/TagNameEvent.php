@@ -69,8 +69,7 @@ class TagNameEvent extends Event
         BlockState $blockState,
         string $tagName,
         Document $document
-    )
-    {
+    ) {
         $this->type       = $type;
         $this->inputName  = $inputName;
         $this->blockState = $blockState;

@@ -109,13 +109,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $query->reset(QueryBuilder::LIMIT_OFFSET);
         $query->reset(QueryBuilder::ORDER);
 
-        if ($this->isQueryPartinUse($query,QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
+        if ($this->isQueryPartinUse($query, QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
             $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
         } else {
             $query->reset(QueryBuilder::COLUMNS);
 
             $countIdentifier = '*';
-            if($this->isQueryPartinUse($query,QueryBuilder::DISTINCT)) {
+            if ($this->isQueryPartinUse($query, QueryBuilder::DISTINCT)) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
             }
 
@@ -130,9 +130,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param QueryBuilder $query
      * @param string $part
+     *
      * @return bool
      */
-    private function isQueryPartinUse($query, $part) {
+    private function isQueryPartinUse($query, $part)
+    {
         try {
             if ($query->getPart($part)) {
                 return true;

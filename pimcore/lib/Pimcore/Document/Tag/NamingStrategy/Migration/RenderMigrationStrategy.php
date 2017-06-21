@@ -75,7 +75,6 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
      */
     private $subscriber;
 
-
     /**
      * @param EventDispatcherInterface $dispatcher
      * @param RequestStack $requestStack
@@ -91,8 +90,7 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         UserLoader $userLoader,
         AdminSessionBagConfigurator $adminSessionConfigurator,
         DocumentRouteHandler $documentRouteHandler
-    )
-    {
+    ) {
         $this->dispatcher               = $dispatcher;
         $this->requestStack             = $requestStack;
         $this->editmodeResolver         = $editmodeResolver;

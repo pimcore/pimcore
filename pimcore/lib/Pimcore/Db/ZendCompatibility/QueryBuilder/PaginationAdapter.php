@@ -67,7 +67,7 @@ class PaginationAdapter implements AdapterInterface
     /**
      * Total item count
      *
-     * @var integer
+     * @var int
      */
     protected $_rowCount = null;
 
@@ -110,9 +110,11 @@ class PaginationAdapter implements AdapterInterface
      * Users are therefore encouraged to profile their queries to find
      * the solution that best meets their needs.
      *
-     * @param  QueryBuilder|integer $totalRowCount Total row count integer
+     * @param  QueryBuilder|int $totalRowCount Total row count integer
      *                                               or query
+     *
      * @return PaginationAdapter $this
+     *
      * @throws \Exception
      */
     public function setRowCount($rowCount)
@@ -132,13 +134,13 @@ class PaginationAdapter implements AdapterInterface
 
             // The select query can contain only one column, which should be the row count column
             if (false === strpos($countColumnPart, $rowCountColumn)) {
-                     throw new \Exception('Row count column not found');
+                throw new \Exception('Row count column not found');
             }
 
             $result = $rowCount->query(\PDO::FETCH_ASSOC)->fetch();
 
             $this->_rowCount = count($result) > 0 ? $result[$rowCountColumn] : 0;
-        } else if (is_integer($rowCount)) {
+        } elseif (is_integer($rowCount)) {
             $this->_rowCount = $rowCount;
         } else {
             throw new \Exception('Invalid row count');
@@ -150,8 +152,9 @@ class PaginationAdapter implements AdapterInterface
     /**
      * Returns an array of items for a page.
      *
-     * @param  integer $offset Page offset
-     * @param  integer $itemCountPerPage Number of items per page
+     * @param  int $offset Page offset
+     * @param  int $itemCountPerPage Number of items per page
+     *
      * @return array
      */
     public function getItems($offset, $itemCountPerPage)
@@ -164,7 +167,7 @@ class PaginationAdapter implements AdapterInterface
     /**
      * Returns the total number of rows in the result set.
      *
-     * @return integer
+     * @return int
      */
     public function count()
     {
@@ -235,7 +238,7 @@ class PaginationAdapter implements AdapterInterface
                     ->select()
                     ->bind($rowCount->getBind())
                     ->from($rowCount);
-            } else if ($isDistinct) {
+            } elseif ($isDistinct) {
                 $part = $columnParts[0];
 
                 if ($part[1] !== QueryBuilder::SQL_WILDCARD && !($part[1] instanceof Expression)) {
@@ -247,7 +250,7 @@ class PaginationAdapter implements AdapterInterface
 
                     $groupPart = $column;
                 }
-            } else if (!empty($groupParts)) {
+            } elseif (!empty($groupParts)) {
                 $groupPart = $db->quoteIdentifier($groupParts[0], true);
             }
 

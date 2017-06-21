@@ -87,8 +87,7 @@ final class ElementTree
     public function __construct(
         Document\PageSnippet $document,
         ConflictResolverInterface $conflictResolver
-    )
-    {
+    ) {
         $this->document         = $document;
         $this->conflictResolver = $conflictResolver;
     }
@@ -601,7 +600,7 @@ final class ElementTree
             return 0;
         };
 
-        uasort($blocks, function(AbstractBlock $a, AbstractBlock $b) use ($compareByTrailingNumber) {
+        uasort($blocks, function (AbstractBlock $a, AbstractBlock $b) use ($compareByTrailingNumber) {
             if ($a->getLevel() === $b->getLevel()) {
                 return $compareByTrailingNumber($a->getRealName(), $b->getRealName());
             }

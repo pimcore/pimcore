@@ -194,7 +194,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected function getEditmodeBlockStateAttributes(): array
     {
         $blockState = $this->getBlockState();
-        $blockNames = array_map(function(BlockName $blockName) {
+        $blockNames = array_map(function (BlockName $blockName) {
             return $blockName->getRealName();
         }, $blockState->getBlocks());
 

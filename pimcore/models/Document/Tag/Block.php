@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 

@@ -64,17 +64,15 @@ class ElementMetadata extends Model\AbstractModel
         $this->setElement($element);
     }
 
-
     /**
      * @param string $elementType
      * @param int $elementId
      */
-    public function setElementTypeAndId($elementType, $elementId) {
+    public function setElementTypeAndId($elementType, $elementId)
+    {
         $this->elementType = $elementType;
         $this->elementId = $elementId;
     }
-
-
 
     /**
      * @param $name
@@ -162,9 +160,9 @@ class ElementMetadata extends Model\AbstractModel
      */
     public function setElement($element)
     {
-
         if (!$element) {
             $this->setElementTypeAndId(null, null);
+
             return;
         }
 
@@ -183,8 +181,9 @@ class ElementMetadata extends Model\AbstractModel
         if ($this->getElementType() && $this->getElementId()) {
             $element = Model\Element\Service::getElementById($this->getElementType(), $this->getElementId());
             if (!$element) {
-                throw new \Exception("element " . $this->getElementType() . " " . $this->getElementId() . " does not exist anymore");
+                throw new \Exception('element ' . $this->getElementType() . ' ' . $this->getElementId() . ' does not exist anymore');
             }
+
             return $element;
         }
     }
@@ -204,8 +203,6 @@ class ElementMetadata extends Model\AbstractModel
     {
         return $this->elementId;
     }
-
-
 
     /**
      * @param $columns

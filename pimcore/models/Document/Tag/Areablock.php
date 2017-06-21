@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
 use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Facade\Translate;

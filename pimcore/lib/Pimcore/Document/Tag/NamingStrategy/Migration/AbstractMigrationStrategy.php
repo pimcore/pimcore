@@ -43,8 +43,7 @@ abstract class AbstractMigrationStrategy
     public function initialize(
         PimcoreStyle $io,
         NamingStrategyInterface $namingStrategy
-    )
-    {
+    ) {
         if ($this->initialized) {
             throw new \LogicException('Strategy is already initialized');
         }
@@ -83,7 +82,6 @@ abstract class AbstractMigrationStrategy
     {
         // do not migrate any element in errored documents
         foreach (array_keys($errors) as $documentId) {
-            //
             if (isset($mapping[$documentId])) {
                 unset($mapping[$documentId]);
             }
