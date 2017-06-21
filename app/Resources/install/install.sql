@@ -3,7 +3,7 @@ SET NAMES utf8mb4;
 
 DROP TABLE IF EXISTS `application_logs`;
 CREATE TABLE `application_logs` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pid` INT(11) NULL DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   `message` varchar(1024) DEFAULT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `application_logs` (
   `info` varchar(1024) DEFAULT NULL,
   `component` varchar(190) DEFAULT NULL,
   `source` varchar(190) DEFAULT NULL,
-  `relatedobject` bigint(20) DEFAULT NULL,
+  `relatedobject` int(11) unsigned DEFAULT NULL,
   `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
   `maintenanceChecked` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -316,7 +316,7 @@ CREATE TABLE `http_error_log` (
   `cookies` longtext,
   `serverVars` longtext,
   `date` int(11) unsigned DEFAULT NULL,
-  `count` bigint(20) DEFAULT NULL,
+  `count` bigint(20) unsigned DEFAULT NULL,
   KEY (`uri` (765)),
   KEY `code` (`code`),
   KEY `date` (`date`),
@@ -724,7 +724,7 @@ CREATE TABLE `users_workspaces_object` (
 DROP TABLE IF EXISTS `uuids`;
 CREATE TABLE `uuids` (
   `uuid` CHAR(36) NOT NULL,
-  `itemId` BIGINT(20) UNSIGNED NOT NULL,
+  `itemId` int(11) unsigned NOT NULL,
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`itemId`, `type`, `uuid`)
@@ -776,9 +776,9 @@ CREATE TABLE `classificationstore_stores` (
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
 CREATE TABLE `classificationstore_groups` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
 	`storeId` INT NULL DEFAULT NULL,
-	`parentId` BIGINT(20) NOT NULL DEFAULT '0',
+	`parentId` INT(11) unsigned NOT NULL DEFAULT '0',
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
@@ -790,7 +790,7 @@ CREATE TABLE `classificationstore_groups` (
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
 	`storeId` INT NULL DEFAULT NULL,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
 	`title` VARCHAR(255) NOT NULL DEFAULT '',
@@ -808,8 +808,8 @@ CREATE TABLE `classificationstore_keys` (
 ) DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `classificationstore_relations` (
-	`groupId` BIGINT(20) NOT NULL,
-	`keyId` BIGINT(20) NOT NULL,
+	`groupId` INT(11) unsigned NOT NULL,
+	`keyId` INT(11) unsigned NOT NULL,
 	`sorter` INT(11) NULL DEFAULT NULL,
 	`mandatory` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`groupId`, `keyId`),
@@ -822,7 +822,7 @@ CREATE TABLE `classificationstore_relations` (
 
 DROP TABLE IF EXISTS `classificationstore_collections`;
 CREATE TABLE `classificationstore_collections` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
 	`storeId` INT NULL DEFAULT NULL,
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` VARCHAR(255) NULL DEFAULT NULL,
@@ -834,8 +834,8 @@ CREATE TABLE `classificationstore_collections` (
 
 
 CREATE TABLE `classificationstore_collectionrelations` (
-	`colId` BIGINT(20) NOT NULL,
-	`groupId` BIGINT(20) NOT NULL,
+	`colId` INT(11) unsigned NOT NULL,
+	`groupId` INT(11) unsigned NOT NULL,
     `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`colId`, `groupId`),
 	INDEX `colId` (`colId`),
@@ -844,7 +844,7 @@ CREATE TABLE `classificationstore_collectionrelations` (
 
 DROP TABLE IF EXISTS `quantityvalue_units`;
 CREATE TABLE `quantityvalue_units` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `group` varchar(50) DEFAULT NULL,
   `abbreviation` varchar(10) NOT NULL,
   `longname` varchar(250) DEFAULT NULL,
