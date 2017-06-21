@@ -76,17 +76,18 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return null|Model\Dao\\Pimcore\Model\Object\AbstractObject
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = 'object')
+    public function load(Object\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType = 'object')
     {
-        if ($type == 'object') {
+        if ($destinationType == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";
         } else {
-            $typeQuery = ' AND type = ' . $this->db->quote($type);
+            $typeQuery = ' AND type = ' . $this->db->quote($destinationType);
         }
 
-        $dataRaw = $this->db->fetchAll('SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery, [$source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position]);
+        $dataRaw = $this->db->fetchAll('SELECT * FROM ' .
+            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position]);
         if (!empty($dataRaw)) {
-            $this->model->setElement($destination);
+            $this->model->setElementTypeAndId($destinationType, $destinationId);
             $this->model->setFieldname($fieldname);
             $columns = $this->model->getColumns();
             foreach ($dataRaw as $row) {

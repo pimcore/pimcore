@@ -26,9 +26,14 @@ use Pimcore\Model\Object;
 class ElementMetadata extends Model\AbstractModel
 {
     /**
-     * @var Model\Element\ElementInterface
+     * @var string
      */
-    protected $element;
+    protected $elementType;
+
+    /**
+     * @var int
+     */
+    protected $elementId;
 
     /**
      * @var string
@@ -55,9 +60,21 @@ class ElementMetadata extends Model\AbstractModel
     public function __construct($fieldname, $columns = [], $element = null)
     {
         $this->fieldname = $fieldname;
-        $this->element = $element;
         $this->columns = $columns;
+        $this->setElement($element);
     }
+
+
+    /**
+     * @param string $elementType
+     * @param int $elementId
+     */
+    public function setElementTypeAndId($elementType, $elementId) {
+        $this->elementType = $elementType;
+        $this->elementId = $elementId;
+    }
+
+
 
     /**
      * @param $name
@@ -113,9 +130,9 @@ class ElementMetadata extends Model\AbstractModel
      *
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type)
+    public function load(Object\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType)
     {
-        return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position, $type);
+        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType);
     }
 
     /**
@@ -139,24 +156,56 @@ class ElementMetadata extends Model\AbstractModel
     }
 
     /**
-     * @param $element
+     * @param Model\Element\ElementInterface|null $element
      *
      * @return $this
      */
     public function setElement($element)
     {
-        $this->element = $element;
+
+        if (!$element) {
+            $this->setElementTypeAndId(null, null);
+            return;
+        }
+
+        $elementType = Model\Element\Service::getType($element);
+        $elementId = $element->getId();
+        $this->setElementTypeAndId($elementType, $elementId);
 
         return $this;
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Element\ElementInterface|null
      */
     public function getElement()
     {
-        return $this->element;
+        if ($this->getElementType() && $this->getElementId()) {
+            $element = Model\Element\Service::getElementById($this->getElementType(), $this->getElementId());
+            if (!$element) {
+                throw new \Exception("element " . $this->getElementType() . " " . $this->getElementId() . " does not exist anymore");
+            }
+            return $element;
+        }
     }
+
+    /**
+     * @return string
+     */
+    public function getElementType()
+    {
+        return $this->elementType;
+    }
+
+    /**
+     * @return int
+     */
+    public function getElementId()
+    {
+        return $this->elementId;
+    }
+
+
 
     /**
      * @param $columns

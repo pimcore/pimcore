@@ -186,7 +186,12 @@ $object->save();
 ```
 
 
-## Multihref with Metadata (ExtJS 6 only)
+## Multihref Advanced
+
+***Formerly known as `Multihref with Metadata`***
+
+***Important Note***: Since 5.0.0 referenced elements will be lazy-loaded! 
+
 This datatype is similar to the `Objects with Metadata` datatype in the way that additional information can be 
 added to the relation.
 
