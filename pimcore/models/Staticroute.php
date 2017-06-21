@@ -522,7 +522,7 @@ class Staticroute extends AbstractModel
         if ($reset) {
             $requestParameters = [];
         } else {
-            $requestParameters = \Pimcore::getContainer()->get('router.request_context')->getParameters();
+            $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
 
             // merge route params from static routes here
             $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();

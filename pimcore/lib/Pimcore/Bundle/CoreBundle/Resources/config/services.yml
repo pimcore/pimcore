@@ -26,6 +26,11 @@ services:
             - '@pimcore.http.request_helper'
             - '@pimcore.controller.config.config_normalizer'
 
+    # alias the request context as public service
+    pimcore.routing.router.request_context:
+        alias: router.request_context
+        public: true
+
     # dedicated router for static routes
     pimcore.routing.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
