@@ -101,7 +101,7 @@ return [
                 ],
                 /* define used commit order processor */
                 'commitorderprocessor' => [
-                    'class' => '\\AppBundle\\Ecommerce\\Order\\Processor'
+                    'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CheckoutManager\\CommitOrderProcessor'
                 ],
                 /* settings for confirmation mail sent to customer after order is finished.
                      also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
