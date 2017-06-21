@@ -1760,4 +1760,6 @@ function array_merge_recursive (arr1, arr2){
     return arr1;
 }
 
-
+function escapeSelector (str) {
+    return str.replace(/[!"#$%&'()*+,./:;<=>?@\[\\\]^`{|}~]/g, "\\$&");
+}
