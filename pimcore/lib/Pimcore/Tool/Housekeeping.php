@@ -21,6 +21,10 @@ class Housekeeping
      */
     public static function cleanupTmpFiles($lastAccessGreaterThanDays = 90)
     {
+        if(!is_dir(PIMCORE_TEMPORARY_DIRECTORY)) {
+            return;
+        }
+
         $directory = new \RecursiveDirectoryIterator(PIMCORE_TEMPORARY_DIRECTORY);
         $filter = new \RecursiveCallbackFilterIterator($directory, function (\SplFileInfo $current, $key, $iterator) use ($lastAccessGreaterThanDays) {
             if ($current->isFile()) {
