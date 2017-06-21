@@ -70,7 +70,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function setDataFromResource($data)
     {
-        $this->value = $data;
+        $this->value = (bool) $data;
 
         return $this;
     }
@@ -84,7 +84,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function setDataFromEditmode($data)
     {
-        $this->value = $data;
+        $this->value = (bool) $data;
 
         return $this;
     }
