@@ -999,7 +999,9 @@ class ClassificationstoreController extends AdminController
                     $context['keyId'] =  $keyData->getKeyId();
                     $context['groupId'] = $groupId;
                     $context['keyDefinition'] = $definition;
-                    $definition = $definition->enrichLayoutDefinition($object, $context);
+                    if (method_exists($definition, "enrichLayoutDefinition")) {
+                        $definition = $definition->enrichLayoutDefinition($object, $context);
+                    }
 
                     $keyList[] = [
                         'name' => $keyData->getName(),
@@ -1075,7 +1077,9 @@ class ClassificationstoreController extends AdminController
             $context['keyId'] =  $keyData->getKeyId();
             $context['groupId'] = $groupId;
             $context['keyDefinition'] = $definition;
-            $definition = $definition->enrichLayoutDefinition($object, $context);
+            if (method_exists($definition, "enrichLayoutDefinition")) {
+                $definition = $definition->enrichLayoutDefinition($object, $context);
+            }
 
             $keyList[] = [
                 'name' => $keyData->getName(),
