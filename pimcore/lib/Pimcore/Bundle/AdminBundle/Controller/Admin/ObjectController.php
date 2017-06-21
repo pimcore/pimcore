@@ -617,12 +617,40 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      */
     public function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
     {
-        if ($layout->{'fieldtype'} == 'localizedfields') {
+        if ($layout->{'fieldtype'} == 'localizedfields' || $layout->{'fieldtype'} == 'classificationstore') {
+
+
+
             if (is_array($allowedView) && count($allowedView) > 0) {
-                $layout->{'permissionView'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedView), true);
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedViewDefault = isset($allowedView["default"]);
+                    if ($haveAllowedViewDefault) {
+                        unset($allowedView["default"]);
+                    }
+                }
+                if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
+                    $layout->{'permissionView'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(
+                        \Pimcore\Tool\Admin::getCurrentUser(),
+                        array_keys($allowedView),
+                        true
+                    );
+                }
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
-                $layout->{'permissionEdit'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedEdit), true);
+                if ($layout->{'fieldtype'} == 'localizedfields') {
+                    $haveAllowedEditDefault = isset($allowedEdit["default"]);
+                    if ($haveAllowedEditDefault) {
+                        unset($allowedEdit["default"]);
+                    }
+                }
+
+                if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
+                    $layout->{'permissionEdit'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(
+                        \Pimcore\Tool\Admin::getCurrentUser(),
+                        array_keys($allowedEdit),
+                        true
+                    );
+                }
             }
         } else {
             if (method_exists($layout, 'getChilds')) {

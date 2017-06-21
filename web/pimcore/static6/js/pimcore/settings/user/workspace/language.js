@@ -22,6 +22,7 @@ pimcore.settings.user.workspace.language = Class.create({
 
     getLayout: function() {
         var storeData = [];
+        storeData.push(['default',t('default')]);
         var nrOfLanguages = pimcore.settings.websiteLanguages.length;
         for (var i = 0; i < nrOfLanguages; i++) {
             var language = pimcore.settings.websiteLanguages[i];

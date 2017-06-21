@@ -48,16 +48,15 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         if (this.fieldConfig.localized) {
             if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
-                this.frontendLanguages = pimcore.settings.websiteLanguages;
+                this.frontendLanguages = pimcore.settings.websiteLanguages.slice(0);
+                this.frontendLanguages.unshift("default");
             } else {
                 this.frontendLanguages = fieldConfig.permissionView;
             }
-
-            this.frontendLanguages = this.frontendLanguages.slice(0);
         } else {
             this.frontendLanguages = [];
+            this.frontendLanguages.unshift("default");
         }
-        this.frontendLanguages.unshift("default");
 
         this.keysToWatch = [];
 
