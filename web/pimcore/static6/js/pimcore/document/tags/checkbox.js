@@ -31,23 +31,27 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
             checked = ' checked="checked"';
         }
 
-        $("#" + id).append('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
+        var elContainer = $(document.getElementById(id));
+
+        elContainer.append('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
+
+        this.elComponent = $(document.getElementById(this.htmlId));
 
         if(options["label"]) {
-            $("#" + id).append('<label for="' + this.htmlId + '">' + options["label"] + '</label>');
+            elContainer.append('<label for="' + this.htmlId + '">' + options["label"] + '</label>');
         }
 
         // onchange event
         if (options.onchange) {
-            $("#" + this.htmlId).change(eval(options.onchange));
+            this.elComponent.change(eval(options.onchange));
         }
         if (options.reload) {
-            $("#" + this.htmlId).change(this.reloadDocument);
+            this.elComponent.change(this.reloadDocument);
         }
     },
 
     getValue: function () {
-        return ($("#" + this.htmlId + ":checked").val() == "true") ? true : false;
+        return this.elComponent.get(0).checked;
     },
 
     getType: function () {
