@@ -649,7 +649,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      */
     public function publishVersionAction(Request $request)
     {
-        $this->versionToSessionAction();
+        $this->versionToSessionAction($request);
 
         $version = Version::getById($request->get('id'));
         $document = $version->loadData();
