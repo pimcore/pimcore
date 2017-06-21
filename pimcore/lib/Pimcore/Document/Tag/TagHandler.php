@@ -339,7 +339,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      */
     public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
     {
-        $document = $attributes['document'];
+        $document = $attributes['document'] ?? null;
         if ($document && $document instanceof PageSnippet) {
             unset($attributes['document']);
             $attributes = $this->actionRenderer->addDocumentAttributes($document, $attributes);

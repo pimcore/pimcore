@@ -145,13 +145,13 @@ class Link extends Model\Document\Tag
     {
         $this->updatePathFromInternal();
 
-        $url = $this->data['path'];
+        $url = $this->data['path'] ?? '';
 
-        if (strlen($this->data['parameters']) > 0) {
+        if (strlen($this->data['parameters'] ?? '') > 0) {
             $url .= '?' . str_replace('?', '', $this->getParameters());
         }
 
-        if (strlen($this->data['anchor']) > 0) {
+        if (strlen($this->data['anchor'] ?? '') > 0) {
             $url .= '#' . str_replace('#', '', $this->getAnchor());
         }
 
