@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    private function getTablename($object)
+    protected function getTablename($object)
     {
         return 'object_metadata_' . $object->getClassId();
     }
@@ -76,18 +76,17 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return null|Model\Dao\\Pimcore\Model\Object\AbstractObject
      */
-    public function load(Object\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType = 'object')
+    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = 'object')
     {
-        if ($destinationType == 'object') {
+        if ($type == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";
         } else {
-            $typeQuery = ' AND type = ' . $this->db->quote($destinationType);
+            $typeQuery = ' AND type = ' . $this->db->quote($type);
         }
 
-        $dataRaw = $this->db->fetchAll('SELECT * FROM ' .
-            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position]);
+        $dataRaw = $this->db->fetchAll('SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery, [$source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position]);
         if (!empty($dataRaw)) {
-            $this->model->setElementTypeAndId($destinationType, $destinationId);
+            $this->model->setElement($destination);
             $this->model->setFieldname($fieldname);
             $columns = $this->model->getColumns();
             foreach ($dataRaw as $row) {
