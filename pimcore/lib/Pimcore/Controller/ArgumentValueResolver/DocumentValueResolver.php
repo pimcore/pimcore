@@ -14,7 +14,7 @@
 
 namespace Pimcore\Controller\ArgumentValueResolver;
 
-use Pimcore\Model\Document as DocumentModel;
+use Pimcore\Model\Document;
 use Pimcore\Service\Request\DocumentResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
@@ -46,7 +46,7 @@ class DocumentValueResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument)
     {
-        if ($argument->getType() !== DocumentModel::class) {
+        if ($argument->getType() !== Document::class) {
             return false;
         }
 
@@ -56,14 +56,14 @@ class DocumentValueResolver implements ArgumentValueResolverInterface
 
         $document = $this->documentResolver->getDocument($request);
 
-        return $document && $document instanceof DocumentModel;
+        return $document && $document instanceof Document;
     }
 
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
      *
-     * @return \Generator|DocumentModel
+     * @return \Generator|Document
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
