@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,10 +15,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
+namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Bundle\CoreBundle\EventListener\AbstractContextAwareListener;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Service\Request\PimcoreContextResolverAwareInterface;
 
-abstract class AbstractFrontendListener extends AbstractContextAwareListener
+abstract class AbstractContextAwareListener implements PimcoreContextResolverAwareInterface
 {
+    use PimcoreContextAwareTrait;
 }

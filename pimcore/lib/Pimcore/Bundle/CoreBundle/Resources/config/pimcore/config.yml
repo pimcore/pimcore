@@ -150,6 +150,9 @@ pimcore:
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
+        profiler:
+            routes:
+                - { path: ^/_(_profiler|wdt) }
         admin:
             routes:
                 - { path: ^/admin }

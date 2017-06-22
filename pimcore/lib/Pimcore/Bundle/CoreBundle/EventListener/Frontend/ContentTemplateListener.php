@@ -12,8 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener;
+namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Service\Request\TemplateResolver;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the
  * value and set it on the Template annotation. This handles custom template files being configured on documents.
  */
-class ContentTemplateListener implements EventSubscriberInterface
+class ContentTemplateListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
      * @var TemplateResolver
@@ -61,6 +62,11 @@ class ContentTemplateListener implements EventSubscriberInterface
     public function onKernelView(GetResponseForControllerResultEvent $event)
     {
         $request = $event->getRequest();
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         $template = $request->attributes->get('_template');
 
         // no @Template present -> nothing to do

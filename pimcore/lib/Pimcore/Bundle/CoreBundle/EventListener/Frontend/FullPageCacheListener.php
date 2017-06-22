@@ -263,6 +263,10 @@ class FullPageCacheListener extends AbstractFrontendListener
             return false;
         }
 
+        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return false;
+        }
+
         $response = $event->getResponse();
 
         if (!$response) {
