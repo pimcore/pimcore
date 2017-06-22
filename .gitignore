@@ -40,6 +40,10 @@
 /.php_cs
 /.php_cs.cache
 
+# composer.local.json is referenced in composer-merge-plugin
+# remove this for your projects if you want to track the file
+/composer.local.json
+
 # composer
 /composer.lock
 /composer.phar
