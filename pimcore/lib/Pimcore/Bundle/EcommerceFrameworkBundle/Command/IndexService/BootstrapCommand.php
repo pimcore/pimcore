@@ -31,10 +31,10 @@ class BootstrapCommand extends AbstractIndexServiceCommand
 
         $this
             ->setName('ecommerce:indexservice:bootstrap')
-            ->setDescription('Bootstrap tasks creating/updating index (for all tenants)')
-            ->addOption('create-or-update-index-structure', null, InputOption::VALUE_NONE, 'Whether to create or update the index structure')
-            ->addOption('update-index', null, InputOption::VALUE_NONE, 'Whether to rebuild the index')
-            ->addOption('object-list-class', null, InputOption::VALUE_REQUIRED, 'The object list class to use', 'Object\\Product\\Listing')
+            ->setDescription('Bootstrap tasks creating/updating index (for all tenants), use one of the options --create-or-update-index-structure or --update-index')
+            ->addOption('create-or-update-index-structure', null, InputOption::VALUE_NONE, 'Use to create or update the index structure')
+            ->addOption('update-index', null, InputOption::VALUE_NONE, 'Use to rebuild the index data')
+            ->addOption('object-list-class', null, InputOption::VALUE_REQUIRED, 'The object list class to use', '\\Pimcore\\Model\\Object\\Product\\Listing')
             ->addOption('list-condition', null, InputOption::VALUE_OPTIONAL, 'An optional condition for object list', '');
     }
 
