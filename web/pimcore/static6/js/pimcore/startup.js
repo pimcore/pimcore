@@ -82,6 +82,7 @@ Ext.require([
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
     'Ext.ux.TabReorderer',
+    'Ext.ux.grid.SubTable',
     'Ext.window.Toast'
 ]);
 

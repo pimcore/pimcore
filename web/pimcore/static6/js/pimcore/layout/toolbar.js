@@ -665,6 +665,19 @@ pimcore.layout.toolbar = Class.create({
                     );
                 }
 
+                if (user.isAllowed("users")) {
+                    userItems.push(
+                        {
+                            text: t("analyze_permissions"),
+                            handler: function() {
+                                var checker = new pimcore.element.permissionchecker();
+                                checker.show();
+                            }.bind(this),
+                            iconCls: "pimcore_icon_search"
+                        }
+                    );
+                }
+
                 if (userItems.length > 0) {
                     settingsItems.push({
                         text: t("users") + " / " + t("roles"),

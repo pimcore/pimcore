@@ -1514,5 +1514,7 @@
     "options_provider_data": "Options Provider Data",
     "clone_custom_report": "Clone this custom report",
     "log_search_pid": "PID",
-    "show_applogger_tab": "Show App Logger Tab"
+    "show_applogger_tab": "Show App Logger Tab",
+    "analyze":"Analyze",
+    "analyze_permissions": "Analyze Permissions"
 }
