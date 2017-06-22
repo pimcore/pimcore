@@ -64,8 +64,8 @@ services:
     #
 
     # handles block state (current block, current index) for sub-requests
-    pimcore.event_listener.block_state:
-        class: Pimcore\Bundle\CoreBundle\EventListener\BlockStateListener
+    pimcore.event_listener.frontend.block_state:
+        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\BlockStateListener
         arguments: ['@pimcore.document.tag.block_state_stack']
         calls:
             - [setLogger, ['@logger']]
@@ -90,8 +90,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.content_template:
-        class: Pimcore\Bundle\CoreBundle\EventListener\ContentTemplateListener
+    pimcore.event_listener.frontend.content_template:
+        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener
         arguments: ['@pimcore.service.request.template_resolver']
         tags:
             - { name: kernel.event_subscriber }

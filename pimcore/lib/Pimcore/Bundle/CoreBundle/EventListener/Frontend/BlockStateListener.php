@@ -12,9 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener;
+namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Document\Tag\Block\BlockStateStack;
+use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Handles block state for sub requests (saves parent state and restores it after request completes)
  */
-class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
+class BlockStateListener extends AbstractFrontendListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -58,7 +59,13 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        if ($event->getRequest()->get('disableBlockClearing')) {
+        $request = $event->getRequest();
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        if ($request->get('disableBlockClearing')) {
             return;
         }
 
@@ -77,7 +84,13 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if ($event->getRequest()->get('disableBlockClearing')) {
+        $request = $event->getRequest();
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        if ($request->get('disableBlockClearing')) {
             return;
         }
 
