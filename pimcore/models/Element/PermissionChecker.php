@@ -228,9 +228,9 @@ class PermissionChecker
             return;
         }
 
-        $details[] = self::createDetail($user, "<b>Language Permissions</b>", null, null, null);
+        if ($element instanceof Object\AbstractObject) {
+            $details[] = self::createDetail($user, "<b>Language Permissions</b>", null, null, null);
 
-        if (!$element instanceof Object\Concrete) {
             $permissions = array("lView" => "view", "lEdit" => "edit");
             foreach ($permissions as $permissionKey => $permissionName) {
                     $languagePermissions = Object\Service::getLanguagePermissions($element, $user, $permissionKey);
