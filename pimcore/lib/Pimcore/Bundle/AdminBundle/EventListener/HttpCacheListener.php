@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\AbstractContextAwareListener;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Service\Request\PimcoreContextResolver;
@@ -22,10 +22,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class HttpCacheListener implements EventSubscriberInterface
+class HttpCacheListener extends AbstractContextAwareListener implements EventSubscriberInterface
 {
-    use PimcoreContextAwareTrait;
-
     /**
      * @var RequestHelper
      */

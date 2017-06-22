@@ -48,7 +48,6 @@ services:
             - '@pimcore.http.request_helper'
             - '@pimcore_admin.security.user_loader'
         calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_subscriber }
@@ -57,8 +56,6 @@ services:
     pimcore.event_listener.frontend.hardlink_canonical_listener:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener
         arguments: ['@pimcore.service.request.document_resolver']
-        calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -162,7 +159,6 @@ services:
             - '@pimcore_admin.security.user_loader'
             - '@pimcore.extension.bundle_manager'
         calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_subscriber }
@@ -174,8 +170,6 @@ services:
 
     pimcore.event_listener.frontend.google_analytics_code:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener
-        calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 

@@ -6,8 +6,6 @@ services:
     pimcore_admin.event_listener.bruteforce_protection:
         class: Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener
         arguments: ['@pimcore_admin.security.bruteforce_protection_handler']
-        calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -36,8 +34,6 @@ services:
     pimcore_admin.event_listener.http_cache:
         class: Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener
         arguments: ['@pimcore.http.request_helper', '@pimcore.http.response_helper']
-        calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -45,7 +41,6 @@ services:
         class: Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener
         arguments: ['@pimcore_admin.security.token_storage_user_resolver']
         calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_subscriber }
@@ -54,7 +49,5 @@ services:
     pimcore_admin.event_listener.usage_statistics:
         class: Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener
         arguments: ['@pimcore_admin.security.token_storage_user_resolver']
-        calls:
-            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_subscriber }

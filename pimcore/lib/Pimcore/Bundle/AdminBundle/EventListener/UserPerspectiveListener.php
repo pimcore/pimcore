@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\AbstractContextAwareListener;
 use Pimcore\Config;
 use Pimcore\Model\User;
 use Pimcore\Service\Request\PimcoreContextResolver;
@@ -26,9 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
+class UserPerspectiveListener extends AbstractContextAwareListener implements EventSubscriberInterface, LoggerAwareInterface
 {
-    use PimcoreContextAwareTrait;
     use LoggerAwareTrait;
 
     /**
