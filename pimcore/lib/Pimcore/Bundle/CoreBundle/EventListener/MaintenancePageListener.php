@@ -83,21 +83,23 @@ class MaintenancePageListener
         $maintenance = false;
         $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
 
-        if (is_file($file)) {
-            $conf = include($file);
-            if (isset($conf['sessionId'])) {
-                try {
-                    $requestSessionId = Session::getSessionIdFromRequest($event->getRequest());
-                } catch (\Exception $e) {
-                    $requestSessionId = null;
-                }
+        if (!is_file($file)) {
+            return;
+        }
 
-                if ($conf['sessionId'] != $requestSessionId) {
-                    $maintenance = true;
-                }
-            } else {
-                @unlink($file);
+        $conf = include($file);
+        if (isset($conf['sessionId'])) {
+            try {
+                $requestSessionId = Session::getSessionIdFromRequest($event->getRequest());
+            } catch (\Exception $e) {
+                $requestSessionId = null;
             }
+
+            if ($conf['sessionId'] != $requestSessionId) {
+                $maintenance = true;
+            }
+        } else {
+            @unlink($file);
         }
 
         // do not activate the maintenance for the server itself
