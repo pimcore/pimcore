@@ -618,14 +618,11 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     public function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
     {
         if ($layout->{'fieldtype'} == 'localizedfields' || $layout->{'fieldtype'} == 'classificationstore') {
-
-
-
             if (is_array($allowedView) && count($allowedView) > 0) {
                 if ($layout->{'fieldtype'} == 'localizedfields') {
-                    $haveAllowedViewDefault = isset($allowedView["default"]);
+                    $haveAllowedViewDefault = isset($allowedView['default']);
                     if ($haveAllowedViewDefault) {
-                        unset($allowedView["default"]);
+                        unset($allowedView['default']);
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
@@ -638,9 +635,9 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
                 if ($layout->{'fieldtype'} == 'localizedfields') {
-                    $haveAllowedEditDefault = isset($allowedEdit["default"]);
+                    $haveAllowedEditDefault = isset($allowedEdit['default']);
                     if ($haveAllowedEditDefault) {
-                        unset($allowedEdit["default"]);
+                        unset($allowedEdit['default']);
                     }
                 }
 

@@ -229,9 +229,9 @@ class Admin
             $languages = array_merge($contentLanguages, $newLanguages);
         }
 
-        if (in_array("default", $languages)) {
-            $languages = array_diff($languages, ["default"]);
-            array_unshift($languages, "default");
+        if (in_array('default', $languages)) {
+            $languages = array_diff($languages, ['default']);
+            array_unshift($languages, 'default');
         }
         if ($returnLanguageArray) {
             return $languages;

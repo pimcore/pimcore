@@ -24,58 +24,52 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model\User;
 
-
 class PermissionChecker
 {
-
     public static function check(ElementInterface $element, $users)
     {
-
-        $protectedColumns = array("cid", "cpath", "userId", "lEdit", "lView", "layouts");
+        $protectedColumns = ['cid', 'cpath', 'userId', 'lEdit', 'lView', 'layouts'];
 
         if ($element instanceof Object\AbstractObject) {
-            $type = "object";
+            $type = 'object';
         } else {
             if ($element instanceof Asset) {
-                $type = "asset";
+                $type = 'asset';
             } else {
                 if ($element instanceof Document) {
-                    $type = "document";
+                    $type = 'document';
                 } else {
-                    throw new \Exception("type not supported");
+                    throw new \Exception('type not supported');
                 }
             }
         }
         $db = Db::get();
-        $tableName = "users_workspaces_".$type;
-        $tableDesc = $db->fetchAll("describe ".$tableName);
+        $tableName = 'users_workspaces_'.$type;
+        $tableDesc = $db->fetchAll('describe '.$tableName);
 
-        $result = array(
-            "columns" => array()
-        );
+        $result = [
+            'columns' => []
+        ];
 
         foreach ($tableDesc as $column) {
-
-            $columnName = $column["Field"];
+            $columnName = $column['Field'];
             if (in_array($columnName, $protectedColumns)) {
                 continue;
             }
 
-            $result["columns"][] = $columnName;
+            $result['columns'][] = $columnName;
         }
 
-        $permissions = array();
-        $details = array();
+        $permissions = [];
+        $details = [];
 
-        /** @var  $user User */
+        /** @var $user User */
         foreach ($users as $user) {
-            $userPermission = array();
-            $userPermission["userId"] = $user->getId();
-            $userPermission["userName"] = $user->getName();
+            $userPermission = [];
+            $userPermission['userId'] = $user->getId();
+            $userPermission['userName'] = $user->getName();
 
-            foreach ($result["columns"] as $columnName) {
-
-
+            foreach ($result['columns'] as $columnName) {
                 $parentIds = self::collectParentIds($element);
 
                 $userIds = $user->getRoles();
@@ -103,8 +97,7 @@ class PermissionChecker
                     if ($permissionsParent) {
                         $userPermission[$columnName] = $permissionsParent[$columnName] ? true : false;
 
-
-                        $details[] = self::createDetail($user, $columnName, $userPermission[$columnName], $permissionsParent["type"], $permissionsParent["name"], $permissionsParent["cpath"]);
+                        $details[] = self::createDetail($user, $columnName, $userPermission[$columnName], $permissionsParent['type'], $permissionsParent['name'], $permissionsParent['cpath']);
 
                         continue;
                     }
@@ -125,29 +118,25 @@ class PermissionChecker
                             $path.'%'
                         );
                         if ($permissionsChilds) {
-                            $result[$columnName] = $permissionsChilds[$columnName] ? true : false;;
-                            $details[] = self::createDetail($user, $columnName, result[$columnName], $permissionsChilds["type"], $permissionsChilds["name"], $permissionsChilds["cpath"]);
+                            $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
+                            $details[] = self::createDetail($user, $columnName, result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
                             continue;
                         }
                     }
-
                 } catch (\Exception $e) {
                     Logger::warn('Unable to get permission '.$type.' for object '.$element->getId());
                 }
-
             }
             self::getUserPermissions($user, $details);
             self::getLanguagePermissions($user, $element, $details);
             $permissions[] = $userPermission;
         }
 
-        $result["permissions"] = $permissions;
+        $result['permissions'] = $permissions;
 
-        $result["details"] = $details;
+        $result['details'] = $details;
 
         return $result;
-
-
     }
 
     /**
@@ -170,32 +159,34 @@ class PermissionChecker
         return $parentIds;
     }
 
-    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null) {
-        $detailEntry = array(
-            "userId" => $user->getId(),
-            "a" => $a,
-            "b" => $b,
-            "c" => $c,
-            "d" => $d,
-            "e" => $e,
-            "f" => $f
+    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null)
+    {
+        $detailEntry = [
+            'userId' => $user->getId(),
+            'a' => $a,
+            'b' => $b,
+            'c' => $c,
+            'd' => $d,
+            'e' => $e,
+            'f' => $f
 
-        );
+        ];
+
         return $detailEntry;
     }
 
-    protected static function getUserPermissions($user, &$details) {
-
+    protected static function getUserPermissions($user, &$details)
+    {
         if ($user->isAdmin()) {
-            $details[] = self::createDetail($user, "ADMIN", true, null, null);
+            $details[] = self::createDetail($user, 'ADMIN', true, null, null);
+
             return;
         }
-        $details[] = self::createDetail($user, "<b>User Permissions</b>", null, null, null);
+        $details[] = self::createDetail($user, '<b>User Permissions</b>', null, null, null);
 
         $db = Db::get();
-        $permissions = $db->fetchCol("select `key` from users_permission_definitions");
+        $permissions = $db->fetchCol('select `key` from users_permission_definitions');
         foreach ($permissions as $permissionKey) {
-
             $entry = null;
 
             if (!$user->getPermission($permissionKey)) {
@@ -223,28 +214,27 @@ class PermissionChecker
      * @param $element
      * @param $details
      */
-    protected function getLanguagePermissions($user, $element, &$details) {
+    protected function getLanguagePermissions($user, $element, &$details)
+    {
         if ($user->isAdmin()) {
             return;
         }
 
         if ($element instanceof Object\AbstractObject) {
-            $details[] = self::createDetail($user, "<b>Language Permissions</b>", null, null, null);
+            $details[] = self::createDetail($user, '<b>Language Permissions</b>', null, null, null);
 
-            $permissions = array("lView" => "view", "lEdit" => "edit");
+            $permissions = ['lView' => 'view', 'lEdit' => 'edit'];
             foreach ($permissions as $permissionKey => $permissionName) {
-                    $languagePermissions = Object\Service::getLanguagePermissions($element, $user, $permissionKey);
-                    if (!$languagePermissions) {
-                        $languagePermissions = "all";
-                    } else {
-                        $languagePermissions = array_keys($languagePermissions);
-                        $languagePermissions = implode(', ', $languagePermissions);
-                    }
-
-                    $details[] = self::createDetail($user, $permissionName, null, null, null, $languagePermissions);
-
+                $languagePermissions = Object\Service::getLanguagePermissions($element, $user, $permissionKey);
+                if (!$languagePermissions) {
+                    $languagePermissions = 'all';
+                } else {
+                    $languagePermissions = array_keys($languagePermissions);
+                    $languagePermissions = implode(', ', $languagePermissions);
                 }
+
+                $details[] = self::createDetail($user, $permissionName, null, null, null, $languagePermissions);
+            }
         }
     }
-
 }

@@ -712,7 +712,7 @@ class ElementController extends AdminController
      */
     public function analyzePermissionsAction(Request $request)
     {
-        $userId = $request->get("userId");
+        $userId = $request->get('userId');
         if ($userId) {
             $user = Model\User::getById($userId);
             $userList = [$user];
@@ -721,8 +721,8 @@ class ElementController extends AdminController
             $userList = $userList->load();
         }
 
-        $elementType = $request->get("elementType");
-        $elementId = $request->get("elementId");
+        $elementType = $request->get('elementType');
+        $elementId = $request->get('elementId');
 
         $element = Element\Service::getElementById($elementType, $elementId);
 
