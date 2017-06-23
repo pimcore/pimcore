@@ -396,6 +396,7 @@ pimcore.extensionmanager.admin = Class.create({
                         }
 
                         if (!handled && iframeSrc) {
+                            extensionId = extensionId.replace(/[/\\*]/g, "_");
                             pimcore.helpers.openGenericIframeWindow("extension_settings_" + extensionId + "_" + type, iframeSrc, "pimcore_icon_plugin", extensionId);
                         }
                     }.bind(this)
