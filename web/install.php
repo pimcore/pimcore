@@ -16,7 +16,10 @@
      * SUPER BADASS PIMCORE INSTALLER ;-)
      */
 
-    include_once(__DIR__ . "/../vendor/autoload.php");
+    /** @var $autoloader \Composer\Autoload\ClassLoader */
+    $autoloader = include_once(__DIR__ . "/../vendor/autoload.php");
+    $autoloader->setApcuPrefix("pimcore-" . uniqid()); // disable the APCu caching for the installer
+
     include_once(__DIR__ . "/../pimcore/config/constants.php");
     include_once(__DIR__ . "/../pimcore/lib/helper-functions.php");
 
