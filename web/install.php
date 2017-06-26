@@ -118,6 +118,26 @@
                 ],
             ]);
 
+            $profile = $_REQUEST["profile"];
+
+            $installProfileRoot = PIMCORE_PROJECT_ROOT . "/install-profiles/" . $profile . "/";
+            $dbDataFile = $installProfileRoot . "dump/data.sql";
+
+            $filesToCopy = rscandir($installProfileRoot);
+            foreach($filesToCopy as $file) {
+                $relativeFilePath = str_replace($installProfileRoot, "", $file);
+                $newPath = PIMCORE_PROJECT_ROOT . "/" . $relativeFilePath;
+                if(is_file($file)) {
+                    if(file_exists($newPath)) {
+                        //unlink($newPath);
+                    }
+                    if(!is_dir(dirname($newPath))) {
+                        mkdir(dirname($newPath), \Pimcore\File::getDefaultMode(), true);
+                    }
+                    copy($file, $newPath);
+                }
+            }
+
             $kernel = new AppKernel(\Pimcore\Config::getEnvironment(), true);
             \Pimcore::setKernel($kernel);
 
@@ -130,34 +150,9 @@
 
             $setup->database();
 
-            $profile = $_REQUEST["profile"];
-            if($profile) {
-
-                $installProfileRoot = PIMCORE_PROJECT_ROOT . "/install-profiles/" . $profile . "/";
-                $dbDataFile = $installProfileRoot . "dump/data.sql";
-
-                $filesToCopy = rscandir($installProfileRoot);
-                foreach($filesToCopy as $file) {
-                    $relativeFilePath = str_replace($installProfileRoot, "", $file);
-                    $newPath = PIMCORE_PROJECT_ROOT . "/" . $relativeFilePath;
-                    if(is_file($file)) {
-                        if(file_exists($newPath)) {
-                            //unlink($newPath);
-                        }
-                        if(!is_dir(dirname($newPath))) {
-                            mkdir(dirname($newPath), \Pimcore\File::getDefaultMode(), true);
-                        }
-                        copy($file, $newPath);
-                    }
-                }
-
-                if(file_exists($dbDataFile)) {
-                    $setup->insertDump($dbDataFile);
-                    $setup->createOrUpdateUser($contentConfig);
-                } else {
-                    // empty installation
-                    $setup->contents($contentConfig);
-                }
+            if(file_exists($dbDataFile)) {
+                $setup->insertDump($dbDataFile);
+                $setup->createOrUpdateUser($contentConfig);
             } else {
                 // empty installation
                 $setup->contents($contentConfig);
