@@ -62,7 +62,7 @@ class PimcoreUrl extends Helper
     /**
      * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
      *
-     * @param null $name
+     * @param string|null $name
      * @param array $parameters
      * @param int $referenceType
      *
@@ -82,11 +82,26 @@ class PimcoreUrl extends Helper
         }
 
         // get name from current route
-        if ($name === null) {
-            $name = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
+        if (null === $name) {
+            $name = $this->getCurrentRoute();
         }
 
         return $this->generator->generate($name, $parameters, $referenceType);
+    }
+
+    /**
+     * Tries to get the current route name from current or master request
+     *
+     * @return string|null
+     */
+    protected function getCurrentRoute()
+    {
+        $route = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
+        if (!$route) {
+            $route = $this->requestHelper->getMasterRequest()->attributes->get('_route');
+        }
+
+        return $route;
     }
 
     /**
