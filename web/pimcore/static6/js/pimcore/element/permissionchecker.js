@@ -34,7 +34,7 @@ pimcore.element.permissionchecker = Class.create({
             var fieldPath = new Ext.form.TextField({
                 fieldLabel: t('path'),
                 name: "path",
-                width: 520,
+                width: 780,
                 fieldCls: "pimcore_droptarget_input"
             });
 
@@ -68,7 +68,7 @@ pimcore.element.permissionchecker = Class.create({
             var user = new Ext.form.TextField({
                 fieldLabel: t('user'),
                 name: "user",
-                width: 520,
+                width: 780,
                 fieldCls: "pimcore_droptarget_input"
             });
 
