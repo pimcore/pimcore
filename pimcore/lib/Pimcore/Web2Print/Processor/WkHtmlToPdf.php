@@ -42,9 +42,9 @@ class WkHtmlToPdf extends Processor
 
         if (!empty($wkhtmltopdfBin)) {
             $this->wkhtmltopdfBin = $wkhtmltopdfBin;
-        } else if($web2printConfig->wkhtmltopdfBin) {
+        } elseif ($web2printConfig->wkhtmltopdfBin) {
             $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
-        } else if($determined = Console::getExecutable("wkhtmltopdf")) {
+        } elseif ($determined = Console::getExecutable('wkhtmltopdf')) {
             $this->wkhtmltopdfBin = $determined;
         }
 
@@ -206,7 +206,7 @@ class WkHtmlToPdf extends Processor
         $web2printConfig = Config::getWeb2PrintConfig();
 
         $relativePath =  str_replace(PIMCORE_WEB_ROOT, '', $fsPath);
-        $relativePath = str_replace(DIRECTORY_SEPARATOR, "/", $relativePath);
+        $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
 
         if ($web2printConfig->wkhtml2pdfHostname) {
             return $web2printConfig->wkhtml2pdfHostname . $relativePath;
