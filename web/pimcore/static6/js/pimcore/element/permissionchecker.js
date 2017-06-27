@@ -240,7 +240,7 @@ pimcore.element.permissionchecker = Class.create({
         this.resultPanel.removeAll();
 
         var columns = [
-            {header: t("name"), sortable: false, dataIndex: "userName", editable: false, flex: 150, filter: 'string'}
+            {header: t("Username"), sortable: false, dataIndex: "userName", editable: false, flex: 150, filter: 'string'}
         ];
 
         var columnCount = data.columns.length;
@@ -256,7 +256,7 @@ pimcore.element.permissionchecker = Class.create({
                 dataIndex: columnName,
                 editable: false,
                 flex: 150,
-                filter: 'string',
+                filter: 'boolean',
                 renderer: function (columnName, value, metaData, record) {
                     if (value === true) {
                         metaData.tdCls += " pimcore_icon_success";
