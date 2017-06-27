@@ -17,6 +17,7 @@ namespace Pimcore\Web2Print\Processor;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
 
 class WkHtmlToPdf extends Processor
@@ -39,10 +40,12 @@ class WkHtmlToPdf extends Processor
     {
         $web2printConfig = Config::getWeb2PrintConfig();
 
-        if (empty($wkhtmltopdfBin)) {
-            $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
-        } else {
+        if (!empty($wkhtmltopdfBin)) {
             $this->wkhtmltopdfBin = $wkhtmltopdfBin;
+        } else if($web2printConfig->wkhtmltopdfBin) {
+            $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
+        } else if($determined = Console::getExecutable("wkhtmltopdf")) {
+            $this->wkhtmltopdfBin = $determined;
         }
 
         if (empty($options)) {
@@ -140,7 +143,7 @@ class WkHtmlToPdf extends Processor
         $id = uniqid();
         $tmpHtmlFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . $id . '.htm';
         file_put_contents($tmpHtmlFile, $htmlString);
-        $srcUrl = $this->getTempFileUrl() . basename($tmpHtmlFile);
+        $srcUrl = $this->getTempFileUrl($tmpHtmlFile);
 
         $pdfFile = $this->convert($srcUrl, $dstFile);
 
@@ -198,11 +201,15 @@ class WkHtmlToPdf extends Processor
     /**
      * @return string
      */
-    public static function getTempFileUrl()
+    public static function getTempFileUrl($fsPath)
     {
         $web2printConfig = Config::getWeb2PrintConfig();
+
+        $relativePath =  str_replace(PIMCORE_WEB_ROOT, '', $fsPath);
+        $relativePath = str_replace(DIRECTORY_SEPARATOR, "/", $relativePath);
+
         if ($web2printConfig->wkhtml2pdfHostname) {
-            return $web2printConfig->wkhtml2pdfHostname . PIMCORE_TEMPORARY_DIRECTORY;
+            return $web2printConfig->wkhtml2pdfHostname . $relativePath;
         } elseif (\Pimcore\Config::getSystemConfig()->general->domain) {
             $hostname = \Pimcore\Config::getSystemConfig()->general->domain;
         } else {
@@ -211,6 +218,6 @@ class WkHtmlToPdf extends Processor
 
         $protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
 
-        return $protocol . '://' . $hostname . PIMCORE_TEMPORARY_DIRECTORY;
+        return $protocol . '://' . $hostname . $relativePath;
     }
 }

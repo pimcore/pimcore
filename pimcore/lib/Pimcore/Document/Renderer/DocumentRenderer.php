@@ -21,6 +21,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer implements DocumentRendererInterface
@@ -75,8 +76,14 @@ class DocumentRenderer implements DocumentRendererInterface
             $attributes['_route'] = $route->getRouteKey();
         }
 
+        try {
+            $request = $this->requestHelper->getCurrentRequest();
+        } catch (\Exception $e) {
+            $request = new Request();
+        }
+
         $uri      = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
-        $response = $this->fragmentRenderer->render($uri, $this->requestHelper->getCurrentRequest(), $options);
+        $response = $this->fragmentRenderer->render($uri, $request, $options);
 
         return $response->getContent();
     }
