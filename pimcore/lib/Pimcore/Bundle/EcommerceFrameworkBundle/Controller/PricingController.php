@@ -40,6 +40,14 @@ class PricingController extends AdminController implements EventedControllerInte
         $key = 'bundle_ecommerce_pricing_rules';
         $access = $this->getUser()->getPermission($key);
         if (!$access) {
+            $roles = $this->getUser()->getRoles();
+            $roles = $roles ? : [];
+            foreach ($roles as $roleId) {
+                $role = \Pimcore\Model\User\Role::getById($roleId);
+                if ($role->getPermission($key)) {
+                    return true;
+                }
+            }
             throw new \Exception('this function requires "bundle_ecommerce_pricing_rules" permission!');
         }
     }
