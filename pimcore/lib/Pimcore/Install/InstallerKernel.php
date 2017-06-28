@@ -111,8 +111,8 @@ class InstallerKernel extends Kernel
         $c->findDefinition(InstallCommand::class)->addTag('console.command');
 
         // register controller and tag it with service_arguments to enable action injection
-        $c->autowire('pimcore.installer.controller', InstallController::class);
-        $c->findDefinition('pimcore.installer.controller')->addTag('controller.service_arguments');
+        $c->autowire(InstallController::class, InstallController::class);
+        $c->findDefinition(InstallController::class)->addTag('controller.service_arguments');
     }
 
     /**
@@ -127,7 +127,7 @@ class InstallerKernel extends Kernel
     private function buildRoute(string $path, string $action, array $methods = []): Route
     {
         $route = new Route($path);
-        $route->setDefault('_controller', sprintf('pimcore.installer.controller:%sAction', $action));
+        $route->setDefault('_controller', sprintf('%s:%sAction', InstallController::class, $action));
 
         if (!empty($methods)) {
             $route->setMethods($methods);
