@@ -211,7 +211,7 @@ class Installer
             ],
         ]);
 
-        $errors = $this->copyProfileFiles($profile, $errors);
+        $errors = $this->copyProfileFiles($profile);
         if (count($errors) > 0) {
             return $errors;
         }
@@ -289,6 +289,7 @@ class Installer
                 $setup->contents($userCredentials);
             } else {
                 foreach ($profile->getDbDataFiles() as $dbFile) {
+                    $this->logger->info('Importing DB file {dbFile}', ['dbFile' => $dbFile]);
                     $setup->insertDump($dbFile);
                 }
 
