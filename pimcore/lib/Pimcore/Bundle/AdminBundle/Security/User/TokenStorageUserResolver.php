@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Security\User;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Model\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Resolves the current pimcore user from the token storage.
@@ -24,16 +25,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class TokenStorageUserResolver
 {
     /**
-     * @var ContainerInterface
+     * @var TokenStorageInterface
      */
-    protected $container;
+    protected $tokenStorage;
 
     /**
-     * @param ContainerInterface $container
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(TokenStorageInterface $tokenStorage)
     {
-        $this->container = $container;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -44,6 +45,8 @@ class TokenStorageUserResolver
         if ($proxy = $this->getUserProxy()) {
             return $proxy->getUser();
         }
+
+        return null;
     }
 
     /**
@@ -55,11 +58,7 @@ class TokenStorageUserResolver
      */
     public function getUserProxy()
     {
-        if (!$this->container->has('security.token_storage')) {
-            throw new \LogicException('The SecurityBundle is not registered in your application.');
-        }
-
-        if (null === $token = $this->container->get('security.token_storage')->getToken()) {
+        if (null === $token = $this->tokenStorage->getToken()) {
             return null;
         }
 
@@ -71,5 +70,7 @@ class TokenStorageUserResolver
         if ($user instanceof UserProxy) {
             return $user;
         }
+
+        return null;
     }
 }
