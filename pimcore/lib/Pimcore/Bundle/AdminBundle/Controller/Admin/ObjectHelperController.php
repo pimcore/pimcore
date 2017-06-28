@@ -90,8 +90,12 @@ class ObjectHelperController extends AdminController
             $context['object'] = $object;
         }
 
-        if (!$fields) {
+        if (!$fields && $class) {
             $fields = $class->getFieldDefinitions();
+        } else {
+            return $this->json([
+                'availableFields' => [],
+            ]);
         }
 
         $types = [];
