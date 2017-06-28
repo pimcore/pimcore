@@ -359,9 +359,13 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
         $results = [];
         foreach ($bm->getEnabledBundleNames() as $className) {
-            $bundle = $bm->getActiveBundle($className, false);
+            try {
+                $bundle = $bm->getActiveBundle($className, false);
 
-            $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
+                $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
+            } catch (\Throwable $e) {
+                $this->get('monolog.logger.pimcore')->error($e);
+            }
         }
 
         foreach ($bm->getAvailableBundles() as $className) {
