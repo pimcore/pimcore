@@ -5,19 +5,13 @@ notifications:
     - travis-ci@pimcore.org
 
 php:
-  - 5.6
+  - 5.6.29
   - 7
   - 7.1
 
 before_install:
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then apt-get install php5-mysql; php5enmod mysql; fi
-
   # analyze ZF usage before running anything else
   - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
-
-
-install:
-  - composer install
 
 before_script:
   # install apache
@@ -28,6 +22,7 @@ before_script:
   # customize php settings
   - sudo chmod 0755 .travis/setup-fpm.sh
   - .travis/setup-fpm.sh
+  - composer install
   # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM)
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart

@@ -363,7 +363,8 @@ class Concrete extends AbstractObject
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies = array_merge($dependencies, $field->resolveDependencies($this->$key));
+                $dependencies = array_merge($dependencies, $field->resolveDependencies(
+                    isset($this->$key) ? $this->$key : null) );
             }
         }
 

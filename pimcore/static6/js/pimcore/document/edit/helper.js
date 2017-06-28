@@ -11,39 +11,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
-
+pimcore.edithelpers = {};
 
 // disable reload & links, this function is here because it has to be in the header (body attribute)
 function pimcoreOnUnload() {
     editWindow.protectLocation();
 }
-
-
-pimcore.edithelpers = {
-    __lastPageHeight: null // contains the last page height determined by setBodyHeight()
-};
-
-pimcore.edithelpers.setBodyHeight = function () {
-    try {
-        var body = document.body,
-            html = document.documentElement,
-            lastPageHeight = pimcore.edithelpers.__lastPageHeight;
-
-        var height = Math.max(body.scrollHeight, body.offsetHeight,
-            html.clientHeight, html.scrollHeight, html.offsetHeight);
-
-
-        if(!lastPageHeight || lastPageHeight < (height-100)) {
-            Ext.getBody().setHeight(height);
-            Ext.get(Ext.query("html")[0]).setHeight(height);
-
-            pimcore.edithelpers.__lastPageHeight = height;
-        }
-    } catch (e) {
-        console.log(e);
-    }
-};
 
 pimcore.edithelpers.frame = {
     active: false,
