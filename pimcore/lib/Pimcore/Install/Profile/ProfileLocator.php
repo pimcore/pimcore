@@ -95,23 +95,22 @@ class ProfileLocator
 
         $finder = new Finder();
         $finder
-            ->directories()
+            ->followLinks()
             ->in($installProfilesPath)
-            ->depth(0);
+            ->name('manifest.yml');
 
         $profiles = [];
-        foreach ($finder as $dir) {
-            $manifestPath = $dir->getRealPath() . '/manifest.yml';
-            if (!file_exists($manifestPath)) {
-                continue;
-            }
-
-            $id = $dir->getBasename();
+        foreach ($finder as $manifest) {
+            $directory = new \SplFileInfo(dirname($manifest->getRealPath()));
+            $profileId = $directory->getBasename();
 
             try {
-                $profiles[$id] = $this->buildProfile($id, $manifestPath);
+                $profiles[$profileId] = $this->buildProfile($profileId, $manifest->getRealPath());
             } catch (\Throwable $e) {
-                $this->logger->error($e);
+                $this->logger->error('Failed to build profile {profile}: {exception}', [
+                    'profile'   => $profileId,
+                    'exception' => $e
+                ]);
             }
         }
 
