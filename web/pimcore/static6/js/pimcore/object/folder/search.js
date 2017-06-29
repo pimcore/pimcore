@@ -165,8 +165,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 beforeedit: function(editor, context, eOpts) {
                     //need to clear cached editors of cell-editing editor in order to
                     //enable different editors per row
-                    editor.editors.each(Ext.destroy, Ext);
-                    editor.editors.clear();
+                    var editors = editor.editors;
+                    editors.each(function(editor) {
+                        if (typeof editor.column.config.getEditor !== "undefined") {
+                            Ext.destroy(editor);
+                            editors.remove(editor);
+                        }
+                    });
                 }
             }
         });
