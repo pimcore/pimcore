@@ -246,45 +246,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             });
         }
 
-        var tbarItems = [
-            {
-                xtype: "tbspacer",
-                width: 20,
-                height: 16,
-                cls: "pimcore_icon_droptarget"
-            },
-            {
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
-
-        if (!readOnly) {
-            tbarItems = tbarItems.concat([
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }
-                //,
-                //this.getCreateControl()
-            ]);
-        }
-
-        if (this.fieldConfig.assetsAllowed) {
-            tbarItems.push({
-                xtype: "button",
-                cls: "pimcore_inline_upload",
-                iconCls: "pimcore_icon_upload",
-                handler: this.uploadDialog.bind(this)
-            });
-        }
-
+        var toolbarItems = this.getEditToolbarItems(readOnly);
 
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -328,7 +290,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {
-                items: tbarItems,
+                items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
             },
@@ -431,6 +393,49 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     getLayoutShow: function () {
         return this.createLayout(true);
+    },
+
+    getEditToolbarItems: function(readOnly) {
+        var toolbarItems = [
+            {
+                xtype: "tbspacer",
+                width: 20,
+                height: 16,
+                cls: "pimcore_icon_droptarget"
+            },
+            {
+                xtype: "tbtext",
+                text: "<b>" + this.fieldConfig.title + "</b>"
+            }];
+
+        if (!readOnly) {
+            toolbarItems = toolbarItems.concat([
+                "->",
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: this.empty.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                }
+                //,
+                //this.getCreateControl()
+            ]);
+        }
+
+        if (this.fieldConfig.assetsAllowed) {
+            toolbarItems.push({
+                xtype: "button",
+                cls: "pimcore_inline_upload",
+                iconCls: "pimcore_icon_upload",
+                handler: this.uploadDialog.bind(this)
+            });
+        }
+
+        return toolbarItems;
     },
 
     dndAllowed: function(data, fromTree) {
