@@ -290,7 +290,7 @@ class ClassDefinition extends Model\AbstractModel
 
             $data .= "\nreturn " . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            \Pimcore\File::putPhpFile($definitionFile, $data);
         }
 
         // create class for object
