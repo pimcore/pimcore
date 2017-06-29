@@ -193,6 +193,11 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var tagType = fieldInfo.layout.type;
         var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
+        editor.setObject(this.object);
+        editor.updateContext({
+            containerType : "batch"
+        });
+
         var formPanel = Ext.create('Ext.form.Panel', {
             xtype: "form",
             border: false,

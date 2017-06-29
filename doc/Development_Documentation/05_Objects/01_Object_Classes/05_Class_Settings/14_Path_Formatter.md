@@ -82,3 +82,6 @@ class TheFormatter
 }
 ```
 
+**Note regarding batch assignment**
+The containerType will be `grid` and the object ID will be the folder ID.
+
