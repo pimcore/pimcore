@@ -143,7 +143,7 @@ services:
 
     # creates needed pimcore directories
     pimcore.cache_warmer.mkdir:
-        class: Pimcore\CacheWarmer\MkdirCacheWarmer
+        class: Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer
         tags:
             - { name: kernel.cache_warmer }
 
