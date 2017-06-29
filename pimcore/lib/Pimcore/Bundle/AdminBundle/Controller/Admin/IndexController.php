@@ -228,7 +228,7 @@ class IndexController extends AdminController
         // check maintenance
         $maintenance_active = false;
 
-        $manager = Model\Schedule\Manager\Factory::getManager('maintenance.pid');
+        $manager = $this->get('pimcore.maintenance.schedule_manager');
 
         $lastExecution = $manager->getLastExecution();
         if ($lastExecution) {
