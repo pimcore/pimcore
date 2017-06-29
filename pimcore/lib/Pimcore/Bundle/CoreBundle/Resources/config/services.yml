@@ -141,6 +141,12 @@ services:
     # INFRASTRUCTURE
     #
 
+    pimcore.maintenance.schedule_manager:
+        class: Pimcore\Model\Schedule\Manager\Procedural
+        arguments: ['maintenance.pid', '@logger']
+        tags:
+            - { name: monolog.logger, channel: pimcore.maintenance }
+
     # creates needed pimcore directories
     pimcore.cache_warmer.mkdir:
         class: Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer
