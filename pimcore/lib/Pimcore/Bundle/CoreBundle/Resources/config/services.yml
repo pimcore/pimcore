@@ -315,6 +315,7 @@ services:
             - '@pimcore.web_path_resolver'
             - '@pimcore.templating.action_renderer'
             - '@pimcore.http.request_helper'
+            - '@translator'
         calls:
             - [setLogger, ['@logger']]
         tags:

@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
-use Pimcore\Facade\Translate;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -389,6 +388,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      */
     public function setOptions($options)
     {
+        $translator = \Pimcore::getContainer()->get('translator');
+
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
 
@@ -411,7 +412,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             foreach ($options['group'] as $name => $areas) {
                 $n = $name;
                 if ($this->editmode) {
-                    $n = Translate::transAdmin($name);
+                    $n = $translator->trans($name, [], 'admin');
                 }
                 $groups[$n] = $areas;
 
@@ -427,7 +428,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
                 }
                 $n = 'Uncategorized';
                 if ($this->editmode) {
-                    $n = Translate::transAdmin($n);
+                    $n = $translator->trans($n, [], 'admin');
                 }
                 $groups[$n] = $uncatAreas;
             }

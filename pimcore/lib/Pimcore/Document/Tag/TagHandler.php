@@ -18,7 +18,6 @@ use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
-use Pimcore\Facade\Translate;
 use Pimcore\Http\RequestHelper;
 use Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface;
 use Pimcore\Model\Document\PageSnippet;
@@ -31,6 +30,7 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TagHandler implements TagHandlerInterface, LoggerAwareInterface
 {
@@ -67,6 +67,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     protected $requestHelper;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @var array
      */
     protected $brickTemplateCache = [];
@@ -85,7 +90,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
         ActionRenderer $actionRenderer,
-        RequestHelper $requestHelper
+        RequestHelper $requestHelper,
+        TranslatorInterface $translator
     ) {
         $this->brickManager    = $brickManager;
         $this->templating      = $templating;
@@ -93,6 +99,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $this->webPathResolver = $webPathResolver;
         $this->actionRenderer  = $actionRenderer;
         $this->requestHelper   = $requestHelper;
+        $this->translator      = $translator;
     }
 
     /**
@@ -159,8 +166,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             }
 
             if ($view->editmode) {
-                $name = Translate::transAdmin($name);
-                $desc = Translate::transAdmin($desc);
+                $name = $this->translator->trans($name, [], 'admin');
+                $desc = $this->translator->trans($desc, [], 'admin');
             }
 
             $areas[$brick->getId()] = [
