@@ -178,7 +178,7 @@ pimcore.object.helpers.edit = {
                 }
             }
 
-            newConfig = Object.extend(newConfig, xTypeLayoutMapping[l.fieldtype]);
+            newConfig = Object.extend(xTypeLayoutMapping[l.fieldtype], newConfig);
             if (typeof newConfig.labelWidth != "undefined") {
                 newConfig = Ext.applyIf(newConfig, {
                     defaults: {
