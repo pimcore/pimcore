@@ -133,7 +133,6 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
         var combo = new Ext.form.ComboBox(editorConfig);;
         var currentValue = combo.getValue();
-        console.log(currentValue);
         return combo;
     },
 
