@@ -326,6 +326,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.grid.on("columnmove", function() { this.saveColumnConfigButton.show() }.bind(this));
         this.grid.on("columnresize", function() { this.saveColumnConfigButton.show() }.bind(this));
 
+        this.grid.on("rowcontextmenu", this.onRowContextmenu);
+
         this.grid.on("afterrender", function (grid) {
             this.updateGridHeaderContextMenu(grid);
         }.bind(this));
