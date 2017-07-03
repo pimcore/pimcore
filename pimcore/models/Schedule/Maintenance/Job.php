@@ -58,41 +58,26 @@ class Job
         return new static($id, $closure, $arguments);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getLockKey(): string
     {
         return 'maintenance-job-' . $this->getId();
     }
 
-    /**
-     * @inheritdoc
-     */
     public function lock()
     {
         Lock::lock($this->getLockKey());
     }
 
-    /**
-     * @inheritdoc
-     */
     public function unlock()
     {
         Lock::release($this->getLockKey());
     }
 
-    /**
-     * @inheritdoc
-     */
     public function isLocked(): bool
     {
         return Lock::isLocked($this->getLockKey(), 86400); // 24h expire

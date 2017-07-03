@@ -18,7 +18,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Google;
-use Pimcore\Model;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;

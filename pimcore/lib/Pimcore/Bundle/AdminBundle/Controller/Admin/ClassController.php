@@ -126,7 +126,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 preg_match('@^([A-Za-z])([^A-Z]+)@', $class->getName(), $matches);
                 $groupName = $matches[0];
 
-                if(!$groupName) {
+                if (!$groupName) {
                     // this is eg. the case when class name uses only capital letters
                     $groupName = $class->getName();
                 }
