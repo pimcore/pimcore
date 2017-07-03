@@ -58,7 +58,7 @@ class NavigationExtension extends \Twig_Extension
      * @param Document $activeDocument
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuPrefix
-     * @param bool $cache
+     * @param bool|string $cache
      *
      * @return Container
      */
@@ -66,7 +66,7 @@ class NavigationExtension extends \Twig_Extension
         Document $activeDocument,
         Document $navigationRootDocument = null,
         string $htmlMenuPrefix = null,
-        bool $cache = true
+        $cache = true
     ): Container {
         return $this->navigationHelper->buildNavigation(
             $activeDocument,
