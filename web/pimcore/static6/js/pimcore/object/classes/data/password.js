@@ -124,13 +124,23 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
             disabled: this.isInCustomLayoutEditor()
         });
 
+        var handleSaltFieldsVisibility = function(algorithm) {
+            if (algorithm == "password_hash") {
+                saltCombo.hide();
+                salt.hide();
+            } else {
+                saltCombo.show();
+                salt.show();
+            }
+        };
+
         var algorithmsCombo = new Ext.form.field.ComboBox({
             xtype: "combo",
             width: 300,
             fieldLabel: t("algorithm"),
             itemId: "algorithm",
             name: "algorithm",
-            value: this.datax.algorithm || 'md5',
+            value: this.datax.algorithm || 'password_hash',
             triggerAction: 'all',
             lazyRender:true,
             mode: 'local',
@@ -141,15 +151,11 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
             disabled: this.isInCustomLayoutEditor(),
             listeners: {
                 select: function (combo, record, index) {
-                    if (record.data.key == "password_hash") {
-                        saltCombo.hide();
-                        salt.hide();
+                    handleSaltFieldsVisibility(record.data.key);
+                }.bind(this),
 
-                    } else {
-                        saltCombo.show();
-                        salt.show();
-                    }
-
+                render: function(combo) {
+                    handleSaltFieldsVisibility(combo.getValue());
                 }.bind(this)
             }
         });

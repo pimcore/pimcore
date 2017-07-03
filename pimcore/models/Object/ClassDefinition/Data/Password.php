@@ -60,7 +60,7 @@ class Password extends Model\Object\ClassDefinition\Data
     /**
      * @var string
      */
-    public $algorithm = 'md5';
+    public $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @var string
