@@ -10,7 +10,7 @@ Note that the ID is mandatory and must be unique!
 
 ![Custom Views](../../../img/classes-custom-views1.png)
 
-For an sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/pimcore/blob/master/website_demo/config/customviews.example.php) 
+For an sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/pimcore/blob/pimcore4/website_demo/config/customviews.example.php) 
 that ships with pimcore and its comments. 
 
 ## Advanced Features / Configurations

@@ -44,11 +44,11 @@ settings of Pimcore. There you also can configure an external SMTP sending servi
 It is easily possible to implement custom address source adapter. Following files have to be created: 
 - JavaScript Class: This class defines the user interface in the sending panel. It has to be located in 
 the namespace `pimcore.document.newsletters.addressSourceAdapters`, named like the adapter (e.g. `pimcore.document.newsletters.addressSourceAdapters.myAdapter`)
- and implement the methods `initialize`, `getName`, `getLayout` and `getValues`. As sample see [csvList](https://github.com/pimcore/pimcore/blob/master/pimcore/static6/js/pimcore/document/newsletters/addressSourceAdapters/csvList.js)
+ and implement the methods `initialize`, `getName`, `getLayout` and `getValues`. As sample see [csvList](https://github.com/pimcore/pimcore/blob/pimcore4/pimcore/static6/js/pimcore/document/newsletters/addressSourceAdapters/csvList.js)
 - PHP Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing 
 the email addresses. It has to be located in the namespace `Pimcore\Document\Newsletter\AddressSourceAdapter`, named like
 the adapter (e.g. `MyAdapter`) and implement the interface `AddressSourceAdapterInterface`. As sample see
- [csvList](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Document/Newsletter/AddressSourceAdapter/CsvList.php). 
+ [csvList](https://github.com/pimcore/pimcore/blob/pimcore4/pimcore/lib/Pimcore/Document/Newsletter/AddressSourceAdapter/CsvList.php). 
 
 
 

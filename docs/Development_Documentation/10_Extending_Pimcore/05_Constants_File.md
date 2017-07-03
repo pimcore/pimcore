@@ -1,7 +1,7 @@
 # Constants File
 
 Pimcore uses several constants for locating certain directories like logging, asses, versions etc. These constants are
-defined in [`/pimcore/config/startup.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/config/startup.php). 
+defined in [`/pimcore/config/startup.php`](https://github.com/pimcore/pimcore/blob/pimcore4/pimcore/config/startup.php). 
  
 If you need to overwrite these constants, e.g. for using a special directory for assets or versions at an object storage
 at AWS S3, you can do so by creating file `constants.php` in document root of Pimcore.

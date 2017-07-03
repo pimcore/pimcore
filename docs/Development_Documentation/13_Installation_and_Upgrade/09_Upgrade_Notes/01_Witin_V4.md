@@ -60,7 +60,7 @@ See: [Newsletter Documents](../../08_Tools_and_Features/19_Newsletter.md) (since
 #### Class definitions are stored as PHP configuration files
 The definition (fields + layout) is no longer stored in *.psf files (PHP serialized format) but is migrated to PHP configuration files and is using the class name in the file name instead of the ID. 
 This brings some huge advantages when working with a VCS like Git, because it's easier to merge definitions and keep track of the history since it uses well formed PHP code. Additionally there's a summary of all the fields used in the definition in the DocBlock. 
-See also: [Example definition](https://github.com/pimcore/pimcore/blob/master/website_demo/var/classes/definition_blogArticle.php)
+See also: [Example definition](https://github.com/pimcore/pimcore/blob/pimcore4/website_demo/var/classes/definition_blogArticle.php)
 
 ## Upgrade notes for 4.2.0
 #### Class Mapping / Dependency Injection

@@ -12,7 +12,7 @@ can rename/reuse).
 
 This configuration is a normal [PHP-DI configuration](http://php-di.org/doc/php-definitions.html), you can use every 
 feature from PHP-DI you like. Additionally you have also access to the container directly in 
-`/website/config/startup.php` ([example](https://github.com/pimcore/pimcore/blob/master/website_demo/config/startup.example.php#L45-L45)).
+`/website/config/startup.php` ([example](https://github.com/pimcore/pimcore/blob/pimcore4/website_demo/config/startup.example.php#L45-L45)).
  
 ## Example Configuration
 
@@ -41,7 +41,7 @@ return [
 ];
 ```
 
-[Click here for a more advanced example](https://github.com/pimcore/pimcore/blob/master/website_example/config/di.example.php)
+[Click here for a more advanced example](https://github.com/pimcore/pimcore/blob/pimcore4/website_example/config/di.example.php)
 
 ## Overwrite Pimcore Models using Dependency Injection
 It's possible to map a custom class to a Pimcore model. That means that you can use your own classes inside Pimcore, 
@@ -132,5 +132,5 @@ Until now this feature is only provided by classes based on `Element\ElementInte
 and their list implementations.
  
 The following link provides a more detailed example: 
-[https://github.com/pimcore/pimcore/blob/master/website_demo/config/di.example.php](https://github.com/pimcore/pimcore/blob/master/website_demo/config/di.example.php) 
+[https://github.com/pimcore/pimcore/blob/pimcore4/website_demo/config/di.example.php](https://github.com/pimcore/pimcore/blob/pimcore4/website_demo/config/di.example.php) 
 

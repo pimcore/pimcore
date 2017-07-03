@@ -34,7 +34,7 @@ These hold together States, Status & Actions into a complete workflow configurat
 ## Configuration
 
 Pimcore ships with a sample configuration file at `website/config/workflowmanagement.example.php`. 
-[See that file on GitHub](https://github.com/pimcore/pimcore/blob/master/website_example/config/workflowmanagement.example.php).
+[See that file on GitHub](https://github.com/pimcore/pimcore/blob/pimcore4/website_example/config/workflowmanagement.example.php).
 This file should give you getting started in workflow configuration. 
 
 For details of configuration options see comments in that file or [Configuration Details](./01_Configuration_Details.md).
