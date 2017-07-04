@@ -264,8 +264,8 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         if (!this.panel) {
 
             var path = "";
-            if (this.data.href) {
-                path = this.data.href;
+            if (this.data.rawHref) {
+                path = this.data.rawHref;
             }
 
             var pathField = new Ext.form.TextField({

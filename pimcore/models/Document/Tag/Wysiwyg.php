@@ -61,7 +61,11 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function getDataEditmode()
     {
-        return Text::wysiwygText($this->text);
+        $document = Model\Document::getById($this->getDocumentId());
+        return Text::wysiwygText($this->text, [
+            "document" => $document,
+            "context" => $this
+        ]);
     }
 
     /**
@@ -71,7 +75,11 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function frontend()
     {
-        return Text::wysiwygText($this->text);
+        $document = Model\Document::getById($this->getDocumentId());
+        return Text::wysiwygText($this->text, [
+                "document" => $document,
+                "context" => $this
+            ]);
     }
 
     /**

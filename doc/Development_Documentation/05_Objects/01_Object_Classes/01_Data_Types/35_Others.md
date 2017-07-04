@@ -46,4 +46,6 @@ $object = Object::getById(234);
   <li><?= $object->getMyLink()->getHtml(); ?></li>
 </ul>
 ```
+#### Link Generators
 
+Please also see the section about [Link Generators](../05_Class_Settings/15_Link_Generator.md)

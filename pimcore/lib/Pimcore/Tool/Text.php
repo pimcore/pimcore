@@ -17,6 +17,7 @@ namespace Pimcore\Tool;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Object\Concrete;
 
 class Text
 {
@@ -38,7 +39,7 @@ class Text
      *
      * @return mixed
      */
-    public static function wysiwygText($text)
+    public static function wysiwygText($text, $params = array())
     {
         if (empty($text)) {
             return $text;
@@ -74,6 +75,15 @@ class Text
                                 if (array_key_exists('fragment', $urlParts) && !empty($urlParts['fragment'])) {
                                     $path .= '#' . $urlParts['fragment'];
                                 }
+                            }
+                        } else if ($element instanceof Concrete) {
+                            if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
+                                $path = $linkGenerator->generate(
+                                    $element, $params
+                                );
+                            } else {
+                                // no object path without link generator!
+                                $path = "";
                             }
                         }
                     } elseif ($matches[1][$i] == 'img') {
@@ -134,7 +144,9 @@ class Text
                         }
                     }
 
-                    $newTag = preg_replace('/'.$linkAttr.'="[^"]*"/', $linkAttr . '="' . $path . '"', $oldTag);
+                    $pattern = '/'.$linkAttr.'="[^"]*"/';
+                    $replacement = $linkAttr . '="' . $path . '"';
+                    $newTag = preg_replace($pattern, $replacement, $oldTag);
 
                     $text = str_replace($oldTag, $newTag, $text);
                 } else {
@@ -194,6 +206,8 @@ class Text
                     } else {
                         $pimcoreElement = Document::getById($newId);
                     }
+
+                    //TODO
 
                     $el->pimcore_id = $newId;
                     $el->src = $pimcoreElement->getFullPath();

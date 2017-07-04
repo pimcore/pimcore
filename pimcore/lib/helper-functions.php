@@ -159,6 +159,10 @@ function object2array($node)
     // dirty hack, should be replaced
     $paj = json_encode($node);
 
+    if (JSON_ERROR_NONE !== json_last_error()) {
+        throw new \InvalidArgumentException(json_last_error_msg());
+    }
+
     return @json_decode($paj, true);
 }
 

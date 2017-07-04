@@ -710,6 +710,13 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
+                    fieldLabel: t("link_generator_reference"),
+                    name: "linkGeneratorReference",
+                    width: 600,
+                    value: this.data.linkGeneratorReference
+                },
+                {
+                    xtype: "textfield",
                     fieldLabel: t("icon"),
                     name: "icon",
                     width: 600,

@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Object\Concrete;
 
 class Link
 {
@@ -383,6 +384,10 @@ class Link
                 $this->linktype = 'internal';
                 $this->internalType = 'asset';
                 $this->internal = $asset->getId();
+            } elseif ($object = Concrete::getByPath($path)) {
+                $this->linktype = 'internal';
+                $this->internalType = 'object';
+                $this->internal = $object->getId();
             } else {
                 $this->linktype = 'direct';
                 $this->direct = $path;
@@ -399,7 +404,7 @@ class Link
     {
         $path = '';
         if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
+            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset || $this->getObject() instanceof Concrete) {
                 $path = $this->getObject()->getFullPath();
             }
         } else {
@@ -420,6 +425,12 @@ class Link
         if ($this->getLinktype() == 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
+            } else if ($this->getObject() instanceof Concrete) {
+                if($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
+                    $path = $linkGenerator->generate($this->getObject(), [
+                        'context' => $this
+                    ]);
+                }
             }
         } else {
             $path = $this->getDirect();
@@ -444,7 +455,7 @@ class Link
      */
     public function getObject()
     {
-        if ($this->object instanceof Document || $this->object instanceof Asset) {
+        if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Concrete) {
             return $this->object;
         } else {
             if ($this->setObjectFromId()) {
@@ -478,6 +489,8 @@ class Link
             $this->object = Document::getById($this->internal);
         } elseif ($this->internalType == 'asset') {
             $this->object = Asset::getById($this->internal);
+        } elseif ($this->internalType == 'object') {
+            $this->object = Concrete::getById($this->internal);
         }
 
         return $this->object;

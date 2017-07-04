@@ -67,6 +67,10 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 The above example renders a list of links: 
 ![The links list in the backend](../../img/editables_link_inside_block.png)
 
+### Link Generators
+
+Please also see the section about [Link Generators](../../05_Objects/01_Object_Classes/05_Class_Settings/15_Link_Generator.md)
+
 
 
 

@@ -1659,7 +1659,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
             onNodeDrop : function (target, dd, e, data) {
                 var record = data.records[0];
-                if (record.data.elementType == "asset" || record.data.elementType == "document") {
+                if (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object") {
                     fieldPath.setValue(record.data.path);
                     return true;
                 }
@@ -1703,7 +1703,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                                 return true;
                                             }
                                         }, {
-                                            type: ["asset","document"]
+                                            type: ["asset","document","object"]
                                         });
                                     }
                                 }]
@@ -1793,13 +1793,15 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                 text: t("empty"),
                 listeners:  {
                     "click": callback["empty"]
-                }
+                },
+                iconCls: "pimcore_icon_empty"
             },
             {
                 text: t("cancel"),
                 listeners:  {
                     "click": callback["cancel"]
-                }
+                },
+                iconCls: "pimcore_icon_cancel"
             },
             {
                 text: t("save"),

@@ -133,7 +133,21 @@ class Link extends Model\Document
         if ($this->getLinktype() == 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
+            } else {
+                if ($this->getObject() instanceof Model\Object\Concrete) {
+
+                    if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
+                        $path = $linkGenerator->generate(
+                            $this->getObject(),
+                            [
+                                'document' => $this,
+                                'context' => $this,
+                            ]
+                        );
+                    }
+                }
             }
+
         } else {
             $path = $this->getDirect();
         }
@@ -142,6 +156,31 @@ class Link extends Model\Document
 
         return $path;
     }
+
+    /**
+     * Returns the plain text path of the link needed for the editmode
+     *
+     * @return string
+     */
+    public function getRawHref()
+    {
+
+        $rawHref = '';
+        if ($this->getLinktype() == 'internal') {
+
+            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset ||
+                ($this->getObject() instanceof Model\Object\Concrete)
+            ) {
+                $rawHref = $this->getObject()->getFullPath();
+            }
+        } else {
+            $rawHref = $this->getDirect();
+        }
+
+
+        return $rawHref;
+    }
+
 
     /**
      * Returns the path of the link including the anchor and parameters
@@ -314,7 +353,7 @@ class Link extends Model\Document
      */
     public function getObject()
     {
-        if ($this->object instanceof Document || $this->object instanceof Asset) {
+        if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Model\Object\Concrete) {
             return $this->object;
         } else {
             if ($this->setObjectFromId()) {
@@ -338,7 +377,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return Asset|Document
+     * @return Asset|Document|Model\Object\Concrete
      */
     public function setObjectFromId()
     {
@@ -347,6 +386,8 @@ class Link extends Model\Document
                 $this->object = Document::getById($this->internal);
             } elseif ($this->internalType == 'asset') {
                 $this->object = Asset::getById($this->internal);
+            } elseif ($this->internalType == 'object') {
+                $this->object = Model\Object\Concrete::getById($this->internal);
             }
         }
 

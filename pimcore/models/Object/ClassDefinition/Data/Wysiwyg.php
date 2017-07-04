@@ -272,7 +272,10 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
             $data = $object->{$this->getName()};
         }
 
-        return Text::wysiwygText($data);
+        return Text::wysiwygText($data, [
+                "object" => $object,
+                "context" => $this
+            ]);
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or

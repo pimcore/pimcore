@@ -221,6 +221,13 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             return true;
         }
 
+        if (data.elementType == "object"){
+            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="object" pimcore_id="'
+                + id + '">' + wrappedText + '</a>');
+            this.ckeditor.insertElement(insertEl);
+            return true;
+        }
+
     },
 
     checkValue: function () {
@@ -252,6 +259,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                             || data.ype=="hardlink" || data.type=="link")){
             return true;
         } else if (data.elementType=="asset" && data.type != "folder"){
+            return true;
+        } else if (data.elementType=="object" && data.type != "folder"){
             return true;
         }
 

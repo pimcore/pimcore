@@ -285,6 +285,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return true;
         }
 
+        if (node.data.elementType == "object"){
+            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="object" pimcore_id="'
+                + id + '">' + wrappedText + '</a>');
+            return true;
+        }
+
     },
 
     getValue: function () {

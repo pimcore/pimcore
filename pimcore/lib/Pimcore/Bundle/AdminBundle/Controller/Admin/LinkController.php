@@ -19,6 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Model\Object\Concrete;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,13 +56,18 @@ class LinkController extends DocumentControllerBase
         $link->userPermissions = $link->getUserPermissions();
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-
         $this->addTranslationsData($link);
         $this->minimizeProperties($link);
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($link);
+        $serializer = $this->get('pimcore_admin.serializer');
+
+        $data = $serializer->serialize($link, 'json', [
+        ]);
+        $data = json_decode($data, true);
+        $data["rawHref"] = $link->getRawHref();
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link
@@ -140,6 +146,10 @@ class LinkController extends DocumentControllerBase
                     $data['linktype'] = 'internal';
                     $data['internalType'] = 'asset';
                     $data['internal'] = $asset->getId();
+                } elseif ($object = Concrete::getByPath($data['path'])) {
+                    $data['linktype'] = 'internal';
+                    $data['internalType'] = 'object';
+                    $data['internal'] = $object->getId();
                 } else {
                     $data['linktype'] = 'direct';
                     $data['direct'] = $data['path'];

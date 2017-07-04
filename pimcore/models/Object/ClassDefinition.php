@@ -125,6 +125,11 @@ class ClassDefinition extends Model\AbstractModel
     public $showAppLoggerTab;
 
     /**
+     * @var string
+     */
+    public $linkGeneratorReference;
+
+    /**
      * @var array
      */
     public $propertyVisibility = [
@@ -1101,5 +1106,29 @@ class ClassDefinition extends Model\AbstractModel
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLinkGeneratorReference()
+    {
+        return $this->linkGeneratorReference;
+    }
+
+    /**
+     * @param string $linkGeneratorReference
+     */
+    public function setLinkGeneratorReference($linkGeneratorReference)
+    {
+        $this->linkGeneratorReference = $linkGeneratorReference;
+    }
+
+    /**
+     * @return Object\ClassDefinition\LinkGeneratorInterface
+     */
+    public function getLinkGenerator() {
+        $generator = Object\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        return $generator;
     }
 }

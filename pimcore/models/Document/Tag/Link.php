@@ -58,6 +58,19 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @see Document\Tag\TagInterface::getDataEditmode
+     *
+     * @return mixed
+     */
+    public function getDataEditmode()
+    {
+        // update path if internal link
+        $this->updatePathFromInternal(true);
+
+        return $this->data;
+    }
+
+    /**
      * @see Document\Tag\TagInterface::frontend
      *
      * @return string
@@ -132,6 +145,14 @@ class Link extends Model\Document\Tag
                     $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
+            } elseif ($this->data['internalType'] == 'object') {
+                $object = Model\Object\Concrete::getById($this->data['internalId']);
+                if (!$object) {
+                    $sane = false;
+                    Logger::notice('Detected insane relation, removing reference to non existent object with id [' . $this->getDocumentId() . ']');
+                    $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
+                    $this->data = $new->getData();
+                }
             }
         }
 
@@ -180,6 +201,22 @@ class Link extends Model\Document\Tag
             } elseif ($this->data['internalType'] == 'asset') {
                 if ($asset = Asset::getById($this->data['internalId'])) {
                     $this->data['path'] = $asset->$method();
+                }
+            } elseif ($this->data['internalType'] == 'object') {
+                if ($object = Model\Object::getById($this->data['internalId'])) {
+                    if($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                        if ($realPath) {
+                            $this->data['path'] = $object->getFullPath();
+                        } else {
+                            $this->data['path'] = $linkGenerator->generate(
+                                $object,
+                                [
+                                    'document' => Document::getById($this->getDocumentId()),
+                                    'context' => $this
+                                ]
+                            );
+                        }
+                    }
                 }
             }
         }
@@ -301,6 +338,16 @@ class Link extends Model\Document\Tag
                     $data['internal'] = true;
                     $data['internalId'] = $asset->getId();
                     $data['internalType'] = 'asset';
+                }
+            }
+        }
+
+        if (!$data['internal']) {
+            if ($object = Model\Object\Concrete::getByPath($data['path'])) {
+                if ($object instanceof Model\Object\Concrete) {
+                    $data['internal'] = true;
+                    $data['internalId'] = $object->getId();
+                    $data['internalType'] = 'object';
                 }
             }
         }

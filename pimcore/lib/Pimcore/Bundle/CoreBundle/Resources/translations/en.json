@@ -1516,5 +1516,6 @@
     "log_search_pid": "PID",
     "show_applogger_tab": "Show App Logger Tab",
     "analyze":"Analyze",
-    "analyze_permissions": "Analyze Permissions"
+    "analyze_permissions": "Analyze Permissions",
+    "link_generator_reference": "Link Provider Class or Service Name"
 }

@@ -187,7 +187,7 @@ CREATE TABLE `documents_hardlink` (
 DROP TABLE IF EXISTS `documents_link`;
 CREATE TABLE `documents_link` (
   `id` int(11) unsigned NOT NULL default '0',
-  `internalType` enum('document','asset') default NULL,
+  `internalType` enum('document','asset','object') default NULL,
   `internal` int(11) unsigned default NULL,
   `direct` varchar(1000) default NULL,
   `linktype` enum('direct','internal') default NULL,
