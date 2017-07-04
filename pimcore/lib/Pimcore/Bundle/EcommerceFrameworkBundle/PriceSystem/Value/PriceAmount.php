@@ -86,9 +86,7 @@ class PriceAmount
      */
     public static function create($amount, int $scale = null)
     {
-        if (is_int($amount)) {
-            return static::fromInteger($amount, $scale);
-        } elseif (is_numeric($amount)) {
+        if (is_numeric($amount)) {
             return static::fromNumeric($amount, $scale);
         } elseif ($amount instanceof self) {
             return static::fromPriceAmount($amount, $scale);
@@ -101,14 +99,14 @@ class PriceAmount
     }
 
     /**
-     * Creates a value from an integer input. No value conversions will be done.
+     * Creates a value from an raw integer input. No value conversions will be done.
      *
      * @param int $amount
      * @param int|null $scale
      *
      * @return self
      */
-    public static function fromInteger(int $amount, int $scale = null): self
+    public static function fromRawValue(int $amount, int $scale = null): self
     {
         return new static($amount, $scale ?? static::$defaultScale);
     }
@@ -118,7 +116,7 @@ class PriceAmount
      * with the given scale. Please note that this implicitely rounds the amount to the
      * next integer, so precision depends on the given scale.
      *
-     * @param mixed $amount
+     * @param int|float|string $amount
      * @param int|null $scale
      *
      * @return PriceAmount
@@ -129,10 +127,14 @@ class PriceAmount
             throw new \InvalidArgumentException('Value is not numeric');
         }
 
-        $scale     = $scale ?? static::$defaultScale;
-        $intAmount = (int)round($amount * pow(10, $scale ?? static::$defaultScale));
+        $scale        = $scale ?? static::$defaultScale;
+        $scaledAmount = $amount * pow(10, $scale);
 
-        return new static($intAmount, $scale);
+        if (!is_int($scaledAmount)) {
+            $scaledAmount = (int)round($scaledAmount);
+        }
+
+        return new static($scaledAmount, $scale);
     }
 
     /**
@@ -159,13 +161,13 @@ class PriceAmount
     }
 
     /**
-     * Returns the internal integer representation.
+     * Returns the internal representation value
      *
      * WARNING: use this with caution as the represented value depends on the scale!
      *
      * @return int
      */
-    public function asInteger(): int
+    public function asRawValue(): int
     {
         return $this->amount;
     }
@@ -236,7 +238,7 @@ class PriceAmount
     {
         $this->compareScale($other);
 
-        return static::fromInteger($this->amount + $other->amount, $this->scale);
+        return new static($this->amount + $other->amount, $this->scale);
     }
 
     /**
@@ -250,7 +252,7 @@ class PriceAmount
     {
         $this->compareScale($other);
 
-        return static::fromInteger($this->amount - $other->amount, $this->scale);
+        return new static($this->amount - $other->amount, $this->scale);
     }
 
     /**
@@ -266,7 +268,7 @@ class PriceAmount
     {
         $result = (int)round($this->amount * $this->getScalarOperand($factor));
 
-        return static::fromInteger($result, $this->scale);
+        return new static($result, $this->scale);
     }
 
     /**
@@ -290,7 +292,7 @@ class PriceAmount
 
         $result = (int)round($this->amount / $operand);
 
-        return static::fromInteger($result, $this->scale);
+        return new static($result, $this->scale);
     }
 
     /**

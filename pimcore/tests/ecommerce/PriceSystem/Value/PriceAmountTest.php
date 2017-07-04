@@ -26,7 +26,7 @@ class PriceAmountTest extends TestCase
     {
         $value = new PriceAmount(100000, 4);
 
-        $this->assertEquals(100000, $value->asInteger());
+        $this->assertEquals(100000, $value->asRawValue());
         $this->assertEquals(10, $value->asFloat());
     }
 
@@ -34,7 +34,7 @@ class PriceAmountTest extends TestCase
     {
         $value = PriceAmount::create(10.0, 4);
 
-        $this->assertEquals(100000, $value->asInteger());
+        $this->assertEquals(100000, $value->asRawValue());
         $this->assertEquals(10.0, $value->asFloat());
         $this->assertSame('10.0000', $value->asString());
     }
@@ -78,21 +78,10 @@ class PriceAmountTest extends TestCase
      */
     public function testZeroScale($input)
     {
-        // non-integer amounts will be rounded to the next integer
-        $expectedInt   = 16;
-        $expectedFloat = 16.0;
-
-        // if integer, the input value will be set directly to the given
-        // amount without any conversions
-        if (is_int($input)) {
-            $expectedInt   = $input;
-            $expectedFloat = (float)$input;
-        }
-
         $val = PriceAmount::create($input, 0);
 
-        $this->assertEquals($expectedInt, $val->asInteger());
-        $this->assertEquals($expectedFloat, $val->asFloat());
+        $this->assertEquals(16, $val->asRawValue());
+        $this->assertEquals(16.0, $val->asFloat());
     }
 
     /**
@@ -102,7 +91,7 @@ class PriceAmountTest extends TestCase
     {
         $value = PriceAmount::create($input);
 
-        $this->assertEquals(159900, $value->asInteger());
+        $this->assertEquals(159900, $value->asRawValue());
         $this->assertEquals(15.99, $value->asFloat());
     }
 
@@ -122,16 +111,16 @@ class PriceAmountTest extends TestCase
         PriceAmount::create('10.0', -1);
     }
 
-    public function testFromInteger()
+    public function testFromRawValue()
     {
-        $simpleValue = PriceAmount::fromInteger(100000, 4);
+        $simpleValue = PriceAmount::fromRawValue(100000, 4);
 
-        $this->assertEquals(100000, $simpleValue->asInteger());
+        $this->assertEquals(100000, $simpleValue->asRawValue());
         $this->assertEquals(10, $simpleValue->asFloat());
 
-        $decimalValue = PriceAmount::fromInteger(159900, 4);
+        $decimalValue = PriceAmount::fromRawValue(159900, 4);
 
-        $this->assertEquals(159900, $decimalValue->asInteger());
+        $this->assertEquals(159900, $decimalValue->asRawValue());
         $this->assertEquals(15.99, $decimalValue->asFloat());
     }
 
@@ -139,12 +128,12 @@ class PriceAmountTest extends TestCase
     {
         $simpleValue = PriceAmount::fromNumeric(10, 4);
 
-        $this->assertEquals(100000, $simpleValue->asInteger());
+        $this->assertEquals(100000, $simpleValue->asRawValue());
         $this->assertEquals(10, $simpleValue->asFloat());
 
         $decimalValue = PriceAmount::fromNumeric(15.99, 4);
 
-        $this->assertEquals(159900, $decimalValue->asInteger());
+        $this->assertEquals(159900, $decimalValue->asRawValue());
         $this->assertEquals(15.99, $decimalValue->asFloat());
     }
 
@@ -158,7 +147,7 @@ class PriceAmountTest extends TestCase
 
     public function testFromPriceAmount()
     {
-        $value        = PriceAmount::fromInteger(100000, 4);
+        $value        = PriceAmount::fromRawValue(100000, 4);
         $createdValue = PriceAmount::fromPriceAmount($value, 4);
 
         $this->assertEquals($value, $createdValue);
@@ -166,7 +155,7 @@ class PriceAmountTest extends TestCase
 
     public function testFromPriceAmountWithDifferentScale()
     {
-        $value        = PriceAmount::fromInteger(100000, 4);
+        $value        = PriceAmount::fromRawValue(100000, 4);
         $createdValue = PriceAmount::fromPriceAmount($value, 8);
 
         $this->assertEquals($value->asFloat(), $createdValue->asFloat());
@@ -176,22 +165,22 @@ class PriceAmountTest extends TestCase
     {
         $val = PriceAmount::create('10', 4);
 
-        $this->assertEquals(100000, $val->asInteger());
+        $this->assertEquals(100000, $val->asRawValue());
         $this->assertEquals(10, $val->asFloat());
 
         $val = $val->withScale(6);
 
-        $this->assertEquals(10000000, $val->asInteger());
+        $this->assertEquals(10000000, $val->asRawValue());
         $this->assertEquals(10, $val->asFloat());
 
         $val = $val->withScale(2);
 
-        $this->assertEquals(1000, $val->asInteger());
+        $this->assertEquals(1000, $val->asRawValue());
         $this->assertEquals(10, $val->asFloat());
 
         $val = $val->withScale(4);
 
-        $this->assertEquals(100000, $val->asInteger());
+        $this->assertEquals(100000, $val->asRawValue());
         $this->assertEquals(10, $val->asFloat());
     }
 
@@ -199,27 +188,27 @@ class PriceAmountTest extends TestCase
     {
         $val = PriceAmount::create('15.99', 4);
 
-        $this->assertEquals(159900, $val->asInteger());
+        $this->assertEquals(159900, $val->asRawValue());
         $this->assertEquals(15.99, $val->asFloat());
 
         $val = $val->withScale(6);
 
-        $this->assertEquals(15990000, $val->asInteger());
+        $this->assertEquals(15990000, $val->asRawValue());
         $this->assertEquals(15.99, $val->asFloat());
 
         $val = $val->withScale(2);
 
-        $this->assertEquals(1599, $val->asInteger());
+        $this->assertEquals(1599, $val->asRawValue());
         $this->assertEquals(15.99, $val->asFloat());
 
         $val = $val->withScale(0);
 
-        $this->assertEquals(16, $val->asInteger());
+        $this->assertEquals(16, $val->asRawValue());
         $this->assertEquals(16, $val->asFloat());
 
         $val = $val->withScale(4);
 
-        $this->assertEquals(160000, $val->asInteger());
+        $this->assertEquals(160000, $val->asRawValue());
         $this->assertEquals(16, $val->asFloat());
     }
 
@@ -299,7 +288,7 @@ class PriceAmountTest extends TestCase
      */
     public function testExceptionOnDivisionByZero($val)
     {
-        $valA = PriceAmount::create(159900, 4);
+        $valA = PriceAmount::fromRawValue(159900, 4);
         $valA->div(PriceAmount::create($val));
     }
 
@@ -320,7 +309,7 @@ class PriceAmountTest extends TestCase
     public function createDataProvider(): array
     {
         return [
-            [159900],
+            [PriceAmount::fromRawValue(159900, 4)],
             [15.99],
             ['15.99'],
             [new PriceAmount(159900, 4)]
@@ -339,12 +328,12 @@ class PriceAmountTest extends TestCase
 
     public function mulDataProvider(): array
     {
-        return $this->buildScalarOperationInputPairs(31);
+        return $this->buildScalarOperationInputPairs(30);
     }
 
     public function divDataProvider(): array
     {
-        return $this->buildScalarOperationInputPairs(7.75);
+        return $this->buildScalarOperationInputPairs(7.50);
     }
 
     public function zeroDataProvider(): array
@@ -368,10 +357,6 @@ class PriceAmountTest extends TestCase
     {
         $input = [
             [
-                155000,
-                145000
-            ],
-            [
                 15.50,
                 14.50
             ],
@@ -380,8 +365,8 @@ class PriceAmountTest extends TestCase
                 '14.50'
             ],
             [
-                PriceAmount::create(155000),
-                PriceAmount::create(145000)
+                PriceAmount::fromRawValue(155000),
+                PriceAmount::fromRawValue(145000)
             ]
         ];
 
@@ -399,20 +384,20 @@ class PriceAmountTest extends TestCase
     {
         $input = [
             [
-                155000,
+                15,
                 2
             ],
             [
-                15.50,
+                15.00,
                 2.00
             ],
             [
-                '15.50',
+                '15.00',
                 '2'
             ],
             [
-                PriceAmount::create(155000),
-                PriceAmount::create(20000),
+                PriceAmount::fromRawValue(150000),
+                PriceAmount::fromRawValue(20000),
             ]
         ];
 
