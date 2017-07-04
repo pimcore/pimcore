@@ -814,3 +814,127 @@ if (Ext.isChrome) {
         this.send(ui8a);
     };
 }
+
+/**
+ * Fieldtype date is not able to save the correct value (before 1951) #1329
+ *
+ * When saving a date before the year 1951 (e.g. 01/01/1950) with the fieldtype "date" inside a object ...
+ *
+ * Expected behavior
+ *
+ * ... the timestamp saved into the database should contain the date 01/01/1950.
+ *
+ * Actual behavior
+ *
+ * ... but it actually contains the value of 01/01/2050.
+ *
+ *
+ */
+Ext.define('pimcore.Ext.form.field.Date', {
+    override: 'Ext.form.field.Date',
+
+    initValue: function() {
+        var value = this.value;
+
+        if (Ext.isString(value)) {
+            this.value = this.rawToValue(value);
+            this.rawDate = this.value;
+            this.rawDateText = this.parseDate(this.value);
+        }
+        else {
+            this.value = value || null;
+            this.rawDate = this.value;
+            this.rawDateText = this.value ? this.parseDate(this.value) : '';
+        }
+
+        this.callParent();
+    },
+
+    rawToValue: function(rawValue) {
+        if (rawValue === this.rawDateText) {
+            return this.rawDate;
+        }
+        return this.parseDate(rawValue) || rawValue || null;
+    },
+
+    setValue: function(v) {
+        var utilDate = Ext.Date,
+            rawDate;
+
+        this.lastValue = this.rawDateText;
+        this.lastDate = this.rawDate;
+        if (Ext.isDate(v)) {
+            rawDate = this.rawDate  = v;
+            this.rawDateText = this.formatDate(v);
+        }
+        else {
+            rawDate = this.rawDate = this.rawToValue(v);
+            this.rawDateText = this.formatDate(v);
+            if (rawDate === v) {
+                rawDate = this.rawDate = null;
+                this.rawDateText = '';
+            }
+        }
+        if (rawDate && !utilDate.formatContainsHourInfo(this.format)) {
+            this.rawDate = utilDate.clearTime(rawDate, true);
+        }
+        this.callParent(arguments);
+    },
+
+    checkChange: function() {
+        var  newVal, oldVal, lastDate;
+
+        if (!this.suspendCheckChange) {
+            newVal = this.getRawValue();
+            oldVal = this.lastValue;
+            lastDate = this.lastDate;
+
+            if (!this.destroyed && this.didValueChange(newVal, oldVal)) {
+                this.rawDate = this.rawToValue(newVal);
+                this.rawDateText = this.formatDate(newVal);
+                this.lastValue = newVal;
+                this.lastDate = this.rawDate;
+                this.fireEvent('change', this, this.getValue(), lastDate);
+                this.onChange(newVal, oldVal);
+            }
+        }
+    },
+
+    getSubmitValue: function() {
+        var format = this.submitFormat || this.format,
+            value = this.rawDate;
+
+        return value ? Ext.Date.format(value, format) : '';
+    },
+
+    getValue: function() {
+        return this.rawDate || null;
+    },
+
+    setRawValue: function(value) {
+        this.callParent([value]);
+        this.rawDate = Ext.isDate(value) ? value : this.rawToValue(value);
+        this.rawDateText = this.formatDate(value);
+    },
+
+    createInitialDate: function(value) {
+        this.callParent();
+    },
+
+    onSelect: function(m, d) {
+        this.setValue(d);
+        this.rawDate = d;
+        this.fireEvent('select', this, d);
+        this.onTabOut(m);
+    },
+
+    onTabOut: function(picker) {
+        this.inputEl.focus();
+        this.collapse();
+    },
+
+    onExpand: function() {
+        var value = this.rawDate;
+        this.picker.setValue(Ext.isDate(value) ? value : this.createInitialDate());
+    }
+});
