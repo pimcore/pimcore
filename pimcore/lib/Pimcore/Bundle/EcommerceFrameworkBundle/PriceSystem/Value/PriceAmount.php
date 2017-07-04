@@ -70,6 +70,22 @@ class PriceAmount
     }
 
     /**
+     * Round value to int value if needed
+     *
+     * @param $value
+     *
+     * @return int
+     */
+    private static function toIntValue($value): int
+    {
+        if (!is_int($value)) {
+            $value = (int)round($value);
+        }
+
+        return $value;
+    }
+
+    /**
      * Creates a value. If an integer is passed, its value will be used without any conversions. Any
      * other value (float, string) will be converted to int with the given scale. If a PriceAmount is
      * passed, it will be converted to the given scale if necessary. Example:
@@ -127,14 +143,12 @@ class PriceAmount
             throw new \InvalidArgumentException('Value is not numeric');
         }
 
-        $scale        = $scale ?? static::$defaultScale;
-        $scaledAmount = $amount * pow(10, $scale);
+        $scale = $scale ?? static::$defaultScale;
 
-        if (!is_int($scaledAmount)) {
-            $scaledAmount = (int)round($scaledAmount);
-        }
+        $result = $amount * pow(10, $scale);
+        $result = static::toIntValue($result);
 
-        return new static($scaledAmount, $scale);
+        return new static($result, $scale);
     }
 
     /**
@@ -173,13 +187,13 @@ class PriceAmount
     }
 
     /**
-     * Returns a float representation
+     * Returns a numeric representation
      *
-     * @return float
+     * @return int|float
      */
-    public function asFloat(): float
+    public function asNumeric()
     {
-        return (float)($this->amount / pow(10, $this->scale));
+        return $this->amount / pow(10, $this->scale);
     }
 
     /**
@@ -193,7 +207,7 @@ class PriceAmount
     {
         $digits = $digits ?? $this->scale;
 
-        return number_format($this->asFloat(), $digits, '.', '');
+        return number_format($this->asNumeric(), $digits, '.', '');
     }
 
     /**
@@ -215,16 +229,19 @@ class PriceAmount
      */
     public function withScale(int $scale): self
     {
+        // no need to create a new object as output would be identical
         if ($scale === $this->scale) {
             return $this;
         }
 
         $this->validateScale($scale);
 
-        $diff   = (int)$scale - $this->scale;
-        $amount = (int)round($this->amount * pow(10, $diff));
+        $diff = $scale - $this->scale;
 
-        return new static($amount, $scale);
+        $result = $this->amount * pow(10, $diff);
+        $result = static::toIntValue($result);
+
+        return new static($result, $scale);
     }
 
     /**
@@ -260,13 +277,16 @@ class PriceAmount
      * a simple scalar factor (e.g. 2) as multiplying prices is rarely needed. However, if
      * a PriceAmount is passed, its float representation will be used for calculations.
      *
-     * @param int|float|PriceAmount $factor
+     * @param int|float|PriceAmount $other
      *
      * @return PriceAmount
      */
-    public function mul($factor): self
+    public function mul($other): self
     {
-        $result = (int)round($this->amount * $this->getScalarOperand($factor));
+        $operand = $this->getScalarOperand($other);
+
+        $result = $this->amount * $operand;
+        $result = static::toIntValue($result);
 
         return new static($result, $this->scale);
     }
@@ -276,27 +296,28 @@ class PriceAmount
      * a simple scalar factor (e.g. 2) as dividing prices is rarely needed. However, if
      * a PriceAmount is passed, its float representation will be used for calculations.
      *
-     * @param int|float|PriceAmount $divisor
+     * @param int|float|PriceAmount $other
      *
      * @return PriceAmount
      * @throws \DivisionByZeroError
      */
-    public function div($divisor): self
+    public function div($other): self
     {
-        $operand = $this->getScalarOperand($divisor);
+        $operand = $this->getScalarOperand($other);
         $epsilon = pow(10, -1 * $this->scale);
 
         if (abs(0 - $operand) < $epsilon) {
             throw new \DivisionByZeroError('Division by zero is not allowed');
         }
 
-        $result = (int)round($this->amount / $operand);
+        $result = $this->amount / $operand;
+        $result = static::toIntValue($result);
 
         return new static($result, $this->scale);
     }
 
     /**
-     * Transforms operand for mul/div into a float value used for calculations.
+     * Transforms operand into a numeric value used for calculations.
      *
      * @param int|float|PriceAmount $operand
      *
@@ -307,7 +328,7 @@ class PriceAmount
         if (is_numeric($operand)) {
             return $operand;
         } elseif ($operand instanceof static) {
-            return $operand->asFloat();
+            return $operand->asNumeric();
         }
 
         throw new \InvalidArgumentException(sprintf(

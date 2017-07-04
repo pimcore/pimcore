@@ -27,7 +27,7 @@ class PriceAmountTest extends TestCase
         $value = new PriceAmount(100000, 4);
 
         $this->assertEquals(100000, $value->asRawValue());
-        $this->assertEquals(10, $value->asFloat());
+        $this->assertEquals(10, $value->asNumeric());
     }
 
     public function testRepresentations()
@@ -35,7 +35,7 @@ class PriceAmountTest extends TestCase
         $value = PriceAmount::create(10.0, 4);
 
         $this->assertEquals(100000, $value->asRawValue());
-        $this->assertEquals(10.0, $value->asFloat());
+        $this->assertEquals(10.0, $value->asNumeric());
         $this->assertSame('10.0000', $value->asString());
     }
 
@@ -81,7 +81,7 @@ class PriceAmountTest extends TestCase
         $val = PriceAmount::create($input, 0);
 
         $this->assertEquals(16, $val->asRawValue());
-        $this->assertEquals(16.0, $val->asFloat());
+        $this->assertEquals(16.0, $val->asNumeric());
     }
 
     /**
@@ -92,7 +92,7 @@ class PriceAmountTest extends TestCase
         $value = PriceAmount::create($input);
 
         $this->assertEquals(159900, $value->asRawValue());
-        $this->assertEquals(15.99, $value->asFloat());
+        $this->assertEquals(15.99, $value->asNumeric());
     }
 
     /**
@@ -116,12 +116,12 @@ class PriceAmountTest extends TestCase
         $simpleValue = PriceAmount::fromRawValue(100000, 4);
 
         $this->assertEquals(100000, $simpleValue->asRawValue());
-        $this->assertEquals(10, $simpleValue->asFloat());
+        $this->assertEquals(10, $simpleValue->asNumeric());
 
         $decimalValue = PriceAmount::fromRawValue(159900, 4);
 
         $this->assertEquals(159900, $decimalValue->asRawValue());
-        $this->assertEquals(15.99, $decimalValue->asFloat());
+        $this->assertEquals(15.99, $decimalValue->asNumeric());
     }
 
     public function testFromNumeric()
@@ -129,12 +129,12 @@ class PriceAmountTest extends TestCase
         $simpleValue = PriceAmount::fromNumeric(10, 4);
 
         $this->assertEquals(100000, $simpleValue->asRawValue());
-        $this->assertEquals(10, $simpleValue->asFloat());
+        $this->assertEquals(10, $simpleValue->asNumeric());
 
         $decimalValue = PriceAmount::fromNumeric(15.99, 4);
 
         $this->assertEquals(159900, $decimalValue->asRawValue());
-        $this->assertEquals(15.99, $decimalValue->asFloat());
+        $this->assertEquals(15.99, $decimalValue->asNumeric());
     }
 
     /**
@@ -158,58 +158,58 @@ class PriceAmountTest extends TestCase
         $value        = PriceAmount::fromRawValue(100000, 4);
         $createdValue = PriceAmount::fromPriceAmount($value, 8);
 
-        $this->assertEquals($value->asFloat(), $createdValue->asFloat());
+        $this->assertEquals($value->asNumeric(), $createdValue->asNumeric());
     }
 
     public function testWithScale()
     {
         $val = PriceAmount::create('10', 4);
 
-        $this->assertEquals(100000, $val->asRawValue());
-        $this->assertEquals(10, $val->asFloat());
+        $this->assertSame(100000, $val->asRawValue());
+        $this->assertSame(10, $val->asNumeric());
 
         $val = $val->withScale(6);
 
-        $this->assertEquals(10000000, $val->asRawValue());
-        $this->assertEquals(10, $val->asFloat());
+        $this->assertSame(10000000, $val->asRawValue());
+        $this->assertSame(10, $val->asNumeric());
 
         $val = $val->withScale(2);
 
-        $this->assertEquals(1000, $val->asRawValue());
-        $this->assertEquals(10, $val->asFloat());
+        $this->assertSame(1000, $val->asRawValue());
+        $this->assertSame(10, $val->asNumeric());
 
         $val = $val->withScale(4);
 
-        $this->assertEquals(100000, $val->asRawValue());
-        $this->assertEquals(10, $val->asFloat());
+        $this->assertSame(100000, $val->asRawValue());
+        $this->assertSame(10, $val->asNumeric());
     }
 
     public function testWithScaleLosesPrecision()
     {
         $val = PriceAmount::create('15.99', 4);
 
-        $this->assertEquals(159900, $val->asRawValue());
-        $this->assertEquals(15.99, $val->asFloat());
+        $this->assertSame(159900, $val->asRawValue());
+        $this->assertSame(15.99, $val->asNumeric());
 
         $val = $val->withScale(6);
 
-        $this->assertEquals(15990000, $val->asRawValue());
-        $this->assertEquals(15.99, $val->asFloat());
+        $this->assertSame(15990000, $val->asRawValue());
+        $this->assertSame(15.99, $val->asNumeric());
 
         $val = $val->withScale(2);
 
-        $this->assertEquals(1599, $val->asRawValue());
-        $this->assertEquals(15.99, $val->asFloat());
+        $this->assertSame(1599, $val->asRawValue());
+        $this->assertSame(15.99, $val->asNumeric());
 
         $val = $val->withScale(0);
 
-        $this->assertEquals(16, $val->asRawValue());
-        $this->assertEquals(16, $val->asFloat());
+        $this->assertSame(16, $val->asRawValue());
+        $this->assertSame(16, $val->asNumeric());
 
         $val = $val->withScale(4);
 
-        $this->assertEquals(160000, $val->asRawValue());
-        $this->assertEquals(16, $val->asFloat());
+        $this->assertSame(160000, $val->asRawValue());
+        $this->assertSame(16, $val->asNumeric());
     }
 
     public function testExceptionOnAddWithMismatchingScale()
@@ -218,9 +218,9 @@ class PriceAmountTest extends TestCase
         $valB = PriceAmount::create('20', 8);
 
         $scaledB = $valB->withScale(4);
-        $this->assertEquals($valB->asFloat(), $scaledB->asFloat());
+        $this->assertEquals($valB->asNumeric(), $scaledB->asNumeric());
 
-        $this->assertEquals(30, $valA->add($scaledB)->asFloat());
+        $this->assertEquals(30, $valA->add($scaledB)->asNumeric());
 
         $this->expectException(\DomainException::class);
         $valA->add($valB);
@@ -232,9 +232,9 @@ class PriceAmountTest extends TestCase
         $valB = PriceAmount::create('20', 8);
 
         $scaledB = $valB->withScale(4);
-        $this->assertEquals($valB->asFloat(), $scaledB->asFloat());
+        $this->assertEquals($valB->asNumeric(), $scaledB->asNumeric());
 
-        $this->assertEquals(-10, $valA->sub($scaledB)->asFloat());
+        $this->assertEquals(-10, $valA->sub($scaledB)->asNumeric());
 
         $this->expectException(\DomainException::class);
         $valA->sub($valB);
@@ -248,7 +248,7 @@ class PriceAmountTest extends TestCase
         $valA = PriceAmount::create($a);
         $valB = PriceAmount::create($b);
 
-        $this->assertEquals($expected, $valA->add($valB)->asFloat());
+        $this->assertEquals($expected, $valA->add($valB)->asNumeric());
     }
 
     /**
@@ -259,7 +259,7 @@ class PriceAmountTest extends TestCase
         $valA = PriceAmount::create($a);
         $valB = PriceAmount::create($b);
 
-        $this->assertEquals($expected, $valA->sub($valB)->asFloat());
+        $this->assertEquals($expected, $valA->sub($valB)->asNumeric());
     }
 
     /**
@@ -269,7 +269,7 @@ class PriceAmountTest extends TestCase
     {
         $valA = PriceAmount::create($a);
 
-        $this->assertEquals($expected, $valA->mul($b)->asFloat());
+        $this->assertEquals($expected, $valA->mul($b)->asNumeric());
     }
 
     /**
@@ -279,7 +279,7 @@ class PriceAmountTest extends TestCase
     {
         $val = PriceAmount::create($a);
 
-        $this->assertEquals($expected, $val->div($b)->asFloat());
+        $this->assertEquals($expected, $val->div($b)->asNumeric());
     }
 
     /**
