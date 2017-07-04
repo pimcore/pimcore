@@ -247,12 +247,16 @@ class PriceAmount
     /**
      * Adds another price amount
      *
-     * @param PriceAmount $other
+     * @param PriceAmount|int|float|string $other
      *
      * @return PriceAmount
      */
-    public function add(PriceAmount $other): self
+    public function add($other): self
     {
+        if (!$other instanceof PriceAmount) {
+            $other = static::fromNumeric($other, $this->scale);
+        }
+
         $this->compareScale($other);
 
         return new static($this->amount + $other->amount, $this->scale);
@@ -261,12 +265,16 @@ class PriceAmount
     /**
      * Subtracts another price amount
      *
-     * @param PriceAmount $other
+     * @param PriceAmount|int|float|string $other
      *
      * @return PriceAmount
      */
-    public function sub(PriceAmount $other): self
+    public function sub($other): self
     {
+        if (!$other instanceof PriceAmount) {
+            $other = static::fromNumeric($other, $this->scale);
+        }
+
         $this->compareScale($other);
 
         return new static($this->amount - $other->amount, $this->scale);

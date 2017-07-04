@@ -246,9 +246,8 @@ class PriceAmountTest extends TestCase
     public function testAdd($a, $b, $expected)
     {
         $valA = PriceAmount::create($a);
-        $valB = PriceAmount::create($b);
 
-        $this->assertEquals($expected, $valA->add($valB)->asNumeric());
+        $this->assertEquals($expected, $valA->add($b)->asNumeric());
     }
 
     /**
@@ -257,9 +256,8 @@ class PriceAmountTest extends TestCase
     public function testSub($a, $b, $expected)
     {
         $valA = PriceAmount::create($a);
-        $valB = PriceAmount::create($b);
 
-        $this->assertEquals($expected, $valA->sub($valB)->asNumeric());
+        $this->assertEquals($expected, $valA->sub($b)->asNumeric());
     }
 
     /**
