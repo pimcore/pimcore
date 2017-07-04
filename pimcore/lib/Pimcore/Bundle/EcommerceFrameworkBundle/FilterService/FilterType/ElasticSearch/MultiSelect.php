@@ -32,8 +32,8 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
         $value = $params[$field];
 
-        if(!empty($value)) {
-            if(!is_array($value)) {
+        if (!empty($value)) {
+            if (!is_array($value)) {
                 $value = [$value];
             }
         }

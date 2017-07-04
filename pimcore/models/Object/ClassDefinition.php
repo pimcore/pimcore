@@ -1127,8 +1127,10 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @return Object\ClassDefinition\LinkGeneratorInterface
      */
-    public function getLinkGenerator() {
+    public function getLinkGenerator()
+    {
         $generator = Object\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+
         return $generator;
     }
 }

@@ -20,10 +20,8 @@ namespace Pimcore\Model\Object\ClassDefinition\Helper;
 use Pimcore\Logger;
 use Pimcore\Model\Object\ClassDefinition\LinkGeneratorInterface;
 
-
 class LinkGeneratorResolver
 {
-
     public static $generatorCache = [];
 
     public static function resolveGenerator($generatorClass)

@@ -66,7 +66,7 @@ class LinkController extends DocumentControllerBase
         $data = $serializer->serialize($link, 'json', [
         ]);
         $data = json_decode($data, true);
-        $data["rawHref"] = $link->getRawHref();
+        $data['rawHref'] = $link->getRawHref();
 
         $event = new GenericEvent($this, [
             'data' => $data,

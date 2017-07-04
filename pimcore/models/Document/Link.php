@@ -135,7 +135,6 @@ class Link extends Model\Document
                 $path = $this->getObject()->getFullPath();
             } else {
                 if ($this->getObject() instanceof Model\Object\Concrete) {
-
                     if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
                         $path = $linkGenerator->generate(
                             $this->getObject(),
@@ -147,7 +146,6 @@ class Link extends Model\Document
                     }
                 }
             }
-
         } else {
             $path = $this->getDirect();
         }
@@ -164,10 +162,8 @@ class Link extends Model\Document
      */
     public function getRawHref()
     {
-
         $rawHref = '';
         if ($this->getLinktype() == 'internal') {
-
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset ||
                 ($this->getObject() instanceof Model\Object\Concrete)
             ) {
@@ -177,10 +173,8 @@ class Link extends Model\Document
             $rawHref = $this->getDirect();
         }
 
-
         return $rawHref;
     }
-
 
     /**
      * Returns the path of the link including the anchor and parameters

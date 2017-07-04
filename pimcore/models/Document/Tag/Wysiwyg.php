@@ -62,9 +62,10 @@ class Wysiwyg extends Model\Document\Tag
     public function getDataEditmode()
     {
         $document = Model\Document::getById($this->getDocumentId());
+
         return Text::wysiwygText($this->text, [
-            "document" => $document,
-            "context" => $this
+            'document' => $document,
+            'context' => $this
         ]);
     }
 
@@ -76,9 +77,10 @@ class Wysiwyg extends Model\Document\Tag
     public function frontend()
     {
         $document = Model\Document::getById($this->getDocumentId());
+
         return Text::wysiwygText($this->text, [
-                "document" => $document,
-                "context" => $this
+                'document' => $document,
+                'context' => $this
             ]);
     }
 

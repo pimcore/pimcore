@@ -19,11 +19,13 @@ namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model\Object\Concrete;
 
-interface LinkGeneratorInterface {
+interface LinkGeneratorInterface
+{
     /**
      * @param Concrete $object
      * @param array $params
+     *
      * @return string
      */
-    public function generate(Concrete $object, array $params = []) : string;
+    public function generate(Concrete $object, array $params = []): string;
 }

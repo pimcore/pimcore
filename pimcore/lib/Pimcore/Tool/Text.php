@@ -39,7 +39,7 @@ class Text
      *
      * @return mixed
      */
-    public static function wysiwygText($text, $params = array())
+    public static function wysiwygText($text, $params = [])
     {
         if (empty($text)) {
             return $text;
@@ -76,14 +76,14 @@ class Text
                                     $path .= '#' . $urlParts['fragment'];
                                 }
                             }
-                        } else if ($element instanceof Concrete) {
+                        } elseif ($element instanceof Concrete) {
                             if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
                                 $path = $linkGenerator->generate(
                                     $element, $params
                                 );
                             } else {
                                 // no object path without link generator!
-                                $path = "";
+                                $path = '';
                             }
                         }
                     } elseif ($matches[1][$i] == 'img') {

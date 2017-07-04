@@ -425,8 +425,8 @@ class Link
         if ($this->getLinktype() == 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
-            } else if ($this->getObject() instanceof Concrete) {
-                if($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
+            } elseif ($this->getObject() instanceof Concrete) {
+                if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
                     $path = $linkGenerator->generate($this->getObject(), [
                         'context' => $this
                     ]);

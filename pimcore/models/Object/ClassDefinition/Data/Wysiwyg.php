@@ -273,8 +273,8 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
         }
 
         return Text::wysiwygText($data, [
-                "object" => $object,
-                "context" => $this
+                'object' => $object,
+                'context' => $this
             ]);
     }
 

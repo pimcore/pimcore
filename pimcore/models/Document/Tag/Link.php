@@ -204,7 +204,7 @@ class Link extends Model\Document\Tag
                 }
             } elseif ($this->data['internalType'] == 'object') {
                 if ($object = Model\Object::getById($this->data['internalId'])) {
-                    if($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                    if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                         if ($realPath) {
                             $this->data['path'] = $object->getFullPath();
                         } else {

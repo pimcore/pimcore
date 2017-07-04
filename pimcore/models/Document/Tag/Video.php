@@ -755,11 +755,11 @@ class Video extends Model\Document\Tag
                 //"interactionCount" => "1234",
             ];
 
-            if(!preg_match("@https?://@", $thumbnail)) {
+            if (!preg_match('@https?://@', $thumbnail)) {
                 if ($thumbnail) {
-                    $jsonLd["thumbnailUrl"] = Tool::getHostUrl() . $thumbnail;
+                    $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnail;
                 } else {
-                    $jsonLd["thumbnailUrl"] = Tool::getHostUrl() . $video->getImageThumbnail([]);
+                    $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $video->getImageThumbnail([]);
                 }
             }
 
