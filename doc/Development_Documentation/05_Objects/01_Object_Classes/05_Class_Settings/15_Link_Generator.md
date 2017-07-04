@@ -14,6 +14,8 @@ Either simply specify the class name ...
 
 ![Link Generator Setup2](../../../img/linkgenerator2.png)
 
+![Link Generator Setup2a](../../../img/linkgenerator2a.png)
+
 ### Sample Link Generator Implementation
 
 ```php
