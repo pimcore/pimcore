@@ -60,13 +60,6 @@ services:
     # CONTROLLERS
     #
 
-    pimcore.controller.controller_resolver:
-        class: Pimcore\Controller\ControllerResolver
-        decorates: controller_resolver
-        arguments:
-            - '@pimcore.controller.controller_resolver.inner'
-            - '@service_container'
-
     pimcore.controller.config.config_normalizer:
         class: Pimcore\Controller\Config\ConfigNormalizer
         arguments: ['@kernel']
