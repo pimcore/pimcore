@@ -32,8 +32,16 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
         $value = $params[$field];
 
+        if(!empty($value)) {
+            if(!is_array($value)) {
+                $value = [$value];
+            }
+        }
+
         if (empty($value) && !$params['is_reload']) {
-            $value = explode(',', $preSelect);
+            if (!empty($preSelect) || $preSelect == '0') {
+                $value = explode(',', $preSelect);
+            }
         } elseif (!empty($value) && in_array(\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;
         }
