@@ -22,7 +22,7 @@ class PriceAmount
     /**
      * @var int
      */
-    private static $defaultScale = 4;
+    protected static $defaultScale = 4;
 
     /**
      * @var int
@@ -43,10 +43,8 @@ class PriceAmount
      * @param int $amount
      * @param int $scale
      */
-    public function __construct(int $amount, int $scale)
+    protected function __construct(int $amount, int $scale)
     {
-        static::validateScale($scale);
-
         $this->amount = $amount;
         $this->scale  = $scale;
     }
@@ -126,7 +124,10 @@ class PriceAmount
      */
     public static function fromRawValue(int $amount, int $scale = null): self
     {
-        return new static($amount, $scale ?? static::$defaultScale);
+        $scale = $scale ?? static::$defaultScale;
+        static::validateScale($scale);
+
+        return new static($amount, $scale);
     }
 
     /**
@@ -147,6 +148,7 @@ class PriceAmount
         }
 
         $scale = $scale ?? static::$defaultScale;
+        static::validateScale($scale);
 
         $result = $amount * pow(10, $scale);
         $result = static::toIntValue($result, $roundingMode);
@@ -168,6 +170,7 @@ class PriceAmount
     public static function fromPriceAmount(PriceAmount $amount, int $scale = null): self
     {
         $scale = $scale ?? static::$defaultScale;
+        static::validateScale($scale);
 
         // object is identical - creating a new object is not necessary
         if ($amount->scale === $scale) {
@@ -175,6 +178,16 @@ class PriceAmount
         }
 
         return $amount->withScale($scale);
+    }
+
+    /**
+     * Returns the used scale factor
+     *
+     * @return int
+     */
+    public function getScale(): int
+    {
+        return $this->scale;
     }
 
     /**
@@ -233,12 +246,12 @@ class PriceAmount
      */
     public function withScale(int $scale, int $roundingMode = null): self
     {
+        static::validateScale($scale);
+
         // no need to create a new object as output would be identical
         if ($scale === $this->scale) {
             return $this;
         }
-
-        $this->validateScale($scale);
 
         $diff = $scale - $this->scale;
 

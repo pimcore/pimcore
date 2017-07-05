@@ -22,14 +22,6 @@ use Pimcore\Tests\Test\TestCase;
 
 class PriceAmountTest extends TestCase
 {
-    public function testConstruct()
-    {
-        $value = new PriceAmount(100000, 4);
-
-        $this->assertEquals(100000, $value->asRawValue());
-        $this->assertEquals(10, $value->asNumeric());
-    }
-
     public function testRepresentations()
     {
         $value = PriceAmount::create(10.0, 4);
@@ -70,7 +62,7 @@ class PriceAmountTest extends TestCase
      */
     public function testInvalidScaleThrowsException()
     {
-        new PriceAmount(10000, -1);
+        PriceAmount::create(10000, -1);
     }
 
     /**
@@ -314,10 +306,9 @@ class PriceAmountTest extends TestCase
     public function createDataProvider(): array
     {
         return [
-            [PriceAmount::fromRawValue(159900, 4)],
             [15.99],
             ['15.99'],
-            [new PriceAmount(159900, 4)]
+            [PriceAmount::fromRawValue(159900, 4)],
         ];
     }
 
@@ -347,7 +338,7 @@ class PriceAmountTest extends TestCase
             [0],
             [0.0],
             ['0'],
-            [new PriceAmount(0, 4)]
+            [PriceAmount::create(0, 4)]
         ];
     }
 
