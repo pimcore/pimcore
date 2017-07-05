@@ -83,4 +83,10 @@ interface ICartPriceCalculator
      * @return ICartPriceCalculator
      */
     public function removeModificator(ICartPriceModificator $modificator);
+
+    /**
+     * Re-initialise the price modificators, e.g. after removing an item from a cart
+     * within the same request, such as an AJAX-call.
+     */
+    public function initModificators();
 }
