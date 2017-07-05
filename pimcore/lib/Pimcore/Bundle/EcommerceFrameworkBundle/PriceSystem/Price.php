@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 
 class Price implements IPrice
 {
@@ -26,12 +30,12 @@ class Price implements IPrice
     private $currency;
 
     /**
-     * @var float
+     * @var PriceAmount
      */
     private $grossAmount;
 
     /**
-     * @var float
+     * @var PriceAmount
      */
     private $netAmount;
 
@@ -51,62 +55,51 @@ class Price implements IPrice
     private $taxEntries = [];
 
     /**
-     * Price constructor.
-     *
-     * @param $amount
+     * @param PriceAmount $amount
      * @param Currency $currency
      * @param bool $minPrice
      */
-    public function __construct($amount, Currency $currency, $minPrice = false)
+    public function __construct(PriceAmount $amount, Currency $currency, bool $minPrice = false)
     {
-        $this->grossAmount = $amount;
-        $this->currency = $currency;
-        $this->minPrice = $minPrice;
+        $this->grossAmount = $this->netAmount = $amount;
+        $this->currency    = $currency;
+        $this->minPrice    = $minPrice;
     }
 
     public function __toString()
     {
-        return $this->getCurrency()->toCurrency($this->grossAmount);
+        return $this->getCurrency()->toCurrency($this->grossAmount->asNumeric());
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function isMinPrice()
+    public function isMinPrice(): bool
     {
         return $this->minPrice;
     }
 
     /**
-     * sets amount of price, depending on $priceMode and $recalc it sets net price or gross price and recalculates the
-     * corresponding net or gross price.
-     *
-     * @param float $amount
-     * @param string $priceMode - default to PRICE_MODE_GROSS
-     * @param bool $recalc - default to false
+     * @inheritdoc
      */
-    public function setAmount($amount, $priceMode = self::PRICE_MODE_GROSS, $recalc = false)
+    public function setAmount(PriceAmount $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false)
     {
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
-                $this->grossAmount = $amount;
+                $this->setGrossAmount($amount, $recalc);
                 break;
             case self::PRICE_MODE_NET:
-                $this->netAmount = $amount;
+                $this->setNetAmount($amount, $recalc);
                 break;
-        }
-
-        if ($recalc) {
-            $this->updateTaxes($priceMode);
+            default:
+                throw new \InvalidArgumentException(sprintf('Price mode "%s" is not supported', $priceMode));
         }
     }
 
     /**
-     * Returns $grossAmount
-     *
-     * @return float
+     * @inheritdoc
      */
-    public function getAmount()
+    public function getAmount(): PriceAmount
     {
         return $this->grossAmount;
     }
@@ -120,25 +113,25 @@ class Price implements IPrice
     }
 
     /**
-     * @return Currency
+     * @inheritdoc
      */
-    public function getCurrency()
+    public function getCurrency(): Currency
     {
         return $this->currency;
     }
 
     /**
-     * @return float
+     * @inheritdoc
      */
-    public function getGrossAmount()
+    public function getGrossAmount(): PriceAmount
     {
         return $this->grossAmount;
     }
 
     /**
-     * @return float
+     * @inheritdoc
      */
-    public function getNetAmount()
+    public function getNetAmount(): PriceAmount
     {
         return $this->netAmount;
     }
@@ -146,25 +139,23 @@ class Price implements IPrice
     /**
      * @return TaxEntry[]
      */
-    public function getTaxEntries()
+    public function getTaxEntries(): array
     {
         return $this->taxEntries;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getTaxEntryCombinationMode()
+    public function getTaxEntryCombinationMode(): string
     {
         return $this->taxEntryCombinationMode;
     }
 
     /**
-     * @param float $grossAmount
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function setGrossAmount($grossAmount, $recalc = false)
+    public function setGrossAmount(PriceAmount $grossAmount, bool $recalc = false)
     {
         $this->grossAmount = $grossAmount;
 
@@ -174,11 +165,9 @@ class Price implements IPrice
     }
 
     /**
-     * @param float $netAmount
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function setNetAmount($netAmount, $recalc = false)
+    public function setNetAmount(PriceAmount $netAmount, bool $recalc = false)
     {
         $this->netAmount = $netAmount;
 
@@ -188,21 +177,17 @@ class Price implements IPrice
     }
 
     /**
-     * @param TaxEntry[] $taxEntries
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function setTaxEntries($taxEntries)
+    public function setTaxEntries(array $taxEntries)
     {
         $this->taxEntries = $taxEntries;
     }
 
     /**
-     * @param string $taxEntryCombinationMode
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function setTaxEntryCombinationMode($taxEntryCombinationMode)
+    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode)
     {
         $this->taxEntryCombinationMode = $taxEntryCombinationMode;
     }
@@ -210,9 +195,9 @@ class Price implements IPrice
     /**
      * Calls calculation service and updates taxes
      *
-     * @param $calculationMode
+     * @param string $calculationMode
      */
-    protected function updateTaxes($calculationMode)
+    protected function updateTaxes(string $calculationMode)
     {
         $taxCalculationService = new TaxCalculationService();
         $taxCalculationService->updateTaxes($this, $calculationMode);
