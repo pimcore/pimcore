@@ -111,6 +111,13 @@ class PriceAmountTest extends TestCase
         PriceAmount::create('10.0', -1);
     }
 
+    public function testCreateRounding()
+    {
+        $this->assertEquals(16, PriceAmount::create('15.50', 0)->asRawValue());
+        $this->assertEquals(16, PriceAmount::create('15.50', 0, PHP_ROUND_HALF_UP)->asRawValue());
+        $this->assertEquals(15, PriceAmount::create('15.50', 0, PHP_ROUND_HALF_DOWN)->asRawValue());
+    }
+
     public function testFromRawValue()
     {
         $simpleValue = PriceAmount::fromRawValue(100000, 4);

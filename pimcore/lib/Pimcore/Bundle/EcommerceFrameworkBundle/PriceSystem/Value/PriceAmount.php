@@ -73,13 +73,14 @@ class PriceAmount
      * Round value to int value if needed
      *
      * @param $value
+     * @param int|null $roundingMode
      *
      * @return int
      */
-    private static function toIntValue($value): int
+    private static function toIntValue($value, int $roundingMode = null): int
     {
         if (!is_int($value)) {
-            $value = (int)round($value);
+            $value = (int)round($value, 0, $roundingMode ?? PHP_ROUND_HALF_UP);
         }
 
         return $value;
@@ -96,14 +97,15 @@ class PriceAmount
      *
      * @param int|float|string|self $amount
      * @param int|null $scale
+     * @param int|null $roundingMode
      *
      * @return self
      * @throws \TypeError
      */
-    public static function create($amount, int $scale = null)
+    public static function create($amount, int $scale = null, int $roundingMode = null)
     {
         if (is_numeric($amount)) {
-            return static::fromNumeric($amount, $scale);
+            return static::fromNumeric($amount, $scale, $roundingMode);
         } elseif ($amount instanceof self) {
             return static::fromPriceAmount($amount, $scale);
         } else {
@@ -134,10 +136,11 @@ class PriceAmount
      *
      * @param int|float|string $amount
      * @param int|null $scale
+     * @param int|null $roundingMode
      *
      * @return PriceAmount
      */
-    public static function fromNumeric($amount, int $scale = null): self
+    public static function fromNumeric($amount, int $scale = null, int $roundingMode = null): self
     {
         if (!is_numeric($amount)) {
             throw new \InvalidArgumentException('Value is not numeric');
@@ -146,7 +149,7 @@ class PriceAmount
         $scale = $scale ?? static::$defaultScale;
 
         $result = $amount * pow(10, $scale);
-        $result = static::toIntValue($result);
+        $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $scale);
     }
@@ -224,10 +227,11 @@ class PriceAmount
      * Builds a value with the given scale
      *
      * @param int $scale
+     * @param int|null $roundingMode
      *
      * @return PriceAmount
      */
-    public function withScale(int $scale): self
+    public function withScale(int $scale, int $roundingMode = null): self
     {
         // no need to create a new object as output would be identical
         if ($scale === $this->scale) {
@@ -239,7 +243,7 @@ class PriceAmount
         $diff = $scale - $this->scale;
 
         $result = $this->amount * pow(10, $diff);
-        $result = static::toIntValue($result);
+        $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $scale);
     }
@@ -286,15 +290,16 @@ class PriceAmount
      * a PriceAmount is passed, its float representation will be used for calculations.
      *
      * @param int|float|PriceAmount $other
+     * @param int|null $roundingMode
      *
      * @return PriceAmount
      */
-    public function mul($other): self
+    public function mul($other, int $roundingMode = null): self
     {
         $operand = $this->getScalarOperand($other);
 
         $result = $this->amount * $operand;
-        $result = static::toIntValue($result);
+        $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);
     }
@@ -305,11 +310,12 @@ class PriceAmount
      * a PriceAmount is passed, its float representation will be used for calculations.
      *
      * @param int|float|PriceAmount $other
+     * @param int|null $roundingMode
      *
      * @return PriceAmount
      * @throws \DivisionByZeroError
      */
-    public function div($other): self
+    public function div($other, int $roundingMode = null): self
     {
         $operand = $this->getScalarOperand($other);
         $epsilon = pow(10, -1 * $this->scale);
@@ -319,7 +325,7 @@ class PriceAmount
         }
 
         $result = $this->amount / $operand;
-        $result = static::toIntValue($result);
+        $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);
     }
