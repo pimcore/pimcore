@@ -1642,9 +1642,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param string $key
      * @return Object\ClassDefinition\Data
      */
-    protected function getFieldDefinition($class, $key) {
-
-
+    protected function getFieldDefinition($class, $key)
+    {
         $fieldDefinition = $class->getFieldDefinition($key);
         if ($fieldDefinition) {
             return $fieldDefinition;
@@ -1654,6 +1653,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
             $fieldDefinition = $localized->getFielddefinition($key);
         }
+
         return $fieldDefinition;
     }
 
@@ -1663,9 +1663,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param string $key
      * @return Object\ClassDefinition\Data
      */
-    protected function getFieldDefinitionFromBrick($brickType, $key) {
-
-
+    protected function getFieldDefinitionFromBrick($brickType, $key)
+    {
         $brickDefinition = Object\Objectbrick\Definition::getByKey($brickType);
         if ($brickDefinition) {
             $fieldDefinition = $brickDefinition->getFieldDefinition($key);
