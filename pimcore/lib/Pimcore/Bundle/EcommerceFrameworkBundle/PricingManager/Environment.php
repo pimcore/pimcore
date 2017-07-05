@@ -14,22 +14,26 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Environment implements IEnvironment
 {
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
+     * @var ICart
      */
     protected $cart;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem
+     * @var ICartItem
      */
     protected $cartItem;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+     * @var ICheckoutable
      */
     protected $product;
 
@@ -44,7 +48,7 @@ class Environment implements IEnvironment
     protected $priceInfo;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
+     * @var AbstractCategory[]
      */
     protected $categories = [];
 
@@ -61,11 +65,11 @@ class Environment implements IEnvironment
     protected $executionMode = IEnvironment::EXECUTION_MODE_PRODUCT;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return IEnvironment
      */
-    public function setCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart)
+    public function setCart(ICart $cart)
     {
         $this->cart = $cart;
 
@@ -73,7 +77,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
+     * @return ICart
      */
     public function getCart()
     {
@@ -81,7 +85,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem
+     * @return ICartItem
      */
     public function getCartItem()
     {
@@ -89,11 +93,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $cartItem
+     * @param ICartItem $cartItem
      *
      * @return $this
      */
-    public function setCartItem(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $cartItem)
+    public function setCartItem(ICartItem $cartItem)
     {
         $this->cartItem = $cartItem;
 
@@ -101,11 +105,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      *
      * @return IEnvironment
      */
-    public function setProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product = null)
+    public function setProduct(ICheckoutable $product = null)
     {
         $this->product = $product;
 
@@ -113,7 +117,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct()
     {
@@ -153,7 +157,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+     * @return IPriceInfo
      */
     public function getPriceInfo()
     {
@@ -173,7 +177,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return array|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @return AbstractCategory[]
      */
     public function getCategories()
     {

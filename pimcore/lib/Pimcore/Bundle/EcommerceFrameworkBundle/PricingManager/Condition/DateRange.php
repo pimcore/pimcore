@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+
 class DateRange implements IDateRange
 {
     /**
@@ -27,11 +29,11 @@ class DateRange implements IDateRange
     protected $ending;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         if ($this->getStarting() && $this->getEnding()) {
             return $this->getStarting()->isEarlier(time()) && $this->getEnding()->isLater(time());

@@ -20,8 +20,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
+use Pimcore\Model\AbstractModel;
 
-class Rule extends \Pimcore\Model\AbstractModel implements IRule
+class Rule extends AbstractModel implements IRule
 {
     /**
      * @param int $id
@@ -101,7 +102,7 @@ class Rule extends \Pimcore\Model\AbstractModel implements IRule
      * @param  $key
      * @param  $value
      *
-     * @return \Pimcore\Model\AbstractModel
+     * @return AbstractModel
      */
     public function setValue($key, $value)
     {

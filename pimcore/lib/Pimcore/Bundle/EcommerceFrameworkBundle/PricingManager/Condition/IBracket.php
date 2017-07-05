@@ -14,17 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-interface IBracket extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+
+interface IBracket extends ICondition
 {
     const OPERATOR_AND = 'and';
     const OPERATOR_OR = 'or';
     const OPERATOR_AND_NOT = 'and_not';
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition $condition
-     * @param string $operator \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket::OPERATOR_*
+     * @param ICondition $condition
+     * @param string $operator IBracket::OPERATOR_*
      *
-     * @return IBracket
+     * @return self
      */
-    public function addCondition(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition $condition, $operator);
+    public function addCondition(ICondition $condition, $operator);
 }

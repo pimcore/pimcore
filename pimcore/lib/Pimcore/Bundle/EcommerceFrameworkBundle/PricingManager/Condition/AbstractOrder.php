@@ -15,24 +15,28 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 use Pimcore\Logger;
+use Pimcore\Model\Object\OnlineShopOrder;
+use Pimcore\Model\Object\OnlineShopOrderItem;
 
-abstract class AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+abstract class AbstractOrder implements ICondition
 {
     /**
-     * persistenter cache für alle condition die von dieser ableiten
+     * Persistent cache for all conditions inheriting from AbstractOrder
      *
      * @var int[]
      */
     private static $cache = [];
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule
-     * @param string                             $field
+     * @param IRule $rule
+     * @param string $field
      *
      * @return mixed
      */
-    private function getData(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule, $field)
+    private function getData(IRule $rule, $field)
     {
         if (!array_key_exists($rule->getId(), self::$cache)) {
             $query = <<<'SQL'
@@ -76,10 +80,9 @@ LIMIT 1
 SQL;
 
             try {
-                $query = sprintf($query, \Pimcore\Model\Object\OnlineShopOrderItem::classId(), \Pimcore\Model\Object\OnlineShopOrder::classId(), $rule->getId()
-                );
-
+                $query = sprintf($query, OnlineShopOrderItem::classId(), OnlineShopOrder::classId(), $rule->getId());
                 $conn = \Pimcore\Db::getConnection();
+
                 self::$cache[$rule->getId()] = $conn->fetchRow($query);
             } catch (\Exception $e) {
                 Logger::error($e);
@@ -90,11 +93,11 @@ SQL;
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule
+     * @param IRule $rule
      *
      * @return int
      */
-    protected function getSoldCount(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule)
+    protected function getSoldCount(IRule $rule)
     {
         return (int)$this->getData($rule, 'soldCount');
     }

@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-interface IDateRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+
+interface IDateRange extends ICondition
 {
     /**
      * @param \DateTime $date

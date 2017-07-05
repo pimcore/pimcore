@@ -14,21 +14,25 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+
 interface IPricingManager
 {
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceinfo
+     * @param IPriceInfo $priceinfo
      *
      * @return IPriceInfo
      */
-    public function applyProductRules(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceinfo);
+    public function applyProductRules(IPriceInfo $priceinfo);
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return IPricingManager
      */
-    public function applyCartRules(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function applyCartRules(ICart $cart);
 
     /**
      * Factory
@@ -44,7 +48,7 @@ interface IPricingManager
      *
      * @return ICondition
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function getCondition($type);
 
@@ -63,9 +67,9 @@ interface IPricingManager
     public function getEnvironment();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
+     * @param IPriceInfo $priceInfo
      *
      * @return IPriceInfo
      */
-    public function getPriceInfo(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo);
+    public function getPriceInfo(IPriceInfo $priceInfo);
 }

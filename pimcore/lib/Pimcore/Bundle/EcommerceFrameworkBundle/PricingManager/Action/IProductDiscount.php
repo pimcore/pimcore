@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 /**
- * interface to identify product discount actions
+ * Interface to identify product discount actions
  */
 interface IProductDiscount extends IDiscount
 {

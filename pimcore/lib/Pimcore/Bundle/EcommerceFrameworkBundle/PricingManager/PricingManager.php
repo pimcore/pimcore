@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Config\Config;
@@ -52,11 +53,11 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
+     * @param IPriceInfo $priceInfo
      *
      * @return IPriceInfo
      */
-    public function applyProductRules(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo)
+    public function applyProductRules(IPriceInfo $priceInfo)
     {
         if ((string)$this->config->disabled == 'true') {
             return $priceInfo;
@@ -210,13 +211,13 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo
+     * @param IPriceInfo $priceInfo
      *
      * @return IPriceInfo
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public function getPriceInfo(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo)
+    public function getPriceInfo(IPriceInfo $priceInfo)
     {
         if ((string)$this->config->disabled == 'true') {
             return $priceInfo;

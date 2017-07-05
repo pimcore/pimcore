@@ -14,10 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+
 class CatalogCategory extends AbstractObjectListCondition implements ICategory
 {
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
+     * @var AbstractCategory[]
      */
     protected $categories = [];
 
@@ -29,7 +33,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     protected $categoryIds = [];
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[] $categories
+     * @param AbstractCategory[] $categories
      *
      * @return ICategory
      */
@@ -41,7 +45,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
+     * @return AbstractCategory[]
      */
     public function getCategories()
     {
@@ -61,7 +65,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
 
         // add categories
         foreach ($this->getCategories() as $category) {
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category */
+            /* @var AbstractCategory $category */
             $json['categories'][] = [
                 $category->getId(),
                 $category->getFullPath()
@@ -74,7 +78,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {
@@ -111,16 +115,16 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         foreach ($environment->getCategories() as $category) {
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category */
+            /* @var AbstractCategory $category */
             foreach ($this->getCategories() as $allow) {
-                /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $allow */
+                /* @var AbstractCategory $allow */
                 if (strpos($category->getFullPath(), $allow->getFullPath()) !== false) {
                     return true;
                 }

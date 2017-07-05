@@ -14,7 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use OnlineShop\Framework\VoucherService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Model\Object\Concrete;
+
+class VoucherToken implements ICondition
 {
     /**
      * @var array
@@ -23,11 +30,11 @@ class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
     protected $whiteList = [];
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         if (!($cart = $environment->getCart())) {
             return false;
@@ -48,7 +55,7 @@ class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
 
     public function checkVoucherCode($code)
     {
-        if (in_array(\Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
+        if (in_array(Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
             return true;
         }
 
@@ -68,7 +75,7 @@ class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
 
         // add categories
         foreach ($this->getWhiteList() as $series) {
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries $series */
+            /* @var AbstractVoucherSeries $series */
             $json['whiteList'][] = [
                 $series->id,
                 $series->path
@@ -81,7 +88,7 @@ class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {
@@ -107,11 +114,11 @@ class VoucherToken implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
     /**
      * @param $id
      *
-     * @return \Pimcore\Model\Object\Concrete|null
+     * @return Concrete|null
      */
     protected function loadSeries($id)
     {
-        return \Pimcore\Model\Object\Concrete::getById($id);
+        return Concrete::getById($id);
     }
 
     /**
