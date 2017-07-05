@@ -1557,9 +1557,9 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                                     if ($keyConfig) {
                                         $fieldDefintion = $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(
                                             json_decode($keyConfig->getDefinition()), $keyConfig->getType());
-                                            if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
-                                                $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
-                                            }
+                                        if ($fieldDefintion && method_exists($fieldDefintion, 'getDataFromGridEditor')) {
+                                            $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
+                                        }
                                     }
 
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
@@ -1584,7 +1584,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
                             $fieldDefintion = $this->getFieldDefinitionFromBrick($brickType, $brickKey);
 
-                            if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
+                            if ($fieldDefintion && method_exists($fieldDefintion, 'getDataFromGridEditor')) {
                                 $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
                             }
 
@@ -1608,7 +1608,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                             }
 
                             $fieldDefintion = $this->getFieldDefinition($class, $key);
-                            if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
+                            if ($fieldDefintion && method_exists($fieldDefintion, 'getDataFromGridEditor')) {
                                 $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
                             }
 
@@ -1774,11 +1774,11 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @param string $class
      * @param string $key
+     *
      * @return Object\ClassDefinition\Data
      */
-    protected function getFieldDefinition($class, $key) {
-
-
+    protected function getFieldDefinition($class, $key)
+    {
         $fieldDefinition = $class->getFieldDefinition($key);
         if ($fieldDefinition) {
             return $fieldDefinition;
@@ -1788,18 +1788,18 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
             $fieldDefinition = $localized->getFielddefinition($key);
         }
+
         return $fieldDefinition;
     }
-
 
     /**
      * @param string $brickType
      * @param string $key
+     *
      * @return Object\ClassDefinition\Data
      */
-    protected function getFieldDefinitionFromBrick($brickType, $key) {
-
-
+    protected function getFieldDefinitionFromBrick($brickType, $key)
+    {
         $brickDefinition = Object\Objectbrick\Definition::getByKey($brickType);
         if ($brickDefinition) {
             $fieldDefinition = $brickDefinition->getFieldDefinition($key);
