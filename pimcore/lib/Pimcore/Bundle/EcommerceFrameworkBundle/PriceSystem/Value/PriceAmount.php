@@ -262,6 +262,98 @@ class PriceAmount
     }
 
     /**
+     * Checks if value is equal to other value
+     *
+     * @param PriceAmount $other
+     *
+     * @return bool
+     */
+    public function equals(PriceAmount $other): bool
+    {
+        return $other->scale === $this->scale && $other->amount === $this->amount;
+    }
+
+    /**
+     * Compares a value to another one
+     *
+     * @param PriceAmount $other
+     *
+     * @return int
+     */
+    public function compare(PriceAmount $other): int
+    {
+        $this->assertSameScale($other, 'Can\'t compare values with different scales. Please convert both values to the same scale.');
+
+        if ($this->amount === $other->amount) {
+            return 0;
+        }
+
+        return ($this->amount > $other->amount) ? 1 : -1;
+    }
+
+    /**
+     * Compares this > other
+     *
+     * @param PriceAmount $other
+     *
+     * @return bool
+     */
+    public function greaterThan(PriceAmount $other): bool
+    {
+        return $this->compare($other) === 1;
+    }
+
+    /**
+     * Compares this >= other
+     *
+     * @param PriceAmount $other
+     *
+     * @return bool
+     */
+    public function greaterThanOrEqual(PriceAmount $other): bool
+    {
+        return $this->compare($other) >= 0;
+    }
+
+    /**
+     * Compares this < other
+     *
+     * @param PriceAmount $other
+     *
+     * @return bool
+     */
+    public function lessThan(PriceAmount $other): bool
+    {
+        return $this->compare($other) === -1;
+    }
+
+    /**
+     * Compares this <= other
+     *
+     * @param PriceAmount $other
+     *
+     * @return bool
+     */
+    public function lessThanOrEqual(PriceAmount $other): bool
+    {
+        return $this->compare($other) <= 0;
+    }
+
+    /**
+     * Returns the absolute amount
+     *
+     * @return PriceAmount
+     */
+    public function abs(): self
+    {
+        if ($this->amount < 0) {
+            return new static((int)abs($this->amount), $this->scale);
+        }
+
+        return $this;
+    }
+
+    /**
      * Adds another price amount
      *
      * @param PriceAmount|int|float|string $other
@@ -274,7 +366,7 @@ class PriceAmount
             $other = static::fromNumeric($other, $this->scale);
         }
 
-        $this->compareScale($other);
+        $this->assertSameScale($other);
 
         return new static($this->amount + $other->amount, $this->scale);
     }
@@ -292,7 +384,7 @@ class PriceAmount
             $other = static::fromNumeric($other, $this->scale);
         }
 
-        $this->compareScale($other);
+        $this->assertSameScale($other);
 
         return new static($this->amount - $other->amount, $this->scale);
     }
@@ -365,10 +457,12 @@ class PriceAmount
         ));
     }
 
-    private function compareScale(PriceAmount $other)
+    private function assertSameScale(PriceAmount $other, string $message = null)
     {
         if ($other->scale !== $this->scale) {
-            throw new \DomainException('Can\'t operate on amounts with different scales. Please convert both amounts to the same scale before proceeding.');
+            $message = $message ?? 'Can\'t operate on amounts with different scales. Please convert both amounts to the same scale before proceeding.';
+
+            throw new \DomainException($message);
         }
     }
 }

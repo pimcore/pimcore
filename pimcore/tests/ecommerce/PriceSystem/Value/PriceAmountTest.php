@@ -240,6 +240,57 @@ class PriceAmountTest extends TestCase
     }
 
     /**
+     * @group compare
+     */
+    public function testCompare()
+    {
+        $a = PriceAmount::create(5);
+        $b = PriceAmount::create(10);
+
+        $this->assertTrue($a->equals($a));
+        $this->assertTrue($b->equals($b));
+        $this->assertTrue($a->equals(PriceAmount::create(5)));
+        $this->assertFalse($a->equals(PriceAmount::create(5, 8)));
+        $this->assertFalse($a->equals($b));
+        $this->assertFalse($b->equals($a));
+
+        $this->assertEquals(-1, $a->compare($b));
+        $this->assertEquals(1, $b->compare($a));
+        $this->assertEquals(0, $a->compare($a));
+        $this->assertEquals(0, $b->compare($b));
+
+        $this->assertTrue($a->lessThan($b));
+        $this->assertFalse($a->lessThan($a));
+        $this->assertFalse($b->lessThan($a));
+        $this->assertFalse($b->lessThan($b));
+
+        $this->assertTrue($a->lessThanOrEqual($a));
+        $this->assertTrue($a->lessThanOrEqual($b));
+        $this->assertFalse($b->lessThanOrEqual($a));
+        $this->assertTrue($b->lessThanOrEqual($b));
+
+        $this->assertFalse($a->greaterThan($a));
+        $this->assertFalse($a->greaterThan($b));
+        $this->assertTrue($b->greaterThan($a));
+        $this->assertFalse($b->greaterThan($b));
+
+        $this->assertTrue($a->greaterThanOrEqual($a));
+        $this->assertFalse($a->greaterThanOrEqual($b));
+        $this->assertTrue($b->greaterThanOrEqual($a));
+        $this->assertTrue($b->greaterThanOrEqual($b));
+    }
+
+    public function testAbs()
+    {
+        $a = PriceAmount::create(5);
+        $b = PriceAmount::create(-5);
+
+        $this->assertFalse($a->equals($b));
+        $this->assertTrue($a->equals($b->abs()));
+        $this->assertEquals(5, $b->abs()->asNumeric());
+    }
+
+    /**
      * @dataProvider addDataProvider
      */
     public function testAdd($a, $b, $expected)
