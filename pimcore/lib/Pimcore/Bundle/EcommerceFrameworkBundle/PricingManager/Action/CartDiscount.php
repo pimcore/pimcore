@@ -15,10 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 
+// TODO use PriceAmount for amounts?
 class CartDiscount implements IDiscount
 {
     /**
@@ -50,8 +52,12 @@ class CartDiscount implements IDiscount
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
-        $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceCalculator->getSubTotal()->getAmount() * ($this->getPercent() / 100)), 2);
-        $amount *= -1;
+        $amount = PriceAmount::create($this->amount);
+        if ($amount->equals(PriceAmount::create(0))) {
+            $amount = $priceCalculator->getSubTotal()->getAmount()->mul($this->getPercent() / 100);
+        }
+
+        $amount = $amount->mul(-1);
 
         //make sure that one rule is applied only once
         foreach ($priceCalculator->getModificators() as &$modificator) {
@@ -65,6 +71,7 @@ class CartDiscount implements IDiscount
 
         $modDiscount = new Discount($environment->getRule());
         $modDiscount->setAmount($amount);
+
         $priceCalculator->addModificator($modDiscount);
 
         return $this;
@@ -76,10 +83,10 @@ class CartDiscount implements IDiscount
     public function toJSON()
     {
         return json_encode([
-                                'type' => 'CartDiscount',
-                                'amount' => $this->getAmount(),
-                                'percent' => $this->getPercent()
-                           ]);
+            'type'    => 'CartDiscount',
+            'amount'  => $this->getAmount(),
+            'percent' => $this->getPercent()
+        ]);
     }
 
     /**

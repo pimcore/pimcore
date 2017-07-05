@@ -14,6 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+
+// TODO use PriceAmount for amounts?
 class ProductDiscount implements IProductDiscount
 {
     /**
@@ -27,26 +32,34 @@ class ProductDiscount implements IProductDiscount
     protected $percent = 0;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
+     * @return IAction
      */
-    public function executeOnProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function executeOnProduct(IEnvironment $environment)
     {
         $priceinfo = $environment->getPriceInfo();
-        $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceinfo->getAmount() * ($this->getPercent() / 100)), 2);
-        $amount = $priceinfo->getAmount() - $amount;
-        $priceinfo->setAmount($amount > 0 ? $amount : 0);
+
+        $amount = PriceAmount::create($this->amount);
+
+        // TODO use discount()?
+        if ($amount->equals(PriceAmount::create(0))) {
+            $amount = $priceinfo->getAmount()->mul($this->getPercent() / 100);
+        }
+
+        $amount = $priceinfo->getAmount()->sub($amount);
+
+        $priceinfo->setAmount($amount);
 
         return $this;
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
+     * @return IAction
      */
-    public function executeOnCart(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function executeOnCart(IEnvironment $environment)
     {
         //nothing to to here
         return $this;
@@ -58,10 +71,10 @@ class ProductDiscount implements IProductDiscount
     public function toJSON()
     {
         return json_encode([
-                                'type' => 'ProductDiscount',
-                                'amount' => $this->getAmount(),
-                                'percent' => $this->getPercent()
-                           ]);
+            'type'    => 'ProductDiscount',
+            'amount'  => $this->getAmount(),
+            'percent' => $this->getPercent()
+        ]);
     }
 
     /**

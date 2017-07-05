@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Logger;
 
 abstract class AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
@@ -99,12 +100,12 @@ SQL;
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule
+     * @param IRule $rule
      *
-     * @return float
+     * @return PriceAmount
      */
-    protected function getSalesAmount(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule)
+    protected function getSalesAmount(IRule $rule): PriceAmount
     {
-        return (float)$this->getData($rule, 'salesAmount');
+        return PriceAmount::create($this->getData($rule, 'salesAmount'));
     }
 }

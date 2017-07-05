@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,82 +18,84 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 
-interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+interface IPriceInfo extends PriceSystemIPriceInfo
 {
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo           $priceInfo
+     * @param PriceSystemIPriceInfo $priceInfo
      * @param IEnvironment $environment
      */
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment);
+    public function __construct(PriceSystemIPriceInfo $priceInfo, IEnvironment $environment);
 
     /**
      * @param IRule $rule
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+     * @return PriceSystemIPriceInfo
      */
     public function addRule(IRule $rule);
 
     /**
-     * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
+     * Returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
      *
      * @return IRule[]
      */
-    public function getRules($forceRecalc = false);
+    public function getRules(bool $forceRecalc = false): array;
 
     /**
-     * @param float $amount
+     * @param PriceAmount $amount
      *
      * @return IPriceInfo
      */
-    public function setAmount($amount);
+    public function setAmount(PriceAmount $amount);
 
     /**
-     * @return mixed
+     * @return IPriceInfo
      */
-    public function getAmount();
-
-    /**
-     * @return IPrice
-     */
-    public function getOriginalPrice();
+    public function getAmount(): PriceAmount;
 
     /**
      * @return IPrice
      */
-    public function getOriginalTotalPrice();
+    public function getOriginalPrice(): IPrice;
+
+    /**
+     * @return IPrice
+     */
+    public function getOriginalTotalPrice(): IPrice;
 
     /**
      * @return IEnvironment
      */
-    public function getEnvironment();
+    public function getEnvironment(): IEnvironment;
 
     /**
      * @param IEnvironment $environment
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+     * @return IPriceInfo
      */
     public function setEnvironment(IEnvironment $environment);
 
     /**
      * @return bool
      */
-    public function hasDiscount();
+    public function hasDiscount(): bool;
 
     /**
      * @return IPrice
      */
-    public function getDiscount();
+    public function getDiscount(): IPrice;
 
     /**
      * @return IPrice
      */
-    public function getTotalDiscount();
+    public function getTotalDiscount(): IPrice;
 
     /**
-     * get discount in percent
+     * Get discount in percent
      *
      * @return float
      */
@@ -99,5 +104,5 @@ interface IPriceInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSyste
     /**
      * @return bool
      */
-    public function hasRulesApplied();
+    public function hasRulesApplied(): bool;
 }

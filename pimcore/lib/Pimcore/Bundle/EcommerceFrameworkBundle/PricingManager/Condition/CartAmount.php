@@ -14,6 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+
 class CartAmount implements ICartAmount
 {
     /**
@@ -22,17 +26,20 @@ class CartAmount implements ICartAmount
     protected $limit;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         if (!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
         }
 
-        return $environment->getCart()->getPriceCalculator()->getSubTotal()->getAmount() >= $this->getLimit();
+        $calculator = $environment->getCart()->getPriceCalculator();
+
+        // TODO store limit as PriceAmount?
+        return $calculator->getSubTotal()->getAmount()->greaterThanOrEqual(PriceAmount::create($this->getLimit()));
     }
 
     /**
@@ -69,7 +76,7 @@ class CartAmount implements ICartAmount
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {
