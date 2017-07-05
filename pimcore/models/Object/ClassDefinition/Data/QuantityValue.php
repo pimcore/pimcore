@@ -221,6 +221,18 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param float $data
+     * @param Model\Object\Concrete $object
+     * @param mixed $params
+     *
+     * @return float
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @see Object_Class_Data::getDataFromEditmode
      *
      * @param float $data
@@ -369,7 +381,8 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
             return [
                 'value' => $data->getValue(),
-                'unit' => $unitAbbreviation
+                'unit' => $unit ? $unit->getId() : null,
+                'unitAbbr' => $unitAbbreviation
             ];
         }
 
