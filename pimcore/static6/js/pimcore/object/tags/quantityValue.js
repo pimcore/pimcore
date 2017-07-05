@@ -129,7 +129,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
 
             if (value) {
-                return value.value + " " + value.unit;
+                return (value.value ? value.value : "") + " " + value.unitAbbr;
             } else {
                 return "";
             }
@@ -137,6 +137,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
+            getEditor:this.getCellEditor.bind(this, field),
             header:ts(field.label),
             sortable:true,
             dataIndex:field.key,
@@ -157,9 +158,17 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     getValue: function () {
         return {
             unit: this.unitField.getValue(),
+            unitAbbr: this.unitField.getRawValue(),
             value: this.inputField.getValue()
         };
     },
+
+    getCellEditValue: function () {
+        var value = this.getValue();
+        value["unitAbbr"] = this.unitField.getRawValue();
+        return value;
+    },
+
 
     getName: function () {
         return this.fieldConfig.name;
@@ -170,5 +179,12 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
         return true;
-    }
+    },
+
+    getCellEditor: function ( field, record) {
+        return new pimcore.object.helpers.gridCellEditor({
+            fieldInfo: field
+        });
+    },
+
 });

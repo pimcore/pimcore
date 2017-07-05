@@ -289,6 +289,7 @@ $scripts = array(
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
+    "pimcore/object/helpers/gridCellEditor.js",
     "pimcore/object/helpers/customLayoutEditor.js",
     "pimcore/object/helpers/optionEditor.js",
     "pimcore/element/selector/object.js",

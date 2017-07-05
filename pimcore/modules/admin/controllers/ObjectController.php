@@ -1402,6 +1402,16 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                 if (method_exists($object, $getter)) {
                                     /** @var  $classificationStoreData Object\Classificationstore */
                                     $classificationStoreData = $object->$getter();
+
+                                    $keyConfig = Object\Classificationstore\KeyConfig::getById($keyid);
+                                    if ($keyConfig) {
+                                        $fieldDefintion = $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(
+                                            json_decode($keyConfig->getDefinition()), $keyConfig->getType());
+                                        if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
+                                            $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
+                                        }
+                                    }
+
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
                                 }
                             } else {
@@ -1434,6 +1444,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                 $brick = new $classname($object);
                                 $object->$fieldGetter()->$brickSetter($brick);
                             }
+
+                            $fieldDefintion = $this->getFieldDefinitionFromBrick($brickType, $brickKey);
+
+                            if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
+                                $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
+                            }
+
                             $brick->$valueSetter($value);
                         } else {
                             if (!$user->isAdmin() && $languagePermissions) {
@@ -1451,6 +1468,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                         }
                                     }
                                 }
+                            }
+
+                            $fieldDefintion = $this->getFieldDefinition($class, $key);
+                            if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
+                                $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
                             }
 
                             $objectData[$key] = $value;
@@ -1613,6 +1635,43 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
             $this->_helper->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
         }
+    }
+
+    /**
+     * @param string $class
+     * @param string $key
+     * @return Object\ClassDefinition\Data
+     */
+    protected function getFieldDefinition($class, $key) {
+
+
+        $fieldDefinition = $class->getFieldDefinition($key);
+        if ($fieldDefinition) {
+            return $fieldDefinition;
+        }
+
+        $localized = $class->getFieldDefinition('localizedfields');
+        if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
+            $fieldDefinition = $localized->getFielddefinition($key);
+        }
+        return $fieldDefinition;
+    }
+
+
+    /**
+     * @param string $brickType
+     * @param string $key
+     * @return Object\ClassDefinition\Data
+     */
+    protected function getFieldDefinitionFromBrick($brickType, $key) {
+
+
+        $brickDefinition = Object\Objectbrick\Definition::getByKey($brickType);
+        if ($brickDefinition) {
+            $fieldDefinition = $brickDefinition->getFieldDefinition($key);
+        }
+
+        return $fieldDefinition;
     }
 
     public function copyInfoAction()
