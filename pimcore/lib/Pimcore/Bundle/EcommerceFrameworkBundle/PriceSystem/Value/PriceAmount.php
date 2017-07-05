@@ -60,10 +60,35 @@ class PriceAmount
         static::$defaultScale = $scale;
     }
 
+    /**
+     * Validates scale not being negative
+     *
+     * @param int $scale
+     */
     private static function validateScale(int $scale)
     {
         if ($scale < 0) {
             throw new \DomainException('Scale must be greater or equal than 0');
+        }
+    }
+
+    /**
+     * Asserts that an integer value didn't become something else
+     * (after some arithmetic operation).
+     *
+     * Adapted from moneyphp/money PhpCalculator
+     *
+     * @param $amount
+     *
+     * @throws \OverflowException  If integer overflow occured
+     * @throws \UnderflowException If integer underflow occured
+     */
+    private static function validateIntegerBounds($amount)
+    {
+        if ($amount > (PHP_INT_MAX - 1)) {
+            throw new \OverflowException('The maximum allowed integer (PHP_INT_MAX) was reached');
+        } elseif ($amount < (~PHP_INT_MAX + 1)) {
+            throw new \UnderflowException('The minimum allowed integer (PHP_INT_MAX) was reached');
         }
     }
 
@@ -151,6 +176,8 @@ class PriceAmount
         static::validateScale($scale);
 
         $result = $amount * pow(10, $scale);
+        static::validateIntegerBounds($result);
+
         $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $scale);
@@ -256,6 +283,8 @@ class PriceAmount
         $diff = $scale - $this->scale;
 
         $result = $this->amount * pow(10, $diff);
+        static::validateIntegerBounds($result);
+
         $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $scale);
@@ -368,7 +397,10 @@ class PriceAmount
 
         $this->assertSameScale($other);
 
-        return new static($this->amount + $other->amount, $this->scale);
+        $result = $this->amount + $other->amount;
+        static::validateIntegerBounds($result);
+
+        return new static($result, $this->scale);
     }
 
     /**
@@ -386,7 +418,10 @@ class PriceAmount
 
         $this->assertSameScale($other);
 
-        return new static($this->amount - $other->amount, $this->scale);
+        $result = $this->amount - $other->amount;
+        static::validateIntegerBounds($result);
+
+        return new static($result, $this->scale);
     }
 
     /**
@@ -404,6 +439,8 @@ class PriceAmount
         $operand = $this->getScalarOperand($other);
 
         $result = $this->amount * $operand;
+        static::validateIntegerBounds($result);
+
         $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);
@@ -430,6 +467,8 @@ class PriceAmount
         }
 
         $result = $this->amount / $operand;
+        static::validateIntegerBounds($result);
+
         $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);

@@ -239,9 +239,6 @@ class PriceAmountTest extends TestCase
         $valA->sub($valB);
     }
 
-    /**
-     * @group compare
-     */
     public function testCompare()
     {
         $a = PriceAmount::create(5);
@@ -352,6 +349,35 @@ class PriceAmountTest extends TestCase
         $this->expectException(\DivisionByZeroError::class);
 
         $val->div(0.00001);
+    }
+
+    // TODO test overflow/underflow is checked on every possible operation
+    public function testIntegerOverflow()
+    {
+        $val = PriceAmount::fromRawValue(1);
+
+        // there's a threshold of 1 from the boundary, so the greatest usable int is PHP_INT_MAX - 1
+        $other = PriceAmount::fromRawValue(PHP_INT_MAX - 2);
+
+        $maxInt = $val->add($other);
+
+        $this->expectException(\OverflowException::class);
+
+        $maxInt->add(PriceAmount::fromRawValue(1));
+    }
+
+    public function testIntegerUnderflow()
+    {
+        $val = PriceAmount::fromRawValue(-1);
+
+        // there's a threshold of 1 from the boundary, so the smallest usable int is -1 * PHP_INT_MAX + 1
+        $other = PriceAmount::fromRawValue(~PHP_INT_MAX + 2);
+
+        $minInt = $val->add($other);
+
+        $this->expectException(\UnderflowException::class);
+
+        $minInt->sub(PriceAmount::fromRawValue(1));
     }
 
     public function createDataProvider(): array
