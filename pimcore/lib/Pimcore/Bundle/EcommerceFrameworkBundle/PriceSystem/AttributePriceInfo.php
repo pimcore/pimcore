@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,9 +18,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 /**
- * Class AttributePriceInfo
- *
- * attribute info for attribute price system
+ * Attribute info for attribute price system
  */
 class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo
 {
@@ -33,23 +34,23 @@ class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo
 
     public function __construct(IPrice $price, $quantity, IPrice $totalPrice)
     {
-        $this->price = $price;
+        $this->price      = $price;
         $this->totalPrice = $totalPrice;
-        $this->quantity = $quantity;
+        $this->quantity   = $quantity;
     }
 
-    public function getPrice()
+    public function getPrice(): IPrice
     {
         return $this->price;
     }
 
-    public function getTotalPrice()
+    public function getTotalPrice(): IPrice
     {
         return $this->totalPrice;
     }
 
     /**
-     * try to delegate all other functions to the product
+     * Try to delegate all other functions to the product
      *
      * @param $name
      * @param $arguments

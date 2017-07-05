@@ -14,44 +14,23 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
 /**
- * Class AttributePriceSystem
- *
- * price system implementation for attribute price system
+ * Price system implementation for attribute price system
  */
 class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 {
     /**
-     * @param $productIds
-     * @param $fromPrice
-     * @param $toPrice
-     * @param $order
-     * @param $offset
-     * @param $limit
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
-    {
-        throw new \Exception('not supported yet');
-    }
-
-    /**
-     * @param $quantityScale
-     * @param $product
-     * @param $products
-     *
-     * @internal param $infoConstructorParams
-     *
-     * @return AbstractPriceInfo
-     */
-    public function createPriceInfoInstance($quantityScale, $product, $products)
+    public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products)
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
@@ -67,7 +46,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
             $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
         }
 
-        $taxCalculationService =  $this->getTaxCalculationService();
+        $taxCalculationService = $this->getTaxCalculationService();
         $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
         $taxCalculationService->updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
 
@@ -75,16 +54,22 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     }
 
     /**
-     * calculates prices from product
+     * @inheritdoc
+     */
+    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
+    {
+        throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
+    }
+
+    /**
+     * Calculates prices from product
      *
-     * @param $product
-     * @param $products
+     * @param ICheckoutable $product
+     * @param ICheckoutable[] $products
      *
      * @return float
-     *
-     * @throws \Exception
      */
-    protected function calculateAmount($product, $products)
+    protected function calculateAmount(ICheckoutable $product, $products)
     {
         $getter = 'get' . ucfirst($this->config->attributename);
         if (method_exists($product, $getter)) {

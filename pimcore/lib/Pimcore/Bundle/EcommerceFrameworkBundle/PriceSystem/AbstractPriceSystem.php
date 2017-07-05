@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -23,9 +26,7 @@ use Pimcore\Model\Object\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
 /**
- * Class AbstractPriceSystem
- *
- * abstract implementation for price systems
+ * Abstract implementation for price systems
  */
 abstract class AbstractPriceSystem implements IPriceSystem
 {
@@ -37,29 +38,24 @@ abstract class AbstractPriceSystem implements IPriceSystem
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct
-     * @param int | string $quantityScale
-     *    quantityScale - numeric or string (allowed values: \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo::MIN_PRICE
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable[] $products
-     *
-     * @return IPriceInfo
+     * @inheritdoc
      */
-    public function getPriceInfo(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $abstractProduct, $quantityScale = null, $products = null)
+    public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo
     {
-        return $this->initPriceInfoInstance($quantityScale, $abstractProduct, $products);
+        return $this->initPriceInfoInstance($quantityScale, $product, $products);
     }
 
     /**
-     * returns shop-instance specific implementation of priceInfo, override this method in your own price system to
+     * Returns shop-instance specific implementation of priceInfo, override this method in your own price system to
      * set any price values
      *
-     * @param $quantityScale
-     * @param $product
-     * @param $products
+     * @param null|int|string $quantityScale Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
+     * @param ICheckoutable $product
+     * @param ICheckoutable[] $products
      *
      * @return IPriceInfo
      */
-    protected function initPriceInfoInstance($quantityScale, $product, $products)
+    protected function initPriceInfoInstance($quantityScale, ICheckoutable $product, $products)
     {
         $priceInfo = $this->createPriceInfoInstance($quantityScale, $product, $products);
 
@@ -78,15 +74,13 @@ abstract class AbstractPriceSystem implements IPriceSystem
     }
 
     /**
-     * @param $quantityScale
-     * @param $product
-     * @param $products
-     *
-     * @internal param $infoConstructorParams
+     * @param null|int|string $quantityScale Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
+     * @param ICheckoutable $product
+     * @param ICheckoutable[] $products
      *
      * @return AbstractPriceInfo
      */
-    abstract public function createPriceInfoInstance($quantityScale, $product, $products);
+    abstract public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products);
 
     /**
      * Sample implementation for getting the correct OnlineShopTaxClass. In this case Tax Class is retrieved from
@@ -98,7 +92,7 @@ abstract class AbstractPriceSystem implements IPriceSystem
      */
     protected function getDefaultTaxClass()
     {
-        $taxClass =  WebsiteSetting::getByName('defaultTaxClass');
+        $taxClass = WebsiteSetting::getByName('defaultTaxClass');
 
         if ($taxClass) {
             $taxClass = OnlineShopTaxClass::getById($taxClass->getData());
@@ -115,10 +109,7 @@ abstract class AbstractPriceSystem implements IPriceSystem
     /**
      * Returns OnlineShopTaxClass for given ICheckoutable.
      *
-     * Should be overwritten in custom price systems with suitable implementation.
-     *
      * @param ICheckoutable $product
-     * @param $environment
      *
      * @return OnlineShopTaxClass
      */
@@ -130,10 +121,7 @@ abstract class AbstractPriceSystem implements IPriceSystem
     /**
      * Returns OnlineShopTaxClass for given ICartPriceModificator
      *
-     * Should be overwritten in custom price systems with suitable implementation.
-     *
      * @param ICartPriceModificator $modificator
-     * @param $environment
      *
      * @return OnlineShopTaxClass
      */

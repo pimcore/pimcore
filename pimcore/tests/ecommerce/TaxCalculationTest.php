@@ -265,13 +265,16 @@ class TaxCalculationTest extends TestCase
                 return $taxClass;
             },
             'getPriceClassInstance' => function ($amount) {
-                return new Price($amount, new Currency('EUR'));
+                return new Price(PriceAmount::create($amount), new Currency('EUR'));
             },
             'calculateAmount' => function () {
                 return 100;
             }
         ]);
 
+        /**
+         * @var $product AbstractProduct
+         */
         $product = Stub::construct(AbstractProduct::class, [], [
             'getId' => function () {
                 return 5;
@@ -284,9 +287,11 @@ class TaxCalculationTest extends TestCase
             }
         ]);
 
-        /**
-         * @var $product AbstractProduct
-         */
-        $this->assertEquals(100, round($product->getOSPrice()->getAmount(), 2), 'Get Price Amount without any tax entries');
+
+        $this->assertEquals(
+            100,
+            $product->getOSPrice()->getAmount()->asNumeric(),
+            'Get Price Amount without any tax entries'
+        );
     }
 }

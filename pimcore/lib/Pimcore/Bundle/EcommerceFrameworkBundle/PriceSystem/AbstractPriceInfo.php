@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,14 +17,32 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-/**
-  * Abstract base class price info
-  */
- class AbstractPriceInfo implements IPriceInfo
- {
-     /**
-     * @static
-     *
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+
+class AbstractPriceInfo implements IPriceInfo
+{
+    /**
+     * @var IPriceSystem
+     */
+    private $priceSystem;
+
+    /**
+     * @var int
+     */
+    protected $quantity;
+
+    /**
+     * @var ICheckoutable
+     */
+    protected $product;
+
+    /**
+     * @var ICheckoutable[]
+     */
+    protected $products;
+
+    /**
      * @return AbstractPriceInfo
      */
     public static function getInstance()
@@ -30,26 +51,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
     }
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
-     */
-    private $priceSystem;
-
-     /** @var int */
-     protected $quantity;
-
-     /**
-      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
-      */
-     protected $product;
-
-     /**
-      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable[]
-      */
-     protected $products;
-
-    /**
-     * @param int|string $quantity
-     * numeric quantity or constant IPriceInfo::MIN_PRICE
+     * @inheritdoc
      */
     public function setQuantity($quantity)
     {
@@ -57,7 +59,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
     }
 
     /**
-     * @return int|string
+     * @inheritdoc
      */
     public function getQuantity()
     {
@@ -65,17 +67,17 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function isMinPrice()
+    public function isMinPrice(): bool
     {
         return $this->getQuantity() === self::MIN_PRICE;
     }
 
     /**
-     * @param IPriceSystem $priceSystem
+     * @inheritdoc
      */
-    public function setPriceSystem($priceSystem)
+    public function setPriceSystem(IPriceSystem $priceSystem)
     {
         $this->priceSystem = $priceSystem;
     }
@@ -88,43 +90,45 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
         return $this->priceSystem;
     }
 
-     /**
-      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
-      *
-      * @return IPrice
-      */
-     public function getPrice()
-     {
-         throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
-     }
+    /**
+     * @inheritdoc
+     */
+    public function getPrice(): IPrice
+    {
+        throw new UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
+    }
 
-     /**
-      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
-      *
-      * @return IPrice
-      */
-     public function getTotalPrice()
-     {
-         throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
-     }
+    /**
+     * @inheritdoc
+     */
+    public function getTotalPrice(): IPrice
+    {
+        throw new UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
+    }
 
-     public function setProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product)
-     {
-         $this->product = $product;
-     }
+    /**
+     * @inheritdoc
+     */
+    public function setProduct(ICheckoutable $product)
+    {
+        $this->product = $product;
+    }
 
-     public function getProduct()
-     {
-         return $this->product;
-     }
+    /**
+     * @inheritdoc
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
 
-     public function setProducts($products)
-     {
-         $this->products = $products;
-     }
+    public function setProducts($products)
+    {
+        $this->products = $products;
+    }
 
-     public function getProducts()
-     {
-         return $this->products;
-     }
- }
+    public function getProducts()
+    {
+        return $this->products;
+    }
+}
