@@ -15,13 +15,10 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
     extend: 'Ext.grid.CellEditor',
 
     constructor: function(config) {
-        console.log("constructor");
-        // this.config = config;
         this.callParent(arguments);
     },
 
     initComponent: function() {
-        console.log("init");
         this.callParent();
     },
 
