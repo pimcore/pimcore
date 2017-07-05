@@ -351,6 +351,56 @@ class PriceAmountTest extends TestCase
         $val->div(0.00001);
     }
 
+    public function testPercentage()
+    {
+        $this->assertEquals(80, PriceAmount::create(100)->toPercentage(80)->asNumeric());
+        $this->assertEquals(35, PriceAmount::create(100)->toPercentage(35)->asNumeric());
+        $this->assertEquals(200, PriceAmount::create(100)->toPercentage(200)->asNumeric());
+    }
+
+    public function testDiscount()
+    {
+        $this->assertEquals(85, PriceAmount::create(100)->discount(15)->asNumeric());
+        $this->assertEquals(50, PriceAmount::create(100)->discount(50)->asNumeric());
+        $this->assertEquals(70, PriceAmount::create(100)->discount(30)->asNumeric());
+    }
+
+    public function testPercentageOf()
+    {
+        $origPrice       = PriceAmount::create('129.99');
+        $discountedPrice = PriceAmount::create('88.00');
+
+        $this->assertEquals(68, round($discountedPrice->percentageOf($origPrice), 0));
+        $this->assertEquals(148, round($origPrice->percentageOf($discountedPrice), 0));
+
+        $a = PriceAmount::create(100);
+        $b = PriceAmount::create(50);
+
+        $this->assertEquals(100, $a->percentageOf($a));
+        $this->assertEquals(100, $b->percentageOf($b));
+        $this->assertEquals(200, $a->percentageOf($b));
+        $this->assertEquals(50, $b->percentageOf($a));
+    }
+
+    public function testDiscountPercentageOf()
+    {
+        $origPrice       = PriceAmount::create('129.99');
+        $discountedPrice = PriceAmount::create('88.00');
+
+        $this->assertEquals(32, round($discountedPrice->discountPercentageOf($origPrice), 0));
+
+        $a = PriceAmount::create(100);
+        $b = PriceAmount::create(50);
+        $c = PriceAmount::create(30);
+
+        $this->assertEquals(0, $a->discountPercentageOf($a));
+        $this->assertEquals(0, $b->discountPercentageOf($b));
+        $this->assertEquals(-100, $a->discountPercentageOf($b));
+        $this->assertEquals(50, $b->discountPercentageOf($a));
+        $this->assertEquals(70, $c->discountPercentageOf($a));
+        $this->assertEquals(40, $c->discountPercentageOf($b));
+    }
+
     // TODO test overflow/underflow is checked on every possible operation
     public function testIntegerOverflow()
     {

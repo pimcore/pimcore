@@ -475,6 +475,81 @@ class PriceAmount
     }
 
     /**
+     * Calculate a percentage amount
+     *
+     * @param int|float $percentage
+     * @param int|null $roundingMode
+     *
+     * @return PriceAmount
+     */
+    public function toPercentage($percentage, int $roundingMode = null): self
+    {
+        $percentage = $this->getScalarOperand($percentage);
+
+        return $this->mul(($percentage / 100), $roundingMode);
+    }
+
+    /**
+     * Calculate a discounted amount
+     *
+     * @example PriceAmount::create(100)->discount(15) = 85
+     *
+     * @param $discount
+     * @param int|null $roundingMode
+     *
+     * @return PriceAmount
+     */
+    public function discount($discount, int $roundingMode = null): self
+    {
+        $discount = $this->getScalarOperand($discount);
+
+        return $this->sub(
+            $this->toPercentage($discount, $roundingMode)
+        );
+    }
+
+    /**
+     * Get the relative percentage to another value
+     *
+     * @example PriceAmount::create(100)->percentageOf(PriceAmount::create(50)) = 200
+     * @example PriceAmount::create(50)->percentageOf(PriceAmount::create(100)) = 50
+     *
+     * @param PriceAmount $other
+     *
+     * @return int|float
+     */
+    public function percentageOf(PriceAmount $other)
+    {
+        $this->assertSameScale($other);
+
+        if ($this->equals($other)) {
+            return 100;
+        }
+
+        return ($this->asRawValue() * 100) / $other->asRawValue();
+    }
+
+    /**
+     * Get the discount percentage starting from a discounted price
+     *
+     * @example PriceAmount::create(30)->discountPercentageOf(PriceAmount::create(100)) = 70
+     *
+     * @param PriceAmount $other
+     *
+     * @return int|float
+     */
+    public function discountPercentageOf(PriceAmount $other)
+    {
+        $this->assertSameScale($other);
+
+        if ($this->equals($other)) {
+            return 0;
+        }
+
+        return 100 - $this->percentageOf($other);
+    }
+
+    /**
      * Transforms operand into a numeric value used for calculations.
      *
      * @param int|float|PriceAmount $operand
