@@ -84,6 +84,10 @@
    - Fallback for old view scripts path relative to `PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts"` - but they 
       are also rendered with Symfony engine.
 
+- Price objects (`IPrice`) now use a value object instead of floats to represent prices. All calls to `get*Amount()`,
+  `set*Amount()` and all custom calculations need to be updated to work with the value object.
+- Added PHP 7 type hints to interfaces where applicable, especially regarding pricing. You might need to update your
+  implementations to match updated interface definitions.
 - CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when subclassing the
   default calculator.
    
