@@ -12,10 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-// set up constants and autoloading
-require_once  __DIR__ . '/bootstrap.php';
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
-// load kernel
-$kernel = require_once  __DIR__ . '/kernel.php';
+require_once __DIR__ . '/constants.php';
+require_once __DIR__ . '/autoload.php';
 
-return $kernel;
+$phpLog = PIMCORE_LOG_DIRECTORY . '/php.log';
+if (is_writable(PIMCORE_LOG_DIRECTORY)) {
+    ini_set('error_log', $phpLog);
+    ini_set('log_errors', '1');
+}

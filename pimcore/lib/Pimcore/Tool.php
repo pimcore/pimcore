@@ -21,6 +21,14 @@ use Symfony\Component\HttpFoundation\Request;
 class Tool
 {
     /**
+     * Sets the current request to use when resolving request at early
+     * stages (before container is loaded)
+     *
+     * @var Request
+     */
+    private static $currentRequest;
+
+    /**
      * @var array
      */
     protected static $notFoundClassNames = [];
@@ -34,6 +42,16 @@ class Tool
      * @var null
      */
     protected static $isFrontend = null;
+
+    /**
+     * Sets the current request to operate on
+     *
+     * @param Request|null $request
+     */
+    public static function setCurrentRequest(Request $request = null)
+    {
+        self::$currentRequest = $request;
+    }
 
     /**
      * returns a valid cache key/tag string
@@ -305,6 +323,10 @@ class Tool
             // do an extra check for the container as we might be in a state where no container is set yet
             if (\Pimcore::hasContainer()) {
                 $request = \Pimcore::getContainer()->get('request_stack')->getMasterRequest();
+            } else {
+                if (null !== self::$currentRequest) {
+                    return self::$currentRequest;
+                }
             }
         }
 
