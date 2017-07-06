@@ -83,8 +83,8 @@ class ProductTaxManagementTest extends TestCase
          * @var $product AbstractProduct
          */
         $price = $product->getOSPrice();
-        $this->assertEquals(100, $price->getGrossAmount(), 'Get gross amount with tax 10% + 15% combine');
-        $this->assertEquals(80, $price->getNetAmount(), 'Get net amount 10% + 15% combine');
+        $this->assertEquals(100, $price->getGrossAmount()->asNumeric(), 'Get gross amount with tax 10% + 15% combine');
+        $this->assertEquals(80, $price->getNetAmount()->asNumeric(), 'Get net amount 10% + 15% combine');
     }
 
     public function testPriceWithTaxEntriesOneAfterAnother()
@@ -95,7 +95,7 @@ class ProductTaxManagementTest extends TestCase
          * @var $product AbstractProduct
          */
         $price = $product->getOSPrice();
-        $this->assertEquals(100, $price->getGrossAmount(), 'Get gross amount with tax 10% + 15% one-after-another');
-        $this->assertEquals(79.05, $price->getNetAmount(), 'Get net amount 10% + 15% one-after-another');
+        $this->assertEquals(100, $price->getGrossAmount()->asNumeric(), 'Get gross amount with tax 10% + 15% one-after-another');
+        $this->assertEquals(79.05, $price->getNetAmount()->asNumeric(), 'Get net amount 10% + 15% one-after-another');
     }
 }
