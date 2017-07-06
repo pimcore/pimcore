@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Ecommerce;
+namespace Pimcore\Tests\Ecommerce\PriceSystem;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
