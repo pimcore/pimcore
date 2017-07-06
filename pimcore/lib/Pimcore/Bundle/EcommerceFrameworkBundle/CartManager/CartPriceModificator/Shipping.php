@@ -20,20 +20,21 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 class Shipping implements IShipping
 {
     /**
-     * @var float
+     * @var PriceAmount
      */
-    protected $charge = 0;
+    protected $charge;
 
     /**
      * @var OnlineShopTaxClass
      */
-    protected $taxClass = 0;
+    protected $taxClass;
 
     /**
      * @param Config $config
@@ -41,7 +42,9 @@ class Shipping implements IShipping
     public function __construct(Config $config = null)
     {
         if ($config && $config->charge) {
-            $this->charge = floatval($config->charge);
+            $this->charge = PriceAmount::create($config->charge);
+        } else {
+            $this->charge = PriceAmount::zero();
         }
     }
 
@@ -75,11 +78,11 @@ class Shipping implements IShipping
     }
 
     /**
-     * @param float $charge
+     * @param PriceAmount $charge
      *
      * @return ICartPriceModificator
      */
-    public function setCharge($charge)
+    public function setCharge(PriceAmount $charge)
     {
         $this->charge = $charge;
 
@@ -87,9 +90,9 @@ class Shipping implements IShipping
     }
 
     /**
-     * @return float
+     * @return PriceAmount
      */
-    public function getCharge()
+    public function getCharge(): PriceAmount
     {
         return $this->charge;
     }

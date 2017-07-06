@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+
 /**
  * Interface IShipping
  *
@@ -22,14 +24,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificat
 interface IShipping extends ICartPriceModificator
 {
     /**
-     * @param float $charge
+     * @param PriceAmount $charge
      *
      * @return ICartPriceModificator
      */
-    public function setCharge($charge);
+    public function setCharge(PriceAmount $charge);
 
     /**
-     * @return float
+     * @return PriceAmount
      */
-    public function getCharge();
+    public function getCharge(): PriceAmount;
 }

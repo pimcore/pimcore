@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Config\Config;
@@ -433,15 +434,17 @@ class OrderManager implements IOrderManager
         }
         $orderItem->setComment($item->getComment());
 
-        $price = 0;
-        $netPrice = 0;
+        $price    = PriceAmount::zero();
+        $netPrice = PriceAmount::zero();
+
         if (!$isGiftItem && is_object($item->getTotalPrice())) {
-            $price = $item->getTotalPrice()->getGrossAmount();
+            $price    = $item->getTotalPrice()->getGrossAmount();
             $netPrice = $item->getTotalPrice()->getNetAmount();
         }
 
-        $orderItem->setTotalPrice($price);
-        $orderItem->setTotalNetPrice($netPrice);
+        // TODO refine how amount is passed to order item (asNumeric? asString?)
+        $orderItem->setTotalPrice($price->asNumeric());
+        $orderItem->setTotalNetPrice($netPrice->asNumeric());
         $orderItem->setTaxInfo($this->buildTaxArray($item->getTotalPrice()->getTaxEntries()));
 
         if (!$isGiftItem) {
@@ -482,7 +485,7 @@ class OrderManager implements IOrderManager
             $taxArray[] = [
                 $taxEntry->getEntry()->getName(),
                 $taxEntry->getPercent() . '%',
-                $taxEntry->getAmount()
+                $taxEntry->getAmount()->asNumeric()
             ];
         }
 
