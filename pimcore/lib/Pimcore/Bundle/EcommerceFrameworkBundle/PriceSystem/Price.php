@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class Price implements IPrice
 {
@@ -30,12 +30,12 @@ class Price implements IPrice
     private $currency;
 
     /**
-     * @var PriceAmount
+     * @var Decimal
      */
     private $grossAmount;
 
     /**
-     * @var PriceAmount
+     * @var Decimal
      */
     private $netAmount;
 
@@ -55,11 +55,11 @@ class Price implements IPrice
     private $taxEntries = [];
 
     /**
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      * @param Currency $currency
      * @param bool $minPrice
      */
-    public function __construct(PriceAmount $amount, Currency $currency, bool $minPrice = false)
+    public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false)
     {
         $this->grossAmount = $this->netAmount = $amount;
         $this->currency    = $currency;
@@ -82,7 +82,7 @@ class Price implements IPrice
     /**
      * @inheritdoc
      */
-    public function setAmount(PriceAmount $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false)
+    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false)
     {
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
@@ -99,7 +99,7 @@ class Price implements IPrice
     /**
      * @inheritdoc
      */
-    public function getAmount(): PriceAmount
+    public function getAmount(): Decimal
     {
         return $this->grossAmount;
     }
@@ -123,7 +123,7 @@ class Price implements IPrice
     /**
      * @inheritdoc
      */
-    public function getGrossAmount(): PriceAmount
+    public function getGrossAmount(): Decimal
     {
         return $this->grossAmount;
     }
@@ -131,7 +131,7 @@ class Price implements IPrice
     /**
      * @inheritdoc
      */
-    public function getNetAmount(): PriceAmount
+    public function getNetAmount(): Decimal
     {
         return $this->netAmount;
     }
@@ -155,7 +155,7 @@ class Price implements IPrice
     /**
      * @inheritdoc
      */
-    public function setGrossAmount(PriceAmount $grossAmount, bool $recalc = false)
+    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false)
     {
         $this->grossAmount = $grossAmount;
 
@@ -167,7 +167,7 @@ class Price implements IPrice
     /**
      * @inheritdoc
      */
-    public function setNetAmount(PriceAmount $netAmount, bool $recalc = false)
+    public function setNetAmount(Decimal $netAmount, bool $recalc = false)
     {
         $this->netAmount = $netAmount;
 

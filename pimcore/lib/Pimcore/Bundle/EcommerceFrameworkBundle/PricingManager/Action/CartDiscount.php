@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-// TODO use PriceAmount for amounts?
+// TODO use Decimal for amounts?
 class CartDiscount implements IDiscount
 {
     /**
@@ -52,7 +52,7 @@ class CartDiscount implements IDiscount
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
-        $amount = PriceAmount::create($this->amount);
+        $amount = Decimal::create($this->amount);
         if ($amount->isZero()) {
             $amount = $priceCalculator->getSubTotal()->getAmount()->toPercentage($this->getPercent());
         }

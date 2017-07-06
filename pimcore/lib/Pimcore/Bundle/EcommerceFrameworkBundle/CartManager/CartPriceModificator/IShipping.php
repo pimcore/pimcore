@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 /**
  * Interface IShipping
@@ -24,14 +24,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 interface IShipping extends ICartPriceModificator
 {
     /**
-     * @param PriceAmount $charge
+     * @param Decimal $charge
      *
      * @return ICartPriceModificator
      */
-    public function setCharge(PriceAmount $charge);
+    public function setCharge(Decimal $charge);
 
     /**
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getCharge(): PriceAmount;
+    public function getCharge(): Decimal;
 }

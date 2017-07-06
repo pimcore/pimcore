@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class CartAmount implements ICartAmount
 {
@@ -38,8 +38,8 @@ class CartAmount implements ICartAmount
 
         $calculator = $environment->getCart()->getPriceCalculator();
 
-        // TODO store limit as PriceAmount?
-        return $calculator->getSubTotal()->getAmount()->greaterThanOrEqual(PriceAmount::create($this->getLimit()));
+        // TODO store limit as Decimal?
+        return $calculator->getSubTotal()->getAmount()->greaterThanOrEqual(Decimal::create($this->getLimit()));
     }
 
     /**

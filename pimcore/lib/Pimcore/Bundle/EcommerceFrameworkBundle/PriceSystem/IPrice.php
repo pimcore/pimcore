@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 /**
  * Interface for price implementations of online shop framework
@@ -32,9 +32,9 @@ interface IPrice
     /**
      * Returns $grossAmount
      *
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getAmount(): PriceAmount;
+    public function getAmount(): Decimal;
 
     /**
      * @return Currency
@@ -50,25 +50,25 @@ interface IPrice
      * Sets amount of price, depending on $priceMode and $recalc it sets net price or gross price and recalculates the
      * corresponding net or gross price.
      *
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      * @param string $priceMode - default to PRICE_MODE_GROSS
      * @param bool $recalc - default to false
      */
-    public function setAmount(PriceAmount $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false);
+    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false);
 
     /**
      * Returns gross amount of price
      *
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getGrossAmount(): PriceAmount;
+    public function getGrossAmount(): Decimal;
 
     /**
      * Returns net amount of price
      *
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getNetAmount(): PriceAmount;
+    public function getNetAmount(): Decimal;
 
     /**
      * Returns tax entries of price as an array
@@ -88,23 +88,23 @@ interface IPrice
      * Sets gross amount of price. If $recalc is set to true, corresponding net price
      * is calculated based on tax entries and tax entry combination mode.
      *
-     * @param PriceAmount $grossAmount
+     * @param Decimal $grossAmount
      * @param bool $recalc
      *
      * @return void
      */
-    public function setGrossAmount(PriceAmount $grossAmount, bool $recalc = false);
+    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false);
 
     /**
      * Sets net amount of price. If $recalc is set to true, corresponding gross price
      * is calculated based on tax entries and tax entry combination mode.
      *
-     * @param PriceAmount $netAmount
+     * @param Decimal $netAmount
      * @param bool $recalc
      *
      * @return void
      */
-    public function setNetAmount(PriceAmount $netAmount, bool $recalc = false);
+    public function setNetAmount(Decimal $netAmount, bool $recalc = false);
 
     /**
      * Sets tax entries for price.

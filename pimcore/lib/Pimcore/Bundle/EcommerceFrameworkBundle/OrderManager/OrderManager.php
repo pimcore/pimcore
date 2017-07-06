@@ -22,9 +22,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 
 class OrderManager implements IOrderManager
@@ -434,8 +434,8 @@ class OrderManager implements IOrderManager
         }
         $orderItem->setComment($item->getComment());
 
-        $price    = PriceAmount::zero();
-        $netPrice = PriceAmount::zero();
+        $price    = Decimal::zero();
+        $netPrice = Decimal::zero();
 
         if (!$isGiftItem && is_object($item->getTotalPrice())) {
             $price    = $item->getTotalPrice()->getGrossAmount();

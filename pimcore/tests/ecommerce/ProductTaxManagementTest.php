@@ -8,7 +8,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 use Pimcore\Tests\Test\TestCase;
 
@@ -23,7 +23,7 @@ class ProductTaxManagementTest extends TestCase
      */
     private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
     {
-        $grossPrice = PriceAmount::create($grossPrice);
+        $grossPrice = Decimal::create($grossPrice);
 
         $taxClass = new OnlineShopTaxClass();
         $taxEntries = new \Pimcore\Model\Object\Fieldcollection();
@@ -43,10 +43,10 @@ class ProductTaxManagementTest extends TestCase
             'getTaxClassForProduct' => function () use ($taxClass) {
                 return $taxClass;
             },
-            'getPriceClassInstance' => function (PriceAmount $amount) {
+            'getPriceClassInstance' => function (Decimal $amount) {
                 return new Price($amount, new Currency('EUR'));
             },
-            'calculateAmount' => function () use ($grossPrice): PriceAmount {
+            'calculateAmount' => function () use ($grossPrice): Decimal {
                 return $grossPrice;
             }
         ]);

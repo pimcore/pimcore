@@ -10,7 +10,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 use Pimcore\Tests\Test\TestCase;
 
@@ -33,7 +33,7 @@ class TaxCalculationTest extends TestCase
 
     public function testNetAndGrossDefaultToTheSameValue()
     {
-        $price = new Price(PriceAmount::create(100), new Currency('EUR'));
+        $price = new Price(Decimal::create(100), new Currency('EUR'));
 
         $this->assertEquals(100, $price->getAmount()->asNumeric());
         $this->assertEquals(100, $price->getGrossAmount()->asNumeric());
@@ -42,12 +42,12 @@ class TaxCalculationTest extends TestCase
 
     public function testNetAndGrossAmountAreDifferentValues()
     {
-        $price = new Price(PriceAmount::create(100), new Currency('EUR'));
+        $price = new Price(Decimal::create(100), new Currency('EUR'));
 
         $this->assertEquals(100, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(100, $price->getNetAmount()->asNumeric());
 
-        $price->setNetAmount(PriceAmount::create(90));
+        $price->setNetAmount(Decimal::create(90));
 
         $this->assertEquals(100, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(90, $price->getNetAmount()->asNumeric());
@@ -55,9 +55,9 @@ class TaxCalculationTest extends TestCase
 
     public function testNetAndGrossAreTheSameWithoutTaxEntries()
     {
-        $price = new Price(PriceAmount::create(100), new Currency('EUR'));
+        $price = new Price(Decimal::create(100), new Currency('EUR'));
 
-        $price->setNetAmount(PriceAmount::create(90), false);
+        $price->setNetAmount(Decimal::create(90), false);
 
         $this->assertEquals(100, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(90, $price->getNetAmount()->asNumeric());
@@ -71,14 +71,14 @@ class TaxCalculationTest extends TestCase
 
     public function testTaxesAreUpdatesWithRecalcParam()
     {
-        $price = new Price(PriceAmount::create(100), new Currency('EUR'));
+        $price = new Price(Decimal::create(100), new Currency('EUR'));
 
-        $price->setNetAmount(PriceAmount::create(90), true);
+        $price->setNetAmount(Decimal::create(90), true);
 
         $this->assertEquals(90, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(90, $price->getNetAmount()->asNumeric());
 
-        $price->setGrossAmount(PriceAmount::create(110), true);
+        $price->setGrossAmount(Decimal::create(110), true);
 
         $this->assertEquals(110, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(110, $price->getNetAmount()->asNumeric());
@@ -86,23 +86,23 @@ class TaxCalculationTest extends TestCase
 
     public function testSetAmount()
     {
-        $price = new Price(PriceAmount::create(100), new Currency('EUR'));
-        $price->setAmount(PriceAmount::create(110), IPrice::PRICE_MODE_GROSS, false);
+        $price = new Price(Decimal::create(100), new Currency('EUR'));
+        $price->setAmount(Decimal::create(110), IPrice::PRICE_MODE_GROSS, false);
 
         $this->assertEquals(110, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(100, $price->getNetAmount()->asNumeric());
 
-        $price->setAmount(PriceAmount::create(120), IPrice::PRICE_MODE_GROSS, true);
+        $price->setAmount(Decimal::create(120), IPrice::PRICE_MODE_GROSS, true);
 
         $this->assertEquals(120, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(120, $price->getNetAmount()->asNumeric());
 
-        $price->setAmount(PriceAmount::create(90), IPrice::PRICE_MODE_NET, false);
+        $price->setAmount(Decimal::create(90), IPrice::PRICE_MODE_NET, false);
 
         $this->assertEquals(120, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(90, $price->getNetAmount()->asNumeric());
 
-        $price->setAmount(PriceAmount::create(80), IPrice::PRICE_MODE_NET, true);
+        $price->setAmount(Decimal::create(80), IPrice::PRICE_MODE_NET, true);
 
         $this->assertEquals(80, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(80, $price->getNetAmount()->asNumeric());
@@ -110,13 +110,13 @@ class TaxCalculationTest extends TestCase
 
     public function testSingleTaxEntryFromNet()
     {
-        $price = new Price(PriceAmount::create(90), new Currency('EUR'));
+        $price = new Price(Decimal::create(90), new Currency('EUR'));
 
         $this->assertTrue($price->getNetAmount()->equals($price->getGrossAmount()), 'No tax entries > net and gross should be equal');
 
         // single tax entry 10%
         $price->setTaxEntries([
-            new TaxEntry(10, PriceAmount::create(0))
+            new TaxEntry(10, Decimal::create(0))
         ]);
 
         $this->calculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_NET);
@@ -126,7 +126,7 @@ class TaxCalculationTest extends TestCase
         $this->assertCount(1, $taxEntries);
         $this->assertEquals(9, $taxEntries[0]->getAmount()->asNumeric(), 'Tax 10%, tax entry amount');
 
-        $price->setGrossAmount(PriceAmount::create(100));
+        $price->setGrossAmount(Decimal::create(100));
         $this->calculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
         $this->assertSame('90.91', $price->getNetAmount()->asString(2), 'Tax 10%, calc from gross price');
 
@@ -135,11 +135,11 @@ class TaxCalculationTest extends TestCase
 
     public function testSingleTaxEntryFromGross()
     {
-        $price = new Price(PriceAmount::create(0), new Currency('EUR'));
+        $price = new Price(Decimal::create(0), new Currency('EUR'));
         $price->setTaxEntries([
-            new TaxEntry(15, PriceAmount::create(0))
+            new TaxEntry(15, Decimal::create(0))
         ]);
-        $price->setGrossAmount(PriceAmount::create(110), true);
+        $price->setGrossAmount(Decimal::create(110), true);
 
         $this->assertEquals(110, $price->getGrossAmount()->asNumeric());
         $this->assertSame('95.65', $price->getNetAmount()->asString(2), 'Tax 15%, calc from gross price with automatic recalc');
@@ -156,7 +156,7 @@ class TaxCalculationTest extends TestCase
         $this->assertEquals(110, $addedTaxNetAmount->asNumeric());
         $this->assertTrue($price->getGrossAmount()->equals($addedTaxNetAmount));
 
-        $price->setNetAmount(PriceAmount::create(100), true);
+        $price->setNetAmount(Decimal::create(100), true);
         $this->assertEquals(115, $price->getGrossAmount()->asNumeric(), 'Tax 15%, calc from net price with automatic recalc');
 
         $taxEntries = $price->getTaxEntries();
@@ -165,13 +165,13 @@ class TaxCalculationTest extends TestCase
 
     public function testMultipleTaxEntriesOneAfterAnother()
     {
-        $price = new Price(PriceAmount::create(90), new Currency('EUR'));
+        $price = new Price(Decimal::create(90), new Currency('EUR'));
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
         // multiple tax entry 12% 4% one-after-another
         $price->setTaxEntries([
-            new TaxEntry(12, PriceAmount::create(0)),
-            new TaxEntry(4, PriceAmount::create(0)),
+            new TaxEntry(12, Decimal::create(0)),
+            new TaxEntry(4, Decimal::create(0)),
         ]);
 
         $this->assertEquals(90, $price->getGrossAmount()->asNumeric());
@@ -192,13 +192,13 @@ class TaxCalculationTest extends TestCase
 
     public function testMultipleTaxEntriesCombined()
     {
-        $price = new Price(PriceAmount::create(90), new Currency('EUR'));
+        $price = new Price(Decimal::create(90), new Currency('EUR'));
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_COMBINE);
 
         // multiple tax entry 12% 4% combine
         $price->setTaxEntries([
-            new TaxEntry(12, PriceAmount::create(0)),
-            new TaxEntry(4, PriceAmount::create(0)),
+            new TaxEntry(12, Decimal::create(0)),
+            new TaxEntry(4, Decimal::create(0)),
         ]);
 
         $this->calculationService->updateTaxes($price);
@@ -216,13 +216,13 @@ class TaxCalculationTest extends TestCase
 
     public function testMultipleTaxEntriesCombinedFromGross()
     {
-        $price = new Price(PriceAmount::create(100), new Currency('EUR'));
+        $price = new Price(Decimal::create(100), new Currency('EUR'));
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_COMBINE);
 
         // multiple tax entry 12% 4% combine
         $price->setTaxEntries([
-            new TaxEntry(12, PriceAmount::create(0)),
-            new TaxEntry(4, PriceAmount::create(0)),
+            new TaxEntry(12, Decimal::create(0)),
+            new TaxEntry(4, Decimal::create(0)),
         ]);
 
         $this->calculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
@@ -260,10 +260,10 @@ class TaxCalculationTest extends TestCase
                 return $taxClass;
             },
             'getPriceClassInstance' => function ($amount) {
-                return new Price(PriceAmount::create($amount), new Currency('EUR'));
+                return new Price(Decimal::create($amount), new Currency('EUR'));
             },
             'calculateAmount' => function () {
-                return PriceAmount::create(100);
+                return Decimal::create(100);
             }
         ]);
 

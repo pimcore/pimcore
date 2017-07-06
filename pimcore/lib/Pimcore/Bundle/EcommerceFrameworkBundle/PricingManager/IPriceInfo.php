@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 interface IPriceInfo extends PriceSystemIPriceInfo
 {
@@ -46,16 +46,16 @@ interface IPriceInfo extends PriceSystemIPriceInfo
     public function getRules(bool $forceRecalc = false): array;
 
     /**
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      *
      * @return IPriceInfo
      */
-    public function setAmount(PriceAmount $amount);
+    public function setAmount(Decimal $amount);
 
     /**
      * @return IPriceInfo
      */
-    public function getAmount(): PriceAmount;
+    public function getAmount(): Decimal;
 
     /**
      * @return IPrice

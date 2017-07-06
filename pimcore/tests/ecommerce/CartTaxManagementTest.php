@@ -14,7 +14,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\Object\Fieldcollection;
 use Pimcore\Model\Object\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
 use Pimcore\Model\Object\OnlineShopTaxClass;
@@ -58,7 +58,7 @@ class CartTaxManagementTest extends TestCase
                 return new Price($amount, new Currency('EUR'));
             },
             'calculateAmount' => function () use ($grossPrice) {
-                return PriceAmount::create($grossPrice);
+                return Decimal::create($grossPrice);
             }
         ]);
 
@@ -108,7 +108,7 @@ class CartTaxManagementTest extends TestCase
 
         if ($withModificators) {
             $shipping = new Shipping();
-            $shipping->setCharge(PriceAmount::create(10));
+            $shipping->setCharge(Decimal::create(10));
             $shipping->setTaxClass($this->buildTaxClass($taxes));
             $calculator->addModificator($shipping);
         }

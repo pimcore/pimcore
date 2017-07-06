@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 /**
  * Interface IDiscount
@@ -27,14 +27,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 interface IDiscount extends ICartPriceModificator
 {
     /**
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      *
      * @return IDiscount
      */
-    public function setAmount(PriceAmount $amount);
+    public function setAmount(Decimal $amount);
 
     /**
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getAmount(): PriceAmount;
+    public function getAmount(): Decimal;
 }

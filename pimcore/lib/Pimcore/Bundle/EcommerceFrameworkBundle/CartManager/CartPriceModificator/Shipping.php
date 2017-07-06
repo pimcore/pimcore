@@ -20,14 +20,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
 class Shipping implements IShipping
 {
     /**
-     * @var PriceAmount
+     * @var Decimal
      */
     protected $charge;
 
@@ -42,9 +42,9 @@ class Shipping implements IShipping
     public function __construct(Config $config = null)
     {
         if ($config && $config->charge) {
-            $this->charge = PriceAmount::create($config->charge);
+            $this->charge = Decimal::create($config->charge);
         } else {
-            $this->charge = PriceAmount::zero();
+            $this->charge = Decimal::zero();
         }
     }
 
@@ -78,11 +78,11 @@ class Shipping implements IShipping
     }
 
     /**
-     * @param PriceAmount $charge
+     * @param Decimal $charge
      *
      * @return ICartPriceModificator
      */
-    public function setCharge(PriceAmount $charge)
+    public function setCharge(Decimal $charge)
     {
         $this->charge = $charge;
 
@@ -90,9 +90,9 @@ class Shipping implements IShipping
     }
 
     /**
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getCharge(): PriceAmount
+    public function getCharge(): Decimal
     {
         return $this->charge;
     }

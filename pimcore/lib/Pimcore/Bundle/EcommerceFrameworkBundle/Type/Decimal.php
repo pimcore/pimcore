@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\Type;
 
-class PriceAmount
+class Decimal
 {
     /**
      * @var int
@@ -37,8 +37,8 @@ class PriceAmount
     private $scale;
 
     /**
-     * Builds a price amount from an integer. The integer amount here must be the final value
-     * with conversion factor already applied.
+     * Builds a value from an integer. The integer amount here must be the final value with
+     * conversion factor already applied.
      *
      * @param int $amount
      * @param int $scale
@@ -111,7 +111,7 @@ class PriceAmount
 
     /**
      * Creates a value. If an integer is passed, its value will be used without any conversions. Any
-     * other value (float, string) will be converted to int with the given scale. If a PriceAmount is
+     * other value (float, string) will be converted to int with the given scale. If a Decimal is
      * passed, it will be converted to the given scale if necessary. Example:
      *
      * input: 15
@@ -130,7 +130,7 @@ class PriceAmount
         if (is_numeric($amount)) {
             return static::fromNumeric($amount, $scale, $roundingMode);
         } elseif ($amount instanceof self) {
-            return static::fromPriceAmount($amount, $scale);
+            return static::fromDecimal($amount, $scale);
         } else {
             throw new \TypeError(
                 'Expected (int, float, string, self), but received ' .
@@ -164,7 +164,7 @@ class PriceAmount
      * @param int|null $scale
      * @param int|null $roundingMode
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public static function fromNumeric($amount, int $scale = null, int $roundingMode = null): self
     {
@@ -189,12 +189,12 @@ class PriceAmount
      * new object will be returned. Please note that this will potentially imply precision
      * loss when converting to a lower scale.
      *
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      * @param int|null $scale
      *
-     * @return PriceAmount
+     * @return Decimal
      */
-    public static function fromPriceAmount(PriceAmount $amount, int $scale = null): self
+    public static function fromDecimal(Decimal $amount, int $scale = null): self
     {
         $scale = $scale ?? static::$defaultScale;
         static::validateScale($scale);
@@ -212,7 +212,7 @@ class PriceAmount
      *
      * @param int|null $scale
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public static function zero(int $scale = null): self
     {
@@ -281,7 +281,7 @@ class PriceAmount
      * @param int $scale
      * @param int|null $roundingMode
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function withScale(int $scale, int $roundingMode = null): self
     {
@@ -305,13 +305,13 @@ class PriceAmount
     /**
      * Checks if value is equal to other value
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @todo Assert same scale before comparing?
      *
      * @return bool
      */
-    public function equals(PriceAmount $other): bool
+    public function equals(Decimal $other): bool
     {
         return $other->scale === $this->scale && $other->amount === $this->amount;
     }
@@ -319,11 +319,11 @@ class PriceAmount
     /**
      * Compares a value to another one
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return int
      */
-    public function compare(PriceAmount $other): int
+    public function compare(Decimal $other): int
     {
         $this->assertSameScale($other, 'Can\'t compare values with different scales. Please convert both values to the same scale.');
 
@@ -337,11 +337,11 @@ class PriceAmount
     /**
      * Compares this > other
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return bool
      */
-    public function greaterThan(PriceAmount $other): bool
+    public function greaterThan(Decimal $other): bool
     {
         return $this->compare($other) === 1;
     }
@@ -349,11 +349,11 @@ class PriceAmount
     /**
      * Compares this >= other
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return bool
      */
-    public function greaterThanOrEqual(PriceAmount $other): bool
+    public function greaterThanOrEqual(Decimal $other): bool
     {
         return $this->compare($other) >= 0;
     }
@@ -361,11 +361,11 @@ class PriceAmount
     /**
      * Compares this < other
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return bool
      */
-    public function lessThan(PriceAmount $other): bool
+    public function lessThan(Decimal $other): bool
     {
         return $this->compare($other) === -1;
     }
@@ -373,11 +373,11 @@ class PriceAmount
     /**
      * Compares this <= other
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return bool
      */
-    public function lessThanOrEqual(PriceAmount $other): bool
+    public function lessThanOrEqual(Decimal $other): bool
     {
         return $this->compare($other) <= 0;
     }
@@ -415,7 +415,7 @@ class PriceAmount
     /**
      * Returns the absolute amount
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function abs(): self
     {
@@ -429,13 +429,13 @@ class PriceAmount
     /**
      * Adds another price amount
      *
-     * @param PriceAmount|int|float|string $other
+     * @param Decimal|int|float|string $other
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function add($other): self
     {
-        if (!$other instanceof PriceAmount) {
+        if (!$other instanceof Decimal) {
             $other = static::fromNumeric($other, $this->scale);
         }
 
@@ -450,13 +450,13 @@ class PriceAmount
     /**
      * Subtracts another price amount
      *
-     * @param PriceAmount|int|float|string $other
+     * @param Decimal|int|float|string $other
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function sub($other): self
     {
-        if (!$other instanceof PriceAmount) {
+        if (!$other instanceof Decimal) {
             $other = static::fromNumeric($other, $this->scale);
         }
 
@@ -471,12 +471,12 @@ class PriceAmount
     /**
      * Multiplies by the given factor. This does NOT have to be a price amount, but can be
      * a simple scalar factor (e.g. 2) as multiplying prices is rarely needed. However, if
-     * a PriceAmount is passed, its float representation will be used for calculations.
+     * a Decimal is passed, its float representation will be used for calculations.
      *
-     * @param int|float|PriceAmount $other
+     * @param int|float|Decimal $other
      * @param int|null $roundingMode
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function mul($other, int $roundingMode = null): self
     {
@@ -493,12 +493,12 @@ class PriceAmount
     /**
      * Divides by the given divisor. This does NOT have to be a price amount, but can be
      * a simple scalar factor (e.g. 2) as dividing prices is rarely needed. However, if
-     * a PriceAmount is passed, its float representation will be used for calculations.
+     * a Decimal is passed, its float representation will be used for calculations.
      *
-     * @param int|float|PriceAmount $other
+     * @param int|float|Decimal $other
      * @param int|null $roundingMode
      *
-     * @return PriceAmount
+     * @return Decimal
      * @throws \DivisionByZeroError
      */
     public function div($other, int $roundingMode = null): self
@@ -521,10 +521,10 @@ class PriceAmount
     /**
      * Returns the additive inverse of a value (e.g. 5 returns -5, -5 returns 5)
      *
-     * @example PriceAmount::create(5)->toAdditiveInverse() = -5
-     * @example PriceAmount::create(-5)->toAdditiveInverse() = 5
+     * @example Decimal::create(5)->toAdditiveInverse() = -5
+     * @example Decimal::create(-5)->toAdditiveInverse() = 5
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function toAdditiveInverse(): self
     {
@@ -537,7 +537,7 @@ class PriceAmount
      * @param int|float $percentage
      * @param int|null $roundingMode
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function toPercentage($percentage, int $roundingMode = null): self
     {
@@ -549,12 +549,12 @@ class PriceAmount
     /**
      * Calculate a discounted amount
      *
-     * @example PriceAmount::create(100)->discount(15) = 85
+     * @example Decimal::create(100)->discount(15) = 85
      *
      * @param $discount
      * @param int|null $roundingMode
      *
-     * @return PriceAmount
+     * @return Decimal
      */
     public function discount($discount, int $roundingMode = null): self
     {
@@ -568,14 +568,14 @@ class PriceAmount
     /**
      * Get the relative percentage to another value
      *
-     * @example PriceAmount::create(100)->percentageOf(PriceAmount::create(50)) = 200
-     * @example PriceAmount::create(50)->percentageOf(PriceAmount::create(100)) = 50
+     * @example Decimal::create(100)->percentageOf(Decimal::create(50)) = 200
+     * @example Decimal::create(50)->percentageOf(Decimal::create(100)) = 50
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return int|float
      */
-    public function percentageOf(PriceAmount $other)
+    public function percentageOf(Decimal $other)
     {
         $this->assertSameScale($other);
 
@@ -589,13 +589,13 @@ class PriceAmount
     /**
      * Get the discount percentage starting from a discounted price
      *
-     * @example PriceAmount::create(30)->discountPercentageOf(PriceAmount::create(100)) = 70
+     * @example Decimal::create(30)->discountPercentageOf(Decimal::create(100)) = 70
      *
-     * @param PriceAmount $other
+     * @param Decimal $other
      *
      * @return int|float
      */
-    public function discountPercentageOf(PriceAmount $other)
+    public function discountPercentageOf(Decimal $other)
     {
         $this->assertSameScale($other);
 
@@ -609,7 +609,7 @@ class PriceAmount
     /**
      * Transforms operand into a numeric value used for calculations.
      *
-     * @param int|float|PriceAmount $operand
+     * @param int|float|Decimal $operand
      *
      * @return float
      */
@@ -628,7 +628,7 @@ class PriceAmount
         ));
     }
 
-    private function assertSameScale(PriceAmount $other, string $message = null)
+    private function assertSameScale(Decimal $other, string $message = null)
     {
         if ($other->scale !== $this->scale) {
             $message = $message ?? 'Can\'t operate on amounts with different scales. Please convert both amounts to the same scale before proceeding.';

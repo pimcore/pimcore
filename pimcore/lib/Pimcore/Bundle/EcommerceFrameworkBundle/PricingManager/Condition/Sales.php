@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\Object\OnlineShopOrder;
 use Pimcore\Model\Object\OnlineShopOrderItem;
 
@@ -42,8 +42,8 @@ class Sales extends AbstractOrder implements ICondition
     {
         $rule = $environment->getRule();
         if ($rule) {
-            // TODO change this->amount to a PriceAmount?
-            $amount = PriceAmount::create($this->getAmount());
+            // TODO change this->amount to a Decimal?
+            $amount = Decimal::create($this->getAmount());
 
             return $this->getSalesAmount($rule)->lessThan($amount);
         } else {

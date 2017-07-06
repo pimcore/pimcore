@@ -19,13 +19,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class Discount implements IDiscount
 {
     /**
-     * @var PriceAmount
+     * @var Decimal
      */
     protected $amount;
 
@@ -40,7 +40,7 @@ class Discount implements IDiscount
     public function __construct(IRule $rule)
     {
         $this->rule   = $rule;
-        $this->amount = PriceAmount::create(0);
+        $this->amount = Decimal::create(0);
     }
 
     /**
@@ -90,7 +90,7 @@ class Discount implements IDiscount
     /**
      * @inheritdoc
      */
-    public function setAmount(PriceAmount $amount)
+    public function setAmount(Decimal $amount)
     {
         $this->amount = $amount;
 
@@ -100,7 +100,7 @@ class Discount implements IDiscount
     /**
      * @inheritdoc
      */
-    public function getAmount(): PriceAmount
+    public function getAmount(): Decimal
     {
         return $this->amount;
     }

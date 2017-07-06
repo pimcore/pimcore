@@ -18,8 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class PriceInfo implements IPriceInfo
 {
@@ -29,7 +28,7 @@ class PriceInfo implements IPriceInfo
     protected $priceInfo;
 
     /**
-     * @var PriceAmount
+     * @var Decimal
      */
     protected $amount;
 
@@ -63,7 +62,7 @@ class PriceInfo implements IPriceInfo
      */
     public function __construct(PriceSystemIPriceInfo $priceInfo, IEnvironment $environment)
     {
-        $this->amount = PriceAmount::create(0);
+        $this->amount = Decimal::create(0);
         $this->priceInfo = $priceInfo;
         $this->environment = $environment;
     }
@@ -162,7 +161,7 @@ class PriceInfo implements IPriceInfo
             $this->rulesApplied = true;
 
             if ($this->getAmount()->isNegative()) {
-                $this->setAmount(PriceAmount::create(0));
+                $this->setAmount(Decimal::create(0));
             }
         }
 
@@ -241,7 +240,7 @@ class PriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function setAmount(PriceAmount $amount)
+    public function setAmount(Decimal $amount)
     {
         $this->amount = $amount;
 
@@ -251,7 +250,7 @@ class PriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function getAmount(): PriceAmount
+    public function getAmount(): Decimal
     {
         return $this->amount;
     }

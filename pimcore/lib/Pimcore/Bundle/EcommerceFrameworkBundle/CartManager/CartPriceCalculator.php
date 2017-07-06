@@ -25,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class CartPriceCalculator implements ICartPriceCalculator
 {
@@ -78,8 +78,8 @@ class CartPriceCalculator implements ICartPriceCalculator
     public function calculate()
     {
         // sum up all item prices
-        $subTotalNet = PriceAmount::zero();
-        $subTotalGross = PriceAmount::zero();
+        $subTotalNet = Decimal::zero();
+        $subTotalGross = Decimal::zero();
 
         /** @var Currency $currency */
         $currency = null;
@@ -209,12 +209,12 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * Possibility to overwrite the price object that should be used
      *
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      * @param Currency $currency
      *
      * @return IPrice
      */
-    protected function getDefaultPriceObject(PriceAmount $amount, Currency $currency): IPrice
+    protected function getDefaultPriceObject(Decimal $amount, Currency $currency): IPrice
     {
         return new Price($amount, $currency);
     }

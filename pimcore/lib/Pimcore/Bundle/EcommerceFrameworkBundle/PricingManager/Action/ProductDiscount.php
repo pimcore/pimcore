@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-// TODO use PriceAmount for amounts?
+// TODO use Decimal for amounts?
 class ProductDiscount implements IProductDiscount
 {
     /**
@@ -40,10 +40,10 @@ class ProductDiscount implements IProductDiscount
     {
         $priceinfo = $environment->getPriceInfo();
 
-        $amount = PriceAmount::create($this->amount);
+        $amount = Decimal::create($this->amount);
 
         // TODO use discount()?
-        if ($amount->equals(PriceAmount::create(0))) {
+        if ($amount->equals(Decimal::create(0))) {
             $amount = $priceinfo->getAmount()->mul($this->getPercent() / 100);
         }
 

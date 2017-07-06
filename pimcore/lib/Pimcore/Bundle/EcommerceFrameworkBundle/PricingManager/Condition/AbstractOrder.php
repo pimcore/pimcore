@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
 use Pimcore\Model\Object\OnlineShopOrder;
 use Pimcore\Model\Object\OnlineShopOrderItem;
@@ -105,10 +105,10 @@ SQL;
     /**
      * @param IRule $rule
      *
-     * @return PriceAmount
+     * @return Decimal
      */
-    protected function getSalesAmount(IRule $rule): PriceAmount
+    protected function getSalesAmount(IRule $rule): Decimal
     {
-        return PriceAmount::create($this->getData($rule, 'salesAmount'));
+        return Decimal::create($this->getData($rule, 'salesAmount'));
     }
 }

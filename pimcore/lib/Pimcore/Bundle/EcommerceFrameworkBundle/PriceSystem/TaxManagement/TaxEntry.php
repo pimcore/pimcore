@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\Object\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
@@ -35,7 +35,7 @@ class TaxEntry
     protected $percent;
 
     /**
-     * @var PriceAmount
+     * @var Decimal
      */
     protected $amount;
 
@@ -46,11 +46,11 @@ class TaxEntry
 
     /**
      * @param $percent
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      * @param string|null $taxId
      * @param TaxEntryFieldcollection|null $entry
      */
-    public function __construct($percent, PriceAmount $amount, string $taxId = null, TaxEntryFieldcollection $entry = null)
+    public function __construct($percent, Decimal $amount, string $taxId = null, TaxEntryFieldcollection $entry = null)
     {
         $this->percent = $percent;
         $this->amount = $amount;
@@ -91,17 +91,17 @@ class TaxEntry
     }
 
     /**
-     * @return PriceAmount
+     * @return Decimal
      */
-    public function getAmount(): PriceAmount
+    public function getAmount(): Decimal
     {
         return $this->amount;
     }
 
     /**
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      */
-    public function setAmount(PriceAmount $amount)
+    public function setAmount(Decimal $amount)
     {
         $this->amount = $amount;
     }
@@ -135,7 +135,7 @@ class TaxEntry
         $convertedTaxEntries = [];
         if ($taxClass->getTaxEntries()) {
             foreach ($taxClass->getTaxEntries() as $index => $entry) {
-                $convertedTaxEntries[] = new static($entry->getPercent(), PriceAmount::create(0), $entry->getName() . '-' . $entry->getPercent(), $entry);
+                $convertedTaxEntries[] = new static($entry->getPercent(), Decimal::create(0), $entry->getName() . '-' . $entry->getPercent(), $entry);
             }
         }
 

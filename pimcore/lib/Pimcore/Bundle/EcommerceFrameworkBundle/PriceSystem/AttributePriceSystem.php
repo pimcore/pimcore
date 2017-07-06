@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 /**
  * Price system implementation for attribute price system
@@ -68,9 +68,9 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      * @param ICheckoutable $product
      * @param ICheckoutable[] $products
      *
-     * @return PriceAmount
+     * @return Decimal
      */
-    protected function calculateAmount(ICheckoutable $product, $products): PriceAmount
+    protected function calculateAmount(ICheckoutable $product, $products): Decimal
     {
         $getter = 'get' . ucfirst($this->config->attributename);
         if (method_exists($product, $getter)) {
@@ -85,13 +85,13 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
                     }
                 }
 
-                return PriceAmount::create($sum);
+                return Decimal::create($sum);
             } else {
-                return PriceAmount::create($product->$getter());
+                return Decimal::create($product->$getter());
             }
         }
 
-        return PriceAmount::zero();
+        return Decimal::zero();
     }
 
     /**
@@ -107,13 +107,13 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * Creates instance of IPrice
      *
-     * @param PriceAmount $amount
+     * @param Decimal $amount
      *
      * @return IPrice
      *
      * @throws \Exception
      */
-    protected function getPriceClassInstance(PriceAmount $amount): IPrice
+    protected function getPriceClassInstance(Decimal $amount): IPrice
     {
         if ($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);

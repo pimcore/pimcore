@@ -15,16 +15,16 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tests\Ecommerce\PriceSystem\Value;
+namespace Pimcore\Tests\Ecommerce\Type;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Tests\Test\TestCase;
 
-class PriceAmountTest extends TestCase
+class DecimalTest extends TestCase
 {
     public function testRepresentations()
     {
-        $value = PriceAmount::create(10.0, 4);
+        $value = Decimal::create(10.0, 4);
 
         $this->assertEquals(100000, $value->asRawValue());
         $this->assertEquals(10.0, $value->asNumeric());
@@ -33,14 +33,14 @@ class PriceAmountTest extends TestCase
 
     public function testAsString()
     {
-        $value = PriceAmount::create(10.0, 4);
+        $value = Decimal::create(10.0, 4);
 
         $this->assertSame('10.0000', (string)$value);
         $this->assertSame('10.0000', $value->asString());
         $this->assertSame('10.00', $value->asString(2));
         $this->assertSame('10', $value->asString(0));
 
-        $otherScale = PriceAmount::create(15.99, 6);
+        $otherScale = Decimal::create(15.99, 6);
 
         $this->assertSame('15.990000', (string)$otherScale);
         $this->assertSame('15.990000', $otherScale->asString());
@@ -48,7 +48,7 @@ class PriceAmountTest extends TestCase
         $this->assertSame('16.0', $otherScale->asString(1));
         $this->assertSame('16', $otherScale->asString(0));
 
-        $noScale = PriceAmount::create(15.99, 0);
+        $noScale = Decimal::create(15.99, 0);
 
         $this->assertSame('16', (string)$noScale);
         $this->assertSame('16', $noScale->asString());
@@ -62,7 +62,7 @@ class PriceAmountTest extends TestCase
      */
     public function testInvalidScaleThrowsException()
     {
-        PriceAmount::create(10000, -1);
+        Decimal::create(10000, -1);
     }
 
     /**
@@ -70,7 +70,7 @@ class PriceAmountTest extends TestCase
      */
     public function testZeroScale($input)
     {
-        $val = PriceAmount::create($input, 0);
+        $val = Decimal::create($input, 0);
 
         $this->assertEquals(16, $val->asRawValue());
         $this->assertEquals(16.0, $val->asNumeric());
@@ -81,7 +81,7 @@ class PriceAmountTest extends TestCase
      */
     public function testCreate($input)
     {
-        $value = PriceAmount::create($input);
+        $value = Decimal::create($input);
 
         $this->assertEquals(159900, $value->asRawValue());
         $this->assertEquals(15.99, $value->asNumeric());
@@ -89,12 +89,12 @@ class PriceAmountTest extends TestCase
 
     public function testCreateZero()
     {
-        $zero = PriceAmount::zero();
+        $zero = Decimal::zero();
 
         $this->assertEquals(0, $zero->asRawValue());
         $this->assertEquals(0, $zero->asNumeric());
         $this->assertEquals('0.00', $zero->asString(2));
-        $this->assertTrue($zero->equals(PriceAmount::create(0)));
+        $this->assertTrue($zero->equals(Decimal::create(0)));
     }
 
     /**
@@ -102,7 +102,7 @@ class PriceAmountTest extends TestCase
      */
     public function testErrorOnInvalidCreateArgument()
     {
-        PriceAmount::create(new \DateTime());
+        Decimal::create(new \DateTime());
     }
 
     /**
@@ -110,24 +110,24 @@ class PriceAmountTest extends TestCase
      */
     public function testInvalidScaleThrowsExceptionOnCreate()
     {
-        PriceAmount::create('10.0', -1);
+        Decimal::create('10.0', -1);
     }
 
     public function testCreateRounding()
     {
-        $this->assertEquals(16, PriceAmount::create('15.50', 0)->asRawValue());
-        $this->assertEquals(16, PriceAmount::create('15.50', 0, PHP_ROUND_HALF_UP)->asRawValue());
-        $this->assertEquals(15, PriceAmount::create('15.50', 0, PHP_ROUND_HALF_DOWN)->asRawValue());
+        $this->assertEquals(16, Decimal::create('15.50', 0)->asRawValue());
+        $this->assertEquals(16, Decimal::create('15.50', 0, PHP_ROUND_HALF_UP)->asRawValue());
+        $this->assertEquals(15, Decimal::create('15.50', 0, PHP_ROUND_HALF_DOWN)->asRawValue());
     }
 
     public function testFromRawValue()
     {
-        $simpleValue = PriceAmount::fromRawValue(100000, 4);
+        $simpleValue = Decimal::fromRawValue(100000, 4);
 
         $this->assertEquals(100000, $simpleValue->asRawValue());
         $this->assertEquals(10, $simpleValue->asNumeric());
 
-        $decimalValue = PriceAmount::fromRawValue(159900, 4);
+        $decimalValue = Decimal::fromRawValue(159900, 4);
 
         $this->assertEquals(159900, $decimalValue->asRawValue());
         $this->assertEquals(15.99, $decimalValue->asNumeric());
@@ -135,12 +135,12 @@ class PriceAmountTest extends TestCase
 
     public function testFromNumeric()
     {
-        $simpleValue = PriceAmount::fromNumeric(10, 4);
+        $simpleValue = Decimal::fromNumeric(10, 4);
 
         $this->assertEquals(100000, $simpleValue->asRawValue());
         $this->assertEquals(10, $simpleValue->asNumeric());
 
-        $decimalValue = PriceAmount::fromNumeric(15.99, 4);
+        $decimalValue = Decimal::fromNumeric(15.99, 4);
 
         $this->assertEquals(159900, $decimalValue->asRawValue());
         $this->assertEquals(15.99, $decimalValue->asNumeric());
@@ -151,28 +151,28 @@ class PriceAmountTest extends TestCase
      */
     public function testExceptionOnInvalidFromNumeric()
     {
-        PriceAmount::fromNumeric('ABC');
+        Decimal::fromNumeric('ABC');
     }
 
-    public function testFromPriceAmount()
+    public function testFromDecimal()
     {
-        $value        = PriceAmount::fromRawValue(100000, 4);
-        $createdValue = PriceAmount::fromPriceAmount($value, 4);
+        $value        = Decimal::fromRawValue(100000, 4);
+        $createdValue = Decimal::fromDecimal($value, 4);
 
         $this->assertEquals($value, $createdValue);
     }
 
-    public function testFromPriceAmountWithDifferentScale()
+    public function testFromDecimalWithDifferentScale()
     {
-        $value        = PriceAmount::fromRawValue(100000, 4);
-        $createdValue = PriceAmount::fromPriceAmount($value, 8);
+        $value        = Decimal::fromRawValue(100000, 4);
+        $createdValue = Decimal::fromDecimal($value, 8);
 
         $this->assertEquals($value->asNumeric(), $createdValue->asNumeric());
     }
 
     public function testWithScale()
     {
-        $val = PriceAmount::create('10', 4);
+        $val = Decimal::create('10', 4);
 
         $this->assertSame(100000, $val->asRawValue());
         $this->assertSame(10, $val->asNumeric());
@@ -195,7 +195,7 @@ class PriceAmountTest extends TestCase
 
     public function testWithScaleLosesPrecision()
     {
-        $val = PriceAmount::create('15.99', 4);
+        $val = Decimal::create('15.99', 4);
 
         $this->assertSame(159900, $val->asRawValue());
         $this->assertSame(15.99, $val->asNumeric());
@@ -223,8 +223,8 @@ class PriceAmountTest extends TestCase
 
     public function testExceptionOnAddWithMismatchingScale()
     {
-        $valA = PriceAmount::create('10', 4);
-        $valB = PriceAmount::create('20', 8);
+        $valA = Decimal::create('10', 4);
+        $valB = Decimal::create('20', 8);
 
         $scaledB = $valB->withScale(4);
         $this->assertEquals($valB->asNumeric(), $scaledB->asNumeric());
@@ -237,8 +237,8 @@ class PriceAmountTest extends TestCase
 
     public function testExceptionOnSubWithMismatchingScale()
     {
-        $valA = PriceAmount::create('10', 4);
-        $valB = PriceAmount::create('20', 8);
+        $valA = Decimal::create('10', 4);
+        $valB = Decimal::create('20', 8);
 
         $scaledB = $valB->withScale(4);
         $this->assertEquals($valB->asNumeric(), $scaledB->asNumeric());
@@ -251,13 +251,13 @@ class PriceAmountTest extends TestCase
 
     public function testCompare()
     {
-        $a = PriceAmount::create(5);
-        $b = PriceAmount::create(10);
+        $a = Decimal::create(5);
+        $b = Decimal::create(10);
 
         $this->assertTrue($a->equals($a));
         $this->assertTrue($b->equals($b));
-        $this->assertTrue($a->equals(PriceAmount::create(5)));
-        $this->assertFalse($a->equals(PriceAmount::create(5, 8)));
+        $this->assertTrue($a->equals(Decimal::create(5)));
+        $this->assertFalse($a->equals(Decimal::create(5, 8)));
         $this->assertFalse($a->equals($b));
         $this->assertFalse($b->equals($a));
 
@@ -289,51 +289,51 @@ class PriceAmountTest extends TestCase
 
     public function testIsPositive()
     {
-        $this->assertTrue(PriceAmount::create(10)->isPositive());
-        $this->assertTrue(PriceAmount::create(1)->isPositive());
-        $this->assertTrue(PriceAmount::create(0.1)->isPositive());
+        $this->assertTrue(Decimal::create(10)->isPositive());
+        $this->assertTrue(Decimal::create(1)->isPositive());
+        $this->assertTrue(Decimal::create(0.1)->isPositive());
 
-        $this->assertFalse(PriceAmount::create(-0.1)->isPositive());
-        $this->assertFalse(PriceAmount::create(-1)->isPositive());
-        $this->assertFalse(PriceAmount::create(-10)->isPositive());
+        $this->assertFalse(Decimal::create(-0.1)->isPositive());
+        $this->assertFalse(Decimal::create(-1)->isPositive());
+        $this->assertFalse(Decimal::create(-10)->isPositive());
 
-        $this->assertFalse(PriceAmount::create(0)->isPositive());
-        $this->assertFalse(PriceAmount::create(0.00001, 4)->isPositive());
+        $this->assertFalse(Decimal::create(0)->isPositive());
+        $this->assertFalse(Decimal::create(0.00001, 4)->isPositive());
     }
 
     public function testIsNegative()
     {
-        $this->assertFalse(PriceAmount::create(10)->isNegative());
-        $this->assertFalse(PriceAmount::create(1)->isNegative());
-        $this->assertFalse(PriceAmount::create(0.1)->isNegative());
+        $this->assertFalse(Decimal::create(10)->isNegative());
+        $this->assertFalse(Decimal::create(1)->isNegative());
+        $this->assertFalse(Decimal::create(0.1)->isNegative());
 
-        $this->assertTrue(PriceAmount::create(-0.1)->isNegative());
-        $this->assertTrue(PriceAmount::create(-1)->isNegative());
-        $this->assertTrue(PriceAmount::create(-10)->isNegative());
+        $this->assertTrue(Decimal::create(-0.1)->isNegative());
+        $this->assertTrue(Decimal::create(-1)->isNegative());
+        $this->assertTrue(Decimal::create(-10)->isNegative());
 
-        $this->assertFalse(PriceAmount::create(0)->isNegative());
-        $this->assertFalse(PriceAmount::create(0.00001, 4)->isNegative());
+        $this->assertFalse(Decimal::create(0)->isNegative());
+        $this->assertFalse(Decimal::create(0.00001, 4)->isNegative());
     }
 
     public function testIsZero()
     {
-        $this->assertTrue(PriceAmount::create(0)->isZero());
-        $this->assertTrue(PriceAmount::create(0.0)->isZero());
-        $this->assertTrue(PriceAmount::create('0')->isZero());
-        $this->assertTrue(PriceAmount::create('0.00')->isZero());
-        $this->assertTrue(PriceAmount::fromRawValue(0)->isZero());
-        $this->assertTrue(PriceAmount::create(0.00001, 4)->isZero());
+        $this->assertTrue(Decimal::create(0)->isZero());
+        $this->assertTrue(Decimal::create(0.0)->isZero());
+        $this->assertTrue(Decimal::create('0')->isZero());
+        $this->assertTrue(Decimal::create('0.00')->isZero());
+        $this->assertTrue(Decimal::fromRawValue(0)->isZero());
+        $this->assertTrue(Decimal::create(0.00001, 4)->isZero());
 
-        $this->assertFalse(PriceAmount::create(10)->isZero());
-        $this->assertFalse(PriceAmount::create(0.1)->isZero());
-        $this->assertFalse(PriceAmount::create(-0.1)->isZero());
-        $this->assertFalse(PriceAmount::create(-10)->isZero());
+        $this->assertFalse(Decimal::create(10)->isZero());
+        $this->assertFalse(Decimal::create(0.1)->isZero());
+        $this->assertFalse(Decimal::create(-0.1)->isZero());
+        $this->assertFalse(Decimal::create(-10)->isZero());
     }
 
     public function testAbs()
     {
-        $a = PriceAmount::create(5);
-        $b = PriceAmount::create(-5);
+        $a = Decimal::create(5);
+        $b = Decimal::create(-5);
 
         $this->assertFalse($a->equals($b));
         $this->assertTrue($a->equals($b->abs()));
@@ -345,7 +345,7 @@ class PriceAmountTest extends TestCase
      */
     public function testAdd($a, $b, $expected)
     {
-        $valA = PriceAmount::create($a);
+        $valA = Decimal::create($a);
 
         $this->assertEquals($expected, $valA->add($b)->asNumeric());
     }
@@ -355,7 +355,7 @@ class PriceAmountTest extends TestCase
      */
     public function testSub($a, $b, $expected)
     {
-        $valA = PriceAmount::create($a);
+        $valA = Decimal::create($a);
 
         $this->assertEquals($expected, $valA->sub($b)->asNumeric());
     }
@@ -365,7 +365,7 @@ class PriceAmountTest extends TestCase
      */
     public function testMul($a, $b, $expected)
     {
-        $valA = PriceAmount::create($a);
+        $valA = Decimal::create($a);
 
         $this->assertEquals($expected, $valA->mul($b)->asNumeric());
     }
@@ -375,7 +375,7 @@ class PriceAmountTest extends TestCase
      */
     public function testDiv($a, $b, $expected)
     {
-        $val = PriceAmount::create($a);
+        $val = Decimal::create($a);
 
         $this->assertEquals($expected, $val->div($b)->asNumeric());
     }
@@ -386,14 +386,14 @@ class PriceAmountTest extends TestCase
      */
     public function testExceptionOnDivisionByZero($val)
     {
-        $valA = PriceAmount::fromRawValue(159900, 4);
-        $valA->div(PriceAmount::create($val));
+        $valA = Decimal::fromRawValue(159900, 4);
+        $valA->div(Decimal::create($val));
     }
 
     public function testDivisionByZeroEpsilon()
     {
         // test division by zero error is thrown when difference from 0 is smaller than epsilon (depending on scale)
-        $val = PriceAmount::create('10', 4);
+        $val = Decimal::create('10', 4);
         $val->div(0.1);
         $val->div(0.01);
         $val->div(0.001);
@@ -406,35 +406,35 @@ class PriceAmountTest extends TestCase
 
     public function testAdditiveInverse()
     {
-        $this->assertSame('-15.50', PriceAmount::create('15.50')->toAdditiveInverse()->asString(2));
-        $this->assertSame('15.50', PriceAmount::create('-15.50')->toAdditiveInverse()->asString(2));
-        $this->assertSame(0, PriceAmount::create(0)->toAdditiveInverse()->asNumeric());
+        $this->assertSame('-15.50', Decimal::create('15.50')->toAdditiveInverse()->asString(2));
+        $this->assertSame('15.50', Decimal::create('-15.50')->toAdditiveInverse()->asString(2));
+        $this->assertSame(0, Decimal::create(0)->toAdditiveInverse()->asNumeric());
     }
 
     public function testToPercentage()
     {
-        $this->assertEquals(80, PriceAmount::create(100)->toPercentage(80)->asNumeric());
-        $this->assertEquals(35, PriceAmount::create(100)->toPercentage(35)->asNumeric());
-        $this->assertEquals(200, PriceAmount::create(100)->toPercentage(200)->asNumeric());
+        $this->assertEquals(80, Decimal::create(100)->toPercentage(80)->asNumeric());
+        $this->assertEquals(35, Decimal::create(100)->toPercentage(35)->asNumeric());
+        $this->assertEquals(200, Decimal::create(100)->toPercentage(200)->asNumeric());
     }
 
     public function testDiscount()
     {
-        $this->assertEquals(85, PriceAmount::create(100)->discount(15)->asNumeric());
-        $this->assertEquals(50, PriceAmount::create(100)->discount(50)->asNumeric());
-        $this->assertEquals(70, PriceAmount::create(100)->discount(30)->asNumeric());
+        $this->assertEquals(85, Decimal::create(100)->discount(15)->asNumeric());
+        $this->assertEquals(50, Decimal::create(100)->discount(50)->asNumeric());
+        $this->assertEquals(70, Decimal::create(100)->discount(30)->asNumeric());
     }
 
     public function testPercentageOf()
     {
-        $origPrice       = PriceAmount::create('129.99');
-        $discountedPrice = PriceAmount::create('88.00');
+        $origPrice       = Decimal::create('129.99');
+        $discountedPrice = Decimal::create('88.00');
 
         $this->assertEquals(68, round($discountedPrice->percentageOf($origPrice), 0));
         $this->assertEquals(148, round($origPrice->percentageOf($discountedPrice), 0));
 
-        $a = PriceAmount::create(100);
-        $b = PriceAmount::create(50);
+        $a = Decimal::create(100);
+        $b = Decimal::create(50);
 
         $this->assertEquals(100, $a->percentageOf($a));
         $this->assertEquals(100, $b->percentageOf($b));
@@ -444,14 +444,14 @@ class PriceAmountTest extends TestCase
 
     public function testDiscountPercentageOf()
     {
-        $origPrice       = PriceAmount::create('129.99');
-        $discountedPrice = PriceAmount::create('88.00');
+        $origPrice       = Decimal::create('129.99');
+        $discountedPrice = Decimal::create('88.00');
 
         $this->assertEquals(32, round($discountedPrice->discountPercentageOf($origPrice), 0));
 
-        $a = PriceAmount::create(100);
-        $b = PriceAmount::create(50);
-        $c = PriceAmount::create(30);
+        $a = Decimal::create(100);
+        $b = Decimal::create(50);
+        $c = Decimal::create(30);
 
         $this->assertEquals(0, $a->discountPercentageOf($a));
         $this->assertEquals(0, $b->discountPercentageOf($b));
@@ -464,30 +464,30 @@ class PriceAmountTest extends TestCase
     // TODO test overflow/underflow is checked on every possible operation
     public function testIntegerOverflow()
     {
-        $val = PriceAmount::fromRawValue(1);
+        $val = Decimal::fromRawValue(1);
 
         // there's a threshold of 1 from the boundary, so the greatest usable int is PHP_INT_MAX - 1
-        $other = PriceAmount::fromRawValue(PHP_INT_MAX - 2);
+        $other = Decimal::fromRawValue(PHP_INT_MAX - 2);
 
         $maxInt = $val->add($other);
 
         $this->expectException(\OverflowException::class);
 
-        $maxInt->add(PriceAmount::fromRawValue(1));
+        $maxInt->add(Decimal::fromRawValue(1));
     }
 
     public function testIntegerUnderflow()
     {
-        $val = PriceAmount::fromRawValue(-1);
+        $val = Decimal::fromRawValue(-1);
 
         // there's a threshold of 1 from the boundary, so the smallest usable int is -1 * PHP_INT_MAX + 1
-        $other = PriceAmount::fromRawValue(~PHP_INT_MAX + 2);
+        $other = Decimal::fromRawValue(~PHP_INT_MAX + 2);
 
         $minInt = $val->add($other);
 
         $this->expectException(\UnderflowException::class);
 
-        $minInt->sub(PriceAmount::fromRawValue(1));
+        $minInt->sub(Decimal::fromRawValue(1));
     }
 
     public function createDataProvider(): array
@@ -495,7 +495,7 @@ class PriceAmountTest extends TestCase
         return [
             [15.99],
             ['15.99'],
-            [PriceAmount::fromRawValue(159900, 4)],
+            [Decimal::fromRawValue(159900, 4)],
         ];
     }
 
@@ -525,7 +525,7 @@ class PriceAmountTest extends TestCase
             [0],
             [0.0],
             ['0'],
-            [PriceAmount::create(0, 4)]
+            [Decimal::create(0, 4)]
         ];
     }
 
@@ -548,8 +548,8 @@ class PriceAmountTest extends TestCase
                 '14.50'
             ],
             [
-                PriceAmount::fromRawValue(155000),
-                PriceAmount::fromRawValue(145000)
+                Decimal::fromRawValue(155000),
+                Decimal::fromRawValue(145000)
             ]
         ];
 
@@ -579,8 +579,8 @@ class PriceAmountTest extends TestCase
                 '2'
             ],
             [
-                PriceAmount::fromRawValue(150000),
-                PriceAmount::fromRawValue(20000),
+                Decimal::fromRawValue(150000),
+                Decimal::fromRawValue(20000),
             ]
         ];
 
