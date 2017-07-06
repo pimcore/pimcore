@@ -30,6 +30,11 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
                         doFocus) {
 
 
+        Ext.WindowManager.each(function(window, idx, length) {
+            window.destroy();
+
+        });
+
         var fieldInfo = this.config.fieldInfo;
 
         if(!fieldInfo || !fieldInfo.layout) {
