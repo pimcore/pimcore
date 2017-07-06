@@ -49,6 +49,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     getGridColumnConfig: function(field) {
 
         return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            getEditor:this.getCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -56,8 +57,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
-                if (value && value.id) {
-                    return '<img src="/admin/asset/get-image-thumbnail?id=' + value.id
+                if (value && value.image) {
+                    return '<img src="/admin/asset/get-image-thumbnail?id=' + value.image
                         + '&width=88&height=88&frame=true" />';
                 }
             }.bind(this, field.key)};
@@ -370,5 +371,16 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         };
 
         element.addListener('click', functionCallback.bind(this), false);
+    },
+
+    getCellEditor: function ( field, record) {
+        return new pimcore.object.helpers.gridCellEditor({
+            fieldInfo: field
+        });
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
+
 });

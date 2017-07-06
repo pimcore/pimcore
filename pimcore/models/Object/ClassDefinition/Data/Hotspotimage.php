@@ -323,6 +323,17 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
+
+     * @param Object\Data\Hotspotimage $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      *
      * @param Asset\Image $data
@@ -565,11 +576,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset) {
-            return $data->getImage();
-        } else {
-            return null;
-        }
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
