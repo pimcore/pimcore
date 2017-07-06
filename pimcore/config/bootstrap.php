@@ -11,7 +11,6 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 require_once __DIR__ . '/constants.php';
