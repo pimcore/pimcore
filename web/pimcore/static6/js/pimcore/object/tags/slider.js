@@ -14,9 +14,9 @@
 pimcore.registerNS("pimcore.object.tags.slider");
 pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
-    type:"slider",
+    type: "slider",
 
-    initialize:function (data, fieldConfig) {
+    initialize: function (data, fieldConfig) {
 
         this.data = "";
 
@@ -34,16 +34,16 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
     },
 
-    getGridColumnFilter:function (field) {
-        return {type:'numeric', dataIndex:field.key};
+    getGridColumnFilter: function (field) {
+        return {type: 'numeric', dataIndex: field.key};
     },
 
-    getLayoutEdit:function () {
+    getLayoutEdit: function () {
 
         var slider = {
-            fieldLabel:this.fieldConfig.title,
-            name:this.fieldConfig.name,
-            componentCls:"object_field"
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
+            componentCls: "object_field"
         };
 
         if (this.data) {
@@ -88,7 +88,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    showValueInLabel:function () {
+    showValueInLabel: function () {
         var labelEl = this.component.labelEl;
 
         if (!this.labelText) {
@@ -97,7 +97,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         var el = labelEl.update(this.labelText + " (" + this.component.getValue() + ")");
     },
 
-    getLayoutShow:function () {
+    getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
         this.component.disable();
@@ -105,23 +105,54 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue:function () {
+    getValue: function () {
         return this.component.getValue().toString();
     },
 
-    getName:function () {
+    getName: function () {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory:function () {
+    isInvalidMandatory: function () {
         return false;
     },
 
-    isDirty:function () {
+    isDirty: function () {
         if (!this.isRendered()) {
             return false;
         }
 
         return this.dirty;
+    },
+
+    getCellEditor: function (field, record) {
+        return new pimcore.object.helpers.gridCellEditor({
+            fieldInfo: field
+        });
+    },
+
+    getGridColumnConfig: function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            try {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+            } catch (e) {
+                console.log(e);
+            }
+            return value;
+
+        }.bind(this, field.key);
+
+        return {
+            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            getEditor: this.getCellEditor.bind(this, field)
+        };
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });

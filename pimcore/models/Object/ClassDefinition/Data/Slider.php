@@ -306,6 +306,18 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param float $data
+     * @param Model\Object\Concrete $object
+     * @param mixed $params
+     *
+     * @return float
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      *
      * @param float $data
