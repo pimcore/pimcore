@@ -12,3 +12,4 @@ backend or via code by a developer.
 * [Custom Views](./11_Custom_Views.md)
 * [Locking Fields](./13_Locking_Fields.md)
 * [Path Formatter](./14_Path_Formatter.md)
+* [Link Generator](./15_Link_Generator.md)
