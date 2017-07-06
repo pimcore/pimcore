@@ -369,6 +369,36 @@ class PriceAmount
     }
 
     /**
+     * Checks if amount is zero
+     *
+     * @return bool
+     */
+    public function isZero(): bool
+    {
+        return 0 === $this->amount;
+    }
+
+    /**
+     * Checks if amount is positive. Not: zero is NOT handled as positive.
+     *
+     * @return bool
+     */
+    public function isPositive(): bool
+    {
+        return $this->amount > 0;
+    }
+
+    /**
+     * Checks if amount is negative
+     *
+     * @return bool
+     */
+    public function isNegative(): bool
+    {
+        return $this->amount < 0;
+    }
+
+    /**
      * Returns the absolute amount
      *
      * @return PriceAmount
@@ -472,6 +502,19 @@ class PriceAmount
         $result = static::toIntValue($result, $roundingMode);
 
         return new static($result, $this->scale);
+    }
+
+    /**
+     * Returns the additive inverse of a value (e.g. 5 returns -5, -5 returns 5)
+     *
+     * @example PriceAmount::create(5)->toAdditiveInverse() = -5
+     * @example PriceAmount::create(-5)->toAdditiveInverse() = 5
+     *
+     * @return PriceAmount
+     */
+    public function toAdditiveInverse(): self
+    {
+        return $this->mul(-1);
     }
 
     /**

@@ -277,6 +277,49 @@ class PriceAmountTest extends TestCase
         $this->assertTrue($b->greaterThanOrEqual($b));
     }
 
+    public function testIsPositive()
+    {
+        $this->assertTrue(PriceAmount::create(10)->isPositive());
+        $this->assertTrue(PriceAmount::create(1)->isPositive());
+        $this->assertTrue(PriceAmount::create(0.1)->isPositive());
+
+        $this->assertFalse(PriceAmount::create(-0.1)->isPositive());
+        $this->assertFalse(PriceAmount::create(-1)->isPositive());
+        $this->assertFalse(PriceAmount::create(-10)->isPositive());
+
+        $this->assertFalse(PriceAmount::create(0)->isPositive());
+        $this->assertFalse(PriceAmount::create(0.00001, 4)->isPositive());
+    }
+
+    public function testIsNegative()
+    {
+        $this->assertFalse(PriceAmount::create(10)->isNegative());
+        $this->assertFalse(PriceAmount::create(1)->isNegative());
+        $this->assertFalse(PriceAmount::create(0.1)->isNegative());
+
+        $this->assertTrue(PriceAmount::create(-0.1)->isNegative());
+        $this->assertTrue(PriceAmount::create(-1)->isNegative());
+        $this->assertTrue(PriceAmount::create(-10)->isNegative());
+
+        $this->assertFalse(PriceAmount::create(0)->isNegative());
+        $this->assertFalse(PriceAmount::create(0.00001, 4)->isNegative());
+    }
+
+    public function testIsZero()
+    {
+        $this->assertTrue(PriceAmount::create(0)->isZero());
+        $this->assertTrue(PriceAmount::create(0.0)->isZero());
+        $this->assertTrue(PriceAmount::create('0')->isZero());
+        $this->assertTrue(PriceAmount::create('0.00')->isZero());
+        $this->assertTrue(PriceAmount::fromRawValue(0)->isZero());
+        $this->assertTrue(PriceAmount::create(0.00001, 4)->isZero());
+
+        $this->assertFalse(PriceAmount::create(10)->isZero());
+        $this->assertFalse(PriceAmount::create(0.1)->isZero());
+        $this->assertFalse(PriceAmount::create(-0.1)->isZero());
+        $this->assertFalse(PriceAmount::create(-10)->isZero());
+    }
+
     public function testAbs()
     {
         $a = PriceAmount::create(5);
@@ -351,7 +394,14 @@ class PriceAmountTest extends TestCase
         $val->div(0.00001);
     }
 
-    public function testPercentage()
+    public function testAdditiveInverse()
+    {
+        $this->assertSame('-15.50', PriceAmount::create('15.50')->toAdditiveInverse()->asString(2));
+        $this->assertSame('15.50', PriceAmount::create('-15.50')->toAdditiveInverse()->asString(2));
+        $this->assertSame(0, PriceAmount::create(0)->toAdditiveInverse()->asNumeric());
+    }
+
+    public function testToPercentage()
     {
         $this->assertEquals(80, PriceAmount::create(100)->toPercentage(80)->asNumeric());
         $this->assertEquals(35, PriceAmount::create(100)->toPercentage(35)->asNumeric());
