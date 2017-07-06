@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Forms;
 
+// TODO refine how payment amounts are transformed for API
 class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
@@ -130,7 +131,7 @@ class Datatrans implements IPayment
         }
 
         // collect payment data
-        $paymentData['amount'] = round($price->getAmount(), 2) * 100;
+        $paymentData['amount'] = round($price->getAmount()->asNumeric(), 2) * 100;
         $paymentData['currency'] = $price->getCurrency()->getShortName();
         $paymentData['reqtype'] = $config['reqtype'];
         // NOA – Authorisation only (default)
@@ -346,7 +347,7 @@ class Datatrans implements IPayment
         } else {
             // authorisieren und zahlung ausführen
             $xml = $this->xmlAuthorisation(
-                'CAA', self::TRANS_TYPE_DEBIT, $price->getAmount() * 100, $price->getCurrency()->getShortName(), $reference, $this->authorizedData['aliasCC'], $this->authorizedData['expm'], $this->authorizedData['expy']
+                'CAA', self::TRANS_TYPE_DEBIT, $price->getAmount()->asNumeric() * 100, $price->getCurrency()->getShortName(), $reference, $this->authorizedData['aliasCC'], $this->authorizedData['expm'], $this->authorizedData['expy']
             );
         }
 
@@ -398,7 +399,7 @@ class Datatrans implements IPayment
         } else {
             // complete authorized payment
             $xml = $this->xmlSettlement(
-                self::TRANS_TYPE_CREDIT, $price->getAmount() * 100, $price->getCurrency()->getShortName(), $reference, $transactionId
+                self::TRANS_TYPE_CREDIT, $price->getAmount()->asNumeric() * 100, $price->getCurrency()->getShortName(), $reference, $transactionId
             );
         }
 
@@ -439,7 +440,7 @@ class Datatrans implements IPayment
     public function executeAuthorizationCancel(IPrice $price, $reference, $transactionId)
     {
         $xml = $this->xmlCancelAuthorization(
-            $price->getAmount() * 100,
+            $price->getAmount()->asNumeric() * 100,
             $price->getCurrency()->getShortName(),
             $reference,
             $transactionId

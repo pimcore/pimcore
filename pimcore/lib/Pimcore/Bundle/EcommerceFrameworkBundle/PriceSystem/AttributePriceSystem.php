@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 
 /**
  * Price system implementation for attribute price system
@@ -30,13 +31,13 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * @inheritdoc
      */
-    public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products)
+    public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products): IPriceInfo
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
         $amount = $this->calculateAmount($product, $products);
         $price = $this->getPriceClassInstance($amount);
-        $totalPrice = $this->getPriceClassInstance($amount * $quantityScale);
+        $totalPrice = $this->getPriceClassInstance($amount->mul($quantityScale));
 
         if ($taxClass) {
             $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
@@ -67,13 +68,14 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      * @param ICheckoutable $product
      * @param ICheckoutable[] $products
      *
-     * @return float
+     * @return PriceAmount
      */
-    protected function calculateAmount(ICheckoutable $product, $products)
+    protected function calculateAmount(ICheckoutable $product, $products): PriceAmount
     {
         $getter = 'get' . ucfirst($this->config->attributename);
         if (method_exists($product, $getter)) {
             if (!empty($products)) {
+                // TODO where to start using price value object?
                 $sum = 0;
                 foreach ($products as $p) {
                     if ($p instanceof AbstractSetProductEntry) {
@@ -83,33 +85,35 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
                     }
                 }
 
-                return $sum;
+                return PriceAmount::create($sum);
             } else {
-                return $product->$getter();
+                return PriceAmount::create($product->$getter());
             }
         }
+
+        return PriceAmount::zero();
     }
 
     /**
-     * returns default currency based on environment settings
+     * Returns default currency based on environment settings
      *
      * @return Currency
      */
-    protected function getDefaultCurrency()
+    protected function getDefaultCurrency(): Currency
     {
         return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     }
 
     /**
-     * creates instance of IPrice
+     * Creates instance of IPrice
      *
-     * @param $amount
+     * @param PriceAmount $amount
      *
      * @return IPrice
      *
      * @throws \Exception
      */
-    protected function getPriceClassInstance($amount)
+    protected function getPriceClassInstance(PriceAmount $amount): IPrice
     {
         if ($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);

@@ -219,18 +219,19 @@ class OrderManager implements IOrderManager
         }
 
         //update order from cart
-        $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getGrossAmount());
-        $order->setTotalNetPrice($cart->getPriceCalculator()->getGrandTotal()->getNetAmount());
-        $order->setSubTotalPrice($cart->getPriceCalculator()->getSubTotal()->getAmount());
-        $order->setSubTotalNetPrice($cart->getPriceCalculator()->getSubTotal()->getNetAmount());
+        // TODO refine how amount is passed to order (asNumeric? asString?)
+        $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getGrossAmount()->asNumeric());
+        $order->setTotalNetPrice($cart->getPriceCalculator()->getGrandTotal()->getNetAmount()->asNumeric());
+        $order->setSubTotalPrice($cart->getPriceCalculator()->getSubTotal()->getAmount()->asNumeric());
+        $order->setSubTotalNetPrice($cart->getPriceCalculator()->getSubTotal()->getNetAmount()->asNumeric());
         $order->setTaxInfo($this->buildTaxArray($cart->getPriceCalculator()->getGrandTotal()->getTaxEntries()));
 
         $modificationItems = new \Pimcore\Model\Object\Fieldcollection();
         foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
             $modificationItem = new \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications();
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
-            $modificationItem->setAmount($modification->getGrossAmount());
-            $modificationItem->setNetAmount($modification->getNetAmount());
+            $modificationItem->setAmount($modification->getGrossAmount()->asNumeric());
+            $modificationItem->setNetAmount($modification->getNetAmount()->asNumeric());
             $modificationItems->add($modificationItem);
         }
 

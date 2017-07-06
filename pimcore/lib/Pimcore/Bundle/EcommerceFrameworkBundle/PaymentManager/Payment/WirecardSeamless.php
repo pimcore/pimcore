@@ -27,6 +27,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
 
+// TODO refine how payment amounts are transformed for API
 class WirecardSeamless implements IPayment
 {
     private $settings;
@@ -477,7 +478,7 @@ class WirecardSeamless implements IPayment
             'secret' => $this->settings->secret,
             'language' => 'de',
             'orderNumber' => $reference,
-            'amount' => round($price->getAmount(), 2),
+            'amount' => round($price->getAmount()->asNumeric(), 2),
             'currency' => $price->getCurrency()->getShortName()
         ];
 
@@ -497,7 +498,7 @@ class WirecardSeamless implements IPayment
             );
         } else {
             return new Status(
-                $transactionId, $reference, 'deposit executed: ' . round($price->getAmount(), 2) . ' ' . $price->getCurrency()->getShortName(), IStatus::STATUS_CLEARED, []
+                $transactionId, $reference, 'deposit executed: ' . round($price->getAmount()->asNumeric(), 2) . ' ' . $price->getCurrency()->getShortName(), IStatus::STATUS_CLEARED, []
             );
         }
     }

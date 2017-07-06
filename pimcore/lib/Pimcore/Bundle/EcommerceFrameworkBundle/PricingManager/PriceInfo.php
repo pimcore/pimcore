@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 
 class PriceInfo implements IPriceInfo
@@ -160,8 +161,8 @@ class PriceInfo implements IPriceInfo
             }
             $this->rulesApplied = true;
 
-            if ($this->getAmount() < 0) {
-                $this->setAmount(0);
+            if ($this->getAmount()->isNegative()) {
+                $this->setAmount(PriceAmount::create(0));
             }
         }
 
@@ -300,8 +301,8 @@ class PriceInfo implements IPriceInfo
     public function getDiscount(): IPrice
     {
         $discount = $this->getPrice()->getAmount()->sub($this->getOriginalPrice()->getAmount());
-        $price = clone $this->priceInfo->getPrice();
 
+        $price = clone $this->priceInfo->getPrice();
         $price->setAmount($discount);
 
         return $price;
@@ -313,8 +314,8 @@ class PriceInfo implements IPriceInfo
     public function getTotalDiscount(): IPrice
     {
         $discount = $this->getTotalPrice()->getAmount()->sub($this->getOriginalTotalPrice()->getAmount());
-        $price = clone $this->priceInfo->getPrice();
 
+        $price = clone $this->priceInfo->getPrice();
         $price->setAmount($discount);
 
         return $price;

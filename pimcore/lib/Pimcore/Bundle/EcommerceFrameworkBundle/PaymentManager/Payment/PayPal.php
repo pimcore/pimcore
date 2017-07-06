@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Config\Config;
 
+// TODO refine how payment amounts are transformed for API
 class PayPal implements IPayment
 {
     /**
@@ -278,7 +279,7 @@ class PayPal implements IPayment
         // create order total
         $paymentDetails = new \stdClass();
         $paymentDetails->OrderTotal = new \stdClass();
-        $paymentDetails->OrderTotal->_ = $price->getAmount();
+        $paymentDetails->OrderTotal->_ = $price->getAmount()->asNumeric();
         $paymentDetails->OrderTotal->currencyID = $price->getCurrency()->getShortName();
 
 //        // add article

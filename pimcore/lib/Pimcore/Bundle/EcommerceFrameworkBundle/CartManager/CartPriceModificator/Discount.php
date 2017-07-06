@@ -16,16 +16,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificat
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Value\PriceAmount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 
 class Discount implements IDiscount
 {
     /**
-     * @var float
+     * @var PriceAmount
      */
-    protected $amount = 0;
+    protected $amount;
 
     /**
      * @var null|IRule
@@ -37,7 +39,8 @@ class Discount implements IDiscount
      */
     public function __construct(IRule $rule)
     {
-        $this->rule = $rule;
+        $this->rule   = $rule;
+        $this->amount = PriceAmount::create(0);
     }
 
     /**
@@ -57,17 +60,17 @@ class Discount implements IDiscount
     /**
      * modify price
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice $currentSubTotal
+     * @param IPrice $currentSubTotal
      * @param ICart  $cart
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return IPrice
      */
-    public function modify(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice $currentSubTotal, ICart $cart)
+    public function modify(IPrice $currentSubTotal, ICart $cart)
     {
         if ($this->getAmount() != 0) {
             $amount = $this->getAmount();
-            if ($currentSubTotal->getAmount() < ($amount * -1)) {
-                $amount = $currentSubTotal->getAmount() * -1;
+            if ($currentSubTotal->getAmount()->lessThan($amount->mul(-1))) {
+                $amount = $currentSubTotal->getAmount()->mul(-1);
             }
 
             $modificatedPrice = new ModificatedPrice($amount, $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
@@ -85,11 +88,9 @@ class Discount implements IDiscount
     }
 
     /**
-     * @param float $amount
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IDiscount
+     * @inheritdoc
      */
-    public function setAmount($amount)
+    public function setAmount(PriceAmount $amount)
     {
         $this->amount = $amount;
 
@@ -97,9 +98,9 @@ class Discount implements IDiscount
     }
 
     /**
-     * @return float
+     * @inheritdoc
      */
-    public function getAmount()
+    public function getAmount(): PriceAmount
     {
         return $this->amount;
     }

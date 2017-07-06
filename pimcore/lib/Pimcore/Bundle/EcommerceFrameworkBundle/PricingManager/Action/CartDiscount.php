@@ -53,8 +53,8 @@ class CartDiscount implements IDiscount
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
         $amount = PriceAmount::create($this->amount);
-        if ($amount->equals(PriceAmount::create(0))) {
-            $amount = $priceCalculator->getSubTotal()->getAmount()->mul($this->getPercent() / 100);
+        if ($amount->isZero()) {
+            $amount = $priceCalculator->getSubTotal()->getAmount()->toPercentage($this->getPercent());
         }
 
         $amount = $amount->mul(-1);
