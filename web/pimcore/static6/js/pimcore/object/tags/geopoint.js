@@ -343,5 +343,40 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         }
 
         return false;
+    },
+
+    getGridColumnConfig: function(field) {
+        return {
+            header: ts(field.label),
+            width: 150,
+            sortable: false,
+            dataIndex: field.key,
+            getEditor:this.getCellEditor.bind(this, field),
+            renderer: function (key, value, metaData, record) {
+                this.applyPermissionStyle(key, value, metaData, record);
+
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += ' grid_value_inherited';
+                }
+
+                if (value) {
+                    var width = 200;
+
+                    var mapUrl = this.getMapUrl(field, value, width, 100);
+
+                    return '<img src="' + mapUrl + '" />';
+                }
+            }.bind(this, field.key)
+        };
+    },
+
+    getCellEditor: function ( field, record) {
+        return new pimcore.object.helpers.gridCellEditor({
+            fieldInfo: field
+        });
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });
