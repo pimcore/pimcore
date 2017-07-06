@@ -351,7 +351,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             width: 150,
             sortable: false,
             dataIndex: field.key,
-            getEditor:this.getCellEditor.bind(this, field),
+            getEditor:this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -368,12 +368,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 }
             }.bind(this, field.key)
         };
-    },
-
-    getCellEditor: function ( field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
-        });
     },
 
     getCellEditValue: function () {

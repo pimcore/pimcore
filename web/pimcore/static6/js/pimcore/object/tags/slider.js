@@ -125,12 +125,6 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         return this.dirty;
     },
 
-    getCellEditor: function (field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
-        });
-    },
-
     getGridColumnConfig: function (field) {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
@@ -148,7 +142,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
         return {
             header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
-            getEditor: this.getCellEditor.bind(this, field)
+            getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 

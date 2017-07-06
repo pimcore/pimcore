@@ -82,14 +82,8 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
 
         return {
             header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
-            getEditor:this.getCellEditor.bind(this, field)
+            getEditor:this.getWindowCellEditor.bind(this, field)
         };
-    },
-
-    getCellEditor: function ( field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
-        });
     },
 
     getCellEditValue: function () {

@@ -137,7 +137,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            getEditor:this.getCellEditor.bind(this, field),
+            getEditor:this.getWindowCellEditor.bind(this, field),
             header:ts(field.label),
             sortable:true,
             dataIndex:field.key,
@@ -179,12 +179,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
         return true;
-    },
-
-    getCellEditor: function ( field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
-        });
-    },
+    }
 
 });

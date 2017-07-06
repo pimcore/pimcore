@@ -37,7 +37,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig:function (field) {
         return {header:ts(field.label), width:150, sortable:true, dataIndex:field.key,
-            getEditor:this.getCellEditor.bind(this, field),
+            getEditor:this.getWindowCellEditor.bind(this, field),
             renderer:function (key, value, metaData, record) {
 
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -139,11 +139,6 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         }
 
         return false;
-    },
-
-    getCellEditor: function ( field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
-        });
     }
+
 });
