@@ -126,6 +126,12 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             me.onEditComplete(remainVisible);
             me.fireEvent('complete', me, value, startValue);
         }
-    }
+    },
 
+    destroy: function() {
+        if (this.editWin) {
+            this.editWin.destroy();
+        }
+        this.callParent(arguments);
+    }
 });
