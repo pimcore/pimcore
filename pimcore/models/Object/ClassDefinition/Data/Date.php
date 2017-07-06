@@ -162,6 +162,22 @@ class Date extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param float $data
+     * @param Model\Object\Concrete $object
+     * @param mixed $params
+     *
+     * @return float
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        if ($data) {
+            $data = $data * 1000;
+        }
+
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @param $data
      * @param null $object
      * @param mixed $params

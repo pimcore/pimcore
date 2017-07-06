@@ -21,7 +21,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnFilter: function(field) {
+    getGridColumnFilter: function (field) {
         return {type: 'string', dataIndex: field.key};
     },
 
@@ -63,5 +63,37 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             return true;
         }
         return false;
+    },
+
+    getGridColumnConfig: function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            try {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+            } catch (e) {
+                console.log(e);
+            }
+            return value;
+
+        }.bind(this, field.key);
+
+        return {
+            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            getEditor:this.getCellEditor.bind(this, field)
+        };
+    },
+
+    getCellEditor: function ( field, record) {
+        return new pimcore.object.helpers.gridCellEditor({
+            fieldInfo: field
+        });
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
+
 });

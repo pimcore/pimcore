@@ -41,6 +41,8 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             return;
         }
 
+        var title = fieldInfo.label ? fieldInfo.label : fieldInfo.key;
+
         this.context = this.editingPlugin.context;
         // this.callParent(arguments);
 
@@ -76,7 +78,7 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
         });
         this.editWin = new Ext.Window({
             modal: false,
-            title: t("edit"),
+            title: t("edit") + " " + title,
             items: [formPanel],
             bodyStyle: "background: #fff;",
             width: 700,
