@@ -20,6 +20,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -28,6 +29,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class ResponseExceptionListener extends AbstractContextAwareListener implements EventSubscriberInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var ActionRenderer
      */
@@ -118,6 +121,8 @@ class ResponseExceptionListener extends AbstractContextAwareListener implements 
         } catch (\Exception $e) {
             // we are even not able to render the error page, so we send the client a unicorn
             $response = 'Page not found. 🦄';
+            $this->logger->emergency('Unable to render error page, exception thrown');
+            $this->logger->emergency($e);
         }
 
         $event->setResponse(new Response($response, $statusCode, $headers));
