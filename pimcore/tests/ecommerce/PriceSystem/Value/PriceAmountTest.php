@@ -87,6 +87,16 @@ class PriceAmountTest extends TestCase
         $this->assertEquals(15.99, $value->asNumeric());
     }
 
+    public function testCreateZero()
+    {
+        $zero = PriceAmount::zero();
+
+        $this->assertEquals(0, $zero->asRawValue());
+        $this->assertEquals(0, $zero->asNumeric());
+        $this->assertEquals('0.00', $zero->asString(2));
+        $this->assertTrue($zero->equals(PriceAmount::create(0)));
+    }
+
     /**
      * @expectedException \TypeError
      */

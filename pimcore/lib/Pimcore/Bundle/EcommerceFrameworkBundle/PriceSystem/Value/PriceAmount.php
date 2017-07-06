@@ -208,6 +208,18 @@ class PriceAmount
     }
 
     /**
+     * Create a zero value object
+     *
+     * @param int|null $scale
+     *
+     * @return PriceAmount
+     */
+    public static function zero(int $scale = null): self
+    {
+        return static::fromRawValue(0, $scale);
+    }
+
+    /**
      * Returns the used scale factor
      *
      * @return int
@@ -294,6 +306,8 @@ class PriceAmount
      * Checks if value is equal to other value
      *
      * @param PriceAmount $other
+     *
+     * @todo Assert same scale before comparing?
      *
      * @return bool
      */
