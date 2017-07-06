@@ -129,6 +129,41 @@ class ExtensionManager
         }
     }
 
+    /**
+     * @return array
+     */
+    public static function getDiPaths()
+    {
+        $ret = [];
+        try {
+            $pluginConfigs = self::getPluginConfigs();
+            if (empty($pluginConfigs)) {
+                return $ret;
+            }
+            if (0 == count($pluginConfigs)) {
+                return $ret;
+            }
+            foreach ($pluginConfigs as $p) {
+                if (!self::isEnabled("plugin", $p["plugin"]["pluginName"])) {
+                    continue;
+                }
+
+                if (is_array($p['plugin']['pluginDependencyInjectionPaths']['path'])) {
+                    foreach ($p['plugin']['pluginDependencyInjectionPaths']['path'] as $path) {
+                        $ret[] = PIMCORE_PLUGINS_PATH . $path;
+                    }
+                } elseif ($p['plugin']['pluginDependencyInjectionPaths']['path'] != null) {
+                    $ret[] = PIMCORE_PLUGINS_PATH . $p['plugin']['pluginDependencyInjectionPaths']['path'];
+                }
+            }
+        } catch (\Exception $e) {
+            Logger::alert("there is a problem with the plugin configuration");
+            Logger::alert($e);
+        }
+        return $ret;
+    }
+
+
 
     /**
      * @return Array $pluginConfigs
