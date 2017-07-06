@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -16,51 +19,50 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
-/**
- * Interface ICartPriceCalculator
- */
 interface ICartPriceCalculator
 {
     public function __construct($config, ICart $cart);
 
     /**
-     * calculates cart sums and saves results
+     * Calculates cart sums and saves results
      *
      * @return void
      */
     public function calculate();
 
     /**
-     * reset calculations
+     * Reset calculations
      *
      * @return void
      */
     public function reset();
 
     /**
-     * returns sub total of cart
+     * Returns sub total of cart
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice $price
+     * @return IPrice $price
      */
-    public function getSubTotal();
+    public function getSubTotal(): IPrice;
 
     /**
-     * returns all price modifications which apply for this cart
+     * Returns grand total of cart
+     *
+     * @return IPrice $price
+     */
+    public function getGrandTotal(): IPrice;
+
+    /**
+     * Returns all price modifications which apply for this cart
      *
      * @return IModificatedPrice[] $priceModification
      */
-    public function getPriceModifications();
+    public function getPriceModifications(): array;
 
     /**
-     * returns grand total of cart
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice $price
-     */
-    public function getGrandTotal();
-
-    /**
-     * manually add a modificator to this cart. by default they are loaded from the configuration
+     * Manually add a modificator to this cart. By default they are loaded from the configuration.
      *
      * @param ICartPriceModificator $modificator
      *
@@ -69,20 +71,20 @@ interface ICartPriceCalculator
     public function addModificator(ICartPriceModificator $modificator);
 
     /**
-     * returns all modificators
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator[]
-     */
-    public function getModificators();
-
-    /**
-     * manually remove a modificator from this cart.
+     * Manually remove a modificator from this cart.
      *
      * @param ICartPriceModificator $modificator
      *
      * @return ICartPriceCalculator
      */
     public function removeModificator(ICartPriceModificator $modificator);
+
+    /**
+     * Returns all modificators
+     *
+     * @return ICartPriceModificator[]
+     */
+    public function getModificators(): array;
 
     /**
      * Re-initialise the price modificators, e.g. after removing an item from a cart

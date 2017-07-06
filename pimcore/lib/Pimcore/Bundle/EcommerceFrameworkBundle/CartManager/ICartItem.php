@@ -21,34 +21,26 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 /**
- * interface for cart item implementations of online shop framework
+ * Interface for cart item implementations of online shop framework
  */
 interface ICartItem
 {
     /**
-     * @abstract
-     *
      * @return ICheckoutable
      */
     public function getProduct();
 
     /**
-     * @abstract
-     *
      * @return int
      */
     public function getCount();
 
     /**
-     * @abstract
-     *
      * @return string
      */
     public function getItemKey();
 
     /**
-     * @abstract
-     *
      * @param ICheckoutable $product
      *
      * @return void
@@ -56,8 +48,6 @@ interface ICartItem
     public function setProduct(ICheckoutable $product);
 
     /**
-     * @abstract
-     *
      * @param int $count
      *
      * @return void
@@ -65,8 +55,6 @@ interface ICartItem
     public function setCount($count);
 
     /**
-     * @abstract
-     *
      * @param ICart $cart
      *
      * @return void
@@ -74,48 +62,36 @@ interface ICartItem
     public function setCart(ICart $cart);
 
     /**
-     * @abstract
-     *
      * @return ICart
      */
     public function getCart();
 
     /**
-     * @abstract
-     *
      * @return ICartItem[]
      */
     public function getSubItems();
 
     /**
-     * @abstract
-     *
-     * @param  ICartItem[] $subItems
+     * @param ICartItem[] $subItems
      *
      * @return void
      */
     public function setSubItems($subItems);
 
     /**
-     * @abstract
-     *
      * @return IPrice
      */
-    public function getPrice();
+    public function getPrice(): IPrice;
 
     /**
-     * @abstract
-     *
      * @return IPrice
      */
-    public function getTotalPrice();
+    public function getTotalPrice(): IPrice;
 
     /**
-     * @abstract
-     *
      * @return IPriceInfo
      */
-    public function getPriceInfo();
+    public function getPriceInfo(): IPriceInfo;
 
     /**
      * @param string $comment
@@ -125,8 +101,6 @@ interface ICartItem
     public function setComment($comment);
 
     /**
-     * @abstract
-     *
      * @return string
      */
     public function getComment();
@@ -137,15 +111,12 @@ interface ICartItem
     public function getSetEntries();
 
     /**
-     * @abstract
-     *
      * @return IAvailability
      */
     public function getAvailabilityInfo();
 
     /**
      * @static
-     * @abstract
      *
      * @param $cartId
      * @param $itemKey
@@ -157,7 +128,6 @@ interface ICartItem
 
     /**
      * @static
-     * @abstract
      *
      * @param $cartId
      *
@@ -166,8 +136,6 @@ interface ICartItem
     public static function removeAllFromCart($cartId);
 
     /**
-     * @abstract
-     *
      * @return void
      */
     public function save();

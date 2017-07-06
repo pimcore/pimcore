@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -23,9 +26,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 
-/**
- * Class CartPriceCalculator
- */
 class CartPriceCalculator implements ICartPriceCalculator
 {
     /**
@@ -34,12 +34,12 @@ class CartPriceCalculator implements ICartPriceCalculator
     protected $isCalculated = false;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @var IPrice
      */
     protected $subTotal;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @var IPrice
      */
     protected $grandTotal;
 
@@ -72,7 +72,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     }
 
     /**
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function calculate()
     {
@@ -185,22 +185,22 @@ class CartPriceCalculator implements ICartPriceCalculator
     }
 
     /**
-     * possibility to overwrite the price object that should be used
+     * Possibility to overwrite the price object that should be used
      *
      * @param $amount
      * @param Currency $currency
      *
      * @return IPrice
      */
-    protected function getDefaultPriceObject($amount, Currency $currency)
+    protected function getDefaultPriceObject(PriceAmount $amount, Currency $currency): IPrice
     {
         return new Price($amount, $currency);
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice $price
+     * @return IPrice $price
      */
-    public function getGrandTotal()
+    public function getGrandTotal(): IPrice
     {
         if (!$this->isCalculated) {
             $this->calculate();
@@ -212,7 +212,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @return IModificatedPrice[] $priceModification
      */
-    public function getPriceModifications()
+    public function getPriceModifications(): array
     {
         if (!$this->isCalculated) {
             $this->calculate();
@@ -222,9 +222,9 @@ class CartPriceCalculator implements ICartPriceCalculator
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice $price
+     * @return IPrice $price
      */
-    public function getSubTotal()
+    public function getSubTotal(): IPrice
     {
         if (!$this->isCalculated) {
             $this->calculate();
@@ -257,7 +257,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @return ICartPriceModificator[]
      */
-    public function getModificators()
+    public function getModificators(): array
     {
         return $this->modificators;
     }

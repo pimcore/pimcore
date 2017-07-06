@@ -18,13 +18,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
-/**
- * Class Shipping
- */
 class Shipping implements IShipping
 {
     /**
@@ -63,7 +61,7 @@ class Shipping implements IShipping
      */
     public function modify(IPrice $currentSubTotal, ICart $cart)
     {
-        $modificatedPrice = new \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
+        $modificatedPrice = new ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
         $taxClass = $this->getTaxClass();
         if ($taxClass) {
