@@ -60,6 +60,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
         return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -68,17 +69,19 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
-                if (value && value.length > 0) {
 
-                    // only show 10 relations in the grid
-                    var maxAmount = 10;
-                    if(value.length > maxAmount) {
-                        value.splice(maxAmount, (value.length - maxAmount) );
-                        value.push("...");
+                if (value) {
+                    var result = [];
+                    var i;
+                    for (i = 0; i < value.length && i < 10; i++) {
+                        var item = value[i];
+                        result.push(item[1]);
                     }
+                    return result.join("<br />");
 
-                    return value.join("<br />");
+
                 }
+                return value;
             }.bind(this, field.key)};
     },
 
@@ -661,6 +664,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
             pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {}, this.component.getView())
         );
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 
 });

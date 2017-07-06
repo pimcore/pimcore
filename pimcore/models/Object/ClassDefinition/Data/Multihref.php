@@ -384,6 +384,19 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
+     * @param array $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return array
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+
+    /**
      * @param $data
      * @param null $object
      * @param array $params
@@ -394,16 +407,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
@@ -967,4 +971,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             return $result;
         }
     }
+
+
 }
