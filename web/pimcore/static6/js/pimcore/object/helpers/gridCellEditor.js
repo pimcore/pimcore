@@ -35,6 +35,7 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
 
         });
 
+        value = Ext.clone(value);
 
         var fieldInfo = this.config.fieldInfo;
 
@@ -55,6 +56,8 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
         var tagType = fieldInfo.layout.fieldtype;
 
         var tag = new pimcore.object.tags[tagType](value, fieldInfo.layout);
+        var object = Ext.clone(this.context.record);
+        tag.setObject(object);
 
         var formPanel = Ext.create('Ext.form.Panel', {
             xtype: "form",

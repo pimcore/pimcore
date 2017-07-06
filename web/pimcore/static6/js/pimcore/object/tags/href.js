@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.tags.href");
 pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
     type: "href",
-    dataChanged:false,
+    dataChanged: false,
 
     initialize: function (data, fieldConfig) {
 
@@ -29,19 +29,26 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     },
 
 
-    getGridColumnConfig:function (field) {
+    getGridColumnConfig: function (field) {
         var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
             if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.tdCls += " grid_value_inherited";
             }
+
+            if (value && value.path) {
+                return value.path;
+
+            }
             return value;
 
         }.bind(this, field.key);
 
-        return {header:ts(field.label), sortable:false, dataIndex:field.key, renderer:renderer,
-            editor:this.getGridColumnEditor(field)};
+        return {
+            header: ts(field.label), sortable: false, dataIndex: field.key, renderer: renderer,
+            getEditor: this.getWindowCellEditor.bind(this, field)
+        };
     },
 
 
@@ -72,11 +79,11 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
                 ddGroup: "element",
-                getTargetFromEvent: function(e) {
+                getTargetFromEvent: function (e) {
                     return this.reference.component.getEl();
                 },
 
-                onNodeOver : function(target, dd, e, data) {
+                onNodeOver: function (target, dd, e, data) {
 
                     var record = data.records[0];
                     var data = record.data;
@@ -90,7 +97,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
                 }.bind(this),
 
-                onNodeDrop : this.onNodeDrop.bind(this)
+                onNodeDrop: this.onNodeDrop.bind(this)
             });
 
 
@@ -108,12 +115,12 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             iconCls: "pimcore_icon_edit",
             style: "margin-left: 5px",
             handler: this.openElement.bind(this)
-        },{
+        }, {
             xtype: "button",
             iconCls: "pimcore_icon_delete",
             style: "margin-left: 5px",
             handler: this.empty.bind(this)
-        },{
+        }, {
             xtype: "button",
             iconCls: "pimcore_icon_search",
             style: "margin-left: 5px",
@@ -142,7 +149,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 padding: 0
             },
             listeners: {
-                afterrender: function() {
+                afterrender: function () {
                     this.requestNicePathData();
                 }.bind(this)
             }
@@ -190,7 +197,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 padding: 0
             },
             listeners: {
-                afterrender: function() {
+                afterrender: function () {
                     this.requestNicePathData();
                 }.bind(this)
             }
@@ -204,10 +211,11 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.assetUploadPath, "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
-                if(data["id"]) {
+                if (data["id"]) {
                     this.data.id = data["id"];
                     this.data.type = "asset";
                     this.data.subtype = data["type"];
+                    this.data.path = data["fullpath"];
                     this.dataChanged = true;
                     this.component.setValue(data["fullpath"]);
                     this.requestNicePathData();
@@ -226,6 +234,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             this.data.id = data.id;
             this.data.type = data.elementType;
             this.data.subtype = data.type;
+            this.data.path = data.path;
             this.dataChanged = true;
             this.component.setValue(data.path);
             this.requestNicePathData();
@@ -300,7 +309,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                     allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
                 }
             } else {
-                allowedSubtypes.object = ["object","folder","variant"];
+                allowedSubtypes.object = ["object", "folder", "variant"];
             }
         }
         if (this.fieldConfig.assetsAllowed) {
@@ -341,14 +350,14 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     },
 
     openElement: function () {
-        if(this.data.id && this.data.type && this.data.subtype) {
+        if (this.data.id && this.data.type && this.data.subtype) {
             pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
         }
     },
 
     empty: function () {
         this.data = {};
-        this.dataChanged=true;
+        this.dataChanged = true;
         this.component.setValue("");
     },
 
@@ -360,7 +369,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    dndAllowed: function(data) {
+    dndAllowed: function (data) {
         var type = data.elementType;
         var i;
         var subType;
@@ -423,7 +432,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         return true;
     },
 
-    requestNicePathData: function() {
+    requestNicePathData: function () {
         if (this.data.id) {
             var targets = new Ext.util.Collection();
             var target = Ext.clone(this.data)
@@ -445,7 +454,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 },
                 this.fieldConfig,
                 this.getContext(),
-                function() {
+                function () {
                     this.component.addCls("grid_nicepath_requested");
                 }.bind(this),
                 function (target, responseData) {
@@ -458,5 +467,9 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 }.bind(this, target)
             );
         }
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });
