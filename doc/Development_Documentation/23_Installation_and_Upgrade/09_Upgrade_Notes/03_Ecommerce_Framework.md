@@ -83,7 +83,9 @@
       `"script" => ":Shop/filters:select_category.html.php"`.
    - Fallback for old view scripts path relative to `PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts"` - but they 
       are also rendered with Symfony engine.
-   
+
+- CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when subclassing the
+  default calculator.
    
 - Commands namespace changed from `shop` to `ecommerce`. 
 

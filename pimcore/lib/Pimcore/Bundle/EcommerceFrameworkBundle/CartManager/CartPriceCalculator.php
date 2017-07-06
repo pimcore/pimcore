@@ -41,7 +41,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
      */
-    protected $gradTotal;
+    protected $grandTotal;
 
     /**
      * @var ICartPriceModificator[]
@@ -160,7 +160,7 @@ class CartPriceCalculator implements ICartPriceCalculator
 
         $currentSubTotal->setTaxEntries($grandTotalTaxes);
 
-        $this->gradTotal = $currentSubTotal;
+        $this->grandTotal   = $currentSubTotal;
         $this->isCalculated = true;
     }
 
@@ -196,7 +196,7 @@ class CartPriceCalculator implements ICartPriceCalculator
             $this->calculate();
         }
 
-        return $this->gradTotal;
+        return $this->grandTotal;
     }
 
     /**
