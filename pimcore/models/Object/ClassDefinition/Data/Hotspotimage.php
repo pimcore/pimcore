@@ -551,7 +551,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                 throw new \Exception('cannot get values from web service import - invalid data, referencing unknown (hotspot) asset with id [ '.$id.' ]');
             } else {
-                $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $value);
+                $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
     }
