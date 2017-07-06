@@ -152,6 +152,18 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+    /**
      * @see Object\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
