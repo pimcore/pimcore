@@ -15,10 +15,12 @@ use Pimcore\Tests\Test\TestCase;
 class ProductTaxManagementTest extends TestCase
 {
     /**
-     * @var \EcommerceFramework\UnitTester
+     * @param float $grossPrice
+     * @param array $taxes
+     * @param string $combinationType
+     *
+     * @return AbstractProduct|\PHPUnit_Framework_MockObject_Stub
      */
-    protected $tester;
-
     private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
     {
         $grossPrice = PriceAmount::create($grossPrice);
@@ -49,7 +51,8 @@ class ProductTaxManagementTest extends TestCase
             }
         ]);
 
-        return Stub::construct(AbstractProduct::class, [], [
+        /** @var AbstractProduct|\PHPUnit_Framework_MockObject_Stub $product */
+        $product = Stub::construct(AbstractProduct::class, [], [
             'getId' => function () {
                 return 5;
             },
@@ -60,42 +63,35 @@ class ProductTaxManagementTest extends TestCase
                 return [];
             }
         ]);
+
+        return $product;
     }
 
-    // tests
     public function testPriceWithoutTaxEntries()
     {
         $product = $this->setUpProduct(100);
+        $price   = $product->getOSPrice();
 
-        /**
-         * @var $product AbstractProduct
-         */
-        $this->assertEquals(100, $product->getOSPrice()->getAmount()->asNumeric(), 'Get Price Amount without any tax entries');
-        $this->assertEquals(100, $product->getOSPrice()->getNetAmount()->asNumeric(), 'Get net amount without any tax entries');
-        $this->assertEquals(100, $product->getOSPrice()->getGrossAmount()->asNumeric(), 'Get gross amount without any tax entries');
+        $this->assertSame('100.00', $price->getAmount()->asString(2), 'Get Price Amount without any tax entries');
+        $this->assertSame('100.00', $price->getNetAmount()->asString(2), 'Get net amount without any tax entries');
+        $this->assertSame('100.00', $price->getGrossAmount()->asString(2), 'Get gross amount without any tax entries');
     }
 
     public function testPriceWithTaxEntriesCombine()
     {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
+        $price   = $product->getOSPrice();
 
-        /**
-         * @var $product AbstractProduct
-         */
-        $price = $product->getOSPrice();
-        $this->assertEquals(100, $price->getGrossAmount()->asNumeric(), 'Get gross amount with tax 10% + 15% combine');
-        $this->assertEquals(80, $price->getNetAmount()->asNumeric(), 'Get net amount 10% + 15% combine');
+        $this->assertSame('100.00', $price->getGrossAmount()->asString(2), 'Get gross amount with tax 10% + 15% combine');
+        $this->assertSame('80.00', $price->getNetAmount()->asString(2), 'Get net amount 10% + 15% combine');
     }
 
     public function testPriceWithTaxEntriesOneAfterAnother()
     {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
+        $price   = $product->getOSPrice();
 
-        /**
-         * @var $product AbstractProduct
-         */
-        $price = $product->getOSPrice();
-        $this->assertEquals(100, $price->getGrossAmount()->asNumeric(), 'Get gross amount with tax 10% + 15% one-after-another');
-        $this->assertEquals(79.05, $price->getNetAmount()->asNumeric(), 'Get net amount 10% + 15% one-after-another');
+        $this->assertSame('100.00', $price->getGrossAmount()->asString(2), 'Get gross amount with tax 10% + 15% one-after-another');
+        $this->assertSame('79.05', $price->getNetAmount()->asString(2), 'Get net amount 10% + 15% one-after-another');
     }
 }

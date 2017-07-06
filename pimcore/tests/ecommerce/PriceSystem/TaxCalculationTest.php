@@ -17,11 +17,6 @@ use Pimcore\Tests\Test\TestCase;
 class TaxCalculationTest extends TestCase
 {
     /**
-     * @var \EcommerceFramework\UnitTester
-     */
-    protected $tester;
-
-    /**
      * @var TaxCalculationService
      */
     private $calculationService;
@@ -268,7 +263,7 @@ class TaxCalculationTest extends TestCase
                 return new Price(PriceAmount::create($amount), new Currency('EUR'));
             },
             'calculateAmount' => function () {
-                return 100;
+                return PriceAmount::create(100);
             }
         ]);
 

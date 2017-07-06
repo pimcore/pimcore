@@ -25,6 +25,8 @@ class Ecommerce extends Module
             /** @var Pimcore $pimcoreModule */
             $pimcoreModule = $this->getModule('\\' . Pimcore::class);
 
+            $this->debug('[ECOMMERCE] Running ecommerce framework installer');
+
             // install ecommerce framework
             $installer = $pimcoreModule->getContainer()->get('pimcore.ecommerceframework.installer');
             $installer->install();
