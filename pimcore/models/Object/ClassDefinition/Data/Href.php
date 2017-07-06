@@ -313,6 +313,20 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
+     * @param array $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return Asset|Document|Object\AbstractObject
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+
+
+    /**
      * @param $data
      * @param null $object
      * @param array $params
@@ -321,9 +335,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
-            return $data->getRealFullPath();
-        }
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
