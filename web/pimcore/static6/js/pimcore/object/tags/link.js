@@ -41,21 +41,24 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     },
 
-    getGridColumnConfig: function(field) {
-        var renderer = function(key, value, metaData, record) {
+    getGridColumnConfig: function (field) {
+        var renderer = function (key, value, metaData, record) {
             this.applyPermissionStyle(key, value, metaData, record);
 
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.tdCls += " grid_value_inherited";
             }
-            if(value) {
+            if (value) {
                 return value.text;
             }
             return t("empty");
 
         }.bind(this, field.key);
 
-        return {header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer};
+        return {
+            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            getEditor: this.getWindowCellEditor.bind(this, field)
+        };
     },
 
     getLayoutEdit: function () {
@@ -95,7 +98,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
         this.component = this.getLayoutEdit();
         this.button.hide();
-        
+
         return this.component;
     },
 
@@ -117,8 +120,8 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     openSearchEditor: function () {
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-            type: ["asset","document"]
-        },
+                type: ["asset", "document"]
+            },
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
@@ -126,12 +129,12 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     save: function () {
         var values = this.window.getComponent("form").getForm().getFieldValues();
-        if(Ext.encode(values) != Ext.encode(this.data)) {
-            this.dirty = true; 
+        if (Ext.encode(values) != Ext.encode(this.data)) {
+            this.dirty = true;
         }
         this.data = values;
 
-        var textValue = "[not set]"; 
+        var textValue = "[not set]";
         if (this.data.text) {
             textValue = this.data.text;
         }
@@ -147,7 +150,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         this.window.close();
 
         this.data = this.defaultData;
-        this.dirty = true; 
+        this.dirty = true;
 
         // set text
         this.displayField.setValue("[not set]");
@@ -157,11 +160,15 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         this.window.close();
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
         return this.dirty;
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });
