@@ -24,13 +24,15 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnConfig: function(field) {
+    getGridColumnConfig: function (field) {
 
-        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+        return {
+            header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
-                                    this.applyPermissionStyle(key, value, metaData, record);
+                this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
                     == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
@@ -39,7 +41,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     return '<img src="/admin/asset/get-image-thumbnail?id=' + value.id
                         + '&width=88&height=88&frame=true" />';
                 }
-            }.bind(this, field.key)};
+            }.bind(this, field.key)
+        };
     },
 
     getLayoutEdit: function () {
@@ -65,12 +68,12 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 {
                     xtype: "tbtext",
                     text: "<b>" + this.fieldConfig.title + "</b>"
-                },"->",{
+                }, "->", {
                     xtype: "button",
                     iconCls: "pimcore_icon_upload",
-                cls: "pimcore_inline_upload",
+                    cls: "pimcore_inline_upload",
                     handler: this.uploadDialog.bind(this)
-                },{
+                }, {
                     xtype: "button",
                     iconCls: "pimcore_icon_edit",
                     handler: this.openImage.bind(this)
@@ -78,7 +81,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
                     handler: this.empty.bind(this)
-                },{
+                }, {
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this)
@@ -96,11 +99,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
                 ddGroup: "element",
-                getTargetFromEvent: function(e) {
+                getTargetFromEvent: function (e) {
                     return this.reference.component.getEl();
                 },
 
-                onNodeOver : function(target, dd, e, data) {
+                onNodeOver: function (target, dd, e, data) {
 
                     var record = data.records[0];
                     if (record.data.type == "image") {
@@ -110,7 +113,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     }
                 },
 
-                onNodeDrop : this.onNodeDrop.bind(this)
+                onNodeDrop: this.onNodeDrop.bind(this)
             });
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
@@ -160,10 +163,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         var record = data.records[0];
         if (record.data.type == "image") {
-            if(this.data != record.data.id) {
+            if (this.data.id != record.data.id) {
                 this.dirty = true;
             }
-            this.data = record.data.id;
+            this.data.id = record.data.id;
 
             this.updateImage();
             return true;
@@ -172,11 +175,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     openSearchEditor: function () {
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-            type: ["asset"],
-            subtype: {
-                asset: ["image"]
-            }
-        },
+                type: ["asset"],
+                subtype: {
+                    asset: ["image"]
+                }
+            },
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
@@ -188,8 +191,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 this.empty();
 
                 var data = Ext.decode(res.response.responseText);
-                if(data["id"] && data["type"] == "image") {
-                    this.data = data["id"];
+                if (data["id"] && data["type"] == "image") {
+                    this.data.id = data["id"];
                     this.dirty = true;
                 }
                 this.updateImage();
@@ -204,11 +207,12 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.empty();
 
         if (item) {
-            if(this.data != item.id) {
+            if (!this.data || this.data.id != item.id) {
                 this.dirty = true;
             }
 
-            this.data = item.id;
+            this.data = this.data || {};
+            this.data.id = item.id;
 
             this.updateImage();
             return true;
@@ -216,8 +220,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     openImage: function () {
-        if(this.data) {
-            pimcore.helpers.openAsset(this.data, "image");
+        if (this.data) {
+            pimcore.helpers.openAsset(this.data.id, "image");
         }
     },
 
@@ -226,10 +230,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         // 5px padding (-10)
         var body = this.getBody();
-        var width = body.getWidth()-10;
-        var height = this.fieldConfig.height-60; // strage body.getHeight() returns 2? so we use the config instead
+        var width = body.getWidth() - 10;
+        var height = this.fieldConfig.height - 60; // strage body.getHeight() returns 2? so we use the config instead
 
-        var path = "/admin/asset/get-image-thumbnail?id=" + this.data + "&width=" + width + "&height=" + height
+        var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width + "&height=" + height
             + "&contain=true";
 
         body = body.down('.x-autocontainer-innerCt');
@@ -256,7 +260,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
         var menu = new Ext.menu.Menu();
 
-        if(this.data) {
+        if (this.data) {
             menu.add(new Ext.menu.Item({
                 text: t('empty'),
                 iconCls: "pimcore_icon_delete",
@@ -277,7 +281,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 }.bind(this)
             }));
 
-            if(this instanceof pimcore.object.tags.hotspotimage) {
+            if (this instanceof pimcore.object.tags.hotspotimage) {
 
                 menu.add(new Ext.menu.Item({
                     text: t('select_specific_area_of_image'),
@@ -326,7 +330,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     empty: function () {
-        this.data = null;
+        if (this.data) {
+            this.data.id = null;
+        }
 
         this.getBody().down('.x-autocontainer-innerCt').setStyle({
             backgroundImage: ""
@@ -350,11 +356,16 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         return true;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
         return this.dirty;
+    },
+
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });

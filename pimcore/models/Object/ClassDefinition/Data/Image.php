@@ -173,7 +173,19 @@ class Image extends Model\Object\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        return $this->getDataForResource($data, $object, $params);
+        return $data;
+    }
+
+    /**
+     * @param Asset $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return int
+     */
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
@@ -187,7 +199,24 @@ class Image extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        return $this->getDataFromResource($data, $object, $params);
+
+        if ($data && intval($data["id"]) > 0) {
+            return Asset\Image::getById($data["id"]);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return Asset
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
