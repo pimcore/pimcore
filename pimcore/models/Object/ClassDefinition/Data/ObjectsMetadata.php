@@ -240,6 +240,19 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
+     * @param array $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return array
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+
+    /**
      * @param $data
      * @param null $object
      * @param array $params
@@ -248,17 +261,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $metaObject) {
-                $eo = $metaObject->getObject();
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**

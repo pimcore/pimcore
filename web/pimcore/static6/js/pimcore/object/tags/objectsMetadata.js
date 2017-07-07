@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.tags.objectsMetadata");
 pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, {
 
     type: "objectsMetadata",
-    dataChanged:false,
+    dataChanged: false,
     idProperty: "id",
     pathProperty: "fullpath",
 
@@ -42,11 +42,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         var i;
 
-        for(i = 0; i < visibleFields.length; i++) {
+        for (i = 0; i < visibleFields.length; i++) {
             fields.push(visibleFields[i]);
         }
 
-        for(i = 0; i < this.fieldConfig.columns.length; i++) {
+        for (i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
         }
 
@@ -55,17 +55,17 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             data: this.data,
             idProperty: 'id',
             listeners: {
-                add:function() {
+                add: function () {
                     this.dataChanged = true;
                 }.bind(this),
-                remove: function() {
+                remove: function () {
                     this.dataChanged = true;
                 }.bind(this),
                 clear: function () {
                     this.dataChanged = true;
                 }.bind(this),
-                update: function(store) {
-                    if(store.ignoreDataChanged) {
+                update: function (store) {
+                    if (store.ignoreDataChanged) {
                         return;
                     }
                     this.dataChanged = true;
@@ -77,7 +77,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     },
 
 
-    createLayout: function(readOnly) {
+    createLayout: function (readOnly) {
         var autoHeight = false;
         if (intval(this.fieldConfig.height) < 15) {
             autoHeight = true;
@@ -92,7 +92,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
 
         for (i = 0; i < visibleFields.length; i++) {
-            if(!empty(visibleFields[i])) {
+            if (!empty(visibleFields[i])) {
                 var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
 
                 var field = {
@@ -117,7 +117,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
-            if(this.fieldConfig.columns[i].width) {
+            if (this.fieldConfig.columns[i].width) {
                 width = this.fieldConfig.columns[i].width;
             }
 
@@ -125,15 +125,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             var renderer = null;
             var listeners = null;
 
-            if(this.fieldConfig.columns[i].type == "number" && !readOnly) {
+            if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
                 editor = new Ext.form.NumberField({});
 
-            } else if(this.fieldConfig.columns[i].type == "text" && !readOnly) {
+            } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
                 editor = new Ext.form.TextField({});
-            } else if(this.fieldConfig.columns[i].type == "select" && !readOnly) {
+            } else if (this.fieldConfig.columns[i].type == "select" && !readOnly) {
                 var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
                 var selectData = [];
-                for(var j = 0; j < selectDataRaw.length; j++) {
+                for (var j = 0; j < selectDataRaw.length; j++) {
                     selectData.push([selectDataRaw[j], selectDataRaw[j]]);
                 }
 
@@ -141,7 +141,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     typeAhead: true,
                     forceSelection: true,
                     triggerAction: 'all',
-                    lazyRender:true,
+                    lazyRender: true,
                     mode: 'local',
 
                     store: new Ext.data.ArrayStore({
@@ -154,7 +154,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     valueField: 'value',
                     displayField: 'label'
                 });
-            } else if(this.fieldConfig.columns[i].type == "bool") {
+            } else if (this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
@@ -167,7 +167,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
                 };
 
-                if(readOnly) {
+                if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
                         header: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
@@ -191,7 +191,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
 
-        if(!readOnly) {
+        if (!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
                 width: 40,
@@ -200,10 +200,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         tooltip: t('up'),
                         icon: "/pimcore/static6/img/flat-color-icons/up.svg",
                         handler: function (grid, rowIndex) {
-                            if(rowIndex > 0) {
+                            if (rowIndex > 0) {
                                 var rec = grid.getStore().getAt(rowIndex);
                                 grid.getStore().removeAt(rowIndex);
-                                grid.getStore().insert(rowIndex-1, [rec]);
+                                grid.getStore().insert(rowIndex - 1, [rec]);
                             }
                         }.bind(this)
                     }
@@ -217,10 +217,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         tooltip: t('down'),
                         icon: "/pimcore/static6/img/flat-color-icons/down.svg",
                         handler: function (grid, rowIndex) {
-                            if(rowIndex < (grid.getStore().getCount()-1)) {
+                            if (rowIndex < (grid.getStore().getCount() - 1)) {
                                 var rec = grid.getStore().getAt(rowIndex);
                                 grid.getStore().removeAt(rowIndex);
-                                grid.getStore().insert(rowIndex+1, [rec]);
+                                grid.getStore().insert(rowIndex + 1, [rec]);
                             }
                         }.bind(this)
                     }
@@ -243,7 +243,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             ]
         });
 
-        if(!readOnly) {
+        if (!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
                 width: 40,
@@ -277,7 +277,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columnLines: true,
             stripeRows: true,
-            columns : {
+            columns: {
                 items: columns
             },
             viewConfig: {
@@ -293,15 +293,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     drop: function () {
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
                         // TODO: investigate if there this is already fixed 6.2
-                        if(this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
+                        if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
                             this.object.toolbar.items.items[0].focus();
                         }
                     }.bind(this),
                     // see https://github.com/pimcore/pimcore/issues/979
                     // probably a ExtJS 6.0 bug. withou this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
-                    cellmousedown: function( element , td , cellIndex , record , tr , rowIndex , e , eOpts ) {
-                        if(cellIndex > visibleFields.length) {
+                    cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+                        if (cellIndex > visibleFields.length) {
                             return false;
                         } else {
                             return true;
@@ -324,19 +324,19 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             ]
         });
 
-        if(!readOnly) {
+        if (!readOnly) {
             this.component.on("rowcontextmenu", this.onRowContextmenu);
         }
 
         this.component.reference = this;
 
-        if(!readOnly) {
+        if (!readOnly) {
             this.component.on("afterrender", function () {
 
                 var dropTargetEl = this.component.getEl();
                 var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                    ddGroup    : 'element',
-                    getTargetFromEvent: function(e) {
+                    ddGroup: 'element',
+                    getTargetFromEvent: function (e) {
                         return this.component.getEl().dom;
                         //return e.getTarget(this.grid.getView().rowSelector);
                     }.bind(this),
@@ -351,7 +351,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }
                     }.bind(this),
-                    onNodeDrop : function(target, dd, e, data) {
+                    onNodeDrop: function (target, dd, e, data) {
 
                         var record = data.records[0];
                         var data = record.data;
@@ -361,9 +361,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
                             var toBeRequested = new Ext.util.Collection();
 
-                            if(data["grid"] && data["grid"] == this.component) {
+                            if (data["grid"] && data["grid"] == this.component) {
                                 var rowIndex = this.component.getView().findRowIndex(e.target);
-                                if(rowIndex !== false) {
+                                if (rowIndex !== false) {
                                     var rec = this.store.getAt(data.rowIndex);
                                     this.store.removeAt(data.rowIndex);
                                     toBeRequested.add(this.store.insert(rowIndex, [rec]));
@@ -401,7 +401,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         return this.createLayout(true);
     },
 
-    getEditToolbarItems: function(readOnly) {
+    getEditToolbarItems: function (readOnly) {
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -433,10 +433,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         return toolbarItems;
     },
 
-    dndAllowed: function(data, fromTree) {
+    dndAllowed: function (data, fromTree) {
         // check if data is a treenode, if not allow drop because of the reordering
         if (!fromTree) {
-            if(data["grid"] && data["grid"] == this.component) {
+            if (data["grid"] && data["grid"] == this.component) {
                 return true;
             }
             return false;
@@ -453,7 +453,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classId = classStore.getAt(classStore.findExact("text", classname));
         var isAllowedClass = false;
 
-        if(classId) {
+        if (classId) {
             if (this.fieldConfig.allowedClassId == classId.id) {
                 isAllowedClass = true;
             }
@@ -489,7 +489,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
     },
 
-    loadObjectData: function(item, fields) {
+    loadObjectData: function (item, fields) {
 
         var newItem = this.store.add(item);
 
@@ -503,9 +503,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 var rdata = Ext.decode(response.responseText);
                 var key;
 
-                if(rdata.success) {
+                if (rdata.success) {
                     var rec = this.store.getById(item.id);
-                    for(key in rdata.fields) {
+                    for (key in rdata.fields) {
                         rec.set(key, rdata.fields[key]);
                     }
                 }
@@ -515,12 +515,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         return newItem;
     },
 
-    normalizeTargetData: function(targets) {
+    normalizeTargetData: function (targets) {
         if (!targets) {
             return targets;
         }
 
-        targets.each(function(record){
+        targets.each(function (record) {
             var type = record.data.type;
             record.data.type = "object";
             record.data.subtype = type;
@@ -529,5 +529,35 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         return targets;
 
+    },
+
+    getGridColumnConfig: function(field) {
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
+            renderer: function (key, value, metaData, record) {
+                this.applyPermissionStyle(key, value, metaData, record);
+
+                if(record.data.inheritedFields[key]
+                    && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+
+
+                if (value) {
+                    var result = [];
+                    var i;
+                    for (i = 0; i < value.length && i < 10; i++) {
+                        var item = value[i];
+                        result.push(item["fullpath"]);
+                    }
+                    return result.join("<br />");
+                }
+                return value;
+            }.bind(this, field.key)};
+    },
+
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });
