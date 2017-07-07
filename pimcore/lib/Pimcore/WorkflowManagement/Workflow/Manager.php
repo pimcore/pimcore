@@ -729,7 +729,7 @@ class Manager
         $subject = $config['workflowSubject'];
 
         if ($element instanceof Asset) {
-            if (isset($subject['objectTypes'][0]) && !in_array($element->getType(), $subject['objectTypes'])) {
+            if (isset($subject['assetTypes'][0]) && !in_array($element->getType(), $subject['assetTypes'])) {
                 return false;
             }
             return true;
