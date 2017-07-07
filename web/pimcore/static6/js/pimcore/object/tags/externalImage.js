@@ -29,6 +29,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function(field) {
 
         return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            getEditor:this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                                     this.applyPermissionStyle(key, value, metaData, record);
 
@@ -37,8 +38,8 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
-                if (value && value.url) {
-                    return '<img style="max-width:88px;max-height:88px" src="' + value.url  + '" />';
+                if (value) {
+                    return '<img style="max-width:88px;max-height:88px" src="' + value  + '" />';
                 }
             }.bind(this, field.key)};
     },
@@ -240,5 +241,9 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
 
     isDirty: function() {
         return this.inputField.isDirty();
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });

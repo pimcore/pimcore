@@ -177,6 +177,20 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         return null;
     }
 
+
+    /**
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
+        return $this->getDataForEditmode($data, $object, $params);
+
+    }
+
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      *
@@ -190,6 +204,19 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
     {
         return new Model\Object\Data\ExternalImage($data);
     }
+
+    /**
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
