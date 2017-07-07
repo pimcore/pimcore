@@ -253,6 +253,19 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param int $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return Asset
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
+
+    /**
      * @param $data
      * @param null $object
      * @param mixed $params
@@ -261,9 +274,16 @@ class Video extends Model\Object\ClassDefinition\Data
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
-            return $data->getData()->getId();
+        if ($data) {
+            if ($data->getData() instanceof Asset) {
+                $id = $data->getData()->getId();
+            }
         }
+        $result = $this->getDataForEditmode($data, $object, $params);
+        if ($id) {
+            $result["id"] = $id;
+        }
+        return $result;
     }
 
     /**

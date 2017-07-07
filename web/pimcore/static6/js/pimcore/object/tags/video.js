@@ -27,22 +27,25 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnConfig: function(field) {
+    getGridColumnConfig: function (field) {
 
-        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
-                    renderer: function (key, value, metaData, record) {
-                                    this.applyPermissionStyle(key, value, metaData, record);
+        return {
+            header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
+            renderer: function (key, value, metaData, record) {
+                this.applyPermissionStyle(key, value, metaData, record);
 
-                                    if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
-                                                                        == true) {
-                                        metaData.tdCls += " grid_value_inherited";
-                                    }
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited
+                    == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
 
-                                    if (value) {
-                                        return '<img src="/admin/asset/get-video-thumbnail?id=' + value
-                                            + '&width=88&height=88&frame=true" />';
-                                    }
-                                }.bind(this, field.key)};
+                if (value && value.id) {
+                    return '<img src="/admin/asset/get-video-thumbnail?id=' + value.id
+                        + '&width=88&height=88&frame=true" />';
+                }
+            }.bind(this, field.key)
+        };
     },
 
     getLayoutEdit: function () {
@@ -62,7 +65,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             tbar: [{
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
-            },"->",{
+            }, "->", {
                 xtype: "button",
                 iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
                 handler: this.openEdit.bind(this)
@@ -139,19 +142,19 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
                 var match, regExp;
 
-                if(values["type"] == "youtube") {
+                if (values["type"] == "youtube") {
                     regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
                     match = values["data"].match(regExp);
                     if (match && match[2].length == 11) {
                         values["data"] = match[2];
                     }
-                } else if(values["type"] == "vimeo") {
+                } else if (values["type"] == "vimeo") {
                     regExp = /vimeo.com\/(\d+)($|\/)/;
                     match = values["data"].match(regExp);
                     if (match && match[1]) {
                         values["data"] = match[1];
                     }
-                } else if(values["type"] == "dailymotion") {
+                } else if (values["type"] == "dailymotion") {
                     regExp = /dailymotion.*\/video\/([^_]+)/;
                     match = values["data"].match(regExp);
                     if (match && match[1]) {
@@ -178,10 +181,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
         var content = '';
 
-        if(this.data.type == "asset" && pimcore.settings.videoconverter) {
+        if (this.data.type == "asset" && pimcore.settings.videoconverter) {
             content = '<img src="/admin/asset/get-video-thumbnail?width='
-                + width + "&height=" + height + '&frame=true&' +  Ext.urlEncode({path: this.data.data}) + '" />';
-        } else if(this.data.type == "youtube") {
+                + width + "&height=" + height + '&frame=true&' + Ext.urlEncode({path: this.data.data}) + '" />';
+        } else if (this.data.type == "youtube") {
             content = '<iframe width="' + width + '" height="' + height + '" src="//www.youtube.com/embed/' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
         } else if (this.data.type == "vimeo") {
             content = '<iframe src="//player.vimeo.com/video/' + this.data.data + '?title=0&amp;byline=0&amp;portrait=0" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
@@ -219,11 +222,16 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         return true;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
         return this.dirty;
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
+
 });
