@@ -78,10 +78,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         result.push(item[1]);
                     }
                     return result.join("<br />");
-
-
+                } else {
+                    return "";
                 }
-                return value;
             }.bind(this, field.key)};
     },
 
