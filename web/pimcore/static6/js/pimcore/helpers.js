@@ -2012,6 +2012,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         buttons: [
             {
                 text: t("cancel"),
+                iconCls: "pimcore_icon_cancel",
                 listeners:  {
                     "click": callback["cancel"]
                 }
