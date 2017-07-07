@@ -29,7 +29,7 @@ return [
                     "items" => [
                         "add" => 0,                                             // hide "Add Object" , "Add Variant"
                         "addFolder" => 0,                                       // hide "Add Folder"
-                        "importFromCsv" => 0,                                   // hide "Import From CSV"
+                        "importCsv" => 0,                                       // hide "Import From CSV"
                         "paste" => 0,                                           // hide "Paste"
                         "copy" => 0,                                            // hide "Copy"
                         "cut" => 0,                                             // hide "Cut"
