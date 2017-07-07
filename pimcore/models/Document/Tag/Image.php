@@ -225,7 +225,7 @@ class Image extends Model\Document\Tag
                 $thumbnail = $image->getThumbnail($thumbConfig, $deferred);
             } else {
                 // we're using the thumbnail class only to generate the HTML
-                $thumbnail = new Asset\Image\Thumbnail($image);
+                $thumbnail = $image->getThumbnail();
             }
 
             $attributes = array_merge($this->options, [
