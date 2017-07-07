@@ -41,7 +41,7 @@ server {
     # allow access to plugin-data and core assets ( done by excluding .*/static and static)
     # forbid the direct access to pimcore-internal data (eg. config-files, ...)
     # ~* = case-insensitive
-    location ~* ^(/plugins/(?!.*/static).*|^/pimcore/(?!(static|modules/3rdparty)).*|/website/var/(?!tmp|assets|areas)|^.*modules/.*/static.*|^(vendor|tests|node_modules|phing)/.*|^(bower|package|composer|gulpfile)\.) {
+    location ~* ^(/plugins/(?!.*/static).*|^/pimcore/(?!(static|modules/3rdparty)).*|/website/var/(?!tmp|assets|areas)|/modules/(?!.*/static).*|^(vendor|tests|node_modules|phing)/.*|^(bower|package|composer|gulpfile)\.) {
         return 403;
     }
  
