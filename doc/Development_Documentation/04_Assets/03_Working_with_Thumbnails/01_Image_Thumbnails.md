@@ -295,13 +295,12 @@ $a->getThumbnail("galleryCarousel")->getMedia("320w")->getHTML();
 $a->getThumbnail("galleryCarousel")->getMedia("320w", 2);
 ```
 
-## Disable Picture Polyfill
-If you want to use your own Polyfill.
-```php
-<?php
-Asset\Image\Thumbnail::setEmbedPicturePolyfill(false);
-?>
-```
+## Picture Polyfill
+Pimcore uses the `<picture>` HTML-tag which isn't supported natively by IE (but all other modern browsers). 
+To use `<picture>` in IE you have to include a polyfill which adds the support to the browser. 
 
+See: 
+- https://github.com/verlok/picturePolyfill
+- https://github.com/scottjehl/picturefill 
 
 

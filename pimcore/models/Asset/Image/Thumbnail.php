@@ -70,16 +70,6 @@ class Thumbnail
     protected $deferred = true;
 
     /**
-     * @var bool
-     */
-    protected static $pictureElementInUse = false;
-
-    /**
-     * @var bool
-     */
-    protected static $embedPicturePolyfill = true;
-
-    /**
      * @param $asset
      * @param null $config
      * @param bool $deferred
@@ -486,11 +476,6 @@ class Thumbnail
             return $htmlImgTag;
         } else {
             // output the <picture> - element
-
-            // set this variable so that Pimcore_Controller_Plugin_Thumbnail::dispatchLoopShutdown() knows that
-            // the picture polyfill script needs to be included
-            self::$pictureElementInUse = true;
-
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
 
@@ -499,7 +484,7 @@ class Thumbnail
 
                 // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
                 ksort($mediaConfigs, SORT_NUMERIC);
-            array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
+                array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
                 foreach ($mediaConfigs as $mediaQuery => $config) {
                     $srcSetValues = [];
@@ -618,39 +603,5 @@ class Thumbnail
     protected function createConfig($selector)
     {
         return Thumbnail\Config::getByAutoDetect($selector);
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isPictureElementInUse()
-    {
-        return self::$pictureElementInUse;
-    }
-
-    /**
-     * Enables, when set to true, dispatchLoopShutdown of Pimcore_Controller_Plugin_Thumbnail
-     *
-     * @param bool $flag
-     */
-    public static function setPictureElementInUse($flag)
-    {
-        self::$pictureElementInUse = (bool) $flag;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function getEmbedPicturePolyfill()
-    {
-        return self::$embedPicturePolyfill;
-    }
-
-    /**
-     * @param bool $embedPicturePolyfill
-     */
-    public static function setEmbedPicturePolyfill($embedPicturePolyfill)
-    {
-        self::$embedPicturePolyfill = $embedPicturePolyfill;
     }
 }
