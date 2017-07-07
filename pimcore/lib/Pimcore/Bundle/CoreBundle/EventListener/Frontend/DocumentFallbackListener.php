@@ -117,7 +117,7 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
         if ($event->isMasterRequest()) {
-            $document = $this->documentService->getNearestDocumentByPath($request);
+            $document = $this->documentService->getNearestDocumentByPath($request->getPathInfo());
             if ($document) {
                 $this->documentResolver->setDocument($request, $document);
             }
