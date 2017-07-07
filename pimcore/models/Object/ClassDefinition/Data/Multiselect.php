@@ -231,6 +231,20 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param string $data
+     * @param null|Model\Object\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
+        return $this->getDataForEditmode($data, $object, $params);
+    }
+
+
+
+    /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      *
      * @param string $data

@@ -24,6 +24,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
         return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            getEditor:this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 try {
                     if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
@@ -33,8 +34,10 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                     console.log(e);
                 }
 
-                if (value && value.length > 0) {
-                    return value.join(",");
+                if (value) {
+                    return value;
+                } else {
+                    return "";
                 }
             }.bind(this, field.key)};
     },
@@ -154,5 +157,9 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     getName: function () {
         return this.fieldConfig.name;
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });
