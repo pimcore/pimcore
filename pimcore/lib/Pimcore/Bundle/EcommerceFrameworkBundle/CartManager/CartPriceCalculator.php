@@ -58,22 +58,17 @@ class CartPriceCalculator implements ICartPriceCalculator
      */
     protected $cart;
 
+    private $config;
+
     /**
      * @param $config
      * @param ICart $cart
      */
-    public function __construct($config, ICart $cart)
-    {
-        $this->modificators = [];
-        if (!empty($config->modificators) && is_object($config->modificators)) {
-            foreach ($config->modificators as $modificator) {
-                $modificatorClass = new $modificator->class($modificator->config);
-                $this->addModificator($modificatorClass);
-            }
-        }
-
+    public function __construct($config, ICart $cart) {
         $this->cart = $cart;
         $this->isCalculated = false;
+        $this->config=$config;
+        $this->initModificators();
     }
 
     /**
@@ -162,6 +157,21 @@ class CartPriceCalculator implements ICartPriceCalculator
 
         $this->grandTotal   = $currentSubTotal;
         $this->isCalculated = true;
+    }
+
+    /**
+     * Re-initialise the price modificators, e.g. after removing an item from a cart
+     * within the same request, such as an AJAX-call.
+     */
+    public function initModificators() {
+        $config = $this->config;
+        $this->modificators = array();
+        if(!empty($config->modificators) && is_object($config->modificators)) {
+            foreach($config->modificators as $modificator) {
+                $modificatorClass = new $modificator->class($modificator->config);
+                $this->addModificator( $modificatorClass );
+            }
+        }
     }
 
     /**
