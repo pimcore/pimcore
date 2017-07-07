@@ -798,6 +798,36 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 pathProperty: this.pathProperty
             }, this.component.getView())
         );
+    },
+
+    getGridColumnConfig: function(field) {
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
+            renderer: function (key, value, metaData, record) {
+                this.applyPermissionStyle(key, value, metaData, record);
+
+                if(record.data.inheritedFields[key]
+                    && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+
+
+                if (value) {
+                    var result = [];
+                    var i;
+                    for (i = 0; i < value.length && i < 10; i++) {
+                        var item = value[i];
+                        result.push(item["path"]);
+                    }
+                    return result.join("<br />");
+                }
+                return value;
+            }.bind(this, field.key)};
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
+
 
 });

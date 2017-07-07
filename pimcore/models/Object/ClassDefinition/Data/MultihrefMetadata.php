@@ -374,17 +374,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $metaObject) {
-                $eo = $metaObject->getElement();
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
