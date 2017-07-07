@@ -76,15 +76,26 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
             this.specificPanel.add([
                 {
                     xtype: "numberfield",
+                    fieldLabel: t("decimal_size"),
+                    name: "decimalSize",
+                    maxValue: 65,
+                    value: this.datax.decimalSize
+                }, {
+                    xtype: "numberfield",
                     fieldLabel: t("decimal_precision"),
                     name: "decimalPrecision",
-                    maxValue: 65,
+                    maxValue: 30,
                     value: this.datax.decimalPrecision
                 }, {
                     xtype: "panel",
                     bodyStyle: "padding-top: 3px",
                     style: "margin-bottom: 10px",
-                    html: t('if_specified_decimal_mysql_type_is_used_automatically')
+                    html: t('decimal_mysql_type_info')
+                }, {
+                    xtype: "panel",
+                    bodyStyle: "padding-top: 3px",
+                    style: "margin-bottom: 10px",
+                    html:'<span class="object_field_setting_warning">' +t('decimal_mysql_type_naming_warning')+'</span>'
                 }, {
                     xtype: "checkbox",
                     fieldLabel: t("integer"),
@@ -125,6 +136,7 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                     unsigned: source.datax.unsigned,
                     minValue: source.datax.minValue,
                     maxValue: source.datax.maxValue,
+                    decimalSize: source.datax.decimalSize,
                     decimalPrecision: source.datax.decimalPrecision
                 });
         }
