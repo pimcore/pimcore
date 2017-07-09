@@ -130,6 +130,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
 
 namespace {
 
+    use Pimcore\Cache;
     use Pimcore\Tool\Session;
 
     if (!function_exists('adminer_object')) {
@@ -221,6 +222,24 @@ namespace {
                     $conf = \Pimcore\Config::getSystemConfig()->database->params;
                     // database name, will be escaped by Adminer
                     return $conf->dbname;
+                }
+
+                public function databases($flush = true)
+                {
+                    $cacheKey = 'pimcore_adminer_databases';
+
+                    if (!$return = Cache::load($cacheKey)) {
+                        $db = Pimcore\Db::get();
+                        $return = $db->fetchAll('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
+
+                        foreach ($return as &$ret) {
+                            $ret = $ret['SCHEMA_NAME'];
+                        }
+
+                        Cache::save($return, $cacheKey);
+                    }
+
+                    return $return;
                 }
             }
 
