@@ -4,6 +4,7 @@ Instead of directly returning the HTML code of your website you could also retur
 You can use the built in Web2Print functionality to accomplish this.
 
 Please make sure that you have set up the web2print functionality correctly ("Settings" -> "Web2Print Settings").
+
 You don't need to enable the Web2Print Documents in Pimcore, you 
 just have to provide the correct settings (Tool -> WkHtmlToPdf / PDFreactor) and the corresponding settings.
 
@@ -28,8 +29,7 @@ class BlogController extends FrontendController
         );
     }
 ```
-
-##Advaced example
+## Advaced example
 
 ```php
 class BlogController extends FrontendController
