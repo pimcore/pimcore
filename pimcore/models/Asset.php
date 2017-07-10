@@ -1287,7 +1287,7 @@ class Asset extends Element\AbstractElement
         if (is_file($file)) {
             if ($type == 'md5') {
                 return md5_file($file);
-            } elseif ($type = 'sha1') {
+            } elseif ($type == 'sha1') {
                 return sha1_file($file);
             } else {
                 throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
