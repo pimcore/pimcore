@@ -72,9 +72,9 @@ class ProductTaxManagementTest extends TestCase
         $product = $this->setUpProduct(100);
         $price   = $product->getOSPrice();
 
-        $this->assertSame('100.00', $price->getAmount()->asString(2), 'Get Price Amount without any tax entries');
-        $this->assertSame('100.00', $price->getNetAmount()->asString(2), 'Get net amount without any tax entries');
-        $this->assertSame('100.00', $price->getGrossAmount()->asString(2), 'Get gross amount without any tax entries');
+        $this->assertSame('100.0000', $price->getAmount()->asString(), 'Get Price Amount without any tax entries');
+        $this->assertSame('100.0000', $price->getNetAmount()->asString(), 'Get net amount without any tax entries');
+        $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount without any tax entries');
     }
 
     public function testPriceWithTaxEntriesCombine()
@@ -82,8 +82,8 @@ class ProductTaxManagementTest extends TestCase
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
         $price   = $product->getOSPrice();
 
-        $this->assertSame('100.00', $price->getGrossAmount()->asString(2), 'Get gross amount with tax 10% + 15% combine');
-        $this->assertSame('80.00', $price->getNetAmount()->asString(2), 'Get net amount 10% + 15% combine');
+        $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% combine');
+        $this->assertSame('80.0000', $price->getNetAmount()->asString(), 'Get net amount 10% + 15% combine');
     }
 
     public function testPriceWithTaxEntriesOneAfterAnother()
@@ -91,7 +91,7 @@ class ProductTaxManagementTest extends TestCase
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
         $price   = $product->getOSPrice();
 
-        $this->assertSame('100.00', $price->getGrossAmount()->asString(2), 'Get gross amount with tax 10% + 15% one-after-another');
-        $this->assertSame('79.05', $price->getNetAmount()->asString(2), 'Get net amount 10% + 15% one-after-another');
+        $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% one-after-another');
+        $this->assertSame('79.0514', $price->getNetAmount()->asString(), 'Get net amount 10% + 15% one-after-another');
     }
 }

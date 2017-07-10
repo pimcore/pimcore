@@ -45,13 +45,17 @@ class DecimalTest extends TestCase
         $this->assertSame('15.990000', (string)$otherScale);
         $this->assertSame('15.990000', $otherScale->asString());
         $this->assertSame('15.99', $otherScale->asString(2));
-        $this->assertSame('16.0', $otherScale->asString(1));
-        $this->assertSame('16', $otherScale->asString(0));
+        $this->assertSame('15.9', $otherScale->asString(1));
+        $this->assertSame('15', $otherScale->asString(0));
+    }
 
+    public function testAsStringNoScaleRoundsToNextInteger()
+    {
         $noScale = Decimal::create(15.99, 0);
 
         $this->assertSame('16', (string)$noScale);
         $this->assertSame('16', $noScale->asString());
+        $this->assertSame('16.00000', $noScale->asString(5));
         $this->assertSame('16.00', $noScale->asString(2));
         $this->assertSame('16.0', $noScale->asString(1));
         $this->assertSame('16', $noScale->asString(0));
@@ -93,7 +97,7 @@ class DecimalTest extends TestCase
 
         $this->assertEquals(0, $zero->asRawValue());
         $this->assertEquals(0, $zero->asNumeric());
-        $this->assertEquals('0.00', $zero->asString(2));
+        $this->assertEquals('0.0000', $zero->asString());
         $this->assertTrue($zero->equals(Decimal::create(0)));
     }
 
@@ -406,8 +410,8 @@ class DecimalTest extends TestCase
 
     public function testAdditiveInverse()
     {
-        $this->assertSame('-15.50', Decimal::create('15.50')->toAdditiveInverse()->asString(2));
-        $this->assertSame('15.50', Decimal::create('-15.50')->toAdditiveInverse()->asString(2));
+        $this->assertSame('-15.5000', Decimal::create('15.50')->toAdditiveInverse()->asString());
+        $this->assertSame('15.5000', Decimal::create('-15.50')->toAdditiveInverse()->asString());
         $this->assertSame(0, Decimal::create(0)->toAdditiveInverse()->asNumeric());
     }
 

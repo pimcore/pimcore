@@ -252,7 +252,8 @@ class Decimal
     }
 
     /**
-     * Returns a string representation. Amount of digits defaults to the scale
+     * Returns a string representation. Digits default to the scale. If $digits is passed,
+     * the string will be truncated to the given amount of digits without any rounding.
      *
      * @param int|null $digits
      *
@@ -260,9 +261,59 @@ class Decimal
      */
     public function asString(int $digits = null): string
     {
-        $digits = $digits ?? $this->scale;
+        $string = strval($this->amount);
+        $amount = null;
 
-        return number_format($this->asNumeric(), $digits, '.', '');
+        if ($this->scale === 0) {
+            $amount = $string;
+        } elseif (strlen($string) <= $this->scale) {
+            $fractionalPart = str_pad($string, $this->scale, '0', STR_PAD_LEFT);
+
+            $amount = '0.' . $fractionalPart;
+        } else {
+            $fractionalOffset = strlen($string) - $this->scale;
+            $integerPart      = substr($string, 0, $fractionalOffset);
+            $fractionalPart   = substr($string, $fractionalOffset);
+
+            $amount = $integerPart . '.'. $fractionalPart;
+        }
+
+        if (null !== $digits) {
+            $amount = $this->truncateDecimalString($amount, $digits);
+        }
+
+        return $amount;
+    }
+
+    /**
+     * Converts decimal string to the given amount of digits. No rounding is done here - additional digits are
+     * just truncated.
+     *
+     * @param string $amount
+     * @param int $digits
+     *
+     * @return string
+     */
+    private function truncateDecimalString(string $amount, int $digits): string
+    {
+        $integerPart    = $amount;
+        $fractionalPart = '0';
+
+        if (false !== strpos($amount, '.')) {
+            list($integerPart, $fractionalPart) = explode('.', $amount);
+        }
+
+        if ($digits === 0) {
+            return $integerPart;
+        }
+
+        if (strlen($fractionalPart) > $digits) {
+            $fractionalPart = substr($fractionalPart, 0, $digits);
+        } elseif (strlen($fractionalPart) < $digits) {
+            $fractionalPart = str_pad($fractionalPart, $digits, '0', STR_PAD_RIGHT);
+        }
+
+        return $integerPart . '.'. $fractionalPart;
     }
 
     /**

@@ -128,7 +128,7 @@ class TaxCalculationTest extends TestCase
 
         $price->setGrossAmount(Decimal::create(100));
         $this->calculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
-        $this->assertSame('90.91', $price->getNetAmount()->asString(2), 'Tax 10%, calc from gross price');
+        $this->assertSame('90.9091', $price->getNetAmount()->asString(), 'Tax 10%, calc from gross price');
 
         $this->assertTrue($price->getGrossAmount()->equals($price->getNetAmount()->add($taxEntries[0]->getAmount())));
     }
@@ -142,13 +142,13 @@ class TaxCalculationTest extends TestCase
         $price->setGrossAmount(Decimal::create(110), true);
 
         $this->assertEquals(110, $price->getGrossAmount()->asNumeric());
-        $this->assertSame('95.65', $price->getNetAmount()->asString(2), 'Tax 15%, calc from gross price with automatic recalc');
+        $this->assertSame('95.6522', $price->getNetAmount()->asString(), 'Tax 15%, calc from gross price with automatic recalc');
 
         $taxEntries = $price->getTaxEntries();
         $this->assertCount(1, $taxEntries);
 
         $taxEntry = $taxEntries[0];
-        $this->assertSame('14.35', $taxEntry->getAmount()->asString(2), 'Tax 15%, tax entry amount');
+        $this->assertSame('14.3478', $taxEntry->getAmount()->asString(), 'Tax 15%, tax entry amount');
 
         // test if taxes add up to gross amount
         $addedTaxNetAmount = $price->getNetAmount()->add($taxEntry->getAmount());
@@ -179,13 +179,13 @@ class TaxCalculationTest extends TestCase
 
         $this->calculationService->updateTaxes($price);
 
-        $this->assertSame('104.83', $price->getGrossAmount()->asString(2), 'Tax 12% + 4% one-after-another, calc from net price');
+        $this->assertSame('104.8320', $price->getGrossAmount()->asString(), 'Tax 12% + 4% one-after-another, calc from net price');
 
         $taxEntries = $price->getTaxEntries();
 
         $this->assertCount(2, $taxEntries);
-        $this->assertSame('10.80', $taxEntries[0]->getAmount()->asString(2), 'Tax 12% + 4% one-after-another, tax entry 1 amount');
-        $this->assertSame('4.03', $taxEntries[1]->getAmount()->asString(2), 'Tax 12% + 4% one-after-another, tax entry 2 amount');
+        $this->assertSame('10.8000', $taxEntries[0]->getAmount()->asString(), 'Tax 12% + 4% one-after-another, tax entry 1 amount');
+        $this->assertSame('4.0320', $taxEntries[1]->getAmount()->asString(), 'Tax 12% + 4% one-after-another, tax entry 2 amount');
 
         $this->assertTaxesAddUp($price);
     }
@@ -203,13 +203,13 @@ class TaxCalculationTest extends TestCase
 
         $this->calculationService->updateTaxes($price);
 
-        $this->assertSame('104.40', $price->getGrossAmount()->asString(2), 'Tax 12% + 4% combine, calc from net price');
+        $this->assertSame('104.4000', $price->getGrossAmount()->asString(), 'Tax 12% + 4% combine, calc from net price');
 
         $taxEntries = $price->getTaxEntries();
 
         $this->assertCount(2, $taxEntries);
-        $this->assertSame('10.80', $taxEntries[0]->getAmount()->asString(2), 'Tax 12% + 4% combine, tax entry 1 amount');
-        $this->assertSame('3.60', $taxEntries[1]->getAmount()->asString(2), 'Tax 12% + 4% combine, tax entry 2 amount');
+        $this->assertSame('10.8000', $taxEntries[0]->getAmount()->asString(), 'Tax 12% + 4% combine, tax entry 1 amount');
+        $this->assertSame('3.6000', $taxEntries[1]->getAmount()->asString(), 'Tax 12% + 4% combine, tax entry 2 amount');
 
         $this->assertTaxesAddUp($price);
     }
@@ -230,9 +230,9 @@ class TaxCalculationTest extends TestCase
         $taxEntries = $price->getTaxEntries();
 
         $this->assertCount(2, $taxEntries);
-        $this->assertEquals('86.21', $price->getNetAmount()->asString(2), 'Tax 12% + 4% combine, calc from gross price');
-        $this->assertEquals('10.34', $taxEntries[0]->getAmount()->asString(2), 'Tax 12% + 4% combine, tax entry 1 amount');
-        $this->assertEquals('3.45', $taxEntries[1]->getAmount()->asString(2), 'Tax 12% + 4% combine, tax entry 2 amount');
+        $this->assertEquals('86.2069', $price->getNetAmount()->asString(), 'Tax 12% + 4% combine, calc from gross price');
+        $this->assertEquals('10.3448', $taxEntries[0]->getAmount()->asString(), 'Tax 12% + 4% combine, tax entry 1 amount');
+        $this->assertEquals('3.4483', $taxEntries[1]->getAmount()->asString(), 'Tax 12% + 4% combine, tax entry 2 amount');
 
         $this->assertTaxesAddUp($price);
     }
@@ -244,7 +244,7 @@ class TaxCalculationTest extends TestCase
             $calculatedGrossAmount = $calculatedGrossAmount->add($taxEntry->getAmount());
         }
 
-        $this->assertEquals($price->getGrossAmount()->asString(2), $calculatedGrossAmount->asString(2));
+        $this->assertEquals($price->getGrossAmount()->asString(), $calculatedGrossAmount->asString());
         $this->assertTrue($price->getGrossAmount()->equals($calculatedGrossAmount));
     }
 
