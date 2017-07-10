@@ -36,12 +36,12 @@ use Pimcore\Model\Document\Page;
         $this->document = $document;
     }
 
-    if ($document->getTitle()) {
+    if ($document instanceof Document\Page && $document->getTitle()) {
         // use the manually set title if available
         $this->headTitle()->set($document->getTitle());
     }
 
-    if ($document->getDescription()) {
+    if ($document instanceof Document\Page && $document->getDescription()) {
         // use the manually set description if available
         $this->headMeta()->setDescription($document->getDescription());
     }
@@ -63,7 +63,6 @@ use Pimcore\Model\Document\Page;
     $this->headLink()->appendStylesheet('/static/css/global.css');
     $this->headLink()->appendStylesheet('/static/lib/video-js/video-js.min.css', "screen");
     $this->headLink()->appendStylesheet('/static/lib/magnific/magnific.css', "screen");
-
     if ($this->editmode) {
         $this->headLink()->appendStylesheet('/static/css/editmode.css', "screen");
     }
