@@ -248,7 +248,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
             return 'bigint(20)';
         }
 
-        if (null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision()) {
+        if ($this->isDecimalType()) {
             return $this->buildDecimalColumnType();
         }
 
@@ -264,11 +264,16 @@ class Numeric extends Model\Object\ClassDefinition\Data
             return 'bigint(20)';
         }
 
-        if (null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision()) {
+        if ($this->isDecimalType()) {
             return $this->buildDecimalColumnType();
         }
 
         return parent::getQueryColumnType();
+    }
+
+    public function isDecimalType(): bool
+    {
+        return (null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision());
     }
 
     private function buildDecimalColumnType(): string
@@ -503,10 +508,14 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @param $value
      *
-     * @return float|int
+     * @return float|int|string
      */
     protected function toNumeric($value)
     {
+        if ($this->isDecimalType()) {
+            return (string) $value;
+        }
+
         if (strpos((string) $value, '.') === false) {
             return (int) $value;
         }
