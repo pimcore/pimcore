@@ -109,7 +109,7 @@ abstract class PrintAbstract extends Document\PageSnippet
      */
     public function generatePdf($config)
     {
-        Processor::getInstance()->preparePdfGeneration($this->getId(), $config);
+        return Processor::getInstance()->preparePdfGeneration($this->getId(), $config);
     }
 
     /**
@@ -129,7 +129,7 @@ abstract class PrintAbstract extends Document\PageSnippet
      */
     public function getPdfFileName()
     {
-        return PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-document-' . $this->getId() . '.pdf';
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-document-' . $this->getId() . '.pdf';
     }
 
     /**

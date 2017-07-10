@@ -63,6 +63,7 @@ use Pimcore\Model\Document\Page;
     $this->headLink()->appendStylesheet('/static/css/global.css');
     $this->headLink()->appendStylesheet('/static/lib/video-js/video-js.min.css', "screen");
     $this->headLink()->appendStylesheet('/static/lib/magnific/magnific.css', "screen");
+    $this->headLink()->appendStylesheet('/static/css/print.css', "print");
     if ($this->editmode) {
         $this->headLink()->appendStylesheet('/static/css/editmode.css', "screen");
     }
@@ -140,7 +141,7 @@ use Pimcore\Model\Document\Page;
             <?php $this->slots()->output('_content') ?>
 
             <?php if ($showBreadcrumbs): ?>
-                <div>
+                <div class="breadcrumb-footer">
                     <a href="/"><?= $this->translate('Home'); ?></a> &gt;
 
                     <?php

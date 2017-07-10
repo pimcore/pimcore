@@ -21,9 +21,91 @@ use Pimcore\Web2Print\Processor;
 
 class PdfReactor8 extends Processor
 {
-    protected function buildPdf(Document\PrintAbstract $document, $config)
+
+    /**
+     * returns the default web2print config
+     *
+     * @param $config
+     * @return array
+     */
+    protected function getConfig($config)
+    {
+        $config = (object)$config;
+        $web2PrintConfig = Config::getWeb2PrintConfig();
+        $reactorConfig = [
+            'document' => '',
+            'baseURL' => (string)$web2PrintConfig->pdfreactorBaseUrl,
+            'author' => $config->author ? $config->author : '',
+            'title' => $config->title ? $config->title : '',
+            'addLinks' => $config->links == 'true',
+            'addBookmarks' => $config->bookmarks == 'true',
+            'javaScriptMode' => $config->javaScriptMode,
+            'defaultColorSpace' => $config->colorspace,
+            'encryption' => $config->encryption,
+            'addTags' => $config->tags == 'true',
+            'logLevel' => $config->loglevel
+        ];
+        if ($config->viewerPreference) {
+            $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
+        }
+        if (trim($web2PrintConfig->pdfreactorLicence)) {
+            $reactorConfig['licenseKey'] = trim($web2PrintConfig->pdfreactorLicence);
+        }
+        return $reactorConfig;
+    }
+
+    /**
+     * @return \PDFreactor
+     */
+    protected function getClient()
     {
         $web2PrintConfig = Config::getWeb2PrintConfig();
+
+        include_once(__DIR__ . '/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
+
+        $port = ((string)$web2PrintConfig->pdfreactorServerPort) ? (string)$web2PrintConfig->pdfreactorServerPort : '9423';
+        $protocol = ((string)$web2PrintConfig->pdfreactorProtocol) ? (string)$web2PrintConfig->pdfreactorProtocol : 'http';
+
+        return new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
+    }
+
+    /**
+     * returns the path to the generated pdf file
+     *
+     * @param string $html
+     * @param array $params
+     * @param bool $returnFilePath return the path to the pdf file or the content
+     * @return string
+     */
+    public function getPdfFromString($html, $params = [], $returnFilePath = false)
+    {
+        $pdfreactor = $this->getClient();
+
+        $customConfig = (array)$params['adapterConfig'];
+        $reactorConfig = $this->getConfig($customConfig);
+
+
+        if(!array_keys($customConfig,'addLinks')){
+            $customConfig['addLinks'] = true;
+        }
+
+        $reactorConfig = array_merge($reactorConfig, $customConfig); //add additional configs
+
+        $reactorConfig['document'] = $this->processHtml($html, $params);
+        $pdf = $pdfreactor->convert($reactorConfig);
+        $pdf = base64_decode($pdf->document);
+        if (!$returnFilePath) {
+            return $pdf;
+        } else {
+            $dstFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
+            file_put_contents($dstFile, $pdf);
+            return $dstFile;
+        }
+    }
+
+    protected function buildPdf(Document\PrintAbstract $document, $config)
+    {
+
 
         $params = [];
         $params['printermarks'] = $config->printermarks == 'true';
@@ -45,34 +127,12 @@ class PdfReactor8 extends Processor
         ini_set('default_socket_timeout', 3000);
         ini_set('max_input_time', -1);
 
-        include_once(__DIR__ . '/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
-
-        $port = ((string) $web2PrintConfig->pdfreactorServerPort) ? (string) $web2PrintConfig->pdfreactorServerPort : '9423';
-        $protocol = ((string) $web2PrintConfig->pdfreactorProtocol) ? (string) $web2PrintConfig->pdfreactorProtocol : 'http';
-
-        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
-
+        $pdfreactor = $this->getClient();
         $filePath = str_replace(PIMCORE_WEB_ROOT, '', $filePath);
 
-        $reactorConfig = [
-            'document' => (string) $web2PrintConfig->pdfreactorBaseUrl . $filePath,
-            'baseURL' => (string) $web2PrintConfig->pdfreactorBaseUrl,
-            'author' => $config->author ? $config->author : '',
-            'title' => $config->title ? $config->title : '',
-            'addLinks' => $config->links == 'true',
-            'addBookmarks' => $config->bookmarks == 'true',
-            'javaScriptMode' => $config->javaScriptMode,
-            'viewerPreferences' => [$config->viewerPreference],
-            'defaultColorSpace' => $config->colorspace,
-            'encryption' => $config->encryption,
-            'addTags' => $config->tags == 'true',
-            'logLevel' => $config->loglevel
-
-        ];
-
-        if (trim($web2PrintConfig->pdfreactorLicence)) {
-            $reactorConfig['licenseKey'] = trim($web2PrintConfig->pdfreactorLicence);
-        }
+        $reactorConfig = $this->getConfig($config);
+        $web2PrintConfig = Config::getWeb2PrintConfig();
+        $reactorConfig['document'] = (string)$web2PrintConfig->pdfreactorBaseUrl . $filePath;
 
         try {
             $progress = new \stdClass();

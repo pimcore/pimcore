@@ -253,11 +253,24 @@ class PrintpageControllerBase extends DocumentControllerBase
         }
 
         $allParams = array_merge($request->request->all(), $request->query->all());
-        $document->generatePdf($allParams);
+
+        if (\Pimcore\Config::getSystemConfig()->general->domain) {
+            $allParams['hostName'] = \Pimcore\Config::getSystemConfig()->general->domain;
+        } else {
+            $allParams['hostName'] = $_SERVER['HTTP_HOST'];
+        }
+
+        $allParams['protocol'] = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+        $pdf = $document->getPdfFileName();
+        if(is_file($pdf)){
+            unlink($pdf);
+        }
+
+        $result = (bool)$document->generatePdf($allParams);
 
         $this->saveProcessingOptions($document->getId(), $allParams);
 
-        return $this->json(['success' => true]);
+        return $this->json(['success' => $result]);
     }
 
     /**
@@ -319,7 +332,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     private function getStoredProcessingOptions($documentId)
     {
-        $filename = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf';
+        $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf';
         if (file_exists($filename)) {
             return \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
         } else {
@@ -333,7 +346,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     private function saveProcessingOptions($documentId, $options)
     {
-        file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
+        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
     }
 
     /**
