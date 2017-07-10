@@ -15,6 +15,7 @@
         {% do pimcore_head_link().appendStylesheet(asset('static/lib/video-js/video-js.min.css'), 'screen') %}
         {% do pimcore_head_link().appendStylesheet(asset('static/lib/magnific/magnific.css'), 'screen') %}
         {% do pimcore_head_link().appendStylesheet(asset('static/bootstrap/css/bootstrap.css')) %}
+        {% do pimcore_head_link().appendStylesheet(asset('static/css/print.css'), 'print') %}
 
         {% if editmode %}
             {% do pimcore_head_link().appendStylesheet(asset('static/css/editmode.css')) %}
@@ -123,7 +124,7 @@
             {% if showBreadcrumbs %}
                 {% do pimcore_nav_renderer('breadcrumbs').setMinDepth(null) %}
 
-                <div>
+                <div class="breadcrumb-footer">
                     <a href="/">{{ "Home"|trans }}</a> &gt;
                     {{ pimcore_render_nav(mainNav, 'breadcrumbs') }}
                 </div>
