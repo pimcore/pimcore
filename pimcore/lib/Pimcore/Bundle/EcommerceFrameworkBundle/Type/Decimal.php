@@ -632,6 +632,9 @@ class Decimal
     /**
      * Calculate a percentage amount
      *
+     * @example Decimal::create(100)->toPercentage(30) = 30
+     * @example Decimal::create(50)->toPercentage(50) = 25
+     *
      * @param int|float $percentage
      * @param int|null $roundingMode
      *

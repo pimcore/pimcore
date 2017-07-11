@@ -104,7 +104,7 @@ class AbstractOfferItem extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return float
+     * @return string|float|int
      */
     public function getOriginalTotalPrice()
     {
@@ -114,7 +114,7 @@ class AbstractOfferItem extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param float $originalTotalPrice
+     * @param string|float|int $originalTotalPrice
      */
     public function setOriginalTotalPrice($originalTotalPrice)
     {
@@ -124,7 +124,7 @@ class AbstractOfferItem extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return float
+     * @return string|float|int
      */
     public function getFinalTotalPrice()
     {
@@ -134,7 +134,7 @@ class AbstractOfferItem extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param float $finalTotalPrice
+     * @param string|float|int $finalTotalPrice
      */
     public function setFinalTotalPrice($finalTotalPrice)
     {

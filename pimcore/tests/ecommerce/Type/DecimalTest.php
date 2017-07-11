@@ -418,6 +418,8 @@ class DecimalTest extends TestCase
     public function testToPercentage()
     {
         $this->assertEquals(80, Decimal::create(100)->toPercentage(80)->asNumeric());
+        $this->assertEquals(25, Decimal::create(100)->toPercentage(25)->asNumeric());
+        $this->assertEquals(25, Decimal::create(50)->toPercentage(50)->asNumeric());
         $this->assertEquals(35, Decimal::create(100)->toPercentage(35)->asNumeric());
         $this->assertEquals(200, Decimal::create(100)->toPercentage(200)->asNumeric());
     }
