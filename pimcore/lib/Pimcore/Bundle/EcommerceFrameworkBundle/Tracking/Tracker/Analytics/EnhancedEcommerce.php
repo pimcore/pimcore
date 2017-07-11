@@ -41,11 +41,16 @@ class EnhancedEcommerce extends Tracker implements
     ICheckoutComplete
 {
     /**
-     * Array of google dependencies to include before any tracking actions.
+     * Dependencies to include before any tracking actions
      *
      * @var array
      */
     protected $dependencies = ['ec'];
+
+    /**
+     * @var bool
+     */
+    protected $dependenciesIncluded = false;
 
     /**
      * @inheritdoc
@@ -62,6 +67,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackProductView(IProduct $product)
     {
+        $this->ensureDependencies();
+
         $item = $this->getTrackingItemBuilder()->buildProductViewItem($product);
 
         $parameterBag['productData'] = $this->transformProductAction($item);
@@ -81,6 +88,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackProductImpression(IProduct $product)
     {
+        $this->ensureDependencies();
+
         $item = $this->getTrackingItemBuilder()->buildProductImpressionItem($product);
 
         $parameterBag['productData'] = $this->transformProductImpression($item);
@@ -98,6 +107,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
+        $this->ensureDependencies();
+
         $this->trackProductAction($product, 'add', $quantity);
     }
 
@@ -109,6 +120,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
+        $this->ensureDependencies();
+
         $this->trackProductAction($product, 'remove', $quantity);
     }
 
@@ -137,6 +150,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackCheckout(ICart $cart)
     {
+        $this->ensureDependencies();
+
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
 
         $parameterBag['items'] = $items;
@@ -157,6 +172,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
+        $this->ensureDependencies();
+
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
 
         $parameterBag['items'] = $items;
@@ -184,6 +201,8 @@ class EnhancedEcommerce extends Tracker implements
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
+        $this->ensureDependencies();
+
         $transaction = $this->getTrackingItemBuilder()->buildCheckoutTransaction($order);
         $items = $this->getTrackingItemBuilder()->buildCheckoutItems($order);
 
@@ -283,5 +302,20 @@ class EnhancedEcommerce extends Tracker implements
             'list' => $item->getList(),
             'position' => $item->getPosition()
         ]);
+    }
+
+    protected function ensureDependencies()
+    {
+        if ($this->dependenciesIncluded || empty($this->dependencies)) {
+            return;
+        }
+
+        $result = $this->templatingEngine->render($this->getViewScript('dependencies'), [
+            'dependencies' => $this->dependencies
+        ]);
+
+        Analytics::addAdditionalCode($result, 'beforePageview');
+
+        $this->dependenciesIncluded = true;
     }
 }

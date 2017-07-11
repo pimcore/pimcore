@@ -11,17 +11,9 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+?>
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
+<?php foreach ($this->dependencies as $dependency): ?>
+ga('require', '<?= $dependency ?>');
 
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-
-interface ITracker
-{
-    public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $templatingEngine);
-
-    /**
-     * @return ITrackingItemBuilder
-     */
-    public function getTrackingItemBuilder();
-}
+<?php endforeach; ?>

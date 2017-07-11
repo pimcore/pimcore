@@ -13,7 +13,6 @@
  */
 ?>
 
-
 <?php foreach ($this->calls as $call => $callData): ?>
     ga('ec:addProduct', <?= json_encode($callData) ?>);
 <?php endforeach; ?>

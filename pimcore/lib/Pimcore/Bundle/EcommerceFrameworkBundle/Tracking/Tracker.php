@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Google\Analytics;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 abstract class Tracker implements ITracker
@@ -28,16 +27,6 @@ abstract class Tracker implements ITracker
      * @var EngineInterface
      */
     protected $templatingEngine;
-
-    /**
-     * @var bool
-     */
-    private $dependenciesIncluded = false;
-
-    /**
-     * @var array
-     */
-    protected $dependencies = [];
 
     public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $templatingEngine)
     {
@@ -95,26 +84,5 @@ abstract class Tracker implements ITracker
         }
 
         return $result;
-    }
-
-    /**
-     * Include all defined google dependencies of this tracker
-     * and only include them once in the script.
-     */
-    public function includeDependencies()
-    {
-        if ($this->dependenciesIncluded) {
-            return;
-        }
-
-        if (0 === count($this->dependencies)) {
-            return;
-        }
-
-        foreach ($this->dependencies as $dependency) {
-            Analytics::addAdditionalCode("ga('require', '" . $dependency . "')", 'beforePageview');
-        }
-
-        $this->dependenciesIncluded = true;
     }
 }

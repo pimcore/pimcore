@@ -13,7 +13,5 @@
  */
 ?>
 
-
-
 ga('ec:setAction', 'checkout_option', <?= json_encode($this->actionData) ?>);
 ga('send', 'event', 'Checkout', 'Option');

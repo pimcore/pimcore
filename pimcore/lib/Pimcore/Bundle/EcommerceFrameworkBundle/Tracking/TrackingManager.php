@@ -152,19 +152,6 @@ class TrackingManager implements ITrackingManager
     }
 
     /**
-     * Ensure the dependency for enhanced e-commerce tracking "ec.js"
-     * is included.
-     */
-    public function ensureDependencies()
-    {
-        foreach ($this->trackers as $tracker) {
-            $tracker->includeDependencies();
-        }
-
-        return $this;
-    }
-
-    /**
      * Track product impression
      *
      * @implements IProductImpression
@@ -173,8 +160,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductImpression(IProduct $product)
     {
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductImpression) {
                 $tracker->trackProductImpression($product);
@@ -191,8 +176,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductView(IProduct $product)
     {
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductView) {
                 $tracker->trackProductView($product);
@@ -210,8 +193,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
                 $tracker->trackProductActionAdd($product, $quantity);
@@ -229,8 +210,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
                 $tracker->trackProductActionRemove($product, $quantity);
@@ -247,8 +226,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckout(ICart $cart)
     {
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckout) {
                 $tracker->trackCheckout($cart);
@@ -273,8 +250,6 @@ class TrackingManager implements ITrackingManager
         $order->setProperty('os_tracked', 'bool', true);
         $order->save();
 
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckoutComplete) {
                 $tracker->trackCheckoutComplete($order);
@@ -294,8 +269,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
-        $this->ensureDependencies();
-
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);
