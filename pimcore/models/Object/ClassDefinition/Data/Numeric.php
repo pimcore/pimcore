@@ -56,13 +56,6 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public $columnType = 'double';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'float';
-
-    /**
      * @var bool
      */
     public $integer = false;
@@ -98,6 +91,22 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @var int
      */
     public $decimalPrecision;
+
+    /**
+     * @inheritDoc
+     */
+    public function getPhpdocType(): string
+    {
+        if ($this->getInteger()) {
+            return 'int';
+        }
+
+        if ($this->isDecimalType()) {
+            return 'string';
+        }
+
+        return 'float';
+    }
 
     /**
      * @return int
@@ -319,11 +328,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForResource
      *
-     * @param float $data
+     * @param float|int|string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -337,11 +346,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromResource
      *
-     * @param float $data
+     * @param float|int|string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -355,11 +364,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      *
-     * @param float $data
+     * @param float|int|string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -369,11 +378,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      *
-     * @param float $data
+     * @param float|int|string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -383,11 +392,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      *
-     * @param float $data
+     * @param float|int|string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -397,11 +406,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getVersionPreview
      *
-     * @param float $data
+     * @param float|int|string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -475,7 +484,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return float|int|string
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
