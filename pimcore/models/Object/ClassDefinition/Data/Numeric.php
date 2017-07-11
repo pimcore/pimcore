@@ -56,6 +56,13 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public $columnType = 'double';
 
     /**
+     * Type for the generated phpdoc
+     *
+     * @var string
+     */
+    public $phpdocType = 'float';
+
+    /**
      * @var bool
      */
     public $integer = false;
