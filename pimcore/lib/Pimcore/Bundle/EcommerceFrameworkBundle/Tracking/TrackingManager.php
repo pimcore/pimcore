@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as Che
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Config\Config;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
@@ -42,16 +43,16 @@ class TrackingManager implements ITrackingManager
     /**
      * @var EngineInterface
      */
-    protected $renderer;
+    protected $templatingEngine;
 
     /**
      * @param Config $config
      *
      * @throws InvalidConfigException
      */
-    public function __construct(Config $config, EngineInterface $renderer)
+    public function __construct(Config $config, EngineInterface $templatingEngine)
     {
-        $this->renderer = $renderer;
+        $this->templatingEngine = $templatingEngine;
         $this->processConfig($config);
     }
 
@@ -64,7 +65,7 @@ class TrackingManager implements ITrackingManager
      */
     protected function processConfig(Config $config)
     {
-        $container = new \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer($config, 'trackingmanager');
+        $container = new HelperContainer($config, 'trackingmanager');
 
         foreach ($container->trackers as $cfg) {
             $this->processConfigEntry($cfg);
@@ -86,7 +87,7 @@ class TrackingManager implements ITrackingManager
         }
 
         $itemBuilder = $this->getItemBuilder($cfg->trackingItemBuilder);
-        $tracker     = new $className($itemBuilder, $this->renderer);
+        $tracker     = new $className($itemBuilder, $this->templatingEngine);
 
         if ($tracker instanceof ITracker) {
             $this->registerTracker($cfg->name, $tracker);
@@ -124,15 +125,18 @@ class TrackingManager implements ITrackingManager
     /**
      * Register a tracker
      *
+     * @param string $name
      * @param ITracker $tracker
      *
      * @return $this
      */
     public function registerTracker($name, ITracker $tracker)
     {
-        if (!isset($this->trackers[$name])) {
-            $this->trackers[$name] = $tracker;
+        if (isset($this->trackers[$name])) {
+            throw new \RuntimeException(sprintf('Tacker with name "%s" is already registered', $name));
         }
+
+        $this->trackers[$name] = $tracker;
 
         return $this;
     }
@@ -170,6 +174,7 @@ class TrackingManager implements ITrackingManager
     public function trackProductImpression(IProduct $product)
     {
         $this->ensureDependencies();
+
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductImpression) {
                 $tracker->trackProductImpression($product);
@@ -187,6 +192,7 @@ class TrackingManager implements ITrackingManager
     public function trackProductView(IProduct $product)
     {
         $this->ensureDependencies();
+
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductView) {
                 $tracker->trackProductView($product);
@@ -205,6 +211,7 @@ class TrackingManager implements ITrackingManager
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
         $this->ensureDependencies();
+
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
                 $tracker->trackProductActionAdd($product, $quantity);
@@ -223,6 +230,7 @@ class TrackingManager implements ITrackingManager
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
         $this->ensureDependencies();
+
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
                 $tracker->trackProductActionRemove($product, $quantity);
@@ -240,6 +248,7 @@ class TrackingManager implements ITrackingManager
     public function trackCheckout(ICart $cart)
     {
         $this->ensureDependencies();
+
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckout) {
                 $tracker->trackCheckout($cart);
@@ -256,17 +265,19 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        if (!$order->getProperty('os_tracked')) {
+        if ($order->getProperty('os_tracked')) {
+            return;
+        }
 
-            //add property to order object in order to prevent multiple checkout complete tracking
-            $order->setProperty('os_tracked', 'bool', true);
-            $order->save();
+        // add property to order object in order to prevent multiple checkout complete tracking
+        $order->setProperty('os_tracked', 'bool', true);
+        $order->save();
 
-            $this->ensureDependencies();
-            foreach ($this->trackers as $tracker) {
-                if ($tracker instanceof ICheckoutComplete) {
-                    $tracker->trackCheckoutComplete($order);
-                }
+        $this->ensureDependencies();
+
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICheckoutComplete) {
+                $tracker->trackCheckoutComplete($order);
             }
         }
     }
@@ -284,6 +295,7 @@ class TrackingManager implements ITrackingManager
     public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
         $this->ensureDependencies();
+
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);

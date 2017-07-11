@@ -14,4 +14,4 @@
 ?>
 
 ga('ec:addProduct', <?= json_encode($this->productData) ?>);
-ga('ec:setAction', '<?=$this->action?>');
+ga('ec:setAction', '<?= $this->action ?>');

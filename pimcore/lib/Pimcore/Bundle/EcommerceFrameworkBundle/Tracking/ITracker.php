@@ -18,18 +18,12 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 interface ITracker
 {
-    /**
-     * @param ITrackingItemBuilder $trackingItemBuilder
-     */
-    public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $renderer);
+    public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $templatingEngine);
 
     /**
      * @return ITrackingItemBuilder
      */
     public function getTrackingItemBuilder();
 
-    /**
-     * @return mixed
-     */
     public function includeDependencies();
 }

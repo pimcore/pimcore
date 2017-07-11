@@ -19,4 +19,4 @@
 <?php endforeach; ?>
 
 ga('ec:setAction', 'checkout', <?= json_encode($this->actionData) ?>);
-ga('send','event','Checkout','Step');
+ga('send', 'event', 'Checkout', 'Step');

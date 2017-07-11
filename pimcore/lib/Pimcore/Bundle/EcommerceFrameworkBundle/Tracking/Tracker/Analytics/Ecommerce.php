@@ -24,7 +24,7 @@ use Pimcore\Google\Analytics;
 class Ecommerce extends Tracker implements ICheckoutComplete
 {
     /**
-     * @return string
+     * @inheritdoc
      */
     protected function getViewScriptPrefix()
     {
@@ -45,7 +45,8 @@ class Ecommerce extends Tracker implements ICheckoutComplete
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
 
-        $result = $this->renderer->render($this->getViewScript('checkout_complete'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('checkout_complete'), $parameterBag);
+
         Analytics::addAdditionalCode($result, 'beforeEnd');
     }
 

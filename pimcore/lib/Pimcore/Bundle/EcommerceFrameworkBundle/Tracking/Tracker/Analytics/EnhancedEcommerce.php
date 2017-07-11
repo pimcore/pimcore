@@ -41,19 +41,19 @@ class EnhancedEcommerce extends Tracker implements
     ICheckoutComplete
 {
     /**
-     * @return string
-     */
-    protected function getViewScriptPrefix()
-    {
-        return 'analytics/enhanced';
-    }
-
-    /**
      * Array of google dependencies to include before any tracking actions.
      *
      * @var array
      */
     protected $dependencies = ['ec'];
+
+    /**
+     * @inheritdoc
+     */
+    protected function getViewScriptPrefix()
+    {
+        return 'analytics/enhanced';
+    }
 
     /**
      * Track product view
@@ -69,7 +69,8 @@ class EnhancedEcommerce extends Tracker implements
         unset($parameterBag['productData']['price']);
         unset($parameterBag['productData']['quantity']);
 
-        $result = $this->renderer->render($this->getViewScript('product_view'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('product_view'), $parameterBag);
+
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
@@ -84,7 +85,8 @@ class EnhancedEcommerce extends Tracker implements
 
         $parameterBag['productData'] = $this->transformProductImpression($item);
 
-        $result = $this->renderer->render($this->getViewScript('product_impression'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('product_impression'), $parameterBag);
+
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
@@ -123,7 +125,8 @@ class EnhancedEcommerce extends Tracker implements
         $parameterBag['productData'] = $this->transformProductAction($item);
         $parameterBag['action'] = $action;
 
-        $result = $this->renderer->render($this->getViewScript('product_action'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('product_action'), $parameterBag);
+
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
@@ -141,7 +144,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $parameterBag['actionData'] = ['step' => 1];
 
-        $result = $this->renderer->render($this->getViewScript('checkout'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('checkout'), $parameterBag);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -158,6 +161,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = [];
+
         if (!is_null($stepNumber) || !is_null($checkoutOption)) {
             $actionData = ['step' => $stepNumber];
 
@@ -168,7 +172,7 @@ class EnhancedEcommerce extends Tracker implements
             $parameterBag['actionData'] = $actionData;
         }
 
-        $result = $this->renderer->render($this->getViewScript('checkout'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('checkout'), $parameterBag);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -187,7 +191,8 @@ class EnhancedEcommerce extends Tracker implements
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
 
-        $result = $this->renderer->render($this->getViewScript('checkout_complete'), $parameterBag);
+        $result = $this->templatingEngine->render($this->getViewScript('checkout_complete'), $parameterBag);
+
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
 
