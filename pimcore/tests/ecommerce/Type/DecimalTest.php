@@ -72,23 +72,23 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider createDataProvider
      */
+    public function testCreate($input, string $expected)
+    {
+        $value = Decimal::create($input);
+
+        $this->assertSame($expected, $value->asString());
+    }
+
+    /**
+     * @dataProvider createZeroScaleDataProvider
+     */
     public function testZeroScale($input)
     {
         $val = Decimal::create($input, 0);
 
         $this->assertEquals(16, $val->asRawValue());
         $this->assertEquals(16.0, $val->asNumeric());
-    }
-
-    /**
-     * @dataProvider createDataProvider
-     */
-    public function testCreate($input)
-    {
-        $value = Decimal::create($input);
-
-        $this->assertEquals(159900, $value->asRawValue());
-        $this->assertEquals(15.99, $value->asNumeric());
+        $this->assertEquals('16.0000', $val->asString());
     }
 
     public function testCreateZero()
@@ -497,9 +497,29 @@ class DecimalTest extends TestCase
     public function createDataProvider(): array
     {
         return [
-            [15.99],
-            ['15.99'],
-            [Decimal::fromRawValue(159900, 4)],
+            [15.99, '15.9900'],
+            ['15.99', '15.9900'],
+            [Decimal::fromRawValue(159900, 4), '15.9900'],
+            ['1.23', '1.2300'],
+            ['-1.23', '-1.2300'],
+            ['1.9999', '1.9999'],
+            ['1.999999', '2.0000'],
+            ['1.999900', '1.9999'],
+            ['100', '100.0000'],
+            ['-100', '-100.0000'],
+            [100, '100.0000'],
+            [-100, '-100.0000'],
+            [100.00, '100.0000'],
+            [-100.00, '-100.0000'],
+        ];
+    }
+
+    public function createZeroScaleDataProvider(): array
+    {
+        return [
+            [15.99, '16.0000'],
+            ['15.99', '16.0000'],
+            [Decimal::fromRawValue(159900, 4), '16.0000'],
         ];
     }
 

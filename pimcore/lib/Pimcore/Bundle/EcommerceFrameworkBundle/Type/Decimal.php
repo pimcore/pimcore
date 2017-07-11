@@ -19,6 +19,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Type;
 
 class Decimal
 {
+    const INTEGER_NUMBER_REGEXP = '/^([+\-]?)\d+$/';
+    const DECIMAL_NUMBER_REGEXP = '/^([+\-]?)(\d+)\.(\d+)$/';
+
     /**
      * @var int
      */
@@ -103,7 +106,8 @@ class Decimal
     private static function toIntValue($value, int $roundingMode = null): int
     {
         if (!is_int($value)) {
-            $value = (int)round($value, 0, $roundingMode ?? PHP_ROUND_HALF_UP);
+            $value = round($value, 0, $roundingMode ?? PHP_ROUND_HALF_UP);
+            $value = (int)$value;
         }
 
         return $value;
@@ -127,7 +131,9 @@ class Decimal
      */
     public static function create($amount, int $scale = null, int $roundingMode = null)
     {
-        if (is_numeric($amount)) {
+        if (is_string($amount)) {
+            return static::fromString($amount, $scale, $roundingMode);
+        } elseif (is_numeric($amount)) {
             return static::fromNumeric($amount, $scale, $roundingMode);
         } elseif ($amount instanceof self) {
             return static::fromDecimal($amount, $scale);
@@ -153,6 +159,47 @@ class Decimal
         static::validateScale($scale);
 
         return new static($amount, $scale);
+    }
+
+    /**
+     * Creates a value from a string input. If possible, the integer will be created with
+     * string operations (e.g. adding zeroes), otherwise it will fall back to fromNumeric().
+     *
+     * @param string $amount
+     * @param int|null $scale
+     * @param int|null $roundingMode
+     *
+     * @return Decimal
+     */
+    public static function fromString(string $amount, int $scale = null, int $roundingMode = null): self
+    {
+        $scale = $scale ?? static::$defaultScale;
+        static::validateScale($scale);
+
+        $result = null;
+
+        if (1 === preg_match(self::INTEGER_NUMBER_REGEXP, $amount, $captures)) {
+            // no decimals -> add zeroes until we have the expected amount
+            // e.g. 1234, scale 4 = 12340000
+            $result = (int)($amount . str_repeat('0', $scale));
+        } elseif (1 === preg_match(self::DECIMAL_NUMBER_REGEXP, $amount, $captures)) {
+            // decimal part is lower/equals than scale - add zeroes as needed and concat it with the integer part
+            // e.g. 123.45 at scale 4 -> 123 (integer) . 4500 (zero padded decimal part) => 1234500
+            if (strlen($captures[3]) <= $scale) {
+                $fractionalPart = str_pad($captures[3], $scale, '0', STR_PAD_RIGHT);
+                $result         = (int)($captures[1] . $captures[2] . $fractionalPart);
+            }
+        }
+
+        if (null !== $result) {
+            static::validateIntegerBounds($result);
+
+            return new static($result, $scale);
+        }
+
+        // default to numeric - this will also apply rounding as we
+        // fall back to floats here
+        return static::fromNumeric($amount, $scale, $roundingMode);
     }
 
     /**
