@@ -79,7 +79,7 @@ class Currency
     }
 
     /**
-     * @param float $value
+     * @param Decimal|float|int|string $value
      * @param string $pattern
      *
      * @return string
@@ -94,7 +94,7 @@ class Currency
         }
 
         if ($value instanceof Decimal) {
-            $value = $value->asNumeric();
+            $value = $value->asString();
         }
 
         return $this->formattingService->formatCurrency($value, $this->currencyShortName, $pattern);

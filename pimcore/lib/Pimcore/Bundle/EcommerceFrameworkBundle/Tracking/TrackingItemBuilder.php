@@ -46,7 +46,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         // set price if product is ready to check out
         if ($product instanceof ICheckoutable) {
-            $item->setPrice($product->getOSPrice()->getAmount()->asNumeric());
+            $item->setPrice($product->getOSPrice()->getAmount()->asString());
         }
 
         return $item;
@@ -83,7 +83,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         // set price if product is ready to check out
         if ($product instanceof ICheckoutable) {
-            $item->setPrice($product->getOSPrice()->getAmount()->asNumeric());
+            $item->setPrice($product->getOSPrice()->getAmount()->asString());
         }
 
         return $item;

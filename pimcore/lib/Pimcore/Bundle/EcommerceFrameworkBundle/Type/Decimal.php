@@ -322,7 +322,7 @@ class Decimal
             $integerPart      = substr($string, 0, $fractionalOffset);
             $fractionalPart   = substr($string, $fractionalOffset);
 
-            $amount = $integerPart . '.'. $fractionalPart;
+            $amount = $integerPart . '.' . $fractionalPart;
         }
 
         if (null !== $digits) {

@@ -347,7 +347,14 @@ class Datatrans implements IPayment
         } else {
             // authorisieren und zahlung ausführen
             $xml = $this->xmlAuthorisation(
-                'CAA', self::TRANS_TYPE_DEBIT, $price->getAmount()->asNumeric() * 100, $price->getCurrency()->getShortName(), $reference, $this->authorizedData['aliasCC'], $this->authorizedData['expm'], $this->authorizedData['expy']
+                'CAA',
+                self::TRANS_TYPE_DEBIT,
+                $price->getAmount()->asNumeric() * 100,
+                $price->getCurrency()->getShortName(),
+                $reference,
+                $this->authorizedData['aliasCC'],
+                $this->authorizedData['expm'],
+                $this->authorizedData['expy']
             );
         }
 
@@ -399,7 +406,11 @@ class Datatrans implements IPayment
         } else {
             // complete authorized payment
             $xml = $this->xmlSettlement(
-                self::TRANS_TYPE_CREDIT, $price->getAmount()->asNumeric() * 100, $price->getCurrency()->getShortName(), $reference, $transactionId
+                self::TRANS_TYPE_CREDIT,
+                $price->getAmount()->asNumeric() * 100,
+                $price->getCurrency()->getShortName(),
+                $reference,
+                $transactionId
             );
         }
 
