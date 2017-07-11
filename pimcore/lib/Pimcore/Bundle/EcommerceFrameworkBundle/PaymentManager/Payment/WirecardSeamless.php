@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
@@ -409,7 +410,7 @@ class WirecardSeamless implements IPayment
         }
 
         // restore price object for payment status
-        $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
+        $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
 
         $status = new Status(
             $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'

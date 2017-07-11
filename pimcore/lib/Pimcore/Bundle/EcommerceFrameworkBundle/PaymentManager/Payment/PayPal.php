@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 
 // TODO refine how payment amounts are transformed for API
@@ -176,7 +177,7 @@ class PayPal implements IPayment
         $this->setAuthorizedData($authorizedData);
 
         // restore price object for payment status
-        $price = new Price($response['amount'], new Currency($response['currency']));
+        $price = new Price(Decimal::create($response['amount']), new Currency($response['currency']));
 
         // execute
         //TODO do not call this in handle response, but call it in the controller!

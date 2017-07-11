@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -249,7 +250,7 @@ class Datatrans implements IPayment
         $this->setAuthorizedData($authorizedData);
 
         // restore price object for payment status
-        $price = new Price($response['amount'] / 100, new Currency($response['currency']));
+        $price = new Price(Decimal::create($response['amount'] / 100), new Currency($response['currency']));
 
         $paymentState = null;
         if (in_array($response['responseCode'], ['01', '02'])) {
@@ -333,7 +334,7 @@ class Datatrans implements IPayment
 
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
-            $price = new Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
+            $price = new Price(Decimal::create($this->authorizedData['amount'] / 100), new Currency($this->authorizedData['currency']));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -397,7 +398,7 @@ class Datatrans implements IPayment
     {
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
-            $price = new Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
+            $price = new Price(Decimal::create($this->authorizedData['amount'] / 100), new Currency($this->authorizedData['currency']));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(

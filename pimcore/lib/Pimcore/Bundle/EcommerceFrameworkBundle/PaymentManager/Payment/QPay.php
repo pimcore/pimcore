@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -278,7 +279,7 @@ class QPay implements IPayment
         $this->setAuthorizedData($authorizedData);
 
         // restore price object for payment status
-        $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
+        $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
 
         return new Status(
             $response['orderIdent'], $response['orderNumber'], $response['avsResponseMessage'] ?: $response['message'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
@@ -357,7 +358,7 @@ class QPay implements IPayment
             ]);
         } else {
             // default clearing auth
-            $price = new Price($this->authorizedData['amount'], new Currency($this->authorizedData['currency']));
+            $price = new Price(Decimal::create($this->authorizedData['amount']), new Currency($this->authorizedData['currency']));
 
             $request = [
                 'customerId' => $this->customer,
