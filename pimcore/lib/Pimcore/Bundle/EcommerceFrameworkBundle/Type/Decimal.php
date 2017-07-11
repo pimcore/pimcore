@@ -17,6 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Type;
 
+/**
+ * This value object is used throughout the ecommerce framework to represent a price value.
+ *
+ * IMPORTANT: if you do any changes, make sure to keep this object immutable. Every operation needs
+ * to return a new instance with the changed value!
+ */
 class Decimal
 {
     const INTEGER_NUMBER_REGEXP = '/^([+\-]?)\d+$/';
