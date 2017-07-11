@@ -246,10 +246,8 @@ class SettingsController extends AdminController
             $dirs = glob($dir . '/*', GLOB_ONLYDIR);
             foreach ($dirs as $dir) {
                 if (
-                    preg_match('@/thumb__' . $thumbnail . '$@', $dir) ||
-                    preg_match('@/thumb__' . $thumbnail . '_auto@', $dir) ||
-                    preg_match('@/thumb__document_' . $thumbnail . '\-[\d]+$@', $dir) ||
-                    preg_match('@/thumb__document_' . $thumbnail . '\-[\d]+_auto@', $dir)
+                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $dir) ||
+                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $dir)
                 ) {
                     recursiveDelete($dir);
                 }
