@@ -31,10 +31,18 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     getGridColumnEditor:function (field) {
         var editorConfig = {};
 
+        var decimalPrecision = 20;
+
         if (field.config) {
             if (field.config.width) {
                 if (intval(field.config.width) > 10) {
                     editorConfig.width = field.config.width;
+                }
+            }
+
+            if (field.config.decimalPrecision) {
+                if (intval(field.config.decimalPrecision) > 0) {
+                    decimalPrecision = field.config.decimalPrecision;
                 }
             }
         }
@@ -44,7 +52,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (field.type == "numeric") {
-            editorConfig.decimalPrecision = 20;
+            editorConfig.decimalPrecision = decimalPrecision;
+
             // we have to use Number since the spinner trigger don't work in grid -> seems to be a bug of Ext
             return new Ext.form.field.Number(editorConfig);
         }

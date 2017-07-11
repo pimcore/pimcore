@@ -21,6 +21,9 @@ use Pimcore\Model;
 
 class Numeric extends Model\Object\ClassDefinition\Data
 {
+    const DECIMAL_SIZE_DEFAULT = 64;
+    const DECIMAL_PRECISION_DEFAULT = 0;
+
     /**
      * Static type of this element
      *
@@ -80,6 +83,18 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public $maxValue;
 
     /**
+     * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
+     * but as decimalPrecision already existed to denote the amount of digits after the point (as it is called on the ExtJS
+     * number field), decimalSize was chosen instead.
+     *
+     * @var int
+     */
+    private $decimalSize;
+
+    /**
+     * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
+     * commend on decimalSize.
+     *
      * @var int
      */
     public $decimalPrecision;
@@ -193,6 +208,22 @@ class Numeric extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @return int
+     */
+    public function getDecimalSize()
+    {
+        return $this->decimalSize;
+    }
+
+    /**
+     * @param int $decimalSize
+     */
+    public function setDecimalSize($decimalSize)
+    {
+        $this->decimalSize = $decimalSize;
+    }
+
+    /**
      * @param int $decimalPrecision
      */
     public function setDecimalPrecision($decimalPrecision)
@@ -217,8 +248,8 @@ class Numeric extends Model\Object\ClassDefinition\Data
             return 'bigint(20)';
         }
 
-        if ($this->getDecimalPrecision()) {
-            return 'decimal(64, ' . intval($this->getDecimalPrecision()) . ')';
+        if ($this->isDecimalType()) {
+            return $this->buildDecimalColumnType();
         }
 
         return parent::getColumnType();
@@ -233,11 +264,56 @@ class Numeric extends Model\Object\ClassDefinition\Data
             return 'bigint(20)';
         }
 
-        if ($this->getDecimalPrecision()) {
-            return 'decimal(64, ' . intval($this->getDecimalPrecision()) . ')';
+        if ($this->isDecimalType()) {
+            return $this->buildDecimalColumnType();
         }
 
         return parent::getQueryColumnType();
+    }
+
+    public function isDecimalType(): bool
+    {
+        return (null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision());
+    }
+
+    private function buildDecimalColumnType(): string
+    {
+        // decimalPrecision already existed in earlier versions to denote the amount of digits after the
+        // comma (and is used in ExtJS). To avoid migrations, decimalSize was chosen to denote the total amount
+        // of supported digits despite the confusing naming.
+        //
+        // The two properties used in the class definition translate to the following MySQL naming:
+        //
+        // DECIMAL(precision, scale) = DECIMAL(decimalSize, decimalPrecision)
+
+        // these are named after what MySQL expects - DECIMAL(precision, scale)
+        $precision = self::DECIMAL_SIZE_DEFAULT;
+        $scale     = self::DECIMAL_PRECISION_DEFAULT;
+
+        if (null !== $this->decimalSize) {
+            $precision = intval($this->decimalSize);
+        }
+
+        if (null !== $this->decimalPrecision) {
+            $scale = intval($this->decimalPrecision);
+        }
+
+        if ($precision < 1 || $precision > 65) {
+            throw new \InvalidArgumentException('Decimal precision must be a value between 1 and 65');
+        }
+
+        if ($scale < 0 || $scale > 30 || $scale > $precision) {
+            throw new \InvalidArgumentException('Decimal scale must be a value between 0 and 30');
+        }
+
+        if ($scale > $precision) {
+            throw new \InvalidArgumentException(sprintf(
+                'Decimal scale can\'t be larger than precision (%d)',
+                $precision
+            ));
+        }
+
+        return sprintf('DECIMAL(%d, %d)', $precision, $scale);
     }
 
     /**
@@ -432,10 +508,14 @@ class Numeric extends Model\Object\ClassDefinition\Data
     /**
      * @param $value
      *
-     * @return float|int
+     * @return float|int|string
      */
     protected function toNumeric($value)
     {
+        if ($this->isDecimalType()) {
+            return (string) $value;
+        }
+
         if (strpos((string) $value, '.') === false) {
             return (int) $value;
         }
