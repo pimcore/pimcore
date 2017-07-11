@@ -20,6 +20,9 @@ namespace Pimcore\Tests\Ecommerce\Type;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Tests\Test\TestCase;
 
+/**
+ * @covers \Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal
+ */
 class DecimalTest extends TestCase
 {
     public function testRepresentations()
@@ -103,10 +106,11 @@ class DecimalTest extends TestCase
 
     /**
      * @expectedException \TypeError
+     * @dataProvider invalidValueCreateProvider
      */
-    public function testErrorOnInvalidCreateArgument()
+    public function testErrorOnInvalidCreateArgument($value)
     {
-        Decimal::create(new \DateTime());
+        Decimal::create($value);
     }
 
     /**
@@ -177,6 +181,8 @@ class DecimalTest extends TestCase
     public function testWithScale()
     {
         $val = Decimal::create('10', 4);
+
+        $this->assertSame($val, $val->withScale(4));
 
         $this->assertSame(100000, $val->asRawValue());
         $this->assertSame(10, $val->asNumeric());
@@ -346,6 +352,7 @@ class DecimalTest extends TestCase
         $a = Decimal::create(5);
         $b = Decimal::create(-5);
 
+        $this->assertSame($a, $a->abs());
         $this->assertFalse($a->equals($b));
         $this->assertTrue($a->equals($b->abs()));
         $this->assertEquals(5, $b->abs()->asNumeric());
@@ -520,6 +527,15 @@ class DecimalTest extends TestCase
             [-100, '-100.0000'],
             [100.00, '100.0000'],
             [-100.00, '-100.0000'],
+        ];
+    }
+
+    public function invalidValueCreateProvider(): array
+    {
+        return [
+            [new \DateTime()],
+            [true],
+            [false]
         ];
     }
 
