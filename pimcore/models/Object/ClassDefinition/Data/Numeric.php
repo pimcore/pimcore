@@ -89,7 +89,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      *
      * @var int
      */
-    private $decimalSize;
+    public $decimalSize;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
