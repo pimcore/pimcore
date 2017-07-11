@@ -415,6 +415,18 @@ class Decimal
     }
 
     /**
+     * Checks if value is not equal to other value
+     *
+     * @param Decimal $other
+     *
+     * @return bool
+     */
+    public function notEquals(Decimal $other): bool
+    {
+        return !$this->equals($other);
+    }
+
+    /**
      * Compares a value to another one
      *
      * @param Decimal $other

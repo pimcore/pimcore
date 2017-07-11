@@ -265,6 +265,13 @@ class DecimalTest extends TestCase
         $this->assertFalse($a->equals($b));
         $this->assertFalse($b->equals($a));
 
+        $this->assertFalse($a->notEquals($a));
+        $this->assertFalse($b->notEquals($b));
+        $this->assertFalse($a->notEquals(Decimal::create(5)));
+        $this->assertTrue($a->notEquals(Decimal::create(5, 8)));
+        $this->assertTrue($a->notEquals($b));
+        $this->assertTrue($b->notEquals($a));
+
         $this->assertEquals(-1, $a->compare($b));
         $this->assertEquals(1, $b->compare($a));
         $this->assertEquals(0, $a->compare($a));
