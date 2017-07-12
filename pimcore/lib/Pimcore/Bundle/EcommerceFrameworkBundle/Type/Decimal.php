@@ -135,7 +135,7 @@ class Decimal
      * @return self
      * @throws \TypeError
      */
-    public static function create($amount, int $scale = null, int $roundingMode = null)
+    public static function create($amount, int $scale = null, int $roundingMode = null): self
     {
         if (is_string($amount)) {
             return static::fromString($amount, $scale, $roundingMode);

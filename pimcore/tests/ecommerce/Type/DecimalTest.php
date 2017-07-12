@@ -347,6 +347,38 @@ class DecimalTest extends TestCase
         $this->assertFalse(Decimal::create(-10)->isZero());
     }
 
+    /**
+     * @dataProvider immutableOperationProvider
+     *
+     * @param $input
+     * @param $expected
+     * @param $operation
+     * @param array ...$arguments
+     */
+    public function testImmutableOperations(int $input, int $expected, $operation, ...$arguments)
+    {
+        $value = Decimal::create($input);
+
+        /** @var Decimal $result */
+        $result = call_user_func_array([$value, $operation], $arguments);
+
+        $this->assertNotSame(
+            $value, $result,
+            sprintf(
+                'Decimal::create(%d)->%s(%s) returns a new instance',
+                $input, $operation, implode(', ', $arguments)
+            )
+        );
+
+        $this->assertSame(
+            $expected, $result->asNumeric(),
+            sprintf(
+                'Decimal::create(%d)->%s(%s)->asNumeric() returns %d',
+                $input, $operation, implode(', ', $arguments), $expected
+            )
+        );
+    }
+
     public function testAbs()
     {
         $a = Decimal::create(5);
@@ -545,6 +577,23 @@ class DecimalTest extends TestCase
             [15.99, '16.0000'],
             ['15.99', '16.0000'],
             [Decimal::fromRawValue(159900, 4), '16.0000'],
+        ];
+    }
+
+    public function immutableOperationProvider(): array
+    {
+        // operations which are expected to return a new instance
+        // [input, expected, operation, ...arguments]
+        return [
+            [100, 100, 'withScale', 2],
+            [-10, 10, 'abs'],
+            [100, 110, 'add', 10],
+            [100, 90, 'sub', 10],
+            [100, 300, 'mul', 3],
+            [100, 50, 'div', 2],
+            [100, -100, 'toAdditiveInverse'],
+            [100, 50, 'toPercentage', 50],
+            [100, 85, 'discount', 15]
         ];
     }
 
