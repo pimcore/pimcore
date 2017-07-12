@@ -48,8 +48,7 @@ class ProductDiscount implements IProductDiscount
         }
 
         $amount = $priceinfo->getAmount()->sub($amount);
-
-        $priceinfo->setAmount($amount);
+        $priceinfo->setAmount($amount->isPositive() ? $amount : Decimal::zero());
 
         return $this;
     }
