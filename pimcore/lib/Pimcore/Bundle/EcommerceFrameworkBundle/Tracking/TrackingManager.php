@@ -16,129 +16,34 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
-use Pimcore\Config\Config;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class TrackingManager implements ITrackingManager
 {
-    /**
-     * @var Config
-     */
-    protected $config;
-
     /**
      * @var ITracker[]
      */
     protected $trackers = [];
 
     /**
-     * @var ITrackingItemBuilder[]
+     * @param ITracker[] $trackers
      */
-    protected $trackingItemBuilders = [];
-
-    /**
-     * @var EngineInterface
-     */
-    protected $templatingEngine;
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    public function __construct(Config $config, EngineInterface $templatingEngine)
+    public function __construct(array $trackers = [])
     {
-        $this->templatingEngine = $templatingEngine;
-        $this->processConfig($config);
-    }
-
-    /**
-     * Process config and register configured trackers
-     *
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    protected function processConfig(Config $config)
-    {
-        $container = new HelperContainer($config, 'trackingmanager');
-
-        foreach ($container->trackers as $cfg) {
-            $this->processConfigEntry($cfg);
+        foreach ($trackers as $tracker) {
+            $this->registerTracker($tracker);
         }
-    }
-
-    /**
-     * Used by processConfig to handle single config entry
-     *
-     * @param Config $cfg
-     *
-     * @throws InvalidConfigException
-     */
-    protected function processConfigEntry(Config $cfg)
-    {
-        $className = $cfg->class;
-        if (!class_exists($className)) {
-            throw new InvalidConfigException(sprintf('Tracker class %s not found.', $className));
-        }
-
-        $itemBuilder = $this->getItemBuilder($cfg->trackingItemBuilder);
-        $tracker     = new $className($itemBuilder, $this->templatingEngine);
-
-        if ($tracker instanceof ITracker) {
-            $this->registerTracker($cfg->name, $tracker);
-        } else {
-            throw new InvalidConfigException(sprintf('Tracker class %s not an insance of ITracker.', $className));
-        }
-    }
-
-    /**
-     * Get an item builder instance, fall back to default implementation
-     *
-     * @param null $className
-     *
-     * @return ITrackingItemBuilder
-     *
-     * @throws InvalidConfigException
-     */
-    protected function getItemBuilder($className = null)
-    {
-        $itemBuilder = null;
-        if (null !== $className) {
-            if (!class_exists($className)) {
-                throw new InvalidConfigException(sprintf('Tracking item builder class %s not found.', $className));
-            }
-
-            $itemBuilder = new $className();
-        } else {
-            // fall back to default implementation
-            $itemBuilder = new TrackingItemBuilder();
-        }
-
-        return $itemBuilder;
     }
 
     /**
      * Register a tracker
      *
-     * @param string $name
      * @param ITracker $tracker
-     *
-     * @return $this
      */
-    public function registerTracker($name, ITracker $tracker)
+    public function registerTracker(ITracker $tracker)
     {
-        if (isset($this->trackers[$name])) {
-            throw new \RuntimeException(sprintf('Tacker with name "%s" is already registered', $name));
-        }
-
-        $this->trackers[$name] = $tracker;
-
-        return $this;
+        $this->trackers[] = $tracker;
     }
 
     /**
@@ -146,7 +51,7 @@ class TrackingManager implements ITrackingManager
      *
      * @return ITracker[]
      */
-    public function getTrackers()
+    public function getTrackers(): array
     {
         return $this->trackers;
     }
