@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -34,9 +36,29 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('pimcore_ecommerce_framework');
         $rootNode
             ->addDefaultsIfNotSet()
-            ->append($this->buildTrackingManagerNode());
+            ->append($this->buildEnvironmentNode())
+            ->append($this->buildTrackingManagerNode())
+        ;
 
         return $treeBuilder;
+    }
+
+    private function buildEnvironmentNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $environment = $builder->root('environment');
+        $environment
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('environment_id')
+                    ->defaultValue(SessionEnvironment::class)
+                ->end()
+            ->end();
+
+        $this->addOptionsNode($environment);
+
+        return $environment;
     }
 
     private function buildTrackingManagerNode(): NodeDefinition
@@ -68,5 +90,19 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $trackingManager;
+    }
+
+    private function addOptionsNode(ArrayNodeDefinition $parent, string $name = 'options')
+    {
+        $parent
+            ->children()
+                ->variableNode($name)
+                    ->defaultValue([])
+                    ->beforeNormalization()
+                        ->castToArray()
+                    ->end()
+                    ->treatNullLike([])
+                ->end()
+            ->end();
     }
 }

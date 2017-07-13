@@ -1,6 +1,8 @@
 services:
     _defaults:
         public: false
+        autowire: true
+        autoconfigure: true
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager: ~
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder: ~

@@ -34,12 +34,23 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
 
         $loader->load('services.yml');
+        $loader->load('environment.yml');
         $loader->load('tracking_manager.yml');
 
-        $this->processTrackingManager($config['tracking_manager'], $container);
+        $this->registerEnvironmentConfiguration($config['environment'], $container);
+        $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
     }
 
-    private function processTrackingManager(array $config, ContainerBuilder $container)
+    private function registerEnvironmentConfiguration(array $config, ContainerBuilder $container)
+    {
+        $environment = new ChildDefinition($config['environment_id']);
+        $environment->setPublic(true);
+
+        $container->setDefinition('pimcore_ecommerce.environment', $environment);
+        $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
+    }
+
+    private function registerTrackingManagerConfiguration(array $config, ContainerBuilder $container)
     {
         // the public flag is only needed as the factory still implements a getTrackingManager method which directly
         // accesses the tracking manager service

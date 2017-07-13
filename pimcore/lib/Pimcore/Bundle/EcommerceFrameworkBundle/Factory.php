@@ -122,6 +122,11 @@ class Factory
         return self::$instance;
     }
 
+    private function get(string $serviceId)
+    {
+        return \Pimcore::getContainer()->get($serviceId);
+    }
+
     /**
      * creates new factory instance and optionally resets environment too
      *
@@ -217,7 +222,7 @@ class Factory
 
     public function getTrackingManager(): ITrackingManager
     {
-        return \Pimcore::getContainer()->get('pimcore_ecommerce.tracking.tracking_manager');
+        return $this->get('pimcore_ecommerce.tracking.tracking_manager');
     }
 
     private function configurePriceSystem($config)
@@ -437,16 +442,9 @@ class Factory
         return $commitOrderProcessor;
     }
 
-    /**
-     * @return IEnvironment
-     */
-    public function getEnvironment()
+    public function getEnvironment(): IEnvironment
     {
-        if (!$this->environment) {
-            $this->initEnvironment();
-        }
-
-        return $this->environment;
+        return $this->get('pimcore_ecommerce.environment');
     }
 
     /**
