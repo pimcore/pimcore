@@ -20,6 +20,7 @@ use Pimcore\Service\Locale;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Environment implements IEnvironment
 {
@@ -86,14 +87,29 @@ class Environment implements IEnvironment
      */
     protected $currentTransientCheckoutTenant;
 
-    public function __construct($config, SessionInterface $session, Locale $localeService)
+    public function __construct(SessionInterface $session, Locale $localeService, array $options = [])
     {
         $this->session       = $session;
         $this->localeService = $localeService;
 
         $this->loadFromSession();
 
-        $this->defaultCurrency = new Currency((string)$config->defaultCurrency);
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+    }
+
+    protected function processOptions(array $options)
+    {
+        $this->defaultCurrency = new Currency((string)$options['defaultCurrency']);
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(['defaultCurrency']);
+        $resolver->setAllowedTypes('defaultCurrency', 'string');
+        $resolver->setDefaults(['defaultCurrency' => 'EUR']);
     }
 
     protected function loadFromSession()
