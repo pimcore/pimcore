@@ -199,10 +199,11 @@ Ext.onReady(function () {
             } else {
                 //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
                 // be saved due to HTTP 500 Response)
-                var errorMessage = "";
+                var date = new Date();
+                var errorMessage = "Timestamp: " + date.toString() + "\n";
 
                 try {
-                    errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
+                    errorMessage += "Status: " + response.status + " | " + response.statusText + "\n";
                     errorMessage += "URL: " + options.url + "\n";
                     if (options["params"]) {
                         errorMessage += "Params:\n";
