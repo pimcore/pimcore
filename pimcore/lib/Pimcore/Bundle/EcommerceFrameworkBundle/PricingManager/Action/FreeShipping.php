@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ISh
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class FreeShipping implements IAction
 {
@@ -47,7 +48,7 @@ class FreeShipping implements IAction
 
             // remove shipping charge
             if ($modificator instanceof IShipping) {
-                $modificator->setCharge(0);
+                $modificator->setCharge(Decimal::zero());
                 $priceCalculator->reset();
             }
         }
