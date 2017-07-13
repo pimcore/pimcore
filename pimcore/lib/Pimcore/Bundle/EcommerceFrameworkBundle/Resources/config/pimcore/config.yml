@@ -10,3 +10,16 @@ pimcore:
                     indexFieldSelection: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection
                     indexFieldSelectionCombo: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo
                     indexFieldSelectionField: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField
+
+pimcore_ecommerce_framework:
+    tracking_manager:
+        trackers:
+            enhanced_ecommerce:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce
+                enabled: false
+            universal_ecommerce:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce
+                enabled: false
+            ecommerce:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce
+                enabled: false

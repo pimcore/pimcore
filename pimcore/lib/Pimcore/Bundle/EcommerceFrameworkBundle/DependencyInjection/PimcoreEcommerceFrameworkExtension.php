@@ -15,16 +15,18 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreEcommerceFrameworkExtension extends Extension
+class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function load(array $configs, ContainerBuilder $container)
+    protected function loadInternal(array $config, ContainerBuilder $container)
     {
         $loader = new YamlFileLoader(
             $container,
@@ -32,5 +34,36 @@ class PimcoreEcommerceFrameworkExtension extends Extension
         );
 
         $loader->load('services.yml');
+        $loader->load('tracking_manager.yml');
+
+        $this->processTrackingManager($config['tracking_manager'], $container);
+    }
+
+    private function processTrackingManager(array $config, ContainerBuilder $container)
+    {
+        // the public flag is only needed as the factory still implements a getTrackingManager method which directly
+        // accesses the tracking manager service
+        $trackingManager = new ChildDefinition($config['tracking_manager_id']);
+        $trackingManager->setPublic(true);
+
+        $container->setDefinition('pimcore_ecommerce.tracking.tracking_manager', $trackingManager);
+
+        foreach ($config['trackers'] as $name => $trackerConfig) {
+            if (!$trackerConfig['enabled']) {
+                continue;
+            }
+
+            $tracker = new ChildDefinition($trackerConfig['id']);
+
+            if (null !== $trackerConfig['item_builder_id']) {
+                $tracker->setArgument('$trackingItemBuilder', new Reference($trackerConfig['item_builder_id']));
+            }
+
+            if (null !== $trackerConfig['options']) {
+                $tracker->setArgument('$options', $trackerConfig['options']);
+            }
+
+            $trackingManager->addMethodCall('registerTracker', [$tracker]);
+        }
     }
 }

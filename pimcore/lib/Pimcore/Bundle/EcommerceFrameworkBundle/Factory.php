@@ -31,7 +31,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
 use Pimcore\Config\Config;
@@ -112,11 +111,6 @@ class Factory
      * @var ITokenManager[]
      */
     private $tokenManagers = [];
-
-    /**
-     * @var TrackingManager
-     */
-    private $trackingManager;
 
     public static function getInstance()
     {
@@ -201,7 +195,6 @@ class Factory
         $this->configurePricingManager($config);
         $this->configurePaymentManager($config);
         $this->configureOrderManager($config);
-        $this->configureTrackingManager($config);
 
         $this->configureOfferToolService($config);
     }
@@ -222,44 +215,9 @@ class Factory
         }
     }
 
-    /**
-     * Configure tracking manager
-     *
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function configureTrackingManager(Config $config)
+    public function getTrackingManager(): ITrackingManager
     {
-        if (!empty($config->ecommerceframework->trackingmanager->class)) {
-            $trackingManagerClass = $config->ecommerceframework->trackingmanager->class;
-            if (class_exists($trackingManagerClass)) {
-                $instance = new $trackingManagerClass($config->ecommerceframework->trackingmanager->config, \Pimcore::getContainer()->get('templating'));
-                if ($instance instanceof ITrackingManager) {
-                    $this->trackingManager = $instance;
-                } else {
-                    throw new InvalidConfigException(sprintf('TrackingManager class %s does not implement Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\ITrackingManager', $trackingManagerClass));
-                }
-            } else {
-                throw new InvalidConfigException(sprintf('TrackingManager class %s not found.', $trackingManagerClass));
-            }
-        }
-    }
-
-    /**
-     * Get tracking manager
-     *
-     * @return TrackingManager
-     *
-     * @throws UnsupportedException
-     */
-    public function getTrackingManager()
-    {
-        if (null === $this->trackingManager) {
-            throw new UnsupportedException('Tracking is not configured, check configuration!');
-        }
-
-        return $this->trackingManager;
+        return \Pimcore::getContainer()->get('pimcore_ecommerce.tracking.tracking_manager');
     }
 
     private function configurePriceSystem($config)
