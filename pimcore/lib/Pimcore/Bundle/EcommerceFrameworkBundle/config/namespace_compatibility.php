@@ -646,7 +646,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup extends \Pimcore\Bundle\Eco
  * @deprecated
  * class OnlineShop_Framework_Impl_Environment
  */
-class OnlineShop_Framework_Impl_Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
+class OnlineShop_Framework_Impl_Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment
 {
 }
 
@@ -1860,7 +1860,7 @@ interface IOrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderMa
  * @deprecated
  * class Environment
  */
-class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
+class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment
 {
 }
 

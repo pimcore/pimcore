@@ -4,7 +4,7 @@ return [
     'ecommerceframework' => [
        /* general settings for ecommerce framework environment */
         'environment' => [
-            'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Environment',
+            'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\SessionEnvironment',
             'config' => [
                 'defaultCurrency' => 'EUR'
             ]

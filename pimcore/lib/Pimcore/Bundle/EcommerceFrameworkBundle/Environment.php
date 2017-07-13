@@ -15,32 +15,18 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Service\Locale;
 use Pimcore\Tool;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Environment implements IEnvironment
 {
-    const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
-    const SESSION_KEY_USERID = 'userid';
-    const SESSION_KEY_USE_GUEST_CART = 'useguestcart';
-    const SESSION_KEY_ASSORTMENT_TENANT = 'currentassortmenttenant';
-    const SESSION_KEY_ASSORTMENT_SUB_TENANT = 'currentassortmentsubtenant';
-    const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
     const USER_ID_NOT_SET = -1;
 
     /**
      * @var Locale
      */
     protected $localeService;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
 
     /**
      * @var Currency
@@ -87,12 +73,9 @@ class Environment implements IEnvironment
      */
     protected $currentTransientCheckoutTenant;
 
-    public function __construct(SessionInterface $session, Locale $localeService, array $options = [])
+    public function __construct(Locale $localeService, array $options = [])
     {
-        $this->session       = $session;
         $this->localeService = $localeService;
-
-        $this->loadFromSession();
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -112,54 +95,32 @@ class Environment implements IEnvironment
         $resolver->setDefaults(['defaultCurrency' => 'EUR']);
     }
 
-    protected function loadFromSession()
+    protected function load()
     {
-        if ('cli' === php_sapi_name()) {
-            return;
-        }
-
-        $sessionBag = $this->getSessionBag();
-
-        $this->customItems = $sessionBag->get(self::SESSION_KEY_CUSTOM_ITEMS, []);
-
-        $this->userId = $sessionBag->get(self::SESSION_KEY_USERID);
-
-        $this->currentAssortmentTenant = $sessionBag->get(self::SESSION_KEY_ASSORTMENT_TENANT);
-        $this->currentAssortmentSubTenant = $sessionBag->get(self::SESSION_KEY_ASSORTMENT_SUB_TENANT);
-
-        $this->currentCheckoutTenant = $sessionBag->get(self::SESSION_KEY_CHECKOUT_TENANT);
-        $this->currentTransientCheckoutTenant = $sessionBag->get(self::SESSION_KEY_CHECKOUT_TENANT);
-
-        $this->useGuestCart = $sessionBag->get(self::SESSION_KEY_USE_GUEST_CART);
     }
 
     public function save()
     {
-        if ('cli' === php_sapi_name()) {
-            return;
-        }
-
-        $sessionBag = $this->getSessionBag();
-        $sessionBag->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
-        $sessionBag->set(self::SESSION_KEY_USERID, $this->userId);
-        $sessionBag->set(self::SESSION_KEY_ASSORTMENT_TENANT, $this->currentAssortmentTenant);
-        $sessionBag->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
-        $sessionBag->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
-        $sessionBag->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
     }
 
     public function getAllCustomItems()
     {
+        $this->load();
+
         return $this->customItems;
     }
 
     public function getCustomItem($key)
     {
+        $this->load();
+
         return $this->customItems[$key];
     }
 
     public function setCustomItem($key, $value)
     {
+        $this->load();
+
         $this->customItems[$key] = $value;
     }
 
@@ -168,6 +129,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentUserId()
     {
+        $this->load();
+
         return $this->userId;
     }
 
@@ -178,6 +141,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentUserId($userId)
     {
+        $this->load();
+
         $this->userId = (int)$userId;
 
         return $this;
@@ -188,41 +153,28 @@ class Environment implements IEnvironment
      */
     public function hasCurrentUserId()
     {
+        $this->load();
+
         return $this->getCurrentUserId() !== self::USER_ID_NOT_SET;
     }
 
     public function removeCustomItem($key)
     {
+        $this->load();
+
         unset($this->customItems[$key]);
     }
 
     public function clearEnvironment()
     {
-        $sessionBag = $this->getSessionBag();
+        $this->load();
 
-        $key = self::SESSION_KEY_CUSTOM_ITEMS;
-        $sessionBag->remove($key);
         $this->customItems = null;
-
-        $key = self::SESSION_KEY_USERID;
-        $sessionBag->remove($key);
         $this->userId = null;
-
-        $key = self::SESSION_KEY_ASSORTMENT_TENANT;
-        $sessionBag->remove($key);
         $this->currentAssortmentTenant = null;
-
-        $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
-        $sessionBag->remove($key);
         $this->currentAssortmentSubTenant = null;
-
-        $key = self::SESSION_KEY_CHECKOUT_TENANT;
-        $sessionBag->remove($key);
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
-
-        $key = self::SESSION_KEY_USE_GUEST_CART;
-        $sessionBag->remove($key);
         $this->useGuestCart = false;
     }
 
@@ -237,6 +189,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentTenant($currentTenant)
     {
+        $this->load();
+
         $this->setCurrentAssortmentTenant($currentTenant);
     }
 
@@ -249,6 +203,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentTenant()
     {
+        $this->load();
+
         return $this->getCurrentAssortmentTenant();
     }
 
@@ -263,6 +219,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentSubTenant($currentSubTenant)
     {
+        $this->load();
+
         $this->setCurrentAssortmentSubTenant($currentSubTenant);
     }
 
@@ -275,6 +233,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentSubTenant()
     {
+        $this->load();
+
         return $this->getCurrentAssortmentSubTenant();
     }
 
@@ -291,6 +251,8 @@ class Environment implements IEnvironment
      */
     public function getUseGuestCart()
     {
+        $this->load();
+
         return $this->useGuestCart;
     }
 
@@ -299,6 +261,8 @@ class Environment implements IEnvironment
      */
     public function setUseGuestCart($useGuestCart)
     {
+        $this->load();
+
         $this->useGuestCart = (bool)$useGuestCart;
     }
 
@@ -309,6 +273,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentAssortmentTenant($tenant)
     {
+        $this->load();
+
         $this->currentAssortmentTenant = $tenant;
     }
 
@@ -319,6 +285,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentAssortmentTenant()
     {
+        $this->load();
+
         return $this->currentAssortmentTenant;
     }
 
@@ -331,6 +299,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentAssortmentSubTenant($subTenant)
     {
+        $this->load();
+
         $this->currentAssortmentSubTenant = $subTenant;
     }
 
@@ -341,6 +311,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentAssortmentSubTenant()
     {
+        $this->load();
+
         return $this->currentAssortmentSubTenant;
     }
 
@@ -354,6 +326,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentCheckoutTenant($tenant, $persistent = true)
     {
+        $this->load();
+
         if ($this->currentCheckoutTenant != $tenant) {
             if ($persistent) {
                 $this->currentCheckoutTenant = $tenant;
@@ -371,18 +345,9 @@ class Environment implements IEnvironment
      */
     public function getCurrentCheckoutTenant()
     {
+        $this->load();
+
         return $this->currentTransientCheckoutTenant;
-    }
-
-    /**
-     * @return AttributeBagInterface
-     */
-    protected function getSessionBag(): AttributeBagInterface
-    {
-        /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
-
-        return $sessionBag;
     }
 
     /**

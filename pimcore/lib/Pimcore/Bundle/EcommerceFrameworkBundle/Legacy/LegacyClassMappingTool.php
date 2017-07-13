@@ -284,7 +284,7 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry' => 'OnlineShop\Framework\Model\AbstractSetProductEntry',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType' => 'OnlineShop\Framework\Model\AbstractVoucherTokenType',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup' => 'OnlineShop\Framework\Model\DefaultMockup',
-        'Pimcore\Bundle\EcommerceFrameworkBundle\Environment' => 'OnlineShop\Framework\Environment',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment' => 'OnlineShop\Framework\Environment',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\AbstractData' => 'OnlineShop\Framework\Tracking\AbstractData',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\AbstractProductData' => 'OnlineShop\Framework\Tracking\AbstractProductData',
