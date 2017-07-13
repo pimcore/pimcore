@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Service\Locale;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Environment implements IEnvironment
@@ -32,7 +33,7 @@ class Environment implements IEnvironment
     const USER_ID_NOT_SET = -1;
 
     /**
-     * @var AttributeBagInterface
+     * @var SessionInterface
      */
     protected $session;
 
@@ -79,10 +80,10 @@ class Environment implements IEnvironment
      */
     protected $currentTransientCheckoutTenant = null;
 
-    public function __construct($config, SessionInterface $containerSession, Locale $localeService)
+    public function __construct($config, SessionInterface $session, Locale $localeService)
     {
+        $this->session       = $session;
         $this->localeService = $localeService;
-        $this->containerSession = $containerSession;
 
         $this->loadFromSession();
 
@@ -91,42 +92,38 @@ class Environment implements IEnvironment
 
     protected function loadFromSession()
     {
-        if (php_sapi_name() != 'cli') {
-            $this->session = $this->buildSession();
-
-            $this->customItems = $this->session->get(self::SESSION_KEY_CUSTOM_ITEMS);
-            if ($this->customItems == null) {
-                $this->customItems=[];
-            }
-
-            $this->userId = $this->session->get(self::SESSION_KEY_USERID);
-
-            $this->currentAssortmentTenant = $this->session->get(self::SESSION_KEY_ASSORTMENT_TENANT);
-
-            $this->currentAssortmentSubTenant = $this->session->get(self::SESSION_KEY_ASSORTMENT_SUB_TENANT);
-
-            $this->currentCheckoutTenant = $this->session->get(self::SESSION_KEY_CHECKOUT_TENANT);
-            $this->currentTransientCheckoutTenant = $this->session->get(self::SESSION_KEY_CHECKOUT_TENANT);
-
-            $this->useGuestCart = $this->session->get(self::SESSION_KEY_USE_GUEST_CART);
+        if ('cli' === php_sapi_name()) {
+            return;
         }
+
+        $sessionBag = $this->getSessionBag();
+
+        $this->customItems = $sessionBag->get(self::SESSION_KEY_CUSTOM_ITEMS, []);
+
+        $this->userId = $sessionBag->get(self::SESSION_KEY_USERID);
+
+        $this->currentAssortmentTenant = $sessionBag->get(self::SESSION_KEY_ASSORTMENT_TENANT);
+        $this->currentAssortmentSubTenant = $sessionBag->get(self::SESSION_KEY_ASSORTMENT_SUB_TENANT);
+
+        $this->currentCheckoutTenant = $sessionBag->get(self::SESSION_KEY_CHECKOUT_TENANT);
+        $this->currentTransientCheckoutTenant = $sessionBag->get(self::SESSION_KEY_CHECKOUT_TENANT);
+
+        $this->useGuestCart = $sessionBag->get(self::SESSION_KEY_USE_GUEST_CART);
     }
 
     public function save()
     {
-        if (php_sapi_name() != 'cli') {
-            $this->session->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
-
-            $this->session->set(self::SESSION_KEY_USERID, $this->userId);
-
-            $this->session->set(self::SESSION_KEY_ASSORTMENT_TENANT, $this->currentAssortmentTenant);
-
-            $this->session->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
-
-            $this->session->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
-
-            $this->session->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
+        if ('cli' === php_sapi_name()) {
+            return;
         }
+
+        $sessionBag = $this->getSessionBag();
+        $sessionBag->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
+        $sessionBag->set(self::SESSION_KEY_USERID, $this->userId);
+        $sessionBag->set(self::SESSION_KEY_ASSORTMENT_TENANT, $this->currentAssortmentTenant);
+        $sessionBag->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
+        $sessionBag->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
+        $sessionBag->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
     }
 
     public function getAllCustomItems()
@@ -179,29 +176,31 @@ class Environment implements IEnvironment
 
     public function clearEnvironment()
     {
+        $sessionBag = $this->getSessionBag();
+
         $key = self::SESSION_KEY_CUSTOM_ITEMS;
-        $this->session->remove($key);
+        $sessionBag->remove($key);
         $this->customItems = null;
 
         $key = self::SESSION_KEY_USERID;
-        $this->session->remove($key);
+        $sessionBag->remove($key);
         $this->userId = null;
 
         $key = self::SESSION_KEY_ASSORTMENT_TENANT;
-        $this->session->remove($key);
+        $sessionBag->remove($key);
         $this->currentAssortmentTenant = null;
 
         $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
-        $this->session->remove($key);
+        $sessionBag->remove($key);
         $this->currentAssortmentSubTenant = null;
 
         $key = self::SESSION_KEY_CHECKOUT_TENANT;
-        $this->session->remove($key);
+        $sessionBag->remove($key);
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
 
         $key = self::SESSION_KEY_USE_GUEST_CART;
-        $this->session->remove($key);
+        $sessionBag->remove($key);
         $this->useGuestCart = false;
     }
 
@@ -356,9 +355,12 @@ class Environment implements IEnvironment
     /**
      * @return AttributeBagInterface
      */
-    protected function buildSession()
+    protected function getSessionBag(): AttributeBagInterface
     {
-        return $this->containerSession->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
+        /** @var AttributeBagInterface $sessionBag */
+        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
+
+        return $sessionBag;
     }
 
     /**
