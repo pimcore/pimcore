@@ -42,7 +42,7 @@ class PageController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-
+throw new \Exception('foo');
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
             return $this->json([
