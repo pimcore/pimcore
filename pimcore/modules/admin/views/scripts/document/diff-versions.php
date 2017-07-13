@@ -38,16 +38,16 @@
 </head>
 <body>
 
-    <?php if($this->image) { ?>
-        <img src="data:image/png;base64,<?= $this->image ?>">
-    <?php } else { ?>
-        <div id="left">
-            <img src="data:image/png;base64,<?= $this->image1 ?>">
-        </div>
-        <div id="right">
-            <img src="data:image/png;base64,<?= $this->image2 ?>">
-        </div>
-    <?php } ?>
+<?php if($this->image) { ?>
+    <img src="/admin/document/diff-versions-image?id=<?= $this->image ?>">
+<?php } else { ?>
+    <div id="left">
+        <img src="/admin/document/diff-versions-image?id=<?= $this->image1 ?>">
+    </div>
+    <div id="right">
+        <img src="/admin/document/diff-versions-image?id=<?= $this->image2 ?>">
+    </div>
+<?php } ?>
 
 </body>
 </html>
