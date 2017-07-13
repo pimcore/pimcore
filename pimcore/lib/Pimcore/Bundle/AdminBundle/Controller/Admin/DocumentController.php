@@ -25,6 +25,7 @@ use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -949,9 +950,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $_COOKIE[$sessionName];
         $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $_COOKIE[$sessionName];
 
-        $fromFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . uniqid() . '.png';
-        $toFile   = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . uniqid() . '.png';
-        $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . uniqid() . '.png';
+        $toFileId = uniqid();
+        $fromFileId = uniqid();
+        $diffFileId = uniqid();
+        $fromFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $fromFileId . ".png";
+        $toFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $toFileId . ".png";
+        $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $diffFileId . ".png";
 
         $viewParams = [];
 
@@ -969,12 +973,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $result[0]->clear();
             $result[0]->destroy();
 
-            $viewParams['image'] = base64_encode(file_get_contents($diffFile));
-
-            unlink($diffFile);
+            $viewParams['image'] = $diffFileId;
         } else {
-            $viewParams['image1'] = base64_encode(file_get_contents($fromFile));
-            $viewParams['image2'] = base64_encode(file_get_contents($toFile));
+            $viewParams['image1'] = $fromFileId;
+            $viewParams['image2'] = $toFileId;
         }
 
         // cleanup
@@ -983,10 +985,24 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $image2->clear();
         $image2->destroy();
 
-        unlink($fromFile);
-        unlink($toFile);
-
         return $this->render('PimcoreAdminBundle:Admin/Document:diff-versions.html.php', $viewParams);
+    }
+
+    /**
+     * @Route("/diff-versions-image")
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function diffVersionsImageAction(Request $request) {
+
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $request->get('id') . ".png";
+        if(file_exists($file)) {
+            $response = new BinaryFileResponse($file);
+            $response->headers->set('Content-Type', 'image/png');
+            return $response;
+        }
     }
 
     /**

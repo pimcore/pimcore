@@ -39,13 +39,13 @@
 <body>
 
     <?php if($this->image) { ?>
-        <img src="data:image/png;base64,<?= $this->image ?>">
+        <img src="/admin/document/diff-versions-image?id=<?= $this->image ?>">
     <?php } else { ?>
         <div id="left">
-            <img src="data:image/png;base64,<?= $this->image1 ?>">
+            <img src="/admin/document/diff-versions-image?id=<?= $this->image1 ?>">
         </div>
         <div id="right">
-            <img src="data:image/png;base64,<?= $this->image2 ?>">
+            <img src="/admin/document/diff-versions-image?id=<?= $this->image2 ?>">
         </div>
     <?php } ?>
 
