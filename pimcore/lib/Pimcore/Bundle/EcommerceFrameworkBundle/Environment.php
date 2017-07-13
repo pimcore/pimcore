@@ -392,17 +392,11 @@ class Environment implements IEnvironment
      */
     public function getSystemLocale()
     {
-        // try to get the language from the service container
-        try {
-            $locale = $this->localeService->findLocale();
-
-            if (Tool::isValidLanguage($locale)) {
-                return (string) $locale;
-            }
-
-            throw new \Exception('Not supported language');
-        } catch (\Exception $e) {
-            return Tool::getDefaultLanguage();
+        $locale = $this->localeService->findLocale();
+        if (Tool::isValidLanguage($locale)) {
+            return (string)$locale;
         }
+
+        return Tool::getDefaultLanguage();
     }
 }
