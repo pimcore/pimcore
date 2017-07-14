@@ -8,3 +8,5 @@ The [Tax Management Component](./03_Tax_Management.md) adds functionality for de
 enough to implement all kinds of tax structures. 
 
 With [Pricing Rules](./05_Pricing_Rules.md) and [Vouchers](./07_Vouchers.md) marketing actions can be implemented.
+
+For details on how to calculate with prices, see [Calculate with Prices](./09_Calculate_with_Prices.md). 

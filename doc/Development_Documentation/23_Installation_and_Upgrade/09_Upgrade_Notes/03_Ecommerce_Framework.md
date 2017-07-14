@@ -88,7 +88,7 @@
   `set*Amount()` and all custom calculations need to be updated to work with the `Decimal` value object.
 - Added PHP 7 type hints to interfaces where applicable, especially regarding pricing. You might need to update your
   implementations to match updated interface definitions. This mainly affects return types of interfaces (e.g. a `PriceInfo`
-  is now forced to return a `IPrice` object for `getTotalPrice()` where it could be `null` previously) any anything working
+  is now forced to return a `IPrice` object for `getTotalPrice()` where it could be `null` previously) and anything working
   with price amounts (as the `Decimal` value object is used now instead of floats).  
   If you implement any of the following classes/interfaces in your project, please check they match the new framework
   definition (see https://github.com/pimcore/pimcore/pull/1701):
@@ -119,8 +119,8 @@
     - `PricingManager/IPriceInfo`
     - `PricingManager/PriceInfo`
   
-- CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when subclassing the
-  default calculator.
+- CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when sub classing 
+  the default calculator.
    
 - Commands namespace changed from `shop` to `ecommerce`. 
 
