@@ -199,9 +199,8 @@ class Image extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
-        if ($data && intval($data["id"]) > 0) {
-            return Asset\Image::getById($data["id"]);
+        if ($data && intval($data['id']) > 0) {
+            return Asset\Image::getById($data['id']);
         }
 
         return null;

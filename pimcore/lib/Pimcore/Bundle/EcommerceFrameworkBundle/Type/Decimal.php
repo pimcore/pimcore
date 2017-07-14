@@ -133,6 +133,7 @@ class Decimal
      * @param int|null $roundingMode
      *
      * @return self
+     *
      * @throws \TypeError
      */
     public static function create($amount, int $scale = null, int $roundingMode = null): self
@@ -615,6 +616,7 @@ class Decimal
      * @param int|null $roundingMode
      *
      * @return Decimal
+     *
      * @throws \DivisionByZeroError
      */
     public function div($other, int $roundingMode = null): self

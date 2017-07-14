@@ -61,14 +61,14 @@ class BlogController extends FrontendController
         if ($request->get('pdf')) {
             //Simple usage
             $html = $this->renderView(':Blog:index.html.twig', $this->view->getAllParameters());
+
             return new \Symfony\Component\HttpFoundation\Response(
                 \Pimcore\Web2Print\Processor::getInstance()->getPdfFromString($html),
                 200,
-                array(
+                [
                     'Content-Type' => 'application/pdf',
-                )
+                ]
             );
-
 
             //Advanced usage
             /*$params = $this->view->getAllParameters();

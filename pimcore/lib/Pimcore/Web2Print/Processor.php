@@ -78,6 +78,7 @@ abstract class Processor
 
         if (!$config['disableBackgroundExecution']) {
             Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log');
+
             return true;
         } else {
             return self::getInstance()->startPdfGeneration($jobConfig->documentId);
@@ -236,10 +237,12 @@ abstract class Processor
         Model\Tool\TmpStore::delete($document->getLockKey());
     }
 
-    protected function processHtml($html,$params){
+    protected function processHtml($html, $params)
+    {
         $placeholder = new \Pimcore\Placeholder();
-        $html = $placeholder->replacePlaceholders($html,$params,$params['document']);
+        $html = $placeholder->replacePlaceholders($html, $params, $params['document']);
         $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $params['document'], $params['hostUrl']);
+
         return $html;
     }
 
@@ -249,7 +252,8 @@ abstract class Processor
      * @param string $html
      * @param array $params
      * @param bool $returnFilePath return the path to the pdf file or the content
+     *
      * @return string
      */
-    abstract function getPdfFromString($html, $params = [], $returnFilePath = false);
+    abstract public function getPdfFromString($html, $params = [], $returnFilePath = false);
 }

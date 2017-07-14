@@ -244,7 +244,7 @@ CSS;
                     $absolutePath = $hostUrl . $absolutePath;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
-                    if($path[0] == '?'){
+                    if ($path[0] == '?') {
                         $absolutePath = $hostUrl . $document . $path;
                     }
                     $netUrl = new \Net_URL2($absolutePath);

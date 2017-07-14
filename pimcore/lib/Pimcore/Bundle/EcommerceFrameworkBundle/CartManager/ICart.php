@@ -273,6 +273,7 @@ interface ICart
 
     /**
      * @static
+     *
      * @param $id
      *
      * @return ICart
@@ -283,6 +284,7 @@ interface ICart
      * returns all carts for given userId
      *
      * @static
+     *
      * @param $userId
      *
      * @return ICart[]

@@ -34,6 +34,7 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
 
     /**
      * @inheritdoc
+     *
      * @todo is this necessary?
      */
     public function getPrice(): IPrice

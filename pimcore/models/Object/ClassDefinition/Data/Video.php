@@ -264,7 +264,6 @@ class Video extends Model\Object\ClassDefinition\Data
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-
     /**
      * @param $data
      * @param null $object
@@ -281,8 +280,9 @@ class Video extends Model\Object\ClassDefinition\Data
         }
         $result = $this->getDataForEditmode($data, $object, $params);
         if ($id) {
-            $result["id"] = $id;
+            $result['id'] = $id;
         }
+
         return $result;
     }
 

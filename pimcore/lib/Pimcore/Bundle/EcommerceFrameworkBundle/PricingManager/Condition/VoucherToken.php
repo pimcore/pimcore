@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use OnlineShop\Framework\VoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\Object\Concrete;

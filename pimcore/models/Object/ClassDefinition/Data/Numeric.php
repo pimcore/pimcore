@@ -289,7 +289,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
 
     public function isDecimalType(): bool
     {
-        return (null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision());
+        return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
     private function buildDecimalColumnType(): string

@@ -21,11 +21,11 @@ use Pimcore\Web2Print\Processor;
 
 class PdfReactor8 extends Processor
 {
-
     /**
      * returns the default web2print config
      *
      * @param $config
+     *
      * @return array
      */
     protected function getConfig($config)
@@ -51,6 +51,7 @@ class PdfReactor8 extends Processor
         if (trim($web2PrintConfig->pdfreactorLicence)) {
             $reactorConfig['licenseKey'] = trim($web2PrintConfig->pdfreactorLicence);
         }
+
         return $reactorConfig;
     }
 
@@ -75,6 +76,7 @@ class PdfReactor8 extends Processor
      * @param string $html
      * @param array $params
      * @param bool $returnFilePath return the path to the pdf file or the content
+     *
      * @return string
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
@@ -84,8 +86,7 @@ class PdfReactor8 extends Processor
         $customConfig = (array)$params['adapterConfig'];
         $reactorConfig = $this->getConfig($customConfig);
 
-
-        if(!array_keys($customConfig,'addLinks')){
+        if (!array_keys($customConfig, 'addLinks')) {
             $customConfig['addLinks'] = true;
         }
 
@@ -99,14 +100,13 @@ class PdfReactor8 extends Processor
         } else {
             $dstFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
             file_put_contents($dstFile, $pdf);
+
             return $dstFile;
         }
     }
 
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
-
-
         $params = [];
         $params['printermarks'] = $config->printermarks == 'true';
         $params['screenResolutionImages'] = $config->screenResolutionImages == 'true';

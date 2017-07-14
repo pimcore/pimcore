@@ -324,8 +324,6 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-
-
     /**
      * @param $data
      * @param null $object

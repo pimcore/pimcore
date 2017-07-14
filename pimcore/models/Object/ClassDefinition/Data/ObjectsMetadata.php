@@ -251,7 +251,6 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-
     /**
      * @param $data
      * @param null $object

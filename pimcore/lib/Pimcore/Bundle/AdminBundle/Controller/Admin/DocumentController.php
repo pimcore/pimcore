@@ -953,9 +953,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $toFileId = uniqid();
         $fromFileId = uniqid();
         $diffFileId = uniqid();
-        $fromFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $fromFileId . ".png";
-        $toFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $toFileId . ".png";
-        $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $diffFileId . ".png";
+        $fromFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . $fromFileId . '.png';
+        $toFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . $toFileId . '.png';
+        $diffFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . $diffFileId . '.png';
 
         $viewParams = [];
 
@@ -995,12 +995,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return BinaryFileResponse
      */
-    public function diffVersionsImageAction(Request $request) {
-
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $request->get('id') . ".png";
-        if(file_exists($file)) {
+    public function diffVersionsImageAction(Request $request)
+    {
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . $request->get('id') . '.png';
+        if (file_exists($file)) {
             $response = new BinaryFileResponse($file);
             $response->headers->set('Content-Type', 'image/png');
+
             return $response;
         }
     }

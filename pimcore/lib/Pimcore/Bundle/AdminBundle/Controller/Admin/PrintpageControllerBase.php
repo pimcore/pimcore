@@ -262,7 +262,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         $allParams['protocol'] = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
         $pdf = $document->getPdfFileName();
-        if(is_file($pdf)){
+        if (is_file($pdf)) {
             unlink($pdf);
         }
 

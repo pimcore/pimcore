@@ -65,7 +65,8 @@ class CartPriceCalculator implements ICartPriceCalculator
      * @param $config
      * @param ICart $cart
      */
-    public function __construct($config, ICart $cart) {
+    public function __construct($config, ICart $cart)
+    {
         $this->cart = $cart;
         $this->isCalculated = false;
         $this->config=$config;
@@ -185,13 +186,14 @@ class CartPriceCalculator implements ICartPriceCalculator
      * Re-initialise the price modificators, e.g. after removing an item from a cart
      * within the same request, such as an AJAX-call.
      */
-    public function initModificators() {
+    public function initModificators()
+    {
         $config = $this->config;
-        $this->modificators = array();
-        if(!empty($config->modificators) && is_object($config->modificators)) {
-            foreach($config->modificators as $modificator) {
+        $this->modificators = [];
+        if (!empty($config->modificators) && is_object($config->modificators)) {
+            foreach ($config->modificators as $modificator) {
                 $modificatorClass = new $modificator->class($modificator->config);
-                $this->addModificator( $modificatorClass );
+                $this->addModificator($modificatorClass);
             }
         }
     }

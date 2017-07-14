@@ -242,8 +242,6 @@ class Multiselect extends Model\Object\ClassDefinition\Data
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-
-
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      *

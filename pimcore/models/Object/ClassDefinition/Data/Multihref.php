@@ -395,7 +395,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-
     /**
      * @param $data
      * @param null $object
@@ -971,6 +970,4 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             return $result;
         }
     }
-
-
 }

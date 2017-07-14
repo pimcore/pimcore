@@ -150,7 +150,8 @@ class Link extends Model\Object\ClassDefinition\Data
      *
      * @return string
      */
-    public function getDataForGrid($data, $object = null, $params = []) {
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
         return $this->getDataForEditmode($data, $object, $params);
     }
 

@@ -282,7 +282,6 @@ class TaxCalculationTest extends TestCase
             }
         ]);
 
-
         $this->assertEquals(
             100,
             $product->getOSPrice()->getAmount()->asNumeric(),

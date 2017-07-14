@@ -13,6 +13,7 @@
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 

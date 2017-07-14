@@ -14,7 +14,6 @@
 
 namespace Pimcore\Web2Print\Processor;
 
-use Pimcore\Bundle\CoreBundle\Command\ThumbnailsVideoCommand;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -138,6 +137,7 @@ class WkHtmlToPdf extends Processor
      * @param string $html
      * @param array $params
      * @param bool $returnFilePath return the path to the pdf file or the content
+     *
      * @return string
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)

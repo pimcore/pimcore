@@ -307,9 +307,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public function getDataForGrid($data, $object = null, $params = [])
     {
         return $this->getDataForEditmode($data, $object, $params);
-
     }
-
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
@@ -352,7 +350,6 @@ class Table extends Model\Object\ClassDefinition\Data
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
-
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
