@@ -167,6 +167,8 @@ class Datatrans implements IPayment
             $formAttributes['data-use-alias'] = 'true';
         }
 
+        $formAttributes['id'] = 'paymentForm';
+
         // create form
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
@@ -179,7 +181,7 @@ class Datatrans implements IPayment
         $form->add('merchantId', HiddenType::class);
         $formData['merchantId'] = $this->merchantId;
 
-        $form->add('hidden', 'sign', ['value' => $sign]);
+        $form->add('sign', HiddenType::class);
         $formData['sign'] = $sign;
 
         // return urls
@@ -205,7 +207,8 @@ class Datatrans implements IPayment
         $formData['reqtype'] = $paymentData['reqtype'];
 
         if ($config['useAlias']) {
-            $form->add('hidden', 'useAlias', ['value' => 'yes']);
+            $form->add('useAlias', HiddenType::class);
+            $formData['useAlias'] = 'yes';
         }
 
         // add submit button

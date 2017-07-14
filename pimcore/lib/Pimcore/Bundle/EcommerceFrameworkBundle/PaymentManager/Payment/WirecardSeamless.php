@@ -642,10 +642,10 @@ class WirecardSeamless implements IPayment
         $secret = $this->settings->secret;
         if ($this->settings->hashAlgorithm != 'hmac_sha512') {
             $requestFingerprint = hash('sha512', $requestFingerprintSeed);
-            \Logger::debug('#wirecard generateFingerprint: ' . $requestFingerprintSeed);
+            Logger::debug('#wirecard generateFingerprint: ' . $requestFingerprintSeed);
         } else {
             $requestFingerprint= hash_hmac('sha512', $requestFingerprintSeed, $secret);
-            \Logger::debug('#wirecard generateFingerprint (hmac): '.$requestFingerprintSeed);
+            Logger::debug('#wirecard generateFingerprint (hmac): '.$requestFingerprintSeed);
         }
 
         return $requestFingerprint;
