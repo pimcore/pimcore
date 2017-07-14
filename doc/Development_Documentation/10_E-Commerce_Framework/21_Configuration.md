@@ -57,6 +57,50 @@ pimcore_ecommerce_framework:
             defaultCurrency: USD
 ```
 
+## Cart manager
+
+```yaml
+pimcore_ecommerce_framework:
+    cart_manager:
+        tenants:
+            # _defaults will be automatically merged into every tenant and removed. every other entry starting with _defaults
+            # will be removed in the final config, but can be used for YAML inheritance
+            _defaults:
+                cart:
+                    factory_id: SuperSuperFactory
+                price_calculator:
+                    factory_id: SuperSuperDuperDuperFactory
+                    options:
+                        foo: bar
+                        modificators:
+                            - foo
+                            - bar
+
+            _defaults_foo:
+                price_calculator:
+                    options: &defaults_foo_options
+                        brr: bum
+
+            default:
+                cart:
+                    factory_id: SuperDuperFactory
+                price_calculator:
+                    factory_id: DuperDuperFactory
+                    options:
+                        foo: baz
+                        modificators:
+                            - baz
+
+            noShipping:
+                price_calculator:
+                    options:
+                        <<: *defaults_foo_options
+                        bar: foo
+                        modificators:
+                            - bazinga
+```
+
+
 ## Tracking manager
 
 ```yaml
