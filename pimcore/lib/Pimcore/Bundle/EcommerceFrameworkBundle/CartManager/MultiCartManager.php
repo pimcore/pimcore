@@ -87,7 +87,7 @@ class MultiCartManager implements ICartManager
     /**
      * @return string
      */
-    public function getCartClassName()
+    public function getCartClassName(): string
     {
         // check if we need a guest cart
         if (Factory::getInstance()->getEnvironment()->getUseGuestCart()
@@ -201,18 +201,18 @@ class MultiCartManager implements ICartManager
     }
 
     /**
-     * @param array $param
+     * @param array $params
      *
      * @return int|string
      *
      * @throws InvalidConfigException
      */
-    public function createCart($param)
+    public function createCart(array $params)
     {
         $this->checkForInit();
 
-        if (array_key_exists($param['id'], $this->carts)) {
-            throw new InvalidConfigException('Cart with id ' . $param['id'] . ' exists already.');
+        if (array_key_exists($params['id'], $this->carts)) {
+            throw new InvalidConfigException('Cart with id ' . $params['id'] . ' exists already.');
         }
 
         // create cart
@@ -222,9 +222,9 @@ class MultiCartManager implements ICartManager
         /**
          * @var $cart ICart
          */
-        $cart->setName($param['name']);
-        if ($param['id']) {
-            $cart->setId($param['id']);
+        $cart->setName($params['name']);
+        if ($params['id']) {
+            $cart->setId($params['id']);
         }
 
         $cart->save();
@@ -290,7 +290,7 @@ class MultiCartManager implements ICartManager
     /**
      * @return ICart[]
      */
-    public function getCarts()
+    public function getCarts(): array
     {
         $this->checkForInit();
 
@@ -322,7 +322,7 @@ class MultiCartManager implements ICartManager
      *
      * @return ICartPriceCalculator
      */
-    public function getCartPriceCalcuator(ICart $cart)
+    public function getCartPriceCalcuator(ICart $cart): ICartPriceCalculator
     {
         return $this->getCartPriceCalculator($cart);
     }
@@ -332,7 +332,7 @@ class MultiCartManager implements ICartManager
      *
      * @return ICartPriceCalculator
      */
-    public function getCartPriceCalculator(ICart $cart)
+    public function getCartPriceCalculator(ICart $cart): ICartPriceCalculator
     {
         return new $this->config->pricecalculator->class($this->config->pricecalculator->config, $cart);
     }

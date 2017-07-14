@@ -106,7 +106,7 @@ interface ICartManager extends IComponent
      *
      * @return string key of new created cart
      */
-    public function createCart($param);
+    public function createCart(array $params);
 
     /**
      * Deletes cart
