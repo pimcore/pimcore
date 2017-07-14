@@ -397,7 +397,7 @@ class Service extends Model\Element\Service
                     $contentMasterElements = $contentMaster->getElements();
                     foreach ($contentMasterElements as $contentMasterElement) {
                         if (method_exists($contentMasterElement, 'rewriteIds')) {
-                            $element = Element\Service::cloneMe($contentMasterElement);
+                            $element = clone $contentMasterElement;
                             $element->rewriteIds($rewriteConfig);
 
                             if (Serialize::serialize($element) != Serialize::serialize($contentMasterElement)) {
