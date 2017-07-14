@@ -130,7 +130,7 @@ class UpdateCommand extends AbstractCommand
             $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion("You are going to update to build $build! Continue with this action? (y/n)", false);
 
-            if (!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question) && !$input->getOption('no-interaction')) {
                 return;
             }
 
