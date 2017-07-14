@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,21 +18,25 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 /**
- * Class LazyLoadingPriceInfo
- *
  * Base implementation for a lazy loading price info
- *
  */
 class LazyLoadingPriceInfo extends AbstractPriceInfo implements IPriceInfo
 {
+    /**
+     * @var IPriceInfo[]
+     */
+    protected $priceRegistry = [];
+
     public static function getInstance()
     {
         return parent::getInstance();
     }
 
-    protected $priceRegistry = [];
-
-    public function getPrice()
+    /**
+     * @inheritdoc
+     * @todo is this necessary?
+     */
+    public function getPrice(): IPrice
     {
         parent::getPrice();
     }

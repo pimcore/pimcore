@@ -18,24 +18,23 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
-/**
- * Class Shipping
- */
 class Shipping implements IShipping
 {
     /**
-     * @var float
+     * @var Decimal
      */
-    protected $charge = 0;
+    protected $charge;
 
     /**
      * @var OnlineShopTaxClass
      */
-    protected $taxClass = 0;
+    protected $taxClass;
 
     /**
      * @param Config $config
@@ -43,7 +42,9 @@ class Shipping implements IShipping
     public function __construct(Config $config = null)
     {
         if ($config && $config->charge) {
-            $this->charge = floatval($config->charge);
+            $this->charge = Decimal::create($config->charge);
+        } else {
+            $this->charge = Decimal::zero();
         }
     }
 
@@ -63,7 +64,7 @@ class Shipping implements IShipping
      */
     public function modify(IPrice $currentSubTotal, ICart $cart)
     {
-        $modificatedPrice = new \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
+        $modificatedPrice = new ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
         $taxClass = $this->getTaxClass();
         if ($taxClass) {
@@ -77,11 +78,11 @@ class Shipping implements IShipping
     }
 
     /**
-     * @param float $charge
+     * @param Decimal $charge
      *
      * @return ICartPriceModificator
      */
-    public function setCharge($charge)
+    public function setCharge(Decimal $charge)
     {
         $this->charge = $charge;
 
@@ -89,9 +90,9 @@ class Shipping implements IShipping
     }
 
     /**
-     * @return float
+     * @return Decimal
      */
-    public function getCharge()
+    public function getCharge(): Decimal
     {
         return $this->charge;
     }

@@ -20,12 +20,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Forms;
 
+// TODO refine how payment amounts are transformed for API
 class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
@@ -130,7 +132,7 @@ class Datatrans implements IPayment
         }
 
         // collect payment data
-        $paymentData['amount'] = round($price->getAmount(), 2) * 100;
+        $paymentData['amount'] = round($price->getAmount()->asNumeric(), 2) * 100;
         $paymentData['currency'] = $price->getCurrency()->getShortName();
         $paymentData['reqtype'] = $config['reqtype'];
         // NOA – Authorisation only (default)
@@ -165,6 +167,8 @@ class Datatrans implements IPayment
             $formAttributes['data-use-alias'] = 'true';
         }
 
+        $formAttributes['id'] = 'paymentForm';
+
         // create form
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
@@ -177,7 +181,7 @@ class Datatrans implements IPayment
         $form->add('merchantId', HiddenType::class);
         $formData['merchantId'] = $this->merchantId;
 
-        $form->add('hidden', 'sign', ['value' => $sign]);
+        $form->add('sign', HiddenType::class);
         $formData['sign'] = $sign;
 
         // return urls
@@ -203,7 +207,8 @@ class Datatrans implements IPayment
         $formData['reqtype'] = $paymentData['reqtype'];
 
         if ($config['useAlias']) {
-            $form->add('hidden', 'useAlias', ['value' => 'yes']);
+            $form->add('useAlias', HiddenType::class);
+            $formData['useAlias'] = 'yes';
         }
 
         // add submit button
@@ -248,7 +253,7 @@ class Datatrans implements IPayment
         $this->setAuthorizedData($authorizedData);
 
         // restore price object for payment status
-        $price = new Price($response['amount'] / 100, new Currency($response['currency']));
+        $price = new Price(Decimal::create($response['amount'] / 100), new Currency($response['currency']));
 
         $paymentState = null;
         if (in_array($response['responseCode'], ['01', '02'])) {
@@ -332,7 +337,7 @@ class Datatrans implements IPayment
 
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
-            $price = new Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
+            $price = new Price(Decimal::create($this->authorizedData['amount'] / 100), new Currency($this->authorizedData['currency']));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -346,7 +351,14 @@ class Datatrans implements IPayment
         } else {
             // authorisieren und zahlung ausführen
             $xml = $this->xmlAuthorisation(
-                'CAA', self::TRANS_TYPE_DEBIT, $price->getAmount() * 100, $price->getCurrency()->getShortName(), $reference, $this->authorizedData['aliasCC'], $this->authorizedData['expm'], $this->authorizedData['expy']
+                'CAA',
+                self::TRANS_TYPE_DEBIT,
+                $price->getAmount()->asNumeric() * 100,
+                $price->getCurrency()->getShortName(),
+                $reference,
+                $this->authorizedData['aliasCC'],
+                $this->authorizedData['expm'],
+                $this->authorizedData['expy']
             );
         }
 
@@ -389,7 +401,7 @@ class Datatrans implements IPayment
     {
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
-            $price = new Price($this->authorizedData['amount'] / 100, new Currency($this->authorizedData['currency']));
+            $price = new Price(Decimal::create($this->authorizedData['amount'] / 100), new Currency($this->authorizedData['currency']));
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
@@ -398,7 +410,11 @@ class Datatrans implements IPayment
         } else {
             // complete authorized payment
             $xml = $this->xmlSettlement(
-                self::TRANS_TYPE_CREDIT, $price->getAmount() * 100, $price->getCurrency()->getShortName(), $reference, $transactionId
+                self::TRANS_TYPE_CREDIT,
+                $price->getAmount()->asNumeric() * 100,
+                $price->getCurrency()->getShortName(),
+                $reference,
+                $transactionId
             );
         }
 
@@ -439,7 +455,7 @@ class Datatrans implements IPayment
     public function executeAuthorizationCancel(IPrice $price, $reference, $transactionId)
     {
         $xml = $this->xmlCancelAuthorization(
-            $price->getAmount() * 100,
+            $price->getAmount()->asNumeric() * 100,
             $price->getCurrency()->getShortName(),
             $reference,
             $transactionId

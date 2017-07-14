@@ -14,7 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+
+class Sold extends AbstractOrder implements ICondition
 {
     /**
      * @var int
@@ -32,11 +39,11 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     protected $countCart = false;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         $rule = $environment->getRule();
         if ($rule) {
@@ -75,7 +82,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {
@@ -124,7 +131,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart|null
+     * @return ICart|null
      */
     protected function getCart()
     {
@@ -132,15 +139,15 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
     }
 
     /**
-     * return a count how often the rule is already uses in the cart
+     * Returns a count how often the rule is already uses in the cart
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart          $cart
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule  $rule
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem|null $cartItem
+     * @param ICart $cart
+     * @param IRule $rule
+     * @param ICartItem|null $cartItem
      *
      * @return int
      */
-    protected function getCartRuleCount(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $cartItem = null)
+    protected function getCartRuleCount(ICart $cart, IRule $rule, ICartItem $cartItem = null)
     {
         // init
         $counter = 0;
@@ -153,7 +160,7 @@ class Sold extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBu
             } else {
                 // get rules
                 $priceInfo = $item->getPriceInfo();
-                if ($priceInfo instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo) {
+                if ($priceInfo instanceof IPriceInfo) {
                     if (($cartItem && $priceInfo->hasRulesApplied()) || $cartItem === null) {
                         $rules = $priceInfo->getRules();
                     }

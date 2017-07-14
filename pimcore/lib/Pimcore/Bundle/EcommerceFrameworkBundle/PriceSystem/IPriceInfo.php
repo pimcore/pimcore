@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,6 +17,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+
 /**
  * Interface for PriceInfo implementations of online shop framework
  */
@@ -22,71 +27,62 @@ interface IPriceInfo
     const MIN_PRICE = 'min';
 
     /**
-     * returns single price
-     *
-     * @abstract
+     * Returns single price
      *
      * @return IPrice
      */
-    public function getPrice();
+    public function getPrice(): IPrice;
 
     /**
-     * returns total price (single price * quantity)
-     *
-     * @abstract
+     * Returns total price (single price * quantity)
      *
      * @return IPrice
      */
-    public function getTotalPrice();
+    public function getTotalPrice(): IPrice;
 
     /**
-     * returns if price is a minimal price (e.g. when having many product variants they might have a from price)
-     *
-     * @abstract
+     * Returns if price is a minimal price (e.g. when having many product variants they might have a from price)
      *
      * @return bool
      */
-    public function isMinPrice();
+    public function isMinPrice(): bool;
 
     /**
-     * returns quantity
+     * Returns quantity
      *
-     * @abstract
-     *
-     * @return int
+     * @return int|string
      */
     public function getQuantity();
 
     /**
+     * Numeric quantity or constant IPriceInfo::MIN_PRICE
+     *
      * @param int|string $quantity
-     * numeric quantity or constant IPriceInfo::MIN_PRICE
      */
     public function setQuantity($quantity);
 
     /**
-     * relation to price system
+     * Relation to price system
      *
-     * @abstract
-     *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem $priceSystem
+     * @param IPriceSystem $priceSystem
      *
      * @return IPriceInfo
      */
-    public function setPriceSystem($priceSystem);
+    public function setPriceSystem(IPriceSystem $priceSystem);
 
     /**
-     * relation to product
+     * Relation to product
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      *
      * @return IPriceInfo
      */
-    public function setProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product);
+    public function setProduct(ICheckoutable $product);
 
     /**
-     * returns product
+     * Returns product
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct();
 }

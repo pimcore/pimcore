@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+
 class Currency
 {
     const LEFT = 'left';
@@ -77,7 +79,7 @@ class Currency
     }
 
     /**
-     * @param float $value
+     * @param Decimal|float|int|string $value
      * @param string $pattern
      *
      * @return string
@@ -89,6 +91,10 @@ class Currency
             $position = $pattern['position'] ? $pattern['position'] : self::RIGHT;
 
             $pattern = $this->patternStore[$symbol][$position] ? $this->patternStore[$symbol][$position] : 'default';
+        }
+
+        if ($value instanceof Decimal) {
+            $value = $value->asString();
         }
 
         return $this->formattingService->formatCurrency($value, $this->currencyShortName, $pattern);

@@ -15,11 +15,13 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 
 class Bracket implements IBracket
 {
     /**
-     * @var array|\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @var array|ICondition
      */
     protected $conditions = [];
 
@@ -29,12 +31,12 @@ class Bracket implements IBracket
     protected $operator = [];
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition $condition
+     * @param ICondition $condition
      * @param string $operator IBracket::OPERATOR_*
      *
      * @return IBracket
      */
-    public function addCondition(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition $condition, $operator)
+    public function addCondition(ICondition $condition, $operator)
     {
         $this->conditions[] = $condition;
         $this->operator[] = $operator;
@@ -43,11 +45,11 @@ class Bracket implements IBracket
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         // A bracket without conditions is not restricted and thus doesn't fail
         if (sizeof($this->conditions) == 0) {
@@ -59,7 +61,7 @@ class Bracket implements IBracket
 
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition $condition */
+            /* @var ICondition $condition */
 
             // test condition
             $check = $condition->check($environment);
@@ -109,7 +111,7 @@ class Bracket implements IBracket
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
             if ($condition) {
-                /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition $condition */
+                /* @var ICondition $condition */
                 $cond = [
                     'operator' => $this->operator[$num],
                     'condition' => json_decode($condition->toJSON())
@@ -124,7 +126,7 @@ class Bracket implements IBracket
     /**
      * @param string $string
      *
-     * @return $this|\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return $this|ICondition
      */
     public function fromJSON($string)
     {

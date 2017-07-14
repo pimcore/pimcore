@@ -14,11 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\Object\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
-/**
- * Class TaxEntry
- */
 class TaxEntry
 {
     const CALCULATION_MODE_COMBINE = 'combine';
@@ -26,7 +25,7 @@ class TaxEntry
     const CALCULATION_MODE_FIXED = 'fixed';
 
     /**
-     * @var \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry
+     * @var TaxEntryFieldcollection
      */
     protected $entry;
 
@@ -36,7 +35,7 @@ class TaxEntry
     protected $percent;
 
     /**
-     * @var float
+     * @var Decimal
      */
     protected $amount;
 
@@ -46,33 +45,16 @@ class TaxEntry
     protected $taxId;
 
     /**
-     * @return \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry
-     */
-    public function getEntry()
-    {
-        return $this->entry;
-    }
-
-    /**
-     * TaxEntry constructor.
-     *
      * @param $percent
-     * @param $amount
-     * @param \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry|null $entry
+     * @param Decimal $amount
+     * @param string|null $taxId
+     * @param TaxEntryFieldcollection|null $entry
      */
-    public function __construct($percent, $amount, $taxId = null, \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry $entry = null)
+    public function __construct($percent, Decimal $amount, string $taxId = null, TaxEntryFieldcollection $entry = null)
     {
         $this->percent = $percent;
         $this->amount = $amount;
         $this->taxId = $taxId;
-        $this->entry = $entry;
-    }
-
-    /**
-     * @param \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry $entry
-     */
-    public function setEntry($entry)
-    {
         $this->entry = $entry;
     }
 
@@ -93,17 +75,33 @@ class TaxEntry
     }
 
     /**
-     * @return float
+     * @param TaxEntryFieldcollection $entry
      */
-    public function getAmount()
+    public function setEntry(TaxEntryFieldcollection $entry)
+    {
+        $this->entry = $entry;
+    }
+
+    /**
+     * @return TaxEntryFieldcollection
+     */
+    public function getEntry(): TaxEntryFieldcollection
+    {
+        return $this->entry;
+    }
+
+    /**
+     * @return Decimal
+     */
+    public function getAmount(): Decimal
     {
         return $this->amount;
     }
 
     /**
-     * @param float $amount
+     * @param Decimal $amount
      */
-    public function setAmount($amount)
+    public function setAmount(Decimal $amount)
     {
         $this->amount = $amount;
     }
@@ -119,7 +117,7 @@ class TaxEntry
     /**
      * @param string $taxId
      */
-    public function setTaxId($taxId)
+    public function setTaxId(string $taxId = null)
     {
         $this->taxId = $taxId;
     }
@@ -137,7 +135,7 @@ class TaxEntry
         $convertedTaxEntries = [];
         if ($taxClass->getTaxEntries()) {
             foreach ($taxClass->getTaxEntries() as $index => $entry) {
-                $convertedTaxEntries[] = new self($entry->getPercent(), 0, $entry->getName() . '-' . $entry->getPercent(), $entry);
+                $convertedTaxEntries[] = new static($entry->getPercent(), Decimal::create(0), $entry->getName() . '-' . $entry->getPercent(), $entry);
             }
         }
 

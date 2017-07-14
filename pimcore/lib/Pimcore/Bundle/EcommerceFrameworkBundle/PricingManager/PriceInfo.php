@@ -16,7 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class PriceInfo implements IPriceInfo
 {
@@ -26,9 +28,9 @@ class PriceInfo implements IPriceInfo
     protected $priceInfo;
 
     /**
-     * @var float
+     * @var Decimal
      */
-    protected $amount = 0;
+    protected $amount;
 
     /**
      * @var IRule[]
@@ -56,37 +58,34 @@ class PriceInfo implements IPriceInfo
     protected $environment;
 
     /**
-     * @param IPriceInfo           $priceInfo
-     * @param IEnvironment $environment
+     * @inheritdoc
      */
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo $priceInfo, IEnvironment $environment)
+    public function __construct(PriceSystemIPriceInfo $priceInfo, IEnvironment $environment)
     {
+        $this->amount = Decimal::create(0);
         $this->priceInfo = $priceInfo;
         $this->environment = $environment;
     }
 
     /**
-     * @param IRule $rule
-     *
-     * @return IPriceInfo
+     * @inheritdoc
      */
     public function addRule(IRule $rule)
     {
         $this->rules[] = $rule;
     }
 
+
     /**
-     * @return IEnvironment
+     * @inheritdoc
      */
-    public function getEnvironment()
+    public function getEnvironment(): IEnvironment
     {
         return $this->environment;
     }
 
     /**
-     * @param IEnvironment $environment
-     *
-     * @return $this
+     * @inheritdoc
      */
     public function setEnvironment(IEnvironment $environment)
     {
@@ -96,7 +95,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * checks if environment changed based on hash
+     * Checks if environment changed based on hash
      * if so, resets valid rules
      *
      * @return bool
@@ -114,13 +113,9 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
-     *
-     * @param bool $forceRecalc
-     *
-     * @return array|IRule
+     * @inheritdoc
      */
-    public function getRules($forceRecalc = false)
+    public function getRules(bool $forceRecalc = false): array
     {
         if ($forceRecalc || $this->validRules === null) {
             $env = $this->getEnvironment();
@@ -143,9 +138,9 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return IPrice
+     * @inheritdoc
      */
-    public function getPrice()
+    public function getPrice(): IPrice
     {
         $price = clone $this->priceInfo->getPrice();
         if ($price == null) {
@@ -165,8 +160,8 @@ class PriceInfo implements IPriceInfo
             }
             $this->rulesApplied = true;
 
-            if ($this->getAmount() < 0) {
-                $this->setAmount(0);
+            if ($this->getAmount()->isNegative()) {
+                $this->setAmount(Decimal::create(0));
             }
         }
 
@@ -176,30 +171,30 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return IPrice
+     * @inheritdoc
      */
-    public function getTotalPrice()
+    public function getTotalPrice(): IPrice
     {
-        if ($this->priceInfo->getPrice() == null) {
-            return null;
-        }
-
         $price = clone $this->priceInfo->getPrice();
-        $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity(), IPrice::PRICE_MODE_GROSS, true);
+        $price->setAmount(
+            $this->getPrice()->getAmount()->mul($this->getQuantity()),
+            IPrice::PRICE_MODE_GROSS,
+            true
+        );
 
         return $price;
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function isMinPrice()
+    public function isMinPrice(): bool
     {
         return $this->priceInfo->isMinPrice();
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getQuantity()
     {
@@ -207,8 +202,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param int|string $quantity
-     * numeric quantity or constant IPriceInfo::MIN_PRICE
+     * @inheritdoc
      */
     public function setQuantity($quantity)
     {
@@ -216,11 +210,9 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param IPriceSystem $priceSystem
-     *
-     * @return IPriceInfo
+     * @inheritdoc
      */
-    public function setPriceSystem($priceSystem)
+    public function setPriceSystem(IPriceSystem $priceSystem)
     {
         $this->priceInfo->setPriceSystem($priceSystem);
 
@@ -228,9 +220,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param ICheckoutable $product
-     *
-     * @return IPriceInfo
+     * @inheritdoc
      */
     public function setProduct(ICheckoutable $product)
     {
@@ -240,7 +230,7 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return ICheckoutable
+     * @inheritdoc
      */
     public function getProduct()
     {
@@ -248,11 +238,9 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @param float $amount
-     *
-     * @return IPriceInfo
+     * @inheritdoc
      */
-    public function setAmount($amount)
+    public function setAmount(Decimal $amount)
     {
         $this->amount = $amount;
 
@@ -260,9 +248,9 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return float
+     * @inheritdoc
      */
-    public function getAmount()
+    public function getAmount(): Decimal
     {
         return $this->amount;
     }
@@ -281,78 +269,73 @@ class PriceInfo implements IPriceInfo
     }
 
     /**
-     * @return IPrice
+     * @inheritdoc
      */
-    public function getOriginalPrice()
+    public function getOriginalPrice(): IPrice
     {
         return $this->priceInfo->getPrice();
     }
 
     /**
-     * @return IPrice
+     * @inheritdoc
      */
-    public function getOriginalTotalPrice()
+    public function getOriginalTotalPrice(): IPrice
     {
         return $this->priceInfo->getTotalPrice();
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function hasDiscount()
+    public function hasDiscount(): bool
     {
-        return $this->getPrice()->getAmount() < $this->getOriginalPrice()->getAmount();
+        return $this->getPrice()->getAmount()->lessThan(
+            $this->getOriginalPrice()->getAmount()
+        );
     }
 
     /**
-     * get discount rate
-     *
-     * @return IPrice
+     * @inheritdoc
      */
-    public function getDiscount()
+    public function getDiscount(): IPrice
     {
-        $discount = $this->getPrice()->getAmount() - $this->getOriginalPrice()->getAmount();
-        $price = clone $this->priceInfo->getPrice();
+        $discount = $this->getPrice()->getAmount()->sub($this->getOriginalPrice()->getAmount());
 
+        $price = clone $this->priceInfo->getPrice();
         $price->setAmount($discount);
 
         return $price;
     }
 
     /**
-     * get total discount rate
-     *
-     * @return IPrice
+     * @inheritdoc
      */
-    public function getTotalDiscount()
+    public function getTotalDiscount(): IPrice
     {
-        $discount = $this->getTotalPrice()->getAmount() - $this->getOriginalTotalPrice()->getAmount();
-        $price = clone $this->priceInfo->getPrice();
+        $discount = $this->getTotalPrice()->getAmount()->sub($this->getOriginalTotalPrice()->getAmount());
 
+        $price = clone $this->priceInfo->getPrice();
         $price->setAmount($discount);
 
         return $price;
     }
 
     /**
-     * get discount in percent
-     *
-     * @return float
+     * @inheritdoc
      */
     public function getDiscountPercent()
     {
-        $org = $this->getOriginalPrice()->getAmount() / 100;
-        $new = $this->getPrice()->getAmount();
-
-        $percent = 100 - ($new / $org);
+        $percent = $this->getPrice()->getAmount()->discountPercentageOf(
+            $this->getOriginalPrice()->getAmount()
+        );
 
         return round($percent, 2);
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
-    public function hasRulesApplied()
+    public function hasRulesApplied(): bool
     {
         return (bool)$this->rulesApplied;
     }

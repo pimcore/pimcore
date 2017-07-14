@@ -160,5 +160,5 @@ To print taxes into the frontend use following samples:
 
 ### 4) Taxes in `OnlineShopOrders`
 Make sure that all tax related attributes are available in `OnlineShopOrder` and `OnlineShopOrderItem`. Then the 
-E-Ccommerce Framework populates all needed values automatically and therefore stores the tax information in the 
+E-Commerce Framework populates all needed values automatically and therefore stores the tax information in the 
 order objects.

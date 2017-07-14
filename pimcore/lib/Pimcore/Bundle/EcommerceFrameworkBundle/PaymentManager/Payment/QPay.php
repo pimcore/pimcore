@@ -19,12 +19,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Forms;
 
+// TODO refine how payment amounts are transformed for API
 class QPay implements IPayment
 {
     // supported hashing algorithms
@@ -170,7 +172,7 @@ class QPay implements IPayment
         // collect payment data
         $paymentData['secret'] = $this->secret;
         $paymentData['customerId'] = $this->customer;
-        $paymentData['amount'] = round($price->getAmount(), 2);
+        $paymentData['amount'] = round($price->getAmount()->asNumeric(), 2);
         $paymentData['currency'] = $price->getCurrency()->getShortName();
         $paymentData['duplicateRequestCheck'] = 'yes';
 
@@ -277,7 +279,7 @@ class QPay implements IPayment
         $this->setAuthorizedData($authorizedData);
 
         // restore price object for payment status
-        $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
+        $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
 
         return new Status(
             $response['orderIdent'], $response['orderNumber'], $response['avsResponseMessage'] ?: $response['message'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
@@ -331,24 +333,54 @@ class QPay implements IPayment
             // recurPayment
 
             $request = [
-                'customerId' => $this->customer, 'toolkitPassword' => $this->toolkitPassword, 'command' => 'recurPayment', 'language' => $this->authorizedData['language'], 'requestFingerprint' => '', 'orderDescription' => $reference, 'sourceOrderNumber' => $this->authorizedData['orderNumber'], 'amount' => $price->getAmount(), 'currency' => $price->getCurrency()->getShortName()
+                'customerId' => $this->customer,
+                'toolkitPassword' => $this->toolkitPassword,
+                'command' => 'recurPayment',
+                'language' => $this->authorizedData['language'],
+                'requestFingerprint' => '',
+                'orderDescription' => $reference,
+                'sourceOrderNumber' => $this->authorizedData['orderNumber'],
+                'amount' => $price->getAmount()->asNumeric(),
+                'currency' => $price->getCurrency()->getShortName()
             ];
 
             // add fingerprint
             $request['requestFingerprint'] = $this->computeFingerprint([
-                $request['customerId'], $request['toolkitPassword'], $this->secret, $request['command'], $request['language'], $request['sourceOrderNumber'], $request['orderDescription'], $request['amount'], $request['currency']
+                $request['customerId'],
+                $request['toolkitPassword'],
+                $this->secret,
+                $request['command'],
+                $request['language'],
+                $request['sourceOrderNumber'],
+                $request['orderDescription'],
+                $request['amount'],
+                $request['currency']
             ]);
         } else {
             // default clearing auth
-            $price = new Price($this->authorizedData['amount'], new Currency($this->authorizedData['currency']));
+            $price = new Price(Decimal::create($this->authorizedData['amount']), new Currency($this->authorizedData['currency']));
 
             $request = [
-                'customerId' => $this->customer, 'toolkitPassword' => $this->toolkitPassword, 'command' => 'deposit', 'language' => $this->authorizedData['language'], 'requestFingerprint' => '', 'orderNumber' => $this->authorizedData['orderNumber'], 'amount' => $price->getAmount(), 'currency' => $price->getCurrency()->getShortName()
+                'customerId' => $this->customer,
+                'toolkitPassword' => $this->toolkitPassword,
+                'command' => 'deposit',
+                'language' => $this->authorizedData['language'],
+                'requestFingerprint' => '',
+                'orderNumber' => $this->authorizedData['orderNumber'],
+                'amount' => $price->getAmount()->asNumeric(),
+                'currency' => $price->getCurrency()->getShortName()
             ];
 
             // add fingerprint
             $request['requestFingerprint'] = $this->computeFingerprint([
-                $request['customerId'], $request['toolkitPassword'], $this->secret, $request['command'], $request['language'], $request['orderNumber'], $request['amount'], $request['currency']
+                $request['customerId'],
+                $request['toolkitPassword'],
+                $this->secret,
+                $request['command'],
+                $request['language'],
+                $request['orderNumber'],
+                $request['amount'],
+                $request['currency']
             ]);
         }
 
@@ -395,7 +427,15 @@ class QPay implements IPayment
     {
         // init request
         $request = [
-            'customerId' => $this->customer, 'toolkitPassword' => $this->toolkitPassword, 'command' => 'refund', 'language' => $this->authorizedData['language'], 'requestFingerprint' => '', 'orderNumber' => $reference, 'amount' => $price->getAmount(), 'currency' => $price->getCurrency()->getShortName(), 'merchantReference' => $transactionId
+            'customerId' => $this->customer,
+            'toolkitPassword' => $this->toolkitPassword,
+            'command' => 'refund',
+            'language' => $this->authorizedData['language'],
+            'requestFingerprint' => '',
+            'orderNumber' => $reference,
+            'amount' => $price->getAmount()->asNumeric(),
+            'currency' => $price->getCurrency()->getShortName(),
+            'merchantReference' => $transactionId
         ];
 
         // add fingerprint

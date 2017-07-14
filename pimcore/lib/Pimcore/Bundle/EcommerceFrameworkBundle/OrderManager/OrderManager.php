@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 
 class OrderManager implements IOrderManager
@@ -219,18 +220,19 @@ class OrderManager implements IOrderManager
         }
 
         //update order from cart
-        $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getGrossAmount());
-        $order->setTotalNetPrice($cart->getPriceCalculator()->getGrandTotal()->getNetAmount());
-        $order->setSubTotalPrice($cart->getPriceCalculator()->getSubTotal()->getAmount());
-        $order->setSubTotalNetPrice($cart->getPriceCalculator()->getSubTotal()->getNetAmount());
+        // TODO refine how amount is passed to order (asNumeric? asString?)
+        $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getGrossAmount()->asString());
+        $order->setTotalNetPrice($cart->getPriceCalculator()->getGrandTotal()->getNetAmount()->asString());
+        $order->setSubTotalPrice($cart->getPriceCalculator()->getSubTotal()->getAmount()->asString());
+        $order->setSubTotalNetPrice($cart->getPriceCalculator()->getSubTotal()->getNetAmount()->asString());
         $order->setTaxInfo($this->buildTaxArray($cart->getPriceCalculator()->getGrandTotal()->getTaxEntries()));
 
         $modificationItems = new \Pimcore\Model\Object\Fieldcollection();
         foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
             $modificationItem = new \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications();
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
-            $modificationItem->setAmount($modification->getGrossAmount());
-            $modificationItem->setNetAmount($modification->getNetAmount());
+            $modificationItem->setAmount($modification->getGrossAmount()->asString());
+            $modificationItem->setNetAmount($modification->getNetAmount()->asString());
             $modificationItems->add($modificationItem);
         }
 
@@ -432,15 +434,17 @@ class OrderManager implements IOrderManager
         }
         $orderItem->setComment($item->getComment());
 
-        $price = 0;
-        $netPrice = 0;
+        $price    = Decimal::zero();
+        $netPrice = Decimal::zero();
+
         if (!$isGiftItem && is_object($item->getTotalPrice())) {
-            $price = $item->getTotalPrice()->getGrossAmount();
+            $price    = $item->getTotalPrice()->getGrossAmount();
             $netPrice = $item->getTotalPrice()->getNetAmount();
         }
 
-        $orderItem->setTotalPrice($price);
-        $orderItem->setTotalNetPrice($netPrice);
+        // TODO refine how amount is passed to order item (asNumeric? asString?)
+        $orderItem->setTotalPrice($price->asString());
+        $orderItem->setTotalNetPrice($netPrice->asString());
         $orderItem->setTaxInfo($this->buildTaxArray($item->getTotalPrice()->getTaxEntries()));
 
         if (!$isGiftItem) {
@@ -481,7 +485,7 @@ class OrderManager implements IOrderManager
             $taxArray[] = [
                 $taxEntry->getEntry()->getName(),
                 $taxEntry->getPercent() . '%',
-                $taxEntry->getAmount()
+                $taxEntry->getAmount()->asString()
             ];
         }
 

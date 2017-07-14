@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,22 +17,24 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+
 /**
  * Interface IDiscount
  *
- * special interface for price modifications added by discount pricing rules for carts
+ * Special interface for price modifications added by discount pricing rules for carts
  */
 interface IDiscount extends ICartPriceModificator
 {
     /**
-     * @param float $amount
+     * @param Decimal $amount
      *
      * @return IDiscount
      */
-    public function setAmount($amount);
+    public function setAmount(Decimal $amount);
 
     /**
-     * @return float
+     * @return Decimal
      */
-    public function getAmount();
+    public function getAmount(): Decimal;
 }

@@ -14,34 +14,41 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-class FreeShipping implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+
+class FreeShipping implements IAction
 {
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
+     * @return IAction
      */
-    public function executeOnProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function executeOnProduct(IEnvironment $environment)
     {
         return $this;
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
+     * @return IAction
      */
-    public function executeOnCart(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function executeOnCart(IEnvironment $environment)
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
         $list = $priceCalculator->getModificators();
         foreach ($list as &$modificator) {
-            /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator $modificator_ */
+            /* @var ICartPriceModificator $modificator_ */
 
             // remove shipping charge
-            if ($modificator instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping) {
-                $modificator->setCharge(0);
+            if ($modificator instanceof IShipping) {
+                $modificator->setCharge(Decimal::zero());
                 $priceCalculator->reset();
             }
         }
@@ -55,14 +62,14 @@ class FreeShipping implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingMa
     public function toJSON()
     {
         return json_encode([
-                                'type' => 'FreeShipping'
-                           ]);
+            'type' => 'FreeShipping'
+        ]);
     }
 
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {

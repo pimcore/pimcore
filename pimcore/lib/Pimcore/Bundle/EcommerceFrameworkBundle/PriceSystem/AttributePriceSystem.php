@@ -14,50 +14,30 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 /**
- * Class AttributePriceSystem
- *
- * price system implementation for attribute price system
+ * Price system implementation for attribute price system
  */
 class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 {
     /**
-     * @param $productIds
-     * @param $fromPrice
-     * @param $toPrice
-     * @param $order
-     * @param $offset
-     * @param $limit
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
-    {
-        throw new \Exception('not supported yet');
-    }
-
-    /**
-     * @param $quantityScale
-     * @param $product
-     * @param $products
-     *
-     * @internal param $infoConstructorParams
-     *
-     * @return AbstractPriceInfo
-     */
-    public function createPriceInfoInstance($quantityScale, $product, $products)
+    public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products): IPriceInfo
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
         $amount = $this->calculateAmount($product, $products);
         $price = $this->getPriceClassInstance($amount);
-        $totalPrice = $this->getPriceClassInstance($amount * $quantityScale);
+        $totalPrice = $this->getPriceClassInstance($amount->mul($quantityScale));
 
         if ($taxClass) {
             $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
@@ -67,7 +47,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
             $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
         }
 
-        $taxCalculationService =  $this->getTaxCalculationService();
+        $taxCalculationService = $this->getTaxCalculationService();
         $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
         $taxCalculationService->updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
 
@@ -75,20 +55,27 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     }
 
     /**
-     * calculates prices from product
-     *
-     * @param $product
-     * @param $products
-     *
-     * @return float
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
-    protected function calculateAmount($product, $products)
+    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
+    {
+        throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
+    }
+
+    /**
+     * Calculates prices from product
+     *
+     * @param ICheckoutable $product
+     * @param ICheckoutable[] $products
+     *
+     * @return Decimal
+     */
+    protected function calculateAmount(ICheckoutable $product, $products): Decimal
     {
         $getter = 'get' . ucfirst($this->config->attributename);
         if (method_exists($product, $getter)) {
             if (!empty($products)) {
+                // TODO where to start using price value object?
                 $sum = 0;
                 foreach ($products as $p) {
                     if ($p instanceof AbstractSetProductEntry) {
@@ -98,33 +85,35 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
                     }
                 }
 
-                return $sum;
+                return Decimal::create($sum);
             } else {
-                return $product->$getter();
+                return Decimal::create($product->$getter());
             }
         }
+
+        return Decimal::zero();
     }
 
     /**
-     * returns default currency based on environment settings
+     * Returns default currency based on environment settings
      *
      * @return Currency
      */
-    protected function getDefaultCurrency()
+    protected function getDefaultCurrency(): Currency
     {
         return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     }
 
     /**
-     * creates instance of IPrice
+     * Creates instance of IPrice
      *
-     * @param $amount
+     * @param Decimal $amount
      *
      * @return IPrice
      *
      * @throws \Exception
      */
-    protected function getPriceClassInstance($amount)
+    protected function getPriceClassInstance(Decimal $amount): IPrice
     {
         if ($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);

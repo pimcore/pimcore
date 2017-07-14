@@ -14,7 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\Object\OnlineShopOrder;
+use Pimcore\Model\Object\OnlineShopOrderItem;
+
+class Sales extends AbstractOrder implements ICondition
 {
     /**
      * @var int
@@ -27,15 +34,18 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkB
     protected $currentSalesAmount = [];
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         $rule = $environment->getRule();
         if ($rule) {
-            return $this->getSalesAmount($rule) < $this->getAmount();
+            // TODO change this->amount to a Decimal?
+            $amount = Decimal::create($this->getAmount());
+
+            return $this->getSalesAmount($rule)->lessThan($amount);
         } else {
             return false;
         }
@@ -57,7 +67,7 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkB
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {
@@ -84,7 +94,7 @@ class Sales extends AbstractOrder implements \Pimcore\Bundle\EcommerceFrameworkB
         $this->amount = (int)$amount;
     }
 
-    protected function getCurrentAmount(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule)
+    protected function getCurrentAmount(IRule $rule)
     {
         if (!array_key_exists($rule->getId(), $this->currentSalesAmount)) {
             $query = <<<'SQL'
@@ -128,9 +138,7 @@ WHERE 1
 LIMIT 1
 SQL;
 
-            $query = sprintf($query, \Pimcore\Model\Object\OnlineShopOrderItem::classId(), \Pimcore\Model\Object\OnlineShopOrder::classId(), $rule->getId()
-            );
-
+            $query = sprintf($query, OnlineShopOrderItem::classId(), OnlineShopOrder::classId(), $rule->getId());
             $conn = \Pimcore\Db::getConnection();
 
             $this->currentSalesAmount[$rule->getId()] = (int)$conn->fetchRow($query)['amount'];

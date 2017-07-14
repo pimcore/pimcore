@@ -14,44 +14,46 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+
 interface IService
 {
     const DISCOUNT_TYPE_PERCENT = 'percent';
     const DISCOUNT_TYPE_AMOUNT = 'amount';
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $excludeItems
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
+     * @return AbstractOffer
      */
-    public function createNewOfferFromCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = []);
+    public function createNewOfferFromCart(ICart $cart, array $excludeItems = []);
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param AbstractOffer $offer
+     * @param ICart $cart
      * @param array $excludeItems
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
+     * @return AbstractOffer
      */
-    public function updateOfferFromCart(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = []);
+    public function updateOfferFromCart(AbstractOffer $offer, ICart $cart, array $excludeItems = []);
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer
+     * @param AbstractOffer $offer
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
+     * @return AbstractOffer
      */
-    public function updateTotalPriceOfOffer(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer);
+    public function updateTotalPriceOfOffer(AbstractOffer $offer);
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer[]
+     * @return AbstractOffer[]
      */
-    public function getOffersForCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function getOffersForCart(ICart $cart);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferItem
+     * @return AbstractOfferItem
      */
     public function getNewOfferItemObject();
 }

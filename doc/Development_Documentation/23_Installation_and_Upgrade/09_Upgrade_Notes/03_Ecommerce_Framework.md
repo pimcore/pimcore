@@ -84,8 +84,43 @@
    - Fallback for old view scripts path relative to `PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts"` - but they 
       are also rendered with Symfony engine.
 
-- CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when subclassing the
-  default calculator.
+- Price objects (`IPrice`) now use a value object instead of floats to represent prices. All calls to `get*Amount()`,
+  `set*Amount()` and all custom calculations need to be updated to work with the `Decimal` value object.
+- Added PHP 7 type hints to interfaces where applicable, especially regarding pricing. You might need to update your
+  implementations to match updated interface definitions. This mainly affects return types of interfaces (e.g. a `PriceInfo`
+  is now forced to return a `IPrice` object for `getTotalPrice()` where it could be `null` previously) and anything working
+  with price amounts (as the `Decimal` value object is used now instead of floats).  
+  If you implement any of the following classes/interfaces in your project, please check they match the new framework
+  definition (see https://github.com/pimcore/pimcore/pull/1701):
+  
+    - `CartManager/AbstractCartItem`
+    - `CartManager/CartPriceCalculator`
+    - `CartManager/CartPriceModificator/Discount`
+    - `CartManager/CartPriceModificator/IDiscount`
+    - `CartManager/CartPriceModificator/IShipping`
+    - `CartManager/CartPriceModificator/Shipping`
+    - `CartManager/ICartItem`
+    - `CartManager/ICartPriceCalculator`
+    - `OfferTool/DefaultService`
+    - `PriceSystem/AbstractPriceInfo`
+    - `PriceSystem/AbstractPriceSystem`
+    - `PriceSystem/AttributePriceInfo`
+    - `PriceSystem/AttributePriceSystem`
+    - `PriceSystem/CachingPriceSystem`
+    - `PriceSystem/IPrice`
+    - `PriceSystem/IPriceInfo`
+    - `PriceSystem/IPriceSystem`
+    - `PriceSystem/LazyLoadingPriceInfo`
+    - `PriceSystem/ModificatedPrice`
+    - `PriceSystem/Price`
+    - `PriceSystem/TaxManagement/TaxCalculationService`
+    - `PriceSystem/TaxManagement/TaxEntry`
+    - `PricingManager/Condition/AbstractOrder`
+    - `PricingManager/IPriceInfo`
+    - `PricingManager/PriceInfo`
+  
+- CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when sub classing 
+  the default calculator.
    
 - Commands namespace changed from `shop` to `ecommerce`. 
 

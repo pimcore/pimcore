@@ -14,7 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class DefaultService implements IService
 {
@@ -27,17 +30,17 @@ class DefaultService implements IService
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $excludeItems
+     * @param ICart $cart
+     * @param ICartItem[] $excludeItems
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
+     * @return AbstractOffer
      */
-    public function createNewOfferFromCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = [])
+    public function createNewOfferFromCart(ICart $cart, array $excludeItems = [])
     {
         $tempOfferNumber = uniqid('offer_');
         $offer = $this->getNewOfferObject($tempOfferNumber);
         $offer->setOfferNumber($tempOfferNumber);
-        $offer->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getAmount());
+        $offer->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getAmount()->asString());
         $offer->setCartId($cart->getId());
         $offer->save();
 
@@ -75,7 +78,7 @@ class DefaultService implements IService
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
+     * @return AbstractOffer
      *
      * @throws \Exception
      */
@@ -87,7 +90,7 @@ class DefaultService implements IService
         $offer = new $this->offerClass();
 
         /**
-         * @var $offer \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer
+         * @var $offer AbstractOffer
          */
         $offer->setParent(\Pimcore\Model\Object\Folder::getByPath($this->parentFolderPath));
         $offer->setCreationDate(time());
@@ -99,7 +102,7 @@ class DefaultService implements IService
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferItem
+     * @return AbstractOfferItem
      *
      * @throws \Exception
      */
@@ -113,12 +116,12 @@ class DefaultService implements IService
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $item
+     * @param ICartItem $item
      * @param $parent
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferItem
+     * @return AbstractOfferItem
      */
-    protected function createOfferItem(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $item, $parent)
+    protected function createOfferItem(ICartItem $item, $parent)
     {
         $offerItem = $this->getNewOfferItemObject();
         $offerItem->setParent($parent);
@@ -135,15 +138,15 @@ class DefaultService implements IService
 
         $offerItem->setComment($item->getComment());
 
-        $price = 0;
+        $price = Decimal::zero();
         if ($item->getTotalPrice()) {
             $price = $item->getTotalPrice()->getAmount();
         }
 
         $price = $this->priceTransformationHook($price);
 
-        $offerItem->setOriginalTotalPrice($price);
-        $offerItem->setFinalTotalPrice($price);
+        $offerItem->setOriginalTotalPrice($price->asString());
+        $offerItem->setFinalTotalPrice($price->asString());
 
         $offerItem->save();
 
@@ -164,7 +167,7 @@ class DefaultService implements IService
         return $offerItem;
     }
 
-    protected function updateOfferItem(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $cartItem, \Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOfferItem $offerItem)
+    protected function updateOfferItem(ICartItem $cartItem, AbstractOfferItem $offerItem)
     {
         $offerItem->setAmount($cartItem->getCount());
         $offerItem->setProduct($cartItem->getProduct());
@@ -175,16 +178,17 @@ class DefaultService implements IService
 
         $offerItem->setComment($cartItem->getComment());
 
-        $price = 0;
+        $price = Decimal::zero();
         if ($cartItem->getTotalPrice()) {
             $price = $cartItem->getTotalPrice()->getAmount();
         }
 
         $price = $this->priceTransformationHook($price);
 
-        if ((string)$price != (string)$offerItem->getOriginalTotalPrice()) {
-            $offerItem->setOriginalTotalPrice($price);
-            $offerItem->setFinalTotalPrice($price);
+        $originalTotalPrice = Decimal::create($offerItem->getOriginalTotalPrice());
+        if (!$price->equals($originalTotalPrice)) {
+            $offerItem->setOriginalTotalPrice($price->asString());
+            $offerItem->setFinalTotalPrice($price->asString());
         }
 
         //Delete all subitems and add them as new items
@@ -215,16 +219,16 @@ class DefaultService implements IService
      * transforms price before set to the offer tool item.
      * can be used e.g. for adding vat, ...
      *
-     * @param $price
+     * @param Decimal $price
      *
-     * @return mixed
+     * @return Decimal
      */
-    protected function priceTransformationHook($price)
+    protected function priceTransformationHook(Decimal $price): Decimal
     {
         return $price;
     }
 
-    protected function setCurrentCustomer(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer)
+    protected function setCurrentCustomer(AbstractOffer $offer)
     {
         $env = Factory::getInstance()->getEnvironment();
 
@@ -236,7 +240,7 @@ class DefaultService implements IService
         return $offer;
     }
 
-    public function updateOfferFromCart(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, array $excludeItems = [], $save = true)
+    public function updateOfferFromCart(AbstractOffer $offer, ICart $cart, array $excludeItems = [], $save = true)
     {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
@@ -282,31 +286,31 @@ class DefaultService implements IService
         return $offer;
     }
 
-    public function updateTotalPriceOfOffer(\Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\AbstractOffer $offer)
+    public function updateTotalPriceOfOffer(AbstractOffer $offer)
     {
-        $totalPrice = 0;
+        $totalPrice = Decimal::zero();
 
         foreach ($offer->getItems() as $item) {
-            $totalPrice += $item->getFinalTotalPrice();
+            $totalPrice = $totalPrice->add(Decimal::create($item->getFinalTotalPrice()));
         }
 
         foreach ($offer->getCustomItems() as $item) {
-            $totalPrice += $item->getFinalTotalPrice();
+            $totalPrice = $totalPrice->add(Decimal::create($item->getFinalTotalPrice()));
         }
 
-        if ($offer->getDiscountType() == IService::DISCOUNT_TYPE_PERCENT) {
-            $discount = $totalPrice * $offer->getDiscount() / 100;
+        if ($offer->getDiscountType() === IService::DISCOUNT_TYPE_PERCENT) {
+            $discount = $totalPrice->toPercentage($offer->getDiscount());
         } else {
-            $discount = $offer->getDiscount();
+            $discount = Decimal::create($offer->getDiscount());
         }
 
-        $offer->setTotalPriceBeforeDiscount($totalPrice);
-        $offer->setTotalPrice($totalPrice - $discount);
+        $offer->setTotalPriceBeforeDiscount($totalPrice->asString());
+        $offer->setTotalPrice($totalPrice->sub($discount)->asString());
 
         return $offer;
     }
 
-    public function getOffersForCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart)
+    public function getOffersForCart(ICart $cart)
     {
         $offerListClass = $this->offerClass . '_List';
         $list = new $offerListClass();

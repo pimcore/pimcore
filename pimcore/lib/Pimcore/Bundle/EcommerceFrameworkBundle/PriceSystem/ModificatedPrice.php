@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,6 +18,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class ModificatedPrice extends Price implements IModificatedPrice
 {
@@ -23,9 +27,10 @@ class ModificatedPrice extends Price implements IModificatedPrice
      */
     protected $description;
 
-    public function __construct($amount, Currency $currency, $minPrice = false, $description = null)
+    public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false, string $description = null)
     {
         parent::__construct($amount, $currency, $minPrice);
+
         $this->description = $description;
     }
 
@@ -40,7 +45,7 @@ class ModificatedPrice extends Price implements IModificatedPrice
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription(string $description = null)
     {
         $this->description = $description;
     }

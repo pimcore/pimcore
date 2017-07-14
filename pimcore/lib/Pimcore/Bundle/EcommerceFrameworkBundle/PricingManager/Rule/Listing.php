@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var array|IRule
+     * @var IRule[]
      */
     protected $rules;
 
@@ -47,7 +47,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return IRule[]
      */
     public function getRules()
     {
@@ -60,7 +60,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $rules
+     * @param IRule[] $rules
      *
      * @return void
      */

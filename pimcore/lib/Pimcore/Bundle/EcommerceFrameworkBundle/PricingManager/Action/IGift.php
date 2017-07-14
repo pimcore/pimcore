@@ -14,22 +14,25 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
+
 /**
- * add a gift product to the given cart
+ * Adds a gift product to the given cart
  */
-interface IGift extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction
+interface IGift extends IAction
 {
     /**
-     * set gift product
+     * Set gift product
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct $product
+     * @param AbstractProduct $product
      *
      * @return IGift
      */
-    public function setProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct $product);
+    public function setProduct(AbstractProduct $product);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct
+     * @return AbstractProduct
      */
     public function getProduct();
 }

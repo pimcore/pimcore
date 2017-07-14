@@ -14,6 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 interface IEnvironment
@@ -22,62 +26,62 @@ interface IEnvironment
     const EXECUTION_MODE_CART = 'cart';
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return IEnvironment
      */
-    public function setCart(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function setCart(ICart $cart);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
+     * @return ICart
      */
     public function getCart();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $cartItem
+     * @param ICartItem $cartItem
      *
      * @return IEnvironment
      */
-    public function setCartItem(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem $cartItem);
+    public function setCartItem(ICartItem $cartItem);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem
+     * @return ICartItem
      */
     public function getCartItem();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      *
      * @return IEnvironment
      */
-    public function setProduct(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product);
+    public function setProduct(ICheckoutable $product);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+     * @return ICheckoutable
      */
     public function getProduct();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule $rule
+     * @param IRule $rule
      *
      * @return IEnvironment
      */
     public function setRule($rule);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule
+     * @return IRule
      */
     public function getRule();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo $priceInfo
+     * @param IPriceInfo $priceInfo
      *
      * @return IEnvironment
      */
-    public function setPriceInfo(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo $priceInfo);
+    public function setPriceInfo(IPriceInfo $priceInfo);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo
+     * @return IPriceInfo
      */
     public function getPriceInfo();
 
@@ -89,7 +93,7 @@ interface IEnvironment
     public function setCategories(array $categories);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
+     * @return AbstractCategory[]
      */
     public function getCategories();
 

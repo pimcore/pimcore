@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 /**
  * Abstract base class for offer pimcore objects
@@ -45,7 +46,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return float
+     * @return string|float|int
      */
     public function getTotalPrice()
     {
@@ -55,7 +56,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param float $totalPrice
+     * @param string|float|int $totalPrice
      */
     public function setTotalPriceBeforeDiscount($totalPrice)
     {
@@ -65,7 +66,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return float
+     * @return string|float|int
      */
     public function getTotalPriceBeforeDiscount()
     {
@@ -75,7 +76,7 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param float $totalPrice
+     * @param string|float|int $totalPrice
      */
     public function setTotalPrice($totalPrice)
     {
@@ -266,23 +267,23 @@ class AbstractOffer extends \Pimcore\Model\Object\Concrete
                 $item->setProductNumber($product->getOSProductNumber());
             }
 
-            $price = 0;
+            $price = Decimal::zero();
             if ($product->getOSPriceInfo($amount)->getTotalPrice()) {
                 $price = $product->getOSPriceInfo($amount)->getTotalPrice()->getAmount();
             }
 
-            $item->setOriginalTotalPrice($price);
-            $item->setFinalTotalPrice($price);
+            $item->setOriginalTotalPrice($price->asString());
+            $item->setFinalTotalPrice($price->asString());
         } else {
             $item->setAmount($item->getAmount() + $amount);
 
-            $price = 0;
+            $price = Decimal::zero();
             if ($product->getOSPriceInfo($item->getAmount())->getTotalPrice()) {
                 $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
             }
 
-            $item->setOriginalTotalPrice($price);
-            $item->setFinalTotalPrice($price);
+            $item->setOriginalTotalPrice($price->asString());
+            $item->setFinalTotalPrice($price->asString());
         }
         $item->save();
 

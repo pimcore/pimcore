@@ -15,8 +15,10 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 
-class Tenant implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+class Tenant implements ICondition
 {
     /**
      * @var string[]
@@ -24,11 +26,11 @@ class Tenant implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
     protected $tenant;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment
+     * @param IEnvironment $environment
      *
      * @return bool
      */
-    public function check(\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment $environment)
+    public function check(IEnvironment $environment)
     {
         $currentTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
 
@@ -51,7 +53,7 @@ class Tenant implements \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ICondition
      */
     public function fromJSON($string)
     {

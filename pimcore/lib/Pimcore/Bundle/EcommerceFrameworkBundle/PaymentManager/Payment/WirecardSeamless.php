@@ -22,11 +22,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
 
+// TODO refine how payment amounts are transformed for API
 class WirecardSeamless implements IPayment
 {
     private $settings;
@@ -408,7 +410,7 @@ class WirecardSeamless implements IPayment
         }
 
         // restore price object for payment status
-        $price = new Price($authorizedData['amount'], new Currency($authorizedData['currency']));
+        $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
 
         $status = new Status(
             $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
@@ -477,7 +479,7 @@ class WirecardSeamless implements IPayment
             'secret' => $this->settings->secret,
             'language' => 'de',
             'orderNumber' => $reference,
-            'amount' => round($price->getAmount(), 2),
+            'amount' => round($price->getAmount()->asNumeric(), 2),
             'currency' => $price->getCurrency()->getShortName()
         ];
 
@@ -497,7 +499,7 @@ class WirecardSeamless implements IPayment
             );
         } else {
             return new Status(
-                $transactionId, $reference, 'deposit executed: ' . round($price->getAmount(), 2) . ' ' . $price->getCurrency()->getShortName(), IStatus::STATUS_CLEARED, []
+                $transactionId, $reference, 'deposit executed: ' . round($price->getAmount()->asNumeric(), 2) . ' ' . $price->getCurrency()->getShortName(), IStatus::STATUS_CLEARED, []
             );
         }
     }
@@ -640,10 +642,10 @@ class WirecardSeamless implements IPayment
         $secret = $this->settings->secret;
         if ($this->settings->hashAlgorithm != 'hmac_sha512') {
             $requestFingerprint = hash('sha512', $requestFingerprintSeed);
-            \Logger::debug('#wirecard generateFingerprint: ' . $requestFingerprintSeed);
+            Logger::debug('#wirecard generateFingerprint: ' . $requestFingerprintSeed);
         } else {
             $requestFingerprint= hash_hmac('sha512', $requestFingerprintSeed, $secret);
-            \Logger::debug('#wirecard generateFingerprint (hmac): '.$requestFingerprintSeed);
+            Logger::debug('#wirecard generateFingerprint (hmac): '.$requestFingerprintSeed);
         }
 
         return $requestFingerprint;

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-interface ICartProduct extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+
+interface ICartProduct extends ICondition
 {
 }

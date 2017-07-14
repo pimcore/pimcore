@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-interface ICartAmount extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+
+interface ICartAmount extends ICondition
 {
     /**
      * @param float $limit

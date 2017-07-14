@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -18,24 +21,21 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICa
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
-/**
- * Interface IPriceSystem
- */
 interface IPriceSystem
 {
     /**
-     * creates price info object for given product and quantity scale
+     * Creates price info object for given product and quantity scale
      *
-     * @param ICheckoutable $abstractProduct
-     * @param null|int|string $quantityScale - numeric or string (allowed values: \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo::MIN_PRICE)
+     * @param ICheckoutable $product
+     * @param null|int|string $quantityScale - Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
      * @param ICheckoutable[] $products
      *
      * @return IPriceInfo
      */
-    public function getPriceInfo(ICheckoutable $abstractProduct, $quantityScale = null, $products = null);
+    public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo;
 
     /**
-     * filters and orders given product ids based on price information
+     * Filters and orders given product IDs based on price information
      *
      * @param $productIds
      * @param $fromPrice
@@ -49,7 +49,7 @@ interface IPriceSystem
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
 
     /**
-     * Returns OnlineShopTaxClass for given ICheckoutable.
+     * Returns OnlineShopTaxClass for given ICheckoutable
      *
      * Should be overwritten in custom price systems with suitable implementation.
      *
@@ -65,7 +65,6 @@ interface IPriceSystem
      * Should be overwritten in custom price systems with suitable implementation.
      *
      * @param ICartPriceModificator $modificator
-     * @param $environment
      *
      * @return OnlineShopTaxClass
      */
