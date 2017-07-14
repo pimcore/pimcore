@@ -164,7 +164,7 @@ class UpdateCommand extends AbstractCommand
                 }
 
                 $script = realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console');
-                $return = Console::runPhpScript($script, 'internal:update-processor ' . escapeshellarg(json_encode($job)));
+                $return = Console::runPhpScript($script, 'internal:update-processor --ignore-maintenance-mode ' . escapeshellarg(json_encode($job)));
 
                 $return = trim($return);
 
