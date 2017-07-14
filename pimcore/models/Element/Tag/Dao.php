@@ -55,7 +55,10 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $dataAttributes = get_object_vars($this->model);
 
-            $originalIdPath = $this->db->fetchOne("SELECT idPath FROM tags WHERE id = ?", $this->model->getId());
+            $originalIdPath = null;
+            if ( $this->model->getId() ){
+                $originalIdPath = $this->db->fetchOne('SELECT idPath FROM tags WHERE id = ?', $this->model->getId());
+            }
 
             $data = [];
             foreach ($dataAttributes as $key => $value) {
