@@ -659,7 +659,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 // get also content of inherited document elements
                 while ($doc) {
                     if (method_exists($doc, "getElements")) {
-                        $elements = array_merge($elements, $doc->getElements());
+                        $elements = array_merge($doc->getElements(), $elements);
                     }
 
                     if (method_exists($doc, "getContentMasterDocument")) {
