@@ -818,33 +818,38 @@ class Service extends Model\Element\Service
 
     /**
      * @static
+     *
      * @param $object
-     * @param $fieldname
+     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $definition
+     *
      * @return array
      */
-    public static function getOptionsForSelectField($object, $fieldname)
+    public static function getOptionsForSelectField($object, $definition)
     {
         $class = null;
         $options = [];
 
-        if (is_object($object) && method_exists($object, "getClass")) {
+        if (is_object($object) && method_exists($object, 'getClass')) {
             $class = $object->getClass();
         } elseif (is_string($object)) {
-            $object = "\\" . ltrim($object, "\\");
+            $object = '\\' . ltrim($object, '\\');
             $object = new $object();
             $class = $object->getClass();
         }
 
         if ($class) {
-            /**
-             * @var ClassDefinition\Data\Select $definition
-             */
-            $definition = $class->getFielddefinition($fieldname);
+            if(is_string($definition)) {
+                /**
+                 * @var ClassDefinition\Data\Select $definition
+                 */
+                $definition = $class->getFielddefinition($definition);
+            }
+
             if ($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {
                 $_options = $definition->getOptions();
 
                 foreach ($_options as $option) {
-                    $options[$option["value"]] = $option["key"];
+                    $options[$option['value']] = $option['key'];
                 }
             }
         }
