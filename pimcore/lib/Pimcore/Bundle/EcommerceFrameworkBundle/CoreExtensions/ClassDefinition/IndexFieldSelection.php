@@ -53,7 +53,7 @@ class IndexFieldSelection extends Data
      *
      * @var string
      */
-    public $phpdocType = 'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection';
+    public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
 
     public $width;
     public $considerTenants = false;
