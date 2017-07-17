@@ -417,6 +417,13 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     openEditWindow: function() {
+
+        var config = {};
+        if(this.options["ratioX"] && this.options["ratioY"]) {
+            config["ratioX"] = this.options["ratioX"];
+            config["ratioY"] = this.options["ratioY"];
+        }
+
         var editor = pimcore.helpers.openImageCropper(this.datax.id, this.datax, function (data) {
             this.datax.cropWidth = data.cropWidth;
             this.datax.cropHeight = data.cropHeight;
@@ -425,7 +432,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax.cropPercent = (undefined !== data.cropPercent) ? data.cropPercent : true;
 
             this.updateImage();
-        }.bind(this));
+        }.bind(this), config);
         editor.open(true);
     },
 
