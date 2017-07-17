@@ -40,6 +40,7 @@ RewriteRule ^pimcore/static.* - [PT,L]
 
 # forbid the direct access to pimcore-internal data (eg. config-files, ...)
 RewriteRule ^website/var/(?!tmp|assets|areas) / [F,L]
+RewriteRule ^website/config/.*$ / [F,L]
 RewriteRule ^plugins/.*$ / [F,L]
 RewriteRule ^pimcore/.*$ / [F,L]
 
