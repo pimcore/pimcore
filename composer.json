@@ -113,7 +113,8 @@
     ],
     "exclude-from-classmap": [
       "install-profiles/",
-      "pimcore/lib/compatibility-stubs.php"
+      "pimcore/lib/compatibility-stubs.php",
+      "pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
     ]
   },
   "scripts": {
