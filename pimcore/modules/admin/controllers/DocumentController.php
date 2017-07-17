@@ -865,10 +865,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         }
     }
 
-    public function diffVersionsImageAction() {
-
+    public function diffVersionsImageAction()
+    {
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/version-diff-tmp-" . $this->getParam('id') . ".png";
-        if(file_exists($file)) {
+        if (file_exists($file)) {
             while (@ob_end_flush()) {
                 ;
             }
