@@ -4,8 +4,8 @@ namespace Pimcore\Tests\Util;
 
 use Codeception\Util\Autoload;
 
-class Autoloader extends Autoload {
-
+class Autoloader extends Autoload
+{
     protected static $reg = false;
 
     public static function addNamespace($prefix, $base_dir, $prepend = false)
