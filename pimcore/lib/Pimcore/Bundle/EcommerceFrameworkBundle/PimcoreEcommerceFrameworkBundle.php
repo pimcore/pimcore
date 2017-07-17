@@ -54,8 +54,10 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 
     public function boot()
     {
-        //load legacy class mapping
-        LegacyClassMappingTool::loadMapping();
+        if($this->getInstaller()->isInstalled()) {
+            //load legacy class mapping only when ecommerce framework bundle is installed.
+            LegacyClassMappingTool::loadMapping();
+        }
     }
 
     /**
