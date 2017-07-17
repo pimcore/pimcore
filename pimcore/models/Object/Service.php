@@ -786,11 +786,11 @@ class Service extends Model\Element\Service
      * @static
      *
      * @param $object
-     * @param $fieldname
+     * @param string|ClassDefinition\Data\Select|ClassDefinition\Data\Multiselect $definition
      *
      * @return array
      */
-    public static function getOptionsForSelectField($object, $fieldname)
+    public static function getOptionsForSelectField($object, $definition)
     {
         $class = null;
         $options = [];
@@ -804,10 +804,13 @@ class Service extends Model\Element\Service
         }
 
         if ($class) {
-            /**
-             * @var ClassDefinition\Data\Select $definition
-             */
-            $definition = $class->getFielddefinition($fieldname);
+            if(is_string($definition)) {
+                /**
+                 * @var ClassDefinition\Data\Select $definition
+                 */
+                $definition = $class->getFielddefinition($definition);
+            }
+
             if ($definition instanceof ClassDefinition\Data\Select || $definition instanceof ClassDefinition\Data\Multiselect) {
                 $_options = $definition->getOptions();
 
