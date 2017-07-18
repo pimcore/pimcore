@@ -21,13 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 interface IVoucherService
 {
     /**
-     * Voucherservice get initialized with config settings from Onlineshop Config.
-     *
-     * @param $sysConfig
-     */
-    public function __construct($sysConfig);
-
-    /**
      * Gets the correct token manager and calls its checkToken() function.
      *
      * @param string $code
