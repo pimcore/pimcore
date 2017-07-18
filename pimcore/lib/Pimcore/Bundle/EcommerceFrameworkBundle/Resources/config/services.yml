@@ -23,3 +23,6 @@ services:
             - { name: kernel.event_subscriber }
             - { name: monolog.logger, channel: pimcore_ecommerce }
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\Factory:
+        factory: ['Pimcore\Bundle\EcommerceFrameworkBundle\Factory', getInstance]
+

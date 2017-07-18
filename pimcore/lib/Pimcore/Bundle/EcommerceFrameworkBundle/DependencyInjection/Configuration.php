@@ -22,8 +22,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
@@ -45,6 +49,8 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->append($this->buildEnvironmentNode())
             ->append($this->buildCartManagerNode())
+            ->append($this->buildOrderManagerNode())
+            ->append($this->buildVoucherServiceNode())
             ->append($this->buildTrackingManagerNode())
         ;
 
@@ -88,7 +94,7 @@ class Configuration implements ConfigurationInterface
                         ],
                         'default' => [
                             'cart' => [
-                                'options' => [
+                                'factory_options' => [
                                     'foo' => 'bar'
                                 ]
                             ]
@@ -120,6 +126,9 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('cart_manager_id')
                                 ->defaultValue(MultiCartManager::class)
+                            ->end()
+                            ->scalarNode('order_manager_tenant')
+                                ->defaultNull()
                             ->end()
                             ->arrayNode('cart')
                                 ->addDefaultsIfNotSet()
@@ -158,6 +167,119 @@ class Configuration implements ConfigurationInterface
 
         return $cartManager;
     }
+
+    private function buildOrderManagerNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $orderManager = $builder->root('order_manager');
+        $orderManager->addDefaultsIfNotSet();
+
+        $orderManager
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('tenants')
+                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant. A tenant named "default" is mandatory.')
+                    ->useAttributeAsKey('name')
+                    ->validate()
+                        ->ifTrue(function (array $v) {
+                            return !array_key_exists('default', $v);
+                        })
+                        ->thenInvalid('Order manager needs at least a default tenant')
+                    ->end()
+                    ->beforeNormalization()
+                    ->always(function ($v) {
+                        if (empty($v) || !is_array($v)) {
+                            $v = [];
+                        }
+
+                        return $this->mergeTenantConfig($v);
+                    })
+                    ->end()
+                    ->prototype('array')
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('order_manager_id')
+                                ->defaultValue(OrderManager::class)
+                            ->end()
+                            ->arrayNode('options')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->scalarNode('order_class')
+                                        ->defaultValue('\\Pimcore\\Model\\Object\\OnlineShopOrder')
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('order_item_class')
+                                        ->defaultValue('\\Pimcore\\Model\\Object\\OnlineShopOrderItem')
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('list_class')
+                                        ->defaultValue(Listing::class)
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('list_item_class')
+                                        ->defaultValue(Listing\Item::class)
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('parent_order_folder')
+                                        ->defaultValue('/order/%%Y/%%m/%%d')
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->scalarNode('agent_factory_id')
+                                ->defaultValue(AgentFactory::class)
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end();
+
+        return $orderManager;
+    }
+
+    private function buildVoucherServiceNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $voucherService = $builder->root('voucher_service');
+        $voucherService->addDefaultsIfNotSet();
+        $voucherService
+            ->children()
+                ->scalarNode('voucher_service_id')
+                    ->cannotBeEmpty()
+                    ->defaultValue(DefaultService::class)
+                ->end()
+                ->arrayNode('options')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('reservation_minutes_threshold')
+                            ->info('Reservations older than x MINUTES get removed by maintenance task')
+                            ->defaultValue(5)
+                            ->min(0)
+                        ->end()
+                        ->integerNode('statistics_days_threshold')
+                            ->info('Statistics older than x DAYS get removed by maintenance task')
+                            ->defaultValue(30)
+                            ->min(0)
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('token_managers')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('class')
+                                ->isRequired()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $voucherService;
+    }
+
 
     private function buildTrackingManagerNode(): NodeDefinition
     {

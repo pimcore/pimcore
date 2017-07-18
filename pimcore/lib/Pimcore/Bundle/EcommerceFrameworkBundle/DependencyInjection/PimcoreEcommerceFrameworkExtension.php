@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -36,13 +35,15 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $loader->load('services.yml');
         $loader->load('environment.yml');
-        $loader->load('tracking_manager.yml');
         $loader->load('cart_manager.yml');
         $loader->load('order_manager.yml');
+        $loader->load('voucher_service.yml');
+        $loader->load('tracking_manager.yml');
 
         $this->registerEnvironmentConfiguration($config['environment'], $container);
         $this->registerCartManagerConfiguration($config['cart_manager'], $container);
-        $this->registerOrderManagerConfiguration([], $container);
+        $this->registerOrderManagerConfiguration($config['order_manager'], $container);
+        $this->registerVoucherServiceConfig($config['voucher_service'], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
     }
 
@@ -77,13 +78,36 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $cartManager->setArgument('$cartFactory', $cartFactory);
             $cartManager->setArgument('$cartPriceCalculatorFactory', $priceCalculatorFactory);
 
+            // order manager tenant defaults to the same tenant as the cart tenant but can be
+            // configured on demand
+            $orderManagerTenant = $tenantConfig['order_manager_tenant'] ?? $tenant;
+
+            $cartManager->setArgument('$orderManager', new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant));
+
             $container->setDefinition('pimcore_ecommerce.cart_manager.' . $tenant, $cartManager);
         }
     }
 
     private function registerOrderManagerConfiguration(array $config, ContainerBuilder $container)
     {
-        $container->setAlias('pimcore_ecommerce.order_manager', OrderManager::class);
+        foreach ($config['tenants'] as $tenant => $tenantConfig) {
+            $orderManager = new ChildDefinition($tenantConfig['order_manager_id']);
+            $orderManager->setPublic(true);
+
+            $orderManager->setArgument('$orderAgentFactory', new Reference($tenantConfig['agent_factory_id']));
+            $orderManager->setArgument('$options', $tenantConfig['options']);
+
+            $container->setDefinition('pimcore_ecommerce.order_manager.' . $tenant, $orderManager);
+        }
+    }
+
+    private function registerVoucherServiceConfig(array $config, ContainerBuilder $container)
+    {
+        $voucherService = new ChildDefinition($config['voucher_service_id']);
+        $voucherService->setPublic(true);
+        $voucherService->setArgument('$options', $config['options']);
+
+        $container->setDefinition('pimcore_ecommerce.voucher_service', $voucherService);
     }
 
     private function registerTrackingManagerConfiguration(array $config, ContainerBuilder $container)

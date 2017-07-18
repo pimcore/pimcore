@@ -16,6 +16,10 @@ pimcore_ecommerce_framework:
         tenants:
             default: ~
 
+    order_manager:
+        tenants:
+            default: ~
+
     tracking_manager:
         trackers:
             enhanced_ecommerce:

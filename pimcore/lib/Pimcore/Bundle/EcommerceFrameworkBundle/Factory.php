@@ -61,6 +61,13 @@ class Factory
     private $cartManagers = [];
 
     /**
+     * Tenant specific order managers
+     *
+     * @var IOrderManager[]
+     */
+    private $orderManagers;
+
+    /**
      * @var Config
      */
     private $config;
@@ -86,11 +93,6 @@ class Factory
     private $pricingManager;
 
     /**
-     * @var IOrderManager
-     */
-    private $orderManager;
-
-    /**
      * @var  IService
      */
     private $offerToolService;
@@ -111,14 +113,10 @@ class Factory
     private $paymentManager;
 
     /**
-     * @var IVoucherService
-     */
-    private $voucherService;
-
-    /**
      * @var ITokenManager[]
      */
     private $tokenManagers = [];
+
 
     public static function getInstance()
     {
@@ -187,7 +185,6 @@ class Factory
         $this->configureCheckoutManager($config);
         $this->configurePricingManager($config);
         $this->configurePaymentManager($config);
-        $this->configureOrderManager($config);
 
         $this->configureOfferToolService($config);
     }
@@ -334,25 +331,6 @@ class Factory
                 }
             } else {
                 throw new InvalidConfigException('PaymentManager class ' . $config->ecommerceframework->paymentmanager->class . ' not found.');
-            }
-        }
-    }
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function configureOrderManager(Config $config)
-    {
-        if (!empty($config->ecommerceframework->ordermanager->class)) {
-            if (class_exists($config->ecommerceframework->ordermanager->class)) {
-                $this->orderManager = new $config->ecommerceframework->ordermanager->class($config->ecommerceframework->ordermanager->config);
-                if (!($this->orderManager instanceof IOrderManager)) {
-                    throw new InvalidConfigException('OrderManager class ' . $config->ecommerceframework->ordermanager->class . ' does not implement Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\IOrderManager.');
-                }
-            } else {
-                throw new InvalidConfigException('OrderManager class ' . $config->ecommerceframework->ordermanager->class . ' not found.');
             }
         }
     }
@@ -554,28 +532,29 @@ class Factory
     }
 
     /**
+     * @param string|null $tenant
+     *
      * @return IOrderManager
      */
-    public function getOrderManager()
+    public function getOrderManager(string $tenant = null): IOrderManager
     {
-        return $this->orderManager;
+        if (null === $tenant) {
+            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
+        }
+
+        if (!isset($this->orderManagers[$tenant])) {
+            $this->orderManagers[$tenant] = $this->get(sprintf('pimcore_ecommerce.order_manager.%s', $tenant));
+        }
+
+        return $this->orderManagers[$tenant];
     }
 
     /**
      * @return IVoucherService
-     *
-     * @throws InvalidConfigException
      */
-    public function getVoucherService()
+    public function getVoucherService(): IVoucherService
     {
-        if (empty($this->voucherService)) {
-            $this->voucherService = new $this->config->ecommerceframework->voucherservice->class($this->config->ecommerceframework->voucherservice->config);
-            if (!($this->voucherService instanceof IVoucherService)) {
-                throw new InvalidConfigException('Voucher Service class ' . $this->config->ecommerceframework->voucherservice->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService.');
-            }
-        }
-
-        return $this->voucherService;
+        return $this->get('pimcore_ecommerce.voucher_service');
     }
 
     /**
