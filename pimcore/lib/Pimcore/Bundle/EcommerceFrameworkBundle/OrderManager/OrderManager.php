@@ -17,26 +17,42 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\File;
 use Pimcore\Model\Object\Folder;
 use Pimcore\Model\Object\Service;
 use Pimcore\Tool;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderManager implements IOrderManager
 {
     /**
-     * @var Config
+     * @var IEnvironment
      */
-    protected $config;
+    protected $environment;
+
+    /**
+     * @var IOrderAgentFactory
+     */
+    protected $orderAgentFactory;
+
+    /**
+     * @var IVoucherService
+     */
+    protected $voucherService;
+
+    /**
+     * @var array
+     */
+    protected $options;
 
     /**
      * @var Folder
@@ -46,19 +62,54 @@ class OrderManager implements IOrderManager
     /**
      * @var string
      */
-    protected $orderClassName = '';
+    protected $orderClassName;
 
     /**
      * @var string
      */
-    protected $orderItemClassName = '';
+    protected $orderItemClassName;
 
-    /**
-     * @param Config $config
-     */
-    public function __construct(Config $config)
+    public function __construct(
+        IEnvironment $environment,
+        IOrderAgentFactory $orderAgentFactory,
+        IVoucherService $voucherService,
+        array $options = []
+    )
     {
-        $this->config = new HelperContainer($config, 'ordermanager');
+        $this->environment = $environment;
+        $this->orderAgentFactory = $orderAgentFactory;
+        $this->voucherService = $voucherService;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+    }
+
+    protected function processOptions(array $options)
+    {
+        $this->orderClassName = $options['order_class'];
+        $this->orderItemClassName = $options['order_item_class'];
+        $this->options = $options;
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $classProperties = ['order_class', 'order_item_class', 'list_class', 'list_item_class'];
+
+        $resolver->setRequired($classProperties);
+
+        $resolver->setDefaults([
+            'order_class'         => '\\Pimcore\\Model\\Object\\OnlineShopOrder',
+            'order_item_class'    => '\\Pimcore\\Model\\Object\\OnlineShopOrderItem',
+            'list_class'          => Listing::class,
+            'list_item_class'     => Listing\Item::class,
+            'parent_order_folder' => '/order/%Y/%m/%d'
+        ]);
+
+        foreach ($classProperties as $classProperty) {
+            $resolver->setAllowedTypes($classProperty, 'string');
+        }
     }
 
     /**
@@ -66,9 +117,9 @@ class OrderManager implements IOrderManager
      */
     public function createOrderList()
     {
-        $orderList = new $this->config->orderList->class();
         /* @var IOrderList $orderList */
-        $orderList->setItemClassName($this->config->orderList->classItem);
+        $orderList = new $this->options['list_class'];
+        $orderList->setItemClassName($this->options['list_item_class']);
 
         return $orderList;
     }
@@ -80,7 +131,7 @@ class OrderManager implements IOrderManager
      */
     public function createOrderAgent(AbstractOrder $order)
     {
-        return new $this->config->orderAgent->class(Factory::getInstance(), $order);
+        return $this->orderAgentFactory->createAgent($order);
     }
 
     /**
@@ -96,10 +147,6 @@ class OrderManager implements IOrderManager
      */
     protected function getOrderClassName()
     {
-        if (empty($this->orderClassName)) {
-            $this->orderClassName = (string) $this->config->orderstorage->orderClass;
-        }
-
         return $this->orderClassName;
     }
 
@@ -116,28 +163,38 @@ class OrderManager implements IOrderManager
      */
     protected function getOrderItemClassName()
     {
-        if (empty($this->orderItemClassName)) {
-            $this->orderItemClassName = (string)$this->config->orderstorage->orderItemClass;
-        }
-
         return $this->orderItemClassName;
     }
 
     /**
-     * @param int $id
+     * @param int|Folder $orderParentFolder
      */
-    public function setParentOrderFolder($id)
+    public function setParentOrderFolder($orderParentFolder)
     {
-        if (is_numeric($id)) {
-            $this->orderParentFolder = Folder::getById($id);
+        if ($orderParentFolder instanceof Folder) {
+            $this->orderParentFolder = $orderParentFolder;
+        } elseif (is_numeric($orderParentFolder)) {
+            $folder = Folder::getById($orderParentFolder);
+
+            if ($folder) {
+                $this->orderParentFolder = $folder;
+            } else {
+                throw new \InvalidArgumentException(sprintf('Folder with ID "%s" was not found', $orderParentFolder));
+            }
         }
+
+        throw new \InvalidArgumentException(sprintf(
+            'Invalid argument for parent order folder. Expected either int or Folder, but got %s',
+            is_object($orderParentFolder) ? get_class($orderParentFolder) : gettype($orderParentFolder)
+        ));
     }
 
     protected function getOrderParentFolder()
     {
         if (empty($this->orderParentFolder)) {
-            $parentFolderId = (string)$this->config->parentorderfolder;
             // processing config and setting options
+            $parentFolderId = (string)$this->options['order_parent_folder'];
+
             if (is_numeric($parentFolderId)) {
                 $parentFolderId = (int)$parentFolderId;
             } else {
@@ -184,7 +241,7 @@ class OrderManager implements IOrderManager
             throw new \Exception("No unique order found for $cartId.");
         }
 
-        if (count($orders) == 1) {
+        if (count($orders) === 1) {
             return $orders[0];
         }
 
@@ -306,13 +363,11 @@ class OrderManager implements IOrderManager
         if (is_array($voucherTokens)) {
             $flippedVoucherTokens = array_flip($voucherTokens);
 
-            $service = Factory::getInstance()->getVoucherService();
-
             if ($tokenObjects = $order->getVoucherTokens()) {
                 foreach ($tokenObjects as $tokenObject) {
                     if (!array_key_exists($tokenObject->getToken(), $flippedVoucherTokens)) {
                         //remove applied tokens which are not in the cart anymore
-                        $service->removeAppliedTokenFromOrder($tokenObject, $order);
+                        $this->voucherService->removeAppliedTokenFromOrder($tokenObject, $order);
                     } else {
                         //if token already in token objects, nothing has to be done
                         //but remove it from $flippedVoucherTokens so they don't get added again
@@ -323,7 +378,7 @@ class OrderManager implements IOrderManager
 
             //add new tokens - which are the remaining entries of $flippedVoucherTokens
             foreach ($flippedVoucherTokens as $code => $x) {
-                $service->applyToken($code, $cart, $order);
+                $this->voucherService->applyToken($code, $cart, $order);
             }
         }
     }
@@ -333,6 +388,8 @@ class OrderManager implements IOrderManager
      *
      * @param ICart $cart
      * @param AbstractOrder $order
+     *
+     * @return AbstractOrder
      */
     protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order)
     {
@@ -351,11 +408,9 @@ class OrderManager implements IOrderManager
      */
     protected function setCurrentCustomerToOrder(AbstractOrder $order)
     {
-        $env = Factory::getInstance()->getEnvironment();
-
+        // sets customer to order - if available
         if (@Tool::classExists('\\Pimcore\\Model\\Object\\Customer')) {
-            $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
-            // sets customer to order - if available
+            $customer = \Pimcore\Model\Object\Customer::getById($this->environment->getCurrentUserId());
             $order->setCustomer($customer);
         }
 

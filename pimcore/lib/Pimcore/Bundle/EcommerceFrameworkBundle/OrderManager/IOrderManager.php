@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Model\Object\Folder;
 
 interface IOrderManager
 {
@@ -33,9 +34,9 @@ interface IOrderManager
     public function createOrderAgent(AbstractOrder $order);
 
     /**
-     * @param int $id
+     * @param int|Folder $orderParentFolder
      */
-    public function setParentOrderFolder($id);
+    public function setParentOrderFolder($orderParentFolder);
 
     /**
      * @param string $classname
