@@ -24,5 +24,8 @@ services:
             - { name: monolog.logger, channel: pimcore_ecommerce }
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Factory:
-        factory: ['Pimcore\Bundle\EcommerceFrameworkBundle\Factory', getInstance]
-
+        arguments:
+            - '@service_container'
+            - '@pimcore_ecommerce.environment'
+            - '@pimcore_ecommerce.voucher_service'
+            - '@pimcore_ecommerce.voucher_service.token_manager_factory'

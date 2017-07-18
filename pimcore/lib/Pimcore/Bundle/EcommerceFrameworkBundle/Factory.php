@@ -66,7 +66,7 @@ class Factory
      *
      * @var IOrderManager[]
      */
-    private $orderManagers;
+    private $orderManagers = [];
 
     /**
      * @var Config
@@ -114,23 +114,33 @@ class Factory
     private $paymentManager;
 
     /**
-     * @var ITokenManager[]
+     * @var IVoucherService
      */
-    private $tokenManagers = [];
+    private $voucherService;
 
     /**
      * @var ITokenManagerFactory
      */
     private $tokenManagerFactory;
 
+    public function __construct(
+        ContainerInterface $container,
+        IEnvironment $environment,
+        IVoucherService $voucherService,
+        ITokenManagerFactory $tokenManagerFactory
+    )
+    {
+        $this->container = $container;
+        $this->environment = $environment;
+        $this->voucherService = $voucherService;
+        $this->tokenManagerFactory = $tokenManagerFactory;
+
+        $this->init();
+    }
+
     public static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self();
-            self::$instance->init();
-        }
-
-        return self::$instance;
+        return \Pimcore::getContainer()->get(Factory::class);
     }
 
     private function get(string $serviceId)
@@ -147,6 +157,8 @@ class Factory
      */
     public static function resetInstance($keepEnvironment = true)
     {
+        throw new \RuntimeException(__METHOD__ . ' is not implemented anymore');
+
         if ($keepEnvironment) {
             $environment = self::$instance->getEnvironment();
         } else {
@@ -157,14 +169,6 @@ class Factory
         self::$instance->init();
 
         return self::$instance;
-    }
-
-    private function __construct($environment = null)
-    {
-        $this->environment = $environment;
-
-        // TODO this is only temporary
-        $this->container = \Pimcore::getContainer();
     }
 
     public function getConfig()
@@ -559,7 +563,7 @@ class Factory
      */
     public function getVoucherService(): IVoucherService
     {
-        return $this->get('pimcore_ecommerce.voucher_service');
+        return $this->voucherService;
     }
 
     /**
