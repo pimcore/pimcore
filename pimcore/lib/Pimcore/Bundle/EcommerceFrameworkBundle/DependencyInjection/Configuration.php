@@ -17,7 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -25,7 +29,6 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\VarDumper\VarDumper;
 
 class Configuration implements ConfigurationInterface
 {
@@ -73,10 +76,8 @@ class Configuration implements ConfigurationInterface
         $cartManager->addDefaultsIfNotSet();
 
         $cartManager
+            ->addDefaultsIfNotSet()
             ->children()
-                ->scalarNode('cart_manager_id')
-                    ->defaultValue(MultiCartManager::class)
-                ->end()
                 ->arrayNode('tenants')
                     ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant. A tenant named "default" is mandatory.')
                     ->example([
@@ -108,7 +109,7 @@ class Configuration implements ConfigurationInterface
                     ->beforeNormalization()
                     ->always(function ($v) {
                         if (empty($v) || !is_array($v)) {
-                            return $v;
+                            $v = [];
                         }
 
                         return $this->mergeTenantConfig($v);
@@ -117,18 +118,38 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->canBeDisabled()
                         ->children()
+                            ->scalarNode('cart_manager_id')
+                                ->defaultValue(MultiCartManager::class)
+                            ->end()
                             ->arrayNode('cart')
-                                ->isRequired()
+                                ->addDefaultsIfNotSet()
                                 ->children()
-                                    ->scalarNode('factory_id')->isRequired()->end()
-                                    ->append($this->buildOptionsNode())
+                                    ->scalarNode('factory_id')
+                                        ->cannotBeEmpty()
+                                        ->defaultValue(CartFactory::class)
+                                    ->end()
+                                    ->append($this->buildOptionsNode('factory_options', [
+                                        'cart_class_name'       => Cart::class,
+                                        'guest_cart_class_name' => SessionCart::class
+                                    ]))
                                 ->end()
                             ->end()
                             ->arrayNode('price_calculator')
-                                ->isRequired()
+                                ->addDefaultsIfNotSet()
                                 ->children()
-                                    ->scalarNode('factory_id')->isRequired()->end()
-                                    ->append($this->buildOptionsNode())
+                                    ->scalarNode('factory_id')
+                                        ->cannotBeEmpty()
+                                        ->defaultValue(CartPriceCalculatorFactory::class)
+                                    ->end()
+                                    ->append($this->buildOptionsNode('factory_options'))
+                                    ->arrayNode('modificators')
+                                        ->prototype('array')
+                                            ->children()
+                                                ->scalarNode('class')->isRequired()->end()
+                                                ->append($this->buildOptionsNode())
+                                            ->end()
+                                        ->end()
+                                    ->end()
                                 ->end()
                             ->end()
                         ->end()
@@ -169,11 +190,11 @@ class Configuration implements ConfigurationInterface
         return $trackingManager;
     }
 
-    private function buildOptionsNode(string $name = 'options'): NodeDefinition
+    private function buildOptionsNode(string $name = 'options', array $defaultValue = []): NodeDefinition
     {
         $node = new VariableNodeDefinition($name);
         $node
-            ->defaultValue([])
+            ->defaultValue($defaultValue)
             ->treatNullLike([])
             ->beforeNormalization()
                ->castToArray()
@@ -208,7 +229,7 @@ class Configuration implements ConfigurationInterface
                 continue;
             }
 
-            $config[$tenant] = $this->mergeDefaults($defaults, $tenantConfig);
+            $config[$tenant] = $this->mergeDefaults($defaults, $tenantConfig ?? []);
         }
 
         // if no default tenant is set, use the _defaults as default tenant

@@ -34,6 +34,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
 use Pimcore\Config\Config;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
 {
@@ -48,14 +49,21 @@ class Factory
     private static $instance;
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * Tenant specific cart managers
+     *
+     * @var ICartManager[]
+     */
+    private $cartManagers = [];
+
+    /**
      * @var Config
      */
     private $config;
-
-    /**
-     * @var ICartManager
-     */
-    private $cartManager;
 
     /**
      * @var IPriceSystem
@@ -124,7 +132,7 @@ class Factory
 
     private function get(string $serviceId)
     {
-        return \Pimcore::getContainer()->get($serviceId);
+        return $this->container->get($serviceId);
     }
 
     /**
@@ -151,6 +159,9 @@ class Factory
     private function __construct($environment = null)
     {
         $this->environment = $environment;
+
+        // TODO this is only temporary
+        $this->container = \Pimcore::getContainer();
     }
 
     public function getConfig()
@@ -162,28 +173,6 @@ class Factory
         return $this->config;
     }
 
-    private function initEnvironment()
-    {
-        $config = $this->getConfig();
-
-        //Environment
-        if (empty($config->ecommerceframework->environment->class)) {
-            throw new InvalidConfigException('No Environment class defined.');
-        } else {
-            if (class_exists($config->ecommerceframework->environment->class)) {
-                $session = \Pimcore::getContainer()->get('session');
-                $localeService = \Pimcore::getContainer()->get('pimcore.locale');
-
-                $this->environment = new $config->ecommerceframework->environment->class($config->ecommerceframework->environment->config, $session, $localeService);
-                if (!($this->environment instanceof IEnvironment)) {
-                    throw new InvalidConfigException('Environment class ' . $config->ecommerceframework->environment->class . ' does not implement IEnvironment.');
-                }
-            } else {
-                throw new InvalidConfigException('Environment class ' . $config->ecommerceframework->environment->class . ' not found.');
-            }
-        }
-    }
-
     private function init()
     {
         $config = $this->getConfig();
@@ -192,7 +181,6 @@ class Factory
 
     private function checkConfig($config)
     {
-        $this->configureCartManager($config);
         $this->configurePriceSystem($config);
         $this->configureAvailabilitySystem($config);
 
@@ -202,22 +190,6 @@ class Factory
         $this->configureOrderManager($config);
 
         $this->configureOfferToolService($config);
-    }
-
-    private function configureCartManager($config)
-    {
-        if (empty($config->ecommerceframework->cartmanager->class)) {
-            throw new InvalidConfigException('No Cartmanager class defined.');
-        } else {
-            if (class_exists($config->ecommerceframework->cartmanager->class)) {
-                $this->cartManager = new $config->ecommerceframework->cartmanager->class($config->ecommerceframework->cartmanager->config);
-                if (!($this->cartManager instanceof ICartManager)) {
-                    throw new InvalidConfigException('Cartmanager class ' . $config->ecommerceframework->cartmanager->class . ' does not implement ICartManager.');
-                }
-            } else {
-                throw new InvalidConfigException('Cartmanager class ' . $config->ecommerceframework->cartmanager->class . ' not found.');
-            }
-        }
     }
 
     public function getTrackingManager(): ITrackingManager
@@ -385,9 +357,17 @@ class Factory
         }
     }
 
-    public function getCartManager()
+    public function getCartManager(string $tenant = null): ICartManager
     {
-        return $this->cartManager;
+        if (null === $tenant) {
+            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
+        }
+
+        if (!isset($this->cartManagers[$tenant])) {
+            $this->cartManagers[$tenant] = $this->get(sprintf('pimcore_ecommerce.cart_manager.%s', $tenant));
+        }
+
+        return $this->cartManagers[$tenant];
     }
 
     /**
@@ -536,7 +516,7 @@ class Factory
 
     public function saveState()
     {
-        $this->cartManager->save();
+        $this->getCartManager()->save();
         $this->environment->save();
     }
 

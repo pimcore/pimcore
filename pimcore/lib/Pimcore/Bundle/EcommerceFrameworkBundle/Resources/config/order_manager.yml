@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    # TODO implement order manager config
+    Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager: ~

@@ -1,0 +1,32 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # CART MANAGER
+    #
+    # Predefined core cart manager implementations. Options for cart and price calculator factories will be set from
+    # configuration.
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager
+        arguments:
+            - '@pimcore_ecommerce.environment'
+            - '@?'
+            - '@?'
+            - '@pimcore_ecommerce.order_manager'
+            - '@logger'
+        tags:
+            - { name: monolog.logger, channel: pimcore_ecommerce }
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory:
+        arguments:
+            $options: []
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory:
+        arguments:
+            $modificatorConfig: []
+            $options: []

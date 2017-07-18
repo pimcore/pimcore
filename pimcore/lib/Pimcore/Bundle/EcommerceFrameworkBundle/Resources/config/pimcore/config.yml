@@ -14,39 +14,7 @@ pimcore:
 pimcore_ecommerce_framework:
     cart_manager:
         tenants:
-            _defaults:
-                cart:
-                    factory_id: SuperSuperFactory
-                price_calculator:
-                    factory_id: SuperSuperDuperDuperFactory
-                    options:
-                        foo: bar
-                        modificators:
-                            - foo
-                            - bar
-
-            _defaults_foo:
-                price_calculator:
-                    options: &defaults_foo_options
-                        brr: bum
-
-            default:
-                cart:
-                    factory_id: SuperDuperFactory
-                price_calculator:
-                    factory_id: DuperDuperFactory
-                    options:
-                        foo: baz
-                        modificators:
-                            - baz
-
-            noShipping:
-                price_calculator:
-                    options:
-                        <<: *defaults_foo_options
-                        bar: foo
-                        modificators:
-                            - bazinga
+            default: ~
 
     tracking_manager:
         trackers:

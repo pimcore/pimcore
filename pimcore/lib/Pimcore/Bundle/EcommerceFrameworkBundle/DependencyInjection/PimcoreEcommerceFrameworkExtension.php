@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -36,8 +37,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('services.yml');
         $loader->load('environment.yml');
         $loader->load('tracking_manager.yml');
+        $loader->load('cart_manager.yml');
+        $loader->load('order_manager.yml');
 
         $this->registerEnvironmentConfiguration($config['environment'], $container);
+        $this->registerCartManagerConfiguration($config['cart_manager'], $container);
+        $this->registerOrderManagerConfiguration([], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
     }
 
@@ -48,6 +53,37 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $container->setDefinition('pimcore_ecommerce.environment', $environment);
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
+    }
+
+    private function registerCartManagerConfiguration(array $config, ContainerBuilder $container)
+    {
+        foreach ($config['tenants'] as $tenant => $tenantConfig) {
+            $cartManager = new ChildDefinition($tenantConfig['cart_manager_id']);
+            $cartManager->setPublic(true);
+
+            $cartFactory = new ChildDefinition($tenantConfig['cart']['factory_id']);
+            $cartFactory->setArgument('$options', $tenantConfig['cart']['factory_options']);
+
+            $priceCalculatorFactory = new ChildDefinition($tenantConfig['price_calculator']['factory_id']);
+            $priceCalculatorFactory->setArgument(
+                '$modificatorConfig',
+                $tenantConfig['price_calculator']['modificators']
+            );
+            $priceCalculatorFactory->setArgument(
+                '$options',
+                $tenantConfig['price_calculator']['factory_options']
+            );
+
+            $cartManager->setArgument('$cartFactory', $cartFactory);
+            $cartManager->setArgument('$cartPriceCalculatorFactory', $priceCalculatorFactory);
+
+            $container->setDefinition('pimcore_ecommerce.cart_manager.' . $tenant, $cartManager);
+        }
+    }
+
+    private function registerOrderManagerConfiguration(array $config, ContainerBuilder $container)
+    {
+        $container->setAlias('pimcore_ecommerce.order_manager', OrderManager::class);
     }
 
     private function registerTrackingManagerConfiguration(array $config, ContainerBuilder $container)
