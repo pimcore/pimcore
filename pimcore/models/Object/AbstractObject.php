@@ -358,7 +358,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 $listClass = $className . '\\Listing';
                 $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
                 $list->setValues($config);
-                $list->load();
 
                 return $list;
             }
