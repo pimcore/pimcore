@@ -344,7 +344,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 $listClass = $className . "\\Listing";
                 $list = \Pimcore::getDiContainer()->make($listClass);
                 $list->setValues($config);
-                $list->load();
 
                 return $list;
             }
