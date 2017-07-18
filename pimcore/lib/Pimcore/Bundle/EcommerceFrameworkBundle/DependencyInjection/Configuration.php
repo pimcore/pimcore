@@ -28,6 +28,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
@@ -256,7 +257,7 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue(DefaultService::class)
                 ->end()
-                ->arrayNode('options')
+                ->arrayNode('voucher_service_options')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->integerNode('reservation_minutes_threshold')
@@ -272,12 +273,16 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('token_managers')
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                        ->canBeDisabled()
-                        ->children()
-                            ->scalarNode('class')
-                                ->isRequired()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('factory_id')
+                            ->cannotBeEmpty()
+                            ->defaultValue(TokenManagerFactory::class)
+                        ->end()
+                        ->arrayNode('mapping')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')
+                                ->cannotBeEmpty()
                             ->end()
                         ->end()
                     ->end()

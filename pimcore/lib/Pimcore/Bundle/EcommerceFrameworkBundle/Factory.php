@@ -33,6 +33,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManagerFactory;
 use Pimcore\Config\Config;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -117,6 +118,10 @@ class Factory
      */
     private $tokenManagers = [];
 
+    /**
+     * @var ITokenManagerFactory
+     */
+    private $tokenManagerFactory;
 
     public static function getInstance()
     {
@@ -561,29 +566,9 @@ class Factory
      * @param AbstractVoucherTokenType $configuration
      *
      * @return ITokenManager
-     *
-     * @throws InvalidConfigException
      */
-    public function getTokenManager(AbstractVoucherTokenType $configuration)
+    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
     {
-        $id   = $configuration->getObject()->getId();
-        $type = $configuration->getType();
-
-        if (empty($this->tokenManagers[$id])) {
-            $tokenManagerClass = $this->config->ecommerceframework->voucherservice->tokenmanagers->$type;
-
-            if ($tokenManagerClass) {
-                $tokenManager = new $tokenManagerClass->class($configuration);
-                if (!($tokenManager instanceof ITokenManager)) {
-                    throw new InvalidConfigException('Token Manager class ' . $tokenManagerClass->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager.');
-                }
-
-                $this->tokenManagers[$id] = $tokenManager;
-            } else {
-                throw new InvalidConfigException('Token Manager for ' . $type . ' not defined.');
-            }
-        }
-
-        return $this->tokenManagers[$id];
+        return $this->tokenManagerFactory->getTokenManager($configuration);
     }
 }

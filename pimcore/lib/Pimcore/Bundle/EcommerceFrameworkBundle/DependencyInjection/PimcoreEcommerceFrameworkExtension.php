@@ -108,9 +108,19 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
     {
         $voucherService = new ChildDefinition($config['voucher_service_id']);
         $voucherService->setPublic(true);
-        $voucherService->setArgument('$options', $config['options']);
+        $voucherService->setArgument('$options', $config['voucher_service_options']);
 
         $container->setDefinition('pimcore_ecommerce.voucher_service', $voucherService);
+
+        $container->setParameter(
+            'pimcore_ecommerce.voucher_service.token_manager.mapping',
+            $config['token_managers']['mapping']
+        );
+
+        $container->setAlias(
+            'pimcore_ecommerce.voucher_service.token_manager_factory',
+            $config['token_managers']['factory_id']
+        );
     }
 
     private function registerTrackingManagerConfiguration(array $config, ContainerBuilder $container)

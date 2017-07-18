@@ -6,5 +6,9 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService: ~
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory:
+        arguments:
+            - '%pimcore_ecommerce.voucher_service.token_manager.mapping%'
+
 
 

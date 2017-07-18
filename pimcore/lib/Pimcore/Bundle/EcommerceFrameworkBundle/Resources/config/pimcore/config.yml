@@ -20,6 +20,12 @@ pimcore_ecommerce_framework:
         tenants:
             default: ~
 
+    voucher_service:
+        token_managers:
+            mapping:
+                VoucherTokenTypePattern: \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Pattern
+                VoucherTokenTypeSingle: \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Single
+
     tracking_manager:
         trackers:
             enhanced_ecommerce:
