@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
+use Pimcore\Tool;
 use Pimcore\Logger;
 use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
@@ -110,7 +111,7 @@ class WirecardSeamless implements IPayment
         $requestFingerprint = $this->generateFingerPrint($fields);
 
         if ($this->settings->iframeCssUrl) {
-            $fields['iframeCssUrl'] = 'http://' . $_SERVER['HTTP_HOST'] . $this->settings->iframeCssUrl;
+            $fields['iframeCssUrl'] = Tool::getHostUrl() . $this->settings->iframeCssUrl;
         }
 
         $postFields = array_merge($fields, [
