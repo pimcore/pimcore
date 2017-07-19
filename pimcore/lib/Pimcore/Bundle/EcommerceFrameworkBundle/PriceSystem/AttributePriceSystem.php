@@ -15,16 +15,67 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 {
+    /**
+     * @var IEnvironment
+     */
+    protected $environment;
+
+    /**
+     * @var string
+     */
+    protected $attributeName;
+
+    /**
+     * @var string
+     */
+    protected $priceClass;
+
+    public function __construct(IPricingManager $pricingManager, IEnvironment $environment, array $options = [])
+    {
+        parent::__construct($pricingManager);
+
+        $this->environment = $environment;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+    }
+
+    protected function processOptions(array $options)
+    {
+        $this->attributeName = $options['attribute_name'];
+        $this->priceClass    = $options['price_class'];
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired([
+            'attribute_name',
+            'price_class'
+        ]);
+
+        $resolver->setDefaults([
+            'attribute_name' => 'price',
+            'price_class'    => Price::class
+        ]);
+
+        $resolver->setAllowedTypes('attribute_name', 'string');
+        $resolver->setAllowedTypes('price_class', 'string');
+    }
+
     /**
      * @inheritdoc
      */
@@ -69,7 +120,8 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      */
     protected function calculateAmount(ICheckoutable $product, $products): Decimal
     {
-        $getter = 'get' . ucfirst($this->config->attributename);
+        $getter = 'get' . ucfirst($this->attributeName);
+
         if (method_exists($product, $getter)) {
             if (!empty($products)) {
                 // TODO where to start using price value object?
@@ -98,7 +150,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      */
     protected function getDefaultCurrency(): Currency
     {
-        return Factory::getInstance()->getEnvironment()->getDefaultCurrency();
+        return $this->environment->getDefaultCurrency();
     }
 
     /**
@@ -107,19 +159,11 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
      * @param Decimal $amount
      *
      * @return IPrice
-     *
-     * @throws \Exception
      */
     protected function getPriceClassInstance(Decimal $amount): IPrice
     {
-        if ($this->config->priceClass) {
-            $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);
-            if (!$price instanceof IPrice) {
-                throw new \Exception('Price Class does not implement IPrice');
-            }
-        } else {
-            $price = new Price($amount, $this->getDefaultCurrency(), false);
-        }
+        $priceClass = $this->priceClass;
+        $price      = new $priceClass($amount, $this->getDefaultCurrency(), false);
 
         return $price;
     }
