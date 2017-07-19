@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\PlaceholderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\TenantProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService;
@@ -42,9 +43,15 @@ class Configuration implements ConfigurationInterface
      */
     private $tenantProcessor;
 
+    /**
+     * @var PlaceholderProcessor
+     */
+    private $placeholderProcessor;
+
     public function __construct()
     {
-        $this->tenantProcessor = new TenantProcessor();
+        $this->tenantProcessor      = new TenantProcessor();
+        $this->placeholderProcessor = new PlaceholderProcessor();
     }
 
     /**
@@ -61,6 +68,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildEnvironmentNode())
             ->append($this->buildCartManagerNode())
             ->append($this->buildOrderManagerNode())
+            ->append($this->buildProductIndexNode())
             ->append($this->buildVoucherServiceNode())
             ->append($this->buildTrackingManagerNode())
         ;
@@ -253,6 +261,111 @@ class Configuration implements ConfigurationInterface
                 ->end();
 
         return $orderManager;
+    }
+
+    private function buildProductIndexNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $productIndex = $builder->root('product_index');
+        $productIndex->addDefaultsIfNotSet();
+
+        $productIndex
+            ->children()
+                ->booleanNode('disable_default_tenant')
+                    ->defaultFalse()
+                ->end()
+                ->arrayNode('tenants')
+                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant.')
+                    ->useAttributeAsKey('name')
+                    ->beforeNormalization()
+                    ->always(function ($v) {
+                        if (empty($v) || !is_array($v)) {
+                            $v = [];
+                        }
+
+                        $config = $this->tenantProcessor->mergeTenantConfig($v);
+
+                        foreach ($config as $tenant => $tenantConfig) {
+                            if (isset($tenantConfig['placeholders']) && is_array($tenantConfig['placeholders']) && count($tenantConfig['placeholders']) > 0) {
+                                $placeholders = $tenantConfig['placeholders'];
+
+                                // remove placeholders while replacing as we don't want to replace the placeholders
+                                unset($tenantConfig['placeholders']);
+
+                                $config[$tenant] = $this->placeholderProcessor->mergePlaceholders($tenantConfig, $placeholders);
+
+                                // re-add placeholders
+                                $config[$tenant]['placeholders'] = $placeholders;
+                            }
+                        }
+
+                        return $config;
+                    })
+                    ->end()
+                    ->prototype('array')
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('config_id')
+                                ->isRequired()
+                            ->end()
+                            ->arrayNode('placeholders')
+                                ->defaultValue([])
+                                ->beforeNormalization()
+                                    ->castToArray()
+                                ->end()
+                                ->prototype('scalar')->end()
+                            ->end()
+                            ->arrayNode('search_attributes')
+                                ->prototype('array')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return ['name' => $v];
+                                        })
+                                    ->end()
+                                    ->children()
+                                        ->scalarNode('name')->isRequired()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('attributes')
+                                ->useAttributeAsKey('name', false)
+                                ->beforeNormalization()
+                                    ->always(function ($v) {
+                                        if (empty($v) || !is_array($v)) {
+                                            $v = [];
+                                        }
+
+                                        // make sure the name property is set
+                                        foreach (array_keys($v) as $name) {
+                                            if (!isset($v[$name]['name'])) {
+                                                $v[$name]['name'] = $name;
+                                            }
+                                        }
+
+                                        return $v;
+                                    })
+                                ->end()
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('name')->isRequired()->end()
+                                        ->scalarNode('fieldname')->defaultNull()->end()
+                                        ->scalarNode('type')->defaultNull()->end()
+                                        ->scalarNode('interpreter')->defaultNull()->end()
+                                        ->scalarNode('getter')->defaultNull()->end()
+                                        ->scalarNode('filtergroup')->defaultNull()->end()
+                                        ->scalarNode('locale')->defaultNull()->end()
+                                        ->variableNode('options')->defaultValue([])->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $productIndex;
     }
 
     private function buildVoucherServiceNode(): NodeDefinition

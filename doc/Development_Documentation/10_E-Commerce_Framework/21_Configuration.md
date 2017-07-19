@@ -101,6 +101,86 @@ pimcore_ecommerce_framework:
 ```
 
 
+## Product Index
+
+```yaml
+# automatically inherit from _defaults section
+pimcore_ecommerce_framework:
+    product_index:
+        tenants:
+            _defaults:
+                search_attributes:
+                    - name
+                    - articleNumber
+                attributes:
+                    name:
+                        locale: '%%locale%%'
+                        type: varchar(255)
+                    code:
+                        type: varchar(255)
+                    articleNumber:
+                        type: varchar(255)
+                    equipment:
+                        type: bool
+                    sorter:
+                        type: blob
+                        getter: \AppBundle\EcommerceFramework\IndexService\CategorySortingGetter
+                        interpreter: \AppBundle\EcommerceFramework\IndexService\CategorySortingInterpreter
+                        options:
+                            locale: '%%locale%%'
+
+            en:
+                config_id: AppBundle\EcommerceFramework\IndexService\TenantConfigEn
+                placeholders:
+                    '%%locale%%': en
+            en_US:
+                config_id: AppBundle\EcommerceFramework\IndexService\TenantConfigEnUs
+                placeholders:
+                    '%%locale%%': en_US
+            de:
+                config_id: AppBundle\EcommerceFramework\IndexService\TenantConfigDe
+                placeholders:
+                    '%%locale%%': de
+            de_DE:
+                config_id: AppBundle\EcommerceFramework\IndexService\TenantConfigDeDe
+                placeholders:
+                    '%%locale%%': de_DE
+```
+
+```yaml
+# inherit from custom _defaults_* sections
+pimcore_ecommerce_framework:
+    product_index:
+        tenants:
+            _defaults_foo: &_defaults_foo
+                search_attributes:
+                    - name
+                    - articleNumber
+                attributes:
+                    name:
+                        locale: '%%locale%%'
+                        type: varchar(255)
+                    code:
+                        type: varchar(255)
+                    articleNumber:
+                        type: varchar(255)
+                    equipment:
+                        type: bool
+                    sorter:
+                        type: blob
+                        getter: \AppBundle\EcommerceFramework\IndexService\CategorySortingGetter
+                        interpreter: \AppBundle\EcommerceFramework\IndexService\CategorySortingInterpreter
+                        options:
+                            locale: '%%locale%%'
+
+            en:
+                <<: *_defaults_foo
+                config_id: AppBundle\EcommerceFramework\IndexService\TenantConfigEn
+                placeholders:
+                    '%%locale%%': en
+```
+
+
 ## Tracking manager
 
 ```yaml
