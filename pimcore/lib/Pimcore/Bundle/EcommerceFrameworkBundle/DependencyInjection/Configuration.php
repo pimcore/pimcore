@@ -68,10 +68,11 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildEnvironmentNode())
             ->append($this->buildCartManagerNode())
             ->append($this->buildOrderManagerNode())
+            ->append($this->buildPriceSystemsNode())
+            ->append($this->buildAvailabilitySystemsNode())
             ->append($this->buildProductIndexNode())
             ->append($this->buildVoucherServiceNode())
-            ->append($this->buildTrackingManagerNode())
-        ;
+            ->append($this->buildTrackingManagerNode());
 
         return $treeBuilder;
     }
@@ -261,6 +262,56 @@ class Configuration implements ConfigurationInterface
                 ->end();
 
         return $orderManager;
+    }
+
+    private function buildPriceSystemsNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $priceSystems = $builder->root('price_systems');
+        $priceSystems
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+                ->beforeNormalization()
+                    ->ifString()
+                    ->then(function ($v) {
+                        return ['id' => $v];
+                    })
+                ->end()
+                ->children()
+                    ->scalarNode('name')->end()
+                    ->scalarNode('id')
+                        ->isRequired()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $priceSystems;
+    }
+
+    private function buildAvailabilitySystemsNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $availabilitySystems = $builder->root('availability_systems');
+        $availabilitySystems
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+                ->beforeNormalization()
+                    ->ifString()
+                    ->then(function ($v) {
+                        return ['id' => $v];
+                    })
+                ->end()
+                ->children()
+                    ->scalarNode('name')->end()
+                    ->scalarNode('id')
+                        ->isRequired()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $availabilitySystems;
     }
 
     private function buildProductIndexNode(): NodeDefinition

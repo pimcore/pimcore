@@ -24,6 +24,9 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     /**
+     * The services below are defined as public as the Factory loads services via get() on
+     * demand.
+     *
      * @inheritDoc
      */
     protected function loadInternal(array $config, ContainerBuilder $container)
@@ -37,12 +40,16 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('environment.yml');
         $loader->load('cart_manager.yml');
         $loader->load('order_manager.yml');
+        $loader->load('price_systems.yml');
+        $loader->load('availability_systems.yml');
         $loader->load('voucher_service.yml');
         $loader->load('tracking_manager.yml');
 
         $this->registerEnvironmentConfiguration($config['environment'], $container);
         $this->registerCartManagerConfiguration($config['cart_manager'], $container);
         $this->registerOrderManagerConfiguration($config['order_manager'], $container);
+        $this->registerPriceSystemsConfiguration($config['price_systems'], $container);
+        $this->registerAvailabilitySystemsConfiguration($config['availability_systems'], $container);
         $this->registerVoucherServiceConfig($config['voucher_service'], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
     }
@@ -104,6 +111,36 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
     }
 
+    private function registerPriceSystemsConfiguration(array $config, ContainerBuilder $container)
+    {
+        $mapping = [];
+
+        foreach ($config as $name => $cfg) {
+            $aliasName = sprintf('pimcore_ecommerce.price_system.%s', $name);
+
+            $container->setAlias($aliasName, $cfg['id']);
+            $mapping[$name] = new Reference($aliasName);
+        }
+
+        $locator = $container->getDefinition('pimcore_ecommerce.price_systems_locator');
+        $locator->setArgument(0, $mapping);
+    }
+
+    private function registerAvailabilitySystemsConfiguration(array $config, ContainerBuilder $container)
+    {
+        $mapping = [];
+
+        foreach ($config as $name => $cfg) {
+            $aliasName = sprintf('pimcore_ecommerce.availability_system.%s', $name);
+
+            $container->setAlias($aliasName, $cfg['id']);
+            $mapping[$name] = new Reference($aliasName);
+        }
+
+        $locator = $container->getDefinition('pimcore_ecommerce.availability_systems_locator');
+        $locator->setArgument(0, $mapping);
+    }
+
     private function registerVoucherServiceConfig(array $config, ContainerBuilder $container)
     {
         $voucherService = new ChildDefinition($config['voucher_service_id']);
@@ -125,8 +162,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerTrackingManagerConfiguration(array $config, ContainerBuilder $container)
     {
-        // the public flag is only needed as the factory still implements a getTrackingManager method which directly
-        // accesses the tracking manager service
         $trackingManager = new ChildDefinition($config['tracking_manager_id']);
         $trackingManager->setPublic(true);
 

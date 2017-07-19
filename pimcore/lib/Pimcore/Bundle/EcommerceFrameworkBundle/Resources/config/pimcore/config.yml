@@ -20,6 +20,14 @@ pimcore_ecommerce_framework:
         tenants:
             default: ~
 
+    price_systems:
+        default:
+            id: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
+
+    availability_systems:
+        default:
+            id: Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
+
     voucher_service:
         token_managers:
             mapping:

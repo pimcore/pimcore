@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
@@ -35,6 +36,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManagerFactory;
 use Pimcore\Config\Config;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
@@ -69,19 +71,19 @@ class Factory
     private $orderManagers = [];
 
     /**
+     * @var PsrContainerInterface
+     */
+    private $priceSystemsLocator;
+
+    /**
+     * @var PsrContainerInterface
+     */
+    private $availabilitySystemsLocator;
+
+    /**
      * @var Config
      */
     private $config;
-
-    /**
-     * @var IPriceSystem
-     */
-    private $priceSystems;
-
-    /**
-     * @var IAvailabilitySystem
-     */
-    private $availabilitySystems;
 
     /**
      * @var ICheckoutManager
@@ -126,12 +128,16 @@ class Factory
     public function __construct(
         ContainerInterface $container,
         IEnvironment $environment,
+        PsrContainerInterface $priceSystemsLocator,
+        PsrContainerInterface $availabilitySystemsLocator,
         IVoucherService $voucherService,
         ITokenManagerFactory $tokenManagerFactory
     )
     {
         $this->container = $container;
         $this->environment = $environment;
+        $this->priceSystemsLocator = $priceSystemsLocator;
+        $this->availabilitySystemsLocator = $availabilitySystemsLocator;
         $this->voucherService = $voucherService;
         $this->tokenManagerFactory = $tokenManagerFactory;
 
@@ -188,9 +194,6 @@ class Factory
 
     private function checkConfig($config)
     {
-        $this->configurePriceSystem($config);
-        $this->configureAvailabilitySystem($config);
-
         $this->configureCheckoutManager($config);
         $this->configurePricingManager($config);
         $this->configurePaymentManager($config);
@@ -201,81 +204,6 @@ class Factory
     public function getTrackingManager(): ITrackingManager
     {
         return $this->get('pimcore_ecommerce.tracking.tracking_manager');
-    }
-
-    private function configurePriceSystem($config)
-    {
-        if (empty($config->ecommerceframework->pricesystems)) {
-            throw new InvalidConfigException('No Pricesystems defined.');
-        }
-        //$this->priceSystems=array();
-        $priceSystemConfigs = $config->ecommerceframework->pricesystems->pricesystem;
-        if ($priceSystemConfigs->class) {
-            $priceSystemConfigs = [$priceSystemConfigs];
-        }
-
-        $this->priceSystems = new \stdClass();
-        if (!empty($priceSystemConfigs)) {
-            foreach ($priceSystemConfigs as $priceSystemConfig) {
-                if (empty($priceSystemConfig->class)) {
-                    throw new InvalidConfigException('No Pricesystem class defined.');
-                }
-                if (empty($priceSystemConfig->name)) {
-                    throw new InvalidConfigException('No Pricesystem name defined.');
-                }
-                $name = $priceSystemConfig->name;
-                if (!empty($this->priceSystems->$name)) {
-                    throw new InvalidConfigException('More than one Pricesystem '.$name . ' is defined!');
-                }
-                /* if (!class_exists($priceSystemConfig->class)) {
-                    throw new InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
-                }*/
-                $class = $priceSystemConfig->class;
-                $priceSystem = new $class($priceSystemConfig->config);
-                if (!$priceSystem instanceof IPriceSystem) {
-                    throw new InvalidConfigException('Pricesystem class ' . $priceSystemConfig->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem.');
-                }
-                $this->priceSystems->$name=$priceSystem;
-            }
-        }
-    }
-
-    private function configureAvailabilitySystem($config)
-    {
-        if (empty($config->ecommerceframework->availablitysystems)) {
-            throw new InvalidConfigException('No AvailabilitySystem defined.');
-        }
-        //$this->priceSystems=array();
-        $availabilitySystemConfigs = $config->ecommerceframework->availablitysystems->availablitysystem;
-        if ($availabilitySystemConfigs->class) {
-            $availabilitySystemConfigs = [$availabilitySystemConfigs];
-        }
-
-        $this->availabilitySystems = new \stdClass();
-        if (!empty($availabilitySystemConfigs)) {
-            foreach ($availabilitySystemConfigs as $availabilitySystemConfig) {
-                if (empty($availabilitySystemConfig->class)) {
-                    throw new InvalidConfigException('No AvailabilitySystem class defined.');
-                }
-                if (empty($availabilitySystemConfig->name)) {
-                    throw new InvalidConfigException('No AvailabilitySystem name defined.');
-                }
-                $name = $availabilitySystemConfig->name;
-                if (!empty($this->availablitysystems->$name)) {
-                    throw new InvalidConfigException('More than one AvailabilitySystem '.$name . ' is defined!');
-                }
-                /* if (!class_exists($priceSystemConfig->class)) {
-                    throw new InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
-                }*/
-
-                $class = $availabilitySystemConfig->class;
-                $availabilitySystem = new $class();
-                if (! $availabilitySystem instanceof IAvailabilitySystem) {
-                    throw new InvalidConfigException('AvailabilitySystem class ' . $availabilitySystemConfig->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem.');
-                }
-                $this->availabilitySystems->$name= $availabilitySystem;
-            }
-        }
     }
 
     private function configureCheckoutManager($config)
@@ -415,43 +343,51 @@ class Factory
     }
 
     /**
-     * @throws UnsupportedException
+     * Loads a price system by name. Falls back to "default" if no name is passed.
      *
-     * @param null $name
+     * @param string|null $name
      *
      * @return IPriceSystem
+     * @throws UnsupportedException
      */
-    public function getPriceSystem($name = null)
+    public function getPriceSystem(string $name = null): IPriceSystem
     {
-        if ($name == null) {
+        if (null === $name) {
             $name = 'default';
         }
 
-        if ($ps = $this->priceSystems->$name) {
-            return $ps;
-        } else {
-            throw new UnsupportedException('priceSystem ' . $name . ' is not supported, check configuration!');
+        if (!$this->priceSystemsLocator->has($name)) {
+            throw new UnsupportedException(sprintf(
+                'Price system "%s" is not supported. Please check the configuration.',
+                $name
+            ));
         }
+
+        return $this->priceSystemsLocator->get($name);
     }
 
     /**
-     * @throws UnsupportedException
+     * Loads an availability system by name. Falls back to "default" if no name is passed.
      *
-     * @param null $name
+     * @param string|null $name
      *
      * @return IAvailabilitySystem
+     * @throws UnsupportedException
      */
-    public function getAvailabilitySystem($name = null)
+    public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
     {
-        if ($name == null) {
+        if (null === $name) {
             $name = 'default';
         }
 
-        if ($ps = $this->availabilitySystems->$name) {
-            return $ps;
-        } else {
-            throw new UnsupportedException('availabilitySystem ' . $name . ' is not supported, check configuration!');
+        if (!$this->availabilitySystemsLocator->has($name)) {
+            throw new UnsupportedException(sprintf(
+                'Availability system "%s" is not supported. Please check the configuration.',
+                $name
+            ));
         }
+
+        return $this->availabilitySystemsLocator->get($name);
     }
 
     /**

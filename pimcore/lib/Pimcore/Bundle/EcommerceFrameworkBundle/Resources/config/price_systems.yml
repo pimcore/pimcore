@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # PRICE SYSTEMS
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem:
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager'
+            - '@pimcore_ecommerce.environment'
