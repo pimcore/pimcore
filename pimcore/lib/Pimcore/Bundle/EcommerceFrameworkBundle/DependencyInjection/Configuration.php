@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\TenantProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
@@ -33,10 +34,19 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class Configuration implements ConfigurationInterface
 {
+    /**
+     * @var TenantProcessor
+     */
+    private $tenantProcessor;
+
+    public function __construct()
+    {
+        $this->tenantProcessor = new TenantProcessor();
+    }
+
     /**
      * @inheritDoc
      */
@@ -119,7 +129,7 @@ class Configuration implements ConfigurationInterface
                             $v = [];
                         }
 
-                        return $this->mergeTenantConfig($v);
+                        return $this->tenantProcessor->mergeTenantConfig($v);
                     })
                     ->end()
                     ->prototype('array')
@@ -194,7 +204,7 @@ class Configuration implements ConfigurationInterface
                             $v = [];
                         }
 
-                        return $this->mergeTenantConfig($v);
+                        return $this->tenantProcessor->mergeTenantConfig($v);
                     })
                     ->end()
                     ->prototype('array')
@@ -335,97 +345,5 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $node;
-    }
-
-    /**
-     * Merges tenant configs with an optional _defaults key which is applied
-     * to every tenant and removed.
-     *
-     * @param array $config
-     *
-     * @return array
-     */
-    private function mergeTenantConfig(array $config): array
-    {
-        // check if a _defaults tenant is set and merge its config into all defined
-        // tenants
-        $defaults = [];
-        if (isset($config['_defaults'])) {
-            $defaults = $config['_defaults'];
-            unset($config['_defaults']);
-        }
-
-        foreach ($config as $tenant => $tenantConfig) {
-            // tenants starting with _defaults are not included in the final config
-            // but can be used for yaml inheritance
-            if (preg_match('/^_defaults/i', $tenant)) {
-                unset($config[$tenant]);
-                continue;
-            }
-
-            $config[$tenant] = $this->mergeDefaults($defaults, $tenantConfig ?? []);
-        }
-
-        // if no default tenant is set, use the _defaults as default tenant
-        if (!isset($config['default']) && !empty($defaults)) {
-            $config['default'] = $defaults;
-        }
-
-        return $config;
-    }
-
-    /**
-     * Merges defaults with values but does not transform scalars into arrays as array_merge_recursive does
-     *
-     * @param array $defaults
-     * @param array $values
-     *
-     * @return array
-     */
-    private function mergeDefaults(array $defaults, array $values): array
-    {
-        foreach ($defaults as $k => $v) {
-            if (!isset($values[$k]) || (is_array($values[$k]) && empty($values[$k]))) {
-                $values[$k] = $v;
-            } else {
-                if (!is_array($v)) {
-                    // only merging arrays
-                    continue;
-                }
-
-                if (!is_array($values[$k])) {
-                    throw new InvalidConfigurationException(sprintf(
-                        'Can\'t merge defaults key %s as defaults is an array while the value to merge is a %s',
-                        $k, gettype($values[$k])
-                    ));
-                }
-
-                if ($this->isArrayAssociative($v)) {
-                    $values[$k] = $this->mergeDefaults($defaults[$k], $values[$k]);
-                } else {
-                    $values[$k] = array_merge($defaults[$k], $values[$k]);
-                }
-            }
-        }
-
-        return $values;
-    }
-
-    /**
-     * Checks if array is associative or sequential
-     *
-     * @see https://stackoverflow.com/a/173479/9131
-     *
-     * @param array $array
-     *
-     * @return bool
-     */
-    private function isArrayAssociative(array $array): bool
-    {
-        if ([] === $array) {
-            return false;
-        }
-
-        return array_keys($array) !== range(0, count($array) - 1);
     }
 }
