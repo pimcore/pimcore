@@ -1134,7 +1134,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping extends \Pimcore\B
  * @deprecated
  * class OnlineShop_Framework_Impl_AttributeAvailabilitySystem
  */
-class OnlineShop_Framework_Impl_AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem
+class OnlineShop_Framework_Impl_AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
 {
 }
 
@@ -1898,7 +1898,7 @@ interface IAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\A
  * @deprecated
  * class AttributeAvailabilitySystem
  */
-class AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem
+class AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
 {
 }
 

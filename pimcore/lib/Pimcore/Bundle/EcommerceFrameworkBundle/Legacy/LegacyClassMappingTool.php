@@ -363,7 +363,7 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount' => 'OnlineShop\Framework\CartManager\CartPriceModificator\Discount',
         'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping' => 'OnlineShop\Framework\CartManager\CartPriceModificator\Shipping',
 
-        'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem' => 'OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem' => 'OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException' => 'OnlineShop\Framework\Exception\InvalidConfigException',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException' => 'OnlineShop\Framework\Exception\UnsupportedException',
