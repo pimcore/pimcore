@@ -23,19 +23,10 @@ services:
             - { name: kernel.event_subscriber }
             - { name: monolog.logger, channel: pimcore_ecommerce }
 
-    pimcore_ecommerce.price_systems_locator:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
-
-    pimcore_ecommerce.availability_systems_locator:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
-
     Pimcore\Bundle\EcommerceFrameworkBundle\Factory:
         arguments:
             - '@service_container'
-            - '@pimcore_ecommerce.environment'
-            - '@pimcore_ecommerce.price_systems_locator'
-            - '@pimcore_ecommerce.availability_systems_locator'
-            - '@pimcore_ecommerce.voucher_service'
-            - '@pimcore_ecommerce.voucher_service.token_manager_factory'
+            - '@pimcore_ecommerce.locator.cart_manager'
+            - '@pimcore_ecommerce.locator.order_manager'
+            - '@pimcore_ecommerce.locator.price_system'
+            - '@pimcore_ecommerce.locator.availability_system'

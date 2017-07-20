@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
@@ -34,7 +34,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManagerFactory;
 use Pimcore\Config\Config;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,38 +46,42 @@ class Factory
     const CONFIG_PATH = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php';
 
     /**
-     * @var Factory
-     */
-    private static $instance;
-
-    /**
      * @var ContainerInterface
      */
     private $container;
 
     /**
+     * @var IEnvironment
+     */
+    private $environment;
+
+    /**
      * Tenant specific cart managers
      *
-     * @var ICartManager[]
+     * @var PsrContainerInterface
      */
-    private $cartManagers = [];
+    private $cartManagers;
 
     /**
      * Tenant specific order managers
      *
-     * @var IOrderManager[]
-     */
-    private $orderManagers = [];
-
-    /**
      * @var PsrContainerInterface
      */
-    private $priceSystemsLocator;
+    private $orderManagers;
 
     /**
+     * Price systems registered by name
+     *
      * @var PsrContainerInterface
      */
-    private $availabilitySystemsLocator;
+    private $priceSystems;
+
+    /**
+     * Availability systems registered by name
+     *
+     * @var PsrContainerInterface
+     */
+    private $availabilitySystems;
 
     /**
      * @var Config
@@ -106,53 +109,173 @@ class Factory
     private $allTenants;
 
     /**
-     * @var IEnvironment
-     */
-    private $environment;
-
-    /**
      * @var IPaymentManager
      */
     private $paymentManager;
 
     /**
-     * @var IVoucherService
+     * Systems with multiple instances (e.g. price systems or tenant specific systems) are
+     * injected through a service locator which is indexed by tenant/name. All other services
+     * are loaded from the container on demand to make sure only services needed are built.
+     *
+     * @param ContainerInterface $container
+     * @param PsrContainerInterface $cartManagers
+     * @param PsrContainerInterface $orderManagers
+     * @param PsrContainerInterface $priceSystemsLocator
+     * @param PsrContainerInterface $availabilitySystems
      */
-    private $voucherService;
-
-    /**
-     * @var ITokenManagerFactory
-     */
-    private $tokenManagerFactory;
-
     public function __construct(
         ContainerInterface $container,
-        IEnvironment $environment,
+        PsrContainerInterface $cartManagers,
+        PsrContainerInterface $orderManagers,
         PsrContainerInterface $priceSystemsLocator,
-        PsrContainerInterface $availabilitySystemsLocator,
-        IVoucherService $voucherService,
-        ITokenManagerFactory $tokenManagerFactory
+        PsrContainerInterface $availabilitySystems
     )
     {
-        $this->container = $container;
-        $this->environment = $environment;
-        $this->priceSystemsLocator = $priceSystemsLocator;
-        $this->availabilitySystemsLocator = $availabilitySystemsLocator;
-        $this->voucherService = $voucherService;
-        $this->tokenManagerFactory = $tokenManagerFactory;
+        $this->container           = $container;
+        $this->cartManagers        = $cartManagers;
+        $this->orderManagers       = $orderManagers;
+        $this->priceSystems        = $priceSystemsLocator;
+        $this->availabilitySystems = $availabilitySystems;
 
         $this->init();
     }
 
-    public static function getInstance()
+    public static function getInstance(): self
     {
         return \Pimcore::getContainer()->get(Factory::class);
     }
 
-    private function get(string $serviceId)
+    public function getEnvironment(): IEnvironment
     {
-        return $this->container->get($serviceId);
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_ENVIRONMENT);
     }
+
+    /**
+     * Returns cart manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
+     *
+     * @param string|null $tenant
+     *
+     * @return ICartManager
+     * @throws UnsupportedException
+     */
+    public function getCartManager(string $tenant = null): ICartManager
+    {
+        if (null === $tenant) {
+            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
+        }
+
+        if (!$this->cartManagers->has($tenant)) {
+            throw new UnsupportedException(sprintf(
+                'Cart manager for tenant "%s" is not defined. Please check the configuration.',
+                $tenant
+            ));
+        }
+
+        return $this->cartManagers->get($tenant);
+    }
+
+    /**
+     * Returns order manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
+     *
+     * @param string|null $tenant
+     *
+     * @return IOrderManager
+     * @throws UnsupportedException
+     */
+    public function getOrderManager(string $tenant = null): IOrderManager
+    {
+        if (null === $tenant) {
+            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
+        }
+
+        if (!$this->orderManagers->has($tenant)) {
+            throw new UnsupportedException(sprintf(
+                'Order manager for tenant "%s" is not defined. Please check the configuration.',
+                $tenant
+            ));
+        }
+
+        return $this->orderManagers->get($tenant);
+    }
+
+    /**
+     * Returns a price system by name. Falls back to "default" if no name is passed.
+     *
+     * @param string|null $name
+     *
+     * @return IPriceSystem
+     * @throws UnsupportedException
+     */
+    public function getPriceSystem(string $name = null): IPriceSystem
+    {
+        if (null === $name) {
+            $name = 'default';
+        }
+
+        if (!$this->priceSystems->has($name)) {
+            throw new UnsupportedException(sprintf(
+                'Price system "%s" is not supported. Please check the configuration.',
+                $name
+            ));
+        }
+
+        return $this->priceSystems->get($name);
+    }
+
+    /**
+     * Returns an availability system by name. Falls back to "default" if no name is passed.
+     *
+     * @param string|null $name
+     *
+     * @return IAvailabilitySystem
+     * @throws UnsupportedException
+     */
+    public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
+    {
+        if (null === $name) {
+            $name = 'default';
+        }
+
+        if (!$this->availabilitySystems->has($name)) {
+            throw new UnsupportedException(sprintf(
+                'Availability system "%s" is not supported. Please check the configuration.',
+                $name
+            ));
+        }
+
+        return $this->availabilitySystems->get($name);
+    }
+
+    public function getVoucherService(): IVoucherService
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_VOUCHER_SERVICE);
+    }
+
+    /**
+     * Builds a token manager for a specific token configuration
+     *
+     * @param AbstractVoucherTokenType $configuration
+     *
+     * @return ITokenManager
+     */
+    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
+    {
+        $tokenManagerFactory = $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TOKEN_MANAGER_FACTORY);
+
+        return $tokenManagerFactory->getTokenManager($configuration);
+    }
+
+    public function getTrackingManager(): ITrackingManager
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
+    }
+
+
+
+
 
     /**
      * creates new factory instance and optionally resets environment too
@@ -199,11 +322,6 @@ class Factory
         $this->configurePaymentManager($config);
 
         $this->configureOfferToolService($config);
-    }
-
-    public function getTrackingManager(): ITrackingManager
-    {
-        return $this->get('pimcore_ecommerce.tracking.tracking_manager');
     }
 
     private function configureCheckoutManager($config)
@@ -272,18 +390,7 @@ class Factory
         }
     }
 
-    public function getCartManager(string $tenant = null): ICartManager
-    {
-        if (null === $tenant) {
-            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
-        }
 
-        if (!isset($this->cartManagers[$tenant])) {
-            $this->cartManagers[$tenant] = $this->get(sprintf('pimcore_ecommerce.cart_manager.%s', $tenant));
-        }
-
-        return $this->cartManagers[$tenant];
-    }
 
     /**
      * @throws InvalidConfigException
@@ -337,58 +444,9 @@ class Factory
         return $commitOrderProcessor;
     }
 
-    public function getEnvironment(): IEnvironment
-    {
-        return $this->get('pimcore_ecommerce.environment');
-    }
 
-    /**
-     * Loads a price system by name. Falls back to "default" if no name is passed.
-     *
-     * @param string|null $name
-     *
-     * @return IPriceSystem
-     * @throws UnsupportedException
-     */
-    public function getPriceSystem(string $name = null): IPriceSystem
-    {
-        if (null === $name) {
-            $name = 'default';
-        }
 
-        if (!$this->priceSystemsLocator->has($name)) {
-            throw new UnsupportedException(sprintf(
-                'Price system "%s" is not supported. Please check the configuration.',
-                $name
-            ));
-        }
 
-        return $this->priceSystemsLocator->get($name);
-    }
-
-    /**
-     * Loads an availability system by name. Falls back to "default" if no name is passed.
-     *
-     * @param string|null $name
-     *
-     * @return IAvailabilitySystem
-     * @throws UnsupportedException
-     */
-    public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
-    {
-        if (null === $name) {
-            $name = 'default';
-        }
-
-        if (!$this->availabilitySystemsLocator->has($name)) {
-            throw new UnsupportedException(sprintf(
-                'Availability system "%s" is not supported. Please check the configuration.',
-                $name
-            ));
-        }
-
-        return $this->availabilitySystemsLocator->get($name);
-    }
 
     /**
      * @var IndexService
@@ -476,39 +534,4 @@ class Factory
         return $this->paymentManager;
     }
 
-    /**
-     * @param string|null $tenant
-     *
-     * @return IOrderManager
-     */
-    public function getOrderManager(string $tenant = null): IOrderManager
-    {
-        if (null === $tenant) {
-            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
-        }
-
-        if (!isset($this->orderManagers[$tenant])) {
-            $this->orderManagers[$tenant] = $this->get(sprintf('pimcore_ecommerce.order_manager.%s', $tenant));
-        }
-
-        return $this->orderManagers[$tenant];
-    }
-
-    /**
-     * @return IVoucherService
-     */
-    public function getVoucherService(): IVoucherService
-    {
-        return $this->voucherService;
-    }
-
-    /**
-     * @param AbstractVoucherTokenType $configuration
-     *
-     * @return ITokenManager
-     */
-    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
-    {
-        return $this->tokenManagerFactory->getTokenManager($configuration);
-    }
 }
