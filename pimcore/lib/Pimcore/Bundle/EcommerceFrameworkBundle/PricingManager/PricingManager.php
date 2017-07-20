@@ -237,6 +237,22 @@ class PricingManager implements IPricingManager
     }
 
     /**
+     * @return array
+     */
+    public function getConditionMapping(): array
+    {
+        return $this->conditionMapping;
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionMapping(): array
+    {
+        return $this->actionMapping;
+    }
+
+    /**
      * Factory
      *
      * @param string $type
