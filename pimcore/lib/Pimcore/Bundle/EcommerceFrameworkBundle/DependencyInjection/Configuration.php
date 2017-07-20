@@ -25,6 +25,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\PlaceholderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\TenantProcessor;
@@ -68,6 +72,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildEnvironmentNode())
             ->append($this->buildCartManagerNode())
             ->append($this->buildOrderManagerNode())
+            ->append($this->buildPricingManagerNode())
             ->append($this->buildPriceSystemsNode())
             ->append($this->buildAvailabilitySystemsNode())
             ->append($this->buildProductIndexNode())
@@ -262,6 +267,56 @@ class Configuration implements ConfigurationInterface
                 ->end();
 
         return $orderManager;
+    }
+
+    private function buildPricingManagerNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $pricingManager = $builder->root('pricing_manager');
+        $pricingManager->addDefaultsIfNotSet();
+
+        $pricingManager
+            ->canBeDisabled()
+            ->children()
+                ->scalarNode('pricing_manager_id')
+                    ->cannotBeEmpty()
+                    ->defaultValue(PricingManager::class)
+                ->end()
+                ->arrayNode('pricing_manager_options')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('rule_class')
+                            ->cannotBeEmpty()
+                            ->defaultValue(Rule::class)
+                        ->end()
+                        ->scalarNode('price_info_class')
+                            ->cannotBeEmpty()
+                            ->defaultValue(PriceInfo::class)
+                        ->end()
+                        ->scalarNode('environment_class')
+                            ->cannotBeEmpty()
+                            ->defaultValue(Environment::class)
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('conditions')
+                    ->info('Condition mapping from name to used class')
+                    ->useAttributeAsKey('name')
+                    ->prototype('scalar')
+                        ->cannotBeEmpty()
+                    ->end()
+                ->end()
+                ->arrayNode('actions')
+                    ->info('Action mapping from name to used class')
+                    ->useAttributeAsKey('name')
+                    ->prototype('scalar')
+                        ->cannotBeEmpty()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $pricingManager;
     }
 
     private function buildPriceSystemsNode(): NodeDefinition

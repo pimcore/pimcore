@@ -94,11 +94,6 @@ class Factory
     private $checkoutManagers;
 
     /**
-     * @var IPricingManager
-     */
-    private $pricingManager;
-
-    /**
      * @var  IService
      */
     private $offerToolService;
@@ -199,6 +194,11 @@ class Factory
         }
 
         return $this->orderManagers->get($tenant);
+    }
+
+    public function getPricingManager(): IPricingManager
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER);
     }
 
     /**
@@ -318,9 +318,7 @@ class Factory
     private function checkConfig($config)
     {
         $this->configureCheckoutManager($config);
-        $this->configurePricingManager($config);
         $this->configurePaymentManager($config);
-
         $this->configureOfferToolService($config);
     }
 
@@ -331,27 +329,6 @@ class Factory
         } else {
             if (!class_exists($config->ecommerceframework->checkoutmanager->class)) {
                 throw new InvalidConfigException('Checkoutmanager class ' . $config->ecommerceframework->checkoutmanager->class . ' not found.');
-            }
-        }
-    }
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function configurePricingManager(Config $config)
-    {
-        if (empty($config->ecommerceframework->pricingmanager->class)) {
-            throw new InvalidConfigException('No PricingManager class defined.');
-        } else {
-            if (class_exists($config->ecommerceframework->pricingmanager->class)) {
-                $this->pricingManager = new $config->ecommerceframework->pricingmanager->class($config->ecommerceframework->pricingmanager->config, \Pimcore::getContainer()->get('session'));
-                if (!($this->pricingManager instanceof IPricingManager)) {
-                    throw new InvalidConfigException('PricingManager class ' . $config->ecommerceframework->pricingmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager.');
-                }
-            } else {
-                throw new InvalidConfigException('PricingManager class ' . $config->ecommerceframework->pricingmanager->class . ' not found.');
             }
         }
     }
@@ -501,13 +478,7 @@ class Factory
         $this->environment->save();
     }
 
-    /**
-     * @return IPricingManager
-     */
-    public function getPricingManager()
-    {
-        return $this->pricingManager;
-    }
+
 
     /**
      * @return IService

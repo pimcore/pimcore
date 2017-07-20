@@ -26,6 +26,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
+    const SERVICE_ID_PRICING_MANAGER = 'pimcore_ecommerce.pricing_manager';
     const SERVICE_ID_VOUCHER_SERVICE = 'pimcore_ecommerce.voucher_service';
     const SERVICE_ID_TOKEN_MANAGER_FACTORY = 'pimcore_ecommerce.voucher_service.token_manager_factory';
     const SERVICE_ID_TRACKING_MANAGER = 'pimcore_ecommerce.tracking.tracking_manager';
@@ -47,6 +48,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('environment.yml');
         $loader->load('cart_manager.yml');
         $loader->load('order_manager.yml');
+        $loader->load('pricing_manager.yml');
         $loader->load('price_systems.yml');
         $loader->load('availability_systems.yml');
         $loader->load('voucher_service.yml');
@@ -55,6 +57,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerEnvironmentConfiguration($config['environment'], $container);
         $this->registerCartManagerConfiguration($config['cart_manager'], $container);
         $this->registerOrderManagerConfiguration($config['order_manager'], $container);
+        $this->registerPricingManagerConfiguration($config['pricing_manager'], $container);
         $this->registerPriceSystemsConfiguration($config['price_systems'], $container);
         $this->registerAvailabilitySystemsConfiguration($config['availability_systems'], $container);
         $this->registerVoucherServiceConfig($config['voucher_service'], $container);
@@ -130,6 +133,19 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupLocator($container, 'order_manager', $mapping);
+    }
+
+    private function registerPricingManagerConfiguration(array $config, ContainerBuilder $container)
+    {
+        $container->setAlias(
+            self::SERVICE_ID_PRICING_MANAGER,
+            $config['pricing_manager_id']
+        );
+
+        $container->setParameter('pimcore_ecommerce.pricing_manager.enabled', $config['enabled']);
+        $container->setParameter('pimcore_ecommerce.pricing_manager.condition_mapping', $config['conditions']);
+        $container->setParameter('pimcore_ecommerce.pricing_manager.action_mapping', $config['actions']);
+        $container->setParameter('pimcore_ecommerce.pricing_manager.options', $config['pricing_manager_options']);
     }
 
     private function registerPriceSystemsConfiguration(array $config, ContainerBuilder $container)

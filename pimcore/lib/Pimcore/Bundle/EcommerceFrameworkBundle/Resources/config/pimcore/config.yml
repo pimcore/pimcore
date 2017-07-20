@@ -20,6 +20,24 @@ pimcore_ecommerce_framework:
         tenants:
             default: ~
 
+    pricing_manager:
+        conditions:
+            Bracket: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
+            DateRange: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange
+            CartAmount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount
+            CatalogProduct: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProduct
+            CatalogCategory: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogCategory
+            Token: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Token
+            Sold: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sold
+            Sales: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sales
+            ClientIp: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ClientIp
+            VoucherToken: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken
+        actions:
+            ProductDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount
+            CartDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartDiscount
+            Gift: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\Gift
+            FreeShipping: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\FreeShipping
+
     price_systems:
         default:
             id: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem

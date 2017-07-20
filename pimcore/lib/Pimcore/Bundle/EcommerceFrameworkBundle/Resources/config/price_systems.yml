@@ -10,5 +10,5 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem:
         arguments:
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager'
+            - '@pimcore_ecommerce.pricing_manager'
             - '@pimcore_ecommerce.environment'
