@@ -123,6 +123,7 @@ pimcore:
                     persona: \Pimcore\Model\Object\ClassDefinition\Data\Persona
                     personamultiselect: \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect
                     quantityValue: \Pimcore\Model\Object\ClassDefinition\Data\QuantityValue
+                    inputQuantityValue: \Pimcore\Model\Object\ClassDefinition\Data\InputQuantityValue
                     select: \Pimcore\Model\Object\ClassDefinition\Data\Select
                     slider: \Pimcore\Model\Object\ClassDefinition\Data\Slider
                     structuredTable: \Pimcore\Model\Object\ClassDefinition\Data\StructuredTable
