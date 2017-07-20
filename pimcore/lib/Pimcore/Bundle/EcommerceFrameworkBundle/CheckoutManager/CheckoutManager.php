@@ -34,14 +34,14 @@ class CheckoutManager implements ICheckoutManager
     const TRACK_ECOMMERCE_UNIVERSAL = 'checkout_trackecommerce_universal';
 
     /**
-     * needed for effective access to one specific checkout step
+     * Needed for effective access to one specific checkout step
      *
      * @var ICheckoutStep[]
      */
     protected $checkoutSteps;
 
     /**
-     * needed for preserving order of checkout steps
+     * Needed for preserving order of checkout steps
      *
      * @var ICheckoutStep[]
      */
@@ -91,7 +91,7 @@ class CheckoutManager implements ICheckoutManager
 
     /**
      * @param ICart $cart
-     * @param                            $config
+     * @param $config
      */
     public function __construct(ICart $cart, $config)
     {
@@ -124,7 +124,7 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * creates, configures and returns commit order processor
+     * Creates, configures and returns commit order processor
      *
      * @return ICommitOrderProcessor
      */
@@ -167,9 +167,9 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Payment is not activated');
         }
 
+        // create order
         $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
-        // create order
 
         if ($order->getOrderState() == AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new UnsupportedException('Order already committed');
@@ -230,9 +230,9 @@ class CheckoutManager implements ICheckoutManager
 
             $env->removeCustomItem(self::CURRENT_STEP . '_' . $this->cart->getId());
 
+            // setting e-commerce tracking information to environment for later use in view
             $env->setCustomItem(self::TRACK_ECOMMERCE . '_' . $order->getOrdernumber(), $this->generateGaEcommerceCode($order));
             $env->setCustomItem(self::TRACK_ECOMMERCE_UNIVERSAL . '_' . $order->getOrdernumber(), $this->generateUniversalEcommerceCode($order));
-            // setting e-commerce tracking information to environment for later use in view
         }
         $env->save();
     }
@@ -242,9 +242,9 @@ class CheckoutManager implements ICheckoutManager
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams)
     {
+        // check if order is already committed and payment information with same internal payment id has same state
+        // if so, do nothing and return order
         if ($committedOrder = $this->getCommitOrderProcessor()->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
-            // check if order is already committed and payment information with same internal payment id has same state
-            // if so, do nothing and return order
             return $committedOrder;
         }
 
@@ -260,8 +260,8 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Checkout not finished yet.');
         }
 
-        $order = $this->getCommitOrderProcessor()->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         // delegate commit order to commit order processor
+        $order = $this->getCommitOrderProcessor()->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         $this->updateEnvironmentAfterOrderCommit($order);
 
         return $order;
@@ -304,9 +304,9 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Checkout not finished yet.');
         }
 
+        // delegate commit order to commit order processor
         $order = Factory::getInstance()->getOrderManager()->getOrCreateOrderFromCart($this->cart);
         $order = $this->getCommitOrderProcessor()->commitOrder($order);
-        // delegate commit order to commit order processor
 
         $this->updateEnvironmentAfterOrderCommit($order);
 
@@ -484,7 +484,7 @@ class CheckoutManager implements ICheckoutManager
                 // checkout NOT finished
                 $this->finished = false;
             } else {
-                //checkout is finished
+                // checkout is finished
                 $this->finished = true;
             }
             $env->setCustomItem(self::FINISHED . '_' . $this->cart->getId(), $this->finished);
@@ -544,7 +544,7 @@ class CheckoutManager implements ICheckoutManager
         $orderManager = Factory::getInstance()->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
 
-        return $order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED;
+        return $order && $order->getOrderState() === $order::ORDER_STATE_COMMITTED;
     }
 
     /**
