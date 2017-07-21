@@ -542,6 +542,9 @@ class QPay implements IPayment
 
             case static::HASH_ALGO_HMAC_SHA512:
                 return $this->computeHmacSha512Fingerprint($data);
+
+            default:
+                throw new \LogicException(sprintf('Hash algorithm "%s" is not supported', $this->hashAlgorithm));
         }
     }
 

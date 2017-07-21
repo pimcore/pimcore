@@ -33,6 +33,13 @@ use Pimcore\Tool;
 
 class WirecardSeamless implements IPayment
 {
+    const PAYMENT_RETURN_STATE_SUCCESS = 'success';
+    const PAYMENT_RETURN_STATE_FAILURE = 'failure';
+    const PAYMENT_RETURN_STATE_CANCEL = 'cancel';
+    const PAYMENT_RETURN_STATE_PENDING = 'pending';
+
+    const ENCODED_ORDERIDENT_DELIMITER = '---';
+
     private $settings;
     private $partial;
 
@@ -45,12 +52,10 @@ class WirecardSeamless implements IPayment
     private $WEBSITE_URL;
     private $CHECKOUT_WINDOW_NAME;
 
-    const PAYMENT_RETURN_STATE_SUCCESS = 'success';
-    const PAYMENT_RETURN_STATE_FAILURE = 'failure';
-    const PAYMENT_RETURN_STATE_CANCEL = 'cancel';
-    const PAYMENT_RETURN_STATE_PENDING = 'pending';
-
-    const ENCODED_ORDERIDENT_DELIMITER = '---';
+    /**
+     * @var array
+     */
+    protected $authorizedData;
 
     /**
      * @param Config $config
@@ -121,6 +126,7 @@ class WirecardSeamless implements IPayment
 
         $result = $this->serverToServerRequest($this->URL_DATASTORAGE_INIT, $postFields);
 
+        // TODO replace with session object!
         $_SESSION['Wirecard_dataStorageId'] = $result['storageId'];
         $javascriptURL = $result['javascriptUrl'];
 
