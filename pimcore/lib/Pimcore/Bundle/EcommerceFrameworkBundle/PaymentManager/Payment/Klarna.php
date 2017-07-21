@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Config\Config;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Klarna implements IPayment
 {
@@ -42,26 +42,47 @@ class Klarna implements IPayment
      */
     protected $endpoint;
 
-    /**
-     * @param Config $config
-     *
-     * @throws \Exception
-     */
-    public function __construct(Config $config)
+    public function __construct(array $options)
     {
-        $settings = $config->config->{$config->mode};
-        if ($settings->eid == '' || $settings->{'shared-secret-key'} == '') {
-            throw new \Exception('payment configuration is wrong. eid or shared-secret-key is empty !');
-        }
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
+    }
 
-        $this->eid = $settings->eid;
-        $this->sharedSecretKey = $settings->{'shared-secret-key'};
+    protected function processOptions(array $options)
+    {
+        $this->eid             = $options['eid'];
+        $this->sharedSecretKey = $options['shared_secret_key'];
 
-        if ($config->mode == 'live') {
+        // set endpoint depending on mode
+        if ('live' === $options['mode']) {
             $this->endpoint = 'https://checkout.klarna.com/checkout/orders';
         } else {
             $this->endpoint = 'https://checkout.testdrive.klarna.com/checkout/orders';
         }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setRequired([
+            'mode',
+            'eid',
+            'shared_secret_key'
+        ]);
+
+        $resolver
+            ->setDefault('mode', 'sandbox')
+            ->setAllowedValues('mode', ['sandbox', 'live']);
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+        }
+
+        return $resolver;
     }
 
     /**

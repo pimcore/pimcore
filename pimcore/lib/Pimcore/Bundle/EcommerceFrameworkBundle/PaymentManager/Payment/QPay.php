@@ -20,12 +20,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QPay implements IPayment
 {
@@ -83,66 +83,75 @@ class QPay implements IPayment
         'shopId' // value=mobile for mobile checkout page
     ];
 
-    public function __construct(Config $config, FormFactoryInterface $formFactory)
+    public function __construct(array $options, FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
 
-        $settings = $config->config->{$config->mode};
-        if ($settings->secret == '' || $settings->customer == '') {
-            throw new \Exception('payment configuration is wrong. secret or customer is empty !');
-        }
-
-        $this->secret = $settings->secret;
-        $this->customer = $settings->customer;
-        $this->toolkitPassword = $settings->toolkitPassword;
-
-        if ($settings->paymenttype) {
-            $this->paymenttype = $settings->paymenttype;
-        }
-
-        $this->initHashAlgorithm($settings);
-        $this->initOptionalPaymentProperties($settings);
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
     }
 
-    /**
-     * Initialize hash algorithm
-     *
-     * @param Config $settings
-     */
-    protected function initHashAlgorithm(Config $settings)
+    protected function processOptions(array $options)
     {
-        if ($settings->hashAlgorithm) {
-            $hashAlgorithm = (string) $settings->hashAlgorithm;
-            if (!in_array($hashAlgorithm, [static::HASH_ALGO_MD5, static::HASH_ALGO_HMAC_SHA512])) {
-                throw new \InvalidArgumentException(sprintf('%s is no valid hash algorithm', $hashAlgorithm));
-            }
+        $this->customer = $options['customer'];
+        $this->secret   = $options['secret'];
 
-            $this->hashAlgorithm = $hashAlgorithm;
+        if (isset($options['toolkit_password'])) {
+            $this->toolkitPassword = $options['toolkit_password'];
+        }
+
+        if (isset($options['payment_type'])) {
+            $this->paymenttype = $options['payment_type'];
+        }
+
+        if (isset($options['hash_algorithm'])) {
+            $this->hashAlgorithm = $options['hash_algorithm'];
+        }
+
+        if (isset($options['optional_payment_properties'])) {
+            $this->optionalPaymentProperties = array_unique(array_merge(
+                $this->optionalPaymentProperties,
+                $options['optional_payment_properties']
+            ));
         }
     }
 
-    /**
-     * Initialize optional payment properties from config
-     *
-     * @param Config $settings
-     */
-    protected function initOptionalPaymentProperties(Config $settings)
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
-        if ($settings->optionalPaymentProperties instanceof Config) {
-            $configArray = $settings->optionalPaymentProperties->toArray();
-            if (isset($configArray['property'])) {
-                // Zend_Config behaves differently if there's just a single object in the set
-                if (is_array($configArray['property'])) {
-                    foreach ($configArray['property'] as $optionalProperty) {
-                        $this->optionalPaymentProperties[] = $optionalProperty;
-                    }
-                } elseif (is_string($configArray['property'])) {
-                    $this->optionalPaymentProperties[] = $configArray['property'];
-                }
-            }
+        $resolver->setRequired([
+            'customer',
+            'secret'
+        ]);
 
-            $this->optionalPaymentProperties = array_unique($this->optionalPaymentProperties);
+        $resolver
+            ->setDefined('toolkit_password')
+            ->setAllowedTypes('toolkit_password', ['string']);
+
+        $resolver
+            ->setDefined('payment_type')
+            ->setAllowedTypes('payment_type', ['string']);
+
+        $resolver
+            ->setDefined('hash_algorithm')
+            ->setAllowedValues('hash_algorithm', [
+                self::HASH_ALGO_MD5,
+                self::HASH_ALGO_HMAC_SHA512
+            ]);
+
+        $resolver
+            ->setDefined('optional_payment_properties')
+            ->setAllowedTypes('optional_payment_properties', 'array');
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
         }
+
+        return $resolver;
     }
 
     /**

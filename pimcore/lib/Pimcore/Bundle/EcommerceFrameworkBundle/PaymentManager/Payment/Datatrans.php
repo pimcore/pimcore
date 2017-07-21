@@ -21,12 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Datatrans implements IPayment
 {
@@ -71,34 +71,68 @@ class Datatrans implements IPayment
      */
     protected $paymentStatus;
 
-    public function __construct(Config $config, FormFactoryInterface $formFactory)
+    public function __construct(array $options, FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
 
-        $settings = $config->config->{$config->mode};
-        if ($settings->sign == '' || $settings->merchantId == '') {
-            throw new \Exception('payment configuration is wrong. secret or customer is empty !');
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
+    }
+
+    protected function processOptions(array $options)
+    {
+        $this->merchantId = $options['merchant_id'];
+        $this->sign       = $options['sign'];
+
+        // use digital signature if configured
+        if (isset($options['use_digital_signature'])) {
+            $this->useDigitalSignature = $options['use_digital_signature'];
         }
 
-        $this->merchantId = $settings->merchantId;
-        $this->sign = $settings->sign;
-
-        // use digitally signed
-        if ($settings->digitalSignature) {
-            $this->useDigitalSignature = (bool)$settings->digitalSignature;
-        }
-
-        if ($config->mode == 'live') {
-            $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
-            $this->endpoint['script'] = 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
-            $this->endpoint['xmlAuthorize'] = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
-            $this->endpoint['xmlProcessor'] = 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp';
+        // set endpoint depending on mode
+        if ('live' === $options['mode']) {
+            $this->endpoint = array_merge($this->endpoint, [
+                'form'         => 'https://payment.datatrans.biz/upp/jsp/upStart.jsp',
+                'script'       => 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
+                'xmlAuthorize' => 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp',
+            ]);
         } else {
-            $this->endpoint['form'] = 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp';
-            $this->endpoint['script'] = 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
-            $this->endpoint['xmlAuthorize'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
-            $this->endpoint['xmlProcessor'] = 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp';
+            $this->endpoint = array_merge($this->endpoint, [
+                'form'         => 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp',
+                'script'       => 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
+                'xmlAuthorize' => 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp',
+            ]);
         }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setRequired([
+            'mode',
+            'merchant_id',
+            'sign'
+        ]);
+
+        $resolver
+            ->setDefault('mode', 'sandbox')
+            ->setAllowedValues('mode', ['sandbox', 'live']);
+
+        $resolver
+            ->setDefined('use_digital_signature')
+            ->setAllowedTypes('use_digital_signature', ['bool']);
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+        }
+
+        return $resolver;
     }
 
     /**
