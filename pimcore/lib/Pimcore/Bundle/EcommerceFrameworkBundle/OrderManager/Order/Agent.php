@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
@@ -410,7 +411,7 @@ class Agent implements IOrderAgent
     {
         $order = $this->getOrder();
         $fingerprintParts = [];
-        $fingerprintParts[] = $order->getTotalPrice();
+        $fingerprintParts[] = Decimal::create($order->getTotalPrice())->asString();
         $fingerprintParts[] = $order->getCreationDate();
         foreach ($order->getItems() as $item) {
             $fingerprintParts[] = $item->getProductNumber();

@@ -164,7 +164,7 @@ class WirecardSeamless implements IPayment
         $fields = [
             'customerId' => $this->settings->customerId,
             'shopId' => $this->settings->shopId,
-            'amount' => round($price->getAmount(), 2),
+            'amount' => round($price->getAmount()->asNumeric(), 2),
             'currency' => $price->getCurrency()->getShortName(),
             'paymentType' => $paymentType,
             'language' => $config['language'] ?: 'de',
