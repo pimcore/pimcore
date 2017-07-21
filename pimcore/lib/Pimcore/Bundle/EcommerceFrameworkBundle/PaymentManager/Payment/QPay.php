@@ -25,13 +25,18 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class QPay implements IPayment
 {
     // supported hashing algorithms
     const HASH_ALGO_MD5 = 'md5';
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
+
+    /**
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
 
     /**
      * @var string
@@ -78,13 +83,10 @@ class QPay implements IPayment
         'shopId' // value=mobile for mobile checkout page
     ];
 
-    /**
-     * @param Config $config
-     *
-     * @throws \Exception
-     */
-    public function __construct(Config $config)
+    public function __construct(Config $config, FormFactoryInterface $formFactory)
     {
+        $this->formFactory = $formFactory;
+
         $settings = $config->config->{$config->mode};
         if ($settings->secret == '' || $settings->customer == '') {
             throw new \Exception('payment configuration is wrong. secret or customer is empty !');
@@ -211,7 +213,7 @@ class QPay implements IPayment
         $formData = [];
 
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
-        $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
+        $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
             'attr' => ['id' => 'paymentForm']
         ]);
 

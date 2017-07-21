@@ -26,7 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class Datatrans implements IPayment
 {
@@ -35,6 +35,11 @@ class Datatrans implements IPayment
 
     const AUTH_TYPE_AUTHORIZATION = 'NOA';
     const AUTH_TYPE_FINAL_AUTHORIZATION = 'FOA'; // final authorization (MasterCard/Maestro)
+
+    /**
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
 
     /**
      * @var array
@@ -66,13 +71,10 @@ class Datatrans implements IPayment
      */
     protected $paymentStatus;
 
-    /**
-     * @param Config $config
-     *
-     * @throws \Exception
-     */
-    public function __construct(Config $config)
+    public function __construct(Config $config, FormFactoryInterface $formFactory)
     {
+        $this->formFactory = $formFactory;
+
         $settings = $config->config->{$config->mode};
         if ($settings->sign == '' || $settings->merchantId == '') {
             throw new \Exception('payment configuration is wrong. secret or customer is empty !');
@@ -183,7 +185,7 @@ class Datatrans implements IPayment
 
         // create form
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
-        $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
+        $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
             'attr' => $formAttributes
         ]);
 

@@ -16,18 +16,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Config\Config;
 
 /**
  * Interface for checkout payment provider
  */
 interface IPayment
 {
-    /**
-     * @param Config $config
-     */
-    public function __construct(Config $config);
-
     /**
      * @return string
      */
