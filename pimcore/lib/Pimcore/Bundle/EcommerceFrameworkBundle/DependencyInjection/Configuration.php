@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultO
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
@@ -78,6 +79,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildPricingManagerNode())
             ->append($this->buildPriceSystemsNode())
             ->append($this->buildAvailabilitySystemsNode())
+            ->append($this->buildPaymentManagerNode())
             ->append($this->buildProductIndexNode())
             ->append($this->buildVoucherServiceNode())
             ->append($this->buildOfferToolNode())
@@ -371,6 +373,54 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $availabilitySystems;
+    }
+
+    private function buildPaymentManagerNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $paymentManager = $builder->root('payment_manager');
+        $paymentManager->addDefaultsIfNotSet();
+
+        $paymentManager
+            ->children()
+                ->scalarNode('payment_manager_id')
+                    ->cannotBeEmpty()
+                    ->defaultValue(PaymentManager::class)
+                ->end()
+                ->arrayNode('providers')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('name')->end()
+                            ->scalarNode('provider_id')
+                                ->isRequired()
+                            ->end()
+                            ->scalarNode('profile')
+                                ->isRequired()
+                            ->end()
+                            ->arrayNode('profiles')
+                                ->beforeNormalization()
+                                    ->always(function ($v) {
+                                        if (empty($v) || !is_array($v)) {
+                                            $v = [];
+                                        }
+
+                                        return $this->tenantProcessor->mergeTenantConfig($v);
+                                    })
+                                ->end()
+                                ->useAttributeAsKey('name')
+                                ->prototype('array')
+                                    ->useAttributeAsKey('name')
+                                    ->prototype('variable')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $paymentManager;
     }
 
     private function buildProductIndexNode(): NodeDefinition

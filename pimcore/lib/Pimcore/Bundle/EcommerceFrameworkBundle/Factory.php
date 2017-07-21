@@ -99,11 +99,6 @@ class Factory
     private $allTenants;
 
     /**
-     * @var IPaymentManager
-     */
-    private $paymentManager;
-
-    /**
      * Systems with multiple instances (e.g. price systems or tenant specific systems) are
      * injected through a service locator which is indexed by tenant/name. All other services
      * are loaded from the container on demand to make sure only services needed are built.
@@ -244,6 +239,11 @@ class Factory
         return $this->availabilitySystems->get($name);
     }
 
+    public function getPaymentManager(): IPaymentManager
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
+    }
+
     public function getOfferToolService(): IService
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
@@ -318,7 +318,6 @@ class Factory
     private function checkConfig($config)
     {
         $this->configureCheckoutManager($config);
-        $this->configurePaymentManager($config);
     }
 
     private function configureCheckoutManager($config)
@@ -331,27 +330,6 @@ class Factory
             }
         }
     }
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function configurePaymentManager(Config $config)
-    {
-        if (!empty($config->ecommerceframework->paymentmanager->class)) {
-            if (class_exists($config->ecommerceframework->paymentmanager->class)) {
-                $this->paymentManager = new $config->ecommerceframework->paymentmanager->class($config->ecommerceframework->paymentmanager->config);
-                if (!($this->paymentManager instanceof IPaymentManager)) {
-                    throw new InvalidConfigException('PaymentManager class ' . $config->ecommerceframework->paymentmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager.');
-                }
-            } else {
-                throw new InvalidConfigException('PaymentManager class ' . $config->ecommerceframework->paymentmanager->class . ' not found.');
-            }
-        }
-    }
-
-
 
     /**
      * @throws InvalidConfigException
@@ -460,14 +438,6 @@ class Factory
     {
         $this->getCartManager()->save();
         $this->environment->save();
-    }
-
-    /**
-     * @return IPaymentManager
-     */
-    public function getPaymentManager()
-    {
-        return $this->paymentManager;
     }
 
 }

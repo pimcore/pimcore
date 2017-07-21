@@ -1,0 +1,33 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager:
+        arguments:
+            - '@pimcore_ecommerce.locator.payment_manager.provider'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Datatrans:
+        arguments:
+            $options: []
+            $formFactory: '@form.factory'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Klarna:
+        arguments:
+            $options: []
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPal:
+        arguments:
+            $options: []
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay:
+        arguments:
+            $options: []
+            $formFactory: '@form.factory'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless:
+        arguments:
+            $options: []
+            $templatingEngine: '@templating.engine.delegating'
+            $session: '@session'

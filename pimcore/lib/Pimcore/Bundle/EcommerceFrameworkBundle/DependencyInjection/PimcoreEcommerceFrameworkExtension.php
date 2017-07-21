@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,11 +23,13 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use Symfony\Component\VarDumper\VarDumper;
 
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
     const SERVICE_ID_PRICING_MANAGER = 'pimcore_ecommerce.pricing_manager';
+    const SERVICE_ID_PAYMENT_MANAGER = 'pimcore_ecommerce.payment_manager';
     const SERVICE_ID_VOUCHER_SERVICE = 'pimcore_ecommerce.voucher_service';
     const SERVICE_ID_TOKEN_MANAGER_FACTORY = 'pimcore_ecommerce.voucher_service.token_manager_factory';
     const SERVICE_ID_OFFER_TOOL = 'pimcore_ecommerce.offer_tool';
@@ -52,6 +55,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('pricing_manager.yml');
         $loader->load('price_systems.yml');
         $loader->load('availability_systems.yml');
+        $loader->load('payment_manager.yml');
         $loader->load('voucher_service.yml');
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
@@ -62,6 +66,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerPricingManagerConfiguration($config['pricing_manager'], $container);
         $this->registerPriceSystemsConfiguration($config['price_systems'], $container);
         $this->registerAvailabilitySystemsConfiguration($config['availability_systems'], $container);
+        $this->registerPaymentManagerConfiguration($config['payment_manager'], $container);
         $this->registerVoucherServiceConfig($config['voucher_service'], $container);
         $this->registerOfferToolConfig($config['offer_tool'], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
@@ -177,6 +182,37 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupLocator($container, 'availability_system', $mapping);
+    }
+
+    private function registerPaymentManagerConfiguration(array $config, ContainerBuilder $container)
+    {
+        $container->setAlias(self::SERVICE_ID_PAYMENT_MANAGER, $config['payment_manager_id']);
+
+        $mapping = [];
+
+        foreach ($config['providers'] as $name => $providerConfig) {
+            if (!isset($providerConfig['profiles'][$providerConfig['profile']])) {
+                throw new InvalidConfigurationException(sprintf(
+                    'Payment provider "%s" is configured to use profile "%s", but profile is not defined',
+                    $name,
+                    $providerConfig['profile']
+                ));
+            }
+
+            $profileConfig = $providerConfig['profiles'][$providerConfig['profile']];
+
+            $provider = new ChildDefinition($providerConfig['provider_id']);
+            if (!empty($profileConfig)) {
+                $provider->setArgument('$options', $profileConfig);
+            }
+
+            $serviceId = sprintf('pimcore_ecommerce.payment_manager.provider.%s', $name);
+            $container->setDefinition($serviceId, $provider);
+
+            $mapping[$name] = $serviceId;
+        }
+
+        $this->setupLocator($container, 'payment_manager.provider', $mapping);
     }
 
     private function registerVoucherServiceConfig(array $config, ContainerBuilder $container)
