@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
@@ -33,8 +34,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\PlaceholderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\TenantProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService as DefaultVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
+use Pimcore\Model\Object\OfferToolOffer;
+use Pimcore\Model\Object\OfferToolOfferItem;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
@@ -77,6 +80,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildAvailabilitySystemsNode())
             ->append($this->buildProductIndexNode())
             ->append($this->buildVoucherServiceNode())
+            ->append($this->buildOfferToolNode())
             ->append($this->buildTrackingManagerNode());
 
         return $treeBuilder;
@@ -484,7 +488,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('voucher_service_id')
                     ->cannotBeEmpty()
-                    ->defaultValue(DefaultService::class)
+                    ->defaultValue(DefaultVoucherService::class)
                 ->end()
                 ->arrayNode('voucher_service_options')
                     ->addDefaultsIfNotSet()
@@ -521,6 +525,40 @@ class Configuration implements ConfigurationInterface
         return $voucherService;
     }
 
+    private function buildOfferToolNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $offerTool = $builder->root('offer_tool');
+        $offerTool->addDefaultsIfNotSet();
+
+        $offerTool
+            ->children()
+                ->scalarNode('service_id')
+                    ->defaultValue(DefaultOfferToolService::class)
+                    ->cannotBeEmpty()
+                ->end()
+                ->arrayNode('order_storage')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('offer_class')
+                            ->cannotBeEmpty()
+                            ->defaultValue(OfferToolOffer::class)
+                        ->end()
+                        ->scalarNode('offer_item_class')
+                            ->cannotBeEmpty()
+                            ->defaultValue(OfferToolOfferItem::class)
+                        ->end()
+                        ->scalarNode('parent_folder_path')
+                            ->cannotBeEmpty()
+                            ->defaultValue('/offertool/offers/%%Y/%%m')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $offerTool;
+    }
 
     private function buildTrackingManagerNode(): NodeDefinition
     {

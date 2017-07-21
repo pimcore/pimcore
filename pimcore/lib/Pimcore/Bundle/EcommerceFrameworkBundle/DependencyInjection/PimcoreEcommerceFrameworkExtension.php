@@ -29,6 +29,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
     const SERVICE_ID_PRICING_MANAGER = 'pimcore_ecommerce.pricing_manager';
     const SERVICE_ID_VOUCHER_SERVICE = 'pimcore_ecommerce.voucher_service';
     const SERVICE_ID_TOKEN_MANAGER_FACTORY = 'pimcore_ecommerce.voucher_service.token_manager_factory';
+    const SERVICE_ID_OFFER_TOOL = 'pimcore_ecommerce.offer_tool';
     const SERVICE_ID_TRACKING_MANAGER = 'pimcore_ecommerce.tracking.tracking_manager';
 
     /**
@@ -52,6 +53,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('price_systems.yml');
         $loader->load('availability_systems.yml');
         $loader->load('voucher_service.yml');
+        $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
 
         $this->registerEnvironmentConfiguration($config['environment'], $container);
@@ -61,6 +63,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerPriceSystemsConfiguration($config['price_systems'], $container);
         $this->registerAvailabilitySystemsConfiguration($config['availability_systems'], $container);
         $this->registerVoucherServiceConfig($config['voucher_service'], $container);
+        $this->registerOfferToolConfig($config['offer_tool'], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
     }
 
@@ -192,6 +195,29 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setAlias(
             self::SERVICE_ID_TOKEN_MANAGER_FACTORY,
             $config['token_managers']['factory_id']
+        );
+    }
+
+    private function registerOfferToolConfig(array $config, ContainerBuilder $container)
+    {
+        $container->setAlias(
+            self::SERVICE_ID_OFFER_TOOL,
+            $config['service_id']
+        );
+
+        $container->setParameter(
+            'pimcore_ecommerce.offer_tool.order_storage.offer_class',
+            $config['order_storage']['offer_class']
+        );
+
+        $container->setParameter(
+            'pimcore_ecommerce.offer_tool.order_storage.offer_item_class',
+            $config['order_storage']['offer_item_class']
+        );
+
+        $container->setParameter(
+            'pimcore_ecommerce.offer_tool.order_storage.parent_folder_path',
+            $config['order_storage']['parent_folder_path']
         );
     }
 

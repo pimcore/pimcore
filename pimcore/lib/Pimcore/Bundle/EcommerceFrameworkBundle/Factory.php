@@ -94,11 +94,6 @@ class Factory
     private $checkoutManagers;
 
     /**
-     * @var  IService
-     */
-    private $offerToolService;
-
-    /**
      * @var string[]
      */
     private $allTenants;
@@ -249,6 +244,11 @@ class Factory
         return $this->availabilitySystems->get($name);
     }
 
+    public function getOfferToolService(): IService
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
+    }
+
     public function getVoucherService(): IVoucherService
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_VOUCHER_SERVICE);
@@ -319,7 +319,6 @@ class Factory
     {
         $this->configureCheckoutManager($config);
         $this->configurePaymentManager($config);
-        $this->configureOfferToolService($config);
     }
 
     private function configureCheckoutManager($config)
@@ -329,21 +328,6 @@ class Factory
         } else {
             if (!class_exists($config->ecommerceframework->checkoutmanager->class)) {
                 throw new InvalidConfigException('Checkoutmanager class ' . $config->ecommerceframework->checkoutmanager->class . ' not found.');
-            }
-        }
-    }
-
-    private function configureOfferToolService($config)
-    {
-        if (!empty($config->ecommerceframework->offertool->class)) {
-            if (!class_exists($config->ecommerceframework->offertool->class)) {
-                throw new InvalidConfigException('OfferTool class ' . $config->ecommerceframework->offertool->class . ' not found.');
-            }
-            if (!class_exists($config->ecommerceframework->offertool->orderstorage->offerClass)) {
-                throw new InvalidConfigException('OfferToolOffer class ' . $config->ecommerceframework->offertool->orderstorage->offerClass . ' not found.');
-            }
-            if (!class_exists($config->ecommerceframework->offertool->orderstorage->offerItemClass)) {
-                throw new InvalidConfigException('OfferToolOfferItem class ' . $config->ecommerceframework->offertool->orderstorage->offerItemClass . ' not found.');
             }
         }
     }
@@ -476,25 +460,6 @@ class Factory
     {
         $this->getCartManager()->save();
         $this->environment->save();
-    }
-
-
-
-    /**
-     * @return IService
-     */
-    public function getOfferToolService()
-    {
-        if (empty($this->offerToolService)) {
-            $className = (string)$this->config->ecommerceframework->offertool->class;
-            $this->offerToolService = new $className(
-                (string) $this->config->ecommerceframework->offertool->orderstorage->offerClass,
-                (string) $this->config->ecommerceframework->offertool->orderstorage->offerItemClass,
-                (string) $this->config->ecommerceframework->offertool->orderstorage->parentFolderPath
-            );
-        }
-
-        return $this->offerToolService;
     }
 
     /**
