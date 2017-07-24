@@ -290,7 +290,8 @@ class SearchController extends AdminController
         }
 
         $beforeListLoadEvent = new GenericEvent($this, [
-            'list' => $searcherList
+            'list' => $searcherList,
+            'context' => $allParams['context']
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $searcherList = $beforeListLoadEvent->getArgument('list');
@@ -326,7 +327,8 @@ class SearchController extends AdminController
         $result = ['data' => $elements, 'success' => true, 'total' => $totalMatches];
 
         $afterListLoadEvent = new GenericEvent($this, [
-            'list' => $result
+            'list' => $result,
+            'context' => $allParams['context']
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');

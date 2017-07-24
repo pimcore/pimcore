@@ -85,6 +85,7 @@ final class AdminEvents
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
      * Arguments:
      *  - list | the search backend list
+     *  - context | contains contextual information
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
      *
@@ -98,6 +99,7 @@ final class AdminEvents
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
      * Arguments:
      *  - list | raw result as an array
+     *  - context | contains contextual information
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
      *
