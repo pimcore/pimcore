@@ -15,15 +15,13 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Config\Config;
 use Pimcore\Logger;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-/**
- * Class FilterService
- */
 class FilterService
 {
     protected $config;
@@ -40,6 +38,8 @@ class FilterService
 
     /**
      * @param $config Config EcommerceFramework Configuration
+     * @param TranslatorInterface $translator
+     * @param EngineInterface $renderer
      */
     public function __construct($config, TranslatorInterface $translator, EngineInterface $renderer)
     {
@@ -54,7 +54,7 @@ class FilterService
      *
      * @param $name
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType | string
+     * @return FilterType\AbstractFilterType | string
      */
     public function getFilterDefinitionClass($name)
     {
@@ -66,7 +66,7 @@ class FilterService
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper
+     * @return FilterGroupHelper
      *
      * @throws \Exception
      */
@@ -88,13 +88,13 @@ class FilterService
     /**
      * Initializes the FilterService, adds all conditions to the ProductList and returns an array of the currently set filters
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject filter definition object to use
+     * @param AbstractFilterDefinition $filterObject filter definition object to use
      * @param IProductList $productList product list to use and add conditions to
      * @param array $params request params with eventually set filter conditions
      *
      * @return array returns set filters
      */
-    public function initFilterService(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition $filterObject, IProductList $productList, $params = [])
+    public function initFilterService(AbstractFilterDefinition $filterObject, IProductList $productList, $params = [])
     {
         $currentFilter = [];
 
@@ -141,7 +141,7 @@ class FilterService
     }
 
     /**
-     * Adds condition - delegates it to the \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType instance
+     * Adds condition - delegates it to the AbstractFilterType instance
      *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param IProductList $productList

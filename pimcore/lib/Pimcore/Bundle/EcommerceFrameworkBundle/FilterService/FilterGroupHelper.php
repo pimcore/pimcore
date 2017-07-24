@@ -16,10 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Model\Object\AbstractObject;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper
- *
  * Helper for getting possible group by values based on different column groups
  *
  * one or more column groups can be mapped to one column type - which defines the logic for retrieving data
@@ -29,7 +28,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
  *  - multiselect
  *  - category
  *  - other
- *
  */
 class FilterGroupHelper
 {
@@ -67,7 +65,7 @@ class FilterGroupHelper
             $values = $productList->getGroupByRelationValues($field);
 
             foreach ($values as $v) {
-                $obj = \Pimcore\Model\Object\AbstractObject::getById($v);
+                $obj = AbstractObject::getById($v);
                 if ($obj) {
                     $name = $obj->getKey();
                     if (method_exists($obj, 'getName')) {
@@ -93,7 +91,7 @@ class FilterGroupHelper
             foreach ($values as $v) {
                 $helper = explode(',', $v);
                 foreach ($helper as $h) {
-                    $obj = \Pimcore\Model\Object\AbstractObject::getById($h);
+                    $obj = AbstractObject::getById($h);
                     if ($obj) {
                         $name = $obj->getKey();
                         if (method_exists($obj, 'getName')) {

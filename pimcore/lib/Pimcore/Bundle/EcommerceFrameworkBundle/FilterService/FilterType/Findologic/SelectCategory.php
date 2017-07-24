@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
@@ -63,7 +65,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
     {
         $value = $params[$filterDefinition->getField()];
 
-        if ($value == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } elseif (empty($value) && !$params['is_reload']) {
             $value = $filterDefinition->getPreSelect();
@@ -76,8 +78,8 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         if (!empty($value)) {
             $value = trim($value);
-            if (\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory::getById($value)) {
-                $productList->setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory::getById($value));
+            if (AbstractCategory::getById($value)) {
+                $productList->setCategory(AbstractCategory::getById($value));
             }
         }
 

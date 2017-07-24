@@ -21,8 +21,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @deprecated
- *
- * Class ProxyFilter
  */
 class ProxyFilter extends AbstractFilterType
 {

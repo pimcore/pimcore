@@ -14,8 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\Object\Folder;
 
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
 {
@@ -27,7 +29,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
     protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
     {
         foreach ($availableRelations as $rel) {
-            if ($rel instanceof \Pimcore\Model\Object\Folder) {
+            if ($rel instanceof Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
@@ -53,7 +55,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
                     $value = $o;
                 }
             }
-        } elseif ($value == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        } elseif ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         }
 

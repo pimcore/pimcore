@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
+use Pimcore\Model\Object\AbstractObject;
 
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
@@ -55,7 +57,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 
         foreach ($values as $v) {
             if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
-                $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
+                $objects[$v['value']] = AbstractObject::getById($v['value']);
             }
         }
 
@@ -105,9 +107,9 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
                     }
                 }
             }
-        } elseif (!empty($value) && in_array(\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        } elseif (!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
             foreach ($value as $k => $v) {
-                if ($v == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+                if ($v == AbstractFilterType::EMPTY_STRING) {
                     unset($value[$k]);
                 }
             }

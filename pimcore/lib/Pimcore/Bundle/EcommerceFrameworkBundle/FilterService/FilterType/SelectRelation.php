@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\Folder;
 
 class SelectRelation extends AbstractFilterType
 {
@@ -36,7 +38,7 @@ class SelectRelation extends AbstractFilterType
 
         foreach ($values as $v) {
             if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
-                $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
+                $objects[$v['value']] = AbstractObject::getById($v['value']);
             }
         }
         Logger::info('done.');
@@ -62,7 +64,7 @@ class SelectRelation extends AbstractFilterType
     protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
     {
         foreach ($availableRelations as $rel) {
-            if ($rel instanceof \Pimcore\Model\Object\Folder) {
+            if ($rel instanceof Folder) {
                 $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
