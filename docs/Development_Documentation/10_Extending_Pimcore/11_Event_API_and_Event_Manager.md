@@ -258,8 +258,8 @@ Various events that can be used to manipulate a search request.
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
 | `admin.search.list.beforeFilterPrepare` | `Searchadmin_SearchController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `requestParams` contains the request parameters. | Fired before the request params are parsed. Note that the context request parameter will contain contextual information. |
-| `admin.search.list.beforeListLoad` | `Searchadmin_SearchController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `list` the search backend list| Allows you to modify the search backend list before it is loaded.  | 
-| `admin.search.list.afterListLoad` | `Searchadmin_SearchController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `list` raw result as array | Allows you to modify the the result after the list was loaded.  |
+| `admin.search.list.beforeListLoad` | `Searchadmin_SearchController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `list` the search backend list, (array) `context` contain contextual information | Allows you to modify the search backend list before it is loaded.  | 
+| `admin.search.list.afterListLoad` | `Searchadmin_SearchController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `list` raw result as array, (array) `context` contain contextual information | Allows you to modify the the result after the list was loaded.  |
 
 
 ### Users and Roles (\Pimcore\Model\User, \Pimcore\Model\User\Folder, \Pimcore\Model\User\Role, \Pimcore\Model\User\Role\Folder)

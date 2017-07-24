@@ -285,7 +285,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($searcherList);
 
         \Pimcore::getEventManager()->trigger("admin.search.list.beforeListLoad", $this, [
-            "list" => $returnValueContainer
+            "list" => $returnValueContainer,
+            "context" => $allParams['context']
         ]);
 
         $searcherList = $returnValueContainer->getData();
@@ -323,7 +324,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($result);
 
         \Pimcore::getEventManager()->trigger("admin.search.list.afterListLoad", $this, [
-            "list" => $returnValueContainer
+            "list" => $returnValueContainer,
+            "context" => $allParams['context']
         ]);
 
         $result = $returnValueContainer->getData();
