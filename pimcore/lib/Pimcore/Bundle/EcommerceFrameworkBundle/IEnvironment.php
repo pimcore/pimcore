@@ -65,10 +65,11 @@ interface IEnvironment extends IComponent
      * Returns custom saved item from environment
      *
      * @param $key
+     * @param $defaultValue
      *
      * @return mixed
      */
-    public function getCustomItem($key);
+    public function getCustomItem($key, $defaultValue = null);
 
     /**
      * Returns all custom items from environment

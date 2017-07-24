@@ -110,11 +110,15 @@ class Environment implements IEnvironment
         return $this->customItems;
     }
 
-    public function getCustomItem($key)
+    public function getCustomItem($key, $defaultValue = null)
     {
         $this->load();
 
-        return $this->customItems[$key];
+        if (isset($this->customItems[$key])) {
+            return $this->customItems[$key];
+        }
+
+        return $defaultValue;
     }
 
     public function setCustomItem($key, $value)
