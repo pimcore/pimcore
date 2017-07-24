@@ -54,7 +54,7 @@ actions, get them from Symfony container follows. They all have keys like `pimco
 ```
 
 - Replace ZF1 `Zend_Paginator` with ZF3 Paginator. It should be sufficient just to replace the create
-statement with `$paginator = new Paginator($productList);`. 
+statement with `$paginator = new \Zend\Paginator\Paginator($productList);`. 
 
 
 ### Area Bricks
