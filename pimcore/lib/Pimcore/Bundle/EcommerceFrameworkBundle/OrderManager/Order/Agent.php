@@ -16,12 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -41,28 +42,34 @@ class Agent implements IOrderAgent
     protected $order;
 
     /**
+     * @var IEnvironment
+     */
+    protected $environment;
+
+    /**
+     * @var IPaymentManager
+     */
+    protected $paymentManager;
+
+    /**
      * @var IPayment
      */
     protected $paymentProvider;
-
-    /**
-     * @var Factory
-     */
-    protected $factory;
 
     /**
      * @var Note[]
      */
     protected $fullChangeLog;
 
-    /**
-     * @param Factory $factory
-     * @param Order                        $order
-     */
-    public function __construct(Factory $factory, Order $order)
+    public function __construct(
+        Order $order,
+        IEnvironment $environment,
+        IPaymentManager $paymentManager
+    )
     {
-        $this->order = $order;
-        $this->factory = $factory;
+        $this->order          = $order;
+        $this->environment    = $environment;
+        $this->paymentManager = $paymentManager;
     }
 
     /**
@@ -231,7 +238,7 @@ class Agent implements IOrderAgent
      */
     public function getCurrency()
     {
-        return $this->factory->getEnvironment()->getDefaultCurrency();
+        return $this->environment->getDefaultCurrency();
     }
 
     /**
@@ -260,7 +267,7 @@ class Agent implements IOrderAgent
                     }
 
                     // init payment
-                    $paymentProvider = $this->factory->getPaymentManager()->getProvider($name);
+                    $paymentProvider = $this->paymentManager->getProvider($name);
                     $paymentProvider->setAuthorizedData($authorizedData);
 
                     $this->paymentProvider = $paymentProvider;

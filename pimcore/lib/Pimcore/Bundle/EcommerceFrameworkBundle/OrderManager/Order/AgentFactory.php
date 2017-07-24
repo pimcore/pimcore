@@ -17,25 +17,35 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgentFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 
 class AgentFactory implements IOrderAgentFactory
 {
     /**
-     * @var Factory
+     * @var IEnvironment
      */
-    protected $factory;
+    protected $environment;
 
-    public function __construct(Factory $factory)
+    /**
+     * @var IPaymentManager
+     */
+    protected $paymentManager;
+
+    public function __construct(
+        IEnvironment $environment,
+        IPaymentManager $paymentManager
+    )
     {
-        $this->factory = $factory;
+        $this->environment    = $environment;
+        $this->paymentManager = $paymentManager;
     }
 
     public function createAgent(AbstractOrder $order): IOrderAgent
     {
-        return new Agent($this->factory, $order);
+        return new Agent($order, $this->environment, $this->paymentManager);
     }
 }

@@ -6,7 +6,8 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory:
         arguments:
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Factory'
+            - '@pimcore_ecommerce.environment'
+            - '@pimcore_ecommerce.payment_manager'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager:
         arguments:
