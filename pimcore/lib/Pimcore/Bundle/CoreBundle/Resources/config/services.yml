@@ -34,8 +34,11 @@ services:
     # dedicated router for static routes
     pimcore.routing.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
-        arguments: ['@router.request_context', '@pimcore.controller.config.config_normalizer']
+        arguments:
+            - '@router.request_context'
+            - '@pimcore.controller.config.config_normalizer'
         calls:
+            - [setLocaleParams, ['%pimcore.routing.static.locale_params%']]
             - [setLogger, ['@logger']]
         tags:
             - { name: router, priority: 100 }
