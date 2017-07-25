@@ -115,7 +115,8 @@ abstract class AbstractElementController extends AbstractRestController
         $permission = $map[$type];
         if (!$element->isAllowed($permission)) {
             $this->get('monolog.logger.security')->error(
-                'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so', [
+                'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so',
+                [
                     'user'        => $this->getUser()->getName(),
                     'permission'  => $permission,
                     'elementType' => $element->getType(),

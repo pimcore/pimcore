@@ -169,7 +169,8 @@ class AreabrickManager implements AreabrickManagerInterface
         if (!$this->container->has($serviceId)) {
             throw new ConfigurationException(sprintf(
                 'Definition for areabrick %s (defined as service %s) does not exist',
-                $id, $serviceId
+                $id,
+                $serviceId
             ));
         }
 

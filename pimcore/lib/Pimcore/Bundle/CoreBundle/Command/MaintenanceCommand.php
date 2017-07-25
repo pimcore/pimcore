@@ -49,17 +49,20 @@ class MaintenanceCommand extends AbstractCommand
             ->setDescription($description)
             ->setHelp($help)
             ->addOption(
-                'job', 'j',
+                'job',
+                'j',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Call just a specific job(s) (see <comment>--help</comment> for a list of valid jobs)'
             )
             ->addOption(
-                'excludedJobs', 'J',
+                'excludedJobs',
+                'J',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Exclude specific job(s) (see <comment>--help</comment> for a list of valid jobs)'
             )
             ->addOption(
-                'force', 'f',
+                'force',
+                'f',
                 InputOption::VALUE_NONE,
                 'Run the jobs, regardless if they\'re locked or not'
             )

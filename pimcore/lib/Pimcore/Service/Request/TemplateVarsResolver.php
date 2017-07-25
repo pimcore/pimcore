@@ -64,8 +64,10 @@ class TemplateVarsResolver extends AbstractRequestResolver
             $vars = $provider->addTemplateVars($request, $vars);
 
             if (!is_array($vars)) {
-                throw new \RuntimeException(sprintf(
-                    'Expected TemplateVarsProvider %s to return an array (%s returned)'),
+                throw new \RuntimeException(
+                    sprintf(
+                    'Expected TemplateVarsProvider %s to return an array (%s returned)'
+                ),
                     get_class($provider),
                     gettype($vars)
                 );

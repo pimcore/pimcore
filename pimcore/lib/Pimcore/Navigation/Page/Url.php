@@ -112,6 +112,7 @@ class Url extends Page
             parent::toArray(),
             [
                 'uri' => $this->getUri()
-            ]);
+            ]
+        );
     }
 }

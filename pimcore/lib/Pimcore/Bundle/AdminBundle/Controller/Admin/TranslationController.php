@@ -310,10 +310,12 @@ class TranslationController extends AdminController
                 $t->setModificationDate(time());
                 $t->save();
 
-                $return = array_merge(['key' => $t->getKey(),
+                $return = array_merge(
+                    ['key' => $t->getKey(),
                     'creationDate' => $t->getCreationDate(),
                     'modificationDate' => $t->getModificationDate()],
-                    $t->getTranslations());
+                    $t->getTranslations()
+                );
 
                 return $this->json(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
@@ -408,20 +410,21 @@ class TranslationController extends AdminController
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
-            $list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list, $joins, $tableName, $filters) {
-                $db = \Pimcore\Db::get();
+            $list->onCreateQuery(
+                function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list, $joins, $tableName, $filters) {
+                    $db = \Pimcore\Db::get();
 
-                $alreadyJoined = [];
+                    $alreadyJoined = [];
 
-                foreach ($joins as $join) {
-                    $fieldname = $join['language'];
+                    foreach ($joins as $join) {
+                        $fieldname = $join['language'];
 
-                    if ($alreadyJoined[$fieldname]) {
-                        continue;
-                    }
-                    $alreadyJoined[$fieldname] = 1;
+                        if ($alreadyJoined[$fieldname]) {
+                            continue;
+                        }
+                        $alreadyJoined[$fieldname] = 1;
 
-                    $select->joinLeft(
+                        $select->joinLeft(
                         [$fieldname => $tableName],
                         '('
                         . $fieldname . '.key = ' . $tableName . '.key'
@@ -431,14 +434,14 @@ class TranslationController extends AdminController
                             $fieldname => 'text'
                         ]
                     );
-                }
+                    }
 
-                $havings = $filters['conditions'];
-                if ($havings) {
-                    $havings = implode(' AND ', $havings);
-                    $select->having($havings);
+                    $havings = $filters['conditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
+                    }
                 }
-            }
             );
         }
     }

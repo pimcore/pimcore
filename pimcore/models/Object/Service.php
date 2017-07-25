@@ -251,11 +251,11 @@ class Service extends Model\Element\Service
 
             $user = AdminTool::getCurrentUser();
 
-//TODO keep this for later!
-//            if (!$user->isAdmin()) {
-//                $permissionSet = $object->getPermissions(null, $user);
-//                $fieldPermissions = self::getFieldPermissions($object, $permissionSet);
-//            }
+            //TODO keep this for later!
+            //            if (!$user->isAdmin()) {
+            //                $permissionSet = $object->getPermissions(null, $user);
+            //                $fieldPermissions = self::getFieldPermissions($object, $permissionSet);
+            //            }
 
             if (empty($fields)) {
                 $fields = array_keys($object->getclass()->getFieldDefinitions());
@@ -636,7 +636,9 @@ class Service extends Model\Element\Service
                 if ($field instanceof ClassDefinition\Data) {
                     $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
                     $joins[] =  ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId'=> $keyid];
-                    $condition = $field->getFilterConditionExt($filter['value'], $operator,
+                    $condition = $field->getFilterConditionExt(
+                        $filter['value'],
+                        $operator,
                         [
                             'name' => $mappedKey]
                     );

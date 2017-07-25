@@ -64,7 +64,10 @@ class CommitOrderProcessor implements ICommitOrderProcessor
 
             //create payment status with error message and cancelled payment
             $paymentStatus = new \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status(
-                $paymentResponseParams['orderIdent'], 'unknown', 'there was an error: ' . $e->getMessage(), IStatus::STATUS_CANCELLED
+                $paymentResponseParams['orderIdent'],
+                'unknown',
+                'there was an error: ' . $e->getMessage(),
+                IStatus::STATUS_CANCELLED
             );
         }
 

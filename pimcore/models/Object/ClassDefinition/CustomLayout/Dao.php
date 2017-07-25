@@ -111,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->update('custom_layouts', $data, ['id' => $this->model->getId()]);
 
-         // save definition as a serialized file
+        // save definition as a serialized file
         $definitionFile = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->model->getId() .'.psf';
         if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
             throw new \Exception('Cannot write definition file in: ' . $definitionFile . ' please check write permission on this directory.');

@@ -28,20 +28,24 @@ class ThumbnailsImageCommand extends AbstractCommand
             ->setName('thumbnails:image')
             ->setDescription('Generate image thumbnails, useful to pre-generate thumbnails in the background')
             ->addOption(
-                'parent', 'p',
+                'parent',
+                'p',
                 InputOption::VALUE_OPTIONAL,
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
-                'thumbnails', 't',
+                'thumbnails',
+                't',
                 InputOption::VALUE_OPTIONAL,
                 'only create specified thumbnails (comma separated eg.: thumb1,thumb2)'
             )->addOption(
-                'system', 's',
+                'system',
+                's',
                 InputOption::VALUE_NONE,
                 'create system thumbnails (used for tree-preview, ...)'
             )->addOption(
-                'force', 'f',
+                'force',
+                'f',
                 InputOption::VALUE_NONE,
                 'recreate thumbnails, regardless if they exist already'
             );

@@ -546,11 +546,16 @@ class ElementController extends AdminController
             if (Tool::classExists($formatterClass)) {
                 $targets = $this->decodeJson($request->get('targets'));
 
-                $result = call_user_func($formatterClass . '::formatPath', $result, $source, $targets,
+                $result = call_user_func(
+                    $formatterClass . '::formatPath',
+                    $result,
+                    $source,
+                    $targets,
                     [
                         'fd' => $fd,
                         'context' => $context
-                    ]);
+                    ]
+                );
             } else {
                 Logger::error('Formatter Class does not exist: ' . $formatterClass);
             }

@@ -35,7 +35,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     {
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()], static::getTableName() . '.key'
+            [ static::getTableName()],
+            static::getTableName() . '.key'
         );
         $this->addConditions($select);
         $this->addGroupBy($select);
@@ -62,7 +63,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
 
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()], static::getTableName() . '.key'
+            [ static::getTableName()],
+            static::getTableName() . '.key'
         );
         $this->addConditions($select);
         $this->addGroupBy($select);
@@ -163,7 +165,8 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
 
         $select = $this->db->select();
         $select->from(
-            [ static::getTableName()], static::getTableName() . '.key'
+            [ static::getTableName()],
+            static::getTableName() . '.key'
         );
         $this->addConditions($select);
         $this->addGroupBy($select);

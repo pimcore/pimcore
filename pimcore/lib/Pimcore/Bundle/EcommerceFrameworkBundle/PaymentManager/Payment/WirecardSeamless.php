@@ -24,10 +24,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
-use Pimcore\Tool;
 use Pimcore\Logger;
 use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
+use Pimcore\Tool;
 
 // TODO refine how payment amounts are transformed for API
 class WirecardSeamless implements IPayment
@@ -332,7 +332,11 @@ class WirecardSeamless implements IPayment
             $this->setAuthorizedData($authorizedData);
 
             return new Status(
-                $orderIdent, '', '', IStatus::STATUS_AUTHORIZED, [
+                $orderIdent,
+                '',
+                '',
+                IStatus::STATUS_AUTHORIZED,
+                [
                     'seamless_amount' => '', 'seamless_paymentType' => 'PREPAYMENT', 'seamless_paymentState' => 'SUCCESS', 'seamless_response' => ''
                 ]
             );
@@ -352,9 +356,13 @@ class WirecardSeamless implements IPayment
 
         if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
             $status = new Status(
-                $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
+                $orderIdent,
+                $response['orderNumber'],
+                $response['avsResponseMessage'],
+                $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
                 ? IStatus::STATUS_CANCELLED
-                : IStatus::STATUS_CANCELLED, [
+                : IStatus::STATUS_CANCELLED,
+                [
                     'seamless_amount' => '', 'seamless_paymentType' => '', 'seamless_paymentState' => '', 'seamless_response' => json_encode($response)
                 ]
             );
@@ -414,9 +422,13 @@ class WirecardSeamless implements IPayment
         $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
 
         $status = new Status(
-            $orderIdent, $response['orderNumber'], $response['avsResponseMessage'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
+            $orderIdent,
+            $response['orderNumber'],
+            $response['avsResponseMessage'],
+            $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
             ? IStatus::STATUS_AUTHORIZED
-            : IStatus::STATUS_CANCELLED, [
+            : IStatus::STATUS_CANCELLED,
+            [
                 'seamless_amount' => (string)$price, 'seamless_paymentType' => $response['paymentType'], 'seamless_paymentState' => $response['paymentState'], 'seamless_response' => print_r($response, true)
             ]
         );
@@ -496,11 +508,19 @@ class WirecardSeamless implements IPayment
 
         if ($result['errors']) {
             return new Status(
-                $transactionId, $reference, 'executeDepit: deposit canceled', IStatus::STATUS_CANCELLED, $result
+                $transactionId,
+                $reference,
+                'executeDepit: deposit canceled',
+                IStatus::STATUS_CANCELLED,
+                $result
             );
         } else {
             return new Status(
-                $transactionId, $reference, 'deposit executed: ' . round($price->getAmount()->asNumeric(), 2) . ' ' . $price->getCurrency()->getShortName(), IStatus::STATUS_CLEARED, []
+                $transactionId,
+                $reference,
+                'deposit executed: ' . round($price->getAmount()->asNumeric(), 2) . ' ' . $price->getCurrency()->getShortName(),
+                IStatus::STATUS_CLEARED,
+                []
             );
         }
     }
@@ -532,7 +552,11 @@ class WirecardSeamless implements IPayment
     {
         if ($paymentType == 'PREPAYMENT') {
             return new Status(
-                $reference, $transactionId, 'approveReversal: payment approval canceled', IStatus::STATUS_CANCELLED, []
+                $reference,
+                $transactionId,
+                'approveReversal: payment approval canceled',
+                IStatus::STATUS_CANCELLED,
+                []
             );
         }
 
@@ -557,7 +581,11 @@ class WirecardSeamless implements IPayment
 
         if (!$result['errors']) {
             return new Status(
-                $reference, $transactionId, 'approveReversal: payment approval canceled', IStatus::STATUS_CANCELLED, []
+                $reference,
+                $transactionId,
+                'approveReversal: payment approval canceled',
+                IStatus::STATUS_CANCELLED,
+                []
             );
         } else {
             return false;

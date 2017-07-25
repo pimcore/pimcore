@@ -370,7 +370,8 @@ class Concrete extends AbstractObject
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
                 $dependencies = array_merge($dependencies, $field->resolveDependencies(
-                    isset($this->$key) ? $this->$key : null));
+                    isset($this->$key) ? $this->$key : null
+                ));
             }
         }
 

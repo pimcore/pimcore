@@ -46,14 +46,14 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
      */
     abstract public function getPageLimit();
 
-   /**
-    * returns list of available fields for sorting ascending
-    *
-    * @abstract
-    *
-    * @return string
-    */
-   abstract public function getOrderByAsc();
+    /**
+     * returns list of available fields for sorting ascending
+     *
+     * @abstract
+     *
+     * @return string
+     */
+    abstract public function getOrderByAsc();
 
     /**
      * returns list of available fields for sorting descending
@@ -64,23 +64,23 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
      */
     abstract public function getOrderByDesc();
 
-   /**
-    * return array of field collections for preconditions
-    *
-    * @abstract
-    *
-    * @return \Pimcore\Model\Object\Fieldcollection
-    */
-   abstract public function getConditions();
+    /**
+     * return array of field collections for preconditions
+     *
+     * @abstract
+     *
+     * @return \Pimcore\Model\Object\Fieldcollection
+     */
+    abstract public function getConditions();
 
-   /**
-    * return array of field collections for filters
-    *
-    * @abstract
-    *
-    * @return \Pimcore\Model\Object\Fieldcollection
-    */
-   abstract public function getFilters();
+    /**
+     * return array of field collections for filters
+     *
+     * @abstract
+     *
+     * @return \Pimcore\Model\Object\Fieldcollection
+     */
+    abstract public function getFilters();
 
     /**
      * enables inheritance for field collections, if xxxInheritance field is available and set to string 'true'

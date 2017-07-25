@@ -73,11 +73,13 @@ class Dao extends Model\Object\Fieldcollection\Dao
                             }
                             $brick->setValue(
                                 $key,
-                                $fd->getDataFromResource($multidata));
+                                $fd->getDataFromResource($multidata)
+                            );
                         } else {
                             $brick->setValue(
                                 $key,
-                                $fd->getDataFromResource($result[$key]));
+                                $fd->getDataFromResource($result[$key])
+                            );
                         }
                     }
                 }

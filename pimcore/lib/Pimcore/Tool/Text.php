@@ -79,7 +79,8 @@ class Text
                         } elseif ($element instanceof Concrete) {
                             if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
                                 $path = $linkGenerator->generate(
-                                    $element, $params
+                                    $element,
+                                    $params
                                 );
                             } else {
                                 // no object path without link generator!

@@ -358,7 +358,8 @@ class Dao extends Model\Dao\AbstractDao
 
             $container = Object\Fieldcollection\Definition::getByKey($containerKey);
 
-            $data = $this->db->fetchAll('SELECT * FROM ' . $this->getTableName()
+            $data = $this->db->fetchAll(
+                'SELECT * FROM ' . $this->getTableName()
                     . ' WHERE ooo_id = ? AND language IN (' . implode(',', $validLanguages) . ') AND `fieldname` = ? AND `index` = ?',
                 [
                     $this->model->getObject()->getId(),
@@ -426,7 +427,11 @@ class Dao extends Model\Dao\AbstractDao
             ;
 
             // create query
-            $sql = sprintf('ifnull(`%s`.`%s`, %s)', $lang, $field, $fallback
+            $sql = sprintf(
+                'ifnull(`%s`.`%s`, %s)',
+                $lang,
+                $field,
+                $fallback
             );
 
             return $fallback !== 'null'
@@ -441,7 +446,8 @@ class Dao extends Model\Dao\AbstractDao
 
                 // get available columns
                 $viewColumns = array_merge(
-                    $this->db->fetchAll('SHOW COLUMNS FROM `' . $defaultTable . '`'), $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
+                    $this->db->fetchAll('SHOW COLUMNS FROM `' . $defaultTable . '`'),
+                    $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
                 );
                 $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `' . $tablename . '`');
 

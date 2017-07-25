@@ -249,9 +249,11 @@ class Sql extends AbstractAdapter
         }
 
         return [
-            'data' => array_merge([
+            'data' => array_merge(
+                [
                         ['value' => null]
-                      ], $filteredData
+                      ],
+                $filteredData
             )
         ];
     }

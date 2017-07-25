@@ -56,7 +56,8 @@ class ProxyFilter extends AbstractFilterType
 
     public function getFilterFrontend(
         AbstractFilterDefinitionType $filterDefinition,
-        IProductList $productList, $currentFilter
+        IProductList $productList,
+        $currentFilter
     ) {
         $filterDefinition->field=$this->field;
 
@@ -65,7 +66,9 @@ class ProxyFilter extends AbstractFilterType
 
     public function addCondition(
         AbstractFilterDefinitionType $filterDefinition,
-        IProductList $productList, $currentFilter, $params,
+        IProductList $productList,
+        $currentFilter,
+        $params,
         $isPrecondition = false
     ) {
         $filterDefinition->field=$this->field;

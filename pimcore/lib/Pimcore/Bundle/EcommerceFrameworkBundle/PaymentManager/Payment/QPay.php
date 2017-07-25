@@ -270,7 +270,10 @@ class QPay implements IPayment
         if ($response['paymentState'] !== 'FAILURE' && $fingerprint != $response['responseFingerprint']) {
             // fingerprint is wrong, ignore this response
             return new Status(
-                $response['orderIdent'], $response['orderNumber'], $response['avsResponseMessage'] ?: $response['message'] ?: 'fingerprint error', IStatus::STATUS_CANCELLED
+                $response['orderIdent'],
+                $response['orderNumber'],
+                $response['avsResponseMessage'] ?: $response['message'] ?: 'fingerprint error',
+                IStatus::STATUS_CANCELLED
             );
         }
 
@@ -282,9 +285,13 @@ class QPay implements IPayment
         $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
 
         return new Status(
-            $response['orderIdent'], $response['orderNumber'], $response['avsResponseMessage'] ?: $response['message'], $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
+            $response['orderIdent'],
+            $response['orderNumber'],
+            $response['avsResponseMessage'] ?: $response['message'],
+            $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
                 ? IStatus::STATUS_AUTHORIZED
-                : IStatus::STATUS_CANCELLED, [
+                : IStatus::STATUS_CANCELLED,
+            [
                 'qpay_amount' => (string)$price, 'qpay_paymentType' => $response['paymentType'], 'qpay_paymentState' => $response['paymentState'], 'qpay_response' => $response
             ]
         );
@@ -392,7 +399,11 @@ class QPay implements IPayment
             // Operation successfully done.
 
             return new Status(
-                $reference, $response['paymentNumber'] ?: $response['orderNumber'], '', IStatus::STATUS_CLEARED, [
+                $reference,
+                $response['paymentNumber'] ?: $response['orderNumber'],
+                '',
+                IStatus::STATUS_CLEARED,
+                [
                     'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
@@ -405,7 +416,11 @@ class QPay implements IPayment
             }
 
             return new Status(
-                $reference, $response['paymentNumber'] ?: $response['orderNumber'], implode("\n", $error), IStatus::STATUS_CANCELLED, [
+                $reference,
+                $response['paymentNumber'] ?: $response['orderNumber'],
+                implode("\n", $error),
+                IStatus::STATUS_CANCELLED,
+                [
                     'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
@@ -451,7 +466,11 @@ class QPay implements IPayment
             // Operation successfully done.
 
             return new Status(
-                $transactionId, $reference, 'executeCredit', IStatus::STATUS_CLEARED, [
+                $transactionId,
+                $reference,
+                'executeCredit',
+                IStatus::STATUS_CLEARED,
+                [
                     'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );
@@ -459,7 +478,11 @@ class QPay implements IPayment
             // https://integration.wirecard.at/doku.php/backend:response_parameters
 
             return new Status(
-                $transactionId, $reference, $response['message'], IStatus::STATUS_CANCELLED, [
+                $transactionId,
+                $reference,
+                $response['message'],
+                IStatus::STATUS_CANCELLED,
+                [
                     'qpay_amount' => (string)$price, 'qpay_command' => $request['command'], 'qpay_response' => $response
                 ]
             );

@@ -63,7 +63,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->db->select();
         $select->from(
-            [ 'assets' ], $columns
+            [ 'assets' ],
+            $columns
         );
         $this->addConditions($select);
         $this->addOrder($select);

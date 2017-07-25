@@ -274,7 +274,8 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
 
     private function askRunConfirmation(): bool
     {
-        $this->io->writeln(<<<EOF
+        $this->io->writeln(
+            <<<EOF
 <comment>[WARNING]</comment> Please be aware that the <comment>render</comment> migration
 strategy can only migrate documents which can be successfully rendered and will only handle elements which
 are used in your template. If you have any elements which are not used in the template (e.g. because they
@@ -285,7 +286,8 @@ EOF
 
         $this->io->newLine();
 
-        $this->io->writeln(<<<EOF
+        $this->io->writeln(
+            <<<EOF
 To make the transition as smooth as possible it's recommended to update all your templates to render any
 needed editables at least in editmode. The command simulates the editmode, so you can rely on the editmode
 parameter to be set in your views.

@@ -127,7 +127,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     }
                     $elementData = $blockElement->getData();
                     $dataForResource = $fd->marshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
-//                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
+                    //                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
 
                     // do not serialize the block element itself
                     $resultElement[$elementName] = [
@@ -173,7 +173,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     }
 
                     // do not serialize the block element itself
-//                    $elementData = $blockElement->getData();
+                    //                    $elementData = $blockElement->getData();
                     $elementData = $blockElementRaw['data'];
 
                     $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
@@ -281,7 +281,9 @@ class Block extends Model\Object\ClassDefinition\Data
 
                 /** @var $fd Object\ClassDefinition\Data */
                 $fd = $this->getFielddefinition($elementName);
-                $dataFromEditMode = $fd->getDataFromEditmode($elementData, $object,
+                $dataFromEditMode = $fd->getDataFromEditmode(
+                    $elementData,
+                    $object,
                     [
                         'context' => [
                             'containerType' => 'block',

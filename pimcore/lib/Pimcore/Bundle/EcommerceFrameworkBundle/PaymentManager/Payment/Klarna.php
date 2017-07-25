@@ -145,9 +145,13 @@ class Klarna implements IPayment
         ];
 
         return new Status(
-            $order['merchant_reference']['orderid2'], $order['id'], $order['status'], array_key_exists($order['status'], $statMap)
+            $order['merchant_reference']['orderid2'],
+            $order['id'],
+            $order['status'],
+            array_key_exists($order['status'], $statMap)
                 ? $statMap[$order['status']]
-                : IStatus::STATUS_CANCELLED, [
+                : IStatus::STATUS_CANCELLED,
+            [
                 'klarna_amount' => $order['cart']['total_price_including_tax'], 'klarna_marshal' => json_encode($order->marshal()), 'klarna_reservation' => $order['reservation'], 'klarna_reference' => $order['reference']
             ]
         );
@@ -201,9 +205,13 @@ class Klarna implements IPayment
             }
 
             return new Status(
-                $reference, $order['id'], $order['status'], $order['status'] == 'created'
+                $reference,
+                $order['id'],
+                $order['status'],
+                $order['status'] == 'created'
                 ? IStatus::STATUS_CLEARED
-                : IStatus::STATUS_CANCELLED, [
+                : IStatus::STATUS_CANCELLED,
+                [
                     'klarna_amount' => $order['cart']['total_price_including_tax'], 'klarna_marshal' => json_encode($order->marshal())
                 ]
             );

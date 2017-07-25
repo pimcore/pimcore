@@ -180,7 +180,9 @@ class AdminOrderController extends FrontendController
          */
         $geoPoint = function (array $address) {
             // https://developers.google.com/maps/documentation/geocoding/index?hl=de#JSON
-            $url = sprintf('http://maps.googleapis.com/maps/api/geocode/json?address=%1$s&sensor=false', urlencode(
+            $url = sprintf(
+                'http://maps.googleapis.com/maps/api/geocode/json?address=%1$s&sensor=false',
+                urlencode(
                     $address[0]
                     . ' ' . $address[1]
                     . ' ' . $address[2]

@@ -208,7 +208,8 @@ EOF;
                 'Element',
                 sprintf(
                     '<comment>%s</comment> (type <comment>%s</comment>)',
-                    $exception->getName(), $exception->getType()
+                    $exception->getName(),
+                    $exception->getType()
                 )
             ]
         ];

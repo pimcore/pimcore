@@ -238,7 +238,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             return $codeSets;
         } catch (\Exception $e) {
             //            var_dump($e);
-//            \Pimcore\Log\Simple::log('VoucherSystem', $e);
+            //            \Pimcore\Log\Simple::log('VoucherSystem', $e);
             return false;
         }
     }

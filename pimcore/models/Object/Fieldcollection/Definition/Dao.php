@@ -102,13 +102,15 @@ class Dao extends Model\Dao\AbstractDao
             $this->addIndexToField($value, $table);
 
             if ($value instanceof  Object\ClassDefinition\Data\Localizedfields) {
-                $value->classSaved($class,
+                $value->classSaved(
+                    $class,
                     [
                         'context' => [
                             'containerType' => 'fieldcollection',
                             'containerKey' => $this->model->getKey()
                         ]
-                    ]);
+                    ]
+                );
             }
         }
 

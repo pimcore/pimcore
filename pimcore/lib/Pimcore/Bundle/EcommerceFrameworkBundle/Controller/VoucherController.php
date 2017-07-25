@@ -135,19 +135,19 @@ class VoucherController extends FrontendController
         return $response;
     }
 
-//    /**
-//     * @param OnlineShopVoucherSeries $onlineShopVoucherSeries
-//     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager
-//     * @param array $params
-//     * @return Response
-//     */
-//    protected function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
-//    {
-//        $paramsBag = [];
-//        $paramsBag['series'] = $onlineShopVoucherSeries;
-//        $renderScript = $tokenManager->prepareConfigurationView($paramsBag, $params);
-//        return $this->render($renderScript);
-//    }
+    //    /**
+    //     * @param OnlineShopVoucherSeries $onlineShopVoucherSeries
+    //     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager
+    //     * @param array $params
+    //     * @return Response
+    //     */
+    //    protected function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
+    //    {
+    //        $paramsBag = [];
+    //        $paramsBag['series'] = $onlineShopVoucherSeries;
+    //        $renderScript = $tokenManager->prepareConfigurationView($paramsBag, $params);
+    //        return $this->render($renderScript);
+    //    }
 
     /**
      * Generates new Tokens or Applies single token settings.

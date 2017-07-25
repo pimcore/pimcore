@@ -70,14 +70,16 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
-                        $value = $fd->load($collection,
+                        $value = $fd->load(
+                            $collection,
                             [
                                 'context' => [
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,
                                     'fieldname' =>  $this->model->getFieldname(),
                                     'index' => $result['index']
-                            ]]);
+                            ]]
+                        );
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
                         }
@@ -156,7 +158,9 @@ class Dao extends Model\Dao\AbstractDao
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
                     if (method_exists($fd, 'delete')) {
-                        $fd->delete($object, [
+                        $fd->delete(
+                            $object,
+                            [
                                 'context' => [
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,
@@ -170,7 +174,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // empty relation table
-        $this->db->deleteWhere('object_relations_' . $object->getClassId(),
+        $this->db->deleteWhere(
+            'object_relations_' . $object->getClassId(),
             "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname()) . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
             . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $this->model->getFieldname() . '/%') . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')'
         );

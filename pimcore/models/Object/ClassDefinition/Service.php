@@ -272,7 +272,7 @@ class Service
                 if (strtolower($column['Null']) == 'yes') {
                     $column['Null'] = 'null';
                 }
-//                $fieldName = strtolower($column["Field"]);
+                //                $fieldName = strtolower($column["Field"]);
                 $fieldName = $column['Field'];
                 $tableDefinitions[$tableName][$fieldName] = $column;
             }

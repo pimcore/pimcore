@@ -967,8 +967,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = $version->loadData();
 
         if ($asset->isAllowed('versions')) {
-            return $this->render('PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
-                ['asset' => $asset]);
+            return $this->render(
+                'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
+                ['asset' => $asset]
+            );
         } else {
             throw new \Exception('Permission denied, version id [' . $id . ']');
         }
@@ -1079,8 +1081,11 @@ class AssetController extends ElementControllerBase implements EventedController
                 \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . $config['dpi'] . ' -yresolution=' . $config['dpi'] . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
 
-            $downloadFilename = str_replace('.' . File::getFileExtension($image->getFilename()),
-                '.' . $thumbnail->getFileExtension(), $image->getFilename());
+            $downloadFilename = str_replace(
+                '.' . File::getFileExtension($image->getFilename()),
+                '.' . $thumbnail->getFileExtension(),
+                $image->getFilename()
+            );
             $downloadFilename = strtolower($downloadFilename);
 
             clearstatcache();
@@ -1331,15 +1336,21 @@ class AssetController extends ElementControllerBase implements EventedController
             $previewData['thumbnail'] = $thumbnail;
 
             if ($thumbnail['status'] == 'finished') {
-                return $this->render('PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
-                    $previewData);
+                return $this->render(
+                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
+                    $previewData
+                );
             } else {
-                return $this->render('PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
-                    $previewData);
+                return $this->render(
+                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                    $previewData
+                );
             }
         } else {
-            return $this->render('PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
-                $previewData);
+            return $this->render(
+                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                $previewData
+            );
         }
     }
 
@@ -2047,7 +2058,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         } else {
             $db = \Pimcore\Db::get();
-                // get list of objects
+            // get list of objects
             $folder = Asset::getById($request->get('folderId'));
 
             $start = 0;

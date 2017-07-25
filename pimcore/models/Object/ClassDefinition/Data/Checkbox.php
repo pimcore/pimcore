@@ -282,7 +282,10 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      */
     public function getFilterCondition($value, $operator)
     {
-        return $this->getFilterConditionExt($value, $operator, [
+        return $this->getFilterConditionExt(
+            $value,
+            $operator,
+            [
                 'name' => $this->name]
         );
     }

@@ -24,8 +24,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements ICheckoutable
 {
     // =============================================
-//     ICheckoutable Methods
-//  =============================================
+    //     ICheckoutable Methods
+    //  =============================================
 
     /**
      * should be overwritten in mapped sub classes of product classes

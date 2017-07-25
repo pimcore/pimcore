@@ -174,7 +174,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 // everything else
-//                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
+                //                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
                 if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
                     $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
                     $protectedColums[] = $key;
@@ -183,7 +183,7 @@ class Dao extends Model\Dao\AbstractDao
                     $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
                     $protectedDatastoreColumns[] = $key;
                 }
-//                }
+                //                }
 
                 // add indices
                 $this->addIndexToField($value, $objectTable, 'getQueryColumnType');

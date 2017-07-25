@@ -120,10 +120,12 @@ class Api
         $client->setApplicationName('pimcore CMF');
 
         $key = file_get_contents(self::getPrivateKeyPath());
-        $client->setAssertionCredentials(new \Google_Auth_AssertionCredentials(
+        $client->setAssertionCredentials(
+            new \Google_Auth_AssertionCredentials(
             $config->email,
             $scope,
-            $key)
+            $key
+        )
         );
 
         $client->setClientId($config->client_id);

@@ -45,7 +45,8 @@ class Dao extends Model\Dao\AbstractDao
                 if (method_exists($fd, 'save')) {
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $index = $this->model->getIndex();
-                    $fd->save($this->model,
+                    $fd->save(
+                        $this->model,
                         [
                             'context' => [
                                 'containerType' => 'fieldcollection',

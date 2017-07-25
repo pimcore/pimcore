@@ -640,7 +640,8 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             $index = $context['index'];
             $containerName = $context['fieldname'];
 
-            $db->deleteWhere('object_metadata_' . $object->getClassId(),
+            $db->deleteWhere(
+                'object_metadata_' . $object->getClassId(),
                 $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                 . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . "$index . /%")
                 . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())

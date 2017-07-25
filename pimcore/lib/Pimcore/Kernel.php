@@ -194,13 +194,15 @@ abstract class Kernel extends SymfonyKernel
             if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
                 $collection->addBundle(
                     new SensioGeneratorBundle(),
-                    80, ['dev']
+                    80,
+                    ['dev']
                 );
 
                 // PimcoreGeneratorBundle depends on SensioGeneratorBundle
                 $collection->addBundle(
                     new PimcoreGeneratorBundle(),
-                    60, ['dev']
+                    60,
+                    ['dev']
                 );
             }
         }

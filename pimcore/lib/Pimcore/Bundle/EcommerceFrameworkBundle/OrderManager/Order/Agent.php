@@ -91,23 +91,23 @@ class Agent implements IOrderAgent
         $item->setOrderState(Order::ORDER_STATE_CANCELLED);
 
         // cancel complete order if all items are canceled
-//        $cancel = true;
-//        foreach($this->getOrder()->getItems() as $i)
-//        {
-//            /* @var OrderItem $i */
-//            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
-//            {
-//                $cancel = false;
-//                break;
-//            }
-//        }
-//
-//
-//        // cancel complete order
-//        if($cancel)
-//        {
-//            $this->getOrder()->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
-//        }
+        //        $cancel = true;
+        //        foreach($this->getOrder()->getItems() as $i)
+        //        {
+        //            /* @var OrderItem $i */
+        //            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
+        //            {
+        //                $cancel = false;
+        //                break;
+        //            }
+        //        }
+        //
+        //
+        //        // cancel complete order
+        //        if($cancel)
+        //        {
+        //            $this->getOrder()->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
+        //        }
 
         // commit changes
         $item->save();

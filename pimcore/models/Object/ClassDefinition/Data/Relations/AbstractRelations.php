@@ -325,8 +325,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
                 $fieldname = $context['fieldname'];
                 $index = $context['index'];
                 $filter = '/fieldcollection~' . $fieldname . '/' . $index . '/%';
-                $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
-                    [$object->getObject()->getId(), $this->getName(), $params['language'], $filter]);
+                $relations = $db->fetchAll(
+                    'SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
+                    [$object->getObject()->getId(), $this->getName(), $params['language'], $filter]
+                );
             } else {
                 $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params['language']]);
             }

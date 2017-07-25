@@ -28,17 +28,20 @@ class CacheClearCommand extends AbstractCommand
             ->setName('pimcore:cache:clear')
             ->setDescription('Clear caches')
             ->addOption(
-                'tags', 't',
+                'tags',
+                't',
                 InputOption::VALUE_OPTIONAL,
                 'only specific tags (csv list of tags)'
             )
             ->addOption(
-                'output', 'o',
+                'output',
+                'o',
                 InputOption::VALUE_OPTIONAL,
                 'only output cache'
             )
             ->addOption(
-                'all', 'a',
+                'all',
+                'a',
                 InputOption::VALUE_OPTIONAL,
                 'clear all'
             )

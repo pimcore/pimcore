@@ -330,11 +330,15 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     {
         $workerId = uniqid();
         $workerTimestamp = time();
-        $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT ' . intval($limit),
-            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]);
+        $this->db->query(
+            'UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT ' . intval($limit),
+            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
+        );
 
-        $entries = $this->db->fetchCol('SELECT o_id FROM ' . $this->getStoreTableName() . ' WHERE preparation_worker_id = ?',
-            [$workerId]);
+        $entries = $this->db->fetchCol(
+            'SELECT o_id FROM ' . $this->getStoreTableName() . ' WHERE preparation_worker_id = ?',
+            [$workerId]
+        );
 
         if ($entries) {
             foreach ($entries as $objectId) {
@@ -368,8 +372,10 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     {
         $workerId = uniqid();
         $workerTimestamp = time();
-        $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
-            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]);
+        $this->db->query(
+            'UPDATE ' . $this->getStoreTableName() . ' SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
+            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
+        );
 
         $entries = $this->db->fetchAll('SELECT o_id, data FROM ' . $this->getStoreTableName() . ' WHERE worker_id = ?', [$workerId]);
 

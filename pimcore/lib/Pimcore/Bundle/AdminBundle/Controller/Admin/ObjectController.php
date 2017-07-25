@@ -469,7 +469,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         // nonownerobjects should go in there anyway (regardless if it a version or not), so that the values can be loaded
         if (
-            (!$objectFromVersion
+            (
+                !$objectFromVersion
                 && $fielddefinition instanceof Object\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
                 && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
@@ -1406,7 +1407,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $treeData = [];
                 $treeData['qtipCfg'] = $object->getElementAdminStyle()->getElementQtipConfig();
 
-                return $this->json([
+                return $this->json(
+                    [
                         'success' => true,
                         'general' => ['o_modificationDate' => $object->getModificationDate() ],
                         'treeData' => $treeData]
@@ -1556,7 +1558,9 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                                     $keyConfig = Object\Classificationstore\KeyConfig::getById($keyid);
                                     if ($keyConfig) {
                                         $fieldDefintion = $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(
-                                            json_decode($keyConfig->getDefinition()), $keyConfig->getType());
+                                            json_decode($keyConfig->getDefinition()),
+                                            $keyConfig->getType()
+                                        );
                                         if ($fieldDefintion && method_exists($fieldDefintion, 'getDataFromGridEditor')) {
                                             $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
                                         }

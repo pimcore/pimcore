@@ -224,7 +224,8 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function addAction(Request $request)
     {
-        $class = Object\ClassDefinition::create(['name' => $this->correctClassname($request->get('name')),
+        $class = Object\ClassDefinition::create(
+            ['name' => $this->correctClassname($request->get('name')),
                 'userOwner' => $this->getUser()->getId()]
         );
 
@@ -242,7 +243,8 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function addCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::create(['name' => $request->get('name'),
+        $customLayout = Object\ClassDefinition\CustomLayout::create(
+            ['name' => $request->get('name'),
                 'userOwner' => $this->getUser()->getId(),
                 'classId' => $request->get('classId')]
         );

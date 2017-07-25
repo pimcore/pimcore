@@ -268,7 +268,8 @@ class Installer extends AbstractInstaller
             if (false === $path || !is_file($path)) {
                 throw new \RuntimeException(sprintf(
                     'Class export for class "%s" was expected in "%s" but file does not exist',
-                    $className, $path
+                    $className,
+                    $path
                 ));
             }
 

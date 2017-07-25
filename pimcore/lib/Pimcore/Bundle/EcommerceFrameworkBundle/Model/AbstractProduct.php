@@ -23,8 +23,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable, IProduct
 {
     // =============================================
-//     IIndexable Methods
-//  =============================================
+    //     IIndexable Methods
+    //  =============================================
 
     /**
      * defines if product is included into the product index. If false, product doesn't appear in product index.
@@ -101,9 +101,9 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
         throw new UnsupportedException('getCategories is not supported for ' . get_class($this));
     }
 
-// =============================================
-//     ICheckoutable Methods
-//  =============================================
+    // =============================================
+    //     ICheckoutable Methods
+    //  =============================================
 
     /**
      * called by default CommitOrderProcessor to get the product name to store it in the order item

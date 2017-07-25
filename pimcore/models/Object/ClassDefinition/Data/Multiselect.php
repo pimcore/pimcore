@@ -349,7 +349,10 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function getFilterCondition($value, $operator)
     {
-        return $this->getFilterConditionExt($value, $operator, [
+        return $this->getFilterConditionExt(
+            $value,
+            $operator,
+            [
                 'name' => $this->name]
         );
     }
@@ -465,8 +468,10 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
     public function enrichFieldDefinition($context = [])
     {
-        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
-                Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT);
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+                Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
         if ($optionsProvider) {
             $context['fieldname'] = $this->getName();
 
@@ -483,8 +488,10 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
-            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT);
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
+        );
 
         if ($optionsProvider) {
             $context['object'] = $object;

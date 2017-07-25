@@ -25,7 +25,10 @@ interface ICheckoutStep
      *
      * @return
      */
-    public function trackCheckoutStep(\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step,
+    public function trackCheckoutStep(
+        \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step,
                                       \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart,
-                                      $stepNumber = null, $checkoutOption = null);
+                                      $stepNumber = null,
+        $checkoutOption = null
+    );
 }

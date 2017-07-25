@@ -29,7 +29,8 @@ class ClassesRebuildCommand extends AbstractCommand
             ->setName('deployment:classes-rebuild')
             ->setDescription('rebuilds db structure for classes, field collections and object bricks based on updated var/classes/definition_*.php files')
             ->addOption(
-                'create-classes', 'c',
+                'create-classes',
+                'c',
                 InputOption::VALUE_NONE,
                 'Create missing Classes (Classes that exists in var/classes but not in the database)'
             )

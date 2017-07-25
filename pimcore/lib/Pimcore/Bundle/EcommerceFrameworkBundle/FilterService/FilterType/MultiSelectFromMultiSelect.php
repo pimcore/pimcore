@@ -96,7 +96,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
             $value = null;
         }
 
-      //  $value = trim($value);
+        //  $value = trim($value);
 
         $currentFilter[$field] = $value;
 

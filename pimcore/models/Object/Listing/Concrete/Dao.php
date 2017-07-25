@@ -64,7 +64,8 @@ class Dao extends Model\Object\Listing\Dao
         // create base
         $field = $this->getTableName() . '.o_id';
         $select->from(
-            [ $this->getTableName() ], [
+            [ $this->getTableName() ],
+            [
                 new Expression(sprintf('%s as o_id', $this->getSelectPart($field, $field))), 'o_type'
             ]
         );
@@ -229,7 +230,9 @@ CONDITION;
 
                 // add join
                 $select->joinLeft(
-                    [ $name => $table ], $condition, ''
+                    [ $name => $table ],
+                    $condition,
+                    ''
                 );
             }
         }
@@ -245,11 +248,13 @@ CONDITION;
 
                 // add join
                 $select->joinLeft(
-                    [ $name => $table ], <<<CONDITION
+                    [ $name => $table ],
+                    <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
 CONDITION
-                    , ''
+                    ,
+                    ''
                 );
             }
         }

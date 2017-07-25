@@ -73,39 +73,46 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             ->setName('pimcore:documents:migrate-naming-strategy')
             ->setDescription('Migrates document editables to nested naming strategy')
             ->addOption(
-                'strategy', 's',
+                'strategy',
+                's',
                 InputOption::VALUE_REQUIRED,
                 sprintf('The migration strategy to use. Available strategies: %s', implode(', ', $this->validMigrationStrategies)),
                 'render'
             )
             ->addOption(
-                'document', 'd',
+                'document',
+                'd',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Document ID(s) to process. Defaults to all documents if option is omitted.'
             )
             ->addOption(
-                'ignoreDocument', 'D',
+                'ignoreDocument',
+                'D',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Document ID(s) to ignore'
             )
             ->addOption(
-                'user', 'u',
+                'user',
+                'u',
                 InputOption::VALUE_REQUIRED,
                 'Run command under given user name (only needed for the render migration strategy)',
                 'admin'
             )
             ->addOption(
-                'dump-sql', null,
+                'dump-sql',
+                null,
                 InputOption::VALUE_REQUIRED,
                 'Dump SQL queries (pass stdout as value to print the queries)'
             )
             ->addOption(
-                'clear-cache', 'C',
+                'clear-cache',
+                'C',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
                 'Clear the cache to start with a fresh cache (optionally pass a list of document IDs to remove only certain entries)'
             )
             ->addOption(
-                'no-cache', null,
+                'no-cache',
+                null,
                 InputOption::VALUE_NONE,
                 'Do not load/save mapping results from/to cache'
             );

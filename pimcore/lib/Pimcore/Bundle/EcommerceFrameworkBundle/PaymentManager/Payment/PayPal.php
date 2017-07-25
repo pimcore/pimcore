@@ -235,7 +235,11 @@ class PayPal implements IPayment
             $paymentInfo = $ret->DoExpressCheckoutPaymentResponseDetails->PaymentInfo;
 
             return new Status(
-                $reference, $paymentInfo->TransactionID, null, AbstractOrder::ORDER_STATE_COMMITTED, [
+                $reference,
+                $paymentInfo->TransactionID,
+                null,
+                AbstractOrder::ORDER_STATE_COMMITTED,
+                [
                     'paypal_TransactionType' => $paymentInfo->TransactionType, 'paypal_PaymentType' => $paymentInfo->PaymentType, 'paypal_amount' => (string)$price
                 ]
             );
@@ -251,7 +255,10 @@ class PayPal implements IPayment
             }
 
             return new Status(
-                $reference, $ret->CorrelationID, $message, AbstractOrder::ORDER_STATE_ABORTED
+                $reference,
+                $ret->CorrelationID,
+                $message,
+                AbstractOrder::ORDER_STATE_ABORTED
             );
         }
     }
@@ -283,56 +290,56 @@ class PayPal implements IPayment
         $paymentDetails->OrderTotal->_ = $price->getAmount()->asNumeric();
         $paymentDetails->OrderTotal->currencyID = $price->getCurrency()->getShortName();
 
-//        // add article
-//        $itemTotal = 0;
-//        $paymentDetails->PaymentDetailsItem = array();
-//        foreach($this->cart->getItems() as $item)
-//        {
-//            $article = new stdClass();
-//            $article->Name = $item->getProduct()->getOSName();
-//            $article->Description = $item->getComment();
-//            $article->Number = $item->getProduct()->getOSProductNumber();
-//            $article->Quantity = $item->getCount();
-//            $article->Amount = new stdClass();
-//            $article->Amount->_ = $item->getPrice()->getAmount();
-//            $article->Amount->currencyID = $currency;
-//
-//            $paymentDetails->PaymentDetailsItem[] = $article;
-//            $itemTotal += $item->getPrice()->getAmount();
-//        }
-//
-//
-//        // add modificators
-//        foreach($priceCalculator->getPriceModifications() as $name => $modification)
-//        {
-//            if($modification instanceof OnlineShop_Framework_IModificatedPrice && $name == 'shipping')
-//            {
-//                // add shipping charge
-//                $paymentDetails->ShippingTotal = new stdClass();
-//                $paymentDetails->ShippingTotal->_ = $modification->getAmount();
-//                $paymentDetails->ShippingTotal->currencyID = $currency;
-//            }
-//            else if($modification instanceof OnlineShop_Framework_IModificatedPrice && $modification->getAmount() !== 0)
-//            {
-//                // add discount line
-//                $article = new stdClass();
-//                $article->Name = $modification->getDescription();
-//                $article->Quantity = 1;
-//                $article->PromoCode = $modification->getDescription();
-//                $article->Amount = new stdClass();
-//                $article->Amount->_ = $modification->getAmount();
-//                $article->Amount->currencyID = $currency;
-//                $paymentDetails->PaymentDetailsItem[] = $article;
-//
-//                $itemTotal += $modification->getAmount();;
-//            }
-//        }
-//
-//
-//        // create item total
-//        $paymentDetails->ItemTotal = new stdClass();
-//        $paymentDetails->ItemTotal->_ = $itemTotal;
-//        $paymentDetails->ItemTotal->currencyID = $currency;
+        //        // add article
+        //        $itemTotal = 0;
+        //        $paymentDetails->PaymentDetailsItem = array();
+        //        foreach($this->cart->getItems() as $item)
+        //        {
+        //            $article = new stdClass();
+        //            $article->Name = $item->getProduct()->getOSName();
+        //            $article->Description = $item->getComment();
+        //            $article->Number = $item->getProduct()->getOSProductNumber();
+        //            $article->Quantity = $item->getCount();
+        //            $article->Amount = new stdClass();
+        //            $article->Amount->_ = $item->getPrice()->getAmount();
+        //            $article->Amount->currencyID = $currency;
+        //
+        //            $paymentDetails->PaymentDetailsItem[] = $article;
+        //            $itemTotal += $item->getPrice()->getAmount();
+        //        }
+        //
+        //
+        //        // add modificators
+        //        foreach($priceCalculator->getPriceModifications() as $name => $modification)
+        //        {
+        //            if($modification instanceof OnlineShop_Framework_IModificatedPrice && $name == 'shipping')
+        //            {
+        //                // add shipping charge
+        //                $paymentDetails->ShippingTotal = new stdClass();
+        //                $paymentDetails->ShippingTotal->_ = $modification->getAmount();
+        //                $paymentDetails->ShippingTotal->currencyID = $currency;
+        //            }
+        //            else if($modification instanceof OnlineShop_Framework_IModificatedPrice && $modification->getAmount() !== 0)
+        //            {
+        //                // add discount line
+        //                $article = new stdClass();
+        //                $article->Name = $modification->getDescription();
+        //                $article->Quantity = 1;
+        //                $article->PromoCode = $modification->getDescription();
+        //                $article->Amount = new stdClass();
+        //                $article->Amount->_ = $modification->getAmount();
+        //                $article->Amount->currencyID = $currency;
+        //                $paymentDetails->PaymentDetailsItem[] = $article;
+        //
+        //                $itemTotal += $modification->getAmount();;
+        //            }
+        //        }
+        //
+        //
+        //        // create item total
+        //        $paymentDetails->ItemTotal = new stdClass();
+        //        $paymentDetails->ItemTotal->_ = $itemTotal;
+        //        $paymentDetails->ItemTotal->currencyID = $currency;
 
         return $paymentDetails;
     }

@@ -72,7 +72,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
     {
         if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
             $this->get('monolog.logger.security')->error(
-                'User {user} attempted to access {permission}, but has no permission to do so', [
+                'User {user} attempted to access {permission}, but has no permission to do so',
+                [
                     'user'       => $this->getUser()->getName(),
                     'permission' => $permission
                 ]

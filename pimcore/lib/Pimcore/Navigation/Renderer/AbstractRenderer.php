@@ -263,8 +263,10 @@ abstract class AbstractRenderer implements RendererInterface
 
         $found  = null;
         $foundDepth = -1;
-        $iterator = new \RecursiveIteratorIterator($container,
-                \RecursiveIteratorIterator::CHILD_FIRST);
+        $iterator = new \RecursiveIteratorIterator(
+            $container,
+                \RecursiveIteratorIterator::CHILD_FIRST
+        );
 
         foreach ($iterator as $page) {
             $currDepth = $iterator->getDepth();

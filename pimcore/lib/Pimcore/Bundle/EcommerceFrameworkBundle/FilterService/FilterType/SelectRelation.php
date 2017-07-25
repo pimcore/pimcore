@@ -96,10 +96,10 @@ class SelectRelation extends AbstractFilterType
 
         if (!empty($value)) {
             //            if($isPrecondition) {
-//                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
-//            } else {
-                $productList->addRelationCondition($field, 'dest = ' . $productList->quote($value));
-//            }
+            //                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
+            //            } else {
+            $productList->addRelationCondition($field, 'dest = ' . $productList->quote($value));
+            //            }
         }
 
         return $currentFilter;

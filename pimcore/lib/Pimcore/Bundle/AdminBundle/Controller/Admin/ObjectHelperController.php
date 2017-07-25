@@ -230,7 +230,7 @@ class ObjectHelperController extends AdminController
                         if (substr($key, 0, 1) == '~') {
                             // not needed for now
                             $type = $keyParts[1];
-//                            $field = $keyParts[2];
+                            //                            $field = $keyParts[2];
                             $groupAndKeyId = explode('-', $keyParts[3]);
                             $keyId = $groupAndKeyId[1];
 
@@ -1104,7 +1104,8 @@ class ObjectHelperController extends AdminController
                             $definition = json_decode($keyConfig->getDefinition());
                             $fieldDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
-                            return $fieldDefinition->getForCsvExport($object,
+                            return $fieldDefinition->getForCsvExport(
+                                $object,
                                 ['context' => [
                                     'containerType' => 'classificationstore',
                                     'fieldname' => $fieldname,

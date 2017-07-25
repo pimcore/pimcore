@@ -66,7 +66,8 @@ class Listing extends AbstractOrderList implements IOrderList
 
             // base order
             $select->from(
-                [ 'order' => 'object_query_' . OnlineShopOrder::classId() ], [
+                [ 'order' => 'object_query_' . OnlineShopOrder::classId() ],
+                [
                     new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id'
                 ]
             );
@@ -137,7 +138,9 @@ class Listing extends AbstractOrderList implements IOrderList
 
         if (!array_key_exists('pricingRule', $joins)) {
             $this->getQuery()->joinLeft(
-                ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()], 'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"', ''
+                ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()],
+                'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"',
+                ''
             );
         }
 
@@ -157,18 +160,23 @@ class Listing extends AbstractOrderList implements IOrderList
 
             $paymentQuery
                 ->from(
-                    ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()], [
+                    ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()],
+                    [
                         'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id'
                     ]
                 )
                 ->join(
-                    ['_order' => 'object_' . OnlineShopOrder::classId()], '_order.oo_id = _paymentInfo.o_id', ''
+                    ['_order' => 'object_' . OnlineShopOrder::classId()],
+                    '_order.oo_id = _paymentInfo.o_id',
+                    ''
                 )
             ;
 
             // join
             $this->getQuery()->joinLeft(
-                ['paymentInfo' => new Db\ZendCompatibility\Expression('(' . $paymentQuery . ')')], 'paymentInfo.o_id = `order`.oo_id', ''
+                ['paymentInfo' => new Db\ZendCompatibility\Expression('(' . $paymentQuery . ')')],
+                'paymentInfo.o_id = `order`.oo_id',
+                ''
             );
         }
 
@@ -184,7 +192,9 @@ class Listing extends AbstractOrderList implements IOrderList
 
         if (!array_key_exists('orderItemObjects', $joins)) {
             $this->getQuery()->join(
-                ['orderItemObjects' => 'objects'], 'orderItemObjects.o_id = orderItem.product__id', ''
+                ['orderItemObjects' => 'objects'],
+                'orderItemObjects.o_id = orderItem.product__id',
+                ''
             );
         }
 
@@ -202,7 +212,9 @@ class Listing extends AbstractOrderList implements IOrderList
 
         if (!array_key_exists('product', $joins)) {
             $this->getQuery()->join(
-                ['product' => 'object_query_' . (int)$classId], 'product.oo_id = orderItem.product__id', ''
+                ['product' => 'object_query_' . (int)$classId],
+                'product.oo_id = orderItem.product__id',
+                ''
             );
         }
 
@@ -220,7 +232,9 @@ class Listing extends AbstractOrderList implements IOrderList
 
         if (!array_key_exists('customer', $joins)) {
             $this->getQuery()->join(
-                ['customer' => 'object_' . (int)$classId], 'customer.o_id = order.customer__id', ''
+                ['customer' => 'object_' . (int)$classId],
+                'customer.o_id = order.customer__id',
+                ''
             );
         }
 
@@ -239,14 +253,17 @@ class Listing extends AbstractOrderList implements IOrderList
         if (!$this->useSubItems()) {
             // just order items
             $select->join(
-                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ], '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id', ''
+                [ '_orderItems' => 'object_relations_' . OnlineShopOrder::classId() ],
+                '_orderItems.fieldname = "items" AND _orderItems.src_id = `order`.oo_id',
+                ''
             );
         } else {
             // join items and sub items
             $orderClassId = OnlineShopOrder::classId();
             $orderItemClassId = OnlineShopOrderItem::classId();
             $select->join(
-                ['_orderItems' => new Db\ZendCompatibility\Expression(<<<SUBQUERY
+                ['_orderItems' => new Db\ZendCompatibility\Expression(
+                    <<<SUBQUERY
 (
     -- add items
     SELECT
@@ -280,13 +297,17 @@ class Listing extends AbstractOrderList implements IOrderList
         AND _orderItems.fieldname = "items"
 )
 SUBQUERY
-                )], '_orderItems.orderId = `order`.oo_id', ''
+                )],
+                '_orderItems.orderId = `order`.oo_id',
+                ''
             );
         }
 
         // join related order item
         $select->join(
-            [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ], 'orderItem.o_id = _orderItems.dest_id', ['OrderItemId' => 'orderItem.oo_id']
+            [ 'orderItem' => 'object_' . OnlineShopOrderItem::classId() ],
+            'orderItem.o_id = _orderItems.dest_id',
+            ['OrderItemId' => 'orderItem.oo_id']
         );
 
         return $this;

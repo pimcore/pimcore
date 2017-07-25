@@ -644,7 +644,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         if (strlen($tagName) > 750) {
             throw new \Exception(sprintf(
                 'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
-                $name, $tagName
+                $name,
+                $tagName
             ));
         }
 

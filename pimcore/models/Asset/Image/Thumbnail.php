@@ -482,37 +482,37 @@ class Thumbnail
             $html = '<picture ' . implode(' ', $pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
 
-                // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-                ksort($mediaConfigs, SORT_NUMERIC);
+            // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+            ksort($mediaConfigs, SORT_NUMERIC);
             array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
-                foreach ($mediaConfigs as $mediaQuery => $config) {
-                    $srcSetValues = [];
-                    foreach ([1, 2] as $highRes) {
-                        $thumbConfigRes = clone $thumbConfig;
-                        $thumbConfigRes->selectMedia($mediaQuery);
-                        $thumbConfigRes->setHighResolution($highRes);
-                        $thumb = $image->getThumbnail($thumbConfigRes, true);
-                        $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
+            foreach ($mediaConfigs as $mediaQuery => $config) {
+                $srcSetValues = [];
+                foreach ([1, 2] as $highRes) {
+                    $thumbConfigRes = clone $thumbConfig;
+                    $thumbConfigRes->selectMedia($mediaQuery);
+                    $thumbConfigRes->setHighResolution($highRes);
+                    $thumb = $image->getThumbnail($thumbConfigRes, true);
+                    $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
 
-                        if (!$fallBackImageThumb) {
-                            $fallBackImageThumb = $thumb;
-                        }
+                    if (!$fallBackImageThumb) {
+                        $fallBackImageThumb = $thumb;
                     }
-
-                    $html .= "\t" . '<source srcset="' . implode(', ', $srcSetValues) .'"';
-                    if ($mediaQuery) {
-                        // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                        $maxWidth = str_replace('w', '', $mediaQuery);
-                        $html .= ' media="(max-width: ' . $maxWidth . 'px)"';
-                        $thumb->reset();
-                    }
-                    $html .= ' />' . "\n";
                 }
 
-                //$html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
+                $html .= "\t" . '<source srcset="' . implode(', ', $srcSetValues) .'"';
+                if ($mediaQuery) {
+                    // currently only max-width is supported, so we replace the width indicator (400w) out of the name
+                    $maxWidth = str_replace('w', '', $mediaQuery);
+                    $html .= ' media="(max-width: ' . $maxWidth . 'px)"';
+                    $thumb->reset();
+                }
+                $html .= ' />' . "\n";
+            }
 
-                $attrCleanedForPicture = $attributes;
+            //$html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
+
+            $attrCleanedForPicture = $attributes;
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
             $attrCleanedForPicture['src'] = 'src="' . (string) $fallBackImageThumb . '"';

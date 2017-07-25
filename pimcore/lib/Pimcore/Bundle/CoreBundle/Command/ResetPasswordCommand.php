@@ -37,7 +37,8 @@ class ResetPasswordCommand extends AbstractCommand
                 'Username or ID of user'
             )
             ->addOption(
-                'password', 'p',
+                'password',
+                'p',
                 InputOption::VALUE_OPTIONAL,
                 'Plaintext password - if not set, script will prompt for the new password (recommended)'
             );

@@ -329,8 +329,10 @@ class Select extends Model\Object\ClassDefinition\Data
 
     public function enrichFieldDefinition($context = [])
     {
-        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
-            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
+        );
 
         if ($optionsProvider) {
             $context['fieldname'] = $this->getName();
@@ -347,8 +349,10 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
-            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
+        );
         if ($optionsProvider) {
             $context['object'] = $object;
             if ($object) {
@@ -382,8 +386,10 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider($this->getOptionsProviderClass(),
-            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT);
+        $optionsProvider = Object\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
+            $this->getOptionsProviderClass(),
+            Object\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT
+        );
 
         if ($optionsProvider) {
             $context = $params['context'] ? $params['context'] : [];

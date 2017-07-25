@@ -716,11 +716,11 @@ class DefaultFindologic implements IProductList
         $data = $this->sendRequest($params);
 
         // TODO error handling
-//        if(array_key_exists('error', $data))
-//        {
-//            throw new Exception($data['error']);
-//        }
-//        $searchResult = $data->searchResult;
+        //        if(array_key_exists('error', $data))
+        //        {
+        //            throw new Exception($data['error']);
+        //        }
+        //        $searchResult = $data->searchResult;
 
         // extract grouped values
         $this->groupedValues = [];
@@ -753,7 +753,10 @@ class DefaultFindologic implements IProductList
         ;
 
         // create url
-        $url = sprintf('http://%1$s/ps/xml_2.0/%2$s?', $this->tenantConfig->getClientConfig('serviceUrl'), $endpoint
+        $url = sprintf(
+            'http://%1$s/ps/xml_2.0/%2$s?',
+            $this->tenantConfig->getClientConfig('serviceUrl'),
+            $endpoint
         );
         $url .= http_build_query($params);
 

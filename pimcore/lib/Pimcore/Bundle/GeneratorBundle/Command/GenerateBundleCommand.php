@@ -35,7 +35,8 @@ class GenerateBundleCommand extends BaseGenerateBundleCommand
         $this
             ->setName('pimcore:generate:bundle')
             ->setDescription('Generates a Pimcore bundle')
-            ->setHelp(<<<EOT
+            ->setHelp(
+                <<<EOT
 The <info>%command.name%</info> command helps you generates new Pimcore bundles. If you need to create a normal Symfony
 bundle, please use the generate:bundle command without pimcore: prefix.
 

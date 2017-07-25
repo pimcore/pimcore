@@ -35,21 +35,25 @@ class UpdateCommand extends AbstractCommand
             ->setAliases(['update'])
             ->setDescription('Update pimcore to the desired version/build')
             ->addOption(
-                'list', 'l',
+                'list',
+                'l',
                 InputOption::VALUE_NONE,
                 'List available updates'
             )
             ->addOption(
-                'update', 'u',
+                'update',
+                'u',
                 InputOption::VALUE_OPTIONAL,
                 'Update to the given number / build'
             )
             ->addOption(
-                'dry-run', 'd',
+                'dry-run',
+                'd',
                 InputOption::VALUE_NONE,
                 'Dry-run'
             )->addOption(
-                'source-build', null,
+                'source-build',
+                null,
                 InputOption::VALUE_OPTIONAL,
                 'specify a source build where the update should start from - this is mainly for debugging purposes'
             );

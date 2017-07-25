@@ -562,7 +562,10 @@ class DefaultFactFinder implements IProductList
             if (!$this->conditionPriceTo) {
                 $params['filterGRUNDPREIS'] = $this->conditionPriceFrom;
             } else {
-                $params['filterGRUNDPREIS'] = sprintf('%d - %d', $this->conditionPriceFrom, $this->conditionPriceTo
+                $params['filterGRUNDPREIS'] = sprintf(
+                    '%d - %d',
+                    $this->conditionPriceFrom,
+                    $this->conditionPriceTo
                 );
             }
         }
@@ -767,7 +770,10 @@ class DefaultFactFinder implements IProductList
      */
     protected function getSearchUrl()
     {
-        return sprintf('http://%s/%s/Search.ff?', $this->tenantConfig->getClientConfig('host'), $this->tenantConfig->getClientConfig('customer')
+        return sprintf(
+            'http://%s/%s/Search.ff?',
+            $this->tenantConfig->getClientConfig('host'),
+            $this->tenantConfig->getClientConfig('customer')
         );
     }
 

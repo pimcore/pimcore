@@ -617,7 +617,8 @@ class Menu extends AbstractRenderer
      *
      * @return string                                       rendered menu (HTML)
      */
-    protected function _renderDeepestMenu(Container $container,
+    protected function _renderDeepestMenu(
+        Container $container,
                                           $ulClass,
                                           $indent,
                                           $innerIndent,
@@ -627,8 +628,8 @@ class Menu extends AbstractRenderer
                                           $addPageClassToLi,
                                           $activeClass,
                                           $parentClass,
-                                          $renderParentClass)
-    {
+                                          $renderParentClass
+    ) {
         if (!$active = $this->findActive($container, $minDepth - 1, $maxDepth)) {
             return '';
         }
@@ -742,8 +743,10 @@ class Menu extends AbstractRenderer
         }
 
         // create iterator
-        $iterator = new \RecursiveIteratorIterator($container,
-                            \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new \RecursiveIteratorIterator(
+            $container,
+                            \RecursiveIteratorIterator::SELF_FIRST
+        );
         if (is_int($maxDepth)) {
             $iterator->setMaxDepth($maxDepth);
         }

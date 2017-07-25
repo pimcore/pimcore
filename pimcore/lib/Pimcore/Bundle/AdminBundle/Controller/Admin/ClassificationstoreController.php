@@ -1348,7 +1348,7 @@ class ClassificationstoreController extends AdminController
         $id = $request->get('id');
 
         $config = Classificationstore\KeyConfig::getById($id);
-//        $config->delete();
+        //        $config->delete();
         $config->setEnabled(false);
         $config->save();
 

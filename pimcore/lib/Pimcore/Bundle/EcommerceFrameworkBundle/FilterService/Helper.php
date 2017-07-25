@@ -34,12 +34,15 @@ class Helper
      * @param $loadFullPage
      * @param bool $excludeLimitOfFirstpage
      */
-    public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
+    public static function setupProductList(
+        \Pimcore\Model\Object\FilterDefinition $filterDefinition,
                                             IProductList $productList,
-                                            $params, $viewModel,
+                                            $params,
+        $viewModel,
                                             FilterService $filterService,
-                                            $loadFullPage, $excludeLimitOfFirstpage = false)
-    {
+                                            $loadFullPage,
+        $excludeLimitOfFirstpage = false
+    ) {
         $orderByOptions = [];
         $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
         if (!empty($orderKeysAsc)) {
