@@ -124,8 +124,16 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             },
 
             onNodeOver : function(target, dd, e, data) {
-                return Ext.dd.DropZone.prototype.dropAllowed;
-            },
+                var record = data.records[0];
+                data = record.data;
+                if (this.dndAllowed(data)) {
+                    return Ext.dd.DropZone.prototype.dropAllowed;
+                }
+                else {
+                    return Ext.dd.DropZone.prototype.dropNotAllowed;
+                }
+
+            }.bind(this),
 
             onNodeDrop : this.onNodeDrop.bind(this)
         });
@@ -205,6 +213,11 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         this.ckeditor.focus();
 
         var node = data.records[0];
+
+        if (!this.ckeditor ||!this.dndAllowed(node.data)) {
+            return;
+        }
+
         var wrappedText = node.data.text;
         var textIsSelected = false;
         
@@ -291,6 +304,20 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return true;
         }
 
+    },
+
+    dndAllowed: function(data) {
+
+        if (data.elementType == "document" && (data.type=="page"
+            || data.type=="hardlink" || data.type=="link")){
+            return true;
+        } else if (data.elementType=="asset" && data.type != "folder"){
+            return true;
+        } else if (data.elementType=="object" && data.type != "folder"){
+            return true;
+        }
+
+        return false;
     },
 
     getValue: function () {

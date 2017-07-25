@@ -1654,12 +1654,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             },
 
             onNodeOver : function(target, dd, e, data) {
-                return Ext.dd.DropZone.prototype.dropAllowed;
+                data = data.records[0].data;
+                return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
             }.bind(this),
 
             onNodeDrop : function (target, dd, e, data) {
                 var record = data.records[0];
-                if (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object") {
+                if (record.data.type != "folder" && (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object")) {
                     fieldPath.setValue(record.data.path);
                     return true;
                 }
