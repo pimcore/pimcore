@@ -28,6 +28,9 @@
     "docs": "https://www.pimcore.org/wiki/"
   },
   "config": {
+    "platform": {
+      "php": "7.0"
+    },
     "optimize-autoloader": true,
     "sort-packages": true
   },
@@ -52,7 +55,7 @@
     "composer/ca-bundle": "^1",
     "debril/rss-atom-bundle": "^3.0",
     "defuse/php-encryption": "~2",
-    "doctrine/doctrine-bundle": "^1.6",
+    "doctrine/doctrine-bundle": "1.6.*",
     "egulias/email-validator": "*",
     "endroid/qrcode": "~1.5",
     "geoip2/geoip2": "~2",
