@@ -22,6 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
@@ -79,6 +81,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildPricingManagerNode())
             ->append($this->buildPriceSystemsNode())
             ->append($this->buildAvailabilitySystemsNode())
+            ->append($this->buildCheckoutManagerNode())
             ->append($this->buildPaymentManagerNode())
             ->append($this->buildProductIndexNode())
             ->append($this->buildVoucherServiceNode())
@@ -373,6 +376,130 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $availabilitySystems;
+    }
+
+    private function buildCheckoutManagerNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $checkoutManager = $builder->root('checkout_manager');
+        $checkoutManager->addDefaultsIfNotSet();
+
+        /*
+         * checkout manager has one level more than other tenant aware config trees as there can be
+         * multiple named checkout managers. the tree is structured as follows:
+         *
+         *   checkout_manager:
+         *       by_name:
+         *           name1:
+         *               tenants:
+         *                   default: ~
+         *                   tenant1: ~
+         *           name2:
+         *               tenants:
+         *                   default: ~
+         *                   tenant1: ~
+         *
+         * the _defaults merging logic is applied inside by_name and inside each tenants array. to specifiy
+         * defaults for every tenant in every name, you can do the following:
+         *
+         *  checkout_manager:
+         *      by_name:
+         *          _defaults:
+         *              tenants:
+         *                  _defaults:
+         *                      checkout_manager_id: FooBar
+         */
+        $checkoutManager
+            ->children()
+                ->arrayNode('by_name')
+                    ->info('Configuration per named checkout manager. If a _defaults key is set, it will be merged into every name configuration. A "default" name is mandatory.')
+                    ->useAttributeAsKey('name')
+                    ->validate()
+                        ->ifTrue(function (array $v) {
+                            return !array_key_exists('default', $v);
+                        })
+                        ->thenInvalid('Checkout manager needs at least a default name')
+                    ->end()
+                    ->beforeNormalization()
+                        ->always(function ($v) {
+                            if (empty($v) || !is_array($v)) {
+                                $v = [];
+                            }
+
+                            return $this->tenantProcessor->mergeTenantConfig($v);
+                        })
+                    ->end()
+                    ->prototype('array')
+                        ->children()
+                            ->arrayNode('tenants')
+                                ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant. A tenant named "default" is mandatory.')
+                                ->useAttributeAsKey('name')
+                                ->validate()
+                                    ->ifTrue(function (array $v) {
+                                        return !array_key_exists('default', $v);
+                                    })
+                                    ->thenInvalid('Checkout manager needs at least a default tenant')
+                                ->end()
+                                ->beforeNormalization()
+                                    ->always(function ($v) {
+                                        if (empty($v) || !is_array($v)) {
+                                            $v = [];
+                                        }
+
+                                        return $this->tenantProcessor->mergeTenantConfig($v);
+                                    })
+                                ->end()
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('factory_id')
+                                            ->defaultValue(CheckoutManagerFactory::class)
+                                            ->cannotBeEmpty()
+                                        ->end()
+                                        ->append($this->buildOptionsNode('factory_options'))
+                                        ->scalarNode('order_manager_tenant')
+                                            ->defaultNull()
+                                        ->end()
+                                        ->arrayNode('payment')
+                                            ->addDefaultsIfNotSet()
+                                            ->children()
+                                                ->scalarNode('provider')
+                                                    ->defaultNull()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                        ->arrayNode('commit_order_processor')
+                                            ->addDefaultsIfNotSet()
+                                            ->children()
+                                                ->scalarNode('id')
+                                                    ->defaultValue(CommitOrderProcessor::class)
+                                                    ->cannotBeEmpty()
+                                                ->end()
+                                                ->variableNode('options')
+                                                    ->defaultNull()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                        ->arrayNode('steps')
+                                            ->requiresAtLeastOneElement()
+                                            ->prototype('array')
+                                                ->children()
+                                                    ->scalarNode('class')
+                                                        ->isRequired()
+                                                    ->end()
+                                                    ->append($this->buildOptionsNode())
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $checkoutManager;
     }
 
     private function buildPaymentManagerNode(): NodeDefinition

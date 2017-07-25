@@ -1,0 +1,26 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # CHECKOUT MANAGER
+    #
+    # Predefined core checkout manager implementations. Undefined arguments (order manager, commit order processor,
+    # options, payment manager, ...) will be set from config.
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory:
+        arguments:
+            - '@pimcore_ecommerce.environment'
+            - '@?' # order manager
+            - '@?' # commit order processor
+            - [] # checkout steps
+            - '@?' # payment provider
+            - [] # options
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor:
+        arguments:
+            - '@?' # order manager
+            - [] # options

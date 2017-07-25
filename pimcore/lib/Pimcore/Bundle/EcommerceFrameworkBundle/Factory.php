@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySyst
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
@@ -30,7 +31,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
@@ -84,6 +84,20 @@ class Factory
     private $availabilitySystems;
 
     /**
+     * Checkout manager factories registered by "name.tenant"
+     *
+     * @var PsrContainerInterface
+     */
+    private $checkoutManagerFactories;
+
+    /**
+     * Commit order processors registered by "checkout_manager_name.checkout_manager_tenant"
+     *
+     * @var PsrContainerInterface
+     */
+    private $commitOrderProcessors;
+
+    /**
      * @var Config
      */
     private $config;
@@ -108,20 +122,26 @@ class Factory
      * @param PsrContainerInterface $orderManagers
      * @param PsrContainerInterface $priceSystemsLocator
      * @param PsrContainerInterface $availabilitySystems
+     * @param PsrContainerInterface $checkoutManagerFactories
+     * @param PsrContainerInterface $commitOrderProcessors
      */
     public function __construct(
         ContainerInterface $container,
         PsrContainerInterface $cartManagers,
         PsrContainerInterface $orderManagers,
         PsrContainerInterface $priceSystemsLocator,
-        PsrContainerInterface $availabilitySystems
+        PsrContainerInterface $availabilitySystems,
+        PsrContainerInterface $checkoutManagerFactories,
+        PsrContainerInterface $commitOrderProcessors
     )
     {
-        $this->container           = $container;
-        $this->cartManagers        = $cartManagers;
-        $this->orderManagers       = $orderManagers;
-        $this->priceSystems        = $priceSystemsLocator;
-        $this->availabilitySystems = $availabilitySystems;
+        $this->container                = $container;
+        $this->cartManagers             = $cartManagers;
+        $this->orderManagers            = $orderManagers;
+        $this->priceSystems             = $priceSystemsLocator;
+        $this->availabilitySystems      = $availabilitySystems;
+        $this->checkoutManagerFactories = $checkoutManagerFactories;
+        $this->commitOrderProcessors    = $commitOrderProcessors;
 
         $this->init();
     }
@@ -239,6 +259,65 @@ class Factory
         return $this->availabilitySystems->get($name);
     }
 
+    /**
+     * Returns a checkout manager specific to a cart instance. Checkout managers support
+     * named managers which in turn can support multiple tenants. If no name or tenant is
+     * passed, the tenant "default" from a checkout manager named "default" will be loaded.
+     *
+     * @param ICart $cart
+     * @param string|null $name
+     * @param string|null $tenant
+     *
+     * @return ICheckoutManager
+     * @throws UnsupportedException
+     */
+    public function getCheckoutManager(ICart $cart, string $name = null, string $tenant = null): ICheckoutManager
+    {
+        $serviceId = $this->buildCheckoutManagerServiceId($name, $tenant);
+
+        if (!$this->commitOrderProcessors->has($serviceId)) {
+            list($normalizedName, $normalizedTenant) = explode('.', $serviceId);
+
+            throw new UnsupportedException(sprintf(
+                'There is no factory defined for checkout manager with name "%s" and tenant "%s". Please check the configuration.',
+                $normalizedName,
+                $normalizedTenant
+            ));
+        }
+
+        /** @var ICheckoutManagerFactory $factory */
+        $factory = $this->checkoutManagerFactories->get($serviceId);
+
+        return $factory->createCheckoutManager($cart);
+    }
+
+    /**
+     * Returns a commit order processor which is configured for a specific checkout manager. The checkoutManagerName and
+     * tenant parameters follow the same logic as for the checkout manager itself.
+     *
+     * @param string|null $checkoutManagerName
+     * @param string|null $tenant
+     *
+     * @return ICommitOrderProcessor
+     * @throws UnsupportedException
+     */
+    public function getCommitOrderProcessor(string $checkoutManagerName = null, string $tenant = null): ICommitOrderProcessor
+    {
+        $serviceId = $this->buildCheckoutManagerServiceId($checkoutManagerName, $tenant);
+
+        if (!$this->commitOrderProcessors->has($serviceId)) {
+            list($normalizedName, $normalizedTenant) = explode('.', $serviceId);
+
+            throw new UnsupportedException(sprintf(
+                'Commit order processor for checkout manager name "%s" and tenant "%s" is not defined. Please check the configuration.',
+                $normalizedName,
+                $normalizedTenant
+            ));
+        }
+
+        return $this->commitOrderProcessors->get($serviceId);
+    }
+
     public function getPaymentManager(): IPaymentManager
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
@@ -273,6 +352,22 @@ class Factory
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
     }
 
+    /**
+     * Normalize name and tenant to "default" and/or current checkout tenant
+     *
+     * @param string|null $name
+     * @param string|null $tenant
+     *
+     * @return string
+     */
+    private function buildCheckoutManagerServiceId(string $name = null, string $tenant = null): string
+    {
+        return sprintf(
+            '%s.%s',
+            $name ?? 'default',
+            $tenant ?? $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default'
+        );
+    }
 
 
 
@@ -317,75 +412,7 @@ class Factory
 
     private function checkConfig($config)
     {
-        $this->configureCheckoutManager($config);
     }
-
-    private function configureCheckoutManager($config)
-    {
-        if (empty($config->ecommerceframework->checkoutmanager->class)) {
-            throw new InvalidConfigException('No Checkoutmanager class defined.');
-        } else {
-            if (!class_exists($config->ecommerceframework->checkoutmanager->class)) {
-                throw new InvalidConfigException('Checkoutmanager class ' . $config->ecommerceframework->checkoutmanager->class . ' not found.');
-            }
-        }
-    }
-
-    /**
-     * @throws InvalidConfigException
-     *
-     * @param ICart $cart
-     * @param string $name optional name of checkout manager, in case there are more than one configured
-     *
-     * @return ICheckoutManager
-     */
-    public function getCheckoutManager(ICart $cart, $name = null)
-    {
-        if (empty($this->checkoutManagers[$cart->getId()])) {
-            if ($name) {
-                $managerConfigName = 'checkoutmanager_' . $name;
-                $manager = new $this->config->ecommerceframework->$managerConfigName->class($cart, $this->config->ecommerceframework->$managerConfigName->config);
-                if (!($manager instanceof ICheckoutManager)) {
-                    throw new InvalidConfigException('Checkoutmanager class ' . $this->config->ecommerceframework->$managerConfigName->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
-                }
-            } else {
-                $manager = new $this->config->ecommerceframework->checkoutmanager->class($cart, $this->config->ecommerceframework->checkoutmanager->config);
-                if (!($manager instanceof ICheckoutManager)) {
-                    throw new InvalidConfigException('Checkoutmanager class ' . $this->config->ecommerceframework->checkoutmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
-                }
-            }
-
-            $this->checkoutManagers[$cart->getId()] = $manager;
-        }
-
-        return $this->checkoutManagers[$cart->getId()];
-    }
-
-    /**
-     * @param string $checkoutManagerName
-     *
-     * @return ICommitOrderProcessor
-     */
-    public function getCommitOrderProcessor($checkoutManagerName = null)
-    {
-        $originalConfig = $this->config->ecommerceframework->checkoutmanager->config;
-        if ($checkoutManagerName) {
-            $managerConfigName = 'checkoutmanager_' . $checkoutManagerName;
-            $originalConfig = $this->config->ecommerceframework->$managerConfigName->config;
-        }
-
-        $config = new HelperContainer($originalConfig, 'checkoutmanager');
-        $commitOrderProcessorClassname = $config->commitorderprocessor->class;
-
-        $commitOrderProcessor = new $commitOrderProcessorClassname();
-        $commitOrderProcessor->setConfirmationMail((string)$config->mails->confirmation);
-
-        return $commitOrderProcessor;
-    }
-
-
-
-
 
     /**
      * @var IndexService
