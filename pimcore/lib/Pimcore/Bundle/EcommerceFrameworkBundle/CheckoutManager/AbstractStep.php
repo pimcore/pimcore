@@ -23,7 +23,7 @@ abstract class AbstractStep implements ICheckoutStep
      */
     protected $cart;
 
-    public function __construct(ICart $cart)
+    public function __construct(ICart $cart, array $options = [])
     {
         $this->cart = $cart;
     }

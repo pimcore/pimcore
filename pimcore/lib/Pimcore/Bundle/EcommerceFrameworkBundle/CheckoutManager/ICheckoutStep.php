@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
  */
 interface ICheckoutStep
 {
-    public function __construct(ICart $cart);
+    public function __construct(ICart $cart, array $options = []);
 
     /**
      * Returns checkout step name

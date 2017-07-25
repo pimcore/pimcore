@@ -74,11 +74,6 @@ interface ICommitOrderProcessor
     public function commitOrder(AbstractOrder $order);
 
     /**
-     * @param string $confirmationMail
-     */
-    public function setConfirmationMail($confirmationMail);
-
-    /**
      * Cleans up orders with state pending payment after 1h
      *
      * @return void

@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
@@ -23,6 +23,7 @@ use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
 use Pimcore\Logger;
 use Pimcore\Model\Tool\Lock;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor implements ICommitOrderProcessor
 {
@@ -30,9 +31,36 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     const LOGGER_NAME = 'commit-order-processor';
 
     /**
+     * @var IOrderManager
+     */
+    protected $orderManager;
+
+    /**
      * @var string
      */
     protected $confirmationMail = '/emails/order-confirmation';
+
+    public function __construct(IOrderManager $orderManager, array $options)
+    {
+        $this->orderManager = $orderManager;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+    }
+
+    protected function processOptions(array $options)
+    {
+        if (isset($options['confirmation_mail'])) {
+            $this->confirmationMail = $options['confirmation_mail'];
+        }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefined('confirmation_mail');
+    }
 
     /**
      * @param string $confirmationMail
@@ -98,8 +126,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             $paymentStatus = $paymentResponseParams;
         }
 
-        $orderManager = Factory::getInstance()->getOrderManager();
-        $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
+        $order = $this->orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if ($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
             $paymentInformationCollection = $order->getPaymentInfo();
@@ -135,8 +162,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             return $committedOrder;
         }
 
-        $orderManager = Factory::getInstance()->getOrderManager();
-        $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
+        $order = $this->orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if (empty($order)) {
             $message = 'No order found for payment status: ' . print_r($paymentStatus, true);
@@ -144,7 +170,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             throw new \Exception($message);
         }
 
-        $orderAgent = $orderManager->createOrderAgent($order);
+        $orderAgent = $this->orderManager->createOrderAgent($order);
         $orderAgent->setPaymentProvider($paymentProvider);
 
         $order = $orderAgent->updatePayment($paymentStatus)->getOrder();
@@ -233,14 +259,12 @@ class CommitOrderProcessor implements ICommitOrderProcessor
      */
     public function cleanUpPendingOrders()
     {
-        $orderManager = Factory::getInstance()->getOrderManager();
-
         $dateTime = new \DateTime();
         $dateTime->add(new \DateInterval('PT1H'));
         $timestamp = $dateTime->getTimestamp();
 
         //Abort orders with payment pending
-        $list = $orderManager->buildOrderList();
+        $list = $this->orderManager->buildOrderList();
         $list->addFieldCollection('PaymentInfo');
         $list->setCondition('orderState = ? AND orderdate < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
@@ -252,7 +276,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         }
 
         //Abort payments with payment pending
-        $list = $orderManager->buildOrderList();
+        $list = $this->orderManager->buildOrderList();
         $list->addFieldCollection('PaymentInfo', 'paymentinfo');
         $list->setCondition('`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
