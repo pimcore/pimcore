@@ -35,14 +35,6 @@ abstract class Tracker implements ITracker
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getTrackingItemBuilder()
-    {
-        return $this->trackingItemBuilder;
-    }
-
-    /**
      * View script prefix
      *
      * @return string

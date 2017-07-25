@@ -38,8 +38,8 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        $transaction = $this->getTrackingItemBuilder()->buildCheckoutTransaction($order);
-        $items       = $this->getTrackingItemBuilder()->buildCheckoutItems($order);
+        $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
+        $items       = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $parameterBag['transaction'] = $transaction;
         $parameterBag['items']       = $items;

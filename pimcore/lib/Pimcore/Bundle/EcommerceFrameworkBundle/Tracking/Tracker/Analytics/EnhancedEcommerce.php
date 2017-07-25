@@ -69,7 +69,7 @@ class EnhancedEcommerce extends Tracker implements
     {
         $this->ensureDependencies();
 
-        $item = $this->getTrackingItemBuilder()->buildProductViewItem($product);
+        $item = $this->trackingItemBuilder->buildProductViewItem($product);
 
         $parameterBag['productData'] = $this->transformProductAction($item);
 
@@ -90,7 +90,7 @@ class EnhancedEcommerce extends Tracker implements
     {
         $this->ensureDependencies();
 
-        $item = $this->getTrackingItemBuilder()->buildProductImpressionItem($product);
+        $item = $this->trackingItemBuilder->buildProductImpressionItem($product);
 
         $parameterBag['productData'] = $this->transformProductImpression($item);
 
@@ -132,7 +132,7 @@ class EnhancedEcommerce extends Tracker implements
      */
     protected function trackProductAction($product, $action, $quantity = 1)
     {
-        $item = $this->getTrackingItemBuilder()->buildProductActionItem($product);
+        $item = $this->trackingItemBuilder->buildProductActionItem($product);
         $item->setQuantity($quantity);
 
         $parameterBag['productData'] = $this->transformProductAction($item);
@@ -152,7 +152,7 @@ class EnhancedEcommerce extends Tracker implements
     {
         $this->ensureDependencies();
 
-        $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
+        $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = $this->buildCheckoutCalls($items);
@@ -174,7 +174,7 @@ class EnhancedEcommerce extends Tracker implements
     {
         $this->ensureDependencies();
 
-        $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
+        $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
         $parameterBag['items'] = $items;
         $parameterBag['calls'] = [];
@@ -203,8 +203,8 @@ class EnhancedEcommerce extends Tracker implements
     {
         $this->ensureDependencies();
 
-        $transaction = $this->getTrackingItemBuilder()->buildCheckoutTransaction($order);
-        $items = $this->getTrackingItemBuilder()->buildCheckoutItems($order);
+        $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
+        $items = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $parameterBag['transaction'] = $this->transformTransaction($transaction);
         $parameterBag['items'] = $items;
