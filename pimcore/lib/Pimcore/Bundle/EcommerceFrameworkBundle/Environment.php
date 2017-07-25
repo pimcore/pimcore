@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Service\Locale;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class Environment implements IEnvironment
@@ -33,10 +32,23 @@ class Environment implements IEnvironment
     const USER_ID_NOT_SET = -1;
 
     /**
+     * @var Locale
+     */
+    protected $localeService;
+
+    /**
      * @var SessionInterface
      */
     protected $session;
 
+    /**
+     * @var Currency
+     */
+    protected $defaultCurrency;
+
+    /**
+     * @var array
+     */
     protected $customItems = [];
 
     /**
@@ -49,26 +61,20 @@ class Environment implements IEnvironment
      */
     protected $useGuestCart = false;
 
-    protected $currentAssortmentTenant = null;
-    protected $currentAssortmentSubTenant = null;
-    protected $currentCheckoutTenant = null;
+    /**
+     * @var string
+     */
+    protected $currentAssortmentTenant;
 
     /**
-     * @var Currency
+     * @var string
      */
-    protected $defaultCurrency = null;
+    protected $currentAssortmentSubTenant;
 
     /**
-     * locale set on container
-     *
-     * @var Locale
+     * @var string
      */
-    protected $localeService = null;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $containerSession = null;
+    protected $currentCheckoutTenant;
 
     /**
      * Current transient checkout tenant
@@ -78,7 +84,7 @@ class Environment implements IEnvironment
      *
      * @var string
      */
-    protected $currentTransientCheckoutTenant = null;
+    protected $currentTransientCheckoutTenant;
 
     public function __construct($config, SessionInterface $session, Locale $localeService)
     {
@@ -377,6 +383,7 @@ class Environment implements IEnvironment
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
             }
+
             throw new \Exception('Not supported language');
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();
