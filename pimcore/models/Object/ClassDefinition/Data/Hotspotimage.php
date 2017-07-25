@@ -270,7 +270,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             $hotspots = object2array($hotspots);
 
             return [
-                'image' => $imageId,
+                'id' => $imageId,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
                 'crop' => $data->getCrop()
@@ -319,7 +319,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new Object\Data\Hotspotimage($data['image'], $data['hotspots'], $data['marker'], $data['crop']);
+        return new Object\Data\Hotspotimage($data['id'], $data['hotspots'], $data['marker'], $data['crop']);
     }
 
     /**
