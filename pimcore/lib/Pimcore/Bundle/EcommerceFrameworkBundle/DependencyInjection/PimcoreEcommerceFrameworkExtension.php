@@ -94,7 +94,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $orderManager = new ChildDefinition($tenantConfig['order_manager_id']);
             $orderManager->setPublic(true);
 
-            $orderManager->setArgument('$orderAgentFactory', new Reference($tenantConfig['agent_factory_id']));
+            $orderAgentFactory = new ChildDefinition($tenantConfig['order_agent']['factory_id']);
+            $orderAgentFactory->setArgument('$options', $tenantConfig['order_agent']['factory_options']);
+
+            $orderManager->setArgument('$orderAgentFactory', $orderAgentFactory);
             $orderManager->setArgument('$options', $tenantConfig['options']);
 
             $container->setDefinition('pimcore_ecommerce.order_manager.' . $tenant, $orderManager);
