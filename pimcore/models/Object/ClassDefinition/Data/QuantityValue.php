@@ -73,7 +73,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = 'Pimcore\\Model\\Object\\Data\\QuantityValue';
+    public $phpdocType = '\\Pimcore\\Model\\Object\\Data\\QuantityValue';
 
     /**
      * @return int
