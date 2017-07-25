@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class Tracker implements ITracker
 {
@@ -28,32 +29,62 @@ abstract class Tracker implements ITracker
      */
     protected $templatingEngine;
 
-    public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $templatingEngine)
+    /**
+     * @var string
+     */
+    protected $templatePrefix;
+
+    /**
+     * @var string
+     */
+    protected $templateExtension;
+
+    public function __construct(
+        ITrackingItemBuilder $trackingItemBuilder,
+        EngineInterface $templatingEngine,
+        array $options = []
+    )
     {
         $this->trackingItemBuilder = $trackingItemBuilder;
         $this->templatingEngine    = $templatingEngine;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+        $this->processOptions($resolver->resolve($options));
     }
 
-    /**
-     * View script prefix
-     *
-     * @return string
-     */
-    abstract protected function getViewScriptPrefix();
+    protected function processOptions(array $options)
+    {
+        $this->templatePrefix    = $options['template_prefix'];
+        $this->templateExtension = $options['template_extension'];
+    }
 
-    /**
-     * Get path to view script
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function getViewScript($name)
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(['template_prefix', 'template_extension']);
+        $resolver->setDefaults([
+            'template_extension' => 'php'
+        ]);
+
+        $resolver->setAllowedTypes('template_prefix', 'string');
+        $resolver->setAllowedTypes('template_extension', 'string');
+    }
+
+    protected function getTemplatePath(string $name)
     {
         return sprintf(
-            'PimcoreEcommerceFrameworkBundle:Tracking/%s:%s.js.php',
-            $this->getViewScriptPrefix(),
-            $name
+            '%s:%s.js.%s',
+            $this->templatePrefix,
+            $name,
+            $this->templateExtension
+        );
+    }
+
+    protected function renderTemplate(string $name, array $parameters): string
+    {
+        return $this->templatingEngine->render(
+            $this->getTemplatePath($name),
+            $parameters
         );
     }
 

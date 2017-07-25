@@ -30,6 +30,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Google\Analytics;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnhancedEcommerce extends Tracker implements
     IProductView,
@@ -52,12 +53,13 @@ class EnhancedEcommerce extends Tracker implements
      */
     protected $dependenciesIncluded = false;
 
-    /**
-     * @inheritdoc
-     */
-    protected function getViewScriptPrefix()
+    protected function configureOptions(OptionsResolver $resolver)
     {
-        return 'analytics/enhanced';
+        parent::configureOptions($resolver);
+
+        $resolver->setDefaults([
+            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/enhanced'
+        ]);
     }
 
     /**
@@ -71,12 +73,13 @@ class EnhancedEcommerce extends Tracker implements
 
         $item = $this->trackingItemBuilder->buildProductViewItem($product);
 
-        $parameterBag['productData'] = $this->transformProductAction($item);
+        $parameters = [];
+        $parameters['productData'] = $this->transformProductAction($item);
 
-        unset($parameterBag['productData']['price']);
-        unset($parameterBag['productData']['quantity']);
+        unset($parameters['productData']['price']);
+        unset($parameters['productData']['quantity']);
 
-        $result = $this->templatingEngine->render($this->getViewScript('product_view'), $parameterBag);
+        $result = $this->renderTemplate('product_view', $parameters);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -92,9 +95,11 @@ class EnhancedEcommerce extends Tracker implements
 
         $item = $this->trackingItemBuilder->buildProductImpressionItem($product);
 
-        $parameterBag['productData'] = $this->transformProductImpression($item);
+        $parameters = [
+            'productData' => $this->transformProductImpression($item)
+        ];
 
-        $result = $this->templatingEngine->render($this->getViewScript('product_impression'), $parameterBag);
+        $result = $this->renderTemplate('product_impression', $parameters);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -135,10 +140,11 @@ class EnhancedEcommerce extends Tracker implements
         $item = $this->trackingItemBuilder->buildProductActionItem($product);
         $item->setQuantity($quantity);
 
-        $parameterBag['productData'] = $this->transformProductAction($item);
-        $parameterBag['action'] = $action;
+        $parameters = [];
+        $parameters['productData'] = $this->transformProductAction($item);
+        $parameters['action'] = $action;
 
-        $result = $this->templatingEngine->render($this->getViewScript('product_action'), $parameterBag);
+        $result = $this->renderTemplate('product_action', $parameters);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -154,12 +160,14 @@ class EnhancedEcommerce extends Tracker implements
 
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
-        $parameterBag['items'] = $items;
-        $parameterBag['calls'] = $this->buildCheckoutCalls($items);
+        $parameters = [];
+        $parameters['items'] = $items;
+        $parameters['calls'] = $this->buildCheckoutCalls($items);
+        $parameters['actionData'] = [
+            'step' => 1
+        ];
 
-        $parameterBag['actionData'] = ['step' => 1];
-
-        $result = $this->templatingEngine->render($this->getViewScript('checkout'), $parameterBag);
+        $result = $this->renderTemplate('checkout', $parameters);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -176,8 +184,9 @@ class EnhancedEcommerce extends Tracker implements
 
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
-        $parameterBag['items'] = $items;
-        $parameterBag['calls'] = [];
+        $parameters = [];
+        $parameters['items'] = $items;
+        $parameters['calls'] = [];
 
         if (!is_null($stepNumber) || !is_null($checkoutOption)) {
             $actionData = ['step' => $stepNumber];
@@ -186,10 +195,10 @@ class EnhancedEcommerce extends Tracker implements
                 $actionData['option'] = $checkoutOption;
             }
 
-            $parameterBag['actionData'] = $actionData;
+            $parameters['actionData'] = $actionData;
         }
 
-        $result = $this->templatingEngine->render($this->getViewScript('checkout'), $parameterBag);
+        $result = $this->renderTemplate('checkout', $parameters);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -206,11 +215,12 @@ class EnhancedEcommerce extends Tracker implements
         $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
         $items = $this->trackingItemBuilder->buildCheckoutItems($order);
 
-        $parameterBag['transaction'] = $this->transformTransaction($transaction);
-        $parameterBag['items'] = $items;
-        $parameterBag['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
+        $parameters = [];
+        $parameters['transaction'] = $this->transformTransaction($transaction);
+        $parameters['items'] = $items;
+        $parameters['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
 
-        $result = $this->templatingEngine->render($this->getViewScript('checkout_complete'), $parameterBag);
+        $result = $this->renderTemplate('checkout_complete', $parameters);
 
         Analytics::addAdditionalCode($result, 'beforePageview');
     }
@@ -304,13 +314,16 @@ class EnhancedEcommerce extends Tracker implements
         ]);
     }
 
+    /**
+     * Makes sure dependencies are included once before any call
+     */
     protected function ensureDependencies()
     {
         if ($this->dependenciesIncluded || empty($this->dependencies)) {
             return;
         }
 
-        $result = $this->templatingEngine->render($this->getViewScript('dependencies'), [
+        $result = $this->renderTemplate('dependencies', [
             'dependencies' => $this->dependencies
         ]);
 
