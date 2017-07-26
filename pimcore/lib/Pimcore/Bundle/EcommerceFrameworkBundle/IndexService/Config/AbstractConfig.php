@@ -14,8 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
+use Pimcore\Model\Object\AbstractObject;
 
 abstract class AbstractConfig implements IConfig
 {
@@ -114,6 +116,8 @@ abstract class AbstractConfig implements IConfig
     }
 
     /**
+     * @param IIndexable $object
+     *
      * @return bool
      */
     public function isActive(IIndexable $object)
@@ -124,7 +128,7 @@ abstract class AbstractConfig implements IConfig
     /**
      * @param IIndexable $object
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
+     * @return AbstractCategory[]
      */
     public function getCategories(IIndexable $object)
     {
@@ -182,7 +186,7 @@ abstract class AbstractConfig implements IConfig
      */
     public function getObjectById($objectId, $onlyMainObject = false)
     {
-        return \Pimcore\Model\Object\AbstractObject::getById($objectId);
+        return AbstractObject::getById($objectId);
     }
 
     /**

@@ -15,9 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 /**
- * Interface for IndexService Tenant Configurations using factfinder as index
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig
+ * Interface for IndexService Tenant Configurations using findologic as index
  */
 interface IFindologicConfig extends IConfig
 {
@@ -40,7 +38,7 @@ interface IFindologicConfig extends IConfig
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic
      */
     public function getTenantWorker();
 }

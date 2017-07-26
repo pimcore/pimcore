@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
@@ -51,13 +53,14 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     protected $indexVersion = 0;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
+     * @var ElasticSearch
      */
     protected $tenantConfig;
 
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch $tenantConfig)
+    public function __construct(ElasticSearch $tenantConfig)
     {
         parent::__construct($tenantConfig);
+
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
         $this->determineAndSetCurrentIndexVersion();
     }
@@ -84,6 +87,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
     protected function getVersionFile()
     {
+        // TODO fix path
         return PIMCORE_WEBSITE_VAR.'/plugins/EcommerceFramework/elasticsearch-index-version-' . $this->indexName.'.txt';
     }
 
@@ -288,7 +292,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     if (!empty($attribute->interpreter)) {
                         $interpreter = $attribute->interpreter;
                         $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
+                        if ($interpreterObject instanceof IRelationInterpreter) {
                             $type = 'long';
                             $isRelation = true;
                         }
@@ -620,6 +624,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
      * checks if system is in reindex mode based on index version and ES alias
      *
      * @return bool
+     * @throws \Exception
      */
     protected function isInReindexMode()
     {

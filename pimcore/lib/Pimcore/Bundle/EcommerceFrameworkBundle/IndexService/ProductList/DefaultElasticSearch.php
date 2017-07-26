@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
@@ -47,7 +49,7 @@ class DefaultElasticSearch implements IProductList
     protected $tenantName;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
+     * @var IElasticSearchConfig
      */
     protected $tenantConfig;
 
@@ -87,7 +89,7 @@ class DefaultElasticSearch implements IProductList
     protected $offset;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @var AbstractCategory
      */
     protected $category;
 
@@ -161,7 +163,7 @@ class DefaultElasticSearch implements IProductList
         return $this->searchAggregation;
     }
 
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig $tenantConfig)
+    public function __construct(IElasticSearchConfig $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -446,7 +448,7 @@ class DefaultElasticSearch implements IProductList
      *
      * @return void
      */
-    public function setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category)
+    public function setCategory(AbstractCategory $category)
     {
         $this->category = $category;
         $this->preparedGroupByValuesLoaded = false;
@@ -454,7 +456,7 @@ class DefaultElasticSearch implements IProductList
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @return AbstractCategory
      */
     public function getCategory()
     {
@@ -1042,7 +1044,7 @@ class DefaultElasticSearch implements IProductList
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig
+     * @return IElasticSearchConfig
      */
     public function getTenantConfig()
     {

@@ -14,13 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Tool\Text;
 
 class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_factfinder';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_factfinder';
+
+    /**
+     * @var array
+     */
+    protected $_sqlChangeLog = [];
 
     protected function getSystemAttributes()
     {
@@ -119,7 +127,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
                     if (!empty($column->interpreter)) {
                         $interpreter = $column->interpreter;
                         $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations) {
+                        if ($interpreterObject instanceof DefaultRelations) {
                             $doAdd = false;
                         }
                     }
@@ -169,11 +177,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
              */
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
-                $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+                $b = AbstractObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
-                $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
+                AbstractObject::setGetInheritedValues(true);
+                $hidePublishedMemory = AbstractObject::doHideUnpublished();
+                AbstractObject::setHideUnpublished(false);
 
                 $data = $this->getDefaultDataForIndex($object, $subObjectId);
                 $data['categoryPaths'] = implode('|', (array)$data['categoryPaths']);
@@ -227,11 +235,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
+                AbstractObject::setGetInheritedValues($b);
+                AbstractObject::setHideUnpublished($hidePublishedMemory);
 
                 foreach ($data as $key => $value) {
-                    $data[$key]= \Pimcore\Tool\Text::removeLineBreaks($value);
+                    $data[$key]= Text::removeLineBreaks($value);
                 }
                 $data['crc_current'] = crc32(serialize($data));
                 $this->insertDataToIndex($data, $subObjectId);
@@ -304,9 +312,10 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     }
 
     /**
-     * @param int $objectId
+     * @param $subObjectId
+     * @param IIndexable|null $object
      *
-     * @todo
+     * @return mixed|void
      */
     protected function doDeleteFromIndex($subObjectId, IIndexable $object = null)
     {

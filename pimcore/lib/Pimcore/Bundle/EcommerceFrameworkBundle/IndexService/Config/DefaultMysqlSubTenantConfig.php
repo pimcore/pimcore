@@ -18,8 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig
- *
  * Sample implementation for sub-tenants based on mysql.
  */
 class DefaultMysqlSubTenantConfig extends DefaultMysql

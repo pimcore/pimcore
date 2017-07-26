@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 
 abstract class AbstractWorker implements IWorker
 {
@@ -25,14 +27,17 @@ abstract class AbstractWorker implements IWorker
     protected $indexColumns;
     protected $filterGroups;
 
+    /**
+     * @var Connection
+     */
     protected $db;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
+     * @var IConfig
      */
     protected $tenantConfig;
 
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig)
+    public function __construct(IConfig $tenantConfig)
     {
         $this->name = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;

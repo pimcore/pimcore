@@ -19,8 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
  * Interface for IndexService Tenant Configurations
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
  */
 interface IConfig
 {
@@ -54,6 +52,8 @@ interface IConfig
 
     /**
      * returns if given product is active for this tenant
+     *
+     * @param IIndexable $object
      *
      * @return bool
      */

@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
- *
  * Configuration for the optimized mysql product index implementation.
  */
 class OptimizedMysql extends DefaultMysql implements IMockupConfig
@@ -32,12 +32,12 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql
+     * @return OptimizedMysqlWorker
      */
     public function getTenantWorker()
     {
         if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql($this);
+            $this->tenantWorker = new OptimizedMysqlWorker($this);
         }
 
         return $this->tenantWorker;
@@ -50,11 +50,11 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
      * @param $data
      * @param $relations
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
+     * @return DefaultMockup
      */
     public function createMockupObject($objectId, $data, $relations)
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
+        return new DefaultMockup($objectId, $data, $relations);
     }
 
     /**

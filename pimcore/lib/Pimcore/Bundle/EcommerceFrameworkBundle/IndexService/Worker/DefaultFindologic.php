@@ -14,13 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
+use Pimcore\Model\Object\Concrete;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic
- *
- * @method \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig getTenantConfig()
+ * @method IFindologicConfig getTenantConfig()
  */
 class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
@@ -188,8 +189,8 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
                             foreach ($categories as $c) {
                                 $categoryIds = [];
 
-                                $currentCategory = \Pimcore\Model\Object\Concrete::getById($c);
-                                while ($currentCategory instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory) {
+                                $currentCategory = Concrete::getById($c);
+                                while ($currentCategory instanceof AbstractCategory) {
                                     $categoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
                                     if ($currentCategory->getOSProductsInParentCategoryVisible()) {

@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql as DefaultMysqlConfig;
 
 class IndexService
 {
@@ -38,7 +39,7 @@ class IndexService
     public function __construct($config)
     {
         if (!(string)$config->disableDefaultTenant) {
-            $this->defaultWorker = new DefaultMysql(new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql('default', $config));
+            $this->defaultWorker = new DefaultMysql(new DefaultMysqlConfig('default', $config));
         }
 
         $this->tenantWorkers = [];
@@ -294,7 +295,7 @@ class IndexService
     /**
      * returns current tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
+     * @return IConfig
      *
      * @throws InvalidConfigException
      */

@@ -14,24 +14,32 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Cache;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
 
 class MySql
 {
+    /**
+     * @var array
+     */
     protected $_sqlChangeLog = [];
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
+     * @var IMysqlConfig
      */
     protected $tenantConfig;
 
+    /**
+     * @var Connection
+     */
     protected $db;
 
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig)
+    public function __construct(IMysqlConfig $tenantConfig)
     {
         $this->tenantConfig = $tenantConfig;
-
         $this->db = \Pimcore\Db::get();
     }
 
@@ -110,7 +118,7 @@ class MySql
                     if (!empty($column->interpreter)) {
                         $interpreter = $column->interpreter;
                         $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
+                        if ($interpreterObject instanceof IRelationInterpreter) {
                             $doAdd = false;
                         }
                     }
@@ -181,7 +189,6 @@ class MySql
 
     public function __destruct()
     {
-
         // write sql change log for deploying to production system
         if (!empty($this->_sqlChangeLog)) {
             $log = implode("\n\n\n", $this->_sqlChangeLog);

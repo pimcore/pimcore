@@ -40,7 +40,7 @@ interface IFactFinderConfig extends IConfig
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder
      */
     public function getTenantWorker();
 }

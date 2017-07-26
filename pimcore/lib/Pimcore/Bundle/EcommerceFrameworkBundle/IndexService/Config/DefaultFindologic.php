@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic as DefaultFindologicWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic
- *
  * Default implementation for FINDOLOGIC as product index backend
  */
 class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMockupConfig
@@ -96,7 +96,7 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
     public function getTenantWorker()
     {
         if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic($this);
+            $this->tenantWorker = new DefaultFindologicWorker($this);
         }
 
         return $this->tenantWorker;
@@ -123,6 +123,6 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
      */
     public function createMockupObject($objectId, $data, $relations)
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
+        return new DefaultMockup($objectId, $data, $relations);
     }
 }

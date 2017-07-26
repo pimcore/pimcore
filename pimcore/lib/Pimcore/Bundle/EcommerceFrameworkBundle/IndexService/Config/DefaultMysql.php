@@ -18,8 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql
- *
  * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
  */
 class DefaultMysql extends AbstractConfig implements IMysqlConfig

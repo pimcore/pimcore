@@ -14,21 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\Concrete;
 
 /**
- * Class AbstractMockupCacheWorker
- *
- * provides worker functionality for patch preparing data and updating index
- *
+ * Provides worker functionality for batch preparing data and updating index
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker
 {
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+     * @var AbstractConfig
      */
     protected $tenantConfig;
 
@@ -85,6 +85,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      * prepare data for index creation and store is in store table
      *
      * @param IIndexable $object
+     * @param $subObjectId
+     *
+     * @return array
      */
     protected function getDefaultDataForIndex(IIndexable $object, $subObjectId)
     {
@@ -136,7 +139,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
             $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
         }
 
-        $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
+        $virtualProduct = AbstractObject::getById($virtualProductId);
         if ($virtualProduct && method_exists($virtualProduct, 'isActive')) {
             $virtualProductActive = $virtualProduct->isActive();
         }
@@ -175,11 +178,11 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
              */
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
-                $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+                $b = AbstractObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
-                $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
+                AbstractObject::setGetInheritedValues(true);
+                $hidePublishedMemory = AbstractObject::doHideUnpublished();
+                AbstractObject::setHideUnpublished(false);
 
                 $data = $this->getDefaultDataForIndex($object, $subObjectId);
                 $relationData = [];
@@ -240,8 +243,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
+                AbstractObject::setGetInheritedValues($b);
+                AbstractObject::setHideUnpublished($hidePublishedMemory);
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
                 $jsonData = json_encode([
@@ -307,7 +310,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      */
     public function fillupPreparationQueue(IIndexable $object)
     {
-        if ($object instanceof \Pimcore\Model\Object\Concrete) {
+        if ($object instanceof Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);

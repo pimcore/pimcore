@@ -14,13 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
  * Interface for IndexService workers
- *
- * Interface IWorker
  */
 interface IWorker
 {
@@ -86,7 +85,7 @@ interface IWorker
     /**
      * returns current tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
+     * @return IConfig
      */
     public function getTenantConfig();
 

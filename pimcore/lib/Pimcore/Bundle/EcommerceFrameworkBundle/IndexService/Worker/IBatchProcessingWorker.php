@@ -18,8 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
  * Interface for IndexService workers which support batch processing of index data preparation and index updating
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker
  */
 interface IBatchProcessingWorker extends IWorker
 {

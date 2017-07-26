@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder as DefaultFactFinderWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder
- *
  * Default implementation for fact finder as product index backend
  */
 class DefaultFactFinder extends AbstractConfig implements IFactFinderConfig, IMockupConfig
@@ -96,7 +96,7 @@ class DefaultFactFinder extends AbstractConfig implements IFactFinderConfig, IMo
     public function getTenantWorker()
     {
         if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder($this);
+            $this->tenantWorker = new DefaultFactFinderWorker($this);
         }
 
         return $this->tenantWorker;
@@ -123,6 +123,6 @@ class DefaultFactFinder extends AbstractConfig implements IFactFinderConfig, IMo
      */
     public function createMockupObject($objectId, $data, $relations)
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
+        return new DefaultMockup($objectId, $data, $relations);
     }
 }

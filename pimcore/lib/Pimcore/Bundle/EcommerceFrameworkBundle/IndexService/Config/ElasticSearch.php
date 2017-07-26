@@ -14,11 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch as DefaultElasticSearchWorker;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
- *
  * Default configuration for elastic search as product index implementation.
  */
 class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSearchConfig
@@ -77,7 +78,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
             if ($col['interpreter']) {
                 $class = $col['interpreter'];
                 $tmp = new $class;
-                if ($tmp instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
+                if ($tmp instanceof IRelationInterpreter) {
                     $attributeType = 'relations';
                 }
             }
@@ -184,12 +185,12 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
+     * @return DefaultElasticSearchWorker
      */
     public function getTenantWorker()
     {
         if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch($this);
+            $this->tenantWorker = new DefaultElasticSearchWorker($this);
         }
 
         return $this->tenantWorker;
@@ -206,7 +207,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      */
     public function createMockupObject($objectId, $data, $relations)
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
+        return new DefaultMockup($objectId, $data, $relations);
     }
 
     /**
