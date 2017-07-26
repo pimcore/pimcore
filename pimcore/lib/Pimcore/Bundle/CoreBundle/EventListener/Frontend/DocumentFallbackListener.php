@@ -132,7 +132,7 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
                 $path = urldecode($request->getPathInfo());
             }
 
-            $document = $this->documentService->getNearestDocumentByPath($path);
+            $document = $this->documentService->getNearestDocumentByPath($path, false, ['page', 'snippet', 'hardlink']);
             if ($document) {
                 $this->documentResolver->setDocument($request, $document);
             }
