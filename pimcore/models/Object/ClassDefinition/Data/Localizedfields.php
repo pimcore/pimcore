@@ -679,9 +679,12 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function getGetterCode($class)
     {
         $code = '';
-        $code .= parent::getGetterCode($class);
+        if (!$class instanceof Object\Fieldcollection\Definition) {
+            $code .= parent::getGetterCode($class);
+        }
 
-        foreach ($this->getFieldDefinitions() as $fd) {
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
 
             /**
              * @var $fd Object\ClassDefinition\Data
@@ -700,7 +703,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function getSetterCode($class)
     {
         $code = '';
-        $code .= parent::getSetterCode($class);
+        if (!$class instanceof Object\Fieldcollection\Definition) {
+            $code .= parent::getSetterCode($class);
+        }
 
         foreach ($this->getFieldDefinitions() as $fd) {
 

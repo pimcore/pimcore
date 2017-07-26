@@ -743,7 +743,7 @@ abstract class Data
         }
 
         // insert this line if inheritance from parent objects is allowed
-        if ($class->getAllowInherit()) {
+        if ($class instanceof Object\ClassDefinition && $class->getAllowInherit()) {
             $code .= "\t" . 'if(\Pimcore\Model\Object::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";
@@ -764,13 +764,16 @@ abstract class Data
      */
     public function getSetterCode($class)
     {
+        $returnType = $class instanceof Object\Fieldcollection\Definition ? '\\Pimcore\\Model\\Object\\FieldCollection\\Data\\' . ucfirst($class->getKey()) :
+                    '\\Pimcore\\Model\\Object\\' . ucfirst($class->getName());
+
         $key = $this->getName();
         $code = '';
 
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\Object\\' . ucfirst($class->getName()) . "\n";
+        $code .= '* @return ' . $returnType . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
 
@@ -958,7 +961,7 @@ abstract class Data
     {
         $key = $this->getName();
         if ($class instanceof  Object\Fieldcollection\Definition) {
-            $classname = ucfirst($class->getKey());
+            $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
         } else {
             $classname = $class->getName();
         }

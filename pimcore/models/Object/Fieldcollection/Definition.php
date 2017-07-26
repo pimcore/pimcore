@@ -199,7 +199,15 @@ class Definition extends Model\AbstractModel
         }
 
         if ($def instanceof Object\ClassDefinition\Data) {
-            $this->addFieldDefinition($def->getName(), $def);
+            $existing = $this->getFieldDefinition($def->getName());
+            if ($existing && method_exists($existing, 'addReferencedField')) {
+                // this is especially for localized fields which get aggregated here into one field definition
+                // in the case that there are more than one localized fields in the class definition
+                // see also pimcore.object.edit.addToDataFields();
+                $existing->addReferencedField($def);
+            } else {
+                $this->addFieldDefinition($def->getName(), $def);
+            }
         }
     }
 
@@ -293,8 +301,9 @@ class Definition extends Model\AbstractModel
 
         $cd .= "\n\n";
 
-        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
+        $fdDefs = $this->getFieldDefinitions();
+        if (is_array($fdDefs) && count($fdDefs)) {
+            foreach ($fdDefs as $key => $def) {
 
                 /**
                  * @var $def Object\ClassDefinition\Data
@@ -302,25 +311,13 @@ class Definition extends Model\AbstractModel
                 $cd .= $def->getGetterCodeFieldcollection($this);
 
                 if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
-                    foreach ($def->getFieldDefinitions() as $localizedFd) {
-
-                        /**
-                         * @var $fd Object\ClassDefinition\Data
-                         */
-                        $cd .= $localizedFd->getGetterCodeLocalizedfields($this);
-                    }
+                    $cd .= $def->getGetterCode($this);
                 }
 
                 $cd .= $def->getSetterCodeFieldcollection($this);
 
                 if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
-                    foreach ($def->getFieldDefinitions() as $localizedFd) {
-
-                        /**
-                         * @var $fd Object\ClassDefinition\Data
-                         */
-                        $cd .= $localizedFd->getSetterCodeLocalizedfields($this);
-                    }
+                    $cd .= $def->getSetterCode($this);
                 }
             }
         }
