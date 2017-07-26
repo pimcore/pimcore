@@ -66,7 +66,7 @@ interface IOrderManager
     public function getOrderFromCart(ICart $cart);
 
     /**
-     * gets order based on given payment status
+     * Returns order based on given payment status
      *
      * @param IStatus $paymentStatus
      *
@@ -75,7 +75,7 @@ interface IOrderManager
     public function getOrderByPaymentStatus(IStatus $paymentStatus);
 
     /**
-     * Build order listing
+     * Builds order listing
      *
      * @return \Pimcore\Model\Object\Listing\Concrete
      *

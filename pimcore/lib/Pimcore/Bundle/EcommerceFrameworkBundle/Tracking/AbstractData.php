@@ -16,7 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 abstract class AbstractData implements \JsonSerializable
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $id;
 
     /**
@@ -43,7 +45,7 @@ abstract class AbstractData implements \JsonSerializable
      * Merge values into properties
      *
      * @param array $data
-     * @param bool|false $overwrite
+     * @param bool $overwrite
      *
      * @return $this
      */

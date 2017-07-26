@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
@@ -23,13 +24,19 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class TrackingManager implements ITrackingManager
 {
-    /** @var  */
+    /**
+     * @var Config
+     */
     protected $config;
 
-    /** @var ITracker[] */
+    /**
+     * @var ITracker[]
+     */
     protected $trackers = [];
 
-    /** @var ITrackingItemBuilder[] */
+    /**
+     * @var ITrackingItemBuilder[]
+     */
     protected $trackingItemBuilders = [];
 
     /**
@@ -133,7 +140,7 @@ class TrackingManager implements ITrackingManager
     /**
      * Get all registered trackers
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker[]
+     * @return ITracker[]
      */
     public function getTrackers()
     {
@@ -174,6 +181,7 @@ class TrackingManager implements ITrackingManager
      * Track product view
      *
      * @param IProduct $product
+     *
      * @implements IProductView
      */
     public function trackProductView(IProduct $product)
@@ -192,7 +200,7 @@ class TrackingManager implements ITrackingManager
      * @implements IProductImpression
      *
      * @param IProduct $product
-     * @param int $quantity
+     * @param int|float $quantity
      */
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
@@ -210,7 +218,7 @@ class TrackingManager implements ITrackingManager
      * @implements IProductImpression
      *
      * @param IProduct $product
-     * @param int $quantity
+     * @param int|float $quantity
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
@@ -268,16 +276,16 @@ class TrackingManager implements ITrackingManager
      *
      * @implements ICheckoutStep
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep\ICheckoutStep $step
+     * @param CheckoutManagerICheckoutStep $step
      * @param ICart $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
         $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
-            if ($tracker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep) {
+            if ($tracker instanceof ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);
             }
         }

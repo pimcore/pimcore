@@ -16,6 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
@@ -197,7 +199,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+     * @return IPriceInfo|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
     {

@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\DeliveryDate
- *
- * sample implementation for delivery date
+ * Sample implementation for delivery date
  */
 class DeliveryDate extends AbstractStep implements ICheckoutStep
 {
@@ -25,35 +25,42 @@ class DeliveryDate extends AbstractStep implements ICheckoutStep
     const DATE = 'delivery_date';
 
     /**
-     * commits step and sets delivered data
-     *
-     * @param  $data
-     *
-     * @return bool
+     * @return string
+     */
+    public function getName()
+    {
+        return 'deliverydate';
+    }
+
+    /**
+     * @inheritdoc
      */
     public function commit($data)
     {
         if (empty($data->instantly) && empty($data->date)) {
-            throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException('Instantly or Date not set.');
+            throw new InvalidConfigException('Instantly or Date not set.');
         }
 
         $this->cart->setCheckoutData(self::INSTANTLY, $data->instantly);
+
         $date = null;
         if ($data->date instanceof \DateTime) {
             $date = $data->date->getTimestamp();
         }
+
         $this->cart->setCheckoutData(self::DATE, $date);
 
         return true;
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getData()
     {
         $data = new \stdClass();
         $data->instantly = $this->cart->getCheckoutData(self::INSTANTLY);
+
         if ($this->cart->getCheckoutData(self::DATE)) {
             $data->date = new \DateTime();
             $data->date->setTimestamp($this->cart->getCheckoutData(self::DATE));
@@ -62,13 +69,5 @@ class DeliveryDate extends AbstractStep implements ICheckoutStep
         }
 
         return $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'deliverydate';
     }
 }

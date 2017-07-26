@@ -16,16 +16,16 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 
 interface IPricingManager
 {
     /**
-     * @param IPriceInfo $priceinfo
+     * @param PriceSystemIPriceInfo $priceinfo
      *
-     * @return IPriceInfo
+     * @return PriceSystemIPriceInfo
      */
-    public function applyProductRules(IPriceInfo $priceinfo);
+    public function applyProductRules(PriceSystemIPriceInfo $priceinfo);
 
     /**
      * @param ICart $cart
@@ -62,14 +62,18 @@ interface IPricingManager
     public function getAction($type);
 
     /**
+     * Factory
+     *
      * @return IEnvironment
      */
     public function getEnvironment();
 
     /**
-     * @param IPriceInfo $priceInfo
+     * Wraps price info in pricing manager price info
      *
-     * @return IPriceInfo
+     * @param PriceSystemIPriceInfo $priceInfo
+     *
+     * @return PriceSystemIPriceInfo|IPriceInfo
      */
-    public function getPriceInfo(IPriceInfo $priceInfo);
+    public function getPriceInfo(PriceSystemIPriceInfo $priceInfo);
 }

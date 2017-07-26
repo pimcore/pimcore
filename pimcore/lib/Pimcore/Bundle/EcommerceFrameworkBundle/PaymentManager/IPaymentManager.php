@@ -17,7 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 interface IPaymentManager
 {
     /**
-     * @param $name
+     * Get a payment provider by name
+     *
+     * @param string $name
      *
      * @return Payment\IPayment
      */

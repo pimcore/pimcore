@@ -19,7 +19,9 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 abstract class Tracker implements ITracker
 {
-    /** @var ITrackingItemBuilder */
+    /**
+     * @var ITrackingItemBuilder
+     */
     protected $trackingItemBuilder;
 
     /**
@@ -71,7 +73,7 @@ abstract class Tracker implements ITracker
     /**
      * Remove null values from an object, keep protected keys in any case
      *
-     * @param $data
+     * @param array $data
      * @param array $protectedKeys
      *
      * @return array

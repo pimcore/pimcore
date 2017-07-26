@@ -20,11 +20,16 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class SessionCart extends AbstractCart implements ICart
 {
     /**
+     * @var ICart[]
+     */
+    protected static $unserializedCarts;
+
+    /**
      * @return string
      */
     protected function getCartItemClassName()
     {
-        return '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartItem';
+        return SessionCartItem::class;
     }
 
     /**
@@ -32,7 +37,7 @@ class SessionCart extends AbstractCart implements ICart
      */
     protected function getCartCheckoutDataClassName()
     {
-        return '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartCheckoutData';
+        return SessionCartCheckoutData::class;
     }
 
     /**
@@ -101,12 +106,10 @@ class SessionCart extends AbstractCart implements ICart
         return $this;
     }
 
-    protected static $unserializedCarts = null;
-
     /**
      * @param int $id
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart
+     * @return ICart|SessionCart
      */
     public static function getById($id)
     {
@@ -120,7 +123,7 @@ class SessionCart extends AbstractCart implements ICart
      *
      * @param int $userId
      *
-     * @return array
+     * @return ICart[]
      */
     public static function getAllCartsForUser($userId)
     {

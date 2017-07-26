@@ -70,8 +70,9 @@ class Environment implements IEnvironment
     protected $containerSession = null;
 
     /**
-     * current transient checkout tenant
-     * this value will not be stored into the session and is only valid for current process
+     * Current transient checkout tenant
+     *
+     * This value will not be stored into the session and is only valid for current process
      * set with setCurrentCheckoutTenant('tenant', false');
      *
      * @var string
@@ -284,8 +285,6 @@ class Environment implements IEnvironment
      * sets current assortment tenant which is used for indexing and product lists
      *
      * @param $tenant string
-     *
-     * @return mixed
      */
     public function setCurrentAssortmentTenant($tenant)
     {

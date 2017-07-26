@@ -22,9 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Logger;
 use Pimcore\Tool;
 
-/**
- * Class MultiCartManager
- */
 class MultiCartManager implements ICartManager
 {
     /**
@@ -158,11 +155,21 @@ class MultiCartManager implements ICartManager
      *
      * @throws InvalidConfigException
      */
-    public function addToCart(ICheckoutable $product, $count, $key = null, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
+    public function addToCart(
+        ICheckoutable $product,
+        $count,
+        $key = null,
+        $itemKey = null,
+        $replace = false,
+        array $params = [],
+        array $subProducts = [],
+        $comment = null
+    )
     {
         $this->checkForInit();
+
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException('Cart ' . $key . ' not found.');
+            throw new InvalidConfigException(sprintf('Cart %s was not found.', $key));
         }
 
         $itemKey = $this->carts[$key]->addItem($product, $count, $itemKey, $replace, $params, $subProducts, $comment);
@@ -177,6 +184,7 @@ class MultiCartManager implements ICartManager
     public function save()
     {
         $this->checkForInit();
+
         foreach ($this->carts as $cart) {
             $cart->save();
         }
@@ -184,12 +192,11 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param null $key
-     *
-     * @throws InvalidConfigException
      */
     public function deleteCart($key = null)
     {
         $this->checkForInit();
+
         $this->getCart($key)->delete();
         unset($this->carts[$key]);
     }
@@ -235,8 +242,9 @@ class MultiCartManager implements ICartManager
     public function clearCart($key = null)
     {
         $this->checkForInit();
+
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException('Cart ' . $key . ' not found.');
+            throw new InvalidConfigException(sprintf('Cart %s was not found.', $key));
         }
 
         $class = $this->getCartClassName();
@@ -254,8 +262,9 @@ class MultiCartManager implements ICartManager
     public function getCart($key = null)
     {
         $this->checkForInit();
+
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException('Cart ' . $key . ' not found.');
+            throw new InvalidConfigException(sprintf('Cart %s was not found.', $key));
         }
 
         return $this->carts[$key];
@@ -269,8 +278,9 @@ class MultiCartManager implements ICartManager
     public function getCartByName($name)
     {
         $this->checkForInit();
+
         foreach ($this->carts as $cart) {
-            if ($cart->getName() == $name) {
+            if ($cart->getName() === $name) {
                 return $cart;
             }
         }
@@ -297,8 +307,9 @@ class MultiCartManager implements ICartManager
     public function removeFromCart($itemKey, $key = null)
     {
         $this->checkForInit();
+
         if (empty($key) || !array_key_exists($key, $this->carts)) {
-            throw new InvalidConfigException('Cart ' . $key . ' not found.');
+            throw new InvalidConfigException(sprintf('Cart %s was not found.', $key));
         }
         $this->carts[$key]->removeItem($itemKey);
     }

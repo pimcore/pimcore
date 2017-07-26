@@ -15,6 +15,8 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 /**
  * Abstract base class for pimcore objects who should be used as set products in the online shop framework
@@ -141,7 +143,7 @@ class AbstractSetProduct extends AbstractProduct
      * @param int $quantityScale
      * @param null $products
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+     * @return IPriceInfo|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = null, $products = null)
     {
