@@ -23,9 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalcula
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-/**
- * Price system implementation for attribute price system
- */
 class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 {
     /**

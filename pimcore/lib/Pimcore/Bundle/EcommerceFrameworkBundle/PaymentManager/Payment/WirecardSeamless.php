@@ -14,8 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
@@ -29,7 +31,6 @@ use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
 use Pimcore\Tool;
 
-// TODO refine how payment amounts are transformed for API
 class WirecardSeamless implements IPayment
 {
     private $settings;
@@ -82,7 +83,7 @@ class WirecardSeamless implements IPayment
     }
 
     /**
-     * start payment
+     * Start payment
      *
      * @param IPrice $price
      * @param array $config
@@ -139,10 +140,12 @@ class WirecardSeamless implements IPayment
 
     public function getInitPaymentRedirectUrl($config)
     {
+        /** @var ICart $cart */
         if (!$cart = $config['cart']) {
             throw new \Exception('no cart sent');
         }
 
+        /** @var IPrice $price */
         $price = $config['price'] ?: $cart->getPriceCalculator()->getGrandTotal();
 
         $orderIdent = $this->encodeOrderIdent($config['paymentInfo']->getInternalPaymentId());
@@ -320,8 +323,14 @@ class WirecardSeamless implements IPayment
         $orderIdent = $this->decodeOrderIdent($orderIdent);
 
         $authorizedData = [
-            'orderNumber' => null, 'paymentType' => null, 'paymentState' => null, 'amount' => null, 'currency' => null, 'gatewayReferenceNumber' => null
+            'orderNumber'            => null,
+            'paymentType'            => null,
+            'paymentState'           => null,
+            'amount'                 => null,
+            'currency'               => null,
+            'gatewayReferenceNumber' => null
         ];
+
         $authorizedData = array_intersect_key($response, $authorizedData);
 
         if ($response['paymentType'] == 'PREPAYMENT') {
@@ -337,7 +346,10 @@ class WirecardSeamless implements IPayment
                 '',
                 IStatus::STATUS_AUTHORIZED,
                 [
-                    'seamless_amount' => '', 'seamless_paymentType' => 'PREPAYMENT', 'seamless_paymentState' => 'SUCCESS', 'seamless_response' => ''
+                    'seamless_amount'       => '',
+                    'seamless_paymentType'  => 'PREPAYMENT',
+                    'seamless_paymentState' => 'SUCCESS',
+                    'seamless_response'     => ''
                 ]
             );
         }
@@ -352,7 +364,10 @@ class WirecardSeamless implements IPayment
         Logger::debug('wirecard seamless response' . var_export($response, true));
 
         // check required fields
-        $required = ['responseFingerprintOrder' => null, 'responseFingerprint' => null];
+        $required = [
+            'responseFingerprintOrder' => null,
+            'responseFingerprint'      => null
+        ];
 
         if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
             $status = new Status(
@@ -360,10 +375,13 @@ class WirecardSeamless implements IPayment
                 $response['orderNumber'],
                 $response['avsResponseMessage'],
                 $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
-                ? IStatus::STATUS_CANCELLED
-                : IStatus::STATUS_CANCELLED,
+                    ? IStatus::STATUS_CANCELLED
+                    : IStatus::STATUS_CANCELLED,
                 [
-                    'seamless_amount' => '', 'seamless_paymentType' => '', 'seamless_paymentState' => '', 'seamless_response' => json_encode($response)
+                    'seamless_amount'       => '',
+                    'seamless_paymentType'  => '',
+                    'seamless_paymentState' => '',
+                    'seamless_response'     => json_encode($response)
                 ]
             );
 
@@ -426,10 +444,13 @@ class WirecardSeamless implements IPayment
             $response['orderNumber'],
             $response['avsResponseMessage'],
             $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
-            ? IStatus::STATUS_AUTHORIZED
-            : IStatus::STATUS_CANCELLED,
+                ? IStatus::STATUS_AUTHORIZED
+                : IStatus::STATUS_CANCELLED,
             [
-                'seamless_amount' => (string)$price, 'seamless_paymentType' => $response['paymentType'], 'seamless_paymentState' => $response['paymentState'], 'seamless_response' => print_r($response, true)
+                'seamless_amount'       => (string)$price,
+                'seamless_paymentType'  => $response['paymentType'],
+                'seamless_paymentState' => $response['paymentState'],
+                'seamless_response'     => print_r($response, true)
             ]
         );
 
@@ -439,9 +460,7 @@ class WirecardSeamless implements IPayment
     }
 
     /**
-     * return the authorized data from payment provider
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getAuthorizedData()
     {
@@ -449,9 +468,7 @@ class WirecardSeamless implements IPayment
     }
 
     /**
-     * set authorized data from payment provider
-     *
-     * @param array $authorizedData
+     * @inheritdoc
      */
     public function setAuthorizedData(array $authorizedData)
     {
@@ -474,7 +491,7 @@ class WirecardSeamless implements IPayment
     }
 
     /**
-     * execute payment
+     * Executes payment
      *
      * @param IPrice $price
      * @param string $reference
@@ -526,7 +543,7 @@ class WirecardSeamless implements IPayment
     }
 
     /**
-     * execute credit
+     * Executes credit
      *
      * @param IPrice $price
      * @param string $reference
@@ -632,7 +649,15 @@ class WirecardSeamless implements IPayment
         return $r;
     }
 
-    public static function createCartByOrderIdent($response)
+    /**
+     * Environment was kept optional for backwards compatibility, but should be passed if possible
+     *
+     * @param $response
+     * @param IEnvironment|null $environment
+     *
+     * @return ICart|null
+     */
+    public static function createCartByOrderIdent($response, IEnvironment $environment = null)
     {
         $orderIdent = $response['orderIdent'];
         $orderIdent = explode(self::ENCODED_ORDERIDENT_DELIMITER, $orderIdent);
@@ -642,11 +667,12 @@ class WirecardSeamless implements IPayment
 
             $cartId = explode('_', $cartId, 2);
             if (class_exists($cartId[0])) {
+                /** @var ICart $cart */
                 $cart = new $cartId[0];
                 $cart->setId($cartId[1]);
 
-                $env = Factory::getInstance()->getEnvironment();
-                $env->setCustomItem(CheckoutManager::FINISHED . '_' . $cart->getId(), true);
+                $environment = $environment ?? Factory::getInstance()->getEnvironment();
+                $environment->setCustomItem(CheckoutManager::FINISHED . '_' . $cart->getId(), true);
 
                 return $cart;
             }

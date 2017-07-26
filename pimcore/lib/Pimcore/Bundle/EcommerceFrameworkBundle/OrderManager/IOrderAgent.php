@@ -15,9 +15,14 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Model\Element\Note;
 
 interface IOrderAgent
@@ -83,31 +88,32 @@ interface IOrderAgent
     public function hasPayment();
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment
+     * @return IPayment
      */
     public function getPaymentProvider();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * @param IPayment $paymentProvider
      *
      * @return Order
      */
-    public function setPaymentProvider(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
+    public function setPaymentProvider(IPayment $paymentProvider);
 
     /**
      * Starts payment:
+     *
      * checks if payment info with PENDING payment exists and checks if order fingerprint has not changed
      * if true -> returns existing payment info
      * if false -> creates new payment info (and aborts existing PENDING payment infos)
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
+     * @return AbstractPaymentInformation
      */
     public function startPayment();
 
     /**
      * Returns current payment info of order, or null if none exists
      *
-     * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
+     * @return null|AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo();
 
@@ -119,18 +125,18 @@ interface IOrderAgent
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function cancelStartedOrderPayment();
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status
+     * @param IStatus $status
      *
      * @return IOrderAgent
      */
-    public function updatePayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status);
+    public function updatePayment(IStatus $status);
 
     /**
      * @return Note[]

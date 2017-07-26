@@ -21,7 +21,7 @@
 - Changed from Namespace `\OnlineShop\Framework\` to `\Pimcore\Bundle\EcommerceFrameworkBundle\`
    - E-Commerce Framework loads class aliases, so all old class names should work as expected
    
-- Replaces `Zend_Config` with `Config` - also in certain interfaces like
+- Replaced `Zend_Config` with `Config` - also in certain interfaces like
    - `IPayment`
    - `OrderManager`
    - `Shipping`

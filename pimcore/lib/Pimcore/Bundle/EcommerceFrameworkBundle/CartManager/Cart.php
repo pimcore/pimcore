@@ -24,7 +24,7 @@ class Cart extends AbstractCart implements ICart
      */
     protected function getCartItemClassName()
     {
-        return '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem';
+        return CartItem::class;
     }
 
     /**
@@ -32,7 +32,7 @@ class Cart extends AbstractCart implements ICart
      */
     protected function getCartCheckoutDataClassName()
     {
-        return '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData';
+        return CartCheckoutData::class;
     }
 
     public function save()

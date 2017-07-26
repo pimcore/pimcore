@@ -17,15 +17,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Config\Config;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-/**
- * Class PricingManager
- */
 class PricingManager implements IPricingManager
 {
     /**
@@ -34,7 +31,7 @@ class PricingManager implements IPricingManager
     protected $config;
 
     /**
-     * @var Rule\Listing
+     * @var Rule[]
      */
     protected $rules;
 
@@ -53,11 +50,11 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param IPriceInfo $priceInfo
+     * @param PriceSystemIPriceInfo $priceInfo
      *
-     * @return IPriceInfo
+     * @return PriceSystemIPriceInfo
      */
-    public function applyProductRules(IPriceInfo $priceInfo)
+    public function applyProductRules(PriceSystemIPriceInfo $priceInfo)
     {
         if ((string)$this->config->disabled == 'true') {
             return $priceInfo;
@@ -107,8 +104,8 @@ class PricingManager implements IPricingManager
         }
         $env->setCategories(array_values($categories));
 
-        //clean up discount pricing modificators in cart price calculator
         $priceCalculator = $cart->getPriceCalculator();
+        // clean up discount pricing modificators in cart price calculator
         $priceModificators = $priceCalculator->getModificators();
         if ($priceModificators) {
             foreach ($priceModificators as $priceModificator) {
@@ -150,6 +147,7 @@ class PricingManager implements IPricingManager
             $rules->setCondition('active = 1');
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
+
             $this->rules = $rules->getRules();
         }
 
@@ -180,10 +178,11 @@ class PricingManager implements IPricingManager
     }
 
     /**
+     * Factory
+     *
      * @param string $type
      *
      * @return ICondition
-     *
      * @throws InvalidConfigException
      */
     public function getCondition($type)
@@ -199,7 +198,7 @@ class PricingManager implements IPricingManager
     /**
      * Factory
      *
-     * @param $type
+     * @param string $type
      *
      * @return IAction
      */
@@ -211,16 +210,17 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param IPriceInfo $priceInfo
+     * @param PriceSystemIPriceInfo $priceInfo
      *
      * @return IPriceInfo
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
-    public function getPriceInfo(IPriceInfo $priceInfo)
+    public function getPriceInfo(PriceSystemIPriceInfo $priceInfo)
     {
         if ((string)$this->config->disabled == 'true') {
             return $priceInfo;
+        // TODO make getPriceInfo private as this call is only used internally where the enabled check is alread applied?
         }
 
         $class = $this->config->priceInfo->class;
@@ -231,6 +231,7 @@ class PricingManager implements IPricingManager
         // create environment
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
+
         if (method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }

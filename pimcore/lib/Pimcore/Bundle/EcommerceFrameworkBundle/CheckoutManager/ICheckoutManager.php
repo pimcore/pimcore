@@ -14,54 +14,59 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-/**
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager
- */
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+
 interface ICheckoutManager
 {
     /**
-     * returns all checkout steps defined for this checkout
+     * Returns all checkout steps defined for this checkout
      *
      * @return ICheckoutStep[]
      */
     public function getCheckoutSteps();
 
     /**
-     * returns checkout step with given name
+     * Returns checkout step with given name
      *
-     * @param  string $stepName
+     * @param string $stepName
      *
      * @return ICheckoutStep
      */
     public function getCheckoutStep($stepName);
 
     /**
-     * returns current checkout step
+     * Returns current checkout step
      *
      * @return ICheckoutStep
      */
     public function getCurrentStep();
 
     /**
-     * returns the cart the checkout is started with
+     * Returns the cart the checkout is started with
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
+     * @return ICart
      */
     public function getCart();
 
     /**
-     * commits checkout step
-     * all previous steps must be committed, otherwise committing step is not allowed
+     * Commits checkout step
+     *
+     * All previous steps must be committed, otherwise committing step is not allowed
      *
      * @param ICheckoutStep $step
-     * @param  mixed                             $data
+     * @param  mixed $data
      *
      * @return bool
      */
     public function commitStep(ICheckoutStep $step, $data);
 
     /**
-     * checks if checkout is finished (= all checkout steps are committed)
+     * Checks if checkout is finished (= all checkout steps are committed)
      * only a finished checkout can be committed
      *
      * @return bool
@@ -69,85 +74,87 @@ interface ICheckoutManager
     public function isFinished();
 
     /**
-     * returns if there currently is a active payment
+     * Returns if there currently is a active payment
      *
      * @return bool
      */
     public function hasActivePayment();
 
     /**
-     * starts payment for checkout - only possible if payment provider is configured
+     * Starts payment for checkout - only possible if payment provider is configured
      * sets cart to read only mode since it must not changed during ongoing payment process
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
+     * @return AbstractPaymentInformation
      */
     public function startOrderPayment();
 
     /**
-     * cancels payment for current payment info
-     * - payment will be cancelled, order state will be resetted and cart will we writable again.
+     * Cancels payment for current payment info
+     *
+     *  - payment will be cancelled, order state will be resetted and cart will we writable again.
      *
      * -> this should be used, when user cancels payment
      *
-     * only possible when payment state is PENDING, otherwise exception is thrown
+     * Only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return null|AbstractOrder
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function cancelStartedOrderPayment();
 
     /**
-     * returns order (creates it if not available yet)
-     * - delegates to commit order processor
+     * Returns order (creates it if not available yet)
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      */
     public function getOrder();
 
     /**
-     * facade method for
-     * - handling payment response and
-     * - commit order payment
+     * Facade method for
      *
-     * use this for committing order when payment is activated
+     *  - handling payment response and
+     *  - commit order payment
      *
-     * delegates to commit order processor
+     * Use this for committing order when payment is activated
+     *
+     * Delegates to commit order processor
      *
      * @param $paymentResponseParams
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
 
     /**
-     * commits order payment
-     *   - updates order payment information in order object
-     *   - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
+     * Commits order payment
      *
-     * delegates to commit order processor
+     *  - updates order payment information in order object
+     *  - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
+     *
+     * Delegates to commit order processor
      *
      * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status
+     * @param IStatus $status
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      */
-    public function commitOrderPayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status);
+    public function commitOrderPayment(IStatus $status);
 
     /**
-     * commits order - does not consider any payment
+     * Commits order - does not consider any payment
      *
-     * use this for committing order when no payment is activated
+     * Use this for committing order when no payment is activated
      *
-     * delegates to commit order processor
+     * Delegates to commit order processor
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      */
     public function commitOrder();
 
     /**
-     * returns if checkout process and subsequently order is committed
+     * Returns if checkout process and subsequently order is committed
      * basically checks, if order is available and if this order is committed
      *
      * @return bool
@@ -155,14 +162,14 @@ interface ICheckoutManager
     public function isCommitted();
 
     /**
-     * returns payment adapter
+     * Returns payment adapter
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment|null
+     * @return IPayment|null
      */
     public function getPayment();
 
     /**
-     * cleans up orders with state pending payment after 1h -> delegates this to commit order processor
+     * Cleans up orders with state pending payment after 1h -> delegates this to commit order processor
      *
      * @return void
      */

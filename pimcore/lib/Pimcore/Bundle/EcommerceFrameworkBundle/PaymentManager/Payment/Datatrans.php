@@ -26,8 +26,8 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormBuilderInterface;
 
-// TODO refine how payment amounts are transformed for API
 class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
@@ -37,7 +37,7 @@ class Datatrans implements IPayment
     const AUTH_TYPE_FINAL_AUTHORIZATION = 'FOA'; // final authorization (MasterCard/Maestro)
 
     /**
-     * @var string
+     * @var array
      */
     protected $endpoint = [];
 
@@ -111,9 +111,9 @@ class Datatrans implements IPayment
      * start payment
      *
      * @param IPrice $price
-     * @param array                       $config
+     * @param array $config
      *
-     * @return \Symfony\Component\Form\FormBuilderInterface
+     * @return FormBuilderInterface
      *
      * @throws \Exception
      *
@@ -123,8 +123,16 @@ class Datatrans implements IPayment
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [  'successUrl' => null, 'errorUrl' => null, 'cancelUrl' => null, 'refno' => null, 'useAlias' => null, 'reqtype' => null, 'language' => null
+        $required = [
+            'successUrl' => null,
+            'errorUrl'   => null,
+            'cancelUrl'  => null,
+            'refno'      => null,
+            'useAlias'   => null,
+            'reqtype'    => null,
+            'language'   => null
         ];
+
         $config = array_intersect_key($config, $required);
 
         if (count($required) != count($config)) {
@@ -143,8 +151,12 @@ class Datatrans implements IPayment
             $sign = $this->sign;
         } else {
             $data = [
-                'merchantId' => $this->merchantId, 'amount' => $paymentData['amount'], 'currency' => $paymentData['currency'], 'refno' => $config['refno']
+                'merchantId' => $this->merchantId,
+                'amount'     => $paymentData['amount'],
+                'currency'   => $paymentData['currency'],
+                'refno'      => $config['refno']
             ];
+
             $sign = hash_hmac('SHA256', implode('', $data), hex2bin($this->sign));
         }
 
@@ -174,6 +186,7 @@ class Datatrans implements IPayment
         $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
             'attr' => $formAttributes
         ]);
+
         $form->setAction($this->endpoint['form']);
         $form->setMethod('post');
 
@@ -239,7 +252,14 @@ class Datatrans implements IPayment
         // check required fields
         $required = $this->getRequiredResponseFields($response);
         $authorizedData = [
-            'aliasCC' => null, 'expm' => null, 'expy' => null, 'reqtype' => null, 'uppTransactionId' => null, 'amount' => null, 'currency' => null, 'refno' => null
+            'aliasCC'          => null,
+            'expm'             => null,
+            'expy'             => null,
+            'reqtype'          => null,
+            'uppTransactionId' => null,
+            'amount'           => null,
+            'currency'         => null,
+            'refno'            => null
         ];
 
         // check fields
@@ -276,7 +296,9 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount' => (string)$price, 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'], 'datatrans_response' => $response
+                'datatrans_amount'               => (string)$price,
+                'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'],
+                'datatrans_response'             => $response
             ]
         );
     }
@@ -328,12 +350,7 @@ class Datatrans implements IPayment
     }
 
     /**
-     * @param IPrice $price
-     * @param string $reference
-     *
-     * @return Status|IStatus
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
@@ -393,7 +410,9 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount' => (string)$price, 'datatrans_responseXML' => $transaction->asXML(), 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                'datatrans_amount'               => (string)$price,
+                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
 
@@ -401,13 +420,7 @@ class Datatrans implements IPayment
     }
 
     /**
-     * gutschrift ausführen
-     *
-     * @param IPrice $price
-     * @param string $reference
-     * @param string $transactionId
-     *
-     * @return IStatus
+     * @inheritdoc
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)
     {
@@ -456,7 +469,9 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount' => (string)$price, 'datatrans_responseXML' => $transaction->asXML(), 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+                'datatrans_amount'               => (string)$price,
+                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
 

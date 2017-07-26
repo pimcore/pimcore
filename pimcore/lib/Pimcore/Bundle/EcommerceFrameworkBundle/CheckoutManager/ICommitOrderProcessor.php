@@ -14,60 +14,64 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-/**
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor
- */
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+
 interface ICommitOrderProcessor
 {
     /**
-     * check if order is already committed and payment information with same internal payment id has same state
+     * Checks if order is already committed and payment information with same internal payment id has same state
      *
-     * @param array|\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $paymentResponseParams
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * @param array|IStatus $paymentResponseParams
+     * @param IPayment $paymentProvider
      *
-     * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return null|AbstractOrder
      *
      * @throws \Exception
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, IPayment $paymentProvider);
 
     /**
-     * facade method for
-     * - handling payment response and
-     * - commit order payment
+     * Facade method for
      *
-     * can be used by controllers to commit orders with payment
+     *  - handling payment response and
+     *  - commit order payment
+     *
+     * Can be used by controllers to commit orders with payment
      *
      * @param $paymentResponseParams
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * @param IPayment $paymentProvider
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, IPayment $paymentProvider);
 
     /**
-     * commits order payment
-     *   - updates order payment information in order object
-     *   - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
+     * Commits order payment
      *
-     * use this for committing order when payment is activated
+     *  - updates order payment information in order object
+     *  - only when payment status == [ORDER_STATE_COMMITTED, ORDER_STATE_PAYMENT_AUTHORIZED] -> order is committed
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $paymentStatus
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider
+     * Use this for committing order when payment is activated
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @param IStatus $paymentStatus
+     * @param IPayment $paymentProvider
+     *
+     * @return AbstractOrder
      */
-    public function commitOrderPayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $paymentStatus, \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment $paymentProvider);
+    public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider);
 
     /**
-     * commits order
+     * Commits order
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
+     * @return AbstractOrder
      */
-    public function commitOrder(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    public function commitOrder(AbstractOrder $order);
 
     /**
      * @param string $confirmationMail
@@ -75,7 +79,7 @@ interface ICommitOrderProcessor
     public function setConfirmationMail($confirmationMail);
 
     /**
-     * cleans up orders with state pending payment after 1h
+     * Cleans up orders with state pending payment after 1h
      *
      * @return void
      */

@@ -16,9 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
 use Pimcore\Config\Config;
 
-/**
- * Class PaymentManager
- */
 class PaymentManager implements IPaymentManager
 {
     /**
@@ -27,7 +24,7 @@ class PaymentManager implements IPaymentManager
     protected $config;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment[]
+     * @var Payment\IPayment[]
      */
     protected $instance = [];
 
@@ -40,9 +37,7 @@ class PaymentManager implements IPaymentManager
     }
 
     /**
-     * @param $name
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment
+     * @inheritdoc
      */
     public function getProvider($name)
     {

@@ -25,9 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
-/**
- * Abstract implementation for price systems
- */
 abstract class AbstractPriceSystem implements IPriceSystem
 {
     protected $config;

@@ -53,7 +53,7 @@ class Ecommerce extends Tracker implements ICheckoutComplete
      * @param Transaction $transaction
      * @param ProductAction[] $items
      *
-     * @return mixed
+     * @return array
      */
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
     {

@@ -14,6 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+
 interface IVoucherService
 {
     /**
@@ -27,33 +31,33 @@ interface IVoucherService
      * Gets the correct token manager and calls its checkToken() function.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return bool
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
+     * @throws VoucherServiceException
      */
-    public function checkToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function checkToken($code, ICart $cart);
 
     /**
      * Gets the correct token manager and calls its reserveToken() function.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return bool
      */
-    public function reserveToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function reserveToken($code, ICart $cart);
 
     /**
      * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return bool
      */
-    public function releaseToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function releaseToken($code, ICart $cart);
 
     /**
      * Gets the correct token manager and calls its applyToken() function, which returns
@@ -61,23 +65,23 @@ interface IVoucherService
      * reservations gets released.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param ICart $cart
+     * @param AbstractOrder $order
      *
      * @return bool
      */
-    public function applyToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    public function applyToken($code, ICart $cart, AbstractOrder $order);
 
     /**
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
      * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      *
      * @return mixed
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
 
     /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is

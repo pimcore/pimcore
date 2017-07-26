@@ -16,13 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Config\Config;
 
-// TODO refine how payment amounts are transformed for API
 class PayPal implements IPayment
 {
     /**
@@ -89,10 +89,10 @@ class PayPal implements IPayment
     }
 
     /**
-     * start payment
+     * Start payment
      *
      * @param IPrice $price
-     * @param array                       $config
+     * @param array $config
      *
      * @return string
      *
@@ -103,8 +103,13 @@ class PayPal implements IPayment
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [  'ReturnURL' => null, 'CancelURL' => null, 'OrderDescription' => null, 'InvoiceID' => null
+        $required = [
+            'ReturnURL'        => null,
+            'CancelURL'        => null,
+            'OrderDescription' => null,
+            'InvoiceID'        => null
         ];
+
         $config = array_intersect_key($config, $required);
 
         if (count($required) != count($config)) {
@@ -149,21 +154,28 @@ class PayPal implements IPayment
     }
 
     /**
-     * execute payment
+     * Executes payment
      *
      * @param mixed $response
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus
+     * @return IStatus
      *
      * @throws \Exception
      */
     public function handleResponse($response)
     {
         // check required fields
-        $required = [   'token' => null, 'PayerID' => null, 'InvoiceID' => null, 'amount' => null, 'currency' => null
+        $required = [
+            'token'     => null,
+            'PayerID'   => null,
+            'InvoiceID' => null,
+            'amount'    => null,
+            'currency'  => null
         ];
+
         $authorizedData = [
-              'token' => null, 'PayerID' => null
+            'token'   => null,
+            'PayerID' => null
         ];
 
         // check fields
@@ -187,9 +199,7 @@ class PayPal implements IPayment
     }
 
     /**
-     * return the authorized data from payment provider
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getAuthorizedData()
     {
@@ -197,9 +207,7 @@ class PayPal implements IPayment
     }
 
     /**
-     * set authorized data from payment provider
-     *
-     * @param array $authorizedData
+     * @inheritdoc
      */
     public function setAuthorizedData(array $authorizedData)
     {
@@ -207,12 +215,7 @@ class PayPal implements IPayment
     }
 
     /**
-     * execute payment
-     *
-     * @param IPrice $price
-     * @param string                      $reference
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus
+     * @inheritdoc
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
@@ -240,7 +243,9 @@ class PayPal implements IPayment
                 null,
                 AbstractOrder::ORDER_STATE_COMMITTED,
                 [
-                    'paypal_TransactionType' => $paymentInfo->TransactionType, 'paypal_PaymentType' => $paymentInfo->PaymentType, 'paypal_amount' => (string)$price
+                    'paypal_TransactionType' => $paymentInfo->TransactionType,
+                    'paypal_PaymentType'     => $paymentInfo->PaymentType,
+                    'paypal_amount'          => (string)$price
                 ]
             );
         } else {
@@ -264,13 +269,7 @@ class PayPal implements IPayment
     }
 
     /**
-     * execute credit
-     *
-     * @param IPrice $price
-     * @param string                      $reference
-     * @param                             $transactionId
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus
+     * @inheritdoc
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)
     {

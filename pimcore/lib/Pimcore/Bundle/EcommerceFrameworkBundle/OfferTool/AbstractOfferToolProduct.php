@@ -17,6 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Model\Object\AbstractObject;
 
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool
@@ -125,7 +128,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
+     * @return IPriceInfo|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
     {
@@ -149,11 +152,11 @@ class AbstractOfferToolProduct extends \Pimcore\Model\Object\Concrete implements
      *
      * @param int $id
      *
-     * @return null|\Pimcore\Model\Object\AbstractObject
+     * @return null|AbstractObject
      */
     public static function getById($id)
     {
-        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+        $object = AbstractObject::getById($id);
 
         if ($object instanceof AbstractOfferToolProduct) {
             return $object;

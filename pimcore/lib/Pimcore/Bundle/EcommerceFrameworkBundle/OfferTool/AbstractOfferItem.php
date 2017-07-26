@@ -15,11 +15,14 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Model\Object\Concrete;
 
 /**
  * Abstract base class for offer item pimcore objects
  */
-class AbstractOfferItem extends \Pimcore\Model\Object\Concrete
+class AbstractOfferItem extends Concrete
 {
     /**
      * @throws UnsupportedException
@@ -32,7 +35,7 @@ class AbstractOfferItem extends \Pimcore\Model\Object\Concrete
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @param ICheckoutable $product
      *
      * @throws UnsupportedException
      */
