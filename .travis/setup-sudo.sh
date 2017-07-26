@@ -2,6 +2,9 @@
 
 set -e
 
+# set home directory permissions to be readable by apache
+sudo chmod 0755 /home/travis
+
 # install apache
 sudo apt-get update
 sudo apt-get install apache2 libapache2-mod-fastcgi
