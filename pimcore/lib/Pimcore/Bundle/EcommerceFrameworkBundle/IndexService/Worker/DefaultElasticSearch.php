@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
 
 class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchProcessingWorker
@@ -57,9 +58,9 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
      */
     protected $tenantConfig;
 
-    public function __construct(ElasticSearch $tenantConfig)
+    public function __construct(ElasticSearch $tenantConfig, Connection $db)
     {
-        parent::__construct($tenantConfig);
+        parent::__construct($tenantConfig, $db);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
         $this->determineAndSetCurrentIndexVersion();

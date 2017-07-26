@@ -37,10 +37,10 @@ class MySql
      */
     protected $db;
 
-    public function __construct(IMysqlConfig $tenantConfig)
+    public function __construct(IMysqlConfig $tenantConfig, Connection $db)
     {
         $this->tenantConfig = $tenantConfig;
-        $this->db = \Pimcore\Db::get();
+        $this->db = $db;
     }
 
     public function getValidTableColumns($table)

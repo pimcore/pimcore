@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
 use Pimcore\Model\Object\AbstractObject;
 
@@ -38,11 +39,11 @@ class DefaultMysql extends AbstractWorker implements IWorker
      */
     protected $mySqlHelper;
 
-    public function __construct(IMysqlConfig $tenantConfig)
+    public function __construct(IMysqlConfig $tenantConfig, Connection $db)
     {
-        parent::__construct($tenantConfig);
+        parent::__construct($tenantConfig, $db);
 
-        $this->mySqlHelper = new Helper\MySql($tenantConfig);
+        $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
     public function createOrUpdateIndexStructures()

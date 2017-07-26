@@ -18,24 +18,38 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologi
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Default implementation for FINDOLOGIC as product index backend
+ *
+ * @method DefaultFindologicWorker getTenantWorker()
  */
 class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMockupConfig
 {
-    protected $clientConfig;
+    use OptionsResolverTrait;
 
     /**
-     * @param string $tenantName
-     * @param $tenantConfig
-     * @param null $totalConfig
+     * @var array
      */
-    public function __construct($tenantName, $tenantConfig, $totalConfig = null)
-    {
-        parent::__construct($tenantName, $tenantConfig, $totalConfig);
+    protected $clientConfig;
 
-        $this->clientConfig = $tenantConfig->clientConfig->toArray();
+    protected function processOptions(array $options)
+    {
+        $options = $this->resolveOptions($options);
+
+        // TODO validate client config for required options?
+        $this->clientConfig = $options['client_config'];
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'client_config' => []
+        ]);
+
+        $resolver->setAllowedTypes('client_config', 'array');
     }
 
     /**
@@ -89,17 +103,18 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
     }
 
     /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return IWorker
+     * @inheritDoc
      */
-    public function getTenantWorker()
+    public function setTenantWorker(IWorker $tenantWorker)
     {
-        if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new DefaultFindologicWorker($this);
+        if (!$tenantWorker instanceof DefaultFindologicWorker) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                DefaultFindologicWorker::class
+            ));
         }
 
-        return $this->tenantWorker;
+        parent::setTenantWorker($tenantWorker);
     }
 
     /**

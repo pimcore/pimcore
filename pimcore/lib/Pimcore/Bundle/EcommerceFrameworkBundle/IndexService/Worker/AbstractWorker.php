@@ -20,13 +20,6 @@ use Pimcore\Db\Connection;
 
 abstract class AbstractWorker implements IWorker
 {
-    protected $name;
-    protected $columnConfig;
-    protected $searchColumnConfig;
-
-    protected $indexColumns;
-    protected $filterGroups;
-
     /**
      * @var Connection
      */
@@ -37,13 +30,22 @@ abstract class AbstractWorker implements IWorker
      */
     protected $tenantConfig;
 
-    public function __construct(IConfig $tenantConfig)
+    protected $name;
+    protected $columnConfig;
+    protected $searchColumnConfig;
+    protected $indexColumns;
+    protected $filterGroups;
+
+    public function __construct(IConfig $tenantConfig, Connection $db)
     {
-        $this->name = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
+        $tenantConfig->setTenantWorker($this);
+
+        $this->db = $db;
+
+        $this->name = $tenantConfig->getTenantName();
         $this->columnConfig = $tenantConfig->getAttributeConfig();
         $this->searchColumnConfig = $tenantConfig->getSearchAttributeConfig();
-        $this->db = \Pimcore\Db::get();
     }
 
     public function getTenantConfig()

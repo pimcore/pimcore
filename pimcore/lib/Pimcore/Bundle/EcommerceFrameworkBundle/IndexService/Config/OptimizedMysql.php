@@ -25,25 +25,6 @@ use Pimcore\Logger;
 class OptimizedMysql extends DefaultMysql implements IMockupConfig
 {
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
-     */
-    protected $tenantWorker;
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return OptimizedMysqlWorker
-     */
-    public function getTenantWorker()
-    {
-        if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new OptimizedMysqlWorker($this);
-        }
-
-        return $this->tenantWorker;
-    }
-
-    /**
      * creates object mockup for given data
      *
      * @param $objectId
