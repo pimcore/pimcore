@@ -47,12 +47,12 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @var ICartPriceModificator[]
      */
-    protected $modificators;
+    protected $modificators = [];
 
     /**
      * @var IModificatedPrice[]
      */
-    protected $modifications;
+    protected $modifications = [];
 
     /**
      * @var ICart
