@@ -221,6 +221,7 @@ class Klarna implements IPayment
      * @param $transactionId
      *
      * @return IStatus
+     *
      * @throws \Exception
      *
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction

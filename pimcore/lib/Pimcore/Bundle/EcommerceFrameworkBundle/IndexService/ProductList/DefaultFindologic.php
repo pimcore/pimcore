@@ -741,6 +741,7 @@ class DefaultFindologic implements IProductList
      * @param array $params
      *
      * @return \SimpleXMLElement
+     *
      * @throws \Exception
      */
     protected function sendRequest(array $params)

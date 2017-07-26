@@ -152,7 +152,6 @@ interface IEnvironment extends IComponent
      */
     public function getSystemLocale();
 
-
     /**
      * ===========================================
      *

@@ -62,6 +62,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
      * @param null $data
      *
      * @return DefaultMockup
+     *
      * @throws InvalidConfigException
      */
     public function saveToMockupCache($objectId, $data = null)

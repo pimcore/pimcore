@@ -243,8 +243,8 @@ class CheckoutManager implements ICheckoutManager
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams)
     {
         if ($committedOrder = $this->getCommitOrderProcessor()->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
-        // check if order is already committed and payment information with same internal payment id has same state
-        // if so, do nothing and return order
+            // check if order is already committed and payment information with same internal payment id has same state
+            // if so, do nothing and return order
             return $committedOrder;
         }
 

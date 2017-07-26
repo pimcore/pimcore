@@ -355,7 +355,7 @@ class OrderManager implements IOrderManager
 
         if (@Tool::classExists('\\Pimcore\\Model\\Object\\Customer')) {
             $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
-        // sets customer to order - if available
+            // sets customer to order - if available
             $order->setCustomer($customer);
         }
 

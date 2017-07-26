@@ -13,6 +13,7 @@
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 

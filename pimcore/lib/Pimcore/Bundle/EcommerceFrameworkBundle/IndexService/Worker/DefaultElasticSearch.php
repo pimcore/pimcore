@@ -624,6 +624,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
      * checks if system is in reindex mode based on index version and ES alias
      *
      * @return bool
+     *
      * @throws \Exception
      */
     protected function isInReindexMode()

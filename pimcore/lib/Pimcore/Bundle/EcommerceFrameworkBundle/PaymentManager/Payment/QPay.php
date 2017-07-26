@@ -24,8 +24,8 @@ use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Forms;
 
 class QPay implements IPayment
 {
@@ -158,6 +158,7 @@ class QPay implements IPayment
      * @param array $config
      *
      * @return FormBuilderInterface
+     *
      * @throws \Exception
      */
     public function initPayment(IPrice $price, array $config)
@@ -455,6 +456,7 @@ class QPay implements IPayment
      * @param $transactionId
      *
      * @return IStatus
+     *
      * @throws \Exception
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)

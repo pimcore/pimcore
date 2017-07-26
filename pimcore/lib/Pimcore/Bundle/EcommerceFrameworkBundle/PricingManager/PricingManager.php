@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Config\Config;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -183,6 +183,7 @@ class PricingManager implements IPricingManager
      * @param string $type
      *
      * @return ICondition
+     *
      * @throws InvalidConfigException
      */
     public function getCondition($type)
@@ -220,7 +221,7 @@ class PricingManager implements IPricingManager
     {
         if ((string)$this->config->disabled == 'true') {
             return $priceInfo;
-        // TODO make getPriceInfo private as this call is only used internally where the enabled check is alread applied?
+            // TODO make getPriceInfo private as this call is only used internally where the enabled check is alread applied?
         }
 
         $class = $this->config->priceInfo->class;

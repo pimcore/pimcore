@@ -427,6 +427,7 @@ class DefaultFactFinder implements IProductList
 
     /**
      * @return IIndexable[]
+     *
      * @throws \Exception
      */
     public function load()
@@ -864,6 +865,7 @@ class DefaultFactFinder implements IProductList
 
     /**
      * @return array
+     *
      * @throws \Exception
      */
     protected function sendRequest()

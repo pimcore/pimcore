@@ -164,8 +164,7 @@ class MultiCartManager implements ICartManager
         array $params = [],
         array $subProducts = [],
         $comment = null
-    )
-    {
+    ) {
         $this->checkForInit();
 
         if (empty($key) || !array_key_exists($key, $this->carts)) {
