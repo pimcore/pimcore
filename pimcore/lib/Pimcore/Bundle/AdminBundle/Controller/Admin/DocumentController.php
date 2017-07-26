@@ -943,12 +943,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $versionFrom = Version::getById($from);
         $docFrom = $versionFrom->loadData();
 
-        $sessionName = Tool\Session::getOption('name');
+        $sessionName = Tool\Session::getSessionName();
+        $sessionId = Tool\Session::getSessionId();
 
         $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
 
-        $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $_COOKIE[$sessionName];
-        $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $_COOKIE[$sessionName];
+        $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $sessionId;
+        $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $sessionId;
 
         $toFileId = uniqid();
         $fromFileId = uniqid();

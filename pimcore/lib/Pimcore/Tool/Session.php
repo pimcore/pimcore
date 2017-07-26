@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,6 +17,7 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler;
 use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -28,7 +32,7 @@ class Session
     public static function getHandler(): AdminSessionHandlerInterface
     {
         if (null === static::$handler) {
-            static::$handler = \Pimcore::getContainer()->get('pimcore_admin.session.handler');
+            static::$handler = \Pimcore::getContainer()->get(AdminSessionHandler::class);
         }
 
         return static::$handler;
@@ -40,22 +44,12 @@ class Session
     }
 
     /**
-     * @param $name
-     *
-     * @return mixed
-     */
-    public static function getOption($name)
-    {
-        return static::getHandler()->getOption($name);
-    }
-
-    /**
      * @param $func
      * @param string $namespace
      *
      * @return mixed
      */
-    public static function useSession($func, $namespace = 'pimcore_admin')
+    public static function useSession($func, string $namespace = 'pimcore_admin')
     {
         return static::getHandler()->useSessionAttributeBag($func, $namespace);
     }
@@ -79,15 +73,15 @@ class Session
     /**
      * @return bool
      */
-    public static function invalidate()
+    public static function invalidate(): bool
     {
         return static::getHandler()->invalidate();
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public static function regenerateId()
+    public static function regenerateId(): bool
     {
         return static::getHandler()->regenerateId();
     }
@@ -98,7 +92,7 @@ class Session
      *
      * @return bool
      */
-    public static function requestHasSessionId(Request $request, $checkRequestParams = false)
+    public static function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
     {
         return static::getHandler()->requestHasSessionId($request, $checkRequestParams);
     }
@@ -109,7 +103,7 @@ class Session
      *
      * @return string
      */
-    public static function getSessionIdFromRequest(Request $request, $checkRequestParams = false)
+    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false)
     {
         return static::getHandler()->getSessionIdFromRequest($request, $checkRequestParams);
     }
@@ -121,7 +115,7 @@ class Session
      *
      * @return AttributeBagInterface
      */
-    public static function get($namespace = 'pimcore_admin')
+    public static function get(string $namespace = 'pimcore_admin'): AttributeBagInterface
     {
         return static::getHandler()->loadAttributeBag($namespace);
     }
@@ -131,11 +125,14 @@ class Session
      *
      * @return AttributeBagInterface
      */
-    public static function getReadOnly($namespace = 'pimcore_admin')
+    public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
     {
         return static::getHandler()->getReadOnlyAttributeBag($namespace);
     }
 
+    /**
+     * Saves the session if it is the last admin session which was opene
+     */
     public static function writeClose()
     {
         return static::getHandler()->writeClose();

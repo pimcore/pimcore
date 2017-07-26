@@ -81,7 +81,6 @@ services:
     pimcore.session.configurator:
         class: Pimcore\Session\SessionConfigurator
 
-
     #
     # SECURITY
     #
@@ -343,7 +342,7 @@ services:
             - '@request_stack'
             - '@pimcore.service.request.editmode_resolver'
             - '@pimcore_admin.security.user_loader'
-            - '@pimcore_admin.session.configurator.admin_session_bags'
+            - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
             - '@pimcore.routing.dynamic.document_route_handler'
 
     #

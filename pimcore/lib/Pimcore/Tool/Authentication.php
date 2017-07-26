@@ -52,12 +52,12 @@ class Authentication
      */
     public static function authenticateSession(Request $request = null)
     {
-        try {
+        if (null === $request) {
+            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+
             if (null === $request) {
-                $request = \Pimcore::getContainer()->get('pimcore.http.request_helper')->getCurrentRequest();
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
         }
 
         if (!Session::requestHasSessionId($request, true)) {

@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 
 abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterface
 {
@@ -29,6 +30,11 @@ abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterfa
      * @var SessionInterface
      */
     protected $session;
+
+    public function __construct(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
 
     /**
      * @inheritdoc
@@ -39,6 +45,21 @@ abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterfa
             return $session->getId();
         });
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSessionName()
+    {
+        return $this->session->getName();
+    }
+
+    /**
+     * Loads the session
+     *
+     * @return SessionInterface
+     */
+    abstract protected function loadSession(): SessionInterface;
 
     /**
      * @inheritdoc
@@ -57,7 +78,7 @@ abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterfa
     /**
      * @inheritdoc
      */
-    public function useSessionAttributeBag(callable $callable, $name = 'pimcore_admin')
+    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin')
     {
         $session      = $this->loadSession();
         $attributeBag = $this->loadAttributeBag($name, $session);
@@ -126,6 +147,9 @@ abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterfa
     public function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
     {
         $sessionName = $this->getSessionName();
+        if (empty($sessionName)) {
+            return false;
+        }
 
         $properties = ['cookies'];
 
@@ -148,8 +172,8 @@ abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterfa
      */
     public function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false): string
     {
-        if (static::requestHasSessionId($request, $checkRequestParams)) {
-            $sessionName = static::getSessionName();
+        if ($this->requestHasSessionId($request, $checkRequestParams)) {
+            $sessionName = $this->getSessionName();
 
             if ($sessionId = $request->cookies->get($sessionName)) {
                 return $sessionId;

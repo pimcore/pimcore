@@ -3,36 +3,19 @@ services:
     # SESSION
     #
 
-    pimcore_admin.session.storage_factory:
-        class: Pimcore\Bundle\AdminBundle\Session\AdminSessionStorageFactory
-        lazy: true
-        public: false
-        arguments: ['@session.handler']
-
-    pimcore_admin.session.storage:
-        class: Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
-        lazy: true
-        public: false
-        factory: 'pimcore_admin.session.storage_factory:createStorage'
-
-    pimcore_admin.session.configurator.admin_session_bags:
-        class: Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator
+    Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator:
         arguments: ['%pimcore.admin.session.attribute_bags%']
+        tags:
+            - { name: pimcore.session.configurator }
 
-    pimcore_admin.session:
-        class: Symfony\Component\HttpFoundation\Session\Session
-        lazy: true
-        public: false
-        configurator: ['@pimcore_admin.session.configurator.admin_session_bags', 'configure']
-        arguments: ['@pimcore_admin.session.storage']
-
-    pimcore_admin.session.handler:
-        class: Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler
-        arguments: ['@pimcore_admin.session', '@pimcore_admin.session.storage', '@pimcore_admin.session.storage_factory']
+    Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
+        arguments:
+            - '@session'
+            - '@request_stack'
         calls:
             - [setLogger, ['@logger']]
         tags:
-            - { name: monolog.logger, channel: session }
+            - { name: monolog.logger, channel: pimcore_admin.session }
 
     #
     # SERIALIZER
