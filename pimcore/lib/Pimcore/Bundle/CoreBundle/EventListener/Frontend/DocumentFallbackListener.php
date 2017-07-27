@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Site;
 use Pimcore\Service\Request\DocumentResolver;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Service\Request\SiteResolver;
@@ -58,8 +57,7 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
         DocumentResolver $documentResolver,
         SiteResolver $siteResolver,
         Document\Service $documentService
-    )
-    {
+    ) {
         $this->requestStack     = $requestStack;
         $this->documentResolver = $documentResolver;
         $this->siteResolver     = $siteResolver;
