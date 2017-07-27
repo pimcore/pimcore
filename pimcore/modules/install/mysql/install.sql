@@ -490,7 +490,7 @@ CREATE TABLE `search_backend_data` (
   `fullpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
-  `subtype` varchar(255) DEFAULT NULL,
+  `subtype` varchar(190) DEFAULT NULL,
   `published` bigint(20) DEFAULT NULL,
   `creationDate` bigint(20) DEFAULT NULL,
   `modificationDate` bigint(20) DEFAULT NULL,
