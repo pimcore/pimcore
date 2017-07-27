@@ -24,6 +24,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql as DefaultMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
@@ -45,6 +48,7 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class Configuration implements ConfigurationInterface
 {
@@ -83,7 +87,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildAvailabilitySystemsNode())
             ->append($this->buildCheckoutManagerNode())
             ->append($this->buildPaymentManagerNode())
-            ->append($this->buildProductIndexNode())
+            ->append($this->buildIndexServiceNode())
             ->append($this->buildVoucherServiceNode())
             ->append($this->buildOfferToolNode())
             ->append($this->buildTrackingManagerNode());
@@ -548,50 +552,81 @@ class Configuration implements ConfigurationInterface
         return $paymentManager;
     }
 
-    private function buildProductIndexNode(): NodeDefinition
+    private function buildIndexServiceNode(): NodeDefinition
     {
         $builder = new TreeBuilder();
 
-        $productIndex = $builder->root('product_index');
-        $productIndex->addDefaultsIfNotSet();
+        $indexService = $builder->root('index_service');
+        $indexService->addDefaultsIfNotSet();
 
-        $productIndex
+        $indexService
             ->children()
-                ->booleanNode('disable_default_tenant')
-                    ->defaultFalse()
+                ->scalarNode('index_service_id')
+                    ->cannotBeEmpty()
+                    ->defaultValue(IndexService::class)
+                ->end()
+                ->scalarNode('default_tenant')
+                    ->cannotBeEmpty()
+                    ->defaultValue('default')
                 ->end()
                 ->arrayNode('tenants')
                     ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant.')
-                    ->useAttributeAsKey('name')
-                    ->beforeNormalization()
-                    ->always(function ($v) {
-                        if (empty($v) || !is_array($v)) {
-                            $v = [];
-                        }
-
-                        $config = $this->tenantProcessor->mergeTenantConfig($v);
-
-                        foreach ($config as $tenant => $tenantConfig) {
-                            if (isset($tenantConfig['placeholders']) && is_array($tenantConfig['placeholders']) && count($tenantConfig['placeholders']) > 0) {
-                                $placeholders = $tenantConfig['placeholders'];
-
-                                // remove placeholders while replacing as we don't want to replace the placeholders
-                                unset($tenantConfig['placeholders']);
-
-                                $config[$tenant] = $this->placeholderProcessor->mergePlaceholders($tenantConfig, $placeholders);
-
-                                // re-add placeholders
-                                $config[$tenant]['placeholders'] = $placeholders;
+                    ->useAttributeAsKey('name', false)
+                    ->validate()
+                        ->always(function (array $v) {
+                            // check if all search attributes are defined as attribute
+                            foreach ($v as $tenant => $tenantConfig) {
+                                foreach ($tenantConfig['search_attributes'] as $searchAttribute) {
+                                    if (!isset($tenantConfig['attributes'][$searchAttribute])) {
+                                        throw new InvalidConfigurationException(sprintf(
+                                            'The search attribute "%s" in product index tenant "%s" is not defined as attribute.',
+                                            $searchAttribute,
+                                            $tenant
+                                        ));
+                                    }
+                                }
                             }
-                        }
 
-                        return $config;
-                    })
+                            return $v;
+                        })
+                    ->end()
+                    ->beforeNormalization()
+                        ->always(function ($v) {
+                            if (empty($v) || !is_array($v)) {
+                                $v = [];
+                            }
+
+                            $config = $this->tenantProcessor->mergeTenantConfig($v);
+
+                            foreach ($config as $tenant => $tenantConfig) {
+                                if (isset($tenantConfig['placeholders']) && is_array($tenantConfig['placeholders']) && count($tenantConfig['placeholders']) > 0) {
+                                    $placeholders = $tenantConfig['placeholders'];
+
+                                    // remove placeholders while replacing as we don't want to replace the placeholders
+                                    unset($tenantConfig['placeholders']);
+
+                                    $config[$tenant] = $this->placeholderProcessor->mergePlaceholders($tenantConfig, $placeholders);
+
+                                    // re-add placeholders
+                                    $config[$tenant]['placeholders'] = $placeholders;
+                                }
+                            }
+
+                            return $config;
+                        })
                     ->end()
                     ->prototype('array')
+                        ->addDefaultsIfNotSet()
+                        ->canBeDisabled()
                         ->children()
                             ->scalarNode('config_id')
-                                ->isRequired()
+                                ->cannotBeEmpty()
+                                ->defaultValue(DefaultMysql::class)
+                            ->end()
+                            ->append($this->buildOptionsNode('config_options'))
+                            ->scalarNode('worker_id')
+                                ->cannotBeEmpty()
+                                ->defaultValue(DefaultMysqlWorker::class)
                             ->end()
                             ->arrayNode('placeholders')
                                 ->defaultValue([])
@@ -601,17 +636,11 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->arrayNode('search_attributes')
-                                ->prototype('array')
-                                    ->beforeNormalization()
-                                        ->ifString()
-                                        ->then(function ($v) {
-                                            return ['name' => $v];
-                                        })
-                                    ->end()
-                                    ->children()
-                                        ->scalarNode('name')->isRequired()->end()
-                                    ->end()
+                                ->defaultValue([])
+                                ->beforeNormalization()
+                                    ->castToArray()
                                 ->end()
+                                ->prototype('scalar')->end()
                             ->end()
                             ->arrayNode('attributes')
                                 ->useAttributeAsKey('name', false)
@@ -632,15 +661,46 @@ class Configuration implements ConfigurationInterface
                                     })
                                 ->end()
                                 ->prototype('array')
+                                    ->beforeNormalization()
+                                        ->always(function($v) {
+                                            if (empty($v) || !is_array($v)) {
+                                                return $v;
+                                            }
+
+                                            // is there a native symfony way to map properties?
+                                            $map = [
+                                                'fieldname'               => 'field_name',
+                                                'filtergroup'             => 'filter_group',
+                                                'getter'                  => 'getter_id',
+                                                'interpreter'             => 'interpreter_id',
+                                                'config'                  => 'options',
+                                                'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype'
+                                            ];
+
+                                            foreach ($map as $old => $new) {
+                                                if (isset($v[$old]) && !isset($v[$new])) {
+                                                    $v[$new] = $v[$old];
+                                                    unset($v[$old]);
+                                                }
+                                            }
+
+                                            return $v;
+                                        })
+                                    ->end()
+
+
                                     ->children()
                                         ->scalarNode('name')->isRequired()->end()
-                                        ->scalarNode('fieldname')->defaultNull()->end()
+                                        ->scalarNode('field_name')->defaultNull()->end()
                                         ->scalarNode('type')->defaultNull()->end()
-                                        ->scalarNode('interpreter')->defaultNull()->end()
-                                        ->scalarNode('getter')->defaultNull()->end()
-                                        ->scalarNode('filtergroup')->defaultNull()->end()
                                         ->scalarNode('locale')->defaultNull()->end()
-                                        ->variableNode('options')->defaultValue([])->end()
+                                        ->scalarNode('filter_group')->defaultNull()->end()
+                                        ->append($this->buildOptionsNode())
+                                        ->scalarNode('getter_id')->defaultNull()->end()
+                                        ->append($this->buildOptionsNode('getter_options'))
+                                        ->scalarNode('interpreter_id')->defaultNull()->end()
+                                        ->append($this->buildOptionsNode('interpreter_options'))
+                                        ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->end()
                                     ->end()
                                 ->end()
                             ->end()
@@ -649,7 +709,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        return $productIndex;
+        return $indexService;
     }
 
     private function buildVoucherServiceNode(): NodeDefinition

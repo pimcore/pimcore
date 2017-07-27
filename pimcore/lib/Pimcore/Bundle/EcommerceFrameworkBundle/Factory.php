@@ -323,6 +323,16 @@ class Factory
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
     }
 
+    public function getIndexService(): IndexService
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_INDEX_SERVICE);
+    }
+
+    public function getAllTenants(): array
+    {
+        return $this->getIndexService()->getTenants();
+    }
+
     public function getOfferToolService(): IService
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
@@ -412,37 +422,6 @@ class Factory
 
     private function checkConfig($config)
     {
-    }
-
-    /**
-     * @var IndexService
-     */
-    private $indexService = null;
-
-    /**
-     * @return IndexService
-     */
-    public function getIndexService()
-    {
-        if (empty($this->indexService)) {
-            $this->indexService = new IndexService($this->config->ecommerceframework->productindex);
-        }
-
-        return $this->indexService;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAllTenants()
-    {
-        if (empty($this->allTenants) && $this->config->ecommerceframework->productindex->tenants && $this->config->ecommerceframework->productindex->tenants instanceof Config) {
-            foreach ($this->config->ecommerceframework->productindex->tenants as $name => $tenant) {
-                $this->allTenants[$name] = $name;
-            }
-        }
-
-        return $this->allTenants;
     }
 
     /**

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService\AttributeFactory;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -22,6 +23,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
@@ -29,6 +31,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
     const SERVICE_ID_PRICING_MANAGER = 'pimcore_ecommerce.pricing_manager';
     const SERVICE_ID_PAYMENT_MANAGER = 'pimcore_ecommerce.payment_manager';
+    const SERVICE_ID_INDEX_SERVICE = 'pimcore_ecommerce.index_service';
     const SERVICE_ID_VOUCHER_SERVICE = 'pimcore_ecommerce.voucher_service';
     const SERVICE_ID_TOKEN_MANAGER_FACTORY = 'pimcore_ecommerce.voucher_service.token_manager_factory';
     const SERVICE_ID_OFFER_TOOL = 'pimcore_ecommerce.offer_tool';
@@ -56,6 +59,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('availability_systems.yml');
         $loader->load('checkout_manager.yml');
         $loader->load('payment_manager.yml');
+        $loader->load('index_service.yml');
         $loader->load('voucher_service.yml');
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
@@ -68,6 +72,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerAvailabilitySystemsConfiguration($config['availability_systems'], $container);
         $this->registerCheckoutManagerConfiguration($config['checkout_manager'], $container);
         $this->registerPaymentManagerConfiguration($config['payment_manager'], $container);
+        $this->registerIndexServiceConfig($config['index_service'], $container);
         $this->registerVoucherServiceConfig($config['voucher_service'], $container);
         $this->registerOfferToolConfig($config['offer_tool'], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
@@ -268,6 +273,43 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupLocator($container, 'payment_manager.provider', $mapping);
+    }
+
+    private function registerIndexServiceConfig(array $config, ContainerBuilder $container)
+    {
+        $container->setAlias(
+            self::SERVICE_ID_INDEX_SERVICE,
+            $config['index_service_id']
+        );
+
+        $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
+
+        $attributeFactory = new AttributeFactory();
+
+        foreach ($config['tenants'] ?? [] as $tenant => $tenantConfig) {
+            if (!$tenantConfig['enabled']) {
+                continue;
+            }
+
+            $configId = sprintf('pimcore_ecommerce.index_service.%s.config', $tenant);
+            $workerId = sprintf('pimcore_ecommerce.index_service.%s.worker', $tenant);
+
+            $config = new ChildDefinition($tenantConfig['config_id']);
+            $config->setArguments([
+                '$tenantName'       => $tenant,
+                '$attributes'       => $attributeFactory->createAttributes($tenantConfig['attributes']),
+                '$searchAttributes' => $tenantConfig['search_attributes'],
+                '$filterTypes'      => [],
+                '$options'          => $tenantConfig['config_options']
+            ]);
+
+            $worker = new ChildDefinition($tenantConfig['worker_id']);
+            $worker->setArgument('$tenantConfig', new Reference($configId));
+            $worker->addTag('pimcore_ecommerce.index_service.worker', ['tenant' => $tenant]);
+
+            $container->setDefinition($configId, $config);
+            $container->setDefinition($workerId, $worker);
+        }
     }
 
     private function registerVoucherServiceConfig(array $config, ContainerBuilder $container)

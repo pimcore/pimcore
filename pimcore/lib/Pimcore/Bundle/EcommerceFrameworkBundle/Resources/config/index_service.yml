@@ -1,0 +1,27 @@
+imports:
+    - { resource: index_service_configs_workers.yml }
+
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # PRODUCT INDEX
+    #
+
+    # workers will be injected by compiler pass
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService:
+        arguments:
+            - '@pimcore_ecommerce.environment'
+            - []
+            - '%pimcore_ecommerce.index_service.default_tenant%'
+
+    # auto-register all core getters as service
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\:
+        resource: '../../IndexService/Getter'
+
+    # auto-register all core interpreters as service
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\:
+        resource: '../../IndexService/Interpreter'
