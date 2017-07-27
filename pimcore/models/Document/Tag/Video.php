@@ -779,6 +779,10 @@ class Video extends Model\Document\Tag
                 $attributes = array_merge($attributes, $this->getOptions()['attributes']);
             }
 
+            if($attributes['controls'] === false){
+                unset($attributes['controls']);
+            }
+
             if (isset($this->getOptions()['removeAttributes']) && is_array($this->getOptions()['removeAttributes'])) {
                 foreach ($this->getOptions()['removeAttributes'] as $attribute) {
                     unset($attributes[$attribute]);
