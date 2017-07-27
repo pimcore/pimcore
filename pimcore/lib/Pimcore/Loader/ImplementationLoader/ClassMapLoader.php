@@ -43,6 +43,11 @@ class ClassMapLoader extends AbstractClassNameLoader
         return isset($this->classMap[$name]);
     }
 
+    public function getClassMap(): array
+    {
+        return $this->classMap;
+    }
+
     /**
      * @inheritDoc
      */

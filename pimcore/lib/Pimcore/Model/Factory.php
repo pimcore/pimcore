@@ -17,10 +17,26 @@ declare(strict_types = 1);
 
 namespace Pimcore\Model;
 
+use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 
 class Factory extends ImplementationLoader
 {
+    /**
+     * Get class map from all classmap loaders
+     */
+    public function getClassMap(): array
+    {
+        $map = [];
+        foreach ($this->loaders as $loader) {
+            if ($loader instanceof ClassMapLoader) {
+                $map = array_merge($map, $loader->getClassMap());
+            }
+        }
+
+        return $map;
+    }
+
     /**
      * @param string $name
      * @param array $params
