@@ -210,8 +210,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         foreach ($this->getStaticRoutes() as $route) {
             if ($routeParams = $route->match($pathinfo, $params)) {
-                // TODO nearest document
-
                 Staticroute::setCurrentRoute($route);
 
                 // add the route object also as parameter to the request object, this is needed in

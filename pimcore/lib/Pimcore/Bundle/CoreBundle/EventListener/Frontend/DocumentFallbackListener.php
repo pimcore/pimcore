@@ -15,8 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Service\Request\DocumentResolver;
 use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Service\Request\SiteResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -32,9 +34,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class DocumentFallbackListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
-     * @var Document\Service
+     * @var RequestStack
      */
-    protected $documentService;
+    protected $requestStack;
 
     /**
      * @var DocumentResolver
@@ -42,20 +44,26 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
     protected $documentResolver;
 
     /**
-     * @var RequestStack
+     * @var SiteResolver
      */
-    protected $requestStack;
+    protected $siteResolver;
 
     /**
-     * @param Document\Service $documentService
-     * @param DocumentResolver $documentResolver
-     * @param RequestStack $requestStack
+     * @var Document\Service
      */
-    public function __construct(Document\Service $documentService, DocumentResolver $documentResolver, RequestStack $requestStack)
+    protected $documentService;
+
+    public function __construct(
+        RequestStack $requestStack,
+        DocumentResolver $documentResolver,
+        SiteResolver $siteResolver,
+        Document\Service $documentService
+    )
     {
-        $this->documentService  = $documentService;
-        $this->documentResolver = $documentResolver;
         $this->requestStack     = $requestStack;
+        $this->documentResolver = $documentResolver;
+        $this->siteResolver     = $siteResolver;
+        $this->documentService  = $documentService;
     }
 
     /**
@@ -72,7 +80,7 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
     }
 
     /**
-     * Finds the nearest document for the current request if the routing/document router didn't (e.g. static routes)
+     * Finds the nearest document for the current request if the routing/document router didn't find one (e.g. static routes)
      *
      * @param GetResponseEvent $event
      */
@@ -117,7 +125,14 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
         if ($event->isMasterRequest()) {
-            $document = $this->documentService->getNearestDocumentByPath($request);
+            $path = null;
+            if ($this->siteResolver->isSiteRequest($request)) {
+                $path = $this->siteResolver->getSitePath($request);
+            } else {
+                $path = urldecode($request->getPathInfo());
+            }
+
+            $document = $this->documentService->getNearestDocumentByPath($path, false, ['page', 'snippet', 'hardlink']);
             if ($document) {
                 $this->documentResolver->setDocument($request, $document);
             }

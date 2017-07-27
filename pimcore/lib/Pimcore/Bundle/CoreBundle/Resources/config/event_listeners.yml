@@ -22,7 +22,11 @@ services:
 
     pimcore.event_listener.frontend.document_fallback:
         class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener
-        arguments: ['@pimcore.document_service', '@pimcore.service.request.document_resolver', '@request_stack']
+        arguments:
+            - '@request_stack'
+            - '@pimcore.service.request.document_resolver'
+            - '@pimcore.service.request.site_resolver'
+            - '@pimcore.document_service'
         tags:
             - { name: kernel.event_subscriber }
 
