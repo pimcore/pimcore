@@ -30,10 +30,19 @@ abstract class AbstractWorker implements IWorker
      */
     protected $tenantConfig;
 
+    /**
+     * @var string
+     */
     protected $name;
-    protected $columnConfig;
-    protected $searchColumnConfig;
+
+    /**
+     * @var array
+     */
     protected $indexColumns;
+
+    /**
+     * @var array
+     */
     protected $filterGroups;
 
     public function __construct(IConfig $tenantConfig, Connection $db)
@@ -41,11 +50,8 @@ abstract class AbstractWorker implements IWorker
         $this->tenantConfig = $tenantConfig;
         $tenantConfig->setTenantWorker($this);
 
-        $this->db = $db;
-
         $this->name = $tenantConfig->getTenantName();
-        $this->columnConfig = $tenantConfig->getAttributeConfig();
-        $this->searchColumnConfig = $tenantConfig->getSearchAttributeConfig();
+        $this->db   = $db;
     }
 
     public function getTenantConfig()
@@ -55,22 +61,23 @@ abstract class AbstractWorker implements IWorker
 
     public function getGeneralSearchAttributes()
     {
-        return $this->searchColumnConfig;
+        return $this->tenantConfig->getSearchAttributes();
     }
 
     public function getIndexAttributes($considerHideInFieldList = false)
     {
-        if (empty($this->indexColumns)) {
-            $this->indexColumns = [];
+        if (null === $this->indexColumns) {
+            $indexColumns = [
+                'categoryIds' => 'categoryIds'
+            ];
 
-            $this->indexColumns['categoryIds'] = 'categoryIds';
-
-            foreach ($this->columnConfig as $column) {
-                if (!$considerHideInFieldList || ($considerHideInFieldList && $column->hideInFieldlistDatatype != 'true')) {
-                    $this->indexColumns[$column->name] = $column->name;
+            foreach ($this->tenantConfig->getAttributes() as $attribute) {
+                if (!$considerHideInFieldList || ($considerHideInFieldList && !$attribute->getHideInFieldlistDatatype())) {
+                    $indexColumns[$attribute->getName()] = $attribute->getName();
                 }
             }
-            $this->indexColumns = array_values($this->indexColumns);
+
+            $this->indexColumns = array_values($indexColumns);
         }
 
         return $this->indexColumns;
@@ -85,16 +92,14 @@ abstract class AbstractWorker implements IWorker
 
     public function getAllFilterGroups()
     {
-        if (empty($this->filterGroups)) {
+        if (null === $this->filterGroups) {
             $this->filterGroups = [];
             $this->filterGroups['system'] = array_diff($this->getSystemAttributes(), ['categoryIds']);
             $this->filterGroups['category'] = ['categoryIds'];
 
-            if ($this->columnConfig) {
-                foreach ($this->columnConfig as $column) {
-                    if ($column->filtergroup) {
-                        $this->filterGroups[(string)$column->filtergroup][] = (string)$column->name;
-                    }
+            foreach ($this->tenantConfig->getAttributes() as $attribute) {
+                if (null !== $attribute->getFilterGroup()) {
+                    $this->filterGroups[$attribute->getFilterGroup()][] = $attribute->getName();
                 }
             }
         }

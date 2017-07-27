@@ -107,29 +107,22 @@ class MySql
 
         $columnsToDelete = $columns;
         $columnsToAdd = [];
-        $columnConfig = $this->tenantConfig->getAttributeConfig();
-        if (!empty($columnConfig->name)) {
-            $columnConfig = [$columnConfig];
-        }
-        if ($columnConfig) {
-            foreach ($columnConfig as $column) {
-                if (!array_key_exists($column->name, $columns)) {
-                    $doAdd = true;
-                    if (!empty($column->interpreter)) {
-                        $interpreter = $column->interpreter;
-                        $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof IRelationInterpreter) {
-                            $doAdd = false;
-                        }
-                    }
 
-                    if ($doAdd) {
-                        $columnsToAdd[$column->name] = $column->type;
-                    }
+        foreach ($this->tenantConfig->getAttributes() as $attribute) {
+            if (!array_key_exists($attribute->getName(), $columns)) {
+                $doAdd = true;
+                if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof  IRelationInterpreter) {
+                    $doAdd = false;
                 }
-                unset($columnsToDelete[$column->name]);
+
+                if ($doAdd) {
+                    $columnsToAdd[$attribute->getName()] = $attribute->getType();
+                }
             }
+
+            unset($columnsToDelete[$attribute->getName()]);
         }
+
         foreach ($columnsToDelete as $c) {
             if (!in_array($c, $systemColumns)) {
                 $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` DROP COLUMN `' . $c . '`;');
@@ -140,7 +133,7 @@ class MySql
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD `' . $c . '` ' . $type . ';');
         }
 
-        $searchIndexColums = $this->tenantConfig->getSearchAttributeConfig();
+        $searchIndexColums = $this->tenantConfig->getSearchAttributes();
         if (!empty($searchIndexColums)) {
             try {
                 $this->dbexec('ALTER TABLE ' . $this->tenantConfig->getTablename() . ' DROP INDEX search;');

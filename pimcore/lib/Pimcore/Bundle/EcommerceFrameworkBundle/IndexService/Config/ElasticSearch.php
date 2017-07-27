@@ -91,10 +91,25 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
     {
-        foreach(['client_config', 'index_settings', 'es_client_params'] as $field) {
+        $arrayFields = [
+            'client_config',
+            'index_settings',
+            'es_client_params',
+            'mapping'
+        ];
+
+        foreach($arrayFields as $field) {
             $resolver->setAllowedTypes($field, 'array');
             $resolver->setDefault($field, []);
         }
+
+        $resolver->setDefined('mapper');
+        $resolver->setAllowedTypes('mapper', 'string');
+
+        $resolver->setDefined('analyzer');
+
+        $resolver->setDefault('store', true);
+        $resolver->setAllowedTypes('store', 'bool');
     }
 
     /**

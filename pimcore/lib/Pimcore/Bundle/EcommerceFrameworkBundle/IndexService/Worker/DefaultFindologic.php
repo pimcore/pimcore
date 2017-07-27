@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Object\Concrete;
 
 /**
+ * @property IFindologicConfig $tenantConfig
  * @method IFindologicConfig getTenantConfig()
  */
 class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker

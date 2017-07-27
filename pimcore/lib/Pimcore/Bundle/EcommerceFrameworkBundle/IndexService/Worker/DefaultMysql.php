@@ -22,17 +22,15 @@ use Pimcore\Db\Connection;
 use Pimcore\Logger;
 use Pimcore\Model\Object\AbstractObject;
 
+/**
+ * @property IMysqlConfig $tenantConfig
+ */
 class DefaultMysql extends AbstractWorker implements IWorker
 {
     /**
      * @var array
      */
     protected $_sqlChangeLog = [];
-
-    /**
-     * @var IMysqlConfig
-     */
-    protected $tenantConfig;
 
     /**
      * @var Helper\MySql
@@ -147,58 +145,38 @@ class DefaultMysql extends AbstractWorker implements IWorker
 
                 $relationData = [];
 
-                $columnConfig = $this->columnConfig;
-                if (!empty($columnConfig->name)) {
-                    $columnConfig = [$columnConfig];
-                } elseif (empty($columnConfig)) {
-                    $columnConfig = [];
-                }
-                foreach ($columnConfig as $column) {
+                foreach ($this->tenantConfig->getAttributes() as $attribute) {
                     try {
-                        $value = null;
-                        if (!empty($column->getter)) {
-                            $getter = $column->getter;
-                            $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
-                        } else {
-                            if (!empty($column->fieldname)) {
-                                $getter = 'get' . ucfirst($column->fieldname);
-                            } else {
-                                $getter = 'get' . ucfirst($column->name);
-                            }
+                        $value = $attribute->getValue($object, $subObjectId, $this->tenantConfig);
 
-                            if (method_exists($object, $getter)) {
-                                $value = $object->$getter($column->locale);
-                            }
-                        }
+                        if (null !== $attribute->getInterpreter()) {
+                            $value = $attribute->interpretValue($value);
 
-                        if (!empty($column->interpreter)) {
-                            $interpreter = $column->interpreter;
-                            $value = $interpreter::interpret($value, $column->config);
-                            $interpreterObject = new $interpreter();
-                            if ($interpreterObject instanceof IRelationInterpreter) {
+                            if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
                                 foreach ($value as $v) {
                                     $relData = [];
                                     $relData['src'] = $subObjectId;
                                     $relData['src_virtualProductId'] = $virtualProductId;
                                     $relData['dest'] = $v['dest'];
-                                    $relData['fieldname'] = $column->name;
+                                    $relData['fieldname'] = $attribute->getName();
                                     $relData['type'] = $v['type'];
                                     $relationData[] = $relData;
                                 }
                             } else {
-                                $data[$column->name] = $value;
+                                $data[$attribute->getName()] = $value;
                             }
                         } else {
-                            $data[$column->name] = $value;
+                            $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$column->name])) {
-                            $data[$column->name] = $this->convertArray($data[$column->name]);
+                        if (is_array($data[$attribute->getName()])) {
+                            $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Exception $e) {
                         Logger::err('Exception in IndexService: ' . $e);
                     }
                 }
+
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }

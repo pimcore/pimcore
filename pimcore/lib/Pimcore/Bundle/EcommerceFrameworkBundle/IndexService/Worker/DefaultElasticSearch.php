@@ -21,6 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\Connection;
 use Pimcore\Logger;
 
+/**
+ * @property ElasticSearch $tenantConfig
+ */
 class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchProcessingWorker
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
@@ -54,9 +57,9 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     protected $indexVersion = 0;
 
     /**
-     * @var ElasticSearch
+     * @var array
      */
-    protected $tenantConfig;
+    protected $bulkIndexData = [];
 
     public function __construct(ElasticSearch $tenantConfig, Connection $db)
     {
@@ -275,54 +278,53 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
         $customAttributesMapping = [];
         $relationAttributesMapping = [];
 
-        $attributesConfig = $this->columnConfig;
-        if (!empty($attributesConfig->name)) {
-            $attributesConfig = [$attributesConfig];
-        }
-        if ($attributesConfig) {
-            foreach ($attributesConfig as $attribute) {
-                //if configuration json is given, no other configuration is considered for mapping
-                if (!empty($attribute->json)) {
-                    $customAttributesMapping[$attribute->name] = json_decode($attribute->json, true);
+        foreach ($this->tenantConfig->getAttributes() as $attribute) {
+            // if option "mapping" is set (array), no other configuration is considered for mapping
+            if (!empty($attribute->getOption('mapping'))) {
+                $customAttributesMapping[$attribute->getName()] = $attribute->getOption('mapping');
+            } else {
+                $isRelation = false;
+                $type = $attribute->getType();
+
+                //check, if interpreter is set and if this interpreter is instance of relation interpreter
+                // -> then set type to long
+                if (null !== $attribute->getInterpreter()) {
+                    if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
+                        $type = 'long';
+                        $isRelation = true;
+                    }
+                }
+
+                if (!empty($attribute->getOption('mapper'))) {
+                    $mapperClass = $attribute->getOption('mapper');
+
+                    $mapper = new $mapperClass();
+                    $mapping = $mapper->getMapping();
                 } else {
-                    $isRelation = false;
-                    $type = $attribute->type;
+                    $mapping = [
+                        'type'  => $type,
+                        'store' => $this->getStoreCustomAttributes(),
+                        'index' => 'not_analyzed'
+                    ];
 
-                    //check, if interpreter is set and if this interpreter is instance of relation interpreter
-                    // -> then set type to long
-                    if (!empty($attribute->interpreter)) {
-                        $interpreter = $attribute->interpreter;
-                        $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof IRelationInterpreter) {
-                            $type = 'long';
-                            $isRelation = true;
-                        }
+                    if (!empty($attribute->getOption('analyzer'))) {
+                        $mapping['index'] = 'analyzed';
+                        $mapping['analyzer'] = $attribute->getOption('analyzer');
                     }
+                }
 
-                    if ($attribute->mapper) {
-                        $mapper = new $attribute->mapper();
-                        $mapping = $mapper->getMapping();
-                    } else {
-                        $mapping = ['type' => $type, 'store' => $this->getStoreCustomAttributes(), 'index' => 'not_analyzed'];
-                        if ($attribute->analyzer) {
-                            $mapping['index'] = 'analyzed';
-                            $mapping['analyzer'] = $attribute->analyzer;
-                        }
-                    }
+                if ($type == 'object') { //object doesn't support index or store
+                    $mapping = ['type' => $type];
+                }
 
-                    if ($type == 'object') { //object doesn't support index or store
-                        $mapping = ['type' => $type];
-                    }
+                if (!$attribute->getOption('store')) {
+                    $mapping['store'] = false;
+                }
 
-                    if ($attribute->store == 'false' || $attribute->store == '0') {
-                        $mapping['store'] = false;
-                    }
-
-                    if ($isRelation) {
-                        $relationAttributesMapping[$attribute->name] = $mapping;
-                    } else {
-                        $customAttributesMapping[$attribute->name] = $mapping;
-                    }
+                if ($isRelation) {
+                    $relationAttributesMapping[$attribute->getName()] = $mapping;
+                } else {
+                    $customAttributesMapping[$attribute->getName()] = $mapping;
                 }
             }
         }
@@ -448,8 +450,6 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
         $this->fillupPreparationQueue($object);
     }
-
-    protected $bulkIndexData = [];
 
     /**
      * only prepare data for updating index

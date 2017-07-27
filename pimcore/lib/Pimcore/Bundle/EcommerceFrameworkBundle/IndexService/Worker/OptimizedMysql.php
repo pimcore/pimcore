@@ -22,16 +22,12 @@ use Pimcore\Logger;
 
 /**
  * @method OptimizedMysqlConfig getTenantConfig()
+ * @property OptimizedMysqlConfig $tenantConfig
  */
 class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessingWorker
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup';
-
-    /**
-     * @var OptimizedMysqlConfig
-     */
-    protected $tenantConfig;
 
     /**
      * @var Helper\MySql
