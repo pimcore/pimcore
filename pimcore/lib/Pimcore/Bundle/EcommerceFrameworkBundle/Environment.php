@@ -337,8 +337,6 @@ class Environment implements IEnvironment
                 $this->currentCheckoutTenant = $tenant;
             }
             $this->currentTransientCheckoutTenant = $tenant;
-
-            Factory::resetInstance();
         }
     }
 

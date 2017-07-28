@@ -369,29 +369,6 @@ class Factory
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
     }
 
-    /**
-     * creates new factory instance and optionally resets environment too
-     *
-     * @param bool|true $keepEnvironment
-     *
-     * @return Factory
-     */
-    public static function resetInstance($keepEnvironment = true)
-    {
-        throw new \RuntimeException(__METHOD__ . ' is not implemented anymore');
-
-        if ($keepEnvironment) {
-            $environment = self::$instance->getEnvironment();
-        } else {
-            $environment = null;
-        }
-
-        self::$instance = new self($environment);
-        self::$instance->init();
-
-        return self::$instance;
-    }
-
     public function getConfig()
     {
         if (empty($this->config)) {
