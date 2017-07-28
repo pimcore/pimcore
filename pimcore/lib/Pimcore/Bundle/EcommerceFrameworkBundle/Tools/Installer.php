@@ -148,8 +148,6 @@ class Installer extends AbstractInstaller
     {
         $this->checkCanBeInstalled();
 
-        $this->copyConfigFile();
-
         $this->createFieldCollections();
         $this->createClasses();
         $this->createObjectBricks();
@@ -420,23 +418,6 @@ class Installer extends AbstractInstaller
         $db = \Pimcore\Db::get();
         foreach ($this->tables as $name => $statement) {
             $db->query($statement);
-        }
-    }
-
-    /**
-     * copy sample config file - if not exists.
-     */
-    private function copyConfigFile()
-    {
-        $target = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php';
-        $fs     = new Filesystem();
-
-        // copy config file
-        if (!$fs->exists($target)) {
-            $fs->copy(
-                $this->installSourcesPath . '/EcommerceFrameworkConfig_sample.php',
-                $target
-            );
         }
     }
 
