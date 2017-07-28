@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
@@ -34,12 +33,18 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
-use Pimcore\Config\Config;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
 {
+    /**
+     * If true the factory will not fall back to the default tenant if a tenant is requested but not existing
+     *
+     * @var bool
+     */
+    private $strictTenants = false;
+
     /**
      * @var ContainerInterface
      */
@@ -104,6 +109,7 @@ class Factory
      * injected through a service locator which is indexed by tenant/name. All other services
      * are loaded from the container on demand to make sure only services needed are built.
      *
+     * @param bool $strictTenants
      * @param ContainerInterface $container
      * @param PsrContainerInterface $cartManagers
      * @param PsrContainerInterface $orderManagers
@@ -114,6 +120,7 @@ class Factory
      * @param PsrContainerInterface $filterServices
      */
     public function __construct(
+        bool $strictTenants = false,
         ContainerInterface $container,
         PsrContainerInterface $cartManagers,
         PsrContainerInterface $orderManagers,
@@ -124,6 +131,8 @@ class Factory
         PsrContainerInterface $filterServices
     )
     {
+        $this->strictTenants = $strictTenants;
+
         $this->container                = $container;
         $this->cartManagers             = $cartManagers;
         $this->orderManagers            = $orderManagers;
@@ -136,7 +145,7 @@ class Factory
 
     public static function getInstance(): self
     {
-        return \Pimcore::getContainer()->get(Factory::class);
+        return \Pimcore::getContainer()->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY);
     }
 
     public function getEnvironment(): IEnvironment
@@ -155,7 +164,7 @@ class Factory
      */
     public function getCartManager(string $tenant = null): ICartManager
     {
-        $tenant = $this->resolveCheckoutTenant($tenant);
+        $tenant = $this->resolveCheckoutTenant($this->cartManagers, $tenant);
 
         if (!$this->cartManagers->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -178,7 +187,7 @@ class Factory
      */
     public function getOrderManager(string $tenant = null): IOrderManager
     {
-        $tenant = $this->resolveCheckoutTenant($tenant);
+        $tenant = $this->resolveCheckoutTenant($this->orderManagers, $tenant);
 
         if (!$this->orderManagers->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -255,7 +264,7 @@ class Factory
      */
     public function getCheckoutManager(ICart $cart, string $tenant = null): ICheckoutManager
     {
-        $tenant = $this->resolveCheckoutTenant($tenant);
+        $tenant = $this->resolveCheckoutTenant($this->checkoutManagerFactories, $tenant);
 
         if (!$this->checkoutManagerFactories->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -280,7 +289,7 @@ class Factory
      */
     public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
     {
-        $tenant = $this->resolveCheckoutTenant($tenant);
+        $tenant = $this->resolveCheckoutTenant($this->commitOrderProcessors, $tenant);
 
         if (!$this->commitOrderProcessors->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -318,7 +327,7 @@ class Factory
      */
     public function getFilterService(string $tenant = null): FilterService
     {
-        $tenant = $this->resolveAssortmentTenant($tenant);
+        $tenant = $this->resolveAssortmentTenant($this->filterServices, $tenant);
 
         if (!$this->filterServices->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -370,29 +379,35 @@ class Factory
         $this->environment->save();
     }
 
-    private function resolveAssortmentTenant(string $tenant = null): string
+    private function resolveAssortmentTenant(PsrContainerInterface $locator, string $tenant = null): string
     {
         // explicitely checking for empty here to catch situations where the tenant is just an empty string
         if (empty($tenant)) {
             $tenant = $this->getEnvironment()->getCurrentAssortmentTenant();
         }
 
-        if (!empty($tenant)) {
-            return $tenant;
-        }
-
-        return 'default';
+        return $this->resolveTenant($locator, $tenant);
     }
 
-    private function resolveCheckoutTenant(string $tenant = null): string
+    private function resolveCheckoutTenant(PsrContainerInterface $locator, string $tenant = null): string
     {
         // explicitely checking for empty here to catch situations where the tenant is just an empty string
         if (empty($tenant)) {
             $tenant = $this->getEnvironment()->getCurrentCheckoutTenant();
         }
 
+        return $this->resolveTenant($locator, $tenant);
+    }
+
+    private function resolveTenant(PsrContainerInterface $locator, string $tenant = null): string
+    {
         if (!empty($tenant)) {
-            return $tenant;
+            // if tenant isn't available and we're not in strict tenant mode, fall
+            // back to the default tenant
+            // in strict tenant mode, just return the tenant, no matter if it exists or not
+            if ($this->strictTenants || $locator->has($tenant)) {
+                return $tenant;
+            }
         }
 
         return 'default';

@@ -22,14 +22,3 @@ services:
         tags:
             - { name: kernel.event_subscriber }
             - { name: monolog.logger, channel: pimcore_ecommerce }
-
-    Pimcore\Bundle\EcommerceFrameworkBundle\Factory:
-        arguments:
-            - '@service_container'
-            - '@pimcore_ecommerce.locator.cart_manager'
-            - '@pimcore_ecommerce.locator.order_manager'
-            - '@pimcore_ecommerce.locator.price_system'
-            - '@pimcore_ecommerce.locator.availability_system'
-            - '@pimcore_ecommerce.locator.checkout_manager.factory'
-            - '@pimcore_ecommerce.locator.checkout_manager.commit_order_processor'
-            - '@pimcore_ecommerce.locator.filter_service'

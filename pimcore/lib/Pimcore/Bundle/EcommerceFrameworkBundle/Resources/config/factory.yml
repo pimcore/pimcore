@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Factory:
+        arguments:
+            - '%pimcore_ecommerce.factory.strict_tenants%'
+            - '@service_container'
+            - '@pimcore_ecommerce.locator.cart_manager'
+            - '@pimcore_ecommerce.locator.order_manager'
+            - '@pimcore_ecommerce.locator.price_system'
+            - '@pimcore_ecommerce.locator.availability_system'
+            - '@pimcore_ecommerce.locator.checkout_manager.factory'
+            - '@pimcore_ecommerce.locator.checkout_manager.commit_order_processor'
+            - '@pimcore_ecommerce.locator.filter_service'

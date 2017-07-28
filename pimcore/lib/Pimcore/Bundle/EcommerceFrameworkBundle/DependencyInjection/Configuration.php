@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
@@ -81,6 +82,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->append($this->buildPimcoreNode())
+            ->append($this->buildFactoryNode())
             ->append($this->buildEnvironmentNode())
             ->append($this->buildCartManagerNode())
             ->append($this->buildOrderManagerNode())
@@ -131,6 +133,28 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $pimcore;
+    }
+
+    private function buildFactoryNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $factory = $builder->root('factory');
+        $factory->addDefaultsIfNotSet();
+
+        $factory
+            ->children()
+                ->scalarNode('factory_id')
+                    ->defaultValue(Factory::class)
+                    ->cannotBeEmpty()
+                ->end()
+                ->booleanNode('strict_tenants')
+                    ->defaultFalse()
+                    ->info('If true the factory will not fall back to the default tenant if a tenant is passed but not existing')
+                ->end()
+            ->end();
+
+        return $factory;
     }
 
     private function buildEnvironmentNode(): NodeDefinition

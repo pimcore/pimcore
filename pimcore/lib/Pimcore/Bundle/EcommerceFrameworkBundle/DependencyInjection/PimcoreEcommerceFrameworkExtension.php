@@ -24,10 +24,10 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
-use Symfony\Component\VarDumper\VarDumper;
 
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
+    const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
     const SERVICE_ID_PRICING_MANAGER = 'pimcore_ecommerce.pricing_manager';
     const SERVICE_ID_PAYMENT_MANAGER = 'pimcore_ecommerce.payment_manager';
@@ -53,6 +53,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.pimcore.config', $config['pimcore']);
 
         $loader->load('services.yml');
+        $loader->load('factory.yml');
         $loader->load('environment.yml');
         $loader->load('cart_manager.yml');
         $loader->load('order_manager.yml');
@@ -69,6 +70,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $orderManagerTenants = array_keys($config['order_manager']['tenants'] ?? []);
 
+        $this->registerFactoryConfiguration($container, $config['factory']);
         $this->registerEnvironmentConfiguration($container, $config['environment']);
         $this->registerCartManagerConfiguration($container, $config['cart_manager'], $orderManagerTenants);
         $this->registerOrderManagerConfiguration($container, $config['order_manager']);
@@ -82,6 +84,19 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerVoucherServiceConfig($container, $config['voucher_service']);
         $this->registerOfferToolConfig($container, $config['offer_tool']);
         $this->registerTrackingManagerConfiguration($container, $config['tracking_manager']);
+    }
+
+    private function registerFactoryConfiguration(ContainerBuilder $container, array $config)
+    {
+        $container->setAlias(
+            self::SERVICE_ID_FACTORY,
+            $config['factory_id']
+        );
+
+        $container->setParameter(
+            'pimcore_ecommerce.factory.strict_tenants',
+            $config['strict_tenants']
+        );
     }
 
     private function registerEnvironmentConfiguration(ContainerBuilder $container, array $config)
