@@ -84,21 +84,21 @@ class Factory
     private $availabilitySystems;
 
     /**
-     * Checkout manager factories registered by "name.tenant"
+     * Checkout manager factories registered by tenant
      *
      * @var PsrContainerInterface
      */
     private $checkoutManagerFactories;
 
     /**
-     * Commit order processors registered by "checkout_manager_name.checkout_manager_tenant"
+     * Commit order processors registered by tenant
      *
      * @var PsrContainerInterface
      */
     private $commitOrderProcessors;
 
     /**
-     * Filter services registered by tenant
+     * Filter services registered by ^tenant
      *
      * @var PsrContainerInterface
      */
@@ -108,11 +108,6 @@ class Factory
      * @var Config
      */
     private $config;
-
-    /**
-     * @var ICheckoutManager
-     */
-    private $checkoutManagers;
 
     /**
      * @var string[]
@@ -266,62 +261,52 @@ class Factory
     }
 
     /**
-     * Returns a checkout manager specific to a cart instance. Checkout managers support
-     * named managers which in turn can support multiple tenants. If no name or tenant is
-     * passed, the tenant "default" from a checkout manager named "default" will be loaded.
+     * Returns checkout manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
      *
      * @param ICart $cart
-     * @param string|null $name
      * @param string|null $tenant
      *
      * @return ICheckoutManager
      * @throws UnsupportedException
      */
-    public function getCheckoutManager(ICart $cart, string $name = null, string $tenant = null): ICheckoutManager
+    public function getCheckoutManager(ICart $cart, string $tenant = null): ICheckoutManager
     {
-        $serviceId = $this->buildCheckoutManagerServiceId($name, $tenant);
+        $tenant = $this->resolveCheckoutTenant($tenant);
 
-        if (!$this->commitOrderProcessors->has($serviceId)) {
-            list($normalizedName, $normalizedTenant) = explode('.', $serviceId);
-
+        if (!$this->checkoutManagerFactories->has($tenant)) {
             throw new UnsupportedException(sprintf(
-                'There is no factory defined for checkout manager with name "%s" and tenant "%s". Please check the configuration.',
-                $normalizedName,
-                $normalizedTenant
+                'There is no factory defined for checkout manager tenant "%s". Please check the configuration.',
+                $tenant
             ));
         }
 
         /** @var ICheckoutManagerFactory $factory */
-        $factory = $this->checkoutManagerFactories->get($serviceId);
+        $factory = $this->checkoutManagerFactories->get($tenant);
 
         return $factory->createCheckoutManager($cart);
     }
 
     /**
-     * Returns a commit order processor which is configured for a specific checkout manager. The checkoutManagerName and
-     * tenant parameters follow the same logic as for the checkout manager itself.
+     * Returns a commit order processor which is configured for a specific checkout manager
      *
-     * @param string|null $checkoutManagerName
      * @param string|null $tenant
      *
      * @return ICommitOrderProcessor
      * @throws UnsupportedException
      */
-    public function getCommitOrderProcessor(string $checkoutManagerName = null, string $tenant = null): ICommitOrderProcessor
+    public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
     {
-        $serviceId = $this->buildCheckoutManagerServiceId($checkoutManagerName, $tenant);
+        $tenant = $this->resolveCheckoutTenant($tenant);
 
-        if (!$this->commitOrderProcessors->has($serviceId)) {
-            list($normalizedName, $normalizedTenant) = explode('.', $serviceId);
-
+        if (!$this->commitOrderProcessors->has($tenant)) {
             throw new UnsupportedException(sprintf(
-                'Commit order processor for checkout manager name "%s" and tenant "%s" is not defined. Please check the configuration.',
-                $normalizedName,
-                $normalizedTenant
+                'Commit order processor for checkout manager tenant "%s" is not defined. Please check the configuration.',
+                $tenant
             ));
         }
 
-        return $this->commitOrderProcessors->get($serviceId);
+        return $this->commitOrderProcessors->get($tenant);
     }
 
     public function getPaymentManager(): IPaymentManager
@@ -394,23 +379,6 @@ class Factory
     public function getTrackingManager(): ITrackingManager
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
-    }
-
-    /**
-     * Normalize name and tenant to "default" and/or current checkout tenant
-     *
-     * @param string|null $name
-     * @param string|null $tenant
-     *
-     * @return string
-     */
-    private function buildCheckoutManagerServiceId(string $name = null, string $tenant = null): string
-    {
-        return sprintf(
-            '%s.%s',
-            $name ?? 'default',
-            $tenant = $this->resolveCheckoutTenant($tenant)
-        );
     }
 
     /**

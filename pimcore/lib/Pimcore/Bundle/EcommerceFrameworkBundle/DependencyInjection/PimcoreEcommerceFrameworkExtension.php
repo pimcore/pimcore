@@ -215,56 +215,52 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $commitOrderProcessorMapping   = [];
         $checkoutManagerFactoryMapping = [];
 
-        foreach ($config['by_name'] as $name => $nameConfig) {
-            foreach ($nameConfig['tenants'] as $tenant => $tenantConfig) {
-                $orderManagerTenant = $this->resolveOrderManagerTenant(
-                    'checkout manager factory',
-                    $tenant,
-                    $tenantConfig['order_manager_tenant'],
-                    $orderManagerTenants
-                );
+        foreach ($config['tenants'] as $tenant => $tenantConfig) {
+            $orderManagerTenant = $this->resolveOrderManagerTenant(
+                'checkout manager factory',
+                $tenant,
+                $tenantConfig['order_manager_tenant'],
+                $orderManagerTenants
+            );
 
-                $orderManagerRef = new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant);
+            $orderManagerRef = new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant);
 
-                $commitOrderProcessor = new ChildDefinition($tenantConfig['commit_order_processor']['id']);
-                $commitOrderProcessor->setArgument('$orderManager', $orderManagerRef);
+            $commitOrderProcessor = new ChildDefinition($tenantConfig['commit_order_processor']['id']);
+            $commitOrderProcessor->setArgument('$orderManager', $orderManagerRef);
 
-                $checkoutManagerFactory = new ChildDefinition($tenantConfig['factory_id']);
-                $checkoutManagerFactory->setArguments([
-                    '$orderManager'            => $orderManagerRef,
-                    '$commitOrderProcessor'    => $commitOrderProcessor,
-                    '$checkoutStepDefinitions' => $tenantConfig['steps'],
-                ]);
+            $checkoutManagerFactory = new ChildDefinition($tenantConfig['factory_id']);
+            $checkoutManagerFactory->setArguments([
+                '$orderManager'            => $orderManagerRef,
+                '$commitOrderProcessor'    => $commitOrderProcessor,
+                '$checkoutStepDefinitions' => $tenantConfig['steps'],
+            ]);
 
-                if (!empty($tenantConfig['factory_options'])) {
-                    $checkoutManagerFactory->setArgument('$options', $tenantConfig['factory_options']);
-                }
-
-                if (null !== $tenantConfig['payment']['provider']) {
-                    $checkoutManagerFactory->setArgument('$paymentProvider', new Reference(sprintf(
-                        'pimcore_ecommerce.payment_manager.provider.%s',
-                        $tenantConfig['payment']['provider']
-                    )));
-                }
-
-                $commitOrderProcessorAliasName = sprintf(
-                    'pimcore_ecommerce.checkout_manager.%s.%s.commit_order_processor',
-                    $name, $tenant
-                );
-
-                $checkoutManagerFactoryAliasName = sprintf(
-                    'pimcore_ecommerce.checkout_manager.%s.%s.factory',
-                    $name, $tenant
-                );
-
-                $container->setDefinition($commitOrderProcessorAliasName, $commitOrderProcessor);
-                $container->setDefinition($checkoutManagerFactoryAliasName, $checkoutManagerFactory);
-
-                $mappingId = sprintf('%s.%s', $name, $tenant);
-
-                $commitOrderProcessorMapping[$mappingId]   = $commitOrderProcessorAliasName;
-                $checkoutManagerFactoryMapping[$mappingId] = $checkoutManagerFactoryAliasName;
+            if (!empty($tenantConfig['factory_options'])) {
+                $checkoutManagerFactory->setArgument('$options', $tenantConfig['factory_options']);
             }
+
+            if (null !== $tenantConfig['payment']['provider']) {
+                $checkoutManagerFactory->setArgument('$paymentProvider', new Reference(sprintf(
+                    'pimcore_ecommerce.payment_manager.provider.%s',
+                    $tenantConfig['payment']['provider']
+                )));
+            }
+
+            $commitOrderProcessorAliasName = sprintf(
+                'pimcore_ecommerce.checkout_manager.%s.commit_order_processor',
+                $tenant
+            );
+
+            $checkoutManagerFactoryAliasName = sprintf(
+                'pimcore_ecommerce.checkout_manager.%s.factory',
+                $tenant
+            );
+
+            $container->setDefinition($commitOrderProcessorAliasName, $commitOrderProcessor);
+            $container->setDefinition($checkoutManagerFactoryAliasName, $checkoutManagerFactory);
+
+            $commitOrderProcessorMapping[$tenant]   = $commitOrderProcessorAliasName;
+            $checkoutManagerFactoryMapping[$tenant] = $checkoutManagerFactoryAliasName;
         }
 
         $this->setupLocator($container, 'checkout_manager.commit_order_processor', $commitOrderProcessorMapping);
