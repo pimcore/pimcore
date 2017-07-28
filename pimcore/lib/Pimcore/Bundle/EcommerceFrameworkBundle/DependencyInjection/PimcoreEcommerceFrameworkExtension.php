@@ -50,6 +50,8 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
+        $container->setParameter('pimcore_ecommerce.pimcore.config', $config['pimcore']);
+
         $loader->load('services.yml');
         $loader->load('environment.yml');
         $loader->load('cart_manager.yml');

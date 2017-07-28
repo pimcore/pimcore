@@ -80,6 +80,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->addDefaultsIfNotSet();
 
         $rootNode
+            ->append($this->buildPimcoreNode())
             ->append($this->buildEnvironmentNode())
             ->append($this->buildCartManagerNode())
             ->append($this->buildOrderManagerNode())
@@ -95,6 +96,41 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildTrackingManagerNode());
 
         return $treeBuilder;
+    }
+
+    private function buildPimcoreNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $pimcore = $builder->root('pimcore');
+        $pimcore->addDefaultsIfNotSet();
+
+        $pimcore
+            ->children()
+                ->arrayNode('menu')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('pricing_rules')
+                            ->addDefaultsIfNotSet()
+                            ->canBeDisabled()
+                        ->end()
+                        ->arrayNode('order_list')
+                            ->addDefaultsIfNotSet()
+                            ->canBeDisabled()
+                            ->children()
+                                ->scalarNode('route')
+                                    ->defaultValue('pimcore_ecommerce_backend_admin-order_list')
+                                ->end()
+                                ->scalarNode('path')
+                                    ->defaultNull()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $pimcore;
     }
 
     private function buildEnvironmentNode(): NodeDefinition

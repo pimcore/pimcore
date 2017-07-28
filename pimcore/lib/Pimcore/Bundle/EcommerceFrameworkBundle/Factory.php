@@ -41,11 +41,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Factory
 {
     /**
-     * framework configuration file
-     */
-    const CONFIG_PATH = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php';
-
-    /**
      * @var ContainerInterface
      */
     private $container;
@@ -367,15 +362,6 @@ class Factory
     public function getTrackingManager(): ITrackingManager
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
-    }
-
-    public function getConfig()
-    {
-        if (empty($this->config)) {
-            $this->config = new Config(require self::CONFIG_PATH, true);
-        }
-
-        return $this->config;
     }
 
     public function saveState()
