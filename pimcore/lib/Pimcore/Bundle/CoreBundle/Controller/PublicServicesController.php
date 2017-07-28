@@ -42,10 +42,9 @@ class PublicServicesController extends FrameworkController
                 $thumbnailFile = null;
                 $thumbnailConfig = null;
 
-                //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
-                if (preg_match("|document_(.*)\-(\d+)$|", $thumbnailName, $matchesThumbs)) {
-                    $thumbnailName = $matchesThumbs[1];
-                    $page = (int)$matchesThumbs[2];
+                //get page in case of an asset document (PDF, ...)
+                if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
+                    $page = (int)$matchesThumbs[1];
                 }
 
                 // just check if the thumbnail exists -> throws exception otherwise
