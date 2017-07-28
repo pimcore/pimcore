@@ -41,8 +41,7 @@ class Helper
         FilterService $filterService,
         $loadFullPage,
         $excludeLimitOfFirstpage = false
-    )
-    {
+    ) {
         $orderByOptions = [];
         $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
         if (!empty($orderKeysAsc)) {
