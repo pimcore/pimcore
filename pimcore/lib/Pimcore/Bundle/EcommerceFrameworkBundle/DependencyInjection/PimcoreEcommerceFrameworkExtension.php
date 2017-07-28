@@ -84,10 +84,11 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerEnvironmentConfiguration(ContainerBuilder $container, array $config)
     {
-        $environment = new ChildDefinition($config['environment_id']);
-        $environment->setPublic(true);
+        $container->setAlias(
+            self::SERVICE_ID_ENVIRONMENT,
+            $config['environment_id']
+        );
 
-        $container->setDefinition(self::SERVICE_ID_ENVIRONMENT, $environment);
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
     }
 
