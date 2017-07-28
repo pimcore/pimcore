@@ -46,7 +46,7 @@ class SelectRelation extends AbstractFilterType
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
-            $script = $this->script;
+            $script = $this->template;
         }
 
         return $this->render($script, [

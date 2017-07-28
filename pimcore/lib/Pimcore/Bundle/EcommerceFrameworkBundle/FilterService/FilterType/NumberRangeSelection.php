@@ -22,12 +22,6 @@ class NumberRangeSelection extends AbstractFilterType
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
         $ranges = $filterDefinition->getRanges();
 
         $groupByValues = $productList->getGroupByValues($field, true);
@@ -64,7 +58,7 @@ class NumberRangeSelection extends AbstractFilterType
             $currentValue = implode($currentFilter[$field], '-');
         }
 
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentValue,

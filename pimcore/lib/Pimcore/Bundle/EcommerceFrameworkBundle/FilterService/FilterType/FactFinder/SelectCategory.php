@@ -65,12 +65,9 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        // init
-        $script = $filterDefinition->getScriptPath() ?: $this->script;
         $rawValues = $productList->getGroupByValues('CategoryPath', true);
         $values = [];
 
-        // ...
         $availableRelations = [];
         if ($filterDefinition->getAvailableCategories()) {
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
@@ -93,9 +90,14 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             }
         }
 
-        // done
-        return $this->render($script, [
-            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]), 'label' => $filterDefinition->getLabel(), 'currentValue' => $currentFilter[$filterDefinition->getField()], 'values' => array_values($values), 'fieldname' => $filterDefinition->getField(), 'metaData' => $filterDefinition->getMetaData(), 'resultCount' => $productList->count()
+        return $this->render($this->getTemplate($filterDefinition), [
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$filterDefinition->getField()],
+            'values' => array_values($values),
+            'fieldname' => $filterDefinition->getField(),
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count()
         ]);
     }
 }
