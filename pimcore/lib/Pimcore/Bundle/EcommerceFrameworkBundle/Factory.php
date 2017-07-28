@@ -177,9 +177,7 @@ class Factory
      */
     public function getCartManager(string $tenant = null): ICartManager
     {
-        if (null === $tenant) {
-            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
-        }
+        $tenant = $this->resolveCheckoutTenant($tenant);
 
         if (!$this->cartManagers->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -202,9 +200,7 @@ class Factory
      */
     public function getOrderManager(string $tenant = null): IOrderManager
     {
-        if (null === $tenant) {
-            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default';
-        }
+        $tenant = $this->resolveCheckoutTenant($tenant);
 
         if (!$this->orderManagers->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -231,7 +227,7 @@ class Factory
      */
     public function getPriceSystem(string $name = null): IPriceSystem
     {
-        if (null === $name) {
+        if (empty($name)) {
             $name = 'default';
         }
 
@@ -255,7 +251,7 @@ class Factory
      */
     public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
     {
-        if (null === $name) {
+        if (empty($name)) {
             $name = 'default';
         }
 
@@ -354,9 +350,7 @@ class Factory
      */
     public function getFilterService(string $tenant = null): FilterService
     {
-        if (null === $tenant) {
-            $tenant = $this->getEnvironment()->getCurrentAssortmentTenant() ?? 'default';
-        }
+        $tenant = $this->resolveAssortmentTenant($tenant);
 
         if (!$this->filterServices->has($tenant)) {
             throw new UnsupportedException(sprintf(
@@ -415,12 +409,9 @@ class Factory
         return sprintf(
             '%s.%s',
             $name ?? 'default',
-            $tenant ?? $this->getEnvironment()->getCurrentCheckoutTenant() ?? 'default'
+            $tenant = $this->resolveCheckoutTenant($tenant)
         );
     }
-
-
-
 
     /**
      * creates new factory instance and optionally resets environment too
@@ -464,12 +455,37 @@ class Factory
     {
     }
 
-
-
     public function saveState()
     {
         $this->getCartManager()->save();
         $this->environment->save();
     }
 
+    private function resolveAssortmentTenant(string $tenant = null): string
+    {
+        // explicitely checking for empty here to catch situations where the tenant is just an empty string
+        if (empty($tenant)) {
+            $tenant = $this->getEnvironment()->getCurrentAssortmentTenant();
+        }
+
+        if (!empty($tenant)) {
+            return $tenant;
+        }
+
+        return 'default';
+    }
+
+    private function resolveCheckoutTenant(string $tenant = null): string
+    {
+        // explicitely checking for empty here to catch situations where the tenant is just an empty string
+        if (empty($tenant)) {
+            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant();
+        }
+
+        if (!empty($tenant)) {
+            return $tenant;
+        }
+
+        return 'default';
+    }
 }
