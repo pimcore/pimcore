@@ -23,7 +23,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
@@ -60,6 +59,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('checkout_manager.yml');
         $loader->load('payment_manager.yml');
         $loader->load('index_service.yml');
+        $loader->load('filter_service.yml');
         $loader->load('voucher_service.yml');
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
@@ -73,6 +73,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerCheckoutManagerConfiguration($config['checkout_manager'], $container);
         $this->registerPaymentManagerConfiguration($config['payment_manager'], $container);
         $this->registerIndexServiceConfig($config['index_service'], $container);
+        $this->registerFilterServiceConfig($config['filter_service'], $container);
         $this->registerVoucherServiceConfig($config['voucher_service'], $container);
         $this->registerOfferToolConfig($config['offer_tool'], $container);
         $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
@@ -310,6 +311,39 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $container->setDefinition($configId, $config);
             $container->setDefinition($workerId, $worker);
         }
+    }
+
+    private function registerFilterServiceConfig(array $config, ContainerBuilder $container)
+    {
+        $mapping = [];
+
+        foreach ($config['tenants'] ?? [] as $tenant => $tenantConfig) {
+            if (!$tenantConfig['enabled']) {
+                continue;
+            }
+
+            $filterTypes = [];
+            foreach ($tenantConfig['filter_types'] ?? [] as $filterTypeName => $filterTypeConfig) {
+                $filterType = new ChildDefinition($filterTypeConfig['filter_type_id']);
+                $filterType->setArgument('$template', $filterTypeConfig['template']);
+
+                if (!empty($filterTypeConfig['options'])) {
+                    $filterType->setArgument('$options', $filterTypeConfig['options']);
+                }
+
+                $filterTypes[$filterTypeName] = $filterType;
+            }
+
+            $filterService = new ChildDefinition($tenantConfig['service_id']);
+            $filterService->setArgument('$filterTypes', $filterTypes);
+
+            $serviceId = sprintf('pimcore_ecommerce.filter_service.%s', $tenant);
+            $container->setDefinition($serviceId, $filterService);
+
+            $mapping[$tenant] = $serviceId;
+        }
+
+        $this->setupLocator($container, 'filter_service', $mapping);
     }
 
     private function registerVoucherServiceConfig(array $config, ContainerBuilder $container)

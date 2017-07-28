@@ -32,3 +32,4 @@ services:
             - '@pimcore_ecommerce.locator.availability_system'
             - '@pimcore_ecommerce.locator.checkout_manager.factory'
             - '@pimcore_ecommerce.locator.checkout_manager.commit_order_processor'
+            - '@pimcore_ecommerce.locator.filter_service'

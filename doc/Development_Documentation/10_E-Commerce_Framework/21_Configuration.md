@@ -181,6 +181,43 @@ pimcore_ecommerce_framework:
 ```
 
 
+## Filter service
+
+```yaml
+pimcore_ecommerce_framework:
+    filter_service:
+        tenants:
+            default:
+                filter_types:
+                    FilterNumberRange:
+                        class: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRange
+                        script: Shop/filters/range.html.php
+                    FilterNumberRangeSelection:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
+                        template: Shop/filters/numberrange.html.php
+                    FilterSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Select
+                        template: Shop/filters/select.html.php
+                    FilterSelectFromMultiSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
+                        template: Shop/filters/select.html.php
+                    FilterMultiSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
+                        template: Shop/filters/multiselect.html.php
+                    FilterMultiSelectFromMultiSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
+                        template: Shop/filters/multiselect.html.php
+                    FilterMultiRelation:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
+                        template: Shop/filters/multiselect-relation.html.php
+                    FilterCategory:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
+                        template: Shop/filters/select_category.html.php
+                    FilterRelation:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
+                        template: Shop/filters/object_relation.html.php
+```
+
 ## Tracking manager
 
 ```yaml

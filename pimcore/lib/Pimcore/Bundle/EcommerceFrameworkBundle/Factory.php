@@ -98,6 +98,13 @@ class Factory
     private $commitOrderProcessors;
 
     /**
+     * Filter services registered by tenant
+     *
+     * @var PsrContainerInterface
+     */
+    private $filterServices;
+
+    /**
      * @var Config
      */
     private $config;
@@ -124,6 +131,7 @@ class Factory
      * @param PsrContainerInterface $availabilitySystems
      * @param PsrContainerInterface $checkoutManagerFactories
      * @param PsrContainerInterface $commitOrderProcessors
+     * @param PsrContainerInterface $filterServices
      */
     public function __construct(
         ContainerInterface $container,
@@ -132,7 +140,8 @@ class Factory
         PsrContainerInterface $priceSystemsLocator,
         PsrContainerInterface $availabilitySystems,
         PsrContainerInterface $checkoutManagerFactories,
-        PsrContainerInterface $commitOrderProcessors
+        PsrContainerInterface $commitOrderProcessors,
+        PsrContainerInterface $filterServices
     )
     {
         $this->container                = $container;
@@ -142,6 +151,7 @@ class Factory
         $this->availabilitySystems      = $availabilitySystems;
         $this->checkoutManagerFactories = $checkoutManagerFactories;
         $this->commitOrderProcessors    = $commitOrderProcessors;
+        $this->filterServices           = $filterServices;
 
         $this->init();
     }
@@ -323,9 +333,39 @@ class Factory
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
     }
 
+    /**
+     * Returns the index service which holds a collection of all index workers
+     *
+     * @return IndexService
+     */
     public function getIndexService(): IndexService
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_INDEX_SERVICE);
+    }
+
+    /**
+     * Returns the filter service for the currently set assortment tenant. Falls back to "default" if no tenant is passed
+     * and there is no current assortment tenant set.
+     *
+     * @param string|null $tenant
+     *
+     * @return FilterService
+     * @throws UnsupportedException
+     */
+    public function getFilterService(string $tenant = null): FilterService
+    {
+        if (null === $tenant) {
+            $tenant = $this->getEnvironment()->getCurrentAssortmentTenant() ?? 'default';
+        }
+
+        if (!$this->filterServices->has($tenant)) {
+            throw new UnsupportedException(sprintf(
+                'Filter service for assortment tenant "%s" is not registered. Please check the configuration.',
+                $tenant
+            ));
+        }
+
+        return $this->filterServices->get($tenant);
     }
 
     public function getAllTenants(): array
@@ -424,21 +464,7 @@ class Factory
     {
     }
 
-    /**
-     * @return FilterService
-     */
-    public function getFilterService()
-    {
-        $filterTypes = $this->getIndexService()->getCurrentTenantConfig()->getFilterTypeConfig();
-        if (!$filterTypes) {
-            $filterTypes = $this->config->ecommerceframework->filtertypes;
-        }
 
-        $translator = \Pimcore::getContainer()->get('translator');
-        $renderer =  \Pimcore::getContainer()->get('templating');
-
-        return new FilterService($filterTypes, $translator, $renderer);
-    }
 
     public function saveState()
     {

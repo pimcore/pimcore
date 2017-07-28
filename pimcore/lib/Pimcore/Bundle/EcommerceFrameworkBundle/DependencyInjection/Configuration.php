@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql as DefaultMysqlWorker;
@@ -88,6 +89,7 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildCheckoutManagerNode())
             ->append($this->buildPaymentManagerNode())
             ->append($this->buildIndexServiceNode())
+            ->append($this->buildFilterServiceNode())
             ->append($this->buildVoucherServiceNode())
             ->append($this->buildOfferToolNode())
             ->append($this->buildTrackingManagerNode());
@@ -712,6 +714,70 @@ class Configuration implements ConfigurationInterface
         return $indexService;
     }
 
+    private function buildFilterServiceNode(): NodeDefinition
+    {
+        $builder = new TreeBuilder();
+
+        $filterService = $builder->root('filter_service');
+        $filterService->addDefaultsIfNotSet();
+
+        $filterService
+            ->children()
+                ->arrayNode('tenants')
+                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant.')
+                    ->useAttributeAsKey('name', false)
+                    ->beforeNormalization()
+                        ->always(function ($v) {
+                            if (empty($v) || !is_array($v)) {
+                                $v = [];
+                            }
+
+                            return $this->tenantProcessor->mergeTenantConfig($v);
+                        })
+                    ->end()
+                    ->prototype('array')
+                        ->addDefaultsIfNotSet()
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('service_id')
+                                ->cannotBeEmpty()
+                                ->defaultValue(FilterService::class)
+                            ->end()
+                            ->arrayNode('filter_types')
+                                ->useAttributeAsKey('name')
+                                ->prototype('array')
+                                    ->addDefaultsIfNotSet()
+                                    ->beforeNormalization()
+                                        ->always(function ($v) {
+                                            if (empty($v) || !is_array($v)) {
+                                                return $v;
+                                            }
+
+                                            return $this->normalizeProperties($v, [
+                                                'class'  => 'filter_type_id',
+                                                'script' => 'template'
+                                            ]);
+                                        })
+                                    ->end()
+                                    ->children()
+                                        ->scalarNode('filter_type_id')
+                                            ->isRequired()
+                                        ->end()
+                                        ->scalarNode('template')
+                                            ->isRequired()
+                                        ->end()
+                                        ->append($this->buildOptionsNode())
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $filterService;
+    }
+
     private function buildVoucherServiceNode(): NodeDefinition
     {
         $builder = new TreeBuilder();
@@ -836,5 +902,25 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $node;
+    }
+
+    /**
+     * Normalizes properties from old to new names to easy migration
+     *
+     * @param array $data
+     * @param array $map
+     *
+     * @return array
+     */
+    private function normalizeProperties(array $data, array $map): array
+    {
+        foreach ($map as $old => $new) {
+            if (isset($data[$old]) && !isset($data[$new])) {
+                $data[$new] = $data[$old];
+                unset($data[$old]);
+            }
+        }
+
+        return $data;
     }
 }
