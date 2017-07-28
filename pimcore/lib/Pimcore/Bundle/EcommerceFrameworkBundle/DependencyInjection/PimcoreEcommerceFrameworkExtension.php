@@ -228,6 +228,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $commitOrderProcessor = new ChildDefinition($tenantConfig['commit_order_processor']['id']);
             $commitOrderProcessor->setArgument('$orderManager', $orderManagerRef);
 
+            if (!empty($tenantConfig['commit_order_processor']['options'])) {
+                $commitOrderProcessor->setArgument('$options', $tenantConfig['commit_order_processor']['options']);
+            }
+
             $checkoutManagerFactory = new ChildDefinition($tenantConfig['factory_id']);
             $checkoutManagerFactory->setArguments([
                 '$orderManager'            => $orderManagerRef,
