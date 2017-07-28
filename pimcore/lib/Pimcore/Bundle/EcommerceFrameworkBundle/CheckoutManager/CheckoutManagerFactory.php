@@ -79,11 +79,10 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         array $options = []
     )
     {
-        $this->environment             = $environment;
-        $this->orderManager            = $orderManager;
-        $this->commitOrderProcessor    = $commitOrderProcessor;
-        $this->checkoutStepDefinitions = $checkoutStepDefinitions;
-        $this->paymentProvider         = $paymentProvider;
+        $this->environment          = $environment;
+        $this->orderManager         = $orderManager;
+        $this->commitOrderProcessor = $commitOrderProcessor;
+        $this->paymentProvider      = $paymentProvider;
 
         $this->processOptions($options);
         $this->processCheckoutStepDefinitions($checkoutStepDefinitions);
