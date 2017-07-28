@@ -64,13 +64,15 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
 
+        $orderManagerTenants = array_keys($config['order_manager']['tenants'] ?? []);
+
         $this->registerEnvironmentConfiguration($container, $config['environment']);
-        $this->registerCartManagerConfiguration($container, $config['cart_manager']);
+        $this->registerCartManagerConfiguration($container, $config['cart_manager'], $orderManagerTenants);
         $this->registerOrderManagerConfiguration($container, $config['order_manager']);
         $this->registerPricingManagerConfiguration($container, $config['pricing_manager']);
         $this->registerPriceSystemsConfiguration($container, $config['price_systems']);
         $this->registerAvailabilitySystemsConfiguration($container, $config['availability_systems']);
-        $this->registerCheckoutManagerConfiguration($container, $config['checkout_manager']);
+        $this->registerCheckoutManagerConfiguration($container, $config['checkout_manager'], $orderManagerTenants);
         $this->registerPaymentManagerConfiguration($container, $config['payment_manager']);
         $this->registerIndexServiceConfig($container, $config['index_service']);
         $this->registerFilterServiceConfig($container, $config['filter_service']);
@@ -88,7 +90,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
     }
 
-    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config, array $orderManagerTenants)
     {
         $mapping = [];
 
@@ -112,9 +114,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $cartManager->setArgument('$cartFactory', $cartFactory);
             $cartManager->setArgument('$cartPriceCalculatorFactory', $priceCalculatorFactory);
 
-            // order manager tenant defaults to the same tenant as the cart tenant but can be
-            // configured on demand
-            $orderManagerTenant = $tenantConfig['order_manager_tenant'] ?? $tenant;
+            $orderManagerTenant = $this->resolveOrderManagerTenant(
+                'cart manager',
+                $tenant,
+                $tenantConfig['order_manager_tenant'],
+                $orderManagerTenants
+            );
 
             $cartManager->setArgument('$orderManager', new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant));
 
@@ -191,17 +196,21 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'availability_system', $mapping);
     }
 
-    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config, array $orderManagerTenants)
     {
         $commitOrderProcessorMapping   = [];
         $checkoutManagerFactoryMapping = [];
 
         foreach ($config['by_name'] as $name => $nameConfig) {
             foreach ($nameConfig['tenants'] as $tenant => $tenantConfig) {
-                // order manager tenant defaults to the same tenant as the checkout manager tenant but can be
-                // configured on demand
-                $orderManagerTenant = $tenantConfig['order_manager_tenant'] ?? $tenant;
-                $orderManagerRef    = new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant);
+                $orderManagerTenant = $this->resolveOrderManagerTenant(
+                    'checkout manager factory',
+                    $tenant,
+                    $tenantConfig['order_manager_tenant'],
+                    $orderManagerTenants
+                );
+
+                $orderManagerRef = new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant);
 
                 $commitOrderProcessor = new ChildDefinition($tenantConfig['commit_order_processor']['id']);
                 $commitOrderProcessor->setArgument('$orderManager', $orderManagerRef);
@@ -412,6 +421,47 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
             $trackingManager->addMethodCall('registerTracker', [$tracker]);
         }
+    }
+
+    /**
+     * If an order manager is explicitely configured (order_manager_tenant) just use the configured one. If not, try
+     * to find an order manager with the same tenant first and fall back to "default" if none is found.
+     *
+     * @param string $subSystem
+     * @param string $tenant
+     * @param string|null $configuredTenant
+     * @param array $orderManagerTenants
+     *
+     * @return string
+     */
+    private function resolveOrderManagerTenant(string $subSystem, string $tenant, string $configuredTenant = null, array $orderManagerTenants)
+    {
+        if (null !== $configuredTenant) {
+            if (!in_array($configuredTenant, $orderManagerTenants)) {
+                throw new InvalidConfigurationException(sprintf(
+                    'Failed to find order manager for %s with tenant "%s" as the configured order manager "%s" is not defined. Please check the configuration.',
+                    $subSystem,
+                    $tenant,
+                    $configuredTenant
+                ));
+            }
+
+            return $configuredTenant;
+        }
+
+        $tenantVariants = [$tenant, 'default'];
+        foreach ($tenantVariants as $tenantVariant) {
+            if (in_array($tenantVariant, $orderManagerTenants)) {
+                return $tenantVariant;
+            }
+        }
+
+        throw new InvalidConfigurationException(sprintf(
+            'Failed to find order manager for %s with tenant "%s". Tried: %s. Please check the configuration.',
+            $subSystem,
+            $tenant,
+            implode(', ', $tenantVariants)
+        ));
     }
 
     private function setupLocator(ContainerBuilder $container, string $id, array $mapping)
