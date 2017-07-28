@@ -838,7 +838,7 @@ class Service extends Model\Element\Service
         }
 
         if ($class) {
-            if(is_string($definition)) {
+            if (is_string($definition)) {
                 /**
                  * @var ClassDefinition\Data\Select $definition
                  */
