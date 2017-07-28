@@ -96,6 +96,7 @@ class AssetsInstaller
         ]);
 
         $builder
+            ->addEnvironmentVariables(['PIMCORE_PROJECT_ROOT' => PIMCORE_PROJECT_ROOT])
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT)
             ->setPrefix('bin/console');
 

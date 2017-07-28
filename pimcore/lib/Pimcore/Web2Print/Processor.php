@@ -72,7 +72,9 @@ abstract class Processor
             $args[] = '--env=' . $env;
         }
 
-        $cmd = Tool\Console::getPhpCli() . ' ' . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' web2print:pdf-creation ' . implode(' ', $args);
+        $phpCli = Tool\Console::getPhpCli();
+        $cmd = 'PIMCORE_PROJECT_ROOT=' . PIMCORE_PROJECT_ROOT . ' ' . $phpCli . ' ';
+        $cmd .= realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' web2print:pdf-creation ' . implode(' ', $args);
 
         Logger::info($cmd);
 
