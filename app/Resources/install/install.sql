@@ -493,7 +493,7 @@ DROP TABLE IF EXISTS  `tags`;
 CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(10) unsigned DEFAULT NULL,
-  `idPath` varchar(255) DEFAULT NULL,
+  `idPath` varchar(190) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
@@ -551,10 +551,10 @@ CREATE TABLE `tmp_store` (
 DROP TABLE IF EXISTS `tracking_events`;
 CREATE TABLE `tracking_events` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
-  `label` varchar(255) DEFAULT NULL,
-  `data` varchar(255) DEFAULT NULL,
+  `category` varchar(190) DEFAULT NULL,
+  `action` varchar(190) DEFAULT NULL,
+  `label` varchar(190) DEFAULT NULL,
+  `data` varchar(190) DEFAULT NULL,
   `timestamp` int(11) unsigned DEFAULT NULL,
   `year` int(5) unsigned DEFAULT NULL,
   `month` int(2) unsigned DEFAULT NULL,
@@ -623,7 +623,7 @@ CREATE TABLE `users` (
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user',
   `name` varchar(50) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
+  `password` varchar(190) DEFAULT NULL,
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -750,7 +750,7 @@ CREATE TABLE `versions` (
 DROP TABLE IF EXISTS `website_settings`;
 CREATE TABLE `website_settings` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
 	`type` ENUM('text','document','asset','object','bool') DEFAULT NULL,
 	`data` TEXT,
 	`siteId` INT(11) UNSIGNED DEFAULT NULL,
@@ -768,7 +768,7 @@ DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
 DROP TABLE IF EXISTS `classificationstore_stores`;
 CREATE TABLE `classificationstore_stores` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(255) NULL DEFAULT NULL,
+	`name` VARCHAR(191) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
@@ -779,7 +779,7 @@ CREATE TABLE `classificationstore_groups` (
 	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
 	`storeId` INT NULL DEFAULT NULL,
 	`parentId` INT(11) unsigned NOT NULL DEFAULT '0',
-	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
 	`description` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
@@ -792,10 +792,10 @@ DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
 	`id` INT(11) unsigned NOT NULL AUTO_INCREMENT,
 	`storeId` INT NULL DEFAULT NULL,
-	`name` VARCHAR(255) NOT NULL DEFAULT '',
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
 	`title` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` TEXT NULL,
-	`type` VARCHAR(255) NULL DEFAULT NULL,
+	`type` VARCHAR(190) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`definition` LONGTEXT NULL,
