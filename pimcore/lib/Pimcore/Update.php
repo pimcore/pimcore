@@ -446,7 +446,7 @@ class Update
 
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
-            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_PROJECT_ROOT);
+            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_COMPOSER_FILE_PATH);
             $process->setTimeout(300);
             $process->mustRun();
         } catch (\Exception $e) {
