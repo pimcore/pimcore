@@ -64,22 +64,22 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
 
-        $this->registerEnvironmentConfiguration($config['environment'], $container);
-        $this->registerCartManagerConfiguration($config['cart_manager'], $container);
-        $this->registerOrderManagerConfiguration($config['order_manager'], $container);
-        $this->registerPricingManagerConfiguration($config['pricing_manager'], $container);
-        $this->registerPriceSystemsConfiguration($config['price_systems'], $container);
-        $this->registerAvailabilitySystemsConfiguration($config['availability_systems'], $container);
-        $this->registerCheckoutManagerConfiguration($config['checkout_manager'], $container);
-        $this->registerPaymentManagerConfiguration($config['payment_manager'], $container);
-        $this->registerIndexServiceConfig($config['index_service'], $container);
-        $this->registerFilterServiceConfig($config['filter_service'], $container);
-        $this->registerVoucherServiceConfig($config['voucher_service'], $container);
-        $this->registerOfferToolConfig($config['offer_tool'], $container);
-        $this->registerTrackingManagerConfiguration($config['tracking_manager'], $container);
+        $this->registerEnvironmentConfiguration($container, $config['environment']);
+        $this->registerCartManagerConfiguration($container, $config['cart_manager']);
+        $this->registerOrderManagerConfiguration($container, $config['order_manager']);
+        $this->registerPricingManagerConfiguration($container, $config['pricing_manager']);
+        $this->registerPriceSystemsConfiguration($container, $config['price_systems']);
+        $this->registerAvailabilitySystemsConfiguration($container, $config['availability_systems']);
+        $this->registerCheckoutManagerConfiguration($container, $config['checkout_manager']);
+        $this->registerPaymentManagerConfiguration($container, $config['payment_manager']);
+        $this->registerIndexServiceConfig($container, $config['index_service']);
+        $this->registerFilterServiceConfig($container, $config['filter_service']);
+        $this->registerVoucherServiceConfig($container, $config['voucher_service']);
+        $this->registerOfferToolConfig($container, $config['offer_tool']);
+        $this->registerTrackingManagerConfiguration($container, $config['tracking_manager']);
     }
 
-    private function registerEnvironmentConfiguration(array $config, ContainerBuilder $container)
+    private function registerEnvironmentConfiguration(ContainerBuilder $container, array $config)
     {
         $environment = new ChildDefinition($config['environment_id']);
         $environment->setPublic(true);
@@ -88,7 +88,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
     }
 
-    private function registerCartManagerConfiguration(array $config, ContainerBuilder $container)
+    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $mapping = [];
 
@@ -127,7 +127,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'cart_manager', $mapping);
     }
 
-    private function registerOrderManagerConfiguration(array $config, ContainerBuilder $container)
+    private function registerOrderManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $mapping = [];
 
@@ -150,7 +150,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'order_manager', $mapping);
     }
 
-    private function registerPricingManagerConfiguration(array $config, ContainerBuilder $container)
+    private function registerPricingManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $container->setAlias(
             self::SERVICE_ID_PRICING_MANAGER,
@@ -163,7 +163,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.pricing_manager.options', $config['pricing_manager_options']);
     }
 
-    private function registerPriceSystemsConfiguration(array $config, ContainerBuilder $container)
+    private function registerPriceSystemsConfiguration(ContainerBuilder $container, array $config)
     {
         $mapping = [];
 
@@ -177,7 +177,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'price_system', $mapping);
     }
 
-    private function registerAvailabilitySystemsConfiguration(array $config, ContainerBuilder $container)
+    private function registerAvailabilitySystemsConfiguration(ContainerBuilder $container, array $config)
     {
         $mapping = [];
 
@@ -191,7 +191,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'availability_system', $mapping);
     }
 
-    private function registerCheckoutManagerConfiguration(array $config, ContainerBuilder $container)
+    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $commitOrderProcessorMapping   = [];
         $checkoutManagerFactoryMapping = [];
@@ -245,7 +245,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'checkout_manager.factory', $checkoutManagerFactoryMapping);
     }
 
-    private function registerPaymentManagerConfiguration(array $config, ContainerBuilder $container)
+    private function registerPaymentManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $container->setAlias(self::SERVICE_ID_PAYMENT_MANAGER, $config['payment_manager_id']);
 
@@ -276,7 +276,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'payment_manager.provider', $mapping);
     }
 
-    private function registerIndexServiceConfig(array $config, ContainerBuilder $container)
+    private function registerIndexServiceConfig(ContainerBuilder $container, array $config)
     {
         $container->setAlias(
             self::SERVICE_ID_INDEX_SERVICE,
@@ -313,7 +313,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
     }
 
-    private function registerFilterServiceConfig(array $config, ContainerBuilder $container)
+    private function registerFilterServiceConfig(ContainerBuilder $container, array $config)
     {
         $mapping = [];
 
@@ -346,7 +346,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupLocator($container, 'filter_service', $mapping);
     }
 
-    private function registerVoucherServiceConfig(array $config, ContainerBuilder $container)
+    private function registerVoucherServiceConfig(ContainerBuilder $container, array $config)
     {
         $voucherService = new ChildDefinition($config['voucher_service_id']);
         $voucherService->setPublic(true);
@@ -365,7 +365,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerOfferToolConfig(array $config, ContainerBuilder $container)
+    private function registerOfferToolConfig(ContainerBuilder $container, array $config)
     {
         $container->setAlias(
             self::SERVICE_ID_OFFER_TOOL,
@@ -388,7 +388,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerTrackingManagerConfiguration(array $config, ContainerBuilder $container)
+    private function registerTrackingManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $trackingManager = new ChildDefinition($config['tracking_manager_id']);
         $trackingManager->setPublic(true);
