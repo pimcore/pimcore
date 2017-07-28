@@ -293,6 +293,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND o.o_id = r.' . $dest . "
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
             AND r.type='object'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
@@ -301,6 +302,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND a.id = r.' . $dest . "
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
             AND r.type='asset'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
@@ -309,8 +311,8 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND d.id = r.' . $dest . "
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='document'
-
             ORDER BY `index` ASC", $params);
 
         if (is_array($relations) and count($relations) > 0) {
