@@ -105,16 +105,6 @@ class Factory
     private $filterServices;
 
     /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var string[]
-     */
-    private $allTenants;
-
-    /**
      * Systems with multiple instances (e.g. price systems or tenant specific systems) are
      * injected through a service locator which is indexed by tenant/name. All other services
      * are loaded from the container on demand to make sure only services needed are built.
@@ -147,8 +137,6 @@ class Factory
         $this->checkoutManagerFactories = $checkoutManagerFactories;
         $this->commitOrderProcessors    = $commitOrderProcessors;
         $this->filterServices           = $filterServices;
-
-        $this->init();
     }
 
     public static function getInstance(): self
@@ -411,16 +399,6 @@ class Factory
         }
 
         return $this->config;
-    }
-
-    private function init()
-    {
-        $config = $this->getConfig();
-        $this->checkConfig($config);
-    }
-
-    private function checkConfig($config)
-    {
     }
 
     public function saveState()
