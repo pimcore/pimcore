@@ -41,6 +41,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService as DefaultVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
@@ -501,9 +502,7 @@ class Configuration implements ConfigurationInterface
                                         ->defaultValue(CommitOrderProcessor::class)
                                         ->cannotBeEmpty()
                                     ->end()
-                                    ->variableNode('options')
-                                        ->defaultNull()
-                                    ->end()
+                                    ->append($this->buildOptionsNode())
                                 ->end()
                             ->end()
                             ->arrayNode('steps')
@@ -904,7 +903,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->append($this->buildOptionsNode())
                             ->scalarNode('item_builder_id')
-                                ->defaultNull()
+                                ->defaultValue(TrackingItemBuilder::class)
                             ->end()
                         ->end()
                     ->end()

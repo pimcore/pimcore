@@ -46,6 +46,18 @@ pimcore_ecommerce_framework:
         default:
             id: Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
 
+    checkout_manager:
+        tenants:
+            default: ~
+
+    index_service:
+        tenants:
+            default: ~
+
+    filter_service:
+        tenants:
+            default: ~
+
     voucher_service:
         token_managers:
             mapping:
