@@ -681,28 +681,18 @@ class Configuration implements ConfigurationInterface
                                                 return $v;
                                             }
 
-                                            // is there a native symfony way to map properties?
-                                            $map = [
+                                            $v = $this->remapProperties($v,[
                                                 'fieldname'               => 'field_name',
                                                 'filtergroup'             => 'filter_group',
                                                 'getter'                  => 'getter_id',
                                                 'interpreter'             => 'interpreter_id',
                                                 'config'                  => 'options',
                                                 'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype'
-                                            ];
-
-                                            foreach ($map as $old => $new) {
-                                                if (isset($v[$old]) && !isset($v[$new])) {
-                                                    $v[$new] = $v[$old];
-                                                    unset($v[$old]);
-                                                }
-                                            }
+                                            ]);
 
                                             return $v;
                                         })
                                     ->end()
-
-
                                     ->children()
                                         ->scalarNode('name')->isRequired()->end()
                                         ->scalarNode('field_name')->defaultNull()->end()
@@ -765,7 +755,7 @@ class Configuration implements ConfigurationInterface
                                                 return $v;
                                             }
 
-                                            return $this->normalizeProperties($v, [
+                                            return $this->remapProperties($v, [
                                                 'class'  => 'filter_type_id',
                                                 'script' => 'template'
                                             ]);
@@ -924,7 +914,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    private function normalizeProperties(array $data, array $map): array
+    private function remapProperties(array $data, array $map): array
     {
         foreach ($map as $old => $new) {
             if (isset($data[$old]) && !isset($data[$new])) {
