@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tests\Ecommerce\Tools\Config;
+namespace Pimcore\Tests\Ecommerce\DependencyInjection\Config\Processor;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor\PlaceholderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Tests\Test\TestCase;
 
 class PlaceholderProcessorTest extends TestCase

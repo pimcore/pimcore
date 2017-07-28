@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\Processor;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
