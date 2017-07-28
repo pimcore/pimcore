@@ -8,9 +8,11 @@ services:
         arguments:
             - '@pimcore_ecommerce.environment'
             - '@pimcore_ecommerce.payment_manager'
+            - []
 
     Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager:
         arguments:
             - '@pimcore_ecommerce.environment'
             - '@?'
             - '@pimcore_ecommerce.voucher_service'
+            - []

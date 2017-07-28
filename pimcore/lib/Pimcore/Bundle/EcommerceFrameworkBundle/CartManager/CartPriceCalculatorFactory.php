@@ -38,9 +38,10 @@ class CartPriceCalculatorFactory implements ICartPriceCalculatorFactory
     protected $options;
 
     /**
+     * @param array $modificatorConfig
      * @param array $options
      */
-    public function __construct(array $modificatorConfig, array $options)
+    public function __construct(array $modificatorConfig, array $options = [])
     {
         $this->modificatorConfig = $modificatorConfig;
 

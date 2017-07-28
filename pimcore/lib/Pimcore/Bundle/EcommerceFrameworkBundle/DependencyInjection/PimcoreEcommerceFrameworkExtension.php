@@ -99,17 +99,23 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $cartManager->setPublic(true);
 
             $cartFactory = new ChildDefinition($tenantConfig['cart']['factory_id']);
-            $cartFactory->setArgument('$options', $tenantConfig['cart']['factory_options']);
+
+            if (!empty($tenantConfig['cart']['factory_options'])) {
+                $cartFactory->setArgument('$options', $tenantConfig['cart']['factory_options']);
+            }
 
             $priceCalculatorFactory = new ChildDefinition($tenantConfig['price_calculator']['factory_id']);
             $priceCalculatorFactory->setArgument(
                 '$modificatorConfig',
                 $tenantConfig['price_calculator']['modificators']
             );
-            $priceCalculatorFactory->setArgument(
-                '$options',
-                $tenantConfig['price_calculator']['factory_options']
-            );
+
+            if (!empty($tenantConfig['price_calculator']['factory_options'])) {
+                $priceCalculatorFactory->setArgument(
+                    '$options',
+                    $tenantConfig['price_calculator']['factory_options']
+                );
+            }
 
             $cartManager->setArgument('$cartFactory', $cartFactory);
             $cartManager->setArgument('$cartPriceCalculatorFactory', $priceCalculatorFactory);
@@ -141,10 +147,16 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $orderManager->setPublic(true);
 
             $orderAgentFactory = new ChildDefinition($tenantConfig['order_agent']['factory_id']);
-            $orderAgentFactory->setArgument('$options', $tenantConfig['order_agent']['factory_options']);
+
+            if (!empty($tenantConfig['order_agent']['factory_options'])) {
+                $orderAgentFactory->setArgument('$options', $tenantConfig['order_agent']['factory_options']);
+            }
 
             $orderManager->setArgument('$orderAgentFactory', $orderAgentFactory);
-            $orderManager->setArgument('$options', $tenantConfig['options']);
+
+            if (!empty($tenantConfig['options'])) {
+                $orderManager->setArgument('$options', $tenantConfig['options']);
+            }
 
             $aliasName = sprintf('pimcore_ecommerce.order_manager.%s', $tenant);
             $container->setDefinition($aliasName, $orderManager);
@@ -220,8 +232,11 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                     '$orderManager'            => $orderManagerRef,
                     '$commitOrderProcessor'    => $commitOrderProcessor,
                     '$checkoutStepDefinitions' => $tenantConfig['steps'],
-                    '$options'                 => $tenantConfig['factory_options']
                 ]);
+
+                if (!empty($tenantConfig['factory_options'])) {
+                    $checkoutManagerFactory->setArgument('$options', $tenantConfig['factory_options']);
+                }
 
                 if (null !== $tenantConfig['payment']['provider']) {
                     $checkoutManagerFactory->setArgument('$paymentProvider', new Reference(sprintf(
@@ -309,9 +324,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 '$tenantName'       => $tenant,
                 '$attributes'       => $attributeFactory->createAttributes($tenantConfig['attributes']),
                 '$searchAttributes' => $tenantConfig['search_attributes'],
-                '$filterTypes'      => [],
-                '$options'          => $tenantConfig['config_options']
+                '$filterTypes'      => []
             ]);
+
+            if (!empty($tenantConfig['config_options'])) {
+                $config->setArgument('$options', $tenantConfig['config_options']);
+            }
 
             $worker = new ChildDefinition($tenantConfig['worker_id']);
             $worker->setArgument('$tenantConfig', new Reference($configId));
@@ -357,11 +375,16 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerVoucherServiceConfig(ContainerBuilder $container, array $config)
     {
-        $voucherService = new ChildDefinition($config['voucher_service_id']);
-        $voucherService->setPublic(true);
-        $voucherService->setArgument('$options', $config['voucher_service_options']);
+        // voucher service options are referenced in service definition
+        $container->setParameter(
+            'pimcore_ecommerce.voucher_service.options',
+            $config['voucher_service_options']
+        );
 
-        $container->setDefinition(self::SERVICE_ID_VOUCHER_SERVICE, $voucherService);
+        $container->setAlias(
+            self::SERVICE_ID_VOUCHER_SERVICE,
+            $config['voucher_service_id']
+        );
 
         $container->setParameter(
             'pimcore_ecommerce.voucher_service.token_manager.mapping',
@@ -415,7 +438,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 $tracker->setArgument('$trackingItemBuilder', new Reference($trackerConfig['item_builder_id']));
             }
 
-            if (null !== $trackerConfig['options']) {
+            if (!empty($trackerConfig['options'])) {
                 $tracker->setArgument('$options', $trackerConfig['options']);
             }
 

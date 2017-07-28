@@ -40,7 +40,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
      */
     protected $confirmationMail = '/emails/order-confirmation';
 
-    public function __construct(IOrderManager $orderManager, array $options)
+    public function __construct(IOrderManager $orderManager, array $options = [])
     {
         $this->orderManager = $orderManager;
 
