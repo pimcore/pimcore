@@ -22,12 +22,15 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class IndexServiceWorkersPass implements CompilerPassInterface
+class RegisterConfiguredServicesPass implements CompilerPassInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function process(ContainerBuilder $container)
+    {
+        $this->registerIndexServiceWorkers($container);
+        $this->registerTrackingManagerTrackers($container);
+    }
+
+    public function registerIndexServiceWorkers(ContainerBuilder $container)
     {
         $workers = [];
         foreach ($container->findTaggedServiceIds('pimcore_ecommerce.index_service.worker') as $id => $tags) {
@@ -36,5 +39,17 @@ class IndexServiceWorkersPass implements CompilerPassInterface
 
         $indexService = $container->findDefinition(PimcoreEcommerceFrameworkExtension::SERVICE_ID_INDEX_SERVICE);
         $indexService->setArgument('$tenantWorkers', $workers);
+    }
+
+    public function registerTrackingManagerTrackers(ContainerBuilder $container)
+    {
+        $trackers = [];
+
+        foreach ($container->findTaggedServiceIds('pimcore_ecommerce.tracking.tracker') as $id => $tags) {
+            $trackers[] = new Reference($id);
+        }
+
+        $trackingManager = $container->findDefinition(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
+        $trackingManager->setArgument('$trackers', $trackers);
     }
 }

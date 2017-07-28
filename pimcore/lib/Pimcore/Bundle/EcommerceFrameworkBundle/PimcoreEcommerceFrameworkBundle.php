@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\IndexServiceWorkersPass;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\RegisterConfiguredServicesPass;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -27,7 +27,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new IndexServiceWorkersPass());
+        $container->addCompilerPass(new RegisterConfiguredServicesPass());
     }
 
     /**

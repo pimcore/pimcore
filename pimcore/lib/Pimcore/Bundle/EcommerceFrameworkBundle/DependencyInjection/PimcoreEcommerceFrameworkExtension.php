@@ -24,6 +24,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use Symfony\Component\VarDumper\VarDumper;
 
 class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
@@ -422,10 +423,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerTrackingManagerConfiguration(ContainerBuilder $container, array $config)
     {
-        $trackingManager = new ChildDefinition($config['tracking_manager_id']);
-        $trackingManager->setPublic(true);
-
-        $container->setDefinition(self::SERVICE_ID_TRACKING_MANAGER, $trackingManager);
+        $container->setAlias(
+            self::SERVICE_ID_TRACKING_MANAGER,
+            $config['tracking_manager_id']
+        );
 
         foreach ($config['trackers'] as $name => $trackerConfig) {
             if (!$trackerConfig['enabled']) {
@@ -442,7 +443,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 $tracker->setArgument('$options', $trackerConfig['options']);
             }
 
-            $trackingManager->addMethodCall('registerTracker', [$tracker]);
+            $tracker->addTag('pimcore_ecommerce.tracking.tracker', ['name' => $name]);
+
+            $container->setDefinition(sprintf('pimcore_ecommerce.tracking.tracker.%s', $name), $tracker);
         }
     }
 
