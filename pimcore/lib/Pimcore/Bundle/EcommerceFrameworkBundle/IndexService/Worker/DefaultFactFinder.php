@@ -16,8 +16,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder as DefaultFactFinderConfig;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Tool\Text;
@@ -34,6 +37,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
      * @var array
      */
     protected $_sqlChangeLog = [];
+
+    public function __construct(IFactFinderConfig $tenantConfig, Connection $db)
+    {
+        parent::__construct($tenantConfig, $db);
+    }
 
     protected function getSystemAttributes()
     {
