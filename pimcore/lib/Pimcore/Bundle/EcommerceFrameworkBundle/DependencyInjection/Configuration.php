@@ -24,11 +24,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService\DefaultWorkerConfigMapper;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql as DefaultMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
@@ -64,10 +64,17 @@ class Configuration implements ConfigurationInterface
      */
     private $placeholderProcessor;
 
+    /**
+     * @var DefaultWorkerConfigMapper
+     */
+    private $indexWorkerConfigMapper;
+
     public function __construct()
     {
         $this->tenantProcessor      = new TenantProcessor();
         $this->placeholderProcessor = new PlaceholderProcessor();
+
+        $this->indexWorkerConfigMapper = new DefaultWorkerConfigMapper();
     }
 
     /**
@@ -624,6 +631,21 @@ class Configuration implements ConfigurationInterface
                                     // re-add placeholders
                                     $config[$tenant]['placeholders'] = $placeholders;
                                 }
+
+                                // if only config or worker is set, try to auto resolve missing config/worker
+                                if (!($config[$tenant]['config_id'] && $config[$tenant]['worker_id'])) {
+                                    // nothing is set - set default value
+                                    if (!$config[$tenant]['config_id'] && !$config[$tenant]['worker_id']) {
+                                        $config[$tenant]['config_id'] = DefaultMysql::class;
+                                    }
+
+                                    // resolve default matching part
+                                    if ($config[$tenant]['config_id']) {
+                                        $config[$tenant]['worker_id'] = $this->indexWorkerConfigMapper->getWorkerForConfig($config[$tenant]['config_id']);
+                                    } elseif ($config[$tenant]['worker_id']) {
+                                        $config[$tenant]['config_id'] = $this->indexWorkerConfigMapper->getConfigForWorker($config[$tenant]['worker_id']);
+                                    }
+                                }
                             }
 
                             return $config;
@@ -640,7 +662,6 @@ class Configuration implements ConfigurationInterface
                             ->append($this->buildOptionsNode('config_options'))
                             ->scalarNode('worker_id')
                                 ->cannotBeEmpty()
-                                ->defaultValue(DefaultMysqlWorker::class)
                             ->end()
                             ->arrayNode('placeholders')
                                 ->defaultValue([])
