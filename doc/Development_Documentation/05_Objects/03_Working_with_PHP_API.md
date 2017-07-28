@@ -287,14 +287,14 @@ The object listing of this example only delivers objects of the type Collectiont
 
 ##### Action 
 ```php
-public function testAction()
+public function testAction( Request $request )
 {
     $list = new Object\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
     $paginator = \Zend_Paginator::factory($list);
-    $paginator->setCurrentPageNumber( $this->_getParam('page') );
+    $paginator->setCurrentPageNumber( $request->get('page') );
     $paginator->setItemCountPerPage(10);
     $this->view->paginator  = $paginator;
 }
