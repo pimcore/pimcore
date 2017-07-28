@@ -1812,14 +1812,6 @@ class OnlineShop_Framework_Impl_Price extends \Pimcore\Bundle\EcommerceFramework
 
 /**
  * @deprecated
- * class OnlineShop_Framework_Config_HelperContainer
- */
-class OnlineShop_Framework_Config_HelperContainer extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer
-{
-}
-
-/**
- * @deprecated
  * class OnlineShop_Framework_Factory
  */
 class OnlineShop_Framework_Factory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Factory
@@ -4211,20 +4203,6 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\L
 }
 
 // -- end namespace OnlineShop\Framework\PricingManager\Rule\Listing ----------------------------------------------------------------------------------
-
-namespace OnlineShop\Framework\Tools\Config {
-
-/**
- * @deprecated
- * class HelperContainer
- */
-class HelperContainer extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer
-{
-}
-
-}
-
-// -- end namespace OnlineShop\Framework\Tools\Config ----------------------------------------------------------------------------------
 
 namespace OnlineShop\Framework\Tracking {
 

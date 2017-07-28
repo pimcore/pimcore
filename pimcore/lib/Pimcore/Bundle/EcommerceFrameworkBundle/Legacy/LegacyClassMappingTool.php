@@ -27,7 +27,6 @@ class LegacyClassMappingTool
         'OnlineShop\Framework\OfferTool\AbstractOffer' => 'OnlineShop_OfferTool_AbstractOffer',
         'OnlineShop\Framework\OfferTool\AbstractOfferItem' => 'OnlineShop_OfferTool_AbstractOfferItem',
         'OnlineShop\Framework\OfferTool\AbstractOfferToolProduct' => 'OnlineShop_OfferTool_AbstractOfferToolProduct',
-        'OnlineShop\Framework\Tools\Config\HelperContainer' => 'OnlineShop_Framework_Config_HelperContainer',
         'OnlineShop\Framework\CartManager\SessionCartItem' => 'OnlineShop_Framework_Impl_SessionCartItem',
         'OnlineShop\Framework\CartManager\SessionCartCheckoutData' => 'OnlineShop_Framework_Impl_SessionCartCheckoutData',
         'OnlineShop\Framework\CartManager\SessionCart' => 'OnlineShop_Framework_Impl_SessionCart',
@@ -477,8 +476,6 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price' => 'OnlineShop\Framework\PriceSystem\Price',
         'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService' => 'OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService',
         'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry' => 'OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry',
-
-        'Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer' => 'OnlineShop\Framework\Tools\Config\HelperContainer',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Command\CleanupPendingOrdersCommand' => 'OnlineShop\Framework\Console\Command\CleanupPendingOrdersCommand',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Command\Voucher\CleanupReservationsCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupReservationsCommand',
