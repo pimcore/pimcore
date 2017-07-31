@@ -299,13 +299,11 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * @Route("/get-config")
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function getConfigAction(Request $request)
+    public function getConfigAction()
     {
-        $pricingManager = $this->get(Factory::class)->getPricingManager();
+        $pricingManager = Factory::getInstance()->getPricingManager();
 
         return $this->json([
             'condition' => array_keys($pricingManager->getConditionMapping()),
