@@ -139,15 +139,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $cartManager->setArgument('$cartFactory', $cartFactory);
             $cartManager->setArgument('$cartPriceCalculatorFactory', $priceCalculatorFactory);
 
-            $orderManagerTenant = $this->resolveOrderManagerTenant(
-                'cart manager',
-                $tenant,
-                $tenantConfig['order_manager_tenant'],
-                $orderManagerTenants
-            );
-
-            $cartManager->setArgument('$orderManager', new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant));
-
             $aliasName = sprintf('pimcore_ecommerce.cart_manager.%s', $tenant);
             $container->setDefinition($aliasName, $cartManager);
 
@@ -233,17 +224,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $checkoutManagerFactoryMapping = [];
 
         foreach ($config['tenants'] as $tenant => $tenantConfig) {
-            $orderManagerTenant = $this->resolveOrderManagerTenant(
-                'checkout manager factory',
-                $tenant,
-                $tenantConfig['order_manager_tenant'],
-                $orderManagerTenants
-            );
-
-            $orderManagerRef = new Reference('pimcore_ecommerce.order_manager.' . $orderManagerTenant);
-
             $commitOrderProcessor = new ChildDefinition($tenantConfig['commit_order_processor']['id']);
-            $commitOrderProcessor->setArgument('$orderManager', $orderManagerRef);
 
             if (!empty($tenantConfig['commit_order_processor']['options'])) {
                 $commitOrderProcessor->setArgument('$options', $tenantConfig['commit_order_processor']['options']);
@@ -251,8 +232,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
             $checkoutManagerFactory = new ChildDefinition($tenantConfig['factory_id']);
             $checkoutManagerFactory->setArguments([
-                '$orderManager'            => $orderManagerRef,
-                '$commitOrderProcessor'    => $commitOrderProcessor,
                 '$checkoutStepDefinitions' => $tenantConfig['steps'],
             ]);
 
@@ -465,47 +444,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
             $container->setDefinition(sprintf('pimcore_ecommerce.tracking.tracker.%s', $name), $tracker);
         }
-    }
-
-    /**
-     * If an order manager is explicitely configured (order_manager_tenant) just use the configured one. If not, try
-     * to find an order manager with the same tenant first and fall back to "default" if none is found.
-     *
-     * @param string $subSystem
-     * @param string $tenant
-     * @param string|null $configuredTenant
-     * @param array $orderManagerTenants
-     *
-     * @return string
-     */
-    private function resolveOrderManagerTenant(string $subSystem, string $tenant, string $configuredTenant = null, array $orderManagerTenants)
-    {
-        if (null !== $configuredTenant) {
-            if (!in_array($configuredTenant, $orderManagerTenants)) {
-                throw new InvalidConfigurationException(sprintf(
-                    'Failed to find order manager for %s with tenant "%s" as the configured order manager "%s" is not defined. Please check the configuration.',
-                    $subSystem,
-                    $tenant,
-                    $configuredTenant
-                ));
-            }
-
-            return $configuredTenant;
-        }
-
-        $tenantVariants = [$tenant, 'default'];
-        foreach ($tenantVariants as $tenantVariant) {
-            if (in_array($tenantVariant, $orderManagerTenants)) {
-                return $tenantVariant;
-            }
-        }
-
-        throw new InvalidConfigurationException(sprintf(
-            'Failed to find order manager for %s with tenant "%s". Tried: %s. Please check the configuration.',
-            $subSystem,
-            $tenant,
-            implode(', ', $tenantVariants)
-        ));
     }
 
     private function setupLocator(ContainerBuilder $container, string $id, array $mapping)

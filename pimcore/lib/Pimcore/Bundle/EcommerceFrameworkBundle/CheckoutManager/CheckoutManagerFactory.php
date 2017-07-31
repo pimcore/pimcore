@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,14 +31,9 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     protected $environment;
 
     /**
-     * @var IOrderManager
+     * @var Factory
      */
-    protected $orderManager;
-
-    /**
-     * @var ICommitOrderProcessor
-     */
-    protected $commitOrderProcessor;
+    protected $factory;
 
     /**
      * Array of checkout step definitions
@@ -64,7 +59,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
 
     /**
      * @param IEnvironment $environment
-     * @param IOrderManager $orderManager
+     * @param Factory $factory
      * @param ICommitOrderProcessor $commitOrderProcessor
      * @param array $checkoutStepDefinitions
      * @param IPayment|null $paymentProvider
@@ -72,17 +67,15 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
      */
     public function __construct(
         IEnvironment $environment,
-        IOrderManager $orderManager,
-        ICommitOrderProcessor $commitOrderProcessor,
+        Factory $factory,
         array $checkoutStepDefinitions,
         IPayment $paymentProvider = null,
         array $options = []
     )
     {
-        $this->environment          = $environment;
-        $this->orderManager         = $orderManager;
-        $this->commitOrderProcessor = $commitOrderProcessor;
-        $this->paymentProvider      = $paymentProvider;
+        $this->environment     = $environment;
+        $this->factory         = $factory;
+        $this->paymentProvider = $paymentProvider;
 
         $this->processOptions($options);
         $this->processCheckoutStepDefinitions($checkoutStepDefinitions);
@@ -149,8 +142,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         $this->checkoutManagers[$cartId] = new $className(
             $cart,
             $this->environment,
-            $this->orderManager,
-            $this->commitOrderProcessor,
+            $this->factory,
             $checkoutSteps,
             $this->paymentProvider
         );

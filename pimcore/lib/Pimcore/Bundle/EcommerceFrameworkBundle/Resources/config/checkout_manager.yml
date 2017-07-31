@@ -14,13 +14,12 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactory:
         arguments:
             - '@pimcore_ecommerce.environment'
-            - '@?' # order manager
-            - '@?' # commit order processor
+            - '@pimcore_ecommerce.factory'
             - [] # checkout steps
             - '@?' # payment provider
             - [] # options
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor:
         arguments:
-            - '@?' # order manager
+            - '@pimcore_ecommerce.factory'
             - [] # options

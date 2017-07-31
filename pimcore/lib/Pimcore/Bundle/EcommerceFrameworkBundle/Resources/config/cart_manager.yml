@@ -17,7 +17,7 @@ services:
             - '@pimcore_ecommerce.environment'
             - '@?'
             - '@?'
-            - '@?'
+            - '@pimcore_ecommerce.factory'
             - '@logger'
         tags:
             - { name: monolog.logger, channel: pimcore_ecommerce }

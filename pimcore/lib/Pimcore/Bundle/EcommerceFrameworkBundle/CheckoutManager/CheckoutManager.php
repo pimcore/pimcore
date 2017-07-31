@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
@@ -44,14 +45,9 @@ class CheckoutManager implements ICheckoutManager
     protected $environment;
 
     /**
-     * @var IOrderManager
+     * @var Factory
      */
-    protected $orderManager;
-
-    /**
-     * @var ICommitOrderProcessor
-     */
-    protected $commitOrderProcessor;
+    protected $factory;
 
     /**
      * Payment Provider
@@ -92,25 +88,22 @@ class CheckoutManager implements ICheckoutManager
     /**
      * @param ICart $cart
      * @param IEnvironment $environment
-     * @param IOrderManager $orderManager
-     * @param ICommitOrderProcessor $commitOrderProcessor
+     * @param Factory $factory
      * @param ICheckoutStep[] $checkoutSteps
      * @param IPayment|null $paymentProvider
      */
     public function __construct(
         ICart $cart,
         IEnvironment $environment,
-        IOrderManager $orderManager,
-        ICommitOrderProcessor $commitOrderProcessor,
+        Factory $factory,
         array $checkoutSteps,
         IPayment $paymentProvider = null
     )
     {
-        $this->cart                 = $cart;
-        $this->environment          = $environment;
-        $this->orderManager         = $orderManager;
-        $this->commitOrderProcessor = $commitOrderProcessor;
-        $this->payment              = $paymentProvider;
+        $this->cart        = $cart;
+        $this->environment = $environment;
+        $this->factory     = $factory;
+        $this->payment     = $paymentProvider;
 
         $this->setCheckoutSteps($checkoutSteps);
     }
@@ -159,15 +152,30 @@ class CheckoutManager implements ICheckoutManager
         }
     }
 
+    protected function getOrderManager(): IOrderManager
+    {
+        // fetching order manager from factory at runtime as it needs to be
+        // resolved from current checkout context
+        return $this->factory->getOrderManager();
+    }
+
+    protected function getCommitOrderProcessor(): ICommitOrderProcessor
+    {
+        // fetching commit order processor from factory at runtime as it needs to be
+        // resolved from current checkout context
+        return $this->factory->getCommitOrderProcessor();
+    }
+
     /**
      * @inheritdoc
      */
     public function hasActivePayment()
     {
-        $order = $this->orderManager->getOrderFromCart($this->cart);
+        $orderManager = $this->getOrderManager();
+        $order = $orderManager->getOrderFromCart($this->cart);
 
         if ($order) {
-            $paymentInfo = $this->orderManager->createOrderAgent($order)->getCurrentPendingPaymentInfo();
+            $paymentInfo = $orderManager->createOrderAgent($order)->getCurrentPendingPaymentInfo();
 
             return !empty($paymentInfo);
         }
@@ -189,13 +197,14 @@ class CheckoutManager implements ICheckoutManager
         }
 
         // create order
-        $order = $this->orderManager->getOrCreateOrderFromCart($this->cart);
+        $orderManager = $this->getOrderManager();
+        $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
         if ($order->getOrderState() === AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new UnsupportedException('Order is already committed');
         }
 
-        $orderAgent = $this->orderManager->createOrderAgent($order);
+        $orderAgent = $orderManager->createOrderAgent($order);
         $paymentInfo = $orderAgent->startPayment();
 
         // always set order state to payment pending when calling start payment
@@ -212,10 +221,11 @@ class CheckoutManager implements ICheckoutManager
      */
     public function cancelStartedOrderPayment()
     {
-        $order = $this->orderManager->getOrderFromCart($this->cart);
+        $orderManager = $this->getOrderManager();
+        $order = $orderManager->getOrderFromCart($this->cart);
 
         if ($order) {
-            $orderAgent = $this->orderManager->createOrderAgent($order);
+            $orderAgent = $orderManager->createOrderAgent($order);
 
             return $orderAgent->cancelStartedOrderPayment();
         }
@@ -226,7 +236,7 @@ class CheckoutManager implements ICheckoutManager
      */
     public function getOrder()
     {
-        return $this->orderManager->getOrCreateOrderFromCart($this->cart);
+        return $this->getOrderManager()->getOrCreateOrderFromCart($this->cart);
     }
 
     /**
@@ -260,9 +270,11 @@ class CheckoutManager implements ICheckoutManager
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams)
     {
+        $commitOrderProcessor = $this->getCommitOrderProcessor();
+
         // check if order is already committed and payment information with same internal payment id has same state
         // if so, do nothing and return order
-        if ($committedOrder = $this->commitOrderProcessor->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
+        if ($committedOrder = $commitOrderProcessor->committedOrderWithSamePaymentExists($paymentResponseParams, $this->getPayment())) {
             return $committedOrder;
         }
 
@@ -279,7 +291,7 @@ class CheckoutManager implements ICheckoutManager
         }
 
         // delegate commit order to commit order processor
-        $order = $this->commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
+        $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         $this->updateEnvironmentAfterOrderCommit($order);
 
         return $order;
@@ -303,7 +315,7 @@ class CheckoutManager implements ICheckoutManager
         }
 
         // delegate commit order to commit order processor
-        $order = $this->commitOrderProcessor->commitOrderPayment($status, $this->getPayment());
+        $order = $this->getCommitOrderProcessor()->commitOrderPayment($status, $this->getPayment());
         $this->updateEnvironmentAfterOrderCommit($order);
 
         return $order;
@@ -323,8 +335,8 @@ class CheckoutManager implements ICheckoutManager
         }
 
         // delegate commit order to commit order processor
-        $order = $this->orderManager->getOrCreateOrderFromCart($this->cart);
-        $order = $this->commitOrderProcessor->commitOrder($order);
+        $order = $this->getOrderManager()->getOrCreateOrderFromCart($this->cart);
+        $order = $this->getCommitOrderProcessor()->commitOrder($order);
 
         $this->updateEnvironmentAfterOrderCommit($order);
 
@@ -565,7 +577,7 @@ class CheckoutManager implements ICheckoutManager
      */
     public function isCommitted()
     {
-        $order = $this->orderManager->getOrderFromCart($this->cart);
+        $order = $this->getOrderManager()->getOrderFromCart($this->cart);
 
         return $order && $order->getOrderState() === $order::ORDER_STATE_COMMITTED;
     }
@@ -583,6 +595,6 @@ class CheckoutManager implements ICheckoutManager
      */
     public function cleanUpPendingOrders()
     {
-        $this->commitOrderProcessor->cleanUpPendingOrders();
+        $this->getCommitOrderProcessor()->cleanUpPendingOrders();
     }
 }

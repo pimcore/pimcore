@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Psr\Log\LoggerInterface;
 
 class MultiCartManager implements ICartManager
@@ -39,9 +39,9 @@ class MultiCartManager implements ICartManager
     protected $cartPriceCalculatorFactory;
 
     /**
-     * @var IOrderManager
+     * @var Factory
      */
-    protected $orderManager;
+    protected $factory;
 
     /**
      * @var LoggerInterface
@@ -60,23 +60,23 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param IEnvironment $environment
-     * @param IOrderManager $orderManager
      * @param ICartFactory $cartFactory
      * @param ICartPriceCalculatorFactory $cartPriceCalculatorFactory
+     * @param Factory $factory
      * @param LoggerInterface $logger
      */
     public function __construct(
         IEnvironment $environment,
         ICartFactory $cartFactory,
         ICartPriceCalculatorFactory $cartPriceCalculatorFactory,
-        IOrderManager $orderManager,
+        Factory $factory,
         LoggerInterface $logger
     )
     {
         $this->environment = $environment;
         $this->cartFactory = $cartFactory;
         $this->cartPriceCalculatorFactory = $cartPriceCalculatorFactory;
-        $this->orderManager = $orderManager;
+        $this->factory = $factory;
         $this->logger = $logger;
     }
 
@@ -108,7 +108,7 @@ class MultiCartManager implements ICartManager
         } else {
             foreach ($carts as $cart) {
                 // check for order state of cart - remove it, when corresponding order is already committed
-                $order = $this->orderManager->getOrderFromCart($cart);
+                $order = $this->factory->getOrderManager()->getOrderFromCart($cart);
                 if (empty($order) || $order->getOrderState() !== $order::ORDER_STATE_COMMITTED) {
                     $this->carts[$cart->getId()] = $cart;
                 } else {
