@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
@@ -57,5 +58,20 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
         } else {
             return $mockup;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTenantWorker(IWorker $tenantWorker)
+    {
+        if (!$tenantWorker instanceof OptimizedMysql) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                OptimizedMysqlWorker::class
+            ));
+        }
+
+        parent::setTenantWorker($tenantWorker);
     }
 }

@@ -29,6 +29,9 @@ services:
             $environment: '@pimcore_ecommerce.environment'
             $db: '@database_connection'
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
 
