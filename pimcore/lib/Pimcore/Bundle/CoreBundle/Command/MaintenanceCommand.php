@@ -101,6 +101,7 @@ class MaintenanceCommand extends AbstractCommand
         $manager->registerJob(Job::fromMethodCall('tmpstorecleanup', '\\Pimcore\\Model\\Tool\\TmpStore', 'cleanup'));
         $manager->registerJob(Job::fromMethodCall('imageoptimize', '\\Pimcore\\Model\\Asset\\Image\\Thumbnail\\Processor', 'processOptimizeQueue'));
         $manager->registerJob(Job::fromMethodCall('cleanupTmpFiles', '\\Pimcore\\Tool\\Housekeeping', 'cleanupTmpFiles'));
+        $manager->registerJob(Job::fromMethodCall('cleanupSymfonyProfilingData', '\\Pimcore\\Tool\\Housekeeping', 'cleanupSymfonyProfilingData'));
 
         $event = new MaintenanceEvent($manager);
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE, $event);
