@@ -7,8 +7,7 @@ This section describes the installation of the E-Commerce Framework and the firs
 The E-Commerce Framework is shipped with Pimcore core. To install it, navigate to `Tools` > `Extensions` in Pimcore 
 Admin UI and activate and install the `PimcoreEcommerceFrameworkBundle`. 
 
-The installer does following tasks: 
-- Create configuration file `app/config/pimcore/EcommerceFrameworkConfig.php` and fills it with default values. 
+The installer does following tasks:  
 - Install several field collections.
 - Install several object classes. 
 - Install several object bricks. 
@@ -18,8 +17,8 @@ The installer does following tasks:
 
 If either classes, field collections, object bricks or tables already exist, the installation cannot be started. 
 
-After this installation routine, additional configurations have to be made - most important Product, ProductCategory and
-eventually `EcommerceFrameworkConfig.php`. 
+After this installation routine, additional configurations have to be made - most important Product and ProductCategory.
+Please see [Configuration](./04_Configuration) for further information on available options.
 
 
 ## Configure Product and Product Category Class

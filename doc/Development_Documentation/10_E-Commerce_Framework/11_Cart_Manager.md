@@ -86,51 +86,56 @@ $grandTotal = $cart->getPriceCalculator()->getGrandTotal();
 
 ## Configuration of Cart Manager
 
-The configuration takes place in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L13-L13): 
-```php
- /* general settings for cart manager */
- 'cartmanager' => [
-     'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\MultiCartManager',
-     'config' => [
-         /* default cart implementation that is used */
-         'cart' => [
-             'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\Cart',
-             'guest' => [
-                 'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart'
-             ]
-         ],
-         /* default price calculator for cart */
-         'pricecalculator' => [
-             'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator',
-             'config' => [
-                 /* price modificators for cart, e.g. for shipping-cost, special discounts, ... */
-                 'modificators' => [
-                     'shipping' => [
-                         'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceModificator\\Shipping',
-                         'config' => [
-                             'charge' => '5.90'
-                         ]
-                     ]
-                 ]
-             ]
-         ],
-     ]
- ],
+The configuration takes place in the `pimcore_ecommerce_framework.cart_manager` configuration section which is [tenant aware](../04_Configuration/README.md).
+
+```yaml
+pimcore_ecommerce_framework:
+    cart_manager:
+        tenants:
+            # defaults for all cart managers
+            _defaults:
+                # define service manager id of cart service - following value is default and can be omitted
+                cart_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager
+
+                # configuration for carts - the following values are set by default and can be omitted 
+                cart:
+                    # service ID of a cart factory which creates individual carts at runtime                    
+                    factory_id: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory
+                    
+                    # options passed to cart factory, e.g. the cart class (available options vary by factory implementation)
+                    factory_options:
+                        cart_class_name: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
+                        guest_cart_class_name: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart            
+        
+            default:   
+                price_calculator:
+                    # list price modificators for cart, e.g. for shipping-cost, special discounts, ...
+                    # key is name of modificator
+                    modificators:
+                        shipping:
+                            class: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping
+                            # configuration options for price modificator
+                            options:
+                                charge: "5.90"
+
+            # additional checkout tenant for cart manager
+            #  - active tenant is set at \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment::setCurrentCheckoutTenant()
+            noShipping: ~ # inherits from _defaults
 ```
 
-
 Following elements are configured: 
-* **Implementation of the cart manager**: The cart manager is the basic entry point for working with carts. It is 
+
+* **Cart manager service ID**: The cart manager is the basic entry point for working with carts. It is 
   responsible for all interactions with different carts and provides functionality as creating carts, 
   adding/removing products and also creates the corresponding price calculator. 
-* **Implementation of the cart**
-* **Implementation of the price calculator**: The price calculator is a framework for calculation and modification
-  (shipping costs, discounts, ...) of prices on cart level. Each modification is implemented in a 
+* **Cart factory service ID**: builds carts when needed and can be configured with cart class name and further options varying
+  by factory implementation
+* **Price calculator factory service ID + options and modificators**: The price calculator is a framework for calculation
+  and modification (shipping costs, discounts, ...) of prices on cart level. Each modification is implemented in a 
   [`ICartPriceModificator` class](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/ICartPriceModificator.php). 
   See [Shipping](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
   or [Discount](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
   for examples. This should be self speaking. 
-
 
 ## Checkout Tenants for Carts
 The E-Commerce Framework has the concept of so called Checkout Tenants which allow different cart manager and 
@@ -149,37 +154,6 @@ $environment->save();
 ```
 
 Once set, the cart manager uses all specific settings of the currently active checkout tenant which are configured
-in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L41-L41)
-as follows: 
+in the configuration (identified by tenant name).
 
-```php
- /* general settings for cart manager */
- 'cartmanager' => [
-     'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\MultiCartManager',
-     'config' => [
-         /* default cart implementation that is used */
-         'cart' => [...],
-         /* default price calculator for cart */
-         'pricecalculator' => [...],
-         
-         /*  special configuration for specific checkout tenants
-             - for not specified elements the default configuration is used as fallback
-             - active tenant is set at \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment::setCurrentCheckoutTenant() */
-         'tenants' => [
-             'noShipping' => [
-                 'pricecalculator' => [
-                     'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\CartPriceCalculator',
-                     'config' => [
-                         'modificators' => []
-                     ]
-                 ]
-             ]
-             /* you also can use external files for additional configuration */
-             /* "expensiveShipping" =>[ "file" => "\\eommerce\\cartmanager-expensiveShipping.php ] */
-         ],
-
-     ]
- ],
-```
-
-See also [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/app/config/pimcore/EcommerceFrameworkConfig.php#L33) for some examples.  
+See also [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Resources/config/pimcore/ecommerce/ecommerce-config.yml) for some examples.  

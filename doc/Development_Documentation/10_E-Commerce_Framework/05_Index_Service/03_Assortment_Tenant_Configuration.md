@@ -18,15 +18,16 @@ By default the system always uses one heavy-weight tenant (= `DefaultMysql`), bu
 
 ### Configuration of Assortment Tenants
 For setting up an Assortment Tenant, following steps are necessary: 
+
 - **Implementation of a Tenant Config:**
 The Tenant Config class is the central configuration of an assortment tenant, defines which products are available for 
 the tenant and provides the connection to the used *Product Index* implementation. It needs to implement 
 [`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IndexService/Config/IConfig.php). 
 For detailed information see in-source documentation of the interface. Following implementations are provided by the framework 
 and may be extended:
-   - `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql`: Provides a simple mysql implementation of 
+   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql`: Provides a simple mysql implementation of 
    the product index.
-  - `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ConfigOptimizedMysql`: Provides an optimized mysql implementation 
+  - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ConfigOptimizedMysql`: Provides an optimized mysql implementation 
   of the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elastic search](https://www.elastic.co/) 
   implementation of the product index.
@@ -35,11 +36,9 @@ and may be extended:
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic`: Provides a default [findologic](https://www.findologic.com/) 
   implementation of the product index.
 
-- **Configuring Assortment Tenants within `EcommerceFrameworkConfig.php`:** 
-Each tenant has to be configured within `EcommerceFrameworkConfig.php` by defining the tenant config class and index 
-attributes. Depending on the *Product Index* implementation, additional configuration may be necessary. The configuration 
-also can be outsourced into an additional configuration file. For more information and samples see the 
-[Sample EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L472). 
+- **Configuring Assortment Tenants within configuration:** 
+Each tenant has to be configured within the `index_service` configuration by defining the tenant config class and index 
+attributes. Depending on the *Product Index* implementation, additional configuration may be necessary. 
 
 
 ### Setting current Assortment Tenant for Frontend
