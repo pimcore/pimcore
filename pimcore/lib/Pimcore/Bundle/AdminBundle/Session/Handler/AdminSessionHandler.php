@@ -24,23 +24,11 @@ class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerA
     use LoggerAwareTrait;
 
     /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
      * Contains how many sessions are currently open, this is important, because writeClose() must not be called if
      * there is still an open session, this is especially important if something doesn't use the method use() but get()
      * so the session isn't closed automatically after the action is done
      */
     private $openedSessions = 0;
-
-    public function __construct(SessionInterface $session, RequestStack $requestStack)
-    {
-        parent::__construct($session);
-
-        $this->requestStack = $requestStack;
-    }
 
     /**
      * @inheritdoc
@@ -52,16 +40,6 @@ class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerA
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
         if (!$this->session->isStarted()) {
-            $request = $this->requestStack->getMasterRequest();
-
-            // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
-            if (null !== $request && !$request->cookies->has($this->session->getName())) {
-                // get session work with session-id via get (since SwfUpload doesn't support cookies)
-                if (null !== $sessionId = $request->get($this->session->getName())) {
-                    $this->session->setId($sessionId);
-                }
-            }
-
             $this->session->start();
         }
 

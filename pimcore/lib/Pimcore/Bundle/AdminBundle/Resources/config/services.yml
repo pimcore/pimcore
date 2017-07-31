@@ -11,7 +11,6 @@ services:
     Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
         arguments:
             - '@session'
-            - '@request_stack'
         calls:
             - [setLogger, ['@logger']]
         tags:
