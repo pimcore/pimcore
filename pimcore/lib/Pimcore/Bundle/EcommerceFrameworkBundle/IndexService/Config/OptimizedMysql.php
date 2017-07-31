@@ -65,7 +65,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
      */
     public function setTenantWorker(IWorker $tenantWorker)
     {
-        if (!$tenantWorker instanceof OptimizedMysql) {
+        if (!$tenantWorker instanceof OptimizedMysqlWorker) {
             throw new \InvalidArgumentException(sprintf(
                 'Worker must be an instance of %s',
                 OptimizedMysqlWorker::class
