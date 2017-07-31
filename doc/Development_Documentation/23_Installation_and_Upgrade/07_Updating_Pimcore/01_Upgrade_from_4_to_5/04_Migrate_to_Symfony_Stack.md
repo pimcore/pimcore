@@ -17,6 +17,15 @@ ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NU
 ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
 ```
 
+If you were running the Compatibility Bridge before - please also run the following SQL: 
+```sql 
+update documents_email set legacy = NULL; 
+update documents_newsletter set legacy = NULL; 
+update documents_page set legacy = NULL; 
+update documents_snippet set legacy = NULL; 
+update documents_printpage set legacy = NULL;  
+```
+
 ### Controller
 - Move Controllers to `/src/AppBundle/Controllers/`.
 - Add namespace to controllers and extend them from `Pimcore\Controller\FrontendController` 
