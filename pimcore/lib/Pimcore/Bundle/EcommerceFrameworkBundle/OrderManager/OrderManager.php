@@ -193,7 +193,7 @@ class OrderManager implements IOrderManager
     {
         if (empty($this->orderParentFolder)) {
             // processing config and setting options
-            $parentFolderId = (string)$this->options['order_parent_folder'];
+            $parentFolderId = (string)$this->options['parent_order_folder'];
 
             if (is_numeric($parentFolderId)) {
                 $parentFolderId = (int)$parentFolderId;
