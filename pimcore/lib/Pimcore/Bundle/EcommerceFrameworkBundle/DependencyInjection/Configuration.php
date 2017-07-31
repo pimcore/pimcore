@@ -113,7 +113,10 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $pimcore = $builder->root('pimcore');
-        $pimcore->addDefaultsIfNotSet();
+        $pimcore
+            ->addDefaultsIfNotSet()
+            ->info('Configuration of Pimcore backend menu entries');
+
 
         $pimcore
             ->children()
@@ -123,10 +126,12 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('pricing_rules')
                             ->addDefaultsIfNotSet()
                             ->canBeDisabled()
+                            ->info('Enabling/Disabling Pricing Rules menu entry. User specific settings can be done via permissions.')
                         ->end()
                         ->arrayNode('order_list')
                             ->addDefaultsIfNotSet()
                             ->canBeDisabled()
+                            ->info('Configuring order list menu - enabling/disabling and defining route of order list to inject custom implementations of order backend.')
                             ->children()
                                 ->scalarNode('route')
                                     ->defaultValue('pimcore_ecommerce_backend_admin-order_list')
@@ -148,13 +153,16 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $factory = $builder->root('factory');
-        $factory->addDefaultsIfNotSet();
+        $factory
+            ->addDefaultsIfNotSet()
+            ->info('Configuration of e-commerce framework factory');
 
         $factory
             ->children()
                 ->scalarNode('factory_id')
                     ->defaultValue(Factory::class)
                     ->cannotBeEmpty()
+                    ->info('Service Id of factory implementation')
                 ->end()
                 ->booleanNode('strict_tenants')
                     ->defaultFalse()
@@ -170,7 +178,9 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $environment = $builder->root('environment');
-        $environment->addDefaultsIfNotSet();
+        $environment
+            ->addDefaultsIfNotSet()
+            ->info('Configuration of environment');
         $environment
             ->children()
                 ->scalarNode('environment_id')
@@ -187,13 +197,15 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $cartManager = $builder->root('cart_manager');
-        $cartManager->addDefaultsIfNotSet();
+        $cartManager
+            ->addDefaultsIfNotSet()
+            ->info('Settings for cart manager');
 
         $cartManager
             ->addDefaultsIfNotSet()
             ->children()
                 ->arrayNode('tenants')
-                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant. A tenant named "default" is mandatory.')
+                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant. It needs to be set in every file. A tenant named "default" is mandatory.')
                     ->example([
                         '_defaults' => [
                             'cart' => [
@@ -203,13 +215,24 @@ class Configuration implements ConfigurationInterface
                         'default' => [
                             'cart' => [
                                 'factory_options' => [
-                                    'foo' => 'bar'
+                                    'cart_class_name' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart'
+                                ]
+                            ],
+                            'price_calculator' => [
+                                'modificators' => [
+                                    'shipping' => [
+                                        'class' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping',
+                                        'options' => [
+                                            'charge' => '5.90'
+                                        ]
+                                    ]
                                 ]
                             ]
                         ],
                         'noShipping' => [
                             'price_calculator' => [
-                                'factory_id' => 'PriceCalculatorFactory'
+                                'factory_id' => 'PriceCalculatorFactory',
+                                'modificators' => '~'
                             ]
                         ]
                     ])
@@ -233,16 +256,19 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('cart_manager_id')
                                 ->defaultValue(MultiCartManager::class)
+                                ->info('Service id of cart service')
                             ->end()
                             ->scalarNode('order_manager_tenant')
                                 ->defaultNull()
                             ->end()
                             ->arrayNode('cart')
                                 ->addDefaultsIfNotSet()
+                                ->info('Configuration for carts')
                                 ->children()
                                     ->scalarNode('factory_id')
                                         ->cannotBeEmpty()
                                         ->defaultValue(CartFactory::class)
+                                        ->info('Service id of cart factory and configuration array')
                                     ->end()
                                     ->append($this->buildOptionsNode('factory_options', [
                                         'cart_class_name'       => Cart::class,
@@ -259,6 +285,7 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->append($this->buildOptionsNode('factory_options'))
                                     ->arrayNode('modificators')
+                                        ->info('List price modificators for cart, e.g. for shipping-cost, special discounts, etc. Key is name of modificator.')
                                         ->prototype('array')
                                             ->children()
                                                 ->scalarNode('class')->isRequired()->end()
@@ -406,6 +433,7 @@ class Configuration implements ConfigurationInterface
 
         $priceSystems = $builder->root('price_systems');
         $priceSystems
+            ->info('Configuration of price systems - key is name of price system.')
             ->useAttributeAsKey('name')
             ->prototype('array')
                 ->beforeNormalization()
@@ -432,6 +460,7 @@ class Configuration implements ConfigurationInterface
         $availabilitySystems = $builder->root('availability_systems');
         $availabilitySystems
             ->useAttributeAsKey('name')
+            ->info('Configuration of availability systems - key is name of price system.')
             ->prototype('array')
                 ->beforeNormalization()
                     ->ifString()
@@ -577,7 +606,9 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $indexService = $builder->root('index_service');
-        $indexService->addDefaultsIfNotSet();
+        $indexService
+            ->addDefaultsIfNotSet()
+            ->info('Configuration of index service');
 
         $indexService
             ->children()
@@ -590,7 +621,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('default')
                 ->end()
                 ->arrayNode('tenants')
-                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant.')
+                    ->info('Configure assortment tenants - at least one tenant has to be configured. If a _defaults key is set, it will be merged into every tenant.')
                     ->useAttributeAsKey('name', false)
                     ->validate()
                         ->always(function (array $v) {
@@ -655,14 +686,22 @@ class Configuration implements ConfigurationInterface
                         ->canBeDisabled()
                         ->children()
                             ->scalarNode('config_id')
+                                ->info('Service id of config implementation')
                                 ->cannotBeEmpty()
                                 ->defaultValue(DefaultMysql::class)
                             ->end()
                             ->append($this->buildOptionsNode('config_options'))
                             ->scalarNode('worker_id')
+                                ->info('Worker id of worker implementation. Can be omitted, then default worker id of configured config is used.')
                                 ->cannotBeEmpty()
                             ->end()
                             ->arrayNode('placeholders')
+                                ->info('Placeholder values in this tenant attributes definition (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
+                                ->example([
+                                    'placeholders' => [
+                                        '%%locale%%' => 'de_AT'
+                                    ]
+                                ])
                                 ->defaultValue([])
                                 ->beforeNormalization()
                                     ->castToArray()
@@ -670,6 +709,7 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->arrayNode('search_attributes')
+                                ->info('Add columns for general fulltext search index of product list - they must be part of the column configuration below')
                                 ->defaultValue([])
                                 ->beforeNormalization()
                                     ->castToArray()
@@ -677,6 +717,7 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->arrayNode('attributes')
+                                ->info('Attributes definition for product index - key is name of attribute')
                                 ->useAttributeAsKey('name', false)
                                 ->beforeNormalization()
                                     ->always(function ($v) {
@@ -715,16 +756,16 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->children()
                                         ->scalarNode('name')->isRequired()->end()
-                                        ->scalarNode('field_name')->defaultNull()->end()
-                                        ->scalarNode('type')->defaultNull()->end()
-                                        ->scalarNode('locale')->defaultNull()->end()
-                                        ->scalarNode('filter_group')->defaultNull()->end()
+                                        ->scalarNode('field_name')->defaultNull()->info('Defines object attribute field name, can be omitted if the same like name of index attribute')->end()
+                                        ->scalarNode('type')->defaultNull()->info('Type of index attribute (database column or elastic search data type)')->end()
+                                        ->scalarNode('locale')->defaultNull()->info('Locale for localized fields, can be omitted if not necessary')->end()
+                                        ->scalarNode('filter_group')->defaultNull()->info('Defines filter group for filter definition in filter service')->end()
                                         ->append($this->buildOptionsNode())
-                                        ->scalarNode('getter_id')->defaultNull()->end()
+                                        ->scalarNode('getter_id')->defaultNull()->info('Service id of getter for this field')->end()
                                         ->append($this->buildOptionsNode('getter_options'))
-                                        ->scalarNode('interpreter_id')->defaultNull()->end()
+                                        ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
-                                        ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->end()
+                                        ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()
                             ->end()
