@@ -160,9 +160,12 @@ class Setup extends Model\AbstractModel
         ]));
 
         // generate parameters.yml
-        $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
-        $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
-        File::put(PIMCORE_APP_ROOT . '/config/parameters.yml', $parameters);
+        $parametersFilePath = PIMCORE_APP_ROOT . '/config/parameters.yml';
+        if (!file_exists($parametersFilePath)) {
+            $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
+            $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
+            File::put($parametersFilePath, $parameters);
+        }
     }
 
     /**
