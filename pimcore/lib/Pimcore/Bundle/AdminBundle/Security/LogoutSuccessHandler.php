@@ -81,7 +81,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         $this->tokenStorage->setToken(null);
 
         // clear open edit locks for this session
-        Editlock::clearSession(session_id());
+        Editlock::clearSession(Session::getSessionId());
 
         /** @var LogoutEvent $event */
         $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {

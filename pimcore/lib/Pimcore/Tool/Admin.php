@@ -139,12 +139,8 @@ class Admin
      *
      * @throws \Exception
      */
-    public static function activateMaintenanceMode($sessionId = null)
+    public static function activateMaintenanceMode($sessionId)
     {
-        if (empty($sessionId)) {
-            $sessionId = session_id();
-        }
-
         if (empty($sessionId)) {
             throw new \Exception("It's not possible to activate the maintenance mode without a session-id");
         }

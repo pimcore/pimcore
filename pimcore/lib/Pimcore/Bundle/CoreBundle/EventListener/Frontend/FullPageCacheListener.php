@@ -255,15 +255,16 @@ class FullPageCacheListener extends AbstractFrontendListener
      */
     public function onKernelResponse(KernelEvent $event)
     {
-        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
-            return false;
-        }
-
         if (!$event->isMasterRequest()) {
             return false;
         }
 
-        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        $request = $event->getRequest();
+        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return false;
         }
 
@@ -273,7 +274,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             return false;
         }
 
-        if ($this->enabled && session_id()) {
+        if ($this->enabled && !empty($request->getSession()->getId())) {
             $this->disable('session in use');
         }
 
