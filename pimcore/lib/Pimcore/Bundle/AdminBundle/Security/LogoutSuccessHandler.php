@@ -109,6 +109,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
         $response->headers->setCookie(new Cookie('pimcore_opentabs', false, 315554400, '/'));
+        $response->headers->clearCookie('pimcore_admin_sid', '/', null, false, true);
 
         $this->logger->debug('Logout succeeded, redirecting to ' . $response->getTargetUrl());
 
