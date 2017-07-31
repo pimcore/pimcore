@@ -311,7 +311,7 @@ class QPay implements IPayment
         // restore price object for payment status
         $decimal = Decimal::zero();
         if($authorizedData['amount']) {
-            Decimal::create($authorizedData['amount']);
+            $decimal = Decimal::create($authorizedData['amount']);
         }
         $price = new Price($decimal, new Currency($authorizedData['currency']));
 
