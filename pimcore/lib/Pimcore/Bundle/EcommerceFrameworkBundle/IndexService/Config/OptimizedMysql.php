@@ -72,6 +72,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
             ));
         }
 
-        parent::setTenantWorker($tenantWorker);
+        $this->checkTenantWorker($tenantWorker);
+        $this->tenantWorker = $tenantWorker;
     }
 }

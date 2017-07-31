@@ -113,6 +113,18 @@ abstract class AbstractConfig implements IConfig
      */
     public function setTenantWorker(IWorker $tenantWorker)
     {
+        $this->checkTenantWorker($tenantWorker);
+        $this->tenantWorker = $tenantWorker;
+    }
+
+    /**
+     * Checks if tenant worker matches prerequisites (config wrapped in worker is this instance and instance has no
+     * worker set yet).
+     *
+     * @param IWorker $tenantWorker
+     */
+    protected function checkTenantWorker(IWorker $tenantWorker)
+    {
         if (null !== $this->tenantWorker) {
             throw new \LogicException(sprintf('Worker for tenant "%s" is already set', $this->tenantName));
         }
@@ -121,8 +133,6 @@ abstract class AbstractConfig implements IConfig
         if ($tenantWorker->getTenantConfig() !== $this) {
             throw new \LogicException('Worker config does not match the config the worker is about to be set to');
         }
-
-        $this->tenantWorker = $tenantWorker;
     }
 
     /**
