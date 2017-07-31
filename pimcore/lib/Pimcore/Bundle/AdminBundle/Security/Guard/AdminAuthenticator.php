@@ -217,8 +217,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 $pimcoreUser = $user->getUser();
 
                 Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
-                    $adminSession->set('user', $pimcoreUser);
                     Session::regenerateId();
+                    $adminSession->set('user', $pimcoreUser);
                 });
             }
         }
