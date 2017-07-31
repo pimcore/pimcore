@@ -391,7 +391,7 @@ class Factory
 
     private function resolveCheckoutTenant(PsrContainerInterface $locator, string $tenant = null): string
     {
-        // explicitely checking for empty here to catch situations where the tenant is just an empty string
+        // explicitly checking for empty here to catch situations where the tenant is just an empty string
         if (empty($tenant)) {
             $tenant = $this->getEnvironment()->getCurrentCheckoutTenant();
         }
