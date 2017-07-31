@@ -309,7 +309,11 @@ class QPay implements IPayment
         $this->setAuthorizedData($authorizedData);
 
         // restore price object for payment status
-        $price = new Price(Decimal::create($authorizedData['amount']), new Currency($authorizedData['currency']));
+        $decimal = Decimal::zero();
+        if($authorizedData['amount']) {
+            Decimal::create($authorizedData['amount']);
+        }
+        $price = new Price($decimal, new Currency($authorizedData['currency']));
 
         return new Status(
             $response['orderIdent'],
