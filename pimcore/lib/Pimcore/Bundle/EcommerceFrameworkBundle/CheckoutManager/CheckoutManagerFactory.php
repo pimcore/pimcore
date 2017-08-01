@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,9 +32,14 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     protected $environment;
 
     /**
-     * @var Factory
+     * @var IOrderManagerLocator
      */
-    protected $factory;
+    protected $orderManagers;
+
+    /**
+     * @var ICommitOrderProcessorLocator
+     */
+    protected $commitOrderProcessors;
 
     /**
      * Array of checkout step definitions
@@ -57,24 +63,18 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
      */
     protected $className = CheckoutManager::class;
 
-    /**
-     * @param IEnvironment $environment
-     * @param Factory $factory
-     * @param ICommitOrderProcessor $commitOrderProcessor
-     * @param array $checkoutStepDefinitions
-     * @param IPayment|null $paymentProvider
-     * @param array $options
-     */
     public function __construct(
         IEnvironment $environment,
-        Factory $factory,
+        IOrderManagerLocator $orderManagers,
+        ICommitOrderProcessorLocator $commitOrderProcessors,
         array $checkoutStepDefinitions,
         IPayment $paymentProvider = null,
         array $options = []
     )
     {
-        $this->environment     = $environment;
-        $this->factory         = $factory;
+        $this->environment = $environment;
+        $this->orderManagers = $orderManagers;
+        $this->commitOrderProcessors = $commitOrderProcessors;
         $this->paymentProvider = $paymentProvider;
 
         $this->processOptions($options);
@@ -142,7 +142,8 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         $this->checkoutManagers[$cartId] = new $className(
             $cart,
             $this->environment,
-            $this->factory,
+            $this->orderManagers,
+            $this->commitOrderProcessors,
             $checkoutSteps,
             $this->paymentProvider
         );

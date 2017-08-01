@@ -14,7 +14,16 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\IndexService\AttributeFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\NameServiceLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\TenantAwareServiceLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -145,7 +154,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping[$tenant] = $aliasName;
         }
 
-        $this->setupLocator($container, 'cart_manager', $mapping);
+        $this->setupComponentLocator(
+            $container, 'cart_manager', $mapping,
+            TenantAwareServiceLocator::class, CartManagerLocator::class
+        );
     }
 
     private function registerOrderManagerConfiguration(ContainerBuilder $container, array $config)
@@ -174,7 +186,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping[$tenant] = $aliasName;
         }
 
-        $this->setupLocator($container, 'order_manager', $mapping);
+        $this->setupComponentLocator(
+            $container, 'order_manager', $mapping,
+            TenantAwareServiceLocator::class, OrderManagerLocator::class
+        );
     }
 
     private function registerPricingManagerConfiguration(ContainerBuilder $container, array $config)
@@ -201,7 +216,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping[$name] = $aliasName;
         }
 
-        $this->setupLocator($container, 'price_system', $mapping);
+        $this->setupComponentLocator(
+            $container, 'price_system', $mapping,
+            NameServiceLocator::class, PriceSystemLocator::class
+        );
     }
 
     private function registerAvailabilitySystemsConfiguration(ContainerBuilder $container, array $config)
@@ -215,7 +233,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping[$name] = $aliasName;
         }
 
-        $this->setupLocator($container, 'availability_system', $mapping);
+        $this->setupComponentLocator(
+            $container, 'availability_system', $mapping,
+            NameServiceLocator::class, AvailabilitySystemLocator::class
+        );
     }
 
     private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config, array $orderManagerTenants)
@@ -263,8 +284,15 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $checkoutManagerFactoryMapping[$tenant] = $checkoutManagerFactoryAliasName;
         }
 
-        $this->setupLocator($container, 'checkout_manager.commit_order_processor', $commitOrderProcessorMapping);
-        $this->setupLocator($container, 'checkout_manager.factory', $checkoutManagerFactoryMapping);
+        $this->setupComponentLocator(
+            $container, 'checkout_manager.commit_order_processor', $commitOrderProcessorMapping,
+            TenantAwareServiceLocator::class, CommitOrderProcessorLocator::class
+        );
+
+        $this->setupComponentLocator(
+            $container, 'checkout_manager.factory', $checkoutManagerFactoryMapping,
+            TenantAwareServiceLocator::class, CheckoutManagerFactoryLocator::class
+        );
     }
 
     private function registerPaymentManagerConfiguration(ContainerBuilder $container, array $config)
@@ -295,7 +323,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping[$name] = $serviceId;
         }
 
-        $this->setupLocator($container, 'payment_manager.provider', $mapping);
+        $this->setupServiceLocator($container, 'payment_manager.provider', $mapping);
     }
 
     private function registerIndexServiceConfig(ContainerBuilder $container, array $config)
@@ -368,7 +396,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping[$tenant] = $serviceId;
         }
 
-        $this->setupLocator($container, 'filter_service', $mapping);
+        $this->setupComponentLocator(
+            $container, 'filter_service', $mapping,
+            TenantAwareServiceLocator::class, FilterServiceLocator::class
+        );
     }
 
     private function registerVoucherServiceConfig(ContainerBuilder $container, array $config)
@@ -446,16 +477,32 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
     }
 
-    private function setupLocator(ContainerBuilder $container, string $id, array $mapping)
+    private function setupComponentLocator(ContainerBuilder $container, string $id, array $mapping, string $parentDefinition, string $class)
+    {
+        $serviceLocator = $this->setupServiceLocator($container, $id, $mapping, false);
+
+        $locator = new ChildDefinition($parentDefinition);
+        $locator->setClass($class);
+        $locator->setPublic(true);
+        $locator->setArgument('$locator', $serviceLocator);
+
+        $container->setDefinition(sprintf('pimcore_ecommerce.locator.%s', $id), $locator);
+    }
+
+    private function setupServiceLocator(ContainerBuilder $container, string $id, array $mapping, bool $register = true)
     {
         foreach ($mapping as $name => $reference) {
             $mapping[$name] = new Reference($reference);
         }
 
-        $locator = new Definition(ServiceLocator::class, [$mapping]);
-        $locator->setPublic(false);
-        $locator->addTag('container.service_locator');
+        $serviceLocator = new Definition(ServiceLocator::class, [$mapping]);
+        $serviceLocator->setPublic(false);
+        $serviceLocator->addTag('container.service_locator');
 
-        $container->setDefinition(sprintf('pimcore_ecommerce.locator.%s', $id), $locator);
+        if ($register) {
+            $container->setDefinition(sprintf('pimcore_ecommerce.locator.%s', $id), $serviceLocator);
+        }
+
+        return $serviceLocator;
     }
 }

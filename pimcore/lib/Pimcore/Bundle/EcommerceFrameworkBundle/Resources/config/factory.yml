@@ -6,7 +6,6 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Factory:
         arguments:
-            - '%pimcore_ecommerce.factory.strict_tenants%'
             - '@service_container'
             - '@pimcore_ecommerce.locator.cart_manager'
             - '@pimcore_ecommerce.locator.order_manager'
@@ -15,3 +14,13 @@ services:
             - '@pimcore_ecommerce.locator.checkout_manager.factory'
             - '@pimcore_ecommerce.locator.checkout_manager.commit_order_processor'
             - '@pimcore_ecommerce.locator.filter_service'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\NameServiceLocator:
+        abstract: true
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\TenantAwareServiceLocator:
+        abstract: true
+        arguments:
+            - '@?' # locator
+            - '@pimcore_ecommerce.environment'
+            - '%pimcore_ecommerce.factory.strict_tenants%'

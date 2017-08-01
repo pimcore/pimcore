@@ -15,20 +15,27 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
@@ -38,13 +45,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
 {
-    /**
-     * If true the factory will not fall back to the default tenant if a tenant is requested but not existing
-     *
-     * @var bool
-     */
-    private $strictTenants = false;
-
     /**
      * @var ContainerInterface
      */
@@ -58,49 +58,49 @@ class Factory
     /**
      * Tenant specific cart managers
      *
-     * @var PsrContainerInterface
+     * @var ICartManagerLocator
      */
     private $cartManagers;
 
     /**
      * Tenant specific order managers
      *
-     * @var PsrContainerInterface
+     * @var IOrderManagerLocator
      */
     private $orderManagers;
 
     /**
      * Price systems registered by name
      *
-     * @var PsrContainerInterface
+     * @var IPriceSystemLocator
      */
     private $priceSystems;
 
     /**
      * Availability systems registered by name
      *
-     * @var PsrContainerInterface
+     * @var IAvailabilitySystemLocator
      */
     private $availabilitySystems;
 
     /**
      * Checkout manager factories registered by tenant
      *
-     * @var PsrContainerInterface
+     * @var ICheckoutManagerFactoryLocator
      */
     private $checkoutManagerFactories;
 
     /**
      * Commit order processors registered by tenant
      *
-     * @var PsrContainerInterface
+     * @var ICommitOrderProcessorLocator
      */
     private $commitOrderProcessors;
 
     /**
      * Filter services registered by ^tenant
      *
-     * @var PsrContainerInterface
+     * @var IFilterServiceLocator
      */
     private $filterServices;
 
@@ -109,34 +109,30 @@ class Factory
      * injected through a service locator which is indexed by tenant/name. All other services
      * are loaded from the container on demand to make sure only services needed are built.
      *
-     * @param bool $strictTenants
      * @param ContainerInterface $container
-     * @param PsrContainerInterface $cartManagers
-     * @param PsrContainerInterface $orderManagers
-     * @param PsrContainerInterface $priceSystemsLocator
-     * @param PsrContainerInterface $availabilitySystems
-     * @param PsrContainerInterface $checkoutManagerFactories
-     * @param PsrContainerInterface $commitOrderProcessors
-     * @param PsrContainerInterface $filterServices
+     * @param ICartManagerLocator $cartManagers
+     * @param IOrderManagerLocator $orderManagers
+     * @param IPriceSystemLocator $priceSystems
+     * @param IAvailabilitySystemLocator $availabilitySystems
+     * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
+     * @param ICommitOrderProcessorLocator $commitOrderProcessors
+     * @param IFilterServiceLocator $filterServices
      */
     public function __construct(
-        bool $strictTenants = false,
         ContainerInterface $container,
-        PsrContainerInterface $cartManagers,
-        PsrContainerInterface $orderManagers,
-        PsrContainerInterface $priceSystemsLocator,
-        PsrContainerInterface $availabilitySystems,
-        PsrContainerInterface $checkoutManagerFactories,
-        PsrContainerInterface $commitOrderProcessors,
-        PsrContainerInterface $filterServices
+        ICartManagerLocator $cartManagers,
+        IOrderManagerLocator $orderManagers,
+        IPriceSystemLocator $priceSystems,
+        IAvailabilitySystemLocator $availabilitySystems,
+        ICheckoutManagerFactoryLocator $checkoutManagerFactories,
+        ICommitOrderProcessorLocator $commitOrderProcessors,
+        IFilterServiceLocator $filterServices
     )
     {
-        $this->strictTenants = $strictTenants;
-
         $this->container                = $container;
         $this->cartManagers             = $cartManagers;
         $this->orderManagers            = $orderManagers;
-        $this->priceSystems             = $priceSystemsLocator;
+        $this->priceSystems             = $priceSystems;
         $this->availabilitySystems      = $availabilitySystems;
         $this->checkoutManagerFactories = $checkoutManagerFactories;
         $this->commitOrderProcessors    = $commitOrderProcessors;
@@ -160,20 +156,10 @@ class Factory
      * @param string|null $tenant
      *
      * @return ICartManager
-     * @throws UnsupportedException
      */
     public function getCartManager(string $tenant = null): ICartManager
     {
-        $tenant = $this->resolveCheckoutTenant($this->cartManagers, $tenant);
-
-        if (!$this->cartManagers->has($tenant)) {
-            throw new UnsupportedException(sprintf(
-                'Cart manager for tenant "%s" is not defined. Please check the configuration.',
-                $tenant
-            ));
-        }
-
-        return $this->cartManagers->get($tenant);
+        return $this->cartManagers->getCartManager($tenant);
     }
 
     /**
@@ -183,20 +169,10 @@ class Factory
      * @param string|null $tenant
      *
      * @return IOrderManager
-     * @throws UnsupportedException
      */
     public function getOrderManager(string $tenant = null): IOrderManager
     {
-        $tenant = $this->resolveCheckoutTenant($this->orderManagers, $tenant);
-
-        if (!$this->orderManagers->has($tenant)) {
-            throw new UnsupportedException(sprintf(
-                'Order manager for tenant "%s" is not defined. Please check the configuration.',
-                $tenant
-            ));
-        }
-
-        return $this->orderManagers->get($tenant);
+        return $this->orderManagers->getOrderManager($tenant);
     }
 
     public function getPricingManager(): IPricingManager
@@ -210,22 +186,10 @@ class Factory
      * @param string|null $name
      *
      * @return IPriceSystem
-     * @throws UnsupportedException
      */
     public function getPriceSystem(string $name = null): IPriceSystem
     {
-        if (empty($name)) {
-            $name = 'default';
-        }
-
-        if (!$this->priceSystems->has($name)) {
-            throw new UnsupportedException(sprintf(
-                'Price system "%s" is not supported. Please check the configuration.',
-                $name
-            ));
-        }
-
-        return $this->priceSystems->get($name);
+        return $this->priceSystems->getPriceSystem($name);
     }
 
     /**
@@ -234,22 +198,10 @@ class Factory
      * @param string|null $name
      *
      * @return IAvailabilitySystem
-     * @throws UnsupportedException
      */
     public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
     {
-        if (empty($name)) {
-            $name = 'default';
-        }
-
-        if (!$this->availabilitySystems->has($name)) {
-            throw new UnsupportedException(sprintf(
-                'Availability system "%s" is not supported. Please check the configuration.',
-                $name
-            ));
-        }
-
-        return $this->availabilitySystems->get($name);
+        return $this->availabilitySystems->getAvailabilitySystem($name);
     }
 
     /**
@@ -260,21 +212,10 @@ class Factory
      * @param string|null $tenant
      *
      * @return ICheckoutManager
-     * @throws UnsupportedException
      */
     public function getCheckoutManager(ICart $cart, string $tenant = null): ICheckoutManager
     {
-        $tenant = $this->resolveCheckoutTenant($this->checkoutManagerFactories, $tenant);
-
-        if (!$this->checkoutManagerFactories->has($tenant)) {
-            throw new UnsupportedException(sprintf(
-                'There is no factory defined for checkout manager tenant "%s". Please check the configuration.',
-                $tenant
-            ));
-        }
-
-        /** @var ICheckoutManagerFactory $factory */
-        $factory = $this->checkoutManagerFactories->get($tenant);
+        $factory = $this->checkoutManagerFactories->getCheckoutManagerFactory($tenant);
 
         return $factory->createCheckoutManager($cart);
     }
@@ -285,20 +226,10 @@ class Factory
      * @param string|null $tenant
      *
      * @return ICommitOrderProcessor
-     * @throws UnsupportedException
      */
     public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
     {
-        $tenant = $this->resolveCheckoutTenant($this->commitOrderProcessors, $tenant);
-
-        if (!$this->commitOrderProcessors->has($tenant)) {
-            throw new UnsupportedException(sprintf(
-                'Commit order processor for checkout manager tenant "%s" is not defined. Please check the configuration.',
-                $tenant
-            ));
-        }
-
-        return $this->commitOrderProcessors->get($tenant);
+        return $this->commitOrderProcessors->getCommitOrderProcessor($tenant);
     }
 
     public function getPaymentManager(): IPaymentManager
@@ -323,20 +254,10 @@ class Factory
      * @param string|null $tenant
      *
      * @return FilterService
-     * @throws UnsupportedException
      */
     public function getFilterService(string $tenant = null): FilterService
     {
-        $tenant = $this->resolveAssortmentTenant($this->filterServices, $tenant);
-
-        if (!$this->filterServices->has($tenant)) {
-            throw new UnsupportedException(sprintf(
-                'Filter service for assortment tenant "%s" is not registered. Please check the configuration.',
-                $tenant
-            ));
-        }
-
-        return $this->filterServices->get($tenant);
+        return $this->filterServices->getFilterService($tenant);
     }
 
     public function getAllTenants(): array
@@ -377,39 +298,5 @@ class Factory
     {
         $this->getCartManager()->save();
         $this->environment->save();
-    }
-
-    private function resolveAssortmentTenant(PsrContainerInterface $locator, string $tenant = null): string
-    {
-        // explicitly checking for empty here to catch situations where the tenant is just an empty string
-        if (empty($tenant)) {
-            $tenant = $this->getEnvironment()->getCurrentAssortmentTenant();
-        }
-
-        return $this->resolveTenant($locator, $tenant);
-    }
-
-    private function resolveCheckoutTenant(PsrContainerInterface $locator, string $tenant = null): string
-    {
-        // explicitly checking for empty here to catch situations where the tenant is just an empty string
-        if (empty($tenant)) {
-            $tenant = $this->getEnvironment()->getCurrentCheckoutTenant();
-        }
-
-        return $this->resolveTenant($locator, $tenant);
-    }
-
-    private function resolveTenant(PsrContainerInterface $locator, string $tenant = null): string
-    {
-        if (!empty($tenant)) {
-            // if tenant isn't available and we're not in strict tenant mode, fall
-            // back to the default tenant
-            // in strict tenant mode, just return the tenant, no matter if it exists or not
-            if ($this->strictTenants || $locator->has($tenant)) {
-                return $tenant;
-            }
-        }
-
-        return 'default';
     }
 }

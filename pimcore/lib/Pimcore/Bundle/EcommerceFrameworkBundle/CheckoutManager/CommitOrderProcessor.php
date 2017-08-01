@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
@@ -32,18 +33,18 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     const LOGGER_NAME = 'commit-order-processor';
 
     /**
-     * @var Factory
+     * @var IOrderManagerLocator
      */
-    protected $factory;
+    protected $orderManagers;
 
     /**
      * @var string
      */
     protected $confirmationMail = '/emails/order-confirmation';
 
-    public function __construct(Factory $factory, array $options = [])
+    public function __construct(IOrderManagerLocator $orderManagers, array $options = [])
     {
-        $this->factory = $factory;
+        $this->orderManagers = $orderManagers;
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -61,13 +62,6 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined('confirmation_mail');
-    }
-
-    protected function getOrderManager(): IOrderManager
-    {
-        // fetching order manager from factory at runtime as it needs to be
-        // resolved from current checkout context
-        return $this->factory->getOrderManager();
     }
 
     /**
@@ -134,7 +128,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             $paymentStatus = $paymentResponseParams;
         }
 
-        $order = $this->getOrderManager()->getOrderByPaymentStatus($paymentStatus);
+        $order = $this->orderManagers->getOrderManager()->getOrderByPaymentStatus($paymentStatus);
 
         if ($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
             $paymentInformationCollection = $order->getPaymentInfo();
@@ -170,7 +164,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             return $committedOrder;
         }
 
-        $orderManager = $this->getOrderManager();
+        $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if (empty($order)) {
@@ -272,7 +266,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         $dateTime->add(new \DateInterval('PT1H'));
         $timestamp = $dateTime->getTimestamp();
 
-        $orderManager = $this->getOrderManager();
+        $orderManager = $this->orderManagers->getOrderManager();
 
         //Abort orders with payment pending
         $list = $orderManager->buildOrderList();
