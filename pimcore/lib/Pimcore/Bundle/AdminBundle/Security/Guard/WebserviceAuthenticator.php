@@ -52,12 +52,10 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
             ];
         } else {
             // check for existing session user
-            if (Session::requestHasSessionId($request)) {
-                if ($pimcoreUser = Authentication::authenticateSession()) {
-                    return [
-                        'user' => $pimcoreUser
-                    ];
-                }
+            if (null !== $pimcoreUser = Authentication::authenticateSession()) {
+                return [
+                    'user' => $pimcoreUser
+                ];
             }
         }
 

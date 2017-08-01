@@ -26,6 +26,7 @@ use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -217,8 +218,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 $pimcoreUser = $user->getUser();
 
                 Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
-                    $adminSession->set('user', $pimcoreUser);
                     Session::regenerateId();
+                    $adminSession->set('user', $pimcoreUser);
                 });
             }
         }
@@ -288,7 +289,10 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         }
 
         if ($url) {
-            return new RedirectResponse($url);
+            $response = new RedirectResponse($url);
+            $response->headers->setCookie(new Cookie('pimcore_admin_sid', true, 0, '/', null, false, true));
+
+            return $response;
         }
     }
 

@@ -26,16 +26,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 interface AdminSessionHandlerInterface
 {
     /**
-     * @param string $name
-     *
-     * @return mixed|null
-     */
-    public function getOption(string $name);
-
-    /**
      * @return string
      */
-    public function getSessionName(): string;
+    public function getSessionName();
 
     /**
      * Returns the session ID
@@ -51,7 +44,7 @@ interface AdminSessionHandlerInterface
      *
      * @param callable $callable
      *
-     * @return mixed
+     * @return mixed Callable result
      */
     public function useSession(callable $callable);
 
@@ -64,7 +57,7 @@ interface AdminSessionHandlerInterface
      *
      * @return mixed
      */
-    public function useSessionAttributeBag(callable $callable, $name = 'pimcore_admin');
+    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin');
 
     /**
      * Loads an attribute bag, optionally lock it if supported and close the session.
@@ -80,7 +73,7 @@ interface AdminSessionHandlerInterface
      *
      * @return bool
      */
-    public function invalidate(int $lifetime = null);
+    public function invalidate(int $lifetime = null): bool;
 
     /**
      * Regenerates the session ID
@@ -92,15 +85,7 @@ interface AdminSessionHandlerInterface
     public function regenerateId(): bool;
 
     /**
-     * Loads the admin session and backs up a currently open foreign session. You MUST call writeClose() after usage
-     * to make sure the admin session is written and foreign sessions are restored.
-     *
-     * @return SessionInterface
-     */
-    public function loadSession(): SessionInterface;
-
-    /**
-     * Directly loads an attribute bag from the session. You MUST call writeClose() after usage
+     * Directly loads an attribute bag from the session. You should call writeClose() after usage
      * to make sure the admin session is written and foreign sessions are restored.
      *
      * @param string $name
@@ -111,8 +96,7 @@ interface AdminSessionHandlerInterface
     public function loadAttributeBag(string $name, SessionInterface $session = null): SessionBagInterface;
 
     /**
-     * Saves the session if it is the last admin session which was opened and restore a foreign session if there is one
-     * available.
+     * Saves the session if it is the last admin session which was opened
      */
     public function writeClose();
 
