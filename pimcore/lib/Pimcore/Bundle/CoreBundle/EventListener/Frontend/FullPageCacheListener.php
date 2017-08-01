@@ -274,7 +274,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             return false;
         }
 
-        if ($this->enabled && !empty($request->getSession()->getId())) {
+        if ($this->enabled && $request->hasSession() && !empty($request->getSession()->getId())) {
             $this->disable('session in use');
         }
 

@@ -79,6 +79,8 @@ class MaintenancePageListener
             return;
         }
 
+        $request = $event->getRequest();
+
         $maintenance = false;
         $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
 
@@ -89,14 +91,8 @@ class MaintenancePageListener
         $conf = include($file);
         if (isset($conf['sessionId'])) {
             $requestSessionId = null;
-
-            try {
-                $session = $event->getRequest()->getSession();
-                if ($session) {
-                    $requestSessionId = $session->getId();
-                }
-            } catch (\Exception $e) {
-                // noop
+            if ($request->hasSession()) {
+                $requestSessionId = $request->getSession()->getId();
             }
 
             if ($conf['sessionId'] != $requestSessionId) {
@@ -110,7 +106,7 @@ class MaintenancePageListener
         // this is to avoid problems with monitoring agents
         $serverIps = ['127.0.0.1'];
 
-        if ($maintenance && !in_array($event->getRequest()->getClientIp(), $serverIps)) {
+        if ($maintenance && !in_array($request->getClientIp(), $serverIps)) {
             $response = new Response($this->getTemplateCode(), 503);
             $event->setResponse($response);
         }
