@@ -19,7 +19,7 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator;
-use Pimcore\Bundle\AdminBundle\Session\Handler\SimpleAdminSessionHandler;
+use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler;
 use Pimcore\Cache;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Render\MigrationSubscriber;
@@ -185,7 +185,7 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         $session = new Session(new MockArraySessionStorage());
         $this->adminSessionConfigurator->configure($session);
 
-        $handler = new SimpleAdminSessionHandler($session);
+        $handler = new AdminSessionHandler($session);
 
         Tool\Session::setHandler($handler);
     }

@@ -62,6 +62,24 @@ final class SystemEvents
     const MAINTENANCE_MODE_DEACTIVATE = 'pimcore.system.maintenance_mode.deactivate';
 
     /**
+     * This event is fired when maintenance mode is scheduled for the next login
+     *
+     * @Event()
+     *
+     * @var string
+     */
+    const MAINTENANCE_MODE_SCHEDULE_LOGIN = 'pimcore.system.maintenance_mode.schedule_login';
+
+    /**
+     * This event is fired when maintenance mode is unscheduled
+     *
+     * @Event()
+     *
+     * @var string
+     */
+    const MAINTENANCE_MODE_UNSCHEDULE_LOGIN = 'pimcore.system.maintenance_mode.unschedule_login';
+
+    /**
      * This event is fired on Full-Page Cache clear
      *
      * @Event()

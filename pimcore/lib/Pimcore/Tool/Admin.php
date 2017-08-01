@@ -134,17 +134,18 @@ class Admin
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
+    public static function getMaintenanceModeScheduleLoginFile()
+    {
+        return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
+    }
+
     /**
      * @param null $sessionId
      *
      * @throws \Exception
      */
-    public static function activateMaintenanceMode($sessionId = null)
+    public static function activateMaintenanceMode($sessionId)
     {
-        if (empty($sessionId)) {
-            $sessionId = session_id();
-        }
-
         if (empty($sessionId)) {
             throw new \Exception("It's not possible to activate the maintenance mode without a session-id");
         }
@@ -187,6 +188,40 @@ class Admin
         }
 
         return false;
+    }
+
+    public static function isMaintenanceModeScheduledForLogin(): bool
+    {
+        $file = self::getMaintenanceModeScheduleLoginFile();
+
+        if (is_file($file)) {
+            $conf = include($file);
+            if (isset($conf['schedule']) && $conf['schedule']) {
+                return true;
+            } else {
+                @unlink($file);
+            }
+        }
+
+        return false;
+    }
+
+    public static function scheduleMaintenanceModeOnLogin()
+    {
+        File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
+            'schedule' => true
+        ]));
+
+        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0777); // so it can be removed also via FTP, ...
+
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
+    }
+
+    public static function unscheduleMaintenanceModeOnLogin()
+    {
+        @unlink(self::getMaintenanceModeScheduleLoginFile());
+
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
     }
 
     /**

@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
+use Pimcore\Tool\Session;
 
 /**
  * @method \Pimcore\Model\Element\Editlock\Dao getDao()
@@ -68,7 +69,7 @@ class Editlock extends Model\AbstractModel
     public static function isLocked($cid, $ctype)
     {
         if ($lock = self::getByElement($cid, $ctype)) {
-            if ((time() - $lock->getDate()) > 3600 || $lock->getSessionId() == session_id()) {
+            if ((time() - $lock->getDate()) > 3600 || $lock->getSessionId() === Session::getSessionId()) {
                 // lock is out of date unlock it
                 self::unlock($cid, $ctype);
 
@@ -135,7 +136,7 @@ class Editlock extends Model\AbstractModel
         $lock->setCtype($ctype);
         $lock->setDate(time());
         $lock->setUserId($user->getId());
-        $lock->setSessionId(session_id());
+        $lock->setSessionId(Session::getSessionId());
         $lock->save();
 
         return $lock;

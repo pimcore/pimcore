@@ -21,11 +21,13 @@ use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -217,8 +219,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 $pimcoreUser = $user->getUser();
 
                 Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
-                    $adminSession->set('user', $pimcoreUser);
                     Session::regenerateId();
+                    $adminSession->set('user', $pimcoreUser);
                 });
             }
         }
@@ -268,6 +270,13 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         // set user on runtime cache for legacy compatibility
         Runtime::set('pimcore_admin_user', $user);
 
+        if ($user->isAdmin()) {
+            if (Admin::isMaintenanceModeScheduledForLogin()) {
+                Admin::activateMaintenanceMode(Session::getSessionId());
+                Admin::unscheduleMaintenanceModeOnLogin();
+            }
+        }
+
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
         if (!in_array($request->attributes->get('_route'), [
@@ -288,7 +297,10 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         }
 
         if ($url) {
-            return new RedirectResponse($url);
+            $response = new RedirectResponse($url);
+            $response->headers->setCookie(new Cookie('pimcore_admin_sid', true, 0, '/', null, false, true));
+
+            return $response;
         }
     }
 

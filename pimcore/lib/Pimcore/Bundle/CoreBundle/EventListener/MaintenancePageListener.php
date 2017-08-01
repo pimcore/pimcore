@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
@@ -89,10 +88,15 @@ class MaintenancePageListener
 
         $conf = include($file);
         if (isset($conf['sessionId'])) {
+            $requestSessionId = null;
+
             try {
-                $requestSessionId = Session::getSessionIdFromRequest($event->getRequest());
+                $session = $event->getRequest()->getSession();
+                if ($session) {
+                    $requestSessionId = $session->getId();
+                }
             } catch (\Exception $e) {
-                $requestSessionId = null;
+                // noop
             }
 
             if ($conf['sessionId'] != $requestSessionId) {

@@ -189,7 +189,7 @@ class FullPageCacheListener extends AbstractFrontendListener
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
-                if (Tool\Session::requestHasSessionId($request)) {
+                if (null !== $pimcoreUser = Tool\Authentication::authenticateSession($request)) {
                     return $this->disable('backend user is logged in');
                 }
             } else {
@@ -256,15 +256,16 @@ class FullPageCacheListener extends AbstractFrontendListener
      */
     public function onKernelResponse(KernelEvent $event)
     {
-        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
-            return false;
-        }
-
         if (!$event->isMasterRequest()) {
             return false;
         }
 
-        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        $request = $event->getRequest();
+        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return false;
         }
 
@@ -274,7 +275,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             return false;
         }
 
-        if ($this->enabled && session_id()) {
+        if ($this->enabled && !empty($request->getSession()->getId())) {
             $this->disable('session in use');
         }
 
