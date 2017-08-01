@@ -299,20 +299,6 @@ class MultiCartManager implements ICartManager
     }
 
     /**
-     * @deprecated
-     *
-     * use getCartPriceCalculator instead
-     *
-     * @param ICart $cart
-     *
-     * @return ICartPriceCalculator
-     */
-    public function getCartPriceCalcuator(ICart $cart): ICartPriceCalculator
-    {
-        return $this->getCartPriceCalculator($cart);
-    }
-
-    /**
      * @param ICart $cart
      *
      * @return ICartPriceCalculator

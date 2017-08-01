@@ -125,13 +125,6 @@ interface ICartManager extends IComponent
     public function getCartPriceCalculator(ICart $cart);
 
     /**
-     * @deprecated use getCartPriceCalculator instead
-     *
-     * @return ICartPriceCalculator
-     */
-    public function getCartPriceCalcuator(ICart $cart);
-
-    /**
      * Resets cart manager - carts need to be reloaded after reset() is called
      *
      * @return void
