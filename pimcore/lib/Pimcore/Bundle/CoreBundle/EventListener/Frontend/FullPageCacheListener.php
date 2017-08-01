@@ -245,6 +245,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             $response->headers->set('Age', (time() - $cacheItemDate));
 
             $event->setResponse($response);
+            $this->enabled = false; // ensure that the response handler below ignores this request
         }
     }
 
