@@ -257,8 +257,9 @@ class FullPageCacheListener extends AbstractFrontendListener
     /**
      * @param KernelEvent $event
      */
-    public function stopPropagationCheck(KernelEvent $event) {
-        if($this->stopResponsePropagation) {
+    public function stopPropagationCheck(KernelEvent $event)
+    {
+        if ($this->stopResponsePropagation) {
             $event->stopPropagation();
         }
     }
