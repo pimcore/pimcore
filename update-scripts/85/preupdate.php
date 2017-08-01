@@ -12,13 +12,4 @@ if (!TmpStore::get($tmpStoreId)) {
 } else {
     // deactivate maintenance mode as the session ID won't match after the update
     \Pimcore\Tool\Admin::deactivateMaintenanceMode();
-
-    // schedule maintenance mode on the next admin login
-    // \Pimcore\Tool\Admin::scheduleMaintenanceModeOnLogin() is not yet available at this stage
-    $maintenanceModeScheduleLoginFile = PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
-    \Pimcore\File::putPhpFile($maintenanceModeScheduleLoginFile, to_php_data_file_format([
-        'schedule' => true
-    ]));
-
-    @chmod($maintenanceModeScheduleLoginFile, 0777);
 }
