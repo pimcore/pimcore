@@ -30,6 +30,11 @@ class FullPageCacheListener extends AbstractFrontendListener
     protected $enabled = true;
 
     /**
+     * @var bool
+     */
+    protected $stopResponsePropagation = false;
+
+    /**
      * @var null|int
      */
     protected $lifetime = null;
@@ -245,6 +250,16 @@ class FullPageCacheListener extends AbstractFrontendListener
             $response->headers->set('Age', (time() - $cacheItemDate));
 
             $event->setResponse($response);
+            $this->stopResponsePropagation = true;
+        }
+    }
+
+    /**
+     * @param KernelEvent $event
+     */
+    public function stopPropagationCheck(KernelEvent $event) {
+        if($this->stopResponsePropagation) {
+            $event->stopPropagation();
         }
     }
 
