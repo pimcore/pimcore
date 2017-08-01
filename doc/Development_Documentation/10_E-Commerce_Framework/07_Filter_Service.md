@@ -77,7 +77,7 @@ pimcore_ecommerce_framework:
 ```
 
 Optionally, you can configure a custom filter service which relies on a custom helper implementation. The helper is a tool
-for the pimcore backend controller to get possible group by values for a certain field (used by object data type IndexFieldSelection,
+for the Pimcore backend controller to get possible group by values for a certain field (used by object data type IndexFieldSelection,
 e.g. in filter definitions). First, create your filter service definition:
 
 ```yaml

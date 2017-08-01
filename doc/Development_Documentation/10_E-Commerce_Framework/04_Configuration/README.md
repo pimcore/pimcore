@@ -12,7 +12,7 @@ E-Commerce Framework, your custom configuration will be merged into the standard
 
     $ bin/console debug:config pimcore_ecommerce_framework 
     
-A reference of available configuration entries can be foind on [PimcoreEcommerceFrameworkBundle Configuration Reference](./01_PimcoreEcommerceFrameworkBundle_Configuration_Reference.md).
+A reference of available configuration entries can be found on [PimcoreEcommerceFrameworkBundle Configuration Reference](./01_PimcoreEcommerceFrameworkBundle_Configuration_Reference.md).
 
 As the E-Commerce Framework makes heavy use of Symfony service definitions and you'll need to reference IDs of custom
 services in the configuration it's advised that you are comfortable to work with [Symfony's Service Container](https://symfony.com/doc/current/service_container.html#creating-configuring-services-in-the-container]). 
@@ -82,7 +82,7 @@ completely free how to merge common configuration entries.
 When configuring tenant specific services, there are multiple configuration entries demanding a service ID as configuration
 value. This means, the system expects the configured value to be available as service definition on the container. You can
 read through the service definitions defined in [PimcoreEcommerceFrameworkBundle](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config)
-to get an insight of default ecommerce services.
+to get an insight of default e-commerce services.
 
 As an example let's take a look at a price system configuration:
 
@@ -145,7 +145,7 @@ In short, when configuring multiple tenant specific service to the same service 
 3) register the child service under a another ID which can be resolved by the factory
 
 To keep your services clean and give the service container more optimization (and performance) possibilities you should 
-defined your parent services as `private` (see order manager definition in the linked config above) as this will result
+define your parent services as `private` (see order manager definition in the linked config above) as this will result
 in the parent definition being removed from the compiled container. 
 
 This child definition pattern applies to nearly all service IDs configured inside tenants with the exception of reusable 

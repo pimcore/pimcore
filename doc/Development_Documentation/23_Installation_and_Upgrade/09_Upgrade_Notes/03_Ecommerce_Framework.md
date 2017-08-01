@@ -1,12 +1,10 @@
 # Breaking Changes from former E-Commerce Framework Plugin 
 
 ## Configuration Changes
-- removed ConfigController for setting location of `OnlineShopConfig.php` 
-   - `OnlineShopConfig.php` must be located always at `PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY` and got renamed to 
-      `EcommerceFrameworkConfig.php`
-   - all sub configuration files are located relative to `PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY`
-- Replaced setting `defaultlocale` in `EcommerceFramework.php` with `defaultCurrency`
-- Replaced root node `onlineshop` in `EcommerceFrameworkConfig.php` with `ecommerceframework`
+- Migrated `OnlineShopConfig.php` to Symfony config and Symfony Service Container. 
+  For details see [E-Commerce Framework Configuration Docs](../../10_E-Commerce_Framework/04_Configuration/README.md)
+
+- Replaced setting `defaultlocale` in Environment configuration with `defaultCurrency`
 
 - OrderBackoffice Translations moved to AdminTranslations
 
