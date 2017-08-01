@@ -21,6 +21,7 @@ use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
@@ -268,6 +269,13 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
         // set user on runtime cache for legacy compatibility
         Runtime::set('pimcore_admin_user', $user);
+
+        if ($user->isAdmin()) {
+            if (Admin::isMaintenanceModeScheduledForLogin()) {
+                Admin::activateMaintenanceMode(Session::getSessionId());
+                Admin::unscheduleMaintenanceModeOnLogin();
+            }
+        }
 
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
