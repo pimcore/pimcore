@@ -88,10 +88,15 @@ class MaintenancePageListener
 
         $conf = include($file);
         if (isset($conf['sessionId'])) {
+            $requestSessionId = null;
+
             try {
-                $requestSessionId = $event->getRequest()->getSession()->getId();
+                $session = $event->getRequest()->getSession();
+                if ($session) {
+                    $requestSessionId = $session->getId();
+                }
             } catch (\Exception $e) {
-                $requestSessionId = null;
+                // noop
             }
 
             if ($conf['sessionId'] != $requestSessionId) {
