@@ -196,8 +196,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 }.bind(this)
             });
         }
-
-
+        else{
+            pimcore.helpers.showNotification(t("error"), t("fields_empty"), "error");
+        }
     }
     ,
 

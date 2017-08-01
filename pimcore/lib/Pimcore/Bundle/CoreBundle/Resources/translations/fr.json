@@ -874,6 +874,7 @@
     "error_saving_document": "Ce document n'a pas pu être sauvegardé",
     "error_saving_object": "L'objet ne peut pas être sauvegardé",
     "please_enter_the_name_of_the_new_object": "Veuillez entrer le nom du nouvel objet",
+    "fields_empty": "Please fill all fields",
     "slider": "Curseur",
     "filename_not_valid": "Nom invalide",
     "firstname": "Prénom",

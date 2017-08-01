@@ -874,6 +874,7 @@
     "error_saving_document": "No se pudo guardar el documento",
     "error_saving_object": "No se pudo guardar el objeto",
     "please_enter_the_name_of_the_new_object": "Por favor, introduzca el nombre del nuevo objeto",
+    "fields_empty": "Please fill all fields",
     "slider": "Deslizador",
     "filename_not_valid": "El nombre no es válido",
     "firstname": "Nombre",

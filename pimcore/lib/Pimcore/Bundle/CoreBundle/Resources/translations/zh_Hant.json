@@ -874,6 +874,7 @@
     "error_saving_document": "檔案不能儲存",
     "error_saving_object": "物件無法儲存",
     "please_enter_the_name_of_the_new_object": "請輸入新項目名稱",
+    "fields_empty": "Please fill all fields",
     "slider": "滑塊",
     "filename_not_valid": "名稱不正確",
     "firstname": "名",

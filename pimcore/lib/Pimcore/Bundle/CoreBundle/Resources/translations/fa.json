@@ -874,6 +874,7 @@
     "error_saving_document": "سند نمی تواند ذخیره شود",
     "error_saving_object": "موضوع نمیتواند ذخیره شود",
     "please_enter_the_name_of_the_new_object": "لطفا یک نا م جدید برای موضوع وارد کنید",
+    "fields_empty": "Please fill all fields",
     "slider": "لغزنده",
     "filename_not_valid": "نام معتبر نیست",
     "firstname": "نام",

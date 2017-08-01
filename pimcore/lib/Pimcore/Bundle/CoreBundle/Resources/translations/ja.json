@@ -874,6 +874,7 @@
     "error_saving_document": "ドキュメントを保存できません",
     "error_saving_object": "オブジェクトを保存できません",
     "please_enter_the_name_of_the_new_object": "新しいオブジェクトの名前を入力して下さい",
+    "fields_empty": "Please fill all fields",
     "slider": "スライダー",
     "filename_not_valid": "名前が不正",
     "firstname": "名",

@@ -874,6 +874,7 @@
     "error_saving_document": "Неможливо зберегти документ",
     "error_saving_object": "Неможлиао зберегти об'єкт",
     "please_enter_the_name_of_the_new_object": "Введіть назву нового об'єкту",
+    "fields_empty": "Please fill all fields",
     "slider": "Повзунок",
     "filename_not_valid": "Ім'я помилкове",
     "firstname": "Ім'я",
