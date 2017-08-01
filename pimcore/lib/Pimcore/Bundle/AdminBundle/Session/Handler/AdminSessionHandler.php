@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Session\Handler;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerAwareInterface

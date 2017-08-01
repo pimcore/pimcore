@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
