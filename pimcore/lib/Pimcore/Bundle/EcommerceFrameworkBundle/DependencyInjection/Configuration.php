@@ -304,7 +304,9 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $orderManager = $builder->root('order_manager');
-        $orderManager->addDefaultsIfNotSet();
+        $orderManager
+            ->info('Configuration of Order Manager')
+            ->addDefaultsIfNotSet();
 
         $orderManager
             ->addDefaultsIfNotSet()
@@ -330,28 +332,35 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->children()
                             ->scalarNode('order_manager_id')
+                                ->info('Service id for oder manager implementation')
                                 ->defaultValue(OrderManager::class)
                             ->end()
                             ->arrayNode('options')
+                                ->info('Options for oder manager')
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->scalarNode('order_class')
+                                        ->info('Pimcore object class for orders')
                                         ->defaultValue('\\Pimcore\\Model\\Object\\OnlineShopOrder')
                                         ->cannotBeEmpty()
                                     ->end()
                                     ->scalarNode('order_item_class')
+                                        ->info('Pimcore object class for order items')
                                         ->defaultValue('\\Pimcore\\Model\\Object\\OnlineShopOrderItem')
                                         ->cannotBeEmpty()
                                     ->end()
                                     ->scalarNode('list_class')
+                                        ->info('Class for order listing')
                                         ->defaultValue(Listing::class)
                                         ->cannotBeEmpty()
                                     ->end()
                                     ->scalarNode('list_item_class')
+                                        ->info('Class for order item listing')
                                         ->defaultValue(Listing\Item::class)
                                         ->cannotBeEmpty()
                                     ->end()
                                     ->scalarNode('parent_order_folder')
+                                        ->info('Default parent folder for new orders')
                                         ->defaultValue('/order/%%Y/%%m/%%d')
                                         ->cannotBeEmpty()
                                     ->end()
@@ -361,6 +370,7 @@ class Configuration implements ConfigurationInterface
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->scalarNode('factory_id')
+                                        ->info('Service id for order agent factory')
                                         ->defaultValue(AgentFactory::class)
                                         ->cannotBeEmpty()
                                     ->end()
@@ -379,16 +389,20 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $pricingManager = $builder->root('pricing_manager');
-        $pricingManager->addDefaultsIfNotSet();
+        $pricingManager
+            ->info('Configuration of Pricing Manager')
+            ->addDefaultsIfNotSet();
 
         $pricingManager
             ->canBeDisabled()
             ->children()
                 ->scalarNode('pricing_manager_id')
+                    ->info('Service id of pricing manager')
                     ->cannotBeEmpty()
                     ->defaultValue(PricingManager::class)
                 ->end()
                 ->arrayNode('pricing_manager_options')
+                    ->info('Options for pricing manager')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('rule_class')
@@ -481,7 +495,9 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $checkoutManager = $builder->root('checkout_manager');
-        $checkoutManager->addDefaultsIfNotSet();
+        $checkoutManager
+            ->info('Configuration of checkout manager')
+            ->addDefaultsIfNotSet();
 
         $checkoutManager
             ->children()
@@ -511,6 +527,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->append($this->buildOptionsNode('factory_options'))
                             ->arrayNode('payment')
+                                ->info('Define payment provider which should be used for payment. Payment providers are defined in payment_manager section.')
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->scalarNode('provider')
@@ -519,6 +536,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                             ->arrayNode('commit_order_processor')
+                                ->info('Define used commit order processor')
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->scalarNode('id')
@@ -529,6 +547,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                             ->arrayNode('steps')
+                                ->info('Define different checkout steps which need to be committed before commit of order is possible')
                                 ->requiresAtLeastOneElement()
                                 ->prototype('array')
                                     ->children()
@@ -552,7 +571,9 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $paymentManager = $builder->root('payment_manager');
-        $paymentManager->addDefaultsIfNotSet();
+        $paymentManager
+            ->info('Configuration of payment manager and payment providers')
+            ->addDefaultsIfNotSet();
 
         $paymentManager
             ->children()
@@ -561,17 +582,21 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(PaymentManager::class)
                 ->end()
                 ->arrayNode('providers')
+                    ->info('Configuration of payment providers, key is name of provider.')
                     ->useAttributeAsKey('name')
                     ->prototype('array')
                         ->children()
                             ->scalarNode('name')->end()
                             ->scalarNode('provider_id')
+                                ->info('Service id of payment provider implementation')
                                 ->isRequired()
                             ->end()
                             ->scalarNode('profile')
+                                ->info('Currently active profile')
                                 ->isRequired()
                             ->end()
                             ->arrayNode('profiles')
+                                ->info('Available profiles with options')
                                 ->beforeNormalization()
                                     ->always(function ($v) {
                                         if (empty($v) || !is_array($v)) {
@@ -776,7 +801,9 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $filterService = $builder->root('filter_service');
-        $filterService->addDefaultsIfNotSet();
+        $filterService
+            ->info('Configuration of filter service')
+            ->addDefaultsIfNotSet();
 
         $filterService
             ->children()
@@ -801,6 +828,7 @@ class Configuration implements ConfigurationInterface
                                 ->defaultValue(FilterService::class)
                             ->end()
                             ->arrayNode('filter_types')
+                                ->info('Assign backend implementations and views to filter type field collections')
                                 ->useAttributeAsKey('name')
                                 ->prototype('array')
                                     ->addDefaultsIfNotSet()
@@ -818,9 +846,11 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->children()
                                         ->scalarNode('filter_type_id')
+                                            ->info('Service id for filter type implementation')
                                             ->isRequired()
                                         ->end()
                                         ->scalarNode('template')
+                                            ->info('Default template for filter, can be overwritten in filter definition')
                                             ->isRequired()
                                         ->end()
                                         ->append($this->buildOptionsNode())
@@ -840,10 +870,13 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $voucherService = $builder->root('voucher_service');
-        $voucherService->addDefaultsIfNotSet();
+        $voucherService
+            ->info('Configuration of voucher service')
+            ->addDefaultsIfNotSet();
         $voucherService
             ->children()
                 ->scalarNode('voucher_service_id')
+                    ->info('Service id of voucher service implementation')
                     ->cannotBeEmpty()
                     ->defaultValue(DefaultVoucherService::class)
                 ->end()
@@ -863,13 +896,16 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('token_managers')
+                    ->info('Configuration of token managers')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('factory_id')
+                            ->info('Service id of token manager factory')
                             ->cannotBeEmpty()
                             ->defaultValue(TokenManagerFactory::class)
                         ->end()
                         ->arrayNode('mapping')
+                            ->info('Mapping for token manager implementations')
                             ->useAttributeAsKey('name')
                             ->prototype('scalar')
                                 ->cannotBeEmpty()
@@ -887,11 +923,14 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $offerTool = $builder->root('offer_tool');
-        $offerTool->addDefaultsIfNotSet();
+        $offerTool
+            ->info('Configuration of offer tool')
+            ->addDefaultsIfNotSet();
 
         $offerTool
             ->children()
                 ->scalarNode('service_id')
+                    ->info('Service id for offer tool service')
                     ->defaultValue(DefaultOfferToolService::class)
                     ->cannotBeEmpty()
                 ->end()
@@ -899,14 +938,17 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('offer_class')
+                            ->info('Pimcore object class for offers')
                             ->cannotBeEmpty()
                             ->defaultValue(OfferToolOffer::class)
                         ->end()
                         ->scalarNode('offer_item_class')
+                            ->info('Pimcore object class for offer items')
                             ->cannotBeEmpty()
                             ->defaultValue(OfferToolOfferItem::class)
                         ->end()
                         ->scalarNode('parent_folder_path')
+                            ->info('default path for new offers')
                             ->cannotBeEmpty()
                             ->defaultValue('/offertool/offers/%%Y/%%m')
                         ->end()
@@ -922,22 +964,29 @@ class Configuration implements ConfigurationInterface
         $builder = new TreeBuilder();
 
         $trackingManager = $builder->root('tracking_manager');
-        $trackingManager->addDefaultsIfNotSet();
+        $trackingManager
+            ->info('Configuration of Tracking Manager')
+            ->addDefaultsIfNotSet();
+
         $trackingManager
             ->children()
                 ->scalarNode('tracking_manager_id')
+                    ->info('Service id of tracking manager')
                     ->defaultValue(TrackingManager::class)
                 ->end()
                 ->arrayNode('trackers')
+                    ->info('Enable/Disable trackers and configure them')
                     ->useAttributeAsKey('name')
                     ->prototype('array')
                         ->canBeDisabled()
                         ->children()
                             ->scalarNode('id')
+                                ->info('Service id for tracker')
                                 ->isRequired()
                             ->end()
                             ->append($this->buildOptionsNode())
                             ->scalarNode('item_builder_id')
+                                ->info('Service id for item builder for tracker')
                                 ->defaultValue(TrackingItemBuilder::class)
                             ->end()
                         ->end()
