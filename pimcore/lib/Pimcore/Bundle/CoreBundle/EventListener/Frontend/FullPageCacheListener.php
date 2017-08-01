@@ -30,6 +30,11 @@ class FullPageCacheListener extends AbstractFrontendListener
     protected $enabled = true;
 
     /**
+     * @var bool
+     */
+    protected $stopResponsePropagation = false;
+
+    /**
      * @var null|int
      */
     protected $lifetime = null;
@@ -245,7 +250,16 @@ class FullPageCacheListener extends AbstractFrontendListener
             $response->headers->set('Age', (time() - $cacheItemDate));
 
             $event->setResponse($response);
-            $this->enabled = false; // ensure that the response handler below ignores this request
+            $this->stopResponsePropagation = true;
+        }
+    }
+
+    /**
+     * @param KernelEvent $event
+     */
+    public function stopPropagationCheck(KernelEvent $event) {
+        if($this->stopResponsePropagation) {
+            $event->stopPropagation();
         }
     }
 
@@ -275,7 +289,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             return false;
         }
 
-        if ($this->enabled && !empty($request->getSession()->getId())) {
+        if ($this->enabled && ($request->hasSession() && !empty($request->getSession()->getId()))) {
             $this->disable('session in use');
         }
 
