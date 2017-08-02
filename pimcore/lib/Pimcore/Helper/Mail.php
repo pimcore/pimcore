@@ -227,7 +227,7 @@ CSS;
             // try to determine if the newsletter is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
             if ($site) {
-                $hostUrl = "http://" . $site->getMainDomain();
+                $hostUrl = \Pimcore\Tool::getRequestScheme() . "://" . $site->getMainDomain();
                 $replacePrefix = $site->getRootPath();
             }
 
