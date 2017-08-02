@@ -469,7 +469,7 @@ class Tool
         $request = self::resolveRequest($request);
 
         if (null === $request) {
-            return '';
+            return 'http';
         }
 
         return $request->getScheme();
