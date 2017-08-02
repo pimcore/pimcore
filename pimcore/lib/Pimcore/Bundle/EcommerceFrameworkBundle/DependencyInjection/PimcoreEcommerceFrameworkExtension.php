@@ -153,7 +153,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupTenantAwareComponentLocator(
-            $container, 'cart_manager', $mapping,
+            $container,
+            'cart_manager',
+            $mapping,
             CartManagerLocator::class
         );
     }
@@ -185,7 +187,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupTenantAwareComponentLocator(
-            $container, 'order_manager', $mapping,
+            $container,
+            'order_manager',
+            $mapping,
             OrderManagerLocator::class
         );
     }
@@ -215,7 +219,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupNameServiceComponentLocator(
-            $container, 'price_system', $mapping,
+            $container,
+            'price_system',
+            $mapping,
             PriceSystemLocator::class
         );
     }
@@ -232,7 +238,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupNameServiceComponentLocator(
-            $container, 'availability_system', $mapping,
+            $container,
+            'availability_system',
+            $mapping,
             AvailabilitySystemLocator::class
         );
     }
@@ -283,12 +291,16 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupTenantAwareComponentLocator(
-            $container, 'checkout_manager.commit_order_processor', $commitOrderProcessorMapping,
+            $container,
+            'checkout_manager.commit_order_processor',
+            $commitOrderProcessorMapping,
             CommitOrderProcessorLocator::class
         );
 
         $this->setupTenantAwareComponentLocator(
-            $container, 'checkout_manager.factory', $checkoutManagerFactoryMapping,
+            $container,
+            'checkout_manager.factory',
+            $checkoutManagerFactoryMapping,
             CheckoutManagerFactoryLocator::class
         );
     }
@@ -395,7 +407,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
 
         $this->setupTenantAwareComponentLocator(
-            $container, 'filter_service', $mapping,
+            $container,
+            'filter_service',
+            $mapping,
             FilterServiceLocator::class
         );
     }

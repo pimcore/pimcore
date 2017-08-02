@@ -22,5 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 interface ICartFactory
 {
     public function getCartClassName(IEnvironment $environment): string;
+
     public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): ICart;
 }

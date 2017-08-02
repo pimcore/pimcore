@@ -20,5 +20,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 interface IOrderManagerLocator
 {
     public function getOrderManager(string $tenant = null): IOrderManager;
+
     public function hasOrderManager(string $tenant): bool;
 }

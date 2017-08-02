@@ -50,8 +50,7 @@ abstract class AbstractFilterType
         EngineInterface $templatingEngine,
         string $template,
         array $options = []
-    )
-    {
+    ) {
         $this->translator       = $translator;
         $this->templatingEngine = $templatingEngine;
         $this->template         = $template;

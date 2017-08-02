@@ -24,6 +24,6 @@ class AvailabilitySystem implements IAvailabilitySystem
      */
     public function getAvailabilityInfo(ICheckoutable $product, $quantityScale = 1, $products = null)
     {
-        return new Availability($product,true);
+        return new Availability($product, true);
     }
 }

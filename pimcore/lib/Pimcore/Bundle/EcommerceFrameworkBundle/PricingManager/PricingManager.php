@@ -64,8 +64,7 @@ class PricingManager implements IPricingManager
         array $actionMapping,
         SessionInterface $session,
         array $options = []
-    )
-    {
+    ) {
         $this->conditionMapping = $conditionMapping;
         $this->actionMapping    = $actionMapping;
         $this->session          = $session;
@@ -278,6 +277,7 @@ class PricingManager implements IPricingManager
      * @param string $type
      *
      * @return IAction
+     *
      * @throws InvalidConfigException
      */
     public function getAction($type)

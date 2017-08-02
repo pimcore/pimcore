@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\Connection;
@@ -47,8 +46,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         array $options = [],
         IEnvironment $environment,
         Connection $db
-    )
-    {
+    ) {
         $this->environment = $environment;
         $this->db = $db;
 

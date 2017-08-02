@@ -98,7 +98,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
             'mapping'
         ];
 
-        foreach($arrayFields as $field) {
+        foreach ($arrayFields as $field) {
             $resolver->setAllowedTypes($field, 'array');
             $resolver->setDefault($field, []);
         }

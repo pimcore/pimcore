@@ -136,7 +136,6 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->info('Configuration of Pimcore backend menu entries');
 
-
         $pimcore
             ->children()
                 ->arrayNode('menu')
@@ -775,12 +774,12 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->prototype('array')
                                     ->beforeNormalization()
-                                        ->always(function($v) {
+                                        ->always(function ($v) {
                                             if (empty($v) || !is_array($v)) {
                                                 return $v;
                                             }
 
-                                            $v = $this->remapProperties($v,[
+                                            $v = $this->remapProperties($v, [
                                                 'fieldname'               => 'field_name',
                                                 'filtergroup'             => 'filter_group',
                                                 'getter'                  => 'getter_id',

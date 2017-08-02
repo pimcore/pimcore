@@ -13,7 +13,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\Object\OnlineShopTaxClass;
 use Pimcore\Tests\Test\EcommerceTestCase;
-use Pimcore\Tests\Test\TestCase;
 
 class ProductTaxManagementTest extends EcommerceTestCase
 {

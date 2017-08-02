@@ -39,5 +39,4 @@ class CheckoutManagerFactoryLocator extends CheckoutTenantAwareServiceLocator im
             $tenant
         ));
     }
-
 }

@@ -20,5 +20,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 interface ICartManagerLocator
 {
     public function getCartManager(string $tenant = null): ICartManager;
+
     public function hasCartManager(string $tenant): bool;
 }

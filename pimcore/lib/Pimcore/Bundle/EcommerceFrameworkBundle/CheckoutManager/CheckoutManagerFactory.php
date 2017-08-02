@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
@@ -70,8 +69,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         array $checkoutStepDefinitions,
         IPayment $paymentProvider = null,
         array $options = []
-    )
-    {
+    ) {
         $this->environment = $environment;
         $this->orderManagers = $orderManagers;
         $this->commitOrderProcessors = $commitOrderProcessors;

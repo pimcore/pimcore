@@ -20,5 +20,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 interface ICheckoutManagerFactoryLocator
 {
     public function getCheckoutManagerFactory(string $tenant = null): ICheckoutManagerFactory;
+
     public function hasCheckoutManagerFactory(string $tenant): bool;
 }

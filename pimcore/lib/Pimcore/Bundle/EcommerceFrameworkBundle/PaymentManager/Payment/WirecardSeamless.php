@@ -153,7 +153,7 @@ class WirecardSeamless implements IPayment
         $this->secret     = $options['secret'];
 
         $paymentMethods = $options['payment_methods'];
-        foreach($paymentMethods as $paymentMethod => $paymentMethodOptions) {
+        foreach ($paymentMethods as $paymentMethod => $paymentMethodOptions) {
             if (!is_array($paymentMethodOptions)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Payment method options for method "%s" must be an array, %s given',

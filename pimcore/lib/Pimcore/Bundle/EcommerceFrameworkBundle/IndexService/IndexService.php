@@ -77,6 +77,7 @@ class IndexService
      * @param string $tenant
      *
      * @return IWorker
+     *
      * @throws WorkerNotFoundException
      */
     public function getTenantWorker(string $tenant): IWorker
@@ -92,6 +93,7 @@ class IndexService
      * Returns default worker as set in defaultTenant
      *
      * @return IWorker
+     *
      * @throws DefaultWorkerNotFoundException
      */
     public function getDefaultWorker(): IWorker
@@ -309,6 +311,7 @@ class IndexService
      * @param string|null $tenant
      *
      * @return IWorker
+     *
      * @throws WorkerNotFoundException
      */
     protected function resolveTenantWorker(string $tenant = null): IWorker

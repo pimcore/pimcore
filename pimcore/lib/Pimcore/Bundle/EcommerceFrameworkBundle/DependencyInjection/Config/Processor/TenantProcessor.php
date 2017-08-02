@@ -75,7 +75,8 @@ class TenantProcessor
                 if (!is_array($values[$k])) {
                     throw new InvalidConfigurationException(sprintf(
                         'Can\'t merge defaults key %s as defaults is an array while the value to merge is a %s',
-                        $k, gettype($values[$k])
+                        $k,
+                        gettype($values[$k])
                     ));
                 }
 

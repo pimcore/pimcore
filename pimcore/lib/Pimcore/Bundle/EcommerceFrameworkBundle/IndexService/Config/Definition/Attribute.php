@@ -92,8 +92,7 @@ class Attribute
         IInterpreter $interpreter = null,
         array $interpreterOptions = [],
         bool $hideInFieldlistDatatype = false
-    )
-    {
+    ) {
         $this->name        = $name;
         $this->fieldName   = $fieldName ?? $name;
         $this->type        = $type;

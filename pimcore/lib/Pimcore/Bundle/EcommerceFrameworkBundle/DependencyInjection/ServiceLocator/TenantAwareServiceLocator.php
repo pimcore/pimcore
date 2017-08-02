@@ -48,8 +48,8 @@ abstract class TenantAwareServiceLocator
     public function __construct(
         PsrContainerInterface $locator,
         IEnvironment $environment,
-        bool $strictTenants = false)
-    {
+        bool $strictTenants = false
+    ) {
         $this->locator       = $locator;
         $this->environment   = $environment;
         $this->strictTenants = $strictTenants;

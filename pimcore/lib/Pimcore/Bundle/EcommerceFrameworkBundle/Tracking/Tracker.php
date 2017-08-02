@@ -43,8 +43,7 @@ abstract class Tracker implements ITracker
         ITrackingItemBuilder $trackingItemBuilder,
         EngineInterface $templatingEngine,
         array $options = []
-    )
-    {
+    ) {
         $this->trackingItemBuilder = $trackingItemBuilder;
         $this->templatingEngine    = $templatingEngine;
 

@@ -28,6 +28,7 @@ interface IPaymentManager
      * @param string $name
      *
      * @return Payment\IPayment
+     *
      * @throws ProviderNotFoundException
      */
     public function getProvider(string $name): IPayment;

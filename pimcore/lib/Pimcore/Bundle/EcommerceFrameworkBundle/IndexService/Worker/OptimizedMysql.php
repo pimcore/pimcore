@@ -21,6 +21,7 @@ use Pimcore\Logger;
 
 /**
  * @method OptimizedMysqlConfig getTenantConfig()
+ *
  * @property OptimizedMysqlConfig $tenantConfig
  */
 class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessingWorker

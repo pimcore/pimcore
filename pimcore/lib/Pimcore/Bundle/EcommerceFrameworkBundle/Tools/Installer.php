@@ -22,7 +22,6 @@ use Pimcore\Model\Object\Fieldcollection;
 use Pimcore\Model\Object\Objectbrick;
 use Pimcore\Model\Translation\Admin;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 class Installer extends AbstractInstaller

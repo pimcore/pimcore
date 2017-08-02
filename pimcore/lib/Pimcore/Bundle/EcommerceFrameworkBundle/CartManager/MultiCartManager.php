@@ -71,8 +71,7 @@ class MultiCartManager implements ICartManager
         ICartPriceCalculatorFactory $cartPriceCalculatorFactory,
         IOrderManagerLocator $orderManagers,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->environment = $environment;
         $this->cartFactory = $cartFactory;
         $this->cartPriceCalculatorFactory = $cartPriceCalculatorFactory;

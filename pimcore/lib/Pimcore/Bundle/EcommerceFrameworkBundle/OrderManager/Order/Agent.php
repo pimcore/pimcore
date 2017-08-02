@@ -65,8 +65,7 @@ class Agent implements IOrderAgent
         Order $order,
         IEnvironment $environment,
         IPaymentManager $paymentManager
-    )
-    {
+    ) {
         $this->order          = $order;
         $this->environment    = $environment;
         $this->paymentManager = $paymentManager;

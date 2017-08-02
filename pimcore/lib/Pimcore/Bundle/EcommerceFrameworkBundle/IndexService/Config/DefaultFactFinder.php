@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Traits\ConfigResolverTrait;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder as DefaultFactFinderWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;

@@ -20,5 +20,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 interface IPriceSystemLocator
 {
     public function getPriceSystem(string $name = null): IPriceSystem;
+
     public function hasPriceSystem(string $name): bool;
 }

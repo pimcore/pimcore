@@ -20,12 +20,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
@@ -40,7 +38,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
-use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
@@ -127,8 +124,7 @@ class Factory
         ICheckoutManagerFactoryLocator $checkoutManagerFactories,
         ICommitOrderProcessorLocator $commitOrderProcessors,
         IFilterServiceLocator $filterServices
-    )
-    {
+    ) {
         $this->container                = $container;
         $this->cartManagers             = $cartManagers;
         $this->orderManagers            = $orderManagers;

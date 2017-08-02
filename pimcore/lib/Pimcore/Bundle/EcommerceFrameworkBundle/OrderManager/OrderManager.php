@@ -74,8 +74,7 @@ class OrderManager implements IOrderManager
         IOrderAgentFactory $orderAgentFactory,
         IVoucherService $voucherService,
         array $options = []
-    )
-    {
+    ) {
         $this->environment = $environment;
         $this->orderAgentFactory = $orderAgentFactory;
         $this->voucherService = $voucherService;

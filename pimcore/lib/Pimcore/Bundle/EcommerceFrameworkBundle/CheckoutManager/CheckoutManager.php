@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
@@ -105,8 +104,7 @@ class CheckoutManager implements ICheckoutManager
         ICommitOrderProcessorLocator $commitOrderProcessors,
         array $checkoutSteps,
         IPayment $paymentProvider = null
-    )
-    {
+    ) {
         $this->cart = $cart;
         $this->environment = $environment;
 
