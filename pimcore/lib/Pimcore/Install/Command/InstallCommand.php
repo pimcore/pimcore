@@ -75,6 +75,7 @@ class InstallCommand extends Command
                     'The install profile to use. Available profiles: %s',
                     implode(', ', $profiles)
                 ),
+                'prompt'      => 'Please choose the install profile you want to use',
                 'mode'        => InputOption::VALUE_REQUIRED,
                 'default'     => 'empty',
                 'choices'     => $profiles
@@ -189,7 +190,7 @@ class InstallCommand extends Command
         // no installer if Pimcore is already installed
         $configFile = Config::locateConfigFile('system.php');
         if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
-            throw new \RuntimeException(sprintf('The system.php config file already exists in "%s"', $configFile));
+            throw new \RuntimeException(sprintf('The system.php config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
         }
 
         $this->io = new PimcoreStyle($input, $output);
@@ -272,6 +273,10 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
+            return 0;
+        }
+
         $params  = [];
         $missing = [];
 
@@ -310,6 +315,8 @@ class InstallCommand extends Command
 
             return 2;
         }
+
+        $this->io->comment('Running installation. You\'ll see the installation log as installation proceeds.');
 
         $installErrors = $this->installer->install($params);
         $this->io->newLine();

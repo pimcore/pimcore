@@ -96,7 +96,14 @@ class InstallerKernel extends Kernel
 
                 'console' => [
                     'type'     => 'console',
-                    'channels' => ['!event']
+                    'level'    => 'debug',
+                    'channels' => ['!event'],
+
+                    // make sure we show all logs on the console
+                    // see https://symfony.com/blog/new-in-symfony-2-4-show-logs-in-console
+                    'verbosity_levels' => [
+                        'VERBOSITY_NORMAL' => 'DEBUG'
+                    ]
                 ]
             ]
         ]);
