@@ -5,8 +5,8 @@ changed how framework components are configured and how the components are built
 on the following points:
 
 * Migrate E-Commerce Framework configuration to a Symfony Config tree exposed by the bundle
-* Refactor components to be wired together via DI instead of relying on the Factory and instead of parsing/handling config
-  inside each component
+* Refactor components to be wired together via DI and Symfony's service container instead of relying on the Factory and instead
+  of parsing/handling config inside each component
 * Components are not aware of configurations or tenants anymore. The bundle extension/configuration takes care of handling
   config and transforming the config to service definitions. Examples:
   * instead of calling `Factory::getInstance()->getVoucherService()` somewhere inside the `OrderManager`, the order manager
@@ -15,12 +15,12 @@ on the following points:
     access by name
     
 The changes mentioned above result in configuration/dependency management logic being removed from components, thus making
-components only responsible for their business logic. This might make construction of a component more complex (as it adds)
-more dependencies to an object, but this complexity can be handled by the service container/bundle extension instead of
+components only responsible for their business logic. This might make construction of a component more complex (as it adds
+more dependencies to an object), but this complexity can be handled by the service container/bundle extension instead of
 the component. As end result, the changes result in more predictable services which are easier to test as all dependencies
 are well-known.
 
-This pages mainly focuses on the code/signature changes of single components. Parallel to the code changes, the configuration
+This pages mainly focuses on the code/signature changes of single components. In addition to the code changes, the configuration
 was migrated from the `EcommerceFrameworkConfig.php` file to a Symfony Config tree which can be configured in any of the
 loaded config files (e.g. `config.yml`) and which includes validation and normalization of config values as soon as the 
 container is built (which gives you instant feedback on missing/invalid values). Regarding configuration, please see:
