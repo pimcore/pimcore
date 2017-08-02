@@ -86,7 +86,7 @@ $grandTotal = $cart->getPriceCalculator()->getGrandTotal();
 
 ## Configuration of Cart Manager
 
-The configuration takes place in the `pimcore_ecommerce_framework.cart_manager` configuration section which is [tenant aware](../04_Configuration/README.md).
+The configuration takes place in the `pimcore_ecommerce_framework.cart_manager` configuration section which is [tenant aware](./04_Configuration/README.md).
 
 ```yaml
 pimcore_ecommerce_framework:
