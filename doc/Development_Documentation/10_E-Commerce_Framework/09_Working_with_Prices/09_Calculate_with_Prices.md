@@ -21,7 +21,7 @@ which contains a lot of usage examples and describes the `Decimal` behaviour qui
   when extending the `Decimal` class with custom functionality.
   
 On the DB side, all E-Commerce Framework class definitions supporting price values were updated to store prices as [`DECIMAL`](https://dev.mysql.com/doc/refman/5.7/en/precision-math-decimal-characteristics.html)
-data type. This means, when fetching a price value from an ecommerce-object (e.g.) an order, it will be a string instead
+data type. This means, when fetching a price value from an ecommerce-object (e.g. an order), it will be a string instead
 of a `float`. This string can directly be passed to the `Decimal` value object's `create()` method. 
 
 A usage example:
