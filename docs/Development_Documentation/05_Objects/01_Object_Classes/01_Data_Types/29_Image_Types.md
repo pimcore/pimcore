@@ -26,7 +26,7 @@ in the class settings as follows:
 The get a thumbnail of an image field, just call `getThumbnail()` on the returned asset object.
 
 ```php
-<?php if ($object->getMyImage() instanceof Asset\Image) {?>
+<?php if ($object->getMyImage() instanceof Pimcore\Model\Asset\Image) {?>
     <img src="<?= $object->getMyImage()->getThumbnail("myThumbnailName") ?>" />
 <?php } ?>
 ```
