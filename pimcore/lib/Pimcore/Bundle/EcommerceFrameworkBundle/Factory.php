@@ -15,83 +15,40 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
-use Pimcore\Config\Config;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
 {
     /**
-     * framework configuration file
+     * @var ContainerInterface
      */
-    const CONFIG_PATH = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/EcommerceFrameworkConfig.php';
-
-    /**
-     * @var Factory
-     */
-    private static $instance;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var ICartManager
-     */
-    private $cartManager;
-
-    /**
-     * @var IPriceSystem
-     */
-    private $priceSystems;
-
-    /**
-     * @var IAvailabilitySystem
-     */
-    private $availabilitySystems;
-
-    /**
-     * @var ICheckoutManager
-     */
-    private $checkoutManagers;
-
-    /**
-     * @var IPricingManager
-     */
-    private $pricingManager;
-
-    /**
-     * @var IOrderManager
-     */
-    private $orderManager;
-
-    /**
-     * @var  IService
-     */
-    private $offerToolService;
-
-    /**
-     * @var string[]
-     */
-    private $allTenants;
+    private $container;
 
     /**
      * @var IEnvironment
@@ -99,576 +56,247 @@ class Factory
     private $environment;
 
     /**
-     * @var IPaymentManager
-     */
-    private $paymentManager;
-
-    /**
-     * @var IVoucherService
-     */
-    private $voucherService;
-
-    /**
-     * @var ITokenManager[]
-     */
-    private $tokenManagers = [];
-
-    /**
-     * @var TrackingManager
-     */
-    private $trackingManager;
-
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-            self::$instance->init();
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * creates new factory instance and optionally resets environment too
+     * Tenant specific cart managers
      *
-     * @param bool|true $keepEnvironment
-     *
-     * @return Factory
+     * @var ICartManagerLocator
      */
-    public static function resetInstance($keepEnvironment = true)
+    private $cartManagers;
+
+    /**
+     * Tenant specific order managers
+     *
+     * @var IOrderManagerLocator
+     */
+    private $orderManagers;
+
+    /**
+     * Price systems registered by name
+     *
+     * @var IPriceSystemLocator
+     */
+    private $priceSystems;
+
+    /**
+     * Availability systems registered by name
+     *
+     * @var IAvailabilitySystemLocator
+     */
+    private $availabilitySystems;
+
+    /**
+     * Checkout manager factories registered by tenant
+     *
+     * @var ICheckoutManagerFactoryLocator
+     */
+    private $checkoutManagerFactories;
+
+    /**
+     * Commit order processors registered by tenant
+     *
+     * @var ICommitOrderProcessorLocator
+     */
+    private $commitOrderProcessors;
+
+    /**
+     * Filter services registered by ^tenant
+     *
+     * @var IFilterServiceLocator
+     */
+    private $filterServices;
+
+    /**
+     * Systems with multiple instances (e.g. price systems or tenant specific systems) are
+     * injected through a service locator which is indexed by tenant/name. All other services
+     * are loaded from the container on demand to make sure only services needed are built.
+     *
+     * @param ContainerInterface $container
+     * @param ICartManagerLocator $cartManagers
+     * @param IOrderManagerLocator $orderManagers
+     * @param IPriceSystemLocator $priceSystems
+     * @param IAvailabilitySystemLocator $availabilitySystems
+     * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
+     * @param ICommitOrderProcessorLocator $commitOrderProcessors
+     * @param IFilterServiceLocator $filterServices
+     */
+    public function __construct(
+        ContainerInterface $container,
+        ICartManagerLocator $cartManagers,
+        IOrderManagerLocator $orderManagers,
+        IPriceSystemLocator $priceSystems,
+        IAvailabilitySystemLocator $availabilitySystems,
+        ICheckoutManagerFactoryLocator $checkoutManagerFactories,
+        ICommitOrderProcessorLocator $commitOrderProcessors,
+        IFilterServiceLocator $filterServices
+    )
     {
-        if ($keepEnvironment) {
-            $environment = self::$instance->getEnvironment();
-        } else {
-            $environment = null;
-        }
-
-        self::$instance = new self($environment);
-        self::$instance->init();
-
-        return self::$instance;
+        $this->container                = $container;
+        $this->cartManagers             = $cartManagers;
+        $this->orderManagers            = $orderManagers;
+        $this->priceSystems             = $priceSystems;
+        $this->availabilitySystems      = $availabilitySystems;
+        $this->checkoutManagerFactories = $checkoutManagerFactories;
+        $this->commitOrderProcessors    = $commitOrderProcessors;
+        $this->filterServices           = $filterServices;
     }
 
-    private function __construct($environment = null)
+    public static function getInstance(): self
     {
-        $this->environment = $environment;
+        return \Pimcore::getContainer()->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY);
     }
 
-    public function getConfig()
+    public function getEnvironment(): IEnvironment
     {
-        if (empty($this->config)) {
-            $this->config = new Config(require self::CONFIG_PATH, true);
-        }
-
-        return $this->config;
-    }
-
-    private function initEnvironment()
-    {
-        $config = $this->getConfig();
-
-        //Environment
-        if (empty($config->ecommerceframework->environment->class)) {
-            throw new InvalidConfigException('No Environment class defined.');
-        } else {
-            if (class_exists($config->ecommerceframework->environment->class)) {
-                $session = \Pimcore::getContainer()->get('session');
-                $localeService = \Pimcore::getContainer()->get('pimcore.locale');
-
-                $this->environment = new $config->ecommerceframework->environment->class($config->ecommerceframework->environment->config, $session, $localeService);
-                if (!($this->environment instanceof IEnvironment)) {
-                    throw new InvalidConfigException('Environment class ' . $config->ecommerceframework->environment->class . ' does not implement IEnvironment.');
-                }
-            } else {
-                throw new InvalidConfigException('Environment class ' . $config->ecommerceframework->environment->class . ' not found.');
-            }
-        }
-    }
-
-    private function init()
-    {
-        $config = $this->getConfig();
-        $this->checkConfig($config);
-    }
-
-    private function checkConfig($config)
-    {
-        $this->configureCartManager($config);
-        $this->configurePriceSystem($config);
-        $this->configureAvailabilitySystem($config);
-
-        $this->configureCheckoutManager($config);
-        $this->configurePricingManager($config);
-        $this->configurePaymentManager($config);
-        $this->configureOrderManager($config);
-        $this->configureTrackingManager($config);
-
-        $this->configureOfferToolService($config);
-    }
-
-    private function configureCartManager($config)
-    {
-        if (empty($config->ecommerceframework->cartmanager->class)) {
-            throw new InvalidConfigException('No Cartmanager class defined.');
-        } else {
-            if (class_exists($config->ecommerceframework->cartmanager->class)) {
-                $this->cartManager = new $config->ecommerceframework->cartmanager->class($config->ecommerceframework->cartmanager->config);
-                if (!($this->cartManager instanceof ICartManager)) {
-                    throw new InvalidConfigException('Cartmanager class ' . $config->ecommerceframework->cartmanager->class . ' does not implement ICartManager.');
-                }
-            } else {
-                throw new InvalidConfigException('Cartmanager class ' . $config->ecommerceframework->cartmanager->class . ' not found.');
-            }
-        }
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_ENVIRONMENT);
     }
 
     /**
-     * Configure tracking manager
+     * Returns cart manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
      *
-     * @param Config $config
+     * @param string|null $tenant
      *
-     * @throws InvalidConfigException
+     * @return ICartManager
      */
-    private function configureTrackingManager(Config $config)
+    public function getCartManager(string $tenant = null): ICartManager
     {
-        if (!empty($config->ecommerceframework->trackingmanager->class)) {
-            $trackingManagerClass = $config->ecommerceframework->trackingmanager->class;
-            if (class_exists($trackingManagerClass)) {
-                $instance = new $trackingManagerClass($config->ecommerceframework->trackingmanager->config, \Pimcore::getContainer()->get('templating'));
-                if ($instance instanceof ITrackingManager) {
-                    $this->trackingManager = $instance;
-                } else {
-                    throw new InvalidConfigException(sprintf('TrackingManager class %s does not implement Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\ITrackingManager', $trackingManagerClass));
-                }
-            } else {
-                throw new InvalidConfigException(sprintf('TrackingManager class %s not found.', $trackingManagerClass));
-            }
-        }
+        return $this->cartManagers->getCartManager($tenant);
     }
 
     /**
-     * Get tracking manager
+     * Returns order manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
      *
-     * @return TrackingManager
+     * @param string|null $tenant
      *
-     * @throws UnsupportedException
+     * @return IOrderManager
      */
-    public function getTrackingManager()
+    public function getOrderManager(string $tenant = null): IOrderManager
     {
-        if (null === $this->trackingManager) {
-            throw new UnsupportedException('Tracking is not configured, check configuration!');
-        }
-
-        return $this->trackingManager;
+        return $this->orderManagers->getOrderManager($tenant);
     }
 
-    private function configurePriceSystem($config)
+    public function getPricingManager(): IPricingManager
     {
-        if (empty($config->ecommerceframework->pricesystems)) {
-            throw new InvalidConfigException('No Pricesystems defined.');
-        }
-        //$this->priceSystems=array();
-        $priceSystemConfigs = $config->ecommerceframework->pricesystems->pricesystem;
-        if ($priceSystemConfigs->class) {
-            $priceSystemConfigs = [$priceSystemConfigs];
-        }
-
-        $this->priceSystems = new \stdClass();
-        if (!empty($priceSystemConfigs)) {
-            foreach ($priceSystemConfigs as $priceSystemConfig) {
-                if (empty($priceSystemConfig->class)) {
-                    throw new InvalidConfigException('No Pricesystem class defined.');
-                }
-                if (empty($priceSystemConfig->name)) {
-                    throw new InvalidConfigException('No Pricesystem name defined.');
-                }
-                $name = $priceSystemConfig->name;
-                if (!empty($this->priceSystems->$name)) {
-                    throw new InvalidConfigException('More than one Pricesystem '.$name . ' is defined!');
-                }
-                /* if (!class_exists($priceSystemConfig->class)) {
-                    throw new InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
-                }*/
-                $class = $priceSystemConfig->class;
-                $priceSystem = new $class($priceSystemConfig->config);
-                if (!$priceSystem instanceof IPriceSystem) {
-                    throw new InvalidConfigException('Pricesystem class ' . $priceSystemConfig->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem.');
-                }
-                $this->priceSystems->$name=$priceSystem;
-            }
-        }
-    }
-
-    private function configureAvailabilitySystem($config)
-    {
-        if (empty($config->ecommerceframework->availablitysystems)) {
-            throw new InvalidConfigException('No AvailabilitySystem defined.');
-        }
-        //$this->priceSystems=array();
-        $availabilitySystemConfigs = $config->ecommerceframework->availablitysystems->availablitysystem;
-        if ($availabilitySystemConfigs->class) {
-            $availabilitySystemConfigs = [$availabilitySystemConfigs];
-        }
-
-        $this->availabilitySystems = new \stdClass();
-        if (!empty($availabilitySystemConfigs)) {
-            foreach ($availabilitySystemConfigs as $availabilitySystemConfig) {
-                if (empty($availabilitySystemConfig->class)) {
-                    throw new InvalidConfigException('No AvailabilitySystem class defined.');
-                }
-                if (empty($availabilitySystemConfig->name)) {
-                    throw new InvalidConfigException('No AvailabilitySystem name defined.');
-                }
-                $name = $availabilitySystemConfig->name;
-                if (!empty($this->availablitysystems->$name)) {
-                    throw new InvalidConfigException('More than one AvailabilitySystem '.$name . ' is defined!');
-                }
-                /* if (!class_exists($priceSystemConfig->class)) {
-                    throw new InvalidConfigException("Pricesystem class " . $priceSystemConfig->class . "  not found.");
-                }*/
-
-                $class = $availabilitySystemConfig->class;
-                $availabilitySystem = new $class();
-                if (! $availabilitySystem instanceof IAvailabilitySystem) {
-                    throw new InvalidConfigException('AvailabilitySystem class ' . $availabilitySystemConfig->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem.');
-                }
-                $this->availabilitySystems->$name= $availabilitySystem;
-            }
-        }
-    }
-
-    private function configureCheckoutManager($config)
-    {
-        if (empty($config->ecommerceframework->checkoutmanager->class)) {
-            throw new InvalidConfigException('No Checkoutmanager class defined.');
-        } else {
-            if (!class_exists($config->ecommerceframework->checkoutmanager->class)) {
-                throw new InvalidConfigException('Checkoutmanager class ' . $config->ecommerceframework->checkoutmanager->class . ' not found.');
-            }
-        }
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER);
     }
 
     /**
-     * @param Config $config
+     * Returns a price system by name. Falls back to "default" if no name is passed.
      *
-     * @throws InvalidConfigException
-     */
-    private function configurePricingManager(Config $config)
-    {
-        if (empty($config->ecommerceframework->pricingmanager->class)) {
-            throw new InvalidConfigException('No PricingManager class defined.');
-        } else {
-            if (class_exists($config->ecommerceframework->pricingmanager->class)) {
-                $this->pricingManager = new $config->ecommerceframework->pricingmanager->class($config->ecommerceframework->pricingmanager->config, \Pimcore::getContainer()->get('session'));
-                if (!($this->pricingManager instanceof IPricingManager)) {
-                    throw new InvalidConfigException('PricingManager class ' . $config->ecommerceframework->pricingmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager.');
-                }
-            } else {
-                throw new InvalidConfigException('PricingManager class ' . $config->ecommerceframework->pricingmanager->class . ' not found.');
-            }
-        }
-    }
-
-    private function configureOfferToolService($config)
-    {
-        if (!empty($config->ecommerceframework->offertool->class)) {
-            if (!class_exists($config->ecommerceframework->offertool->class)) {
-                throw new InvalidConfigException('OfferTool class ' . $config->ecommerceframework->offertool->class . ' not found.');
-            }
-            if (!class_exists($config->ecommerceframework->offertool->orderstorage->offerClass)) {
-                throw new InvalidConfigException('OfferToolOffer class ' . $config->ecommerceframework->offertool->orderstorage->offerClass . ' not found.');
-            }
-            if (!class_exists($config->ecommerceframework->offertool->orderstorage->offerItemClass)) {
-                throw new InvalidConfigException('OfferToolOfferItem class ' . $config->ecommerceframework->offertool->orderstorage->offerItemClass . ' not found.');
-            }
-        }
-    }
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function configurePaymentManager(Config $config)
-    {
-        if (!empty($config->ecommerceframework->paymentmanager->class)) {
-            if (class_exists($config->ecommerceframework->paymentmanager->class)) {
-                $this->paymentManager = new $config->ecommerceframework->paymentmanager->class($config->ecommerceframework->paymentmanager->config);
-                if (!($this->paymentManager instanceof IPaymentManager)) {
-                    throw new InvalidConfigException('PaymentManager class ' . $config->ecommerceframework->paymentmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager.');
-                }
-            } else {
-                throw new InvalidConfigException('PaymentManager class ' . $config->ecommerceframework->paymentmanager->class . ' not found.');
-            }
-        }
-    }
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function configureOrderManager(Config $config)
-    {
-        if (!empty($config->ecommerceframework->ordermanager->class)) {
-            if (class_exists($config->ecommerceframework->ordermanager->class)) {
-                $this->orderManager = new $config->ecommerceframework->ordermanager->class($config->ecommerceframework->ordermanager->config);
-                if (!($this->orderManager instanceof IOrderManager)) {
-                    throw new InvalidConfigException('OrderManager class ' . $config->ecommerceframework->ordermanager->class . ' does not implement Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\IOrderManager.');
-                }
-            } else {
-                throw new InvalidConfigException('OrderManager class ' . $config->ecommerceframework->ordermanager->class . ' not found.');
-            }
-        }
-    }
-
-    public function getCartManager()
-    {
-        return $this->cartManager;
-    }
-
-    /**
-     * @throws InvalidConfigException
-     *
-     * @param ICart $cart
-     * @param string $name optional name of checkout manager, in case there are more than one configured
-     *
-     * @return ICheckoutManager
-     */
-    public function getCheckoutManager(ICart $cart, $name = null)
-    {
-        if (empty($this->checkoutManagers[$cart->getId()])) {
-            if ($name) {
-                $managerConfigName = 'checkoutmanager_' . $name;
-                $manager = new $this->config->ecommerceframework->$managerConfigName->class($cart, $this->config->ecommerceframework->$managerConfigName->config);
-                if (!($manager instanceof ICheckoutManager)) {
-                    throw new InvalidConfigException('Checkoutmanager class ' . $this->config->ecommerceframework->$managerConfigName->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
-                }
-            } else {
-                $manager = new $this->config->ecommerceframework->checkoutmanager->class($cart, $this->config->ecommerceframework->checkoutmanager->config);
-                if (!($manager instanceof ICheckoutManager)) {
-                    throw new InvalidConfigException('Checkoutmanager class ' . $this->config->ecommerceframework->checkoutmanager->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager.');
-                }
-            }
-
-            $this->checkoutManagers[$cart->getId()] = $manager;
-        }
-
-        return $this->checkoutManagers[$cart->getId()];
-    }
-
-    /**
-     * @param string $checkoutManagerName
-     *
-     * @return ICommitOrderProcessor
-     */
-    public function getCommitOrderProcessor($checkoutManagerName = null)
-    {
-        $originalConfig = $this->config->ecommerceframework->checkoutmanager->config;
-        if ($checkoutManagerName) {
-            $managerConfigName = 'checkoutmanager_' . $checkoutManagerName;
-            $originalConfig = $this->config->ecommerceframework->$managerConfigName->config;
-        }
-
-        $config = new HelperContainer($originalConfig, 'checkoutmanager');
-        $commitOrderProcessorClassname = $config->commitorderprocessor->class;
-
-        $commitOrderProcessor = new $commitOrderProcessorClassname();
-        $commitOrderProcessor->setConfirmationMail((string)$config->mails->confirmation);
-
-        return $commitOrderProcessor;
-    }
-
-    /**
-     * @return IEnvironment
-     */
-    public function getEnvironment()
-    {
-        if (!$this->environment) {
-            $this->initEnvironment();
-        }
-
-        return $this->environment;
-    }
-
-    /**
-     * @throws UnsupportedException
-     *
-     * @param null $name
+     * @param string|null $name
      *
      * @return IPriceSystem
      */
-    public function getPriceSystem($name = null)
+    public function getPriceSystem(string $name = null): IPriceSystem
     {
-        if ($name == null) {
-            $name = 'default';
-        }
-
-        if ($ps = $this->priceSystems->$name) {
-            return $ps;
-        } else {
-            throw new UnsupportedException('priceSystem ' . $name . ' is not supported, check configuration!');
-        }
+        return $this->priceSystems->getPriceSystem($name);
     }
 
     /**
-     * @throws UnsupportedException
+     * Returns an availability system by name. Falls back to "default" if no name is passed.
      *
-     * @param null $name
+     * @param string|null $name
      *
      * @return IAvailabilitySystem
      */
-    public function getAvailabilitySystem($name = null)
+    public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
     {
-        if ($name == null) {
-            $name = 'default';
-        }
-
-        if ($ps = $this->availabilitySystems->$name) {
-            return $ps;
-        } else {
-            throw new UnsupportedException('availabilitySystem ' . $name . ' is not supported, check configuration!');
-        }
+        return $this->availabilitySystems->getAvailabilitySystem($name);
     }
 
     /**
-     * @var IndexService
+     * Returns checkout manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
+     *
+     * @param ICart $cart
+     * @param string|null $tenant
+     *
+     * @return ICheckoutManager
      */
-    private $indexService = null;
+    public function getCheckoutManager(ICart $cart, string $tenant = null): ICheckoutManager
+    {
+        $factory = $this->checkoutManagerFactories->getCheckoutManagerFactory($tenant);
+
+        return $factory->createCheckoutManager($cart);
+    }
 
     /**
+     * Returns a commit order processor which is configured for a specific checkout manager
+     *
+     * @param string|null $tenant
+     *
+     * @return ICommitOrderProcessor
+     */
+    public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
+    {
+        return $this->commitOrderProcessors->getCommitOrderProcessor($tenant);
+    }
+
+    public function getPaymentManager(): IPaymentManager
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
+    }
+
+    /**
+     * Returns the index service which holds a collection of all index workers
+     *
      * @return IndexService
      */
-    public function getIndexService()
+    public function getIndexService(): IndexService
     {
-        if (empty($this->indexService)) {
-            $this->indexService = new IndexService($this->config->ecommerceframework->productindex);
-        }
-
-        return $this->indexService;
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_INDEX_SERVICE);
     }
 
     /**
-     * @return string[]
-     */
-    public function getAllTenants()
-    {
-        if (empty($this->allTenants) && $this->config->ecommerceframework->productindex->tenants && $this->config->ecommerceframework->productindex->tenants instanceof Config) {
-            foreach ($this->config->ecommerceframework->productindex->tenants as $name => $tenant) {
-                $this->allTenants[$name] = $name;
-            }
-        }
-
-        return $this->allTenants;
-    }
-
-    /**
+     * Returns the filter service for the currently set assortment tenant. Falls back to "default" if no tenant is passed
+     * and there is no current assortment tenant set.
+     *
+     * @param string|null $tenant
+     *
      * @return FilterService
      */
-    public function getFilterService()
+    public function getFilterService(string $tenant = null): FilterService
     {
-        $filterTypes = $this->getIndexService()->getCurrentTenantConfig()->getFilterTypeConfig();
-        if (!$filterTypes) {
-            $filterTypes = $this->config->ecommerceframework->filtertypes;
-        }
+        return $this->filterServices->getFilterService($tenant);
+    }
 
-        $translator = \Pimcore::getContainer()->get('translator');
-        $renderer =  \Pimcore::getContainer()->get('templating');
+    public function getAllTenants(): array
+    {
+        return $this->getIndexService()->getTenants();
+    }
 
-        return new FilterService($filterTypes, $translator, $renderer);
+    public function getOfferToolService(): IService
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
+    }
+
+    public function getVoucherService(): IVoucherService
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_VOUCHER_SERVICE);
+    }
+
+    /**
+     * Builds a token manager for a specific token configuration
+     *
+     * @param AbstractVoucherTokenType $configuration
+     *
+     * @return ITokenManager
+     */
+    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
+    {
+        $tokenManagerFactory = $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TOKEN_MANAGER_FACTORY);
+
+        return $tokenManagerFactory->getTokenManager($configuration);
+    }
+
+    public function getTrackingManager(): ITrackingManager
+    {
+        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
     }
 
     public function saveState()
     {
-        $this->cartManager->save();
+        $this->getCartManager()->save();
         $this->environment->save();
-    }
-
-    /**
-     * @return IPricingManager
-     */
-    public function getPricingManager()
-    {
-        return $this->pricingManager;
-    }
-
-    /**
-     * @return IService
-     */
-    public function getOfferToolService()
-    {
-        if (empty($this->offerToolService)) {
-            $className = (string)$this->config->ecommerceframework->offertool->class;
-            $this->offerToolService = new $className(
-                (string) $this->config->ecommerceframework->offertool->orderstorage->offerClass,
-                (string) $this->config->ecommerceframework->offertool->orderstorage->offerItemClass,
-                (string) $this->config->ecommerceframework->offertool->orderstorage->parentFolderPath
-            );
-        }
-
-        return $this->offerToolService;
-    }
-
-    /**
-     * @return IPaymentManager
-     */
-    public function getPaymentManager()
-    {
-        return $this->paymentManager;
-    }
-
-    /**
-     * @return IOrderManager
-     */
-    public function getOrderManager()
-    {
-        return $this->orderManager;
-    }
-
-    /**
-     * @return IVoucherService
-     *
-     * @throws InvalidConfigException
-     */
-    public function getVoucherService()
-    {
-        if (empty($this->voucherService)) {
-            $this->voucherService = new $this->config->ecommerceframework->voucherservice->class($this->config->ecommerceframework->voucherservice->config);
-            if (!($this->voucherService instanceof IVoucherService)) {
-                throw new InvalidConfigException('Voucher Service class ' . $this->config->ecommerceframework->voucherservice->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService.');
-            }
-        }
-
-        return $this->voucherService;
-    }
-
-    /**
-     * @param AbstractVoucherTokenType $configuration
-     *
-     * @return ITokenManager
-     *
-     * @throws InvalidConfigException
-     */
-    public function getTokenManager(AbstractVoucherTokenType $configuration)
-    {
-        $id   = $configuration->getObject()->getId();
-        $type = $configuration->getType();
-
-        if (empty($this->tokenManagers[$id])) {
-            $tokenManagerClass = $this->config->ecommerceframework->voucherservice->tokenmanagers->$type;
-
-            if ($tokenManagerClass) {
-                $tokenManager = new $tokenManagerClass->class($configuration);
-                if (!($tokenManager instanceof ITokenManager)) {
-                    throw new InvalidConfigException('Token Manager class ' . $tokenManagerClass->class . ' does not implement \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager.');
-                }
-
-                $this->tokenManagers[$id] = $tokenManager;
-            } else {
-                throw new InvalidConfigException('Token Manager for ' . $type . ' not defined.');
-            }
-        }
-
-        return $this->tokenManagers[$id];
     }
 }

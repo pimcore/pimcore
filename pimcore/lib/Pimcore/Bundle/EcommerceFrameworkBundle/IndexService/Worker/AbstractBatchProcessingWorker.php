@@ -24,14 +24,11 @@ use Pimcore\Model\Object\Concrete;
 
 /**
  * Provides worker functionality for batch preparing data and updating index
+ *
+ * @property AbstractConfig $tenantConfig
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker
 {
-    /**
-     * @var AbstractConfig
-     */
-    protected $tenantConfig;
-
     /**
      * returns name for store table
      *
@@ -187,59 +184,38 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 $data = $this->getDefaultDataForIndex($object, $subObjectId);
                 $relationData = [];
 
-                $columnConfig = $this->columnConfig;
-                if (!empty($columnConfig->name)) {
-                    $columnConfig = [$columnConfig];
-                } elseif (empty($columnConfig)) {
-                    $columnConfig = [];
-                }
-                foreach ($columnConfig as $column) {
+                foreach ($this->tenantConfig->getAttributes() as $attribute) {
                     try {
-                        //$data[$column->name] = null;
-                        $value = null;
-                        if (!empty($column->getter)) {
-                            $getter = $column->getter;
-                            $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
-                        } else {
-                            if (!empty($column->fieldname)) {
-                                $getter = 'get' . ucfirst($column->fieldname);
-                            } else {
-                                $getter = 'get' . ucfirst($column->name);
-                            }
+                        $value = $attribute->getValue($object, $subObjectId, $this->tenantConfig);
 
-                            if (method_exists($object, $getter)) {
-                                $value = $object->$getter($column->locale);
-                            }
-                        }
+                        if (null !== $attribute->getInterpreter()) {
+                            $value = $attribute->interpretValue($value);
 
-                        if (!empty($column->interpreter)) {
-                            $interpreter = $column->interpreter;
-                            $value = $interpreter::interpret($value, $column->config);
-                            $interpreterObject = new $interpreter();
-                            if ($interpreterObject instanceof IRelationInterpreter) {
+                            if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
                                 foreach ($value as $v) {
                                     $relData = [];
                                     $relData['src'] = $subObjectId;
                                     $relData['src_virtualProductId'] = $data['o_virtualProductId'];
                                     $relData['dest'] = $v['dest'];
-                                    $relData['fieldname'] = $column->name;
+                                    $relData['fieldname'] = $attribute->getName();
                                     $relData['type'] = $v['type'];
                                     $relationData[] = $relData;
                                 }
                             } else {
-                                $data[$column->name] = $value;
+                                $data[$attribute->getName()] = $value;
                             }
                         } else {
-                            $data[$column->name] = $value;
+                            $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$column->name])) {
-                            $data[$column->name] = $this->convertArray($data[$column->name]);
+                        if (is_array($data[$attribute->getName()])) {
+                            $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Exception $e) {
                         Logger::err('Exception in IndexService: ' . $e);
                     }
                 }
+
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }

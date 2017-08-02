@@ -14,27 +14,38 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class StructuredTable implements IInterpreter
 {
-    public static function interpret($value, $config = null)
-    {
-        if (empty($config->tablerow)) {
-            throw new \Exception('Table row config missing.');
-        }
-        if (empty($config->tablecolumn)) {
-            throw new \Exception('Table column config missing.');
-        }
+    use OptionsResolverTrait;
 
-        $getter = 'get' . ucfirst($config->tablerow) . '__' . ucfirst($config->tablecolumn);
+    public function interpret($value, $config = null)
+    {
+        $config = $this->resolveOptions($config ?? []);
+
+        $getter = 'get' . ucfirst($config['tablerow']) . '__' . ucfirst($config['tablecolumn']);
 
         if ($value && $value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
-            if (!empty($config->defaultUnit)) {
-                return $value->$getter() . ' ' . $config->defaultUnit;
+            if (isset($config['defaultUnit'])) {
+                return $value->$getter() . ' ' . $config['defaultUnit'];
             } else {
                 return $value->$getter();
             }
         }
 
         return null;
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        $resolver->setDefined('defaultUnit');
+
+        foreach (['tablerow', 'tablecolumn'] as $field) {
+            $resolver
+                ->setDefined($field)
+                ->setAllowedTypes($field, ['string', 'int']); // TODO does int make sense?
+        }
     }
 }

@@ -27,7 +27,6 @@ class LegacyClassMappingTool
         'OnlineShop\Framework\OfferTool\AbstractOffer' => 'OnlineShop_OfferTool_AbstractOffer',
         'OnlineShop\Framework\OfferTool\AbstractOfferItem' => 'OnlineShop_OfferTool_AbstractOfferItem',
         'OnlineShop\Framework\OfferTool\AbstractOfferToolProduct' => 'OnlineShop_OfferTool_AbstractOfferToolProduct',
-        'OnlineShop\Framework\Tools\Config\HelperContainer' => 'OnlineShop_Framework_Config_HelperContainer',
         'OnlineShop\Framework\CartManager\SessionCartItem' => 'OnlineShop_Framework_Impl_SessionCartItem',
         'OnlineShop\Framework\CartManager\SessionCartCheckoutData' => 'OnlineShop_Framework_Impl_SessionCartCheckoutData',
         'OnlineShop\Framework\CartManager\SessionCart' => 'OnlineShop_Framework_Impl_SessionCart',
@@ -125,7 +124,6 @@ class LegacyClassMappingTool
         'OnlineShop\Framework\IndexService\Config\DefaultFactFinder' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultFactFinder',
         'OnlineShop\Framework\IndexService\Config\DefaultFindologic' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultFindologic',
         'OnlineShop\Framework\IndexService\Config\DefaultMysql' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysql',
-        'OnlineShop\Framework\IndexService\Config\DefaultMysqlInheritColumnConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlInheritColumnConfig',
         'OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig' => 'OnlineShop_Framework_IndexService_Tenant_Config_DefaultMysqlSubTenantConfig',
         'OnlineShop\Framework\IndexService\Config\ElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Config_ElasticSearch',
         'OnlineShop\Framework\IndexService\Config\OptimizedMysql' => 'OnlineShop_Framework_IndexService_Tenant_Config_OptimizedMysql',
@@ -284,7 +282,7 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry' => 'OnlineShop\Framework\Model\AbstractSetProductEntry',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType' => 'OnlineShop\Framework\Model\AbstractVoucherTokenType',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup' => 'OnlineShop\Framework\Model\DefaultMockup',
-        'Pimcore\Bundle\EcommerceFrameworkBundle\Environment' => 'OnlineShop\Framework\Environment',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment' => 'OnlineShop\Framework\Environment',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\AbstractData' => 'OnlineShop\Framework\Tracking\AbstractData',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\AbstractProductData' => 'OnlineShop\Framework\Tracking\AbstractProductData',
@@ -363,7 +361,7 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount' => 'OnlineShop\Framework\CartManager\CartPriceModificator\Discount',
         'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping' => 'OnlineShop\Framework\CartManager\CartPriceModificator\Shipping',
 
-        'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem' => 'OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem' => 'OnlineShop\Framework\AvailabilitySystem\AttributeAvailabilitySystem',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException' => 'OnlineShop\Framework\Exception\InvalidConfigException',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException' => 'OnlineShop\Framework\Exception\UnsupportedException',
@@ -411,7 +409,6 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder' => 'OnlineShop\Framework\IndexService\Config\DefaultFactFinder',
         'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic' => 'OnlineShop\Framework\IndexService\Config\DefaultFindologic',
         'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql' => 'OnlineShop\Framework\IndexService\Config\DefaultMysql',
-        'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlInheritColumnConfig' => 'OnlineShop\Framework\IndexService\Config\DefaultMysqlInheritColumnConfig',
         'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig' => 'OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig',
         'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch' => 'OnlineShop\Framework\IndexService\Config\ElasticSearch',
         'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql' => 'OnlineShop\Framework\IndexService\Config\OptimizedMysql',
@@ -479,8 +476,6 @@ class LegacyClassMappingTool
         'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price' => 'OnlineShop\Framework\PriceSystem\Price',
         'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService' => 'OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService',
         'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry' => 'OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry',
-
-        'Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer' => 'OnlineShop\Framework\Tools\Config\HelperContainer',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Command\CleanupPendingOrdersCommand' => 'OnlineShop\Framework\Console\Command\CleanupPendingOrdersCommand',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Command\Voucher\CleanupReservationsCommand' => 'OnlineShop\Framework\Console\Command\Voucher\CleanupReservationsCommand',

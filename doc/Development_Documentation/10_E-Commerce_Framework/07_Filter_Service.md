@@ -25,55 +25,79 @@ the correct filter conditions based on the Product Index implementation and rend
 Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType` expects the two methods 
 `getFilterFrontend()` and `addCondition()` to be implemented. 
 
-
-The configuration of the Filter Types takes place in the 
-[`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L528-L528)
-
-```php
- /*  assign backend implementations and views to filter type field collections
+Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
+The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
  
-    helper = tool for pimcore backend controller to get possible group by values for a certain field
-             (used by object data type IndexFieldSelection, e.g. in filter definitions)
- */
-"filtertypes" => [
-    'helper' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterGroupHelper',
-    'FilterNumberRange' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\NumberRange',
-        'script' => ':Shop/filters:range.html.php'
-    ],
-    'FilterNumberRangeSelection' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\NumberRangeSelection',
-        'script' => ':Shop/filters:numberrange.html.php'
-    ],
-    'FilterSelect' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\Select',
-        'script' => ':Shop/filters:select.html.php'
-    ],
-    'FilterSelectFromMultiSelect' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\SelectFromMultiSelect',
-        'script' => ':Shop/filters:select.html.php'
-    ],
-    'FilterMultiSelect' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\MultiSelect',
-        'script' => ':Shop/filters:multiselect.html.php'
-    ],
-    'FilterMultiSelectFromMultiSelect' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\MultiSelectFromMultiSelect',
-        'script' => ':Shop/filters:multiselect.html.php'
-    ],
-    'FilterMultiRelation' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\MultiSelectRelation',
-        'script' => ':Shop/filters:multiselect-relation.html.php'
-    ],
-    'FilterCategory' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\SelectCategory',
-        'script' => ':Shop/filters:select_category.html.php'
-    ],
-    'FilterRelation' => [
-        'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\FilterService\\FilterType\\SelectRelation',
-        'script' => ':Shop/filters:object_relation.html.php'
-    ]
-],
+```yaml
+pimcore_ecommerce_framework:
+    filter_service:
+        tenants:
+            default:
+                # assign backend implementations and views to filter type field collections
+                filter_types:
+                
+                    # filter type for the FilterNumberRange field collection
+                    FilterNumberRange:
+                        # service id for filter type implementation
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRange
+                        # default template for filter, can be overwritten in filter definition
+                        template: ':Shop/filters:range.html.php'
+
+                    FilterNumberRangeSelection:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
+                        template: ':Shop/filters:numberrange.html.php'
+
+                    FilterSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Select
+                        template: ':Shop/filters:select.html.php'
+
+                    FilterSelectFromMultiSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
+                        template: ':Shop/filters:select.html.php'
+
+                    FilterMultiSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
+                        template: ':Shop/filters:multiselect.html.php'
+
+                    FilterMultiSelectFromMultiSelect:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectFromMultiSelect
+                        template: ':Shop/filters:multiselect.html.php'
+
+                    FilterMultiRelation:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
+                        template: ':Shop/filters:multiselect-relation.html.php'
+
+                    FilterCategory:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
+                        template: ':Shop/filters:select_category.html.php'
+
+                    FilterRelation:
+                        filter_type_id: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
+                        template: ':Shop/filters:object_relation.html.php'
+```
+
+Optionally, you can configure a custom filter service which relies on a custom helper implementation. The helper is a tool
+for the Pimcore backend controller to get possible group by values for a certain field (used by object data type IndexFieldSelection,
+e.g. in filter definitions). First, create your filter service definition:
+
+```yaml
+services:
+    app.custom_filter_service:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper'
+```
+
+You can now use the service definition in the `filter_service` config:
+
+```yaml
+pimcore_ecommerce_framework:
+    filter_service:
+        tenants:
+            default:
+                service_id: app.custom_filter_service
+                filter_types:
+                    # ...
 ```
 
 **Configuration elements are:**
@@ -103,7 +127,8 @@ changed by the user in the frontend.
 
 
 The configuration of preconditions and filters is done by field collection entries, whereby the field collection types 
-are mapped to Filter Types and their backend implementations in the `EcommerceFrameworkConfig.php` (see previous chapter). 
+are mapped to Filter Types and their backend implementations in the `pimcore_ecommerce_framework.filter_service` config 
+section (see previous chapter). 
 The Filter Definition class can be extended and modified to custom needs of the system. 
 
 Filter Definition objects can be assigned to category objects to build up automatic category pages or to area bricks in 

@@ -646,7 +646,7 @@ class OnlineShop_Framework_ProductList_DefaultMockup extends \Pimcore\Bundle\Eco
  * @deprecated
  * class OnlineShop_Framework_Impl_Environment
  */
-class OnlineShop_Framework_Impl_Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
+class OnlineShop_Framework_Impl_Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment
 {
 }
 
@@ -1134,7 +1134,7 @@ class OnlineShop_Framework_Impl_CartPriceModificator_Shipping extends \Pimcore\B
  * @deprecated
  * class OnlineShop_Framework_Impl_AttributeAvailabilitySystem
  */
-class OnlineShop_Framework_Impl_AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem
+class OnlineShop_Framework_Impl_AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
 {
 }
 
@@ -1812,14 +1812,6 @@ class OnlineShop_Framework_Impl_Price extends \Pimcore\Bundle\EcommerceFramework
 
 /**
  * @deprecated
- * class OnlineShop_Framework_Config_HelperContainer
- */
-class OnlineShop_Framework_Config_HelperContainer extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer
-{
-}
-
-/**
- * @deprecated
  * class OnlineShop_Framework_Factory
  */
 class OnlineShop_Framework_Factory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Factory
@@ -1860,7 +1852,7 @@ interface IOrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderMa
  * @deprecated
  * class Environment
  */
-class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\Environment
+class Environment extends \Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment
 {
 }
 
@@ -1898,7 +1890,7 @@ interface IAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\A
  * @deprecated
  * class AttributeAvailabilitySystem
  */
-class AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AttributeAvailabilitySystem
+class AttributeAvailabilitySystem extends \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
 {
 }
 
@@ -4211,20 +4203,6 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\L
 }
 
 // -- end namespace OnlineShop\Framework\PricingManager\Rule\Listing ----------------------------------------------------------------------------------
-
-namespace OnlineShop\Framework\Tools\Config {
-
-/**
- * @deprecated
- * class HelperContainer
- */
-class HelperContainer extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer
-{
-}
-
-}
-
-// -- end namespace OnlineShop\Framework\Tools\Config ----------------------------------------------------------------------------------
 
 namespace OnlineShop\Framework\Tracking {
 

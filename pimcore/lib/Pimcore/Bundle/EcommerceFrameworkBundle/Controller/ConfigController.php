@@ -15,8 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Config\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,24 +32,25 @@ class ConfigController extends AdminController
      */
     public function jsConfigAction()
     {
-        $config = Factory::getInstance()->getConfig();
+        $config = $this->getParameter('pimcore_ecommerce.pimcore.config');
 
-        $params = [];
-
-        if ($config->ecommerceframework->pimcore instanceof Config) {
-            foreach ($config->ecommerceframework->pimcore as $confName => $conf) {
-                $entries = [];
-                foreach ($conf as $entryName => $entry) {
-                    $entries[$entryName] = $entry->toArray();
-                }
-                $params[$confName] = $entries;
-            }
+        $orderList = $config['menu']['order_list'];
+        if (isset($orderList['route']) && !empty($orderList['route'])) {
+            $orderList['route'] = $this->get('router')->generate($orderList['route']);
+        } elseif (isset($orderList['path']) && !empty($orderList['path'])) {
+            $orderList['route'] = $orderList['path'];
         }
 
-        $javascript='pimcore.registerNS("pimcore.bundle.EcommerceFramework.bundle.config");';
+        if (array_key_exists('path', $orderList)) {
+            unset($orderList['path']);
+        }
+
+        $config['menu']['order_list'] = $orderList;
+
+        $javascript = 'pimcore.registerNS("pimcore.bundle.EcommerceFramework.bundle.config");' . PHP_EOL;
 
         $javascript .= 'pimcore.bundle.EcommerceFramework.bundle.config = ';
-        $javascript .= json_encode($params).';';
+        $javascript .= json_encode($config) . ';';
 
         $response = new Response($javascript);
         $response->headers->set('Content-Type', 'application/javascript');

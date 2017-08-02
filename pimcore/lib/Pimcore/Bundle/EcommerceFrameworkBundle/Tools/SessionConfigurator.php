@@ -23,22 +23,25 @@ class SessionConfigurator implements SessionConfiguratorInterface
     const ATTRIBUTE_BAG_CART = 'ecommerceframework_cart';
     const ATTRIBUTE_BAG_ENVIRONMENT = 'ecommerceframework_environment';
     const ATTRIBUTE_BAG_PRICING_ENVIRONMENT = 'ecommerceframework_pricing_environment';
+    const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
 
     /**
      * @inheritDoc
      */
     public function configure(SessionInterface $session)
     {
-        $bag = new NamespacedAttributeBag('_' . self::ATTRIBUTE_BAG_CART);
-        $bag->setName(self::ATTRIBUTE_BAG_CART);
-        $session->registerBag($bag);
+        $bagNames = [
+            self::ATTRIBUTE_BAG_CART,
+            self::ATTRIBUTE_BAG_ENVIRONMENT,
+            self::ATTRIBUTE_BAG_PRICING_ENVIRONMENT,
+            self::ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT
+        ];
 
-        $bag = new NamespacedAttributeBag('_' . self::ATTRIBUTE_BAG_ENVIRONMENT);
-        $bag->setName(self::ATTRIBUTE_BAG_ENVIRONMENT);
-        $session->registerBag($bag);
+        foreach ($bagNames as $bagName) {
+            $bag = new NamespacedAttributeBag('_' . $bagName);
+            $bag->setName($bagName);
 
-        $bag = new NamespacedAttributeBag('_' . self::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
-        $bag->setName(self::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
-        $session->registerBag($bag);
+            $session->registerBag($bag);
+        }
     }
 }

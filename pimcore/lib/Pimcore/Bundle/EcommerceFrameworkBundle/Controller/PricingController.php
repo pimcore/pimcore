@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
@@ -298,32 +299,16 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * @Route("/get-config")
      *
-     * @param Request $request
+     * @return JsonResponse
      */
-    public function getConfigAction(Request $request)
+    public function getConfigAction()
     {
-        // init
-        $json = [
-            'condition' => [],
-            'action' => []
-        ];
+        $pricingManager = Factory::getInstance()->getPricingManager();
 
-        // get config
-        $pricingConfig = Factory::getInstance()->getConfig()->get('ecommerceframework')->get('pricingmanager');
-        if ($pricingConfig) {
-            $list = $pricingConfig->get('config')->get('condition');
-            foreach ($list as $name => $config) {
-                $json['condition'][] = $name;
-            }
-
-            $list = $pricingConfig->get('config')->get('action');
-            foreach ($list as $name => $config) {
-                $json['action'][] = $name;
-            }
-        }
-
-        // print
-        return $this->json($json);
+        return $this->json([
+            'condition' => array_keys($pricingManager->getConditionMapping()),
+            'action'    => array_keys($pricingManager->getActionMapping())
+        ]);
     }
 
     /**

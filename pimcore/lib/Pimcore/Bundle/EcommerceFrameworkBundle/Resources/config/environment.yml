@@ -1,0 +1,24 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # ENVIRONMENT
+    #
+    # Predefined core environment implementations. Options will be set from configuration.
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Environment:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\Environment
+        arguments:
+            - '@pimcore.locale'
+            - '%pimcore_ecommerce.environment.options%'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment
+        arguments:
+            - '@session'
+            - '@pimcore.locale'
+            - '%pimcore_ecommerce.environment.options%'

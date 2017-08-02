@@ -21,13 +21,7 @@ class NumberRange extends AbstractFilterType
 {
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
               'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
               'label' => $filterDefinition->getLabel(),
               'currentValue' => $currentFilter[$this->getField($filterDefinition)],

@@ -14,11 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Model\Object\AbstractObject;
+
 class ObjectId implements IInterpreter
 {
-    public static function interpret($value, $config = null)
+    public function interpret($value, $config = null)
     {
-        if (!empty($value) && $value instanceof \Pimcore\Model\Object\AbstractObject) {
+        if (!empty($value) && $value instanceof AbstractObject) {
             return $value->getId();
         }
 

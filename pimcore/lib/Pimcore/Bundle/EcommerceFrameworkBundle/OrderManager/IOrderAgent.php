@@ -15,8 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
@@ -27,12 +25,6 @@ use Pimcore\Model\Element\Note;
 
 interface IOrderAgent
 {
-    /**
-     * @param Factory $factory
-     * @param Order                        $order
-     */
-    public function __construct(Factory $factory, Order $order);
-
     /**
      * @return Order
      */
@@ -125,7 +117,7 @@ interface IOrderAgent
      *
      * only possible when payment state is PENDING, otherwise exception is thrown
      *
-     * @return AbstractOrder
+     * @return Order
      *
      * @throws UnsupportedException
      */

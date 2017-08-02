@@ -106,7 +106,7 @@ interface ICartManager extends IComponent
      *
      * @return string key of new created cart
      */
-    public function createCart($param);
+    public function createCart(array $params);
 
     /**
      * Deletes cart
@@ -123,13 +123,6 @@ interface ICartManager extends IComponent
      * @return ICartPriceCalculator
      */
     public function getCartPriceCalculator(ICart $cart);
-
-    /**
-     * @deprecated use getCartPriceCalculator instead
-     *
-     * @return ICartPriceCalculator
-     */
-    public function getCartPriceCalcuator(ICart $cart);
 
     /**
      * Resets cart manager - carts need to be reloaded after reset() is called

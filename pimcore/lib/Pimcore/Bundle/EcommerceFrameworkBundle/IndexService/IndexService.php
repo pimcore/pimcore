@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,81 +18,108 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql as DefaultMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\DefaultWorkerNotFoundException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\WorkerNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Config\Config;
 
 class IndexService
 {
     /**
-     * @var IWorker
+     * @var IEnvironment
      */
-    protected $defaultWorker;
+    protected $environment;
 
     /**
      * @var IWorker[]
      */
-    protected $tenantWorkers;
+    protected $tenantWorkers = [];
 
-    public function __construct($config)
+    /**
+     * @var string
+     */
+    protected $defaultTenant = 'default';
+
+    /**
+     * @param IEnvironment $environment
+     * @param IWorker[] $tenantWorkers
+     * @param string $defaultTenant
+     */
+    public function __construct(IEnvironment $environment, array $tenantWorkers = [], string $defaultTenant = 'default')
     {
-        if (!(string)$config->disableDefaultTenant) {
-            $this->defaultWorker = new DefaultMysql(new DefaultMysqlConfig('default', $config));
+        $this->environment = $environment;
+
+        foreach ($tenantWorkers as $tenantWorker) {
+            $this->registerTenantWorker($tenantWorker);
         }
 
-        $this->tenantWorkers = [];
-        if ($config->tenants && $config->tenants instanceof Config) {
-            foreach ($config->tenants as $name => $tenant) {
-                $tenantConfigClass = (string) $tenant->class;
-                $tenantConfig = $tenant;
-                if ($tenant->file) {
-                    $tenantConfig = new Config(require PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . ((string)$tenant->file), true);
-                    $tenantConfig = $tenantConfig->tenant;
-                }
-
-                /**
-                 * @var $tenantConfig IConfig
-                 */
-                $tenantConfig = new $tenantConfigClass($name, $tenantConfig, $config);
-                $worker = $tenantConfig->getTenantWorker();
-                $this->tenantWorkers[$name] = $worker;
-            }
+        if (null !== $defaultTenant && !empty($defaultTenant)) {
+            $this->defaultTenant = $defaultTenant;
         }
     }
 
+    protected function registerTenantWorker(IWorker $tenantWorker)
+    {
+        $this->tenantWorkers[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;
+    }
+
+    public function getTenants(): array
+    {
+        return array_keys($this->tenantWorkers);
+    }
+
     /**
-     * Returns a specific Tenant Worker
+     * Returns a specific tenant worker
      *
-     * @param string $name
+     * @param string $tenant
      *
      * @return IWorker
+     * @throws WorkerNotFoundException
      */
-    public function getTenantWorker($name)
+    public function getTenantWorker(string $tenant): IWorker
     {
-        return $this->tenantWorkers[$name];
+        if (!array_key_exists($tenant, $this->tenantWorkers)) {
+            throw new WorkerNotFoundException(sprintf('Tenant "%s" doesn\'t exist', $tenant));
+        }
+
+        return $this->tenantWorkers[$tenant];
+    }
+
+    /**
+     * Returns default worker as set in defaultTenant
+     *
+     * @return IWorker
+     * @throws DefaultWorkerNotFoundException
+     */
+    public function getDefaultWorker(): IWorker
+    {
+        if (!array_key_exists($this->defaultTenant, $this->tenantWorkers)) {
+            throw new DefaultWorkerNotFoundException(sprintf(
+                'Could not load default worker as there is no worker registered for the tenant "%s"',
+                $this->defaultTenant
+            ));
+        }
+
+        return $this->tenantWorkers[$this->defaultTenant];
     }
 
     /**
      * @deprecated
      *
-     * @param null $tenant
+     * @param string|null $tenant
      *
      * @return array
-     *
-     * @throws InvalidConfigException
      */
-    public function getGeneralSearchColumns($tenant = null)
+    public function getGeneralSearchColumns(string $tenant = null)
     {
         return $this->getGeneralSearchAttributes($tenant);
     }
 
     /**
-     * returns all attributes marked as general search attributes for full text search
+     * Returns all attributes marked as general search attributes for full text search
      *
      * @param string $tenant
      *
@@ -97,23 +127,13 @@ class IndexService
      *
      * @throws InvalidConfigException
      */
-    public function getGeneralSearchAttributes($tenant = null)
+    public function getGeneralSearchAttributes(string $tenant = null): array
     {
-        if (empty($tenant)) {
-            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
-        }
+        try {
+            $tenantWorker = $this->resolveTenantWorker($tenant);
 
-        if ($tenant) {
-            if (array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getGeneralSearchAttributes();
-            } else {
-                throw new InvalidConfigException("Tenant $tenant doesn't exist.");
-            }
-        }
-
-        if ($this->defaultWorker) {
-            return $this->defaultWorker->getGeneralSearchAttributes();
-        } else {
+            return $tenantWorker->getGeneralSearchAttributes();
+        } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
     }
@@ -127,51 +147,41 @@ class IndexService
     }
 
     /**
-     *  creates or updates necessary index structures (like database tables and so on)
+     * Creates or updates necessary index structures (e.g. database tables)
      */
     public function createOrUpdateIndexStructures()
     {
-        if ($this->defaultWorker) {
-            $this->defaultWorker->createOrUpdateIndexStructures();
-        }
-
-        foreach ($this->tenantWorkers as $name => $tenant) {
-            $tenant->createOrUpdateIndexStructures();
+        foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
+            $tenantWorker->createOrUpdateIndexStructures();
         }
     }
 
     /**
-     * deletes given element from index
+     * Deletes given element from index
      *
      * @param IIndexable $object
      */
     public function deleteFromIndex(IIndexable $object)
     {
-        if ($this->defaultWorker) {
-            $this->defaultWorker->deleteFromIndex($object);
-        }
-        foreach ($this->tenantWorkers as $name => $tenant) {
-            $tenant->deleteFromIndex($object);
+        foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
+            $tenantWorker->deleteFromIndex($object);
         }
     }
 
     /**
-     * updates given element in index
+     * Updates given element in index
      *
      * @param IIndexable $object
      */
     public function updateIndex(IIndexable $object)
     {
-        if ($this->defaultWorker) {
-            $this->defaultWorker->updateIndex($object);
-        }
-        foreach ($this->tenantWorkers as $name => $tenant) {
-            $tenant->updateIndex($object);
+        foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
+            $tenantWorker->updateIndex($object);
         }
     }
 
     /**
-     * returns all index attributes
+     * Returns all index attributes
      *
      * @param bool $considerHideInFieldList
      * @param string $tenant
@@ -180,23 +190,13 @@ class IndexService
      *
      * @throws InvalidConfigException
      */
-    public function getIndexAttributes($considerHideInFieldList = false, $tenant = null)
+    public function getIndexAttributes(bool $considerHideInFieldList = false, string $tenant = null): array
     {
-        if (empty($tenant)) {
-            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
-        }
+        try {
+            $tenantWorker = $this->resolveTenantWorker($tenant);
 
-        if ($tenant) {
-            if (array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getIndexAttributes($considerHideInFieldList);
-            } else {
-                throw new InvalidConfigException("Tenant $tenant doesn't exist.");
-            }
-        }
-
-        if ($this->defaultWorker) {
-            return $this->defaultWorker->getIndexAttributes($considerHideInFieldList);
-        } else {
+            return $tenantWorker->getIndexAttributes($considerHideInFieldList);
+        } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
     }
@@ -217,7 +217,7 @@ class IndexService
     }
 
     /**
-     * returns all filter groups
+     * Returns all filter groups
      *
      * @param string $tenant
      *
@@ -225,29 +225,19 @@ class IndexService
      *
      * @throws InvalidConfigException
      */
-    public function getAllFilterGroups($tenant = null)
+    public function getAllFilterGroups(string $tenant = null): array
     {
-        if (empty($tenant)) {
-            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
-        }
+        try {
+            $tenantWorker = $this->resolveTenantWorker($tenant);
 
-        if ($tenant) {
-            if (array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getAllFilterGroups();
-            } else {
-                throw new InvalidConfigException("Tenant $tenant doesn't exist.");
-            }
-        }
-
-        if ($this->defaultWorker) {
-            return $this->defaultWorker->getAllFilterGroups();
-        } else {
+            return $tenantWorker->getAllFilterGroups();
+        } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
     }
 
     /**
-     * retruns all index attributes for a given filter group
+     * Returns all index attributes for a given filter group
      *
      * @param $filterType
      * @param string $tenant
@@ -256,23 +246,13 @@ class IndexService
      *
      * @throws InvalidConfigException
      */
-    public function getIndexAttributesByFilterGroup($filterType, $tenant = null)
+    public function getIndexAttributesByFilterGroup($filterType, string $tenant = null): array
     {
-        if (empty($tenant)) {
-            $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
-        }
+        try {
+            $tenantWorker = $this->resolveTenantWorker($tenant);
 
-        if ($tenant) {
-            if (array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getIndexAttributesByFilterGroup($filterType);
-            } else {
-                throw new InvalidConfigException("Tenant $tenant doesn't exist.");
-            }
-        }
-
-        if ($this->defaultWorker) {
-            return $this->defaultWorker->getIndexAttributesByFilterGroup($filterType);
-        } else {
+            return $tenantWorker->getIndexAttributesByFilterGroup($filterType);
+        } catch (DefaultWorkerNotFoundException $e) {
             return [];
         }
     }
@@ -293,7 +273,7 @@ class IndexService
     }
 
     /**
-     * returns current tenant configuration
+     * Returns current tenant configuration
      *
      * @return IConfig
      *
@@ -304,51 +284,47 @@ class IndexService
         return $this->getCurrentTenantWorker()->getTenantConfig();
     }
 
+    public function getCurrentTenantWorker(): IWorker
+    {
+        return $this->resolveTenantWorker();
+    }
+
+    public function getProductListForCurrentTenant(): IProductList
+    {
+        $tenantWorker = $this->getCurrentTenantWorker();
+
+        return $tenantWorker->getProductList();
+    }
+
+    public function getProductListForTenant(string $tenant): IProductList
+    {
+        $tenantWorker = $this->resolveTenantWorker($tenant);
+
+        return $tenantWorker->getProductList();
+    }
+
     /**
+     * Resolve tenant worker either from given tenant name or from the current tenant
+     *
+     * @param string|null $tenant
+     *
      * @return IWorker
-     *
-     * @throws InvalidConfigException
+     * @throws WorkerNotFoundException
      */
-    public function getCurrentTenantWorker()
+    protected function resolveTenantWorker(string $tenant = null): IWorker
     {
-        $tenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+        if (null === $tenant) {
+            $tenant = $this->environment->getCurrentAssortmentTenant();
+        }
 
         if ($tenant) {
-            if (array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant];
-            } else {
-                throw new InvalidConfigException("Tenant $tenant doesn't exist.");
+            if (!array_key_exists($tenant, $this->tenantWorkers)) {
+                throw new WorkerNotFoundException(sprintf('Tenant "%s" doesn\'t exist', $tenant));
             }
-        } else {
-            return $this->defaultWorker;
-        }
-    }
 
-    /**
-     * @return IProductList
-     *
-     * @throws InvalidConfigException
-     */
-    public function getProductListForCurrentTenant()
-    {
-        return $this->getCurrentTenantWorker()->getProductList();
-    }
-
-    /**
-     * @return IProductList
-     *
-     * @throws InvalidConfigException
-     */
-    public function getProductListForTenant($tenant)
-    {
-        if ($tenant) {
-            if (array_key_exists($tenant, $this->tenantWorkers)) {
-                return $this->tenantWorkers[$tenant]->getProductList();
-            } else {
-                throw new InvalidConfigException("Tenant $tenant doesn't exist.");
-            }
-        } else {
-            return $this->defaultWorker->getProductList();
+            return $this->tenantWorkers[$tenant];
         }
+
+        return $this->getDefaultWorker();
     }
 }

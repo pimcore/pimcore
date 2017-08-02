@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PayPal implements IPayment
 {
@@ -50,34 +50,76 @@ class PayPal implements IPayment
      */
     protected $authorizedData;
 
-    /**
-     * @param Config $config
-     */
-    public function __construct(Config $config)
+    public function __construct(array $options)
     {
-        // init
-        $credentials = $config->config->{$config->mode};
-        if ($config->mode == 'live') {
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
+    }
+
+    protected function processOptions(array $options)
+    {
+        // set endpoint depending on mode
+        if ('live' === $options['mode']) {
             $this->endpointUrlPart = 'paypal';
         } else {
             $this->endpointUrlPart = 'sandbox.paypal';
         }
 
-        // create paypal interface
-        $wsdl = 'https://www.' . $this->endpointUrlPart . '.com/wsdl/PayPalSvc.wsdl';
-        $location = 'https://api-3t.' . $this->endpointUrlPart . '.com/2.0';
-        $this->client = new \SoapClient($wsdl, ['location' => $location]);
+        $this->client = $this->createClient($this->endpointUrlPart, $this->createClientCredentials(
+            $options['api_username'],
+            $options['api_password'],
+            $options['api_signature']
+        ));
+    }
 
-        // auth
-        $auth = new \stdClass();
-        $auth->Credentials = new \stdClass();
-        $auth->Credentials->Username = $credentials->api_username;
-        $auth->Credentials->Password = $credentials->api_password;
-        $auth->Credentials->Signature = $credentials->api_signature;
+    protected function createClientCredentials(string $username, string $password, string $signature): \stdClass
+    {
+        $credentials = new \stdClass();
+        $credentials->Credentials = new \stdClass();
 
-        $header = new \SoapHeader('urn:ebay:api:PayPalAPI', 'RequesterCredentials', $auth);
+        $credentials->Credentials->Username  = $username;
+        $credentials->Credentials->Password  = $password;
+        $credentials->Credentials->Signature = $signature;
 
-        $this->client->__setSoapHeaders($header);
+        return $credentials;
+    }
+
+    protected function createClient(string $endpointUrlPart, \stdClass $credentials): \SoapClient
+    {
+        $wsdl     = 'https://www.' . $endpointUrlPart . '.com/wsdl/PayPalSvc.wsdl';
+        $location = 'https://api-3t.' . $endpointUrlPart . '.com/2.0';
+
+        $client = new \SoapClient($wsdl, ['location' => $location]);
+        $client->__setSoapHeaders(
+            new \SoapHeader('urn:ebay:api:PayPalAPI', 'RequesterCredentials', $credentials)
+        );
+
+        return $client;
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setRequired([
+            'mode',
+            'api_username',
+            'api_password',
+            'api_signature',
+        ]);
+
+        $resolver
+            ->setDefault('mode', 'sandbox')
+            ->setAllowedValues('mode', ['sandbox', 'live']);
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+        }
+
+        return $resolver;
     }
 
     /**
@@ -274,6 +316,7 @@ class PayPal implements IPayment
     public function executeCredit(IPrice $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
+        throw new \Exception('not implemented');
     }
 
     /**

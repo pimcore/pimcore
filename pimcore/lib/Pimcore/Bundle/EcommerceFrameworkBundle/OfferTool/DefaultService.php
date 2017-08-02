@@ -18,15 +18,61 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\Object\Folder;
+use Pimcore\Model\Object\Service;
 
 class DefaultService implements IService
 {
-    public function __construct($offerClass, $offerItemClass, $parentFolderPath)
+    /**
+     * @var string
+     */
+    protected $offerClass;
+
+    /**
+     * @var string
+     */
+    protected $offerItemClass;
+
+    /**
+     * @var string
+     */
+    protected $parentFolderPath;
+
+    /**
+     * @var Folder
+     */
+    protected $parentFolder;
+
+    public function __construct(string $offerClass, string $offerItemClass, string $parentFolderPath)
     {
+        if (!class_exists($offerClass)) {
+            throw new \InvalidArgumentException(sprintf('Offer class "%s" does not exist.'));
+        }
+
+        if (!class_exists($offerItemClass)) {
+            throw new \InvalidArgumentException(sprintf('Offer item class "%s" does not exist.'));
+        }
+
         $this->offerClass = $offerClass;
         $this->offerItemClass = $offerItemClass;
         $this->parentFolderPath = strftime($parentFolderPath, time());
-        \Pimcore\Model\Object\Service::createFolderByPath($this->parentFolderPath);
+    }
+
+    protected function getParentFolder(): Folder
+    {
+        $folder = Folder::getByPath($this->parentFolderPath);
+        if (!$folder) {
+            $folder = Service::createFolderByPath($this->parentFolderPath);
+        }
+
+        if (!$folder) {
+            throw new \RuntimeException(sprintf(
+                'Unable to create/load parent folder from path "%s"',
+                $this->parentFolderPath
+            ));
+        }
+
+        return $folder;
     }
 
     /**
@@ -79,20 +125,15 @@ class DefaultService implements IService
 
     /**
      * @return AbstractOffer
-     *
-     * @throws \Exception
      */
     protected function getNewOfferObject($tempOfferNumber)
     {
-        if (!class_exists($this->offerClass)) {
-            throw new \Exception('Offer Class' . $this->offerClass . ' does not exist.');
-        }
         $offer = new $this->offerClass();
 
         /**
          * @var $offer AbstractOffer
          */
-        $offer->setParent(\Pimcore\Model\Object\Folder::getByPath($this->parentFolderPath));
+        $offer->setParent($this->getParentFolder());
         $offer->setCreationDate(time());
         $offer->setKey($tempOfferNumber);
         $offer->setPublished(true);
@@ -103,15 +144,9 @@ class DefaultService implements IService
 
     /**
      * @return AbstractOfferItem
-     *
-     * @throws \Exception
      */
     public function getNewOfferItemObject()
     {
-        if (!class_exists($this->offerItemClass)) {
-            throw new \Exception('OfferItem Class' . $this->offerItemClass . ' does not exist.');
-        }
-
         return new $this->offerItemClass();
     }
 

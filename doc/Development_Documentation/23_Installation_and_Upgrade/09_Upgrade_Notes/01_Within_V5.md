@@ -1,5 +1,12 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 86 (2017-08-02)
+
+E-Commerce Framework configuration was moved to a Symfony Config. For details see 
+[Config Signature changes](./03_Ecommerce_Framework/02_Ecommerce_Framework_Config_Signature_Changes.md)
+
+
+
 ## Build 60 (2017-05-31)
 
 The navigation view helper signature has changed and now uses a different syntax to render navigations. In short,

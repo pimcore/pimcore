@@ -9,32 +9,40 @@ responsibility of the Commit Order Processor). These aspects contain among other
 
 
 ## Configuration
-The configuration takes place in the [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L649)
-```php
-/* order manager */
-'ordermanager' => [
-    'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\OrderManager',
-    'config' => [
-        'orderList' => [
-            'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\Order\\Listing',
-            'classItem' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\Order\\Listing\\Item'
-        ],
-        'orderAgent' => [
-            'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\OrderManager\\Order\\Agent'
-        ],
-        /* settings for order storage - pimcore class names for oder and order items */
-        'orderstorage' => [
-            'orderClass' => '\\Pimcore\\Model\\Object\\OnlineShopOrder',
-            'orderItemClass' => '\\Pimcore\\Model\\Object\\OnlineShopOrderItem'
-        ],
-        /* parent folder for order objects - either ID or path can be specified. path is parsed by strftime. */
-        'parentorderfolder' => '/order/%Y/%m/%d',
-        /* special configuration for specific checkout tenants */
-        'tenants' => [
-            'otherFolder' => [
-                'parentorderfolder' => '/order_otherfolder/%Y/%m/%d'
-            ]
-        ]
-    ]
-],
+The configuration takes place in the `pimcore_ecommerce_framework.order_manager` config section and is [tenant aware](../04_Configuration/README.md).
+
+```yaml
+pimcore_ecommerce_framework:
+    order_manager:
+        tenants:
+            _defaults:
+                # service ID of order manager implementation
+                order_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager
+                # options for oder manager
+                options:
+                    # Pimcore object class for orders
+                    order_class: \Pimcore\Model\Object\OnlineShopOrder
+                    # Pimcore object class for order items
+                    order_item_class: \Pimcore\Model\Object\OnlineShopOrderItem
+                    # Class for order listing
+                    list_class: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing
+                    # Class for order item listing
+                    list_item_class: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Item
+                    # Default parent folder for new orders
+                    parent_order_folder: /order/%%Y/%%m/%%d
+                # Options for oder agent
+                order_agent:
+                    # service ID of order agent factory - builds order agents individual to each order
+                    factory_id: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory
+                    # options for order agent factory - available options vary by factory implementation
+                    factory_options:
+                        agent_class: AppBundle\Ecommerce\OrderManager\Order\Agent
+            
+            # inherits from _defaults
+            default: ~
+                        
+            # inherits from _defaults, but sets another order folder
+            otherFolder:
+                options:
+                    parent_order_folder: /order_otherfolder/%%Y/%%m/%%d
 ```

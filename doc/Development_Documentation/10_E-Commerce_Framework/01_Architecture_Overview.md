@@ -1,7 +1,7 @@
 # Architecture Overview
 
 The following architecture overview shows available framework components. The component configuration takes place in 
-the `EcommerceFrameworkConfig.php` file and a factory is responsible for instantiation of the implementations. 
+the `pimcore_ecommerce_framework` configuration node and a factory is responsible for resolving of the implementations. 
 For each component a custom implementation can be configured and used. 
 
 ![bigpicture](../img/ecommerce-architecture.png)

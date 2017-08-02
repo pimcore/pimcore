@@ -24,26 +24,20 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\Object\OnlineShopOrder;
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Templating\EngineInterface;
 
 class WirecardSeamless implements IPayment
 {
-    private $settings;
-    private $partial;
-
-    private $URL_WIRECARD_CHECKOUT;
-    private $URL_DATASTORAGE_INIT;
-    private $URL_DATASTORAGE_READ;
-    private $URL_FRONTEND_INIT;
-    private $URL_APPROVE_REVERSAL = 'https://checkout.wirecard.com/seamless/backend/approveReversal';
-    private $URL_DEPOSIT = 'https://checkout.wirecard.com/seamless/backend/deposit';
-    private $WEBSITE_URL;
-    private $CHECKOUT_WINDOW_NAME;
+    const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
 
     const PAYMENT_RETURN_STATE_SUCCESS = 'success';
     const PAYMENT_RETURN_STATE_FAILURE = 'failure';
@@ -52,26 +46,183 @@ class WirecardSeamless implements IPayment
 
     const ENCODED_ORDERIDENT_DELIMITER = '---';
 
-    /**
-     * @param Config $config
-     *
-     * @throws \Exception
-     */
-    public function __construct(Config $config)
-    {
-        $this->settings = $config->config->{$config->mode};
-        $this->partial = $config->partial;
-        $this->js = $config->js;
+    const SESSION_KEY_STORAGE_ID = 'Wirecard_dataStorageId';
 
-        $this->URL_WIRECARD_CHECKOUT = 'https://checkout.wirecard.com';
+    /**
+     * @var EngineInterface
+     */
+    protected $templatingEngine;
+
+    /**
+     * @var SessionInterface
+     */
+    protected $session;
+
+    /**
+     * @var array
+     */
+    protected $authorizedData;
+
+    /**
+     * @var string
+     */
+    protected $customerId;
+
+    /**
+     * @var string
+     */
+    protected $shopId;
+
+    /**
+     * @var string
+     */
+    protected $password;
+
+    /**
+     * @var string
+     */
+    protected $secret;
+
+    /**
+     * @var string
+     */
+    protected $hashAlgorithm;
+
+    /**
+     * @var array
+     */
+    protected $paymentMethods = [];
+
+    /**
+     * @var string
+     */
+    protected $customerStatement;
+
+    /**
+     * @var bool
+     */
+    protected $paypalActivateItemLevel = false;
+
+    /**
+     * @var string
+     */
+    protected $iframeCssUrl;
+
+    /**
+     * @var string
+     */
+    protected $partial;
+
+    /**
+     * @var string
+     */
+    protected $js;
+
+    private $URL_WIRECARD_CHECKOUT = 'https://checkout.wirecard.com';
+    private $URL_DATASTORAGE_INIT;
+    private $URL_DATASTORAGE_READ;
+    private $URL_FRONTEND_INIT;
+    private $URL_APPROVE_REVERSAL = 'https://checkout.wirecard.com/seamless/backend/approveReversal';
+    private $URL_DEPOSIT = 'https://checkout.wirecard.com/seamless/backend/deposit';
+    private $WEBSITE_URL;
+    private $CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
+
+    public function __construct(array $options, EngineInterface $templatingEngine, SessionInterface $session)
+    {
+        $this->templatingEngine = $templatingEngine;
+        $this->session          = $session;
+
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
+
+        // TODO refactor properties to proper naming and to use request to fetch env data
         $this->URL_DATASTORAGE_INIT = $this->URL_WIRECARD_CHECKOUT . '/seamless/dataStorage/init';
         $this->URL_DATASTORAGE_READ = $this->URL_WIRECARD_CHECKOUT . '/seamless/dataStorage/read';
-        $this->URL_FRONTEND_INIT = $this->URL_WIRECARD_CHECKOUT . '/seamless/frontend/init';
+        $this->URL_FRONTEND_INIT    = $this->URL_WIRECARD_CHECKOUT . '/seamless/frontend/init';
 
         $WEBSITE_URL = rtrim($_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'], '/') . '/';
         $this->WEBSITE_URL = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? "https://$WEBSITE_URL" : "http://$WEBSITE_URL";
+    }
 
-        $this->CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
+    protected function processOptions(array $options)
+    {
+        $this->customerId = $options['customer_id'];
+        $this->shopId     = $options['shop_id'];
+        $this->password   = $options['password'];
+        $this->secret     = $options['secret'];
+
+        $paymentMethods = $options['payment_methods'];
+        foreach($paymentMethods as $paymentMethod => $paymentMethodOptions) {
+            if (!is_array($paymentMethodOptions)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Payment method options for method "%s" must be an array, %s given',
+                    $paymentMethod,
+                    is_object($paymentMethodOptions) ? get_class($paymentMethodOptions) : gettype($paymentMethodOptions)
+                ));
+            }
+
+            $this->paymentMethods[$paymentMethod] = $paymentMethodOptions;
+        }
+
+        $this->partial = $options['partial'];
+
+        if (isset($options['js'])) {
+            $this->js = $options['js'];
+        }
+
+        if (isset($options['hash_algorithm'])) {
+            $this->hashAlgorithm = $options['hash_algorithm'];
+        }
+
+        if (isset($options['customer_statement'])) {
+            $this->customerStatement = $options['customer_statement'];
+        }
+
+        if (isset($options['paypal_activate_item_level'])) {
+            $this->paypalActivateItemLevel = $options['paypal_activate_item_level'];
+        }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setRequired([
+            'customer_id',
+            'shop_id',
+            'secret',
+            'password',
+            'payment_methods',
+            'partial'
+        ]);
+
+        $resolver->setAllowedTypes('payment_methods', 'array');
+        $resolver->setAllowedTypes('partial', 'string');
+
+        $resolver->setDefined('js');
+
+        $resolver
+            ->setDefined('hash_algorithm')
+            ->setAllowedValues('hash_algorithm', [self::HASH_ALGO_HMAC_SHA512]);
+
+        $resolver->setDefined('customer_statement');
+
+        $resolver
+            ->setDefined('paypal_activate_item_level')
+            ->setAllowedTypes('paypal_activate_item_level', 'bool');
+
+        $resolver
+            ->setDefined('iframe_css_url')
+            ->setAllowedTypes('iframe_css_url', 'string');
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+        }
+
+        return $resolver;
     }
 
     /**
@@ -80,6 +231,14 @@ class WirecardSeamless implements IPayment
     public function getName()
     {
         return 'WirecardSeamless';
+    }
+
+    protected function getSessionBag(): AttributeBagInterface
+    {
+        /** @var AttributeBagInterface $bag */
+        $bag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT);
+
+        return $bag;
     }
 
     /**
@@ -101,8 +260,8 @@ class WirecardSeamless implements IPayment
         }
 
         $fields = [
-            'customerId' => $this->settings->customerId,
-            'shopId' => $this->settings->shopId,
+            'customerId' => $this->customerId,
+            'shopId' => $this->shopId,
             'orderIdent' => $this->encodeOrderIdent($orderIdent),
             'returnUrl' => $this->WEBSITE_URL . 'frontend/fallback_return.php',
             'language' => $config['language'] ?: 'de',
@@ -111,8 +270,8 @@ class WirecardSeamless implements IPayment
 
         $requestFingerprint = $this->generateFingerPrint($fields);
 
-        if ($this->settings->iframeCssUrl) {
-            $fields['iframeCssUrl'] = Tool::getHostUrl() . $this->settings->iframeCssUrl;
+        if (null !== $this->iframeCssUrl) {
+            $fields['iframeCssUrl'] = Tool::getHostUrl() . $this->iframeCssUrl;
         }
 
         $postFields = array_merge($fields, [
@@ -121,21 +280,19 @@ class WirecardSeamless implements IPayment
 
         $result = $this->serverToServerRequest($this->URL_DATASTORAGE_INIT, $postFields);
 
-        $_SESSION['Wirecard_dataStorageId'] = $result['storageId'];
+        $this->getSessionBag()->set(self::SESSION_KEY_STORAGE_ID, $result['storageId']);
+
         $javascriptURL = $result['javascriptUrl'];
 
         $params = [];
         $params['javascriptUrl'] = $javascriptURL;
         $params['orderIdent'] = $orderIdent;
-        $params['paymentMethods'] = $this->settings->paymentMethods;
+        $params['paymentMethods'] = $this->paymentMethods;
         $params['config'] = $config;
 
         $params['wirecardFrontendScript'] = $this->js;
 
-        //TODO inject this via container
-        $renderer =  \Pimcore::getContainer()->get('templating');
-
-        return $renderer->render($this->partial, $params);
+        return $this->templatingEngine->render($this->partial, $params);
     }
 
     public function getInitPaymentRedirectUrl($config)
@@ -162,8 +319,8 @@ class WirecardSeamless implements IPayment
         $paymentType = $config['paymentType'] ? $config['paymentType'] : $_REQUEST['paymentType'];
 
         $fields = [
-            'customerId' => $this->settings->customerId,
-            'shopId' => $this->settings->shopId,
+            'customerId' => $this->customerId,
+            'shopId' => $this->shopId,
             'amount' => round($price->getAmount()->asNumeric(), 2),
             'currency' => $price->getCurrency()->getShortName(),
             'paymentType' => $paymentType,
@@ -177,14 +334,14 @@ class WirecardSeamless implements IPayment
             'confirmUrl' => $confirmURL,
             'consumerUserAgent' => $_SERVER['HTTP_USER_AGENT'],
             'consumerIpAddress' => $_SERVER['REMOTE_ADDR'],
-            'storageId' => $_SESSION['Wirecard_dataStorageId'],
+            'storageId' => $this->getSessionBag()->get(self::SESSION_KEY_STORAGE_ID),
             'orderIdent' => $orderIdent,
             'windowName' => $this->CHECKOUT_WINDOW_NAME,
             // 'duplicateRequestCheck' => 'yes'
         ];
 
-        if ($this->settings->customerStatement) {
-            $fields['customerStatement'] = $this->settings->customerStatement;
+        if (null !== $this->customerStatement) {
+            $fields['customerStatement'] = $this->customerStatement;
         }
 
         if ($config['orderReference']) {
@@ -195,7 +352,7 @@ class WirecardSeamless implements IPayment
             $fields = $this->addPayolutionRequestFields($fields, $config['paymentInfo']->getObject(), $config);
         }
 
-        if ($paymentType == 'PAYPAL' && $this->settings->paypalActivateItemLevel) {
+        if ($paymentType == 'PAYPAL' && $this->paypalActivateItemLevel) {
             $fields = $this->addPaypalFields($fields, $config['paymentInfo']->getObject(), $config);
         }
 
@@ -402,7 +559,7 @@ class WirecardSeamless implements IPayment
         $secretUsed = 0; // flag which contains 0 if secret has not been used or 1 if secret has been used
         $order = explode(',', $response['responseFingerprintOrder']);
 
-        $secret = $this->settings->secret;
+        $secret = $this->secret;
         for ($i = 0; $i < count($order); $i++) {
             $key = $order[$i];
             $value = isset($response[$order[$i]]) ? $response[$order[$i]] : '';
@@ -427,7 +584,7 @@ class WirecardSeamless implements IPayment
         }
 
         // computes the fingerprint from the fingerprint string
-        $fingerprint = $this->calculateFingerprint($fingerprintString, $this->settings->secret);
+        $fingerprint = $this->calculateFingerprint($fingerprintString, $this->secret);
 
         if (!((strcmp($fingerprint, $response['responseFingerprint']) == 0)
             && ($mandatoryFingerPrintFields == 3)
@@ -503,10 +660,10 @@ class WirecardSeamless implements IPayment
     public function deposit(IPrice $price = null, $reference = null, $transactionId = null)
     {
         $fields = [
-            'customerId' => $this->settings->customerId,
-            'shopId' => $this->settings->shopId,
-            'password' => $this->settings->password,
-            'secret' => $this->settings->secret,
+            'customerId' => $this->customerId,
+            'shopId' => $this->shopId,
+            'password' => $this->password,
+            'secret' => $this->secret,
             'language' => 'de',
             'orderNumber' => $reference,
             'amount' => round($price->getAmount()->asNumeric(), 2),
@@ -578,10 +735,10 @@ class WirecardSeamless implements IPayment
         }
 
         $fields = [
-            'customerId' => $this->settings->customerId,
-            'shopId' => $this->settings->shopId,
-            'password' => $this->settings->password,
-            'secret' => $this->settings->secret,
+            'customerId' => $this->customerId,
+            'shopId' => $this->shopId,
+            'password' => $this->password,
+            'secret' => $this->secret,
             'language' => 'de',
             'orderNumber' => $transactionId,
         ];
@@ -690,17 +847,16 @@ class WirecardSeamless implements IPayment
     }
 
     /**
-     * Calculate fingerprint based on algorithm in settings.
+     * Calculate fingerprint based on algorithm
      */
     protected function calculateFingerprint($requestFingerprintSeed)
     {
-        $secret = $this->settings->secret;
-        if ($this->settings->hashAlgorithm != 'hmac_sha512') {
+        if ($this->hashAlgorithm === self::HASH_ALGO_HMAC_SHA512) {
+            $requestFingerprint= hash_hmac('sha512', $requestFingerprintSeed, $this->secret);
+            Logger::debug('#wirecard generateFingerprint (hmac): ' . $requestFingerprintSeed);
+        } else {
             $requestFingerprint = hash('sha512', $requestFingerprintSeed);
             Logger::debug('#wirecard generateFingerprint: ' . $requestFingerprintSeed);
-        } else {
-            $requestFingerprint= hash_hmac('sha512', $requestFingerprintSeed, $secret);
-            Logger::debug('#wirecard generateFingerprint (hmac): '.$requestFingerprintSeed);
         }
 
         return $requestFingerprint;
@@ -717,7 +873,7 @@ class WirecardSeamless implements IPayment
         }
 
         if (!$ignoreSecret) {
-            $requestFingerprintSeed .= $this->settings->secret;
+            $requestFingerprintSeed .= $this->secret;
             $requestFingerprintOrder .= 'secret,';
         }
 

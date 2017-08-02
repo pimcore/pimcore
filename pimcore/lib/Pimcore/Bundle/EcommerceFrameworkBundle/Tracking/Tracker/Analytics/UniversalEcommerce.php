@@ -20,15 +20,17 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Google\Analytics;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UniversalEcommerce extends Tracker implements ICheckoutComplete
 {
-    /**
-     * @return string
-     */
-    protected function getViewScriptPrefix()
+    protected function configureOptions(OptionsResolver $resolver)
     {
-        return 'analytics/universal';
+        parent::configureOptions($resolver);
+
+        $resolver->setDefaults([
+            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/universal'
+        ]);
     }
 
     /**
@@ -38,14 +40,16 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        $transaction = $this->getTrackingItemBuilder()->buildCheckoutTransaction($order);
-        $items       = $this->getTrackingItemBuilder()->buildCheckoutItems($order);
+        $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
+        $items       = $this->trackingItemBuilder->buildCheckoutItems($order);
 
-        $parameterBag['transaction'] = $transaction;
-        $parameterBag['items']       = $items;
-        $parameterBag['calls']       = $this->buildCheckoutCompleteCalls($transaction, $items);
+        $parameters = [];
+        $parameters['transaction'] = $transaction;
+        $parameters['items'] = $items;
+        $parameters['calls'] = $this->buildCheckoutCompleteCalls($transaction, $items);
 
-        $result = $this->renderer->render($this->getViewScript('checkout_complete'), $parameterBag);
+        $result = $this->renderTemplate('checkout_complete', $parameters);
+
         Analytics::addAdditionalCode($result, 'beforeEnd');
     }
 

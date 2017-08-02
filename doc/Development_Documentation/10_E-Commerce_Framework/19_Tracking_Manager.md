@@ -39,30 +39,37 @@ trackers.
 > If so, the tracking action is ignored for this tracker.
 
 
-## Configuration in `EcommerceFrameworkConfig.php`
+## Configuration
 
-The configuration takes place in the [`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L701).
+The configuration takes place in the `pimcore_ecommerce_framework.tracking_manager` config section.
 If no `TrackingItemBuilder` is configured, the `TrackingItemBuilder` will fall back to the default implementation 
 `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder`. Further information about `TrackingItemBuilder`
 see below. 
 
-```php
-/*  tracking manager - define which trackers (e.g. Google Analytics Universal Ecommerce) are active and should
-be called when you track something via TrackingManager */
-'trackingmanager' => [
-    'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingManager',
-    'config' => [
-        'trackers' => [
-            [
-                'name' => 'GoogleAnalyticsEnhancedEcommerce',
-                'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce',
-                'trackingItemBuilder' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tracking\\TrackingItemBuilder'
-            ]
-        ]
-    ]
-],
-```
+```yaml
+pimcore_ecommerce_config:
+    # tracking manager - define which trackers (e.g. Google Analytics Universal Ecommerce) are active and should
+    # be called when you track something via TrackingManager
+    tracking_manager:
+        # service ID of tracking manager - the following is the default value and can be omitted
+        tracking_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager
 
+        trackers:
+            # enable the core enhanced_ecommerce tracker with default options
+            enhanced_ecommerce:
+                enabled: true
+                
+            my_custom_tracker:
+                # use already defined enhanced ecommerce tracker
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce
+                
+                # options vary by tracker implementation
+                options:
+                    template_prefix: AppBundle:Tracking/analytics/enhanced 
+           
+                # service id for item builder
+                item_builder_id: AppBundle\Ecommerce\Tracking\TrackingItemBuilder
+```
 
 ## Working with Tracking Manager
 
@@ -117,9 +124,11 @@ class CheckoutController extends AbstractCartAware {
 ## Project Specific Data
 
 Adding project specific data to tracking items by extending the `TrackingItemBuilder` class. The extending class has to
-be configured in the [`EcommerceFrameworkConfig.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L708).
+be defined as service and configured on the tracker configuration (see above).
 
 ### Example for Additional Data in Product Impressions
+
+Define a custom item builder:
 
 ```php
 class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBuilder {
@@ -140,6 +149,13 @@ class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBui
         return $item;
     }
 }
+```
+
+And define it as service:
+
+```yaml
+services:
+    AppBundle\Ecommerce\Tracking\TrackingItemBuilder: ~
 ```
 
 

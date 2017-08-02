@@ -16,113 +16,109 @@ For more information about integrating Payment into checkout processes see
 
 ## Configuration
 
-Configuration of Payment Manager takes place in [EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php#L127-L127). 
+Configuration of Payment Manager takes place in the `pimcore_ecommerce_config.payment_manager` config section: 
 
-```php
-'paymentmanager' => [
-    'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\PaymentManager',
-    'statusClass' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Status',
-    'config' => [
-        'provider' => [
-            [
-                'name' => 'datatrans',
-                'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\Datatrans',
-                'mode' => 'sandbox',
-                'config' => [
-                    'sandbox' => [
-                        'merchantId' => '1000011011',
-                        'sign' => '30916165706580013',
-                        'digitalSignature' => '0'
-                    ],
-                    'live' => [ ... ]
-                ]
-            ],
-            [
-                /* https://integration.wirecard.at/doku.php/wcp:integration */
-                /* https://integration.wirecard.at/doku.php/demo:demo_data */
-                'name' => 'qpay',
-                'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\QPay',
-                'mode' => 'sandbox',
-                'config' => [
-                    'sandbox' => [
-                        'secret' => 'B8AKTPWBRMNBV455FG6M2DANE99WU2',
-                        'customer' => 'D200001',
-                        'toolkitPassword' => 'jcv45z',
-                        /* define optional properties which can be used in initPayment (see Wirecard documentation)
-                        https://git.io/v2ty1 */
-                        /* "optionalPaymentProerties" => [
-                            "property" => [
-                                "paymentType",
-                                "financialInstitution"
-                            ]
-                        ], */
-                        /*  set hash algorithm to HMAC-SHA512
-                        https://git.io/v2tyV */
-                        /* ["hashAlgorithm" => "hmac_sha512"] */
-                    ],
-                    'test' => [
-                        'secret' => 'CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ',
-                        'customer' => 'D200411',
-                        'toolkitPassword' => '2g4fq2m'
-                    ],
-                    'live' => [ ... ]
-                ]
-            ],
-            [
-                'name' => 'paypal',
-                'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\PayPal',
-                'mode' => 'sandbox',
-                'config' => [
-                    'sandbox' => [
-                        'api_username' => 'paypal-facilitator_api1.i-2xdream.de',
-                        'api_password' => '1375366858',
-                        'api_signature' => 'AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD'
-                    ],
-                    'live' => [ ... ]
-                ]
-            ],
-            [
-                'name' => 'seamless',
-                'class' => '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\PaymentManager\\Payment\\WirecardSeamless',
-                'mode' => 'sandbox',
-                'partial' => 'PaymentSeamless/wirecard-seamless/payment-method-selection.html.php',
-                'js' => '/website/static/js/payment/wirecard-seamless/frontend.js',
-                'config' => [
-                    'sandbox' => [
-                        'customerId' => 'D200001',
-                        'shopId' => 'qmore',
-                        'secret' => 'B8AKTPWBRMNBV455FG6M2DANE99WU2',
-                        'password' => 'jcv45z',
-                        'iframeCssUrl' => '/website/static/css/payment-iframe.css?elementsclientauth=disabled',
-                        'paymentMethods' => [
-                            'PREPAYMENT' => [
-                                'icon' => '/website/static/img/wirecard-seamless/prepayment.png',
-                                'partial' => 'PaymentSeamless/wirecard-seamless/payment-method/prepayment.html.php'
-                            ],
-                            'CCARD' => [
-                                'icon' => '/website/static/img/wirecard-seamless/ccard.png',
-                                'partial' => 'PaymentSeamless/wirecard-seamless/payment-method/ccard.html.php'
-                            ],
-                            'PAYPAL' => [
-                                'icon' => '/website/static/img/wirecard-seamless/paypal.png'
-                            ],
-                            'SOFORTUEBERWEISUNG' => [
-                                'icon' => '/website/static/img/wirecard-seamless/sue.png'
-                            ],
-                            'INVOICE' => [
-                                'icon' => '/website/static/img/wirecard-seamless/payolution.png',
-                                'partial' => 'PaymentSeamless/wirecard-seamless/payment-method/invoice.html.php'
-                            ]
-                        ]
-                    ],
-                    'live' => [ ... ]
-                    ]
-                ]
-            ]
-        ]
-    ]
-]
+```yaml
+pimcore_ecommerce_config:
+    payment_manager:
+        # service ID of payment manager implementation - following value is default value an can be omitted
+        payment_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager
+
+        # configuration of payment providers, key is name of provider
+        providers:
+            datatrans:
+                # service ID of payment provider implementation
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Datatrans
+
+                # active profile - you can define multiple profiles in the section below 
+                profile: sandbox
+
+                # available profiles with options - options vary on the provider implementation as the
+                profiles:
+                    sandbox:
+                        merchant_id: 1000011011
+                        sign: 30916165706580013
+                        use_digital_signature: false
+                    live:
+                        merchant_id: merchant_id_id
+                        sign: sign_id
+                        use_digital_signature: false
+                        mode: live
+
+            qpay:
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay
+                profile: sandbox
+                profiles:
+                    sandbox:
+                        secret: B8AKTPWBRMNBV455FG6M2DANE99WU2
+                        customer: D200001
+                        toolkit_password: jcv45z
+                        # define optional properties which can be used in initPayment (see Wirecard documentation)
+                        optional_payment_properties:
+                            - paymentType
+                            - financialInstitution
+
+                        # set hash algorithm to HMAC-SHA512
+                        hash_algorithm:
+                            hmac_sha512
+
+                    live:
+                        secret: secret
+                        customer: customer
+
+            paypal:
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPal
+                profile: sandbox
+                profiles:
+                    sandbox:
+                        api_username: paypal-facilitator_api1.i-2xdream.de
+                        api_password: 1375366858
+                        api_signature: AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD
+                    live:
+                        api_username: username
+                        api_password: password
+                        api_signature: signature
+                        mode: live
+
+
+            seamless:
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless
+                profile: sandbox
+                profiles:
+                    _defaults:
+                        hash_algorithm: hmac_sha512
+                        paypal_activate_item_level: true
+                        partial: PaymentSeamless/wirecard-seamless/payment-method-selection.html.php
+                        js: /static/js/payment/wirecard-seamless/frontend.js
+                        iframe_css_url: /static/css/payment-iframe.css?elementsclientauth=disabled
+                        payment_methods:
+                            PREPAYMENT:
+                                icon: /static/img/wirecard-seamless/prepayment.png
+                                partial: PaymentSeamless/wirecard-seamless/payment-method/prepayment.html.php
+                            CCARD:
+                                icon: /static/img/wirecard-seamless/ccard.png
+                                partial: PaymentSeamless/wirecard-seamless/payment-method/ccard.html.php
+                            PAYPAL:
+                                icon: /static/img/wirecard-seamless/paypal.png
+                            SOFORTUEBERWEISUNG:
+                                icon: /static/img/wirecard-seamless/sue.png
+                            INVOICE:
+                                icon: /static/img/wirecard-seamless/payolution.png
+                                partial: PaymentSeamless/wirecard-seamless/payment-method/invoice.html.php
+                    sandbox:
+                        customer_id: D200001
+                        shop_id: qmore
+                        secret: B8AKTPWBRMNBV455FG6M2DANE99WU2
+                        password: jcv45z
+                    live:
+                        customer_id: customer_id
+                        shop_id: shop_id
+                        secret: secret
+                        password: password
 ```
+
+The payment provider name will be referenced from the checkout manager configuration and can be used to fetch a specific
+provider from the payment manager.
 
 ## Payment Providers
 Currently following Payment Providers are integrated into the framework: 

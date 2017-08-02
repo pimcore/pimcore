@@ -14,17 +14,38 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch as DefaultElasticSearchWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Default configuration for elastic search as product index implementation.
+ *
+ * @method DefaultElasticSearchWorker getTenantWorker()
  */
 class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSearchConfig
 {
+    use OptionsResolverTrait;
+
+    /**
+     * @var array
+     */
     protected $clientConfig = [];
+
+    /**
+     * @var array
+     */
+    protected $indexSettings = [];
+
+    /**
+     * @var array
+     */
+    protected $elasticSearchClientParams = [];
 
     /**
      * contains the mapping for the fields in Elasticsearch
@@ -46,44 +67,49 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         'inProductList'=> 'system.inProductList',
     ];
 
-    /**
-     * @var array
-     */
-    protected $indexSettings = null;
-
-    /**
-     * @var array
-     */
-    protected $elasticSearchClientParams = null;
-
-    /**
-     * @param string $tenantName
-     * @param $tenantConfig
-     * @param null $totalConfig
-     */
-    public function __construct($tenantName, $tenantConfig, $totalConfig = null)
+    protected function addAttribute(Attribute $attribute)
     {
-        parent::__construct($tenantName, $tenantConfig, $totalConfig);
+        parent::addAttribute($attribute);
 
-        $this->indexSettings = json_decode($tenantConfig->indexSettingsJson, true);
-        $this->elasticSearchClientParams = json_decode($tenantConfig->elasticSearchClientParamsJson, true);
-
-        if ($tenantConfig->clientConfig) {
-            $this->clientConfig = $tenantConfig->clientConfig->toArray();
+        $attributeType = 'attributes';
+        if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof IRelationInterpreter) {
+            $attributeType = 'relations';
         }
 
-        $config = $tenantConfig->toArray();
-        foreach ($config['columns'] as $col) {
-            $attributeType = 'attributes';
-            if ($col['interpreter']) {
-                $class = $col['interpreter'];
-                $tmp = new $class;
-                if ($tmp instanceof IRelationInterpreter) {
-                    $attributeType = 'relations';
-                }
-            }
-            $this->fieldMapping[$col['name']] = $attributeType.'.'.$col['name'];
+        $this->fieldMapping[$attribute->getName()] = sprintf('%s.%s', $attributeType, $attribute->getName());
+    }
+
+    protected function processOptions(array $options)
+    {
+        $options = $this->resolveOptions($options);
+
+        // TODO validate client config and other settings/params?
+        $this->clientConfig = $options['client_config'];
+        $this->indexSettings = $options['index_settings'];
+        $this->elasticSearchClientParams = $options['elastic_search_client_params'];
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        $arrayFields = [
+            'client_config',
+            'index_settings',
+            'es_client_params',
+            'mapping'
+        ];
+
+        foreach($arrayFields as $field) {
+            $resolver->setAllowedTypes($field, 'array');
+            $resolver->setDefault($field, []);
         }
+
+        $resolver->setDefined('mapper');
+        $resolver->setAllowedTypes('mapper', 'string');
+
+        $resolver->setDefined('analyzer');
+
+        $resolver->setDefault('store', true);
+        $resolver->setAllowedTypes('store', 'bool');
     }
 
     /**
@@ -178,22 +204,18 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     }
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch
+     * @inheritDoc
      */
-    protected $tenantWorker;
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return DefaultElasticSearchWorker
-     */
-    public function getTenantWorker()
+    public function setTenantWorker(IWorker $tenantWorker)
     {
-        if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new DefaultElasticSearchWorker($this);
+        if (!$tenantWorker instanceof DefaultElasticSearchWorker) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                DefaultElasticSearchWorker::class
+            ));
         }
 
-        return $this->tenantWorker;
+        parent::setTenantWorker($tenantWorker);
     }
 
     /**

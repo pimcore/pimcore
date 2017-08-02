@@ -14,19 +14,39 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class DefaultBrickGetter implements IGetter
 {
-    public static function get($object, $config = null)
+    use OptionsResolverTrait;
+
+    public function get($object, $config = null)
     {
-        $brickContainerGetter = 'get' . ucfirst($config->brickfield);
+        $config = $this->resolveOptions($config ?? []);
+
+        $brickContainerGetter = 'get' . ucfirst($config['brickfield']);
         $brickContainer = $object->$brickContainerGetter();
 
-        $brickGetter = 'get' . ucfirst($config->bricktype);
+        $brickGetter = 'get' . ucfirst($config['bricktype']);
         $brick = $brickContainer->$brickGetter();
         if ($brick) {
-            $fieldGetter = 'get' . ucfirst($config->fieldname);
+            $fieldGetter = 'get' . ucfirst($config['fieldname']);
 
             return $brick->$fieldGetter();
+        }
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        static::setupBrickGetterOptionsResolver($resolver);
+    }
+
+    public static function setupBrickGetterOptionsResolver(OptionsResolver $resolver)
+    {
+        foreach (['brickfield', 'bricktype', 'fieldname'] as $field) {
+            $resolver->setRequired($field);
+            $resolver->setAllowedTypes($field, 'string');
         }
     }
 }

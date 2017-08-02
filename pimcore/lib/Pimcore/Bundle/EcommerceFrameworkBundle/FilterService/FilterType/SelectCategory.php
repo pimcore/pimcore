@@ -21,12 +21,6 @@ class SelectCategory extends AbstractFilterType
 {
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];
 
@@ -53,7 +47,7 @@ class SelectCategory extends AbstractFilterType
 
         $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
-        $parameterBag = [
+        $parameters = [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
@@ -65,7 +59,7 @@ class SelectCategory extends AbstractFilterType
             'resultCount' => $productList->count()
         ];
 
-        return $this->render($script, $parameterBag);
+        return $this->render($this->getTemplate($filterDefinition), $parameters);
     }
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)

@@ -21,12 +21,6 @@ class MultiSelectCategory extends AbstractFilterType
 {
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];
 
@@ -51,7 +45,7 @@ class MultiSelectCategory extends AbstractFilterType
             }
         }
 
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],

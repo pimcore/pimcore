@@ -26,12 +26,6 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
         $values = [];
         foreach ($productList->getGroupByValues($this->getField($filterDefinition), true) as $value) {
             $values[] = ['from' => $value['parameter']->min,
@@ -40,7 +34,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
             'label' => $value['label']];
         }
 
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$this->getField($filterDefinition)],

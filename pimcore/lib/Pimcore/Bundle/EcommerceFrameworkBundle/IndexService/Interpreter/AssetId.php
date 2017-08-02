@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Model\Asset;
+
 class AssetId implements IInterpreter
 {
-    public static function interpret($value, $config = null)
+    public function interpret($value, $config = null)
     {
         if (!empty($value) && $value instanceof Asset) {
             return $value->getId();

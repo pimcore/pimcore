@@ -14,12 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder as DefaultFactFinderConfig;
+
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Tool\Text;
 
+/**
+ * @property DefaultFactFinderConfig $tenantConfig
+ */
 class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_factfinder';
@@ -29,6 +37,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
      * @var array
      */
     protected $_sqlChangeLog = [];
+
+    public function __construct(IFactFinderConfig $tenantConfig, Connection $db)
+    {
+        parent::__construct($tenantConfig, $db);
+    }
 
     protected function getSystemAttributes()
     {
@@ -114,31 +127,25 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
         $systemColumns = $this->getSystemAttributes();
 
         $columnsToDelete = $columns;
-
         $columnsToAdd = [];
-        $columnConfig = $this->columnConfig;
-        if (!empty($columnConfig->name)) {
-            $columnConfig = [$columnConfig];
-        }
-        if ($columnConfig) {
-            foreach ($columnConfig as $column) {
-                if (!array_key_exists($column->name, $columns)) {
-                    $doAdd = true;
-                    if (!empty($column->interpreter)) {
-                        $interpreter = $column->interpreter;
-                        $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof DefaultRelations) {
-                            $doAdd = false;
-                        }
-                    }
 
-                    if ($doAdd) {
-                        $columnsToAdd[$column->name] = $column->type;
+        foreach ($this->tenantConfig->getAttributes() as $attribute) {
+            if (!array_key_exists($attribute->getName(), $columns)) {
+                $doAdd = true;
+                if (null !== $attribute->getInterpreter()) {
+                    if ($attribute->getInterpreter() instanceof DefaultRelations) {
+                        $doAdd = false;
                     }
                 }
-                unset($columnsToDelete[$column->name]);
+
+                if ($doAdd) {
+                    $columnsToAdd[$attribute->getName()] = $attribute->getType();
+                }
             }
+
+            unset($columnsToDelete[$attribute->getName()]);
         }
+
         foreach ($columnsToDelete as $c) {
             if (!in_array($c, $systemColumns)) {
                 $this->dbexec('ALTER TABLE `' . $this->getStoreTableName() . '` DROP COLUMN `' . $c . '`;');
@@ -190,48 +197,22 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
                 $data['preparation_worker_id'] = $this->db->quote(null);
                 $data['in_preparation_queue'] = 0;
 
-                $columnConfig = $this->columnConfig;
-                if (!empty($columnConfig->name)) {
-                    $columnConfig = [$columnConfig];
-                } elseif (empty($columnConfig)) {
-                    $columnConfig = [];
-                }
-                foreach ($columnConfig as $column) {
+                foreach ($this->tenantConfig->getAttributes() as $attribute) {
                     try {
-                        //$data[$column->name] = null;
-                        $value = null;
-                        if (!empty($column->getter)) {
-                            $getter = $column->getter;
-                            $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
-                        } else {
-                            if (!empty($column->fieldname)) {
-                                $getter = 'get' . ucfirst($column->fieldname);
-                            } else {
-                                $getter = 'get' . ucfirst($column->name);
-                            }
+                        $value = $attribute->getValue($object, $subObjectId, $this->tenantConfig);
+                        $value = $attribute->interpretValue($value);
 
-                            if (method_exists($object, $getter)) {
-                                $value = $object->$getter($column->locale);
-                            }
+                        if (is_array($value)) {
+                            $value = array_filter($value);
+                            $value = '|' . implode('|', $value) . '|';
                         }
 
-                        if (!empty($column->interpreter)) {
-                            $interpreter = $column->interpreter;
-                            $value = $interpreter::interpret($value, $column->config);
-                            $interpreterObject = new $interpreter();
-                            $data[$column->name] = $value;
-                        } else {
-                            $data[$column->name] = $value;
-                        }
-
-                        if (is_array($data[$column->name])) {
-                            $data[$column->name] = array_filter($data[$column->name]);
-                            $data[$column->name] = '|'.implode('|', $data[$column->name]).'|';
-                        }
+                        $data[$attribute->getName()] = $value;
                     } catch (\Exception $e) {
                         Logger::err('Exception in IndexService: ' . $e);
                     }
                 }
+
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }

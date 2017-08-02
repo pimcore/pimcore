@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder as DefaultFactFinderWorker;
+
 /**
  * Interface for IndexService Tenant Configurations using factfinder as index
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig
  */
 interface IFactFinderConfig extends IConfig
 {
@@ -40,7 +40,7 @@ interface IFactFinderConfig extends IConfig
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder
+     * @return DefaultFactFinderWorker
      */
     public function getTenantWorker();
 }

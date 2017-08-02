@@ -1,12 +1,15 @@
 # Breaking Changes from former E-Commerce Framework Plugin 
 
 ## Configuration Changes
-- removed ConfigController for setting location of `OnlineShopConfig.php` 
-   - `OnlineShopConfig.php` must be located always at `PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY` and got renamed to 
-      `EcommerceFrameworkConfig.php`
-   - all sub configuration files are located relative to `PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY`
-- Replaced setting `defaultlocale` in `EcommerceFramework.php` with `defaultCurrency`
-- Replaced root node `onlineshop` in `EcommerceFrameworkConfig.php` with `ecommerceframework`
+- Migrated `OnlineShopConfig.php` to Symfony config and Symfony Service Container. This has some major impact on how 
+  services are instantiated and on some signatures. This hardly affects usage of the framework, but if you are sub classing
+  and extending functionality, it will affect you. 
+  For details see [Config Signature changes](./02_Ecommerce_Framework_Config_Signature_Changes.md) and
+   [E-Commerce Framework Configuration Docs](../../../10_E-Commerce_Framework/04_Configuration/README.md)
+
+
+
+- Replaced setting `defaultlocale` in Environment configuration with `defaultCurrency`
 
 - OrderBackoffice Translations moved to AdminTranslations
 
@@ -35,7 +38,7 @@
    - `\Zend_Db_Select()` becomes `\Pimcore\Db\ZendCompatibility\QueryBuilder` 
    - `\Zend_Db_Expr()` becomes `\Pimcore\Db\ZendCompatibility\Expression`   
    
- - Replaced `Zend_Date` to DateTime - also in certain interfaces like
+ - Replaced `Zend_Date` with DateTime - also in certain interfaces like
    - `ICart`
    - `ICartItem`
    - `AbstractOrder` (still works if Pimcore is in `Zend_Date` - mode)
@@ -84,41 +87,10 @@
    - Fallback for old view scripts path relative to `PIMCORE_PROJECT_ROOT . "/legacy/website/views/scripts"` - but they 
       are also rendered with Symfony engine.
 
-- Price objects (`IPrice`) now use a value object instead of floats to represent prices. All calls to `get*Amount()`,
-  `set*Amount()` and all custom calculations need to be updated to work with the `Decimal` value object.
-- Added PHP 7 type hints to interfaces where applicable, especially regarding pricing. You might need to update your
-  implementations to match updated interface definitions. This mainly affects return types of interfaces (e.g. a `PriceInfo`
-  is now forced to return a `IPrice` object for `getTotalPrice()` where it could be `null` previously) and anything working
-  with price amounts (as the `Decimal` value object is used now instead of floats).  
-  If you implement any of the following classes/interfaces in your project, please check they match the new framework
-  definition (see https://github.com/pimcore/pimcore/pull/1701):
-  
-    - `CartManager/AbstractCartItem`
-    - `CartManager/CartPriceCalculator`
-    - `CartManager/CartPriceModificator/Discount`
-    - `CartManager/CartPriceModificator/IDiscount`
-    - `CartManager/CartPriceModificator/IShipping`
-    - `CartManager/CartPriceModificator/Shipping`
-    - `CartManager/ICartItem`
-    - `CartManager/ICartPriceCalculator`
-    - `OfferTool/DefaultService`
-    - `PriceSystem/AbstractPriceInfo`
-    - `PriceSystem/AbstractPriceSystem`
-    - `PriceSystem/AttributePriceInfo`
-    - `PriceSystem/AttributePriceSystem`
-    - `PriceSystem/CachingPriceSystem`
-    - `PriceSystem/IPrice`
-    - `PriceSystem/IPriceInfo`
-    - `PriceSystem/IPriceSystem`
-    - `PriceSystem/LazyLoadingPriceInfo`
-    - `PriceSystem/ModificatedPrice`
-    - `PriceSystem/Price`
-    - `PriceSystem/TaxManagement/TaxCalculationService`
-    - `PriceSystem/TaxManagement/TaxEntry`
-    - `PricingManager/Condition/AbstractOrder`
-    - `PricingManager/IPriceInfo`
-    - `PricingManager/PriceInfo`
-  
+- Price objects (`IPrice`) now use a value object instead of floats to represent prices. If you are calculating with prices
+  (e.g. in custom pricing rules), this will affect you. If you are just using Price objects and displaying prices, this 
+  change should be transparent for you. For details see [Price changes page](./01_Ecommerce_Framework_Price_Objects.md).   
+ 
 - CartPriceCalculator: property `$gradTotal` was renamed to `$grandTotal` - needs to be reflected in when sub classing 
   the default calculator.
    
@@ -146,12 +118,11 @@ RENAME TABLE plugin_onlineshop_optimized_productindex_relations TO ecommercefram
 UPDATE translations_admin SET `key` = REPLACE(`key`, 'plugin_onlineshop_', 'bundle_ecommerce_') WHERE `key` LIKE 'plugin_onlineshop%';
 UPDATE users_permission_definitions SET `key` = REPLACE(`key`, 'plugin_onlineshop_', 'bundle_ecommerce_');	
 ```
-	
-- `AbstractFilterType` (and all filter type implementations): Constructor changed to `public function __construct($script, $config, TranslatorInterface $translator, EngineInterface $renderer);`
+
 - `IEnvironment`: 
   - added 
     - `getSystemLocale()`
-    - `getdefaultCurrency()`
+    - `getDefaultCurrency()`
   - removed 
     - `setSessionNamespace()`
     - `getSessionNamespace()`

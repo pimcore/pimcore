@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Model\Object\AbstractObject;
+
 class DefaultObjects implements IRelationInterpreter
 {
-    public static function interpret($value, $config = null)
+    public function interpret($value, $config = null)
     {
         $result = [];
 
@@ -24,7 +26,7 @@ class DefaultObjects implements IRelationInterpreter
             foreach ($value as $v) {
                 $result[] = ['dest' => $v->getId(), 'type' => 'object'];
             }
-        } elseif ($value instanceof \Pimcore\Model\Object\AbstractObject) {
+        } elseif ($value instanceof AbstractObject) {
             $result[] = ['dest' => $value->getId(), 'type' => 'object'];
         }
 

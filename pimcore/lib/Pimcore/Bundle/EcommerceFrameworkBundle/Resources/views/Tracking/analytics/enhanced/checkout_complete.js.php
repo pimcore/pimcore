@@ -13,10 +13,9 @@
  */
 ?>
 
-
 <?php foreach ($this->calls as $call => $callData): ?>
 ga('ec:addProduct', <?= json_encode($callData) ?>);
 
 <?php endforeach; ?>
 
-ga('ec:setAction', 'purchase', <?=json_encode($this->transaction)?>);
+ga('ec:setAction', 'purchase', <?= json_encode($this->transaction) ?>);

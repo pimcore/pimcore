@@ -595,7 +595,7 @@ class DefaultMysql implements IProductList
                 }
             }
 
-            $condition .= ' AND ' . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributeConfig(), $searchstring);
+            $condition .= ' AND ' . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributes(), $searchstring);
         }
 
         $this->logger->info('Total Condition: ' . $condition);

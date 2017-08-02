@@ -42,6 +42,20 @@ interface IPricingManager
     public function getRule();
 
     /**
+     * Get map from action name to used class
+     *
+     * @return array
+     */
+    public function getActionMapping(): array;
+
+    /**
+     * Get map from condition name to used class
+     *
+     * @return array
+     */
+    public function getConditionMapping(): array;
+
+    /**
      * Factory
      *
      * @param string $type

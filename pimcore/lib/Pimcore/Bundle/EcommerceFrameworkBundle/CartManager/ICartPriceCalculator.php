@@ -18,12 +18,24 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 
 interface ICartPriceCalculator
 {
-    public function __construct($config, ICart $cart);
+    /**
+     * @param IEnvironment $environment
+     * @param ICart $cart
+     * @param ICartPriceModificator[] $modificators
+     */
+    public function __construct(IEnvironment $environment, ICart $cart, array $modificators = []);
+
+    /**
+     * (Re-)initialize standard price modificators, e.g. after removing an item from a cart
+     * within the same request, such as an AJAX-call.
+     */
+    public function initModificators();
 
     /**
      * Calculates cart sums and saves results
@@ -84,10 +96,4 @@ interface ICartPriceCalculator
      * @return ICartPriceModificator[]
      */
     public function getModificators(): array;
-
-    /**
-     * Re-initialise the price modificators, e.g. after removing an item from a cart
-     * within the same request, such as an AJAX-call.
-     */
-    public function initModificators();
 }
