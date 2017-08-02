@@ -58,6 +58,8 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
 
         $container->setParameter('pimcore_ecommerce.pimcore.config', $config['pimcore']);
+        $container->setParameter('pimcore_ecommerce.use_legacy_class_mapping', $config['use_legacy_class_mapping']);
+        $container->setParameter('pimcore_ecommerce.decimal_scale', $config['decimal_scale']);
 
         $loader->load('services.yml');
         $loader->load('factory.yml');

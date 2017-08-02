@@ -47,6 +47,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService as Def
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
 use Pimcore\Model\Object\OfferToolOffer;
 use Pimcore\Model\Object\OfferToolOfferItem;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
@@ -88,6 +89,8 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('pimcore_ecommerce_framework');
         $rootNode->addDefaultsIfNotSet();
 
+        $this->addRootNodeChildren($rootNode);
+
         $rootNode
             ->append($this->buildPimcoreNode())
             ->append($this->buildFactoryNode())
@@ -106,6 +109,22 @@ class Configuration implements ConfigurationInterface
             ->append($this->buildTrackingManagerNode());
 
         return $treeBuilder;
+    }
+
+    private function addRootNodeChildren(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->booleanNode('use_legacy_class_mapping')
+                    ->info('If true, the bundle will alias legacy class names (OnlineShop\Framework\*) to the new namespace')
+                    ->defaultTrue()
+                ->end()
+               ->integerNode('decimal_scale')
+                    ->info('Default scale used for Decimal objects')
+                    ->min(0)
+                    ->defaultValue(4)
+                ->end()
+            ->end();
     }
 
     private function buildPimcoreNode(): NodeDefinition

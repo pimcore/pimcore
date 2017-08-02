@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\RegisterConfiguredServicesPass;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -64,7 +65,13 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 
     public function boot()
     {
-        if ($this->getInstaller()->isInstalled()) {
+        $container = $this->container;
+
+        // set default decimal scale from config
+        Decimal::setDefaultScale($container->getParameter('pimcore_ecommerce.decimal_scale'));
+
+        // use legacy class mapping if configured
+        if ($container->getParameter('pimcore_ecommerce.use_legacy_class_mapping') && $this->getInstaller()->isInstalled()) {
             //load legacy class mapping only when ecommerce framework bundle is installed.
             LegacyClassMappingTool::loadMapping();
         }
