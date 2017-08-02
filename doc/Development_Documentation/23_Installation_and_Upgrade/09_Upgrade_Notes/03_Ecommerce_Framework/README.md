@@ -13,7 +13,7 @@
 
 - OrderBackoffice Translations moved to AdminTranslations
 
-- [Findlogic Export URL](../../10_E-Commerce_Framework/05_Index_Service/05_Data_Architecture_and_Indexing_Process.md) 
+- [Findlogic Export URL](../../../10_E-Commerce_Framework/05_Index_Service/05_Data_Architecture_and_Indexing_Process.md) 
   changed to `/ecommerceframework/findologic-export`
 
 - Logging now with Symfony standard logging
