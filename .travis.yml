@@ -1,37 +1,28 @@
-language: php
-
 notifications:
   email:
     - travis-ci@pimcore.org
+
+sudo: required
+language: php
 
 php:
   - 5.6.29
   - 7
   - 7.1
 
-before_script:
-  # install apache
-  - sudo apt-get update
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
-  - sudo a2enmod rewrite actions fastcgi alias
+addons:
+  hosts:
+    - pimcore-test.dev
 
-  # customize php settings
-  - sudo chmod 0755 .travis/setup-fpm.sh
-  - .travis/setup-fpm.sh
+install:
+  - chmod +x .travis/setup-sudo.sh && .travis/setup-sudo.sh
   - composer install
-  # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM)
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
-  - sudo service apache2 restart
-  # make tests executable
-  - cd tests
-  - sudo chmod 0755 alltests.sh
 
 script:
-  - ./alltests.sh
+  - (cd tests && chmod +x alltests.sh && ./alltests.sh)
 
 after_script:
   - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
   - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
   - cat $TRAVIS_BUILD_DIR/apache-error.log
   - cat $TRAVIS_BUILD_DIR/apache-access.log
-
