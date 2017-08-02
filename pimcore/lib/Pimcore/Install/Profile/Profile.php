@@ -52,7 +52,7 @@ class Profile
     public function __construct(string $id, string $path, array $config)
     {
         $this->id     = $id;
-        $this->name   = $config['name'] ?: $id;
+        $this->name   = $config['name'] ?? $id;
         $this->path   = $path;
         $this->config = $config;
     }
@@ -87,9 +87,56 @@ class Profile
             }
         }
 
+        $files = $this->removeImplicitelyAddedDirectories($files);
+
         $this->filesToAdd = $files;
 
         return $this->filesToAdd;
+    }
+
+    /**
+     * If a manifest defines to add files individually from a directory which is already defined in the list
+     * remove the directory from the list as the directory itself shouldn't be copied/symlinked in this case.
+     *
+     * Example:
+     *
+     * files to add:
+     *  - app/config/pimcore/*
+     *  - app/config/pimcore/ecommerce/*
+     *
+     * As the directory app/config/ecommerce is already implicitely added by defining the second entry, the directory
+     * itself shouldn't be handled (copied/symlinked), just the files matching the first pattern.
+     *
+     * @param array $files
+     * @return array
+     */
+    private function removeImplicitelyAddedDirectories(array $files): array
+    {
+        $remove = [];
+        foreach ($files as $sourcePath => $target) {
+            if (!is_dir($sourcePath)) {
+                continue;
+            }
+
+            foreach ($files as $sp => $t) {
+                // same entry
+                if ($sp === $sourcePath) {
+                    continue;
+                }
+
+                // entry starts with sourcepath
+                if (0 === strpos($sp, $sourcePath)) {
+                    $remove[] = $sourcePath;
+                    break;
+                }
+            }
+        }
+
+        foreach ($remove as $removePath) {
+            unset($files[$removePath]);
+        }
+
+        return $files;
     }
 
     public function getDbDataFiles(): array
