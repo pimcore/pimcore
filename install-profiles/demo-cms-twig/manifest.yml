@@ -4,7 +4,7 @@ files:
         - app/Resources/views
         - src/AppBundle
         - var/classes
-        - var/config/*.*
+        - var/config/*
         - web/static
         - web/var/assets
 db:

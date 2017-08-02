@@ -3,4 +3,4 @@ files:
     add:
         - app/Resources/views
         - src/AppBundle
-        - var/config/*.*
+        - var/config/*
