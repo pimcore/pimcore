@@ -75,16 +75,14 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
 
-        $orderManagerTenants = array_keys($config['order_manager']['tenants'] ?? []);
-
         $this->registerFactoryConfiguration($container, $config['factory']);
         $this->registerEnvironmentConfiguration($container, $config['environment']);
-        $this->registerCartManagerConfiguration($container, $config['cart_manager'], $orderManagerTenants);
+        $this->registerCartManagerConfiguration($container, $config['cart_manager']);
         $this->registerOrderManagerConfiguration($container, $config['order_manager']);
         $this->registerPricingManagerConfiguration($container, $config['pricing_manager']);
         $this->registerPriceSystemsConfiguration($container, $config['price_systems']);
         $this->registerAvailabilitySystemsConfiguration($container, $config['availability_systems']);
-        $this->registerCheckoutManagerConfiguration($container, $config['checkout_manager'], $orderManagerTenants);
+        $this->registerCheckoutManagerConfiguration($container, $config['checkout_manager']);
         $this->registerPaymentManagerConfiguration($container, $config['payment_manager']);
         $this->registerIndexServiceConfig($container, $config['index_service']);
         $this->registerFilterServiceConfig($container, $config['filter_service']);
@@ -116,7 +114,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
     }
 
-    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config, array $orderManagerTenants)
+    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $mapping = [];
 
@@ -237,7 +235,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config, array $orderManagerTenants)
+    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config)
     {
         $commitOrderProcessorMapping   = [];
         $checkoutManagerFactoryMapping = [];
