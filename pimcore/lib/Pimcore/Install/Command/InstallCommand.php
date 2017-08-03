@@ -21,7 +21,6 @@ use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Install\Installer;
 use Pimcore\Install\Profile\ProfileLocator;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
