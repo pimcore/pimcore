@@ -90,7 +90,11 @@ class Installer
         foreach ($checks as $check) {
             if ($check->getState() === Check::STATE_ERROR) {
                 if ($check->getLink()) {
-                    $errors[] = sprintf('<a href="%s" target="_blank">%s</a>', $check->getLink(), $check->getMessage());
+                    if ('cli' === php_sapi_name()) {
+                        $errors[] = sprintf('%s (see %s)', $check->getMessage(), $check->getLink());
+                    } else {
+                        $errors[] = sprintf('<a href="%s" target="_blank">%s</a>', $check->getLink(), $check->getMessage());
+                    }
                 } else {
                     $errors[] = $check->getMessage();
                 }
