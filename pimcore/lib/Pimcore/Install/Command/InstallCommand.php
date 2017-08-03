@@ -183,13 +183,6 @@ class InstallCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        /** @var Application $application */
-        $application = $this->getApplication();
-
-        if ('dev' !== $application->getKernel()->getEnvironment()) {
-            throw new \RuntimeException('The installer can only be run in the dev environment');
-        }
-
         // no installer if Pimcore is already installed
         $configFile = Config::locateConfigFile('system.php');
         if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
