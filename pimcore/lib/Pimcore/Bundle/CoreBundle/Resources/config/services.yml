@@ -269,6 +269,7 @@ services:
     pimcore.extension.bundle_locator:
         class: Pimcore\Extension\Bundle\PimcoreBundleLocator
         arguments:
+            - '@pimcore.composer.package_info'
             - '%pimcore.extensions.bundles.search_paths%'
             - '%pimcore.extensions.bundles.handle_composer%'
 
@@ -377,6 +378,9 @@ services:
     #
     # PIMCORE SERVICES
     #
+
+    pimcore.composer.package_info:
+        class: Pimcore\Composer\PackageInfo
 
     pimcore.bundle_config_locator:
         class: Pimcore\Config\BundleConfigLocator

@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Pimcore
@@ -14,13 +15,12 @@
 
 use Pimcore\Config;
 use Pimcore\Install\InstallerKernel;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Pimcore\Version;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
-$maxExecutionTime = 300;
+$maxExecutionTime = 0;
 @ini_set('max_execution_time', $maxExecutionTime);
 set_time_limit($maxExecutionTime);
 
@@ -31,17 +31,10 @@ require_once __DIR__ . '/../pimcore/config/constants.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 include_once(__DIR__ . '/../pimcore/lib/helper-functions.php');
 
-// no installer if Pimcore is already installed
-if (is_file(Config::locateConfigFile('system.php'))) {
-    $response = new RedirectResponse('/admin?_dc=' . microtime(true), Response::HTTP_FOUND);
-    $response->send();
+$kernel = new InstallerKernel(Config::getEnvironment(), true);
 
-    return;
-}
-
-$kernel   = new InstallerKernel(Config::getEnvironment(), true);
-$request  = Request::createFromGlobals();
-$response = $kernel->handle($request);
-$response->send();
-
-$kernel->terminate($request, $response);
+$application = new Application($kernel);
+$application->setName('Pimcore Installer');
+$application->setVersion(Version::getVersion());
+$application->setDefaultCommand('pimcore:install', true);
+$application->run();
