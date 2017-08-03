@@ -150,17 +150,20 @@ class InstallCommand extends Command
             ->setDescription($description)
             ->setHelp($help)
             ->addOption(
-                'no-overwrite', null,
+                'no-overwrite',
+                null,
                 InputOption::VALUE_NONE,
                 'Do no overwrite existing files'
             )
             ->addOption(
-                'symlink', null,
+                'symlink',
+                null,
                 InputOption::VALUE_NONE,
                 'Symlink install profile files instead of copying them. Will fall back to copy on Windows.'
             )
             ->addOption(
-                'ignore-existing-config', null,
+                'ignore-existing-config',
+                null,
                 InputOption::VALUE_NONE,
                 'Do not abort if a <comment>system.php</comment> file already exists'
             );

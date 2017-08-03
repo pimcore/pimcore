@@ -138,7 +138,8 @@ class ProfileLocator
                         if (0 !== strpos($manifestPath, $path)) {
                             throw new \RuntimeException(sprintf(
                                 'Manifest path for package "%s" resolves to "%s", but the path is outside the package directory',
-                                $package['name'], $manifestPath
+                                $package['name'],
+                                $manifestPath
                             ));
                         }
                     }

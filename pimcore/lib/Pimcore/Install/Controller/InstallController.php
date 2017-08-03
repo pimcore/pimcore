@@ -21,15 +21,13 @@ use Pimcore\Install\Installer;
 use Pimcore\Install\Profile\Profile;
 use Pimcore\Install\Profile\ProfileLocator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class InstallController extends AbstractController
 {
     public function indexAction(Installer $installer, ProfileLocator $profileLocator)
     {
-        $profiles = array_map(function(Profile $profile) {
+        $profiles = array_map(function (Profile $profile) {
             return [
                 $profile->getId(),
                 $profile->getName()

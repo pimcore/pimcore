@@ -108,6 +108,7 @@ class Profile
      * itself shouldn't be handled (copied/symlinked), just the files matching the first pattern.
      *
      * @param array $files
+     *
      * @return array
      */
     private function removeImplicitelyAddedDirectories(array $files): array
@@ -149,7 +150,7 @@ class Profile
         $prefix  = $this->path . '/';
 
         foreach ($this->config['db']['data_files'] as $dbFile) {
-            $path = $prefix . '/' . ltrim($dbFile, '/');;
+            $path = $prefix . '/' . ltrim($dbFile, '/');
             if (!file_exists($path)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Profile "%s" defines a non-existing DB file "%s"',
