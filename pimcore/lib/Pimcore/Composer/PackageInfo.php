@@ -81,9 +81,9 @@ class PackageInfo
     /**
      * @param string $path
      *
-     * @return array
+     * @return array|null
      */
-    private function readComposerFile(string $path): array
+    private function readComposerFile(string $path)
     {
         if (file_exists($path) && is_readable($path)) {
             $json = json_decode(file_get_contents($path), true);
