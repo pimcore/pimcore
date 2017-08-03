@@ -1391,6 +1391,7 @@
     "web2print_author": "Author",
     "web2print_title": "Title",
     "web2print_printermarks": "Printermarks",
+    "web2print_addOverprint": "Overprinting",
     "web2print_links": "Links",
     "web2print_bookmarks": "Bookmarks",
     "web2print_tags": "Tags",
