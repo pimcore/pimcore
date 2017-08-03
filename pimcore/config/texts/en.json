@@ -5997,6 +5997,10 @@
         "definition": "Printermarks"
     },
     {
+        "term": "web2print_addOverprint",
+        "definition": "Overprinting"
+    },
+    {
         "term": "web2print_links",
         "definition": "Links"
     },

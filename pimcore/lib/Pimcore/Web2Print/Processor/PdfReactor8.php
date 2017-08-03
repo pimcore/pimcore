@@ -66,7 +66,8 @@ class PdfReactor8 extends Processor
             "defaultColorSpace" => $config->colorspace,
             "encryption" => $config->encryption,
             "addTags" => $config->tags == "true",
-            "logLevel" => $config->loglevel
+            "logLevel" => $config->loglevel,
+            "addOverprint" => $config->addOverprint == "true"
 
         ];
 
@@ -111,6 +112,7 @@ class PdfReactor8 extends Processor
         $options[] = ["name" => "author", "type" => "text", "default" => ""];
         $options[] = ["name" => "title", "type" => "text", "default" => ""];
         $options[] = ["name" => "printermarks", "type" => "bool", "default" => ""];
+        $options[] = ["name" => "addOverprint", "type" => "bool", "default" => ""];
         $options[] = ["name" => "links", "type" => "bool", "default" => true];
         $options[] = ["name" => "bookmarks", "type" => "bool", "default" => true];
         $options[] = ["name" => "tags", "type" => "bool", "default" => true];
