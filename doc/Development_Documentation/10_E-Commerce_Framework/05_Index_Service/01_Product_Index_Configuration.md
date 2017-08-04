@@ -9,7 +9,7 @@ class responsible for storing and managing the index.
 
 ```yaml
 pimcore_ecommerce_framework:
-    product_index:
+    index_service:
         # product index defines multiple tenants which can be disabled individually
         # a tenant can define placeholders which will be replaced 
         tenants:
