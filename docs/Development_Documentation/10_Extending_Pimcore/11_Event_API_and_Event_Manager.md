@@ -132,6 +132,8 @@ attach multiple events
 | `document.postDelete`              | `Pimcore\Model\Document` | -                                                       |                                                                                                         |
 | `document.print.prePdfGeneration`  | `Pimcore\Model\Document` | `Pimcore\Web2Print\Processor\{ProcessorName} processor` | processor contains the processor object used to generate the PDF                                        |
 | `document.print.postPdfGeneration` | `Pimcore\Model\Document` | (string) `filename`, (string) `pdf`                     | filename contains the filename of the generated pdf on filesystem, pdf contains generated pdf as string |
+| `document.print.processor.modifyProcessingOptions` | Processor | (array)                     | modfiy the processing options for the adapter (displayed in the pimcore admin interface) |
+| `document.print.processor.modifyConfig` | Processor | (array)                     | modfify the configuration which is passed to processor|
 | `document.postCopy`                | `Pimcore\Model\Document` | `Pimcore\Model\Document base_element`                   | base_element contains the base document used in copying process                                         |
 
 ### Object

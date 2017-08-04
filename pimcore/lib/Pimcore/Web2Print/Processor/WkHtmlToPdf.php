@@ -32,6 +32,7 @@ class WkHtmlToPdf extends Processor
      */
     private $options = "";
 
+    protected $config = [];
 
     /**
      * @param string $wkhtmltopdfBin
@@ -53,6 +54,7 @@ class WkHtmlToPdf extends Processor
             }
         }
 
+
         if ($options) {
             foreach ($options as $key => $value) {
                 $this->options .= " --" . (string)$key;
@@ -73,6 +75,8 @@ class WkHtmlToPdf extends Processor
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
+
+        $this->config = $config;
         $web2printConfig = Config::getWeb2PrintConfig();
 
         $params = [];
@@ -110,7 +114,14 @@ class WkHtmlToPdf extends Processor
      */
     public function getProcessingOptions()
     {
-        return [];
+        $options = [];
+
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($options);
+
+        \Pimcore::getEventManager()->trigger("document.print.processor.modifyProcessingOptions", $this, [
+            "returnValueContainer" => $returnValueContainer
+        ]);
+        return $returnValueContainer->getData();
     }
 
     /**
@@ -180,7 +191,30 @@ class WkHtmlToPdf extends Processor
         }
 
         $retVal = 0;
-        $cmd = $this->wkhtmltopdfBin . " " . $this->options . " " . escapeshellarg($srcUrl) . " " . escapeshellarg($dstFile) . " > " . $outputFile;
+
+
+        $params = [
+            'wkhtmltopdfBin' => $this->wkhtmltopdfBin,
+            'options' => $this->options,
+            'srcUrl' => $srcUrl,
+            'dstFile' => $dstFile,
+            'outputFile' => $outputFile,
+            'config' => $this->config
+        ];
+
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($params);
+        \Pimcore::getEventManager()->trigger("document.print.processor.modifyConfig", $this, [
+            "returnValueContainer" => $returnValueContainer
+        ]);
+
+        $params = $returnValueContainer->getData();
+
+        if($params['cmd']){
+            $cmd = $params['cmd'];
+        }else{
+            $cmd = $params['wkhtmltopdfBin'] . " " . $params['options'] . " " . escapeshellarg($params['srcUrl']) . " " . escapeshellarg($params['dstFile']) . " > " . $params['outputFile'];
+        }
+
         system($cmd, $retVal);
         $output = file_get_contents($outputFile);
         @unlink($outputFile);
