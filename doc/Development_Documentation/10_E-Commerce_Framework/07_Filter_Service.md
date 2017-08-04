@@ -160,7 +160,7 @@ $products = $factory->getIndexService()->getProductListForCurrentTenant();
 $this->view->products = $products;
 
 // create and init filter service
-$filterService = $factory->getFilterService($this->view);
+$filterService = $factory->getFilterService();
 
 \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $products, $params, $this->view, $filterService, true);
 $this->view->filterService = $filterService;
