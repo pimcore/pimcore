@@ -299,9 +299,29 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
+        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->replacePimcoreIdsInHtml($data, $idMapping);
+
+        return $data;
+    }
+
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
+    {
+        return $this->replacePimcoreIdsInHtml($value, $idMapper);
+    }
+
+    /**
+     * Replaces all occurences of "pimcore_id" attributes in links and images according to the given mapping.
+     *
+     * @param string $data
+     * @param mixed $idMapping
+     *
+     * @return mixed
+     */
+    private function replacePimcoreIdsInHtml($data, $idMapping)
+    {
         include_once(PIMCORE_PATH . "/lib/simple_html_dom.php");
 
-        $data = $this->getDataFromObjectParam($object, $params);
         $html = str_get_html($data);
         if ($html) {
             $s = $html->find("a[pimcore_id],img[pimcore_id]");
@@ -312,11 +332,20 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
                         $type = $el->pimcore_type;
                         $id = (int) $el->pimcore_id;
 
-                        if (array_key_exists($type, $idMapping)) {
-                            if (array_key_exists($id, $idMapping[$type])) {
-                                $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
+                        if (is_array($idMapping)) {
+                            if (array_key_exists($type, $idMapping)) {
+                                if (array_key_exists($id, $idMapping[$type])) {
+                                    $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$type][$id] . '"', $el->outertext);
+                                }
+                            }
+                        } else if (is_object($idMapping) && method_exists($idMapping, 'getMappedId')) {
+                            $mappedId = $idMapping->getMappedId($type, $id);
+
+                            if ($mappedId) {
+                                $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $mappedId . '"', $el->outertext);
                             }
                         }
+
                     }
                 }
             }
