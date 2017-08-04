@@ -768,7 +768,7 @@ DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
 DROP TABLE IF EXISTS `classificationstore_stores`;
 CREATE TABLE `classificationstore_stores` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(191) NULL DEFAULT NULL,
+	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` LONGTEXT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
