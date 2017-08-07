@@ -202,6 +202,11 @@ class Installer
             'profile' => $profile->getName()
         ]);
 
+        $errors = $this->copyProfileFiles($profile);
+        if (count($errors) > 0) {
+            return $errors;
+        }
+
         $setup = new Setup();
 
         $dbConfig['username'] = $dbConfig['user'];
@@ -214,11 +219,6 @@ class Installer
                 'params' => $dbConfig
             ],
         ]);
-
-        $errors = $this->copyProfileFiles($profile);
-        if (count($errors) > 0) {
-            return $errors;
-        }
 
         $kernel = new \AppKernel(Config::getEnvironment(), true);
         \Pimcore::setKernel($kernel);
