@@ -79,7 +79,7 @@ Every parameter can be set as option to make the install automated. The `--no-in
 prompts:
 
 ```
-$ bin/install --profile demo-cms \
+$ bin/install --profile demo-basic \
   --admin-username admin --admin-password admin \
   --mysql-username username --mysql-password password --mysql-database pimcore5 \
   --no-interaction
@@ -89,7 +89,7 @@ To avoid having to pass sensitive data (e.g. DB password) as command line option
 variable. See `bin/install --help` for details. Example:
 
 ```
-$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install --profile demo-cms \
+$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install --profile demo-basic \
   --admin-username admin --admin-password admin \
   --mysql-database pimcore5 \
   --no-interaction

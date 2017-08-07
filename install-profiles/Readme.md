@@ -1,18 +1,18 @@
 
 # How to use an install profile without installing it
 
-This example uses the profile `demo-cms`, so for other profiles you may change the commands below accordingly. 
+This example uses the profile `demo-basic`, so for other profiles you may change the commands below accordingly. 
 
 
 ## Create the following symlinks
 ```
 ln -sr app/config/parameters.example.yml app/config/parameters.yml
-ln -sr install-profiles/demo-cms/app/Resources/views app/Resources/views
-ln -sr install-profiles/demo-cms/app/config/local/* app/config/local/
-ln -sr install-profiles/demo-cms/src/AppBundle src/AppBundle
-ln -sr install-profiles/demo-cms/web/var web/var 
-ln -sr install-profiles/demo-cms/var/* var/
-ln -sr install-profiles/demo-cms/web/static/ web/static
+ln -sr install-profiles/demo-basic/app/Resources/views app/Resources/views
+ln -sr install-profiles/demo-basic/app/config/local/* app/config/local/
+ln -sr install-profiles/demo-basic/src/AppBundle src/AppBundle
+ln -sr install-profiles/demo-basic/web/var web/var 
+ln -sr install-profiles/demo-basic/var/* var/
+ln -sr install-profiles/demo-basic/web/static/ web/static
 ```
 
 ## Setup 
@@ -22,5 +22,5 @@ cp var/config/system.template.php var/config/system.php
  
 # load structure and data
 mysql -u root -p example < app/Resources/install/install.sql
-mysql -u root -p example < install-profiles/demo-cms/dump/data.sql
+mysql -u root -p example < install-profiles/demo-basic/dump/data.sql
 ```

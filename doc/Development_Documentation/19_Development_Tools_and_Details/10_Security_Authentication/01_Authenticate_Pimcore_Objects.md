@@ -6,7 +6,7 @@ configuration with users stored as Pimcore objects.
 As example, assume we have a user object which is defined in a `AppBundle\Model\Object\User` class and stores its password
 in a field named `password` (field type `Password`). The password field is configured to use the `password_hash` algorithm
 which is the standard way to handle passwords in PHP these days (internally it uses bcrypt). The class definition looks
-like this (you can find a working example in the `demo-cms` install profile):
+like this (you can find a working example in the `demo-basic` install profile):
 
 ![AppBundle\Model\Object\User](../../img/security_authentication_class_definition.png)
 
@@ -169,6 +169,6 @@ security:
 
 This should get you started with a custom authentication system based on Pimcore objects. For further information see:
 
-* The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms) which acts as base for
+* The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic) which acts as base for
   this guide and implements a form/session login.
 * The [Symfony Security Component documentation](http://symfony.com/doc/current/security.html)

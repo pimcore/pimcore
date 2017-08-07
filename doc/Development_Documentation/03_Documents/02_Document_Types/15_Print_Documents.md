@@ -67,7 +67,7 @@ For details of settings please see section below or renderer documentation.
 They can be activated by the printermarks rendering setting. Technically they are implemented by an additional CSS-file which needs to be included.
 For Details, check links below:
 
-* [view-script](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms/app/Resources/views/Web2print/default.html.php#L102-L102)
+* [view-script](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/app/Resources/views/Web2print/default.html.php#L102-L102)
 * [css-file](https://github.com/pimcore/pimcore/blob/master/web/pimcore/static6/css/print/print-printermarks.css)
 
 ## Settings
