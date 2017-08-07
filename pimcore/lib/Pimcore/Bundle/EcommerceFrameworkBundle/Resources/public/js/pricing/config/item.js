@@ -1201,7 +1201,7 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (data.type == "object") {
+                                    if (data.type == "object" || data.type == "variant") {
                                         this.setValue(data.path);
                                         return true;
                                     }
