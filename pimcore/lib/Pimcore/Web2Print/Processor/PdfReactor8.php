@@ -75,6 +75,12 @@ class PdfReactor8 extends Processor
             $reactorConfig["licenseKey"] = trim($web2PrintConfig->pdfreactorLicence);
         }
 
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($reactorConfig);
+        \Pimcore::getEventManager()->trigger("document.print.processor.modifyConfig", $this, [
+            "returnValueContainer" => $returnValueContainer,
+            "document" => $document
+        ]);
+
         try {
             $progress = new \stdClass();
             $progress->finished = false;
@@ -151,6 +157,11 @@ class PdfReactor8 extends Processor
             "default" => \LogLevel::FATAL
         ];
 
-        return $options;
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($options);
+
+        \Pimcore::getEventManager()->trigger("document.print.processor.modifyProcessingOptions", $this, [
+            "returnValueContainer" => $returnValueContainer
+        ]);
+        return $returnValueContainer->getData();
     }
 }
