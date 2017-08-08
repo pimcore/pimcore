@@ -106,7 +106,7 @@ class Gift implements IGift
      */
     public function __sleep()
     {
-        if($this->product) {
+        if(is_object($this->product)) {
             $this->productPath = $this->product->getFullPath();
         }
 
@@ -120,7 +120,8 @@ class Gift implements IGift
     {
         if($this->productPath != '') {
             $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->productPath );
+        } else if (is_string($this->product)) {
+            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->product );
         }
-
     }
 }
