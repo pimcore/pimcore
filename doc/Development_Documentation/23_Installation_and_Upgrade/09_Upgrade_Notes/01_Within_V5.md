@@ -21,6 +21,11 @@ If you updated up to build 85 and experience this issue, you can solve it with t
 * alternatively you can use the CLI updater to circumvent the maintenance page. the following command would update to build 86:
 
     PIMCORE_ENVIRONMENT=dev bin/console pimcore:update --ignore-maintenance-mode -u 86
+    
+### Session related BC breaks
+
+The admin session ID can't be injected via GET parameter anymore. This was possbile in previous Pimcore versions to support
+Flash based file uploaders but was obsolete.
 
 
 ## Build 60 (2017-05-31)
