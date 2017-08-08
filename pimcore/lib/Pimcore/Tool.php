@@ -356,26 +356,6 @@ class Tool
     }
 
     /**
-     * @param Request|null $request
-     *
-     * @return bool
-     */
-    public static function isInstaller(Request $request = null)
-    {
-        $request = self::resolveRequest($request);
-
-        if (null === $request) {
-            return false;
-        }
-
-        if (preg_match('@^/install@', $request->getRequestUri())) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      *
      * @param Request|null $request
