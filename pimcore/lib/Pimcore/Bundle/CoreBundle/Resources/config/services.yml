@@ -1,4 +1,9 @@
 services:
+    Pimcore\Extension\Bundle\Migrations\Command\:
+        resource: '../../../../Extension/Bundle/Migrations/Command'
+        autowire: true
+        autoconfigure: true
+
     pimcore.bundle_locator:
         class: Pimcore\HttpKernel\BundleLocator\BundleLocator
         arguments: ['@kernel']
