@@ -25,6 +25,11 @@ class Gift implements IGift
     protected $product;
 
     /**
+     * @var string
+     */
+    protected $productPath;
+
+    /**
      * @param IEnvironment $environment
      *
      * @return IGift
@@ -97,16 +102,15 @@ class Gift implements IGift
 
     /**
      * dont cache the entire product object
-     *
      * @return array
      */
     public function __sleep()
     {
-        if ($this->product) {
-            $this->product = $this->product->getFullPath();
+        if(is_object($this->product)) {
+            $this->productPath = $this->product->getFullPath();
         }
 
-        return ['product'];
+        return array('productPath');
     }
 
     /**
@@ -114,8 +118,10 @@ class Gift implements IGift
      */
     public function __wakeup()
     {
-        if ($this->product != '') {
-            $this->product = AbstractProduct::getByPath($this->product);
+        if($this->productPath != '') {
+            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->productPath );
+        } else if (is_string($this->product)) {
+            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->product );
         }
     }
 }
