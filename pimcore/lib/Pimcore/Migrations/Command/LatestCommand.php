@@ -1,10 +1,9 @@
 <?php
 
-namespace Pimcore\Extension\Bundle\Migrations\Command;
+namespace Pimcore\Migrations\Command;
 
-use Doctrine\Bundle\MigrationsBundle\Command\MigrationsExecuteDoctrineCommand;
 use Doctrine\Bundle\MigrationsBundle\Command\MigrationsLatestDoctrineCommand;
-use Pimcore\Extension\Bundle\Migrations\Command\Traits\PimcoreMigrationsConfiguration;
+use Pimcore\Migrations\Command\Traits\PimcoreMigrationsConfiguration;
 
 class LatestCommand extends MigrationsLatestDoctrineCommand
 {

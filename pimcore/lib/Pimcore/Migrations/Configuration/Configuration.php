@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Extension\Bundle\Migrations\Configuration;
+namespace Pimcore\Migrations\Configuration;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Migrations\Finder\MigrationFinderInterface;
@@ -24,7 +24,7 @@ use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use Pimcore\Extension\Bundle\Migrations\Version;
+use Pimcore\Migrations\Version;
 
 class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuration
 {

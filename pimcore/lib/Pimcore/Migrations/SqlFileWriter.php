@@ -15,12 +15,12 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Extension\Bundle\Migrations;
+namespace Pimcore\Migrations;
 
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Doctrine\DBAL\Migrations\OutputWriter;
-use Pimcore\Extension\Bundle\Migrations\Configuration\Configuration;
+use Pimcore\Migrations\Configuration\Configuration;
 
 class SqlFileWriter
 {

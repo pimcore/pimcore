@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Extension\Bundle\Migrations;
+namespace Pimcore\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Migrations\MigrationException;
@@ -26,9 +26,9 @@ use Doctrine\DBAL\Migrations\Provider\SchemaDiffProviderInterface;
 use Doctrine\DBAL\Migrations\SkipMigrationException;
 use Doctrine\DBAL\Types\Type;
 use Pimcore\Db\Connection;
-use Pimcore\Extension\Bundle\Migrations\Configuration\Configuration;
-use Pimcore\Extension\Bundle\Migrations\Migration\DryRunMigrationInterface;
-use Pimcore\Extension\Bundle\Migrations\Migration\PimcoreMigrationInterface;
+use Pimcore\Migrations\Configuration\Configuration;
+use Pimcore\Migrations\Migration\DryRunMigrationInterface;
+use Pimcore\Migrations\Migration\PimcoreMigrationInterface;
 
 class Version extends \Doctrine\DBAL\Migrations\Version
 {

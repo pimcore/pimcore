@@ -1,9 +1,9 @@
 <?php
 
-namespace Pimcore\Extension\Bundle\Migrations\Command;
+namespace Pimcore\Migrations\Command;
 
 use Doctrine\Bundle\MigrationsBundle\Command\MigrationsGenerateDoctrineCommand;
-use Pimcore\Extension\Bundle\Migrations\Command\Traits\PimcoreMigrationsConfiguration;
+use Pimcore\Migrations\Command\Traits\PimcoreMigrationsConfiguration;
 
 class GenerateCommand extends MigrationsGenerateDoctrineCommand
 {
@@ -15,7 +15,7 @@ class GenerateCommand extends MigrationsGenerateDoctrineCommand
 namespace <namespace>;
 
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Extension\Bundle\Migrations\Migration\AbstractPimcoreMigration;
+use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!

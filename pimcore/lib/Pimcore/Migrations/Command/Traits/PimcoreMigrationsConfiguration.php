@@ -15,13 +15,13 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Extension\Bundle\Migrations\Command\Traits;
+namespace Pimcore\Migrations\Command\Traits;
 
 use Doctrine\DBAL\Migrations\Configuration\Connection\Loader\ConnectionHelperLoader;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
 use Pimcore\Db\Connection;
-use Pimcore\Extension\Bundle\Migrations\Configuration\Configuration;
+use Pimcore\Migrations\Configuration\Configuration;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

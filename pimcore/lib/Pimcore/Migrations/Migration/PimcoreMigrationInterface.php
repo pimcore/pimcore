@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Extension\Bundle\Migrations\Migration;
+namespace Pimcore\Migrations\Migration;
 
 /**
  * Doctrine migrations by default output a warning if no SQL queries were run during a migration. This is
