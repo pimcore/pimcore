@@ -22,6 +22,7 @@ use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
 use Pimcore\Db\Connection;
 use Pimcore\Migrations\Configuration\Configuration;
+use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -66,32 +67,17 @@ trait PimcoreMigrationsConfiguration
     {
         /** @var $this AbstractCommand */
         if (!$this->migrationConfiguration) {
-            $bundle = $this->getBundle($input);
+            $factory = $this->getApplication()->getKernel()->getContainer()->get(ConfigurationFactory::class);
 
-            $migrationSet = '_app';
-            if ($bundle) {
-                $migrationSet = $bundle->getName();
-            }
-
-            $configuration = new Configuration(
-                $migrationSet,
-                $this->getConnection($input),
-                $this->getOutputWriter($output)
-            );
+            $bundle       = $this->getBundle($input);
+            $connection   = $this->getConnection($input);
+            $outputWriter = $this->getOutputWriter($output);
 
             if ($bundle) {
-                $configuration->setName($bundle->getName() . ' Migrations');
-                $configuration->setMigrationsNamespace($bundle->getNamespace() . '\\Migrations');
-                $configuration->setMigrationsDirectory($bundle->getPath() . '/Resources/migrations');
+                $this->migrationConfiguration = $factory->createForBundle($bundle, $connection, $outputWriter);
             } else {
-                $kernel = $this->getApplication()->getKernel();
-
-                $configuration->setName('Migrations');
-                $configuration->setMigrationsNamespace('App\\Migrations');
-                $configuration->setMigrationsDirectory($kernel->getRootDir() . '/Resources/migrations');
+                $this->migrationConfiguration = $factory->createForSet('app', $connection, $outputWriter);
             }
-
-            $this->migrationConfiguration = $configuration;
         }
 
         return $this->migrationConfiguration;

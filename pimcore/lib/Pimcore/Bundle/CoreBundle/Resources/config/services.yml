@@ -1,9 +1,4 @@
 services:
-    Pimcore\Migrations\Command\:
-        resource: '../../../../Migrations/Command'
-        autowire: true
-        autoconfigure: true
-
     pimcore.bundle_locator:
         class: Pimcore\HttpKernel\BundleLocator\BundleLocator
         arguments: ['@kernel']
@@ -421,3 +416,15 @@ services:
     pimcore.tool.assets_installer:
         class: Pimcore\Tool\AssetsInstaller
         arguments: ['@kernel', '@pimcore_admin.serializer']
+
+
+    # MIGRATIONS
+
+    Pimcore\Migrations\Command\:
+        resource: '../../../../Migrations/Command'
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Migrations\Configuration\ConfigurationFactory:
+        arguments:
+            - '%kernel.root_dir%'
