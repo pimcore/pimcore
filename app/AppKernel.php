@@ -24,6 +24,8 @@ class AppKernel extends Kernel
      */
     public function registerBundlesToCollection(BundleCollection $collection)
     {
+        $collection->addBundle(new \Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle());
+
         if (class_exists('\\AppBundle\\AppBundle')) {
             $collection->addBundle(new \AppBundle\AppBundle);
         }
