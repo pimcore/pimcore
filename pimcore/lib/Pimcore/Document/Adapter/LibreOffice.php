@@ -53,7 +53,7 @@ class LibreOffice extends Ghostscript
     {
 
         // it's also possible to pass a path or filename
-        if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/", $fileType)) {
+        if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/i", $fileType)) {
             return true;
         }
 
@@ -91,8 +91,8 @@ class LibreOffice extends Ghostscript
         }
 
         // first we have to create a pdf out of the document (if it isn't already one), so that we can pass it to ghostscript
-        // unfortunately there isn't an other way at the moment
-        if (!preg_match("/\.?pdf$/", $path)) {
+        // unfortunately there isn't any other way at the moment
+        if (!preg_match("/\.?pdf$/i", $path)) {
             if (!parent::isFileTypeSupported($path)) {
                 $this->path = $this->getPdf($path);
             }
