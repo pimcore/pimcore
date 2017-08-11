@@ -52,7 +52,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             $content = str_replace('"static/', '"proxy/adminer/static/', $content);
             $content = str_replace('"../externals/', '"proxy/externals/', $content);
 
-            return new Response($content);
+            return new Response($content, 200, $this->getAdminerSetHeaders());
         }
 
         /**
@@ -64,7 +64,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          */
         public function proxyAction(Request $request)
         {
-            $response = new Response();
+            $content = '';
+            $headers = [];
 
             // proxy for resources
             $path = $request->get('path');
@@ -73,9 +74,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
 
                 // it seems that css files need the right content-type (Chrome)
                 if (preg_match('@.css$@', $path)) {
-                    $response->headers->set('Content-Type', 'text/css');
+                    $headers['Content-Type'] = 'text/css';
                 } elseif (preg_match('@.js$@', $path)) {
-                    $response->headers->set('Content-Type', 'text/javascript');
+                    $headers['Content-Type'] = 'text/javascript';
                 }
 
                 if (file_exists($filePath)) {
@@ -86,12 +87,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                         $content .= file_get_contents($this->adminerHome . 'designs/konya/adminer.css');
                         $content .= file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/adminer-modifications.css');
                     }
-
-                    $response->setContent($content);
                 }
             }
 
-            return $response;
+            return new Response($content, 200, array_merge($headers, $this->getAdminerSetHeaders()));
         }
 
         /**
@@ -124,6 +123,31 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         public function onKernelResponse(FilterResponseEvent $event)
         {
             // nothing to do
+        }
+
+        /**
+         * @return array
+         */
+        protected function getAdminerSetHeaders()
+        {
+            $headers = [];
+
+            if (!headers_sent()) {
+                $headersRaw = headers_list();
+
+                foreach ($headersRaw as $header) {
+                    $header = explode(":", $header);
+                    list($headerKey, $headerValue) = $header;
+
+                    if ($headerKey && $headerValue) {
+                        $headers[$headerKey] = $headerValue;
+                    }
+                }
+
+                header_remove();
+            }
+
+            return $headers;
         }
     }
 }
