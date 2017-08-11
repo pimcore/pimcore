@@ -42,6 +42,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 return $this->redirect('/admin/external_adminer/adminer?username=' . $conf->username . '&db=' . $conf->dbname);
             }
 
+            $response = new Response();
+
             chdir($this->adminerHome . 'adminer');
 
             ob_start();
@@ -52,7 +54,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             $content = str_replace('"static/', '"proxy/adminer/static/', $content);
             $content = str_replace('"../externals/', '"proxy/externals/', $content);
 
-            return new Response($content);
+
+            $response->setContent($content);
+
+            return $this->mergeAdminerHeaders($response);
         }
 
         /**
@@ -65,6 +70,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         public function proxyAction(Request $request)
         {
             $response = new Response();
+            $content = '';
 
             // proxy for resources
             $path = $request->get('path');
@@ -86,12 +92,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                         $content .= file_get_contents($this->adminerHome . 'designs/konya/adminer.css');
                         $content .= file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/adminer-modifications.css');
                     }
-
-                    $response->setContent($content);
                 }
             }
 
-            return $response;
+            $response->setContent($content);
+
+            return $this->mergeAdminerHeaders($response);
         }
 
         /**
@@ -124,6 +130,33 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         public function onKernelResponse(FilterResponseEvent $event)
         {
             // nothing to do
+        }
+
+        /**
+         * Merges http-headers set from Adminer via headers function
+         * to the Symfony Response Object
+         *
+         * @param Response $response
+         * @return Response
+         */
+        protected function mergeAdminerHeaders(Response $response)
+        {
+            if (!headers_sent()) {
+                $headersRaw = headers_list();
+
+                foreach ($headersRaw as $header) {
+                    $header = explode(":", $header);
+                    list($headerKey, $headerValue) = $header;
+
+                    if ($headerKey && $headerValue) {
+                        $response->headers->set($headerKey, $headerValue);
+                    }
+                }
+
+                header_remove();
+            }
+
+            return $response;
         }
     }
 }
