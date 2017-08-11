@@ -321,12 +321,12 @@ $mainNavigation = $this->navigation()->buildNavigation($this->document, $mainNav
     $page->setCustomSetting("headline", $document->getElement("headline")->getData());
 });
 
-$this->navigation()->menu()->setPartial("/Navigation/partials/navigation.html.php");
+$this->navigation()->menu()->setPartial("Navigation/partials/navigation.html.php");
 echo $this->navigation()->menu()->render($mainNavigation);
 ?>
 ```
 
-Later in the template of the navigation (`/Navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
+Later in the template of the navigation (`Navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
 
 ```php
 <?php foreach( $this->pages as $page ){ ?>
@@ -334,7 +334,7 @@ Later in the template of the navigation (`/Navigation/partials/navigation.html.p
          <li class="<?php if( $page->getActive(true) ){ ?>active<?php } ?>">
           <a href="<?= $page->getUri() ?>" target="<?= $page->getTarget() ?>"><?= $page->getLabel() ?></a>
           <ul class="<?= $page->getCustomSetting("subListClass") ?>" role="menu">
-                <?php $this->template( "/navigation/partials/main.php", [ "container" => $page->getPages() ] ); ?>
+                <?= $this->template("Navigation/partials/partials/main.html.php", [ "pages" => $page->getPages() ] ); ?>
           </ul>
      </li>
     <?php } ?>
