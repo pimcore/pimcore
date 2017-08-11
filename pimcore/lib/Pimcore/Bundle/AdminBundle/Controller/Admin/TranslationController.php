@@ -212,7 +212,7 @@ class TranslationController extends AdminController
         $suffix = $admin ? 'admin' : 'website';
         $response = new Response("\xEF\xBB\xBF" . $csv);
         $response->headers->set('Content-Encoding', 'UTF-8');
-        $response->headers->set('Content-type:', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $response->headers->set('Content-Disposition', 'attachment; filename="export_ ' . $suffix . '_translations.csv"');
         ini_set('display_errors', false); //to prevent warning messages in csv
         return $response;
