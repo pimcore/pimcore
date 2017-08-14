@@ -805,7 +805,7 @@ Ext.define('Ext.scroll.TouchScroller', {
     extend: 'Ext.scroll.DomScroller',
     alias: 'scroller.touch'
 });
-
+Ext.supports.touchScroll = 0;
 
 // Chrome fix for XMLHttpRequest.sendAsBinary()
 if (Ext.isChrome) {
