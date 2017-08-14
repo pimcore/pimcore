@@ -786,6 +786,7 @@ Ext.define('Ext.scroll.TouchScroller', {
     extend: 'Ext.scroll.DomScroller',
     alias: 'scroller.touch'
 });
+Ext.supports.touchScroll = 0;
 
 /**
  * Fieldtype date is not able to save the correct value (before 1951) #1329
