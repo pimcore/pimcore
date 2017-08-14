@@ -32,17 +32,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $sql = 'SELECT id FROM ' . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $configsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
+        $sql = "SELECT * FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $configsData = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
-        $configData = [];
-        foreach ($configsData as $config) {
-            $configData[] = Object\Classificationstore\KeyConfig::getById($config);
+        $configList = [];
+        foreach ($configsData as $keyConfigData) {
+            $keyConfig = new Object\Classificationstore\KeyConfig();
+            $keyConfig->setValues($keyConfigData);
+            $configList[] = $keyConfig;
         }
 
-        $this->model->setList($configData);
+        $this->model->setList($configList);
 
-        return $configData;
+        return $configList;
     }
 
     /**

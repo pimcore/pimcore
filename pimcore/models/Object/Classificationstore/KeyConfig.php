@@ -98,12 +98,22 @@ class KeyConfig extends Model\AbstractModel
             if (self::$cacheEnabled && self::$cache[$id]) {
                 return self::$cache[$id];
             }
+
+            $cacheKey = "cs_keyconfig_" . $id;
+            $config = Cache::load($cacheKey);
+            if ($config) {
+                return $config;
+            }
+
             $config = new self();
             $config->setId($id);
+
             $config->getDao()->getById();
             if (self::$cacheEnabled) {
                 self::$cache[$id] = $config;
             }
+
+            Cache::save($config, $cacheKey, [], null, 0, true);
 
             return $config;
         } catch (\Exception $e) {
@@ -231,6 +241,8 @@ class KeyConfig extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE, new KeyConfigEvent($this));
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
+            $cacheKey = "cs_keyconfig_" . $this->getId();
+            Cache::remove($cacheKey);
         }
         parent::delete();
         \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE, new KeyConfigEvent($this));
@@ -254,6 +266,9 @@ class KeyConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
+            $cacheKey = "cs_keyconfig_" . $this->getId();
+            Cache::remove($cacheKey);
+
             $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE, new KeyConfigEvent($this));
         } else {
