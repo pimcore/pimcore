@@ -51,6 +51,7 @@ $scripts = array(
     "lib/prototype-light.js",
     "lib/jquery.min.js",
     "lib/ext/ext-all.js",
+    "pimcore/overrides.js",
     "lib/ext/classic/theme-triton/theme-triton.js",
 );
 
