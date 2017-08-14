@@ -239,6 +239,8 @@ class KeyConfig extends Model\AbstractModel
         \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.preDelete", $this);
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
+            $cacheKey = "cs_keyconfig_" . $this->getId();
+            Cache::remove($cacheKey);
         }
         parent::delete();
         \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.postDelete", $this);
@@ -262,6 +264,9 @@ class KeyConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
+            $cacheKey = "cs_keyconfig_" . $this->getId();
+            Cache::remove($cacheKey);
+
             $isUpdate = true;
             \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.preUpdate", $this);
         } else {
