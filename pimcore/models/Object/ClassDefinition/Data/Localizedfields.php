@@ -1234,6 +1234,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function unmarshal($value, $object = null, $params = [])
     {
         $lf = new Object\Localizedfield();
+        $lf->setObject($object);
         if (is_array($value)) {
             $items = [];
             foreach ($value as $language => $languageData) {
