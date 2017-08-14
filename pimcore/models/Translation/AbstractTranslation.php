@@ -268,6 +268,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }
 
+    /**
+     *
+     */
     public function save()
     {
         if (!$this->getCreationDate()) {
@@ -279,6 +282,16 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         $this->getDao()->save();
+
+        self::clearDependentCache();
+    }
+
+    /**
+     *
+     */
+    public function delete() {
+        $this->getDao()->delete();
+        self::clearDependentCache();
     }
 
     /**

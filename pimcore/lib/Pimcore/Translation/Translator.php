@@ -15,6 +15,7 @@
 namespace Pimcore\Translation;
 
 use Pimcore\Cache;
+use Pimcore\Model\Translation\AbstractTranslation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -226,7 +227,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             $backend = $this->getBackendForDomain($domain);
             if ($backend) {
                 if (strlen($id) > 190) {
-                    throw new \Exception("Pimcore_Translate: Message ID's longer than 190 characters are invalid!");
+                    throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
                 $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
@@ -234,6 +235,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 // no translation found create key
                 if (Tool::isValidLanguage($locale)) {
                     try {
+                        /**
+                         * @var AbstractTranslation $t
+                         */
                         $t = $class::getByKey($id);
                         $t->addTranslation($locale, '');
                     } catch (\Exception $e) {
