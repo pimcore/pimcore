@@ -244,6 +244,11 @@ class Localizedfield extends Model\AbstractModel
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = Model\Object\Fieldcollection\Definition::getByKey($containerKey);
+        } elseif ($context && $context['containerType'] == 'block') {
+            $containerKey = $context['containerKey'];
+            $object = $this->getObject();
+            $blockDefinition = $object->getClass()->getFieldDefinition($containerKey);
+            $container = $blockDefinition;
         } else {
             $object = $this->getObject();
             $container = $object->getClass();
