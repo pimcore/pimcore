@@ -2097,28 +2097,33 @@ class AssetController extends ElementControllerBase implements EventedController
                 foreach ($filters as $filter) {
                     $operator = '=';
 
-                    if ($filter['type'] == 'string') {
+                    $filterField = $filter['property'];
+                    $filterOperator = $filter['operator'];
+                    $filterType = $filter['type'];
+
+
+                    if ($filterType == 'string') {
                         $operator = 'LIKE';
-                    } elseif ($filter['type'] == 'numeric') {
-                        if ($filter['comparison'] == 'lt') {
+                    } elseif ($filterType == 'numeric') {
+                        if ($filterOperator == 'lt') {
                             $operator = '<';
-                        } elseif ($filter['comparison'] == 'gt') {
+                        } elseif ($filterOperator == 'gt') {
                             $operator = '>';
-                        } elseif ($filter['comparison'] == 'eq') {
+                        } elseif ($filterOperator == 'eq') {
                             $operator = '=';
                         }
-                    } elseif ($filter['type'] == 'date') {
-                        if ($filter['comparison'] == 'lt') {
+                    } elseif ($filterType == 'date') {
+                        if ($filterOperator == 'lt') {
                             $operator = '<';
-                        } elseif ($filter['comparison'] == 'gt') {
+                        } elseif ($filterOperator == 'gt') {
                             $operator = '>';
-                        } elseif ($filter['comparison'] == 'eq') {
+                        } elseif ($filterOperator == 'eq') {
                             $operator = '=';
                         }
                         $filter['value'] = strtotime($filter['value']);
-                    } elseif ($filter['type'] == 'list') {
+                    } elseif ($filterType == 'list') {
                         $operator = '=';
-                    } elseif ($filter['type'] == 'boolean') {
+                    } elseif ($filterType == 'boolean') {
                         $operator = '=';
                         $filter['value'] = (int) $filter['value'];
                     }
@@ -2128,8 +2133,8 @@ class AssetController extends ElementControllerBase implements EventedController
                         $value = '%' . $value . '%';
                     }
 
-                    $field = '`' . $filter['field'] . '` ';
-                    if ($filter['field'] == 'fullpath') {
+                    $field = '`' . $filterField . '` ';
+                    if ($filterField == 'fullpath') {
                         $field = 'CONCAT(path,filename)';
                     }
 
