@@ -17,14 +17,17 @@
 
 namespace Pimcore\Model\Object\QuantityValue;
 
-use Pimcore\Logger;
+use Pimcore\Cache;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Object\QuantityValue\Unit\Dao getDao()
  */
 class Unit extends Model\AbstractModel
 {
+    const CACHE_KEY = "quantityvalue_units_table";
+
     /**
      * @var int
      */
@@ -98,28 +101,42 @@ class Unit extends Model\AbstractModel
      */
     public static function getById($id)
     {
-        $cacheKey = Unit\Dao::TABLE_NAME . '_' . $id;
-
         try {
-            $unit = \Pimcore\Cache\Runtime::get($cacheKey);
-        } catch (\Exception $e) {
-            try {
-                $unit = new self();
-                $unit->getDao()->getById($id);
-                \Pimcore\Cache\Runtime::set($cacheKey, $unit);
-            } catch (\Exception $ex) {
-                Logger::debug($ex->getMessage());
-
-                return null;
+            if ( Cache\Runtime::isRegistered(self::CACHE_KEY)) {
+                $table = Cache\Runtime::get(self::CACHE_KEY);
             }
+
+            if (!is_array($table)) {
+                $table = Cache::load(self::CACHE_KEY);
+                if (is_array($table)) {
+                    Cache\Runtime::set(self::CACHE_KEY, $table);
+                }
+            }
+
+            if (!is_array($table)) {
+                $table = array();
+                $list = new Model\Object\QuantityValue\Unit\Listing();
+                $list = $list->load();
+                /** @var  $item Model\Object\QuantityValue\Unit */
+                foreach ($list as $item) {
+                    $table[$item->getId()] = $item;
+                }
+
+                Cache::save($table, self::CACHE_KEY, [], null, 995, true);
+                Cache\Runtime::set(self::CACHE_KEY, $table);
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
+
         }
 
-        return $unit;
+        if (isset($table[$id])) {
+            return $table[$id];
+        }
     }
 
     /**
      * @param array $values
-     *
      * @return Unit
      */
     public static function create($values = [])
@@ -133,14 +150,15 @@ class Unit extends Model\AbstractModel
     public function save()
     {
         $this->getDao()->save();
+        Cache\Runtime::set(self::CACHE_KEY, null);
+        Cache::remove(self::CACHE_KEY);
     }
 
     public function delete()
     {
-        $cacheKey = Unit\Dao::TABLE_NAME . '_' . $this->getId();
-        \Pimcore\Cache\Runtime::set($cacheKey, null);
-
         $this->getDao()->delete();
+        Cache\Runtime::set(self::CACHE_KEY, null);
+        Cache::remove(self::CACHE_KEY);
     }
 
     /**
@@ -148,7 +166,7 @@ class Unit extends Model\AbstractModel
      */
     public function __toString()
     {
-        return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
+        return ucfirst($this->getAbbreviation() . " (" . $this->getId() . ")");
     }
 
     public function setAbbreviation($abbreviation)
