@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object\QuantityValue;
 
+use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Logger;
 
@@ -24,6 +25,8 @@ use Pimcore\Logger;
  */
 class Unit extends Model\AbstractModel
 {
+    const CACHE_KEY = "quantityvalue_units_table";
+
     /**
      * @var int
      */
@@ -94,23 +97,38 @@ class Unit extends Model\AbstractModel
      */
     public static function getById($id)
     {
-        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $id;
-
         try {
-            $unit = \Zend_Registry::get($cacheKey);
-        } catch (\Exception $e) {
-            try {
-                $unit = new self();
-                $unit->getDao()->getById($id);
-                \Zend_Registry::set($cacheKey, $unit);
-            } catch (\Exception $ex) {
-                Logger::debug($ex->getMessage());
-
-                return null;
+            if ( \Zend_Registry::isRegistered(self::CACHE_KEY)) {
+                $table = \Zend_Registry::get(self::CACHE_KEY);
             }
+
+            if (!is_array($table)) {
+                $table = Cache::load(self::CACHE_KEY);
+                if (is_array($table)) {
+                    \Zend_Registry::set(self::CACHE_KEY, $table);
+                }
+            }
+
+            if (!is_array($table)) {
+                $table = array();
+                $list = new Model\Object\QuantityValue\Unit\Listing();
+                $list = $list->load();
+                /** @var  $item Model\Object\QuantityValue\Unit */
+                foreach ($list as $item) {
+                    $table[$item->getId()] = $item;
+                }
+
+                Cache::save($table, self::CACHE_KEY, [], null, 995, true);
+                \Zend_Registry::set(self::CACHE_KEY, $table);
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
+
         }
 
-        return $unit;
+        if (isset($table[$id])) {
+            return $table[$id];
+        }
     }
 
     /**
@@ -128,14 +146,15 @@ class Unit extends Model\AbstractModel
     public function save()
     {
         $this->getDao()->save();
+        \Zend_Registry::set(self::CACHE_KEY, null);
+        Cache::remove(self::CACHE_KEY);
     }
 
     public function delete()
     {
-        $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
-        \Zend_Registry::set($cacheKey, null);
-
         $this->getDao()->delete();
+        \Zend_Registry::set(self::CACHE_KEY, null);
+        Cache::remove(self::CACHE_KEY);
     }
 
     /**
