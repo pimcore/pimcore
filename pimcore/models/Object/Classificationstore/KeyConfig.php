@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Object\Classificationstore;
 
+use Pimcore\Cache;
 use Pimcore\Event\Model\Object\ClassificationStore\KeyConfigEvent;
 use Pimcore\Event\ObjectClassificationStoreEvents;
 use Pimcore\Model;
