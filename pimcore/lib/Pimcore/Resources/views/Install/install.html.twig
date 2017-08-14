@@ -369,7 +369,29 @@
                     iconCls: "icon_check",
                     disabled: true,
                     handler: function () {
-                        window.open("/install/check?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
+                        var checkWin = new Ext.Window({
+                            width: 720,
+                            scrollable: true,
+                            height: 500,
+                            title: 'Check Requirements',
+                            html: 'Please wait ...'
+                        });
+                        checkWin.show();
+
+                        var params = Ext.getCmp("install_form").getForm().getFieldValues();
+                        params['headless'] = 'true';
+
+                        Ext.Ajax.request({
+                            url: "/install/check",
+                            method: "post",
+                            params: params,
+                            success: function (response) {
+                                checkWin.update(response.responseText);
+                            },
+                            failure: function (response) {
+                                checkWin.update("<h3>Ooops ... something went wrong</h3><p>Please check your database configuration values and your log files.</p>");
+                            }
+                        });
                     }
                 },"->",
                     {
