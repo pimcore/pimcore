@@ -34,6 +34,22 @@
     "optimize-autoloader": true,
     "sort-packages": true
   },
+  "repositories": [
+    {
+      "info1": "External dependency of vrana/adminer which isn't included or referenced by adminer, see also https://sourceforge.net/p/adminer/bugs-and-features/468/ ",
+      "info2": "The package on GitHub isn't compatible with Adminer, it doesn't contain the /modules/ folder.",
+      "type": "package",
+      "package": {
+        "name": "vrana/jush",
+        "version": "1.0.0",
+        "source": {
+          "url": "https://git.code.sf.net/p/jush/git",
+          "type": "git",
+          "reference": "master"
+        }
+      }
+    }
+  ],
   "require": {
     "php": ">=7.0",
     "ext-SimpleXML": "*",
@@ -86,6 +102,7 @@
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "twig/twig": "^2.0",
     "vrana/adminer": "~4.2",
+    "vrana/jush": "*",
     "wikimedia/composer-merge-plugin": "^1.4",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2"
@@ -105,7 +122,9 @@
   },
   "autoload": {
     "psr-4": {
-      "": ["src/"],
+      "": [
+        "src/"
+      ],
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
