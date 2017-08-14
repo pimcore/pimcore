@@ -263,7 +263,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         }
 
         // now check for custom fallback locales, only for shared translations
-        if (empty($translated) && ($domain == 'messages' || $domain == 'admin')) {
+        if (empty($translated) && $domain == 'messages') {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
