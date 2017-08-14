@@ -11,6 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+if(typeof window['t'] !== 'function') {
+    // for compatibility reasons
+    function t(v) {return v;};
+}
+
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
 
