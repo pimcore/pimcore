@@ -28,19 +28,19 @@ final class VersionEvents
      *
      * @var string
      */
-    const POST_SAVE = 'pimcore.class.postSave';
+    const POST_SAVE = 'pimcore.version.postSave';
 
     /**
      * @Event("Pimcore\Event\Model\VersionEvent")
      *
      * @var string
      */
-    const PRE_DELETE = 'pimcore.class.preDelete';
+    const PRE_DELETE = 'pimcore.version.preDelete';
 
     /**
      * @Event("Pimcore\Event\Model\VersionEvent")
      *
      * @var string
      */
-    const POST_DELETE = 'pimcore.class.postDelete';
+    const POST_DELETE = 'pimcore.version.postDelete';
 }
