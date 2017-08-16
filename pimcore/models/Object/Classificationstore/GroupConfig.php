@@ -86,6 +86,7 @@ class GroupConfig extends Model\AbstractModel
             } else {
                 \Zend_Registry::set($cacheKey, $config);
             }
+
             return $config;
         } catch (\Exception $e) {
         }

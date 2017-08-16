@@ -98,7 +98,7 @@ class Unit extends Model\AbstractModel
     public static function getById($id)
     {
         try {
-            if ( \Zend_Registry::isRegistered(self::CACHE_KEY)) {
+            if (\Zend_Registry::isRegistered(self::CACHE_KEY)) {
                 $table = \Zend_Registry::get(self::CACHE_KEY);
             }
 
@@ -110,7 +110,7 @@ class Unit extends Model\AbstractModel
             }
 
             if (!is_array($table)) {
-                $table = array();
+                $table = [];
                 $list = new Model\Object\QuantityValue\Unit\Listing();
                 $list = $list->load();
                 /** @var  $item Model\Object\QuantityValue\Unit */
@@ -123,7 +123,6 @@ class Unit extends Model\AbstractModel
             }
         } catch (\Exception $e) {
             Logger::error($e);
-
         }
 
         if (isset($table[$id])) {

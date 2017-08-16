@@ -75,7 +75,6 @@ class WkHtmlToPdf extends Processor
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
-
         $this->config = $config;
         $web2printConfig = Config::getWeb2PrintConfig();
 
@@ -121,6 +120,7 @@ class WkHtmlToPdf extends Processor
         \Pimcore::getEventManager()->trigger("document.print.processor.modifyProcessingOptions", $this, [
             "returnValueContainer" => $returnValueContainer
         ]);
+
         return $returnValueContainer->getData();
     }
 
@@ -209,9 +209,9 @@ class WkHtmlToPdf extends Processor
 
         $params = $returnValueContainer->getData();
 
-        if($params['cmd']){
+        if ($params['cmd']) {
             $cmd = $params['cmd'];
-        }else{
+        } else {
             $cmd = $params['wkhtmltopdfBin'] . " " . $params['options'] . " " . escapeshellarg($params['srcUrl']) . " " . escapeshellarg($params['dstFile']) . " > " . $params['outputFile'];
         }
 

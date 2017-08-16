@@ -162,6 +162,7 @@ class PdfReactor8 extends Processor
         \Pimcore::getEventManager()->trigger("document.print.processor.modifyProcessingOptions", $this, [
             "returnValueContainer" => $returnValueContainer
         ]);
+
         return $returnValueContainer->getData();
     }
 }
