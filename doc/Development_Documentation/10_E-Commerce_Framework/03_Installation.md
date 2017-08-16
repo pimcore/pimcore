@@ -32,7 +32,7 @@ The only requirement is, that the classes have to be 'prepared' for being produc
 There are two ways of preparing a Pimcore class for product-usage in the E-Commerce Framework
 
 1. The Pimcore class needs to extend the abstract class `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct`
-   * This is useful, when both product index and checkout functionality are based on the E-Commerce Framework. 
+   * This is useful, when both product index and checkout functionality are based on the E-Commerce Framework.    
    
    
 2. Make sure that the Pimcore class implements either `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable` or 
@@ -44,6 +44,11 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
 > For the abstract class use the parent class functionality of Pimcore. For implementing the interfaces use either 
 the parent class functionality or the overriding models functionality of Pimcore 
 (see also [Overriding Models](../20_Extending_Pimcore/03_Overriding_Models.md)).
+
+> If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
+You might need to override a few methods that cannot be implemented by the abstract class and throw an 
+exception depending on the use case you are using it. 
+
 
 ### Product Category
 When a product category class is used, this class needs to extend the abstract class 
