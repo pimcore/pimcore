@@ -150,4 +150,10 @@ This will result in data loss!
  directory `/src/Website` for all your models and libraries in `Website` namespace. 
 - Replace and refactor all ZF1 functionality. 
 
+### Documents
+- Document editables now use a different naming format for nested editables. Please see the upgrade notes regarding build
+  54 in the [upgrade within V5 upgrade notes](./01_Within_V5.md#page_Build_54_(2017-05-16)) documentation and add the
+  configuration entry for the legacy naming to your config or execute the naming migration script. Details on the migration
+  can be found in [Editable Naming Strategies](../../03_Documents/13_Editable_Naming_Strategies.md).
+
 > Also have a look at the [Upgrade Notes](../../09_Upgrade_Notes/02_V4_to_V5.md).
