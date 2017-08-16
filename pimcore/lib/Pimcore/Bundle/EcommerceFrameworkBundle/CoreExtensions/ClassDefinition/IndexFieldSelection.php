@@ -315,10 +315,18 @@ class IndexFieldSelection extends Data
         $getter = 'get'.ucfirst($key);
 
         if ($object->$getter() instanceof ObjectData\IndexFieldSelection) {
+            $preSelect = $object->$getter()->getPreSelect();
+            if($preSelect) {
+                if(!is_array($preSelect)) {
+                    $preSelect = explode(",", $preSelect);
+                }
+                $preSelect = implode('%%', $preSelect);
+            }
+
             return [
                 'tenant' => $object->$getter()->getTenant(),
                 'field' => $object->$getter()->getField(),
-                'preSelect' => implode('%%', $object->$getter()->getPreSelect())
+                'preSelect' => $preSelect
             ];
         } else {
             return null;
