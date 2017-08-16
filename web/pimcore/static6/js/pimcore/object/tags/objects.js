@@ -195,11 +195,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
                 }.bind(this)
             });
+        } else {
+            pimcore.helpers.showNotification(t("error"), t("mandatory_field_empty"), "error");
         }
-
-
-    }
-    ,
+    },
 
     getCreateControl: function () {
 
