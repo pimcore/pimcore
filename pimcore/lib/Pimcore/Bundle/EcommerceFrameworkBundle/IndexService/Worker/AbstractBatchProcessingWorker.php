@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\Object\Localizedfield;
 
 /**
  * Provides worker functionality for batch preparing data and updating index
@@ -180,6 +181,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 AbstractObject::setGetInheritedValues(true);
                 $hidePublishedMemory = AbstractObject::doHideUnpublished();
                 AbstractObject::setHideUnpublished(false);
+                $getFallbackLanguagesMemory = Localizedfield::getGetFallbackValues();
+                Localizedfield::setGetFallbackValues(true);
 
                 $data = $this->getDefaultDataForIndex($object, $subObjectId);
                 $relationData = [];
@@ -221,6 +224,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
                 }
                 AbstractObject::setGetInheritedValues($b);
                 AbstractObject::setHideUnpublished($hidePublishedMemory);
+                Localizedfield::setGetFallbackValues($getFallbackLanguagesMemory);
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
                 $jsonData = json_encode([
