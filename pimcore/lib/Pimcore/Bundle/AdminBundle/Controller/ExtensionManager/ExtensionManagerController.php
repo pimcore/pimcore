@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
+use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\LegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
@@ -208,6 +209,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $message = 'Failed to run assets:install command. Please run command manually.' . PHP_EOL . PHP_EOL . $e->getMessage();
         }
 
+        $message = Encoding::fixUTF8($message);
         $message = explode(PHP_EOL, $message);
 
         return $message;
