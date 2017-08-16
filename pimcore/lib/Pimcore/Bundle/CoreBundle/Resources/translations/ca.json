@@ -874,6 +874,7 @@
     "error_saving_document": "No s’ha pogut guardar el document",
     "error_saving_object": "No s'ha pogut guardar l'objecte",
     "please_enter_the_name_of_the_new_object": "Sisplau, introdueixi el nom del nou objecte",
+    "fields_empty": "Please fill all fields",
     "slider": "Lliscador",
     "filename_not_valid": "El nom no és vàlid",
     "firstname": "Nom",

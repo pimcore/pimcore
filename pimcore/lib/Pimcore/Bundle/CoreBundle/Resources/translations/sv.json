@@ -874,6 +874,7 @@
     "error_saving_document": "Dokumentet kunde inte sparas",
     "error_saving_object": "Objektet kunde inte sparas",
     "please_enter_the_name_of_the_new_object": "Vad ska det nya objektet heta?",
+    "fields_empty": "Please fill all fields",
     "slider": "Slider",
     "filename_not_valid": "Ogiltigt namn",
     "firstname": "Förnamn",

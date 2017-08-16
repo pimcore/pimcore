@@ -874,6 +874,7 @@
     "error_saving_document": "Il documento non può essere salvato",
     "error_saving_object": "L'oggetto non può essere salvato",
     "please_enter_the_name_of_the_new_object": "Inserisci il nome del nuovo oggetto",
+    "fields_empty": "Please fill all fields",
     "slider": "Slider",
     "filename_not_valid": "Il nome non è valido",
     "firstname": "Nome",

@@ -878,6 +878,7 @@
     "error_saving_document": "Document couldn't be saved",
     "error_saving_object": "Object couldn't be saved",
     "please_enter_the_name_of_the_new_object": "Please enter the name of the new Object",
+    "fields_empty": "Please fill all fields",
     "slider": "Slider",
     "filename_not_valid": "Name is not valid",
     "firstname": "Firstname",

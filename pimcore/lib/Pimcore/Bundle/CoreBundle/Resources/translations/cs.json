@@ -874,6 +874,7 @@
     "error_saving_document": "Dokument nemohl být uložen",
     "error_saving_object": "Záznam nemohl být uložen",
     "please_enter_the_name_of_the_new_object": "Zadejte název nového záznamu",
+    "fields_empty": "Please fill all fields",
     "slider": "Posuvník (Slider)",
     "filename_not_valid": "Neplatný název",
     "firstname": "Jméno",

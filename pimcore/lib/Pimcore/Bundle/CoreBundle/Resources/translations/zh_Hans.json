@@ -874,6 +874,7 @@
     "error_saving_document": "文档不能保存",
     "error_saving_object": "项目不能保存",
     "please_enter_the_name_of_the_new_object": "请输入新项目名称",
+    "fields_empty": "Please fill all fields",
     "slider": "滑块",
     "filename_not_valid": "名称不正确",
     "firstname": "名",
