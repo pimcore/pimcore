@@ -344,7 +344,7 @@ class ClassDefinition extends Model\AbstractModel
                                 $def->getName()
                             ).' ($field, $value, $locale = null, $limit = 0) '."\n";
                     } else {
-                        $cd .= '* @method \\Pimcore\\Model\\Object\\'.ucfirst(
+                        $cd .= '* @method static \\Pimcore\\Model\\Object\\'.ucfirst(
                                 $this->getName()
                             ).'\Listing getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
                     }
