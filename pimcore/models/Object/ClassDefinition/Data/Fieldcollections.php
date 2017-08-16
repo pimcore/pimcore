@@ -196,7 +196,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
-                $collection = new $collectionClass;
+                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());
@@ -477,7 +477,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 }
 
                 $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($fieldcollection);
-                $collection = new $collectionClass;
+                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());

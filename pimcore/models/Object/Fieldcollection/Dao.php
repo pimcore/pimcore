@@ -60,9 +60,10 @@ class Dao extends Model\Dao\AbstractDao
 
             $fieldDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
             $collectionClass = '\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\' . ucfirst($type);
+            $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
-                $collection = new $collectionClass();
+                $collection = $modelFactory->build($collectionClass);
                 $collection->setIndex($result['index']);
                 $collection->setFieldname($result['fieldname']);
                 $collection->setObject($object);
