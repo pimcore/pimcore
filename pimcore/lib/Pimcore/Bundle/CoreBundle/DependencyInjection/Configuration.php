@@ -89,6 +89,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('class_overrides')
+                            ->useAttributeAsKey('name')
                             ->prototype('scalar');
     }
 
