@@ -2101,7 +2101,6 @@ class AssetController extends ElementControllerBase implements EventedController
                     $filterOperator = $filter['operator'];
                     $filterType = $filter['type'];
 
-
                     if ($filterType == 'string') {
                         $operator = 'LIKE';
                     } elseif ($filterType == 'numeric') {

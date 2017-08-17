@@ -184,7 +184,7 @@ class Block extends Model\Object\ClassDefinition\Data
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
-                            $data->setContext(array('containerType' => 'block', 'containerKey' => $this->getName()));
+                            $data->setContext(['containerType' => 'block', 'containerKey' => $this->getName()]);
                             $blockElementRaw['data'] = $data;
                         }
                     }

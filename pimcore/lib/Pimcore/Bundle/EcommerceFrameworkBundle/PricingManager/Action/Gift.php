@@ -102,15 +102,16 @@ class Gift implements IGift
 
     /**
      * dont cache the entire product object
+     *
      * @return array
      */
     public function __sleep()
     {
-        if(is_object($this->product)) {
+        if (is_object($this->product)) {
             $this->productPath = $this->product->getFullPath();
         }
 
-        return array('productPath');
+        return ['productPath'];
     }
 
     /**
@@ -118,10 +119,10 @@ class Gift implements IGift
      */
     public function __wakeup()
     {
-        if($this->productPath != '') {
-            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->productPath );
-        } else if (is_string($this->product)) {
-            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->product );
+        if ($this->productPath != '') {
+            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath($this->productPath);
+        } elseif (is_string($this->product)) {
+            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath($this->product);
         }
     }
 }

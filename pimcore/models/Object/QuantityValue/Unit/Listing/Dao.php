@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $units = [];
 
-        $unitConfigs = $this->db->fetchAll("SELECT * FROM " . Object\QuantityValue\Unit\Dao::TABLE_NAME .
+        $unitConfigs = $this->db->fetchAll('SELECT * FROM ' . Object\QuantityValue\Unit\Dao::TABLE_NAME .
             $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($unitConfigs as $unitConfig) {

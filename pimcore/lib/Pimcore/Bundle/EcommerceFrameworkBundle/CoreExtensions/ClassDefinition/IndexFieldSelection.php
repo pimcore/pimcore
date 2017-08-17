@@ -316,9 +316,9 @@ class IndexFieldSelection extends Data
 
         if ($object->$getter() instanceof ObjectData\IndexFieldSelection) {
             $preSelect = $object->$getter()->getPreSelect();
-            if($preSelect) {
-                if(!is_array($preSelect)) {
-                    $preSelect = explode(",", $preSelect);
+            if ($preSelect) {
+                if (!is_array($preSelect)) {
+                    $preSelect = explode(',', $preSelect);
                 }
                 $preSelect = implode('%%', $preSelect);
             }

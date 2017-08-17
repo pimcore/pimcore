@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $sql = "SELECT * FROM " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $sql = 'SELECT * FROM ' . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $configsData = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
         $configList = [];

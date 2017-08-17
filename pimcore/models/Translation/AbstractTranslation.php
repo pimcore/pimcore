@@ -169,6 +169,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param string $language
+     *
      * @return bool
      */
     public function hasTranslation($language)
@@ -176,9 +177,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return isset($this->translations[$language]);
     }
 
-    /**
-     *
-     */
     public static function clearDependentCache()
     {
         \Pimcore\Cache::clearTags(['translator', 'translate']);
@@ -280,9 +278,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }
 
-    /**
-     *
-     */
     public function save()
     {
         if (!$this->getCreationDate()) {
@@ -298,10 +293,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         self::clearDependentCache();
     }
 
-    /**
-     *
-     */
-    public function delete() {
+    public function delete()
+    {
         $this->getDao()->delete();
         self::clearDependentCache();
     }

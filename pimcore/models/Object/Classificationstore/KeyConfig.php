@@ -100,7 +100,7 @@ class KeyConfig extends Model\AbstractModel
                 return self::$cache[$id];
             }
 
-            $cacheKey = "cs_keyconfig_" . $id;
+            $cacheKey = 'cs_keyconfig_' . $id;
             $config = Cache::load($cacheKey);
             if ($config) {
                 return $config;
@@ -242,7 +242,7 @@ class KeyConfig extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE, new KeyConfigEvent($this));
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
-            $cacheKey = "cs_keyconfig_" . $this->getId();
+            $cacheKey = 'cs_keyconfig_' . $this->getId();
             Cache::remove($cacheKey);
         }
         parent::delete();
@@ -267,7 +267,7 @@ class KeyConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
-            $cacheKey = "cs_keyconfig_" . $this->getId();
+            $cacheKey = 'cs_keyconfig_' . $this->getId();
             Cache::remove($cacheKey);
 
             $isUpdate = true;

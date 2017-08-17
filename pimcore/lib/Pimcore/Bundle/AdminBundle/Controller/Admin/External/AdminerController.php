@@ -48,6 +48,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             // empty fake response, unfortunately Adminer uses flush() very heavily so we're not able to buffer, rewrite
             // and put the into a proper response object :(
             $response = new Response();
+
             return $this->mergeAdminerHeaders($response);
         }
 
@@ -68,12 +69,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             // proxy for resources
             $path = $request->get('path');
             if (preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
-
-                if($request->get('type') == 'external') {
+                if ($request->get('type') == 'external') {
                     $path = '../' . $path;
                 }
 
-                if(strpos($path, 'static/') === 0) {
+                if (strpos($path, 'static/') === 0) {
                     $path = 'adminer/' . $path;
                 }
 
@@ -139,6 +139,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          * to the Symfony Response Object
          *
          * @param Response $response
+         *
          * @return Response
          */
         protected function mergeAdminerHeaders(Response $response)
@@ -147,7 +148,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 $headersRaw = headers_list();
 
                 foreach ($headersRaw as $header) {
-                    $header = explode(":", $header);
+                    $header = explode(':', $header);
                     list($headerKey, $headerValue) = $header;
 
                     if ($headerKey && $headerValue) {
