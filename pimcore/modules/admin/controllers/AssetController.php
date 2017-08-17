@@ -325,10 +325,27 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     {
         $asset = Asset::getById($this->getParam("id"));
 
+        $newFilename = Element\Service::getValidKey($_FILES["Filedata"]["name"], 'asset');
+        $mimetype = Tool\Mime::detect($_FILES["Filedata"]["tmp_name"], $newFilename);
+        $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
+
+        if($newType != $asset->getType()) {
+            $t = \Zend_Registry::get("Zend_Translate");
+            $this->_helper->json([
+                'success'=>false,
+                'message'=> sprintf($t->translate('asset_type_change_not_allowed'), $asset->getType(), $newType)
+            ]);
+        }
+
         $stream = fopen($_FILES["Filedata"]["tmp_name"], "r+");
         $asset->setStream($stream);
         $asset->setCustomSetting("thumbnails", null);
         $asset->setUserModification($this->getUser()->getId());
+        $newFilename = Element\Service::getValidKey($_FILES["Filedata"]["name"], 'asset');
+        if($newFilename != $asset->getFilename()) {
+            $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
+        }
+        $asset->setFilename($newFilename);
 
         if ($asset->isAllowed("publish")) {
             $asset->save();
