@@ -748,10 +748,6 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             if ($allowUpdate) {
-                if ($request->get('filename') || $request->get('parentId')) {
-                    $asset->getData();
-                }
-
                 if ($request->get('filename') != $asset->getFilename() and !$asset->isAllowed('rename')) {
                     unset($updateData['filename']);
                     Logger::debug('prevented renaming asset because of missing permissions ');
