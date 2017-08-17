@@ -666,10 +666,6 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             if ($allowUpdate) {
-                if ($this->getParam("filename") || $this->getParam("parentId")) {
-                    $asset->getData();
-                }
-
                 if ($this->getParam("filename") != $asset->getFilename() and !$asset->isAllowed("rename")) {
                     unset($updateData["filename"]);
                     Logger::debug("prevented renaming asset because of missing permissions ");
