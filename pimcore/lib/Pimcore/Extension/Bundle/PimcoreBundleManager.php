@@ -211,7 +211,7 @@ class PimcoreBundleManager
     /**
      * Reads bundle state from config
      *
-     * @param $bundle
+     * @param string|PimcoreBundleInterface $bundle
      *
      * @return array
      */
@@ -262,10 +262,15 @@ class PimcoreBundleManager
      * Enables a bundle
      *
      * @param string|PimcoreBundleInterface $bundle
+     * @param array $state Optional additional state config (see StateConfig)
      */
-    public function enable($bundle)
+    public function enable($bundle, array $state = [])
     {
-        $this->setState($bundle, ['enabled' => true]);
+        $state = array_merge($state, [
+            'enabled' => true
+        ]);
+
+        $this->setState($bundle, $state);
     }
 
     /**
