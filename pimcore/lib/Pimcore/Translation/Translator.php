@@ -221,7 +221,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
     {
-        if ($id != $translated && $translated) {
+        if(empty($id)) {
+            return $translated;
+        } else if ($id != $translated && $translated) {
             return $translated;
         } elseif ($id == $translated && !$this->getCatalogue($locale)->has($id, $domain)) {
             $backend = $this->getBackendForDomain($domain);
@@ -239,7 +241,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                          * @var AbstractTranslation $t
                          */
                         $t = $class::getByKey($id);
-                        $t->addTranslation($locale, '');
+                        if(!$t->hasTranslation($locale)) {
+                            $t->addTranslation($locale, '');
+                        } else {
+                            return $translated;
+                        }
                     } catch (\Exception $e) {
                         $t = new $class();
                         $t->setKey($id);

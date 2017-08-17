@@ -167,6 +167,18 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this->translations[$language];
     }
 
+    /**
+     * @param string $language
+     * @return bool
+     */
+    public function hasTranslation($language)
+    {
+        return isset($this->translations[$language]);
+    }
+
+    /**
+     *
+     */
     public static function clearDependentCache()
     {
         \Pimcore\Cache::clearTags(['translator', 'translate']);
