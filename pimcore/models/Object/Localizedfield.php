@@ -271,7 +271,13 @@ class Localizedfield extends Model\AbstractModel
 
         // check for inherited value
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
-        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
+
+        $allowInheritance = true;
+        if($context && $context['containerType'] == 'block'){
+            $allowInheritance = false;
+        }
+
+        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues && $allowInheritance) {
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();
