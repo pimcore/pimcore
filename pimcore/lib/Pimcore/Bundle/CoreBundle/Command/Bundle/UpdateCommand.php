@@ -37,6 +37,8 @@ class UpdateCommand extends AbstractBundleCommand
         $bm     = $this->getBundleManager();
         $bundle = $this->getBundle();
 
+        $this->setupInstallerOutputWriter($bundle);
+
         try {
             $bm->update($bundle);
 

@@ -37,6 +37,8 @@ class UninstallCommand extends AbstractBundleCommand
         $bm     = $this->getBundleManager();
         $bundle = $this->getBundle();
 
+        $this->setupInstallerOutputWriter($bundle);
+
         try {
             $bm->uninstall($bundle);
 

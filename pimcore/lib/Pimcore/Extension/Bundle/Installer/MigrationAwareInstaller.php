@@ -25,6 +25,7 @@ use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\MigrationManager;
 use Pimcore\Migrations\Version;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 abstract class MigrationAwareInstaller extends AbstractInstaller implements MigrationAwareInstallerInterface
 {
@@ -220,8 +221,15 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
      */
     protected function runSchemaMigration(bool $up = true)
     {
+        $outputWriter = $this->getMigrationConfiguration()->getOutputWriter();
+
         $fromSchema = $this->connection->getSchemaManager()->createSchema();
         $toSchema   = clone $fromSchema;
+
+        $output = $up ? 'Installing' : 'Uninstalling';
+        $output .= ' bundle <comment>%s</comment>' . "\n";
+
+        $outputWriter->write(sprintf($output, $this->bundle->getName()));
 
         if ($up) {
             $this->populateSchema($toSchema);
@@ -231,8 +239,29 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
 
         $sql = $fromSchema->getMigrateToSql($toSchema, $this->connection->getDatabasePlatform());
 
-        foreach ($sql as $query) {
-            $this->connection->executeQuery($query);
+        if (0 === count($sql)) {
+            $outputWriter->write('<comment>No migrations to execute.</comment>');
         }
+
+        $i = 0;
+        $time = 0;
+        $stopwatch = new Stopwatch();
+
+        foreach ($sql as $query) {
+            $evt = $stopwatch->start('query_' . $i++);
+
+            $outputWriter->write('     <comment>-></comment> ' . $query);
+            $this->connection->executeQuery($query);
+
+            $evt->stop();
+            $time += $evt->getDuration();
+        }
+
+        $time = round($time/1000, 2);
+
+        $outputWriter->write("\n  <comment>------------------------</comment>\n");
+        $outputWriter->write(sprintf("  <info>++</info> finished in %ss", $time));
+        $outputWriter->write(sprintf("  <info>++</info> %s sql queries", count($sql)));
+        $outputWriter->write("\n");
     }
 }
