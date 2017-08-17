@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Migrations\Command\:
+        resource: '../../../../Migrations/Command'
+
+    Pimcore\Migrations\Configuration\ConfigurationFactory:
+        public: true
+        arguments:
+            $rootDir: '%kernel.root_dir%'
