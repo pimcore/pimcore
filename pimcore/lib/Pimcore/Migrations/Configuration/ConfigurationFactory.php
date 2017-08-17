@@ -33,6 +33,11 @@ class ConfigurationFactory
      */
     private $migrationSets = [];
 
+    /**
+     * @var Configuration[]
+     */
+    private $configurations = [];
+
     public function __construct(string $rootDir)
     {
         $this->rootDir = $rootDir;
@@ -40,7 +45,7 @@ class ConfigurationFactory
         $this->buildDefaultMigrationSets();
     }
 
-    public function createForSet(
+    public function getForSet(
         string $set,
         Connection $connection,
         OutputWriter $outputWriter = null
@@ -52,10 +57,10 @@ class ConfigurationFactory
 
         $migrationSet = $this->migrationSets[$set];
 
-        return $this->createConfiguration($migrationSet, $connection, $outputWriter);
+        return $this->getConfiguration($migrationSet, $connection, $outputWriter);
     }
 
-    public function createForBundle(
+    public function getForBundle(
         BundleInterface $bundle,
         Connection $connection,
         OutputWriter $outputWriter = null
@@ -63,15 +68,19 @@ class ConfigurationFactory
     {
         $migrationSet = $this->getMigrationSetForBundle($bundle);
 
-        return $this->createConfiguration($migrationSet, $connection, $outputWriter);
+        return $this->getConfiguration($migrationSet, $connection, $outputWriter);
     }
 
-    protected function createConfiguration(
+    protected function getConfiguration(
         MigrationSetConfiguration $migrationSet,
         Connection $connection,
         OutputWriter $outputWriter = null
     ): Configuration
     {
+        if (isset($this->configurations[$migrationSet->getIdentifier()])) {
+            return $this->configurations[$migrationSet->getIdentifier()];
+        }
+
         $configuration = new Configuration(
             $migrationSet->getIdentifier(),
             $connection,
@@ -81,6 +90,8 @@ class ConfigurationFactory
         $configuration->setName($migrationSet->getName());
         $configuration->setMigrationsNamespace($migrationSet->getNamespace());
         $configuration->setMigrationsDirectory($migrationSet->getDirectory());
+
+        $this->configurations[$migrationSet->getIdentifier()] = $configuration;
 
         return $configuration;
     }

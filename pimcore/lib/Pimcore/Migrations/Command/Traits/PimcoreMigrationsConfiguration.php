@@ -74,9 +74,9 @@ trait PimcoreMigrationsConfiguration
             $outputWriter = $this->getOutputWriter($output);
 
             if ($bundle) {
-                $this->migrationConfiguration = $factory->createForBundle($bundle, $connection, $outputWriter);
+                $this->migrationConfiguration = $factory->getForBundle($bundle, $connection, $outputWriter);
             } else {
-                $this->migrationConfiguration = $factory->createForSet('app', $connection, $outputWriter);
+                $this->migrationConfiguration = $factory->getForSet('app', $connection, $outputWriter);
             }
         }
 
