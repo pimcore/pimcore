@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
@@ -155,7 +156,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @param null $itemKey
      * @param bool $replace
      * @param array $params
-     * @param array $subProducts
+     * @param AbstractSetProductEntry[] $subProducts
      * @param null $comment
      *
      * @return mixed
@@ -181,7 +182,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      * @param $count
      * @param bool $replace
      * @param array $params
-     * @param array $subProducts
+     * @param AbstractSetProductEntry[] $subProducts
      * @param null $comment
      *
      * @return mixed
