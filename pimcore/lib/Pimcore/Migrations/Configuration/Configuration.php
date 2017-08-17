@@ -308,6 +308,35 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     }
 
     /**
+     * Clears migration table records.
+     */
+    public function clearMigratedVersions()
+    {
+        $this->connection->executeQuery($this->formatQuery('DELETE FROM {table} WHERE {migration_set} = ?'), [
+                $this->migrationSet
+            ]
+        );
+    }
+
+    /**
+     * Returns the number of new (not migrated) migrations
+     *
+     * @return int
+     */
+    public function getNumberOfNewMigrations(): int
+    {
+        $availableMigrations = $this->getAvailableVersions();
+        $executedMigrations  = $this->getMigratedVersions();
+
+        $newMigrations = count(array_diff(
+            $availableMigrations,
+            $executedMigrations
+        ));
+
+        return $newMigrations;
+    }
+
+    /**
      * Handles simple placeholder handling in query. Makes queries more readable as we need to replace the configurable
      * columns in every query.
      *

@@ -11,3 +11,5 @@ services:
         public: true
         arguments:
             $rootDir: '%kernel.root_dir%'
+
+    Pimcore\Migrations\MigrationManager: ~
