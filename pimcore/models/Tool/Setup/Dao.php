@@ -26,7 +26,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     public function database()
     {
-        $mysqlInstallScript = file_get_contents(PIMCORE_PROJECT_ROOT . '/app/Resources/install/install.sql');
+        $mysqlInstallScript = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Install/Resources/install.sql');
 
         // remove comments in SQL script
         $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);

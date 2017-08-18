@@ -21,6 +21,6 @@ ln -sr install-profiles/demo-basic/web/static/ web/static
 cp var/config/system.template.php var/config/system.php
  
 # load structure and data
-mysql -u root -p example < app/Resources/install/install.sql
+mysql -u root -p example < pimcore/lib/Pimcore/Install/Resources/install.sql'
 mysql -u root -p example < install-profiles/demo-basic/dump/data.sql
 ```

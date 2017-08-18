@@ -3,7 +3,7 @@
 include_once('../../../pimcore/config/startup_cli.php');
 
 // get tables which are already in install.sql
-$installSql = file_get_contents(PIMCORE_PROJECT_ROOT . '/app/Resources/install/install.sql');
+$installSql = file_get_contents(PIMCORE_PATH . '/lib/Pimcore/Install/Resources/install.sql');
 preg_match_all('/CREATE TABLE `(.*)`/', $installSql, $matches);
 $existingTables = $matches[1];
 
