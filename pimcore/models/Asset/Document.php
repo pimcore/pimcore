@@ -54,6 +54,15 @@ class Document extends Model\Asset
     }
 
     /**
+     *
+     */
+    public function delete()
+    {
+        parent::delete();
+        $this->clearThumbnails(true);
+    }
+
+    /**
      * @todo: Shouldnt' this always return an int?
      *
      * @param null $path

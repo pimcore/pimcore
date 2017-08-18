@@ -53,7 +53,7 @@ class Video extends Model\Asset
     public function delete()
     {
         parent::delete();
-        $this->clearThumbnails();
+        $this->clearThumbnails(true);
     }
 
     /**

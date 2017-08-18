@@ -77,6 +77,15 @@ class Image extends Model\Asset
     }
 
     /**
+     *
+     */
+    public function delete()
+    {
+        parent::delete();
+        $this->clearThumbnails(true);
+    }
+
+    /**
      * @param bool $force
      */
     public function clearThumbnails($force = false)
