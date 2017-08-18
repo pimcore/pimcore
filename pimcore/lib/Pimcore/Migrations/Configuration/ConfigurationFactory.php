@@ -185,7 +185,7 @@ class ConfigurationFactory
             $bundle->getName(),
             $bundle->getName() . ' Migrations',
             $bundle->getNamespace() . '\\Migrations',
-            $bundle->getPath() . '/Resources/migrations'
+            $bundle->getPath() . '/Migrations'
         );
     }
 
