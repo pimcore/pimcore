@@ -53,8 +53,8 @@ pimcore.object.classes.data.data = Class.create({
         }
 
         // per default all settings are available
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-                                        "visibleGridView","visibleSearch","index","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","index", "unique", "invisible",
+                                        "visibleGridView","visibleSearch", "style"];
     },
 
     getGroup: function () {
@@ -79,6 +79,22 @@ pimcore.object.classes.data.data = Class.create({
             }
         });
 
+        var indexCombo = new Ext.form.field.Checkbox({
+            fieldLabel: t("index"),
+            name: "index",
+            itemId: "index",
+            checked: this.datax.index,
+            disabled: !in_array("index",this.availableSettingsFields),
+            hidden: true
+        });
+
+        var uniqueCombo = new Ext.form.field.Checkbox({
+            fieldLabel: t("unique"),
+            name: "unique",
+            itemId: "unique",
+            checked: this.datax.unique,
+            hidden: true
+        });
 
         var standardSettings = [
             {
@@ -139,6 +155,8 @@ pimcore.object.classes.data.data = Class.create({
                 checked: this.datax.mandatory,
                 disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
             },
+            indexCombo,
+            uniqueCombo,
             {
                 xtype: "checkbox",
                 fieldLabel: t("not_editable"),
@@ -176,14 +194,12 @@ pimcore.object.classes.data.data = Class.create({
                 disabled: !in_array("visibleSearch",this.availableSettingsFields)
             });
 
-            standardSettings.push({
-                xtype: "checkbox",
-                fieldLabel: t("index"),
-                name: "index",
-                itemId: "index",
-                checked: this.datax.index,
-                disabled: !in_array("index",this.availableSettingsFields)
-            });
+            indexCombo.setHidden(false);
+            if (this.datax.hasOwnProperty("unique")) {
+                uniqueCombo.setHidden(false);
+                Ext.QuickTips.init();
+                Ext.QuickTips.register({target:  uniqueCombo, text: t("unique_qtip")});
+            }
         }
 
         var layoutSettings = [
@@ -233,7 +249,6 @@ pimcore.object.classes.data.data = Class.create({
         });
 
         this.layout.on("render", this.layoutRendered.bind(this));
-
 
         return this.layout;
     },

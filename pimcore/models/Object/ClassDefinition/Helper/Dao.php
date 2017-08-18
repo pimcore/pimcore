@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Helper;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Pimcore\Logger;
 use Pimcore\Model\Object;
 
 trait Dao
@@ -26,33 +28,65 @@ trait Dao
      * @param $table
      * @param string $columnTypeGetter
      */
-    protected function addIndexToField($field, $table, $columnTypeGetter = 'getColumnType')
+    protected function addIndexToField($field, $table, $columnTypeGetter = 'getColumnType', $considerUniqueIndex = false, $isLocalized = false, $isFieldcollection = false)
     {
         $columnType = $field->$columnTypeGetter();
 
-        if ($field->getIndex()) {
-            if (is_array($columnType)) {
-                // multicolumn field
-                foreach ($columnType as $fkey => $fvalue) {
-                    $columnName = $field->getName() . '__' . $fkey;
-                    $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` ADD INDEX `p_index_' . $columnName . '` (`' . $columnName . '`);');
+        $prefixes = array(
+            'p_index_' => array("enabled" => $field->getIndex() && ! $field->getUnique(), "unique" => false),
+            'u_index_' => array("enabled" => $field->getUnique(), "unique" => true)
+
+        );
+
+        foreach ($prefixes as $prefix => $config) {
+            $enabled = $config["enabled"];
+            $unique = $config["unique"];
+            $uniqueStr = $unique ? ' UNIQUE ' : '';
+
+            if ($enabled) {
+                if (is_array($columnType)) {
+                    // multicolumn field
+                    foreach ($columnType as $fkey => $fvalue) {
+                        $indexName = $field->getName().'__'.$fkey;
+                        $columnName = '`' . $indexName . '`';
+                        if ($unique) {
+                            if ($isLocalized) {
+                                $columnName .= ',`language`';
+                            } else if ($isFieldcollection) {
+                                $columnName .= ',`fieldname`';
+                            }
+                        }
+                        $this->db->queryIgnoreError(
+                            'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');'
+                            , [], [UniqueConstraintViolationException::class]);
+                    }
+                } else {
+                    // single -column field
+                    $indexName = $field->getName();
+                    $columnName = '`' . $indexName . '`';
+                    if ($unique) {
+                        if ($isLocalized) {
+                            $columnName .= ',`language`';
+                        } else if ($isFieldcollection) {
+                            $columnName .= ',`fieldname`';
+                        }
+                    }
+                    $this->db->queryIgnoreError(
+                        'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');'
+                    , [], [UniqueConstraintViolationException::class]);
                 }
             } else {
-                // single -column field
-                $columnName = $field->getName();
-                $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` ADD INDEX `p_index_' . $columnName . '` (`' . $columnName . '`);');
-            }
-        } else {
-            if (is_array($columnType)) {
-                // multicolumn field
-                foreach ($columnType as $fkey => $fvalue) {
-                    $columnName = $field->getName() . '__' . $fkey;
-                    $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` DROP INDEX `p_index_' . $columnName . '`;');
+                if (is_array($columnType)) {
+                    // multicolumn field
+                    foreach ($columnType as $fkey => $fvalue) {
+                        $columnName = $field->getName().'__'.$fkey;
+                        $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                    }
+                } else {
+                    // single -column field
+                    $columnName = $field->getName();
+                    $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
                 }
-            } else {
-                // single -column field
-                $columnName = $field->getName();
-                $this->db->queryIgnoreError('ALTER TABLE `' . $table . '` DROP INDEX `p_index_' . $columnName . '`;');
             }
         }
     }

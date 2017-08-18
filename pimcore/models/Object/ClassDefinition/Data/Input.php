@@ -69,6 +69,12 @@ class Input extends Model\Object\ClassDefinition\Data
     public $regex = '';
 
     /**
+     * @var boolean
+     */
+    public $unique;
+
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -206,6 +212,22 @@ class Input extends Model\Object\ClassDefinition\Data
     public function getRegex()
     {
         return $this->regex;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return $this->unique;
+    }
+
+    /**
+     * @param bool $unique
+     */
+    public function setUnique($unique)
+    {
+        $this->unique = $unique;
     }
 
     /**

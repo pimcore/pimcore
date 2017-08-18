@@ -99,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
                     $protectedColums[] = $key;
                 }
             }
-            $this->addIndexToField($value, $table);
+            $this->addIndexToField($value, $table, 'getColumnType', true, false, true);
 
             if ($value instanceof  Object\ClassDefinition\Data\Localizedfields) {
                 $value->classSaved(

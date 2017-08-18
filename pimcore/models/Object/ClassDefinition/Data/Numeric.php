@@ -83,6 +83,12 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public $maxValue;
 
     /**
+     * @var boolean
+     */
+    public $unique;
+
+
+    /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
      * but as decimalPrecision already existed to denote the amount of digits after the point (as it is called on the ExtJS
      * number field), decimalSize was chosen instead.
@@ -253,6 +259,22 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public function getDecimalPrecision()
     {
         return $this->decimalPrecision;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return $this->unique;
+    }
+
+    /**
+     * @param bool $unique
+     */
+    public function setUnique($unique)
+    {
+        $this->unique = $unique;
     }
 
     /**

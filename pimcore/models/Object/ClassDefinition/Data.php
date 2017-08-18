@@ -1116,6 +1116,14 @@ abstract class Data
     }
 
     /**
+     * @return bool
+     */
+    public function getUnique()
+    {
+        return false;
+    }
+
+    /**
      * @param $object
      * @param array $params
      *

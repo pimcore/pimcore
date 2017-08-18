@@ -553,7 +553,8 @@ QUERY;
                         $protectedColumns[] = $key;
                     }
                 }
-                $this->addIndexToField($value, $table);
+                //TODO
+                $this->addIndexToField($value, $table, 'getColumnType', true, true);
             }
         }
 

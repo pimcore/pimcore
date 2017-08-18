@@ -118,7 +118,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
             }
 
             // add indices
-            $this->addIndexToField($value, $tableStore);
+            $this->addIndexToField($value, $tableStore, 'getColumnType', true);
             $this->addIndexToField($value, $tableQuery);
         }
 

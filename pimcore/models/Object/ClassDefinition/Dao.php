@@ -187,7 +187,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 // add indices
                 $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
-                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType');
+                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
             }
         }
 

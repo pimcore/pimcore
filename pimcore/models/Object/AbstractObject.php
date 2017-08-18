@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Object;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Event\Model\ObjectEvent;
 use Pimcore\Event\ObjectEvents;
@@ -621,6 +622,9 @@ class AbstractObject extends Model\Element\AbstractElement
             } catch (\Exception $e) {
                 try {
                     $this->rollBack();
+
+
+
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
                     Logger::info($er);
@@ -628,6 +632,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
                 if ($e instanceof Model\Element\ValidationException) {
                     throw $e;
+                }
+
+                if ($e instanceof UniqueConstraintViolationException) {
+                    throw new Element\ValidationException("unique constraint violation", 0, $e);
                 }
 
                 // set "HideUnpublished" back to the value it was originally

@@ -591,7 +591,7 @@
   "data_mapping": "Data Mapping",
   "unsupported_filetype": "Unsupported Filetype",
   "class_saved_successfully": "Class saved successfully",
-  "class_save_error": "Class cannot be saved",
+  "class_save_error": "Class cannot be saved. see debug.log",
   "email_log_resend_window_success_message": "The email has been sent successfully to all recipients.",
   "email_log_resend_window_error_message": "An error occurred. The email has not been resent.",
   "condition": "Condition",
@@ -1522,5 +1522,7 @@
   "show_applogger_tab": "Show App Logger Tab",
   "analyze": "Analyze",
   "analyze_permissions": "Analyze Permissions",
-  "link_generator_reference": "Link Provider Class or Service Name"
+  "link_generator_reference": "Link Provider Class or Service Name",
+  "unique": "Unique",
+  "unique_qtip": "Unique constraint will added. No needed to check 'index' as well"
 }

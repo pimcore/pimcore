@@ -52,6 +52,7 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
         $super();
 
         this.specificPanel.removeAll();
+
         this.specificPanel.add([
             {
                 xtype: "numberfield",
