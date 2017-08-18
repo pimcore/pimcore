@@ -89,7 +89,7 @@ class WkHtmlToPdf extends Processor
 
         $params['hostUrl'] = $config->protocol . '://' . $config->hostName;
         if ($web2printConfig->wkhtml2pdfHostname) {
-            $params['hostUrl'] = $config->protocol . $web2printConfig->wkhtml2pdfHostname;
+            $params['hostUrl'] = $config->protocol . '://' . $web2printConfig->wkhtml2pdfHostname;
         }
 
         $html = $this->processHtml($html, $params);
