@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Tool\Tag;
 
 use Pimcore\Cache;
+use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -61,6 +62,11 @@ class Config extends Model\AbstractModel
     public $httpMethod = '';
 
     /**
+     * @var boolean
+     */
+    public $disabled;
+
+    /**
      * @var array
      */
     public $params = [
@@ -80,6 +86,7 @@ class Config extends Model\AbstractModel
      * @var int
      */
     public $creationDate;
+
 
     /**
      * @param $name
@@ -328,4 +335,22 @@ class Config extends Model\AbstractModel
     {
         $this->creationDate = $creationDate;
     }
+
+    /**
+     * @return bool
+     */
+    public function isDisabled()
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * @param bool $disabled
+     */
+    public function setDisabled($disabled)
+    {
+        $this->disabled = $disabled;
+    }
+
+
 }

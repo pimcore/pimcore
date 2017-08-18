@@ -87,7 +87,11 @@ class TagManagerListener extends AbstractFrontendListener
         $content = $response->getContent();
         $requestParams = array_merge($_GET, $_POST);
 
+        /** @var $tag Tag\Config */
         foreach ($tags as $tag) {
+            if ($tag->isDisabled()) {
+                continue;
+            }
             $method = strtolower($tag->getHttpMethod());
             $pattern = $tag->getUrlPattern();
             $textPattern = $tag->getTextPattern();
@@ -124,6 +128,9 @@ class TagManagerListener extends AbstractFrontendListener
 
                 if (is_array($tag->getItems()) && $paramsValid) {
                     foreach ($tag->getItems() as $item) {
+                        if ($item['disabled']) {
+                            continue;
+                        }
                         if (!empty($item['element']) && !empty($item['code']) && !empty($item['position'])) {
                             if (in_array($item['element'], ['body', 'head'])) {
                                 // check if the code should be inserted using one of the presets
