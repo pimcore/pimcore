@@ -20,6 +20,7 @@ namespace Pimcore\Migrations\Configuration;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
+use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class ConfigurationFactory
@@ -68,9 +69,18 @@ class ConfigurationFactory
         OutputWriter $outputWriter = null
     ): Configuration
     {
-        $migrationSet = $this->getMigrationSetForBundle($bundle);
+        $migrationSet  = $this->getMigrationSetForBundle($bundle);
+        $configuration = $this->getConfiguration($migrationSet, $connection, $outputWriter);
 
-        return $this->getConfiguration($migrationSet, $connection, $outputWriter);
+        if ($bundle instanceof PimcoreBundleInterface) {
+            $installer = $bundle->getInstaller();
+
+            if (null !== $installer && $installer instanceof MigrationInstallerInterface) {
+                $configuration->setInstaller($installer);
+            }
+        }
+
+        return $configuration;
     }
 
     protected function getConfiguration(

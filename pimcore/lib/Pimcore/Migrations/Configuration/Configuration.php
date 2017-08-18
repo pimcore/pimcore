@@ -24,6 +24,7 @@ use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Migrations\InstallVersion;
 use Pimcore\Migrations\Version;
 
@@ -61,6 +62,14 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
      * @var Connection
      */
     private $connection;
+
+    /**
+     * If the installer is set, the default current version will either be 0 or InstallVersion::INSTALL_VERSION depending
+     * on isInstalled()
+     *
+     * @var MigrationInstallerInterface
+     */
+    private $installer;
 
     /**
      * @inheritDoc
@@ -110,6 +119,14 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         // if this is omitted, the migration bundle commands will
         // override our custom table name which is reserved to plain
         // doctrine migrations if using the migration bundle with the ORM
+    }
+
+    /**
+     * @param MigrationInstallerInterface $installer
+     */
+    public function setInstaller(MigrationInstallerInterface $installer)
+    {
+        $this->installer = $installer;
     }
 
     /**
@@ -287,7 +304,15 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
             $this->migrationSet
         ]);
 
-        return $result !== false ? (string) $result : '0';
+        if (false !== $result) {
+            return (string)$result;
+        }
+
+        if (null !== $this->installer && $this->installer->isInstalled()) {
+            return InstallVersion::INSTALL_VERSION;
+        }
+
+        return '0';
     }
 
     /**
