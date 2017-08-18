@@ -14,12 +14,14 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
+use Doctrine\DBAL\Migrations\OutputWriter;
 use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\LegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
+use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
@@ -27,6 +29,9 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Routing\RouteReferenceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -210,6 +215,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         }
 
         $message = Encoding::fixUTF8($message);
+        $message = (new AnsiToHtmlConverter())->convert($message);
         $message = explode(PHP_EOL, $message);
 
         return $message;
@@ -258,13 +264,20 @@ class ExtensionManagerController extends AdminController implements EventedContr
     {
         try {
             $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
+            $output = $this->setupInstallerOutput($bundle);
 
             $this->bundleManager->update($bundle);
 
-            return $this->json([
+            $data = [
                 'success' => true,
                 'bundle'  => $this->buildBundleInfo($bundle, true, true)
-            ]);
+            ];
+
+            if (!empty($message = $output->fetch())) {
+                $data['message'] = (new AnsiToHtmlConverter())->convert($message);
+            }
+
+            return $this->json($data);
         } catch (BundleNotFoundException $e) {
             return $this->json([
                 'success' => false,
@@ -326,6 +339,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     {
         try {
             $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
+            $output = $this->setupInstallerOutput($bundle);
 
             if ($install) {
                 $this->bundleManager->install($bundle);
@@ -333,10 +347,16 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 $this->bundleManager->uninstall($bundle);
             }
 
-            return $this->json([
+            $data = [
                 'success' => true,
                 'reload'  => $this->bundleManager->needsReloadAfterInstall($bundle)
-            ]);
+            ];
+
+            if (!empty($message = $output->fetch())) {
+                $data['message'] = (new AnsiToHtmlConverter())->convert($message);
+            }
+
+            return $this->json($data);
         } catch (BundleNotFoundException $e) {
             return $this->json([
                 'success' => false,
@@ -533,5 +553,31 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'active'        => $this->areabrickManager->isEnabled($brick->getId()),
             'version'       => $brick->getVersion()
         ];
+    }
+
+    /**
+     * Sets a buffered output writer on the migration configuration which can be used
+     * to fetch messages which happened during migration
+     *
+     * @param PimcoreBundleInterface $bundle
+     * @return BufferedOutput
+     */
+    private function setupInstallerOutput(PimcoreBundleInterface $bundle): BufferedOutput
+    {
+        $output = new BufferedOutput(Output::VERBOSITY_NORMAL, true);
+
+        $installer = $bundle->getInstaller();
+        if (null === $installer || !$installer instanceof MigrationInstallerInterface) {
+            return $output;
+        }
+
+        $outputWriter = new OutputWriter(function ($message) use ($output) {
+            $output->writeln($message);
+        });
+
+        $configuration = $installer->getMigrationConfiguration();
+        $configuration->setOutputWriter($outputWriter);
+
+        return $output;
     }
 }
