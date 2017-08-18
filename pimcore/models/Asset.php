@@ -663,7 +663,7 @@ class Asset extends Element\AbstractElement
 
                 // set mime type
 
-                $mimetype = Mime::detect($destinationPath);
+                $mimetype = Mime::detect($destinationPath, $this->getFilename());
                 $this->setMimetype($mimetype);
 
                 // set type
