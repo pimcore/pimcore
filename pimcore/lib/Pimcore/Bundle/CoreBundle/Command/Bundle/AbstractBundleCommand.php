@@ -105,4 +105,15 @@ abstract class AbstractBundleCommand extends AbstractCommand
     {
         return str_replace('/', '\\', $bundleIdentifier);
     }
+
+    protected function getShortClassName(string $className)
+    {
+        if (!class_exists($className)) {
+            throw new \InvalidArgumentException(sprintf('Class "%s" does not exist', $className));
+        }
+
+        $parts = explode('\\', $className);
+
+        return array_pop($parts);
+    }
 }

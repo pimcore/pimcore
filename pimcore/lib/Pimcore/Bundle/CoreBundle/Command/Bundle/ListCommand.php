@@ -22,6 +22,7 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListCommand extends AbstractBundleCommand
@@ -31,6 +32,11 @@ class ListCommand extends AbstractBundleCommand
         $this
             ->setName($this->buildName('list'))
             ->setDescription('Lists all pimcore bundles and their enabled/installed state')
+            ->addOption(
+                'fully-qualified-classnames', 'f',
+                InputOption::VALUE_NONE,
+                'Show fully qualified class names instead of short names'
+            )
         ;
     }
 
@@ -56,9 +62,13 @@ class ListCommand extends AbstractBundleCommand
                 $bundle = $bm->getActiveBundle($bundleClass, false);
             }
 
-            $row = [
-                $bundleClass
-            ];
+            $row = [];
+
+            if ($input->getOption('fully-qualified-classnames')) {
+                $row[] = $bundleClass;
+            } else {
+                $row[] = $this->getShortClassName($bundleClass);
+            }
 
             $row[] = $this->formatBool($enabled);
 

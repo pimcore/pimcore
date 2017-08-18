@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,9 +56,14 @@ class EnableCommand extends AbstractBundleCommand
     {
         $state = $this->resolveState($input);
 
+        $bm = $this->getBundleManager();
+
         $bundleClass = $this->normalizeBundleIdentifier($input->getArgument('bundle-class'));
 
-        $bm = $this->getBundleManager();
+        $mapping = $this->getAvailableBundleShortNameMapping($bm);
+        if (isset($mapping[$bundleClass])) {
+            $bundleClass = $mapping[$bundleClass];
+        }
 
         try {
             $bm->enable($bundleClass, $state);
@@ -66,6 +72,28 @@ class EnableCommand extends AbstractBundleCommand
         } catch (\Exception $e) {
             $this->handlePrerequisiteError($e->getMessage());
         }
+    }
+
+    /**
+     * Maps short name without namespace to fully qualified name to avoid having to use the fully qualified name
+     * as argument.
+     *
+     * e.g. PimcoreEcommerceFrameworkBundle => Pimcore\Bundle\EcommerceFrameworkBundle\PimcoreEcommerceFrameworkBundle
+     *
+     * @param PimcoreBundleManager $bundleManager
+     *
+     * @return array
+     */
+    private function getAvailableBundleShortNameMapping(PimcoreBundleManager $bundleManager): array
+    {
+        $availableBundles = $bundleManager->getAvailableBundles();
+
+        $mapping = [];
+        foreach ($availableBundles as $availableBundle) {
+            $mapping[$this->getShortClassName($availableBundle)] = $availableBundle;
+        }
+
+        return $mapping;
     }
 
     private function resolveState(InputInterface $input): array
