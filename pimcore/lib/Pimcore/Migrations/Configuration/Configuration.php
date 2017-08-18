@@ -130,6 +130,19 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     }
 
     /**
+     * @inheritDoc
+     */
+    public function registerMigrationsFromDirectory($path)
+    {
+        if (!file_exists($path)) {
+            // do not throw an exception if path does not exist
+            return [];
+        }
+
+        return parent::registerMigrationsFromDirectory($path);
+    }
+
+    /**
      * @inheritdoc
      */
     public function registerMigration($version, $class)
