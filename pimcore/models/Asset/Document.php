@@ -53,6 +53,15 @@ class Document extends Model\Asset
     }
 
     /**
+     *
+     */
+    public function delete()
+    {
+        parent::delete();
+        $this->clearThumbnails(true);
+    }
+
+    /**
      * @todo: Shouldnt' this always return an int?
      *
      * @param null $path
@@ -156,7 +165,10 @@ class Document extends Model\Asset
                 }
             }
 
-            recursiveDelete($this->getImageThumbnailSavePath());
+            $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
+            foreach($files as $file) {
+                recursiveDelete($file);
+            }
         }
     }
 }

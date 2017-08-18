@@ -77,12 +77,24 @@ class Image extends Model\Asset
     }
 
     /**
+     *
+     */
+    public function delete()
+    {
+        parent::delete();
+        $this->clearThumbnails(true);
+    }
+
+    /**
      * @param bool $force
      */
     public function clearThumbnails($force = false)
     {
         if ($this->getDataChanged() || $force) {
-            recursiveDelete($this->getImageThumbnailSavePath());
+            $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
+            foreach($files as $file) {
+                recursiveDelete($file);
+            }
         }
     }
 
