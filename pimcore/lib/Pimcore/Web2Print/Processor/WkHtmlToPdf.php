@@ -15,10 +15,12 @@
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
+use Pimcore\Event\Model\PrintConfigEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
+use Pimcore\Event\DocumentEvents;
 
 class WkHtmlToPdf extends Processor
 {
@@ -31,6 +33,8 @@ class WkHtmlToPdf extends Processor
      * @var string
      */
     private $options = '';
+
+    protected $config = [];
 
     /**
      * @param string $wkhtmltopdfBin
@@ -76,6 +80,7 @@ class WkHtmlToPdf extends Processor
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
+        $this->config = $config;
         $web2printConfig = Config::getWeb2PrintConfig();
 
         $params = ['document' => $document];
@@ -112,7 +117,13 @@ class WkHtmlToPdf extends Processor
      */
     public function getProcessingOptions()
     {
-        return [];
+        $event = new PrintConfigEvent($this, [
+            'options' => []
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+
+        return (array)$event->getArgument('options');
     }
 
     /**
@@ -205,7 +216,26 @@ class WkHtmlToPdf extends Processor
         }
 
         $retVal = 0;
-        $cmd = $this->wkhtmltopdfBin . ' ' . $this->options . ' ' . escapeshellarg($srcUrl) . ' ' . escapeshellarg($dstFile);
+
+        $event = new PrintConfigEvent($this, [
+            'wkhtmltopdfBin' => $this->wkhtmltopdfBin,
+            'options' => $this->options,
+            'srcUrl' => $srcUrl,
+            'dstFile' => $dstFile,
+            'config' => $this->config
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+
+
+
+        $params = $event->getArguments();
+
+        if ($params['cmd']) {
+            $cmd = $params['cmd'];
+        } else {
+            $cmd = $params['wkhtmltopdfBin'] . " " . $params['options'] . " " . escapeshellarg($params['srcUrl']) . " " . escapeshellarg($params['dstFile']);
+        }
+
 
         exec($cmd, $output, $retVal);
 
