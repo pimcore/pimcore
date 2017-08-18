@@ -19,8 +19,10 @@ namespace Pimcore\Migrations;
 
 use Doctrine\DBAL\Migrations\Version as DoctrineVersion;
 use Pimcore\Db\Connection;
+use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
+use Pimcore\Migrations\Configuration\InstallConfiguration;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class MigrationManager
@@ -91,6 +93,19 @@ class MigrationManager
     public function getBundleVersion(BundleInterface $bundle, string $versionId): DoctrineVersion
     {
         return $this->getBundleConfiguration($bundle)->getVersion($versionId);
+    }
+
+    /**
+     * Resolves an install configuration handling only a single install version
+     *
+     * @param Configuration $configuration
+     * @param MigrationInstallerInterface $installer
+     *
+     * @return InstallConfiguration
+     */
+    public function getInstallConfiguration(Configuration $configuration, MigrationInstallerInterface $installer): InstallConfiguration
+    {
+        return $this->configurationFactory->getInstallConfiguration($configuration, $installer);
     }
 
     /**

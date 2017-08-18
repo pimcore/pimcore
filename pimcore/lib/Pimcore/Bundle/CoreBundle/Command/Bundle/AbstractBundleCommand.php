@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Extension\Bundle\Installer\MigrationAwareInstallerInterface;
+use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputOption;
@@ -127,7 +127,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
     protected function setupInstallerOutputWriter(PimcoreBundleInterface $bundle)
     {
         $installer = $bundle->getInstaller();
-        if (null === $installer || !$installer instanceof MigrationAwareInstallerInterface) {
+        if (null === $installer || !$installer instanceof MigrationInstallerInterface) {
             return;
         }
 

@@ -24,6 +24,7 @@ use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Pimcore\Migrations\InstallVersion;
 use Pimcore\Migrations\Version;
 
 class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuration
@@ -144,7 +145,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
      *
      * @param array $migrations
      */
-    private function setMigrations(array $migrations)
+    protected function setMigrations(array $migrations)
     {
         static $migrationsProperty;
 

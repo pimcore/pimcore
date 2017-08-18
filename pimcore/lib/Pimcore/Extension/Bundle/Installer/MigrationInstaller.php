@@ -18,16 +18,18 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle\Installer;
 
 use Doctrine\DBAL\Migrations\Migration;
+use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\Migrations\Configuration\Configuration;
+use Pimcore\Migrations\Configuration\InstallConfiguration;
+use Pimcore\Migrations\InstallVersion;
 use Pimcore\Migrations\MigrationManager;
 use Pimcore\Migrations\Version;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
 
-abstract class MigrationAwareInstaller extends AbstractInstaller implements MigrationAwareInstallerInterface
+abstract class MigrationInstaller extends AbstractInstaller implements MigrationInstallerInterface
 {
     /**
      * @var BundleInterface
@@ -44,6 +46,16 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
      */
     protected $migrationManager;
 
+    /**
+     * @var InstallConfiguration
+     */
+    protected $installConfiguration;
+
+    /**
+     * @var InstallVersion
+     */
+    protected $installVersion;
+
     public function __construct(
         BundleInterface $bundle,
         Connection $connection,
@@ -58,11 +70,30 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
     /**
      * @inheritdoc
      */
+    public function getMigrationVersion(): string
+    {
+        return InstallVersion::INSTALL_VERSION;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getMigrationConfiguration(): Configuration
     {
         return $this->migrationManager->getBundleConfiguration($this->bundle);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getInstallMigrationConfiguration(): InstallConfiguration
+    {
+        return $this->migrationManager->getInstallConfiguration($this->getMigrationConfiguration(), $this);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function install()
     {
         if (!$this->canBeInstalled()) {
@@ -73,7 +104,8 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
         $installMigrationVersion   = null;
         $installMigrationVersionId = $this->getMigrationVersion();
 
-        if (!empty($installMigrationVersionId)) {
+        // load the migration to be marked as installed if it's something else than the install version
+        if (InstallVersion::INSTALL_VERSION !== $installMigrationVersionId) {
             $installMigrationVersion = $this->migrationManager->getBundleVersion(
                 $this->bundle,
                 $installMigrationVersionId
@@ -81,7 +113,7 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
         }
 
         // install initial schema
-        $this->installSchema();
+        $this->executeInstallMigration(true);
 
         // custom install logic
         $this->doInstall();
@@ -103,17 +135,29 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
     protected function updateAfterInstall()
     {
         if ($this->canBeUpdated()) {
+            $configuration = $this->getMigrationConfiguration();
+            $outputWriter  = $configuration->getOutputWriter();
+
+            $outputWriter->write("\n" . sprintf('<comment>%s</comment>', str_repeat('#', 70)) . "\n");
+            $outputWriter->write(sprintf(
+                'Running <comment>%s</comment> updates after installation' . "\n",
+                $this->bundle->getName()
+            ));
+
             $this->update();
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function uninstall()
     {
         if (!$this->canBeUninstalled()) {
             throw new InstallationException(sprintf('Bundle "%s" can\'t be uninstalled', $this->bundle->getName()));
         }
 
-        $this->uninstallSchema();
+        $this->executeInstallMigration(false);
         $this->doUninstall();
 
         if ($this->clearMigratedVersionsOnUninstall()) {
@@ -127,6 +171,9 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
         // noop - to be implemented on demand for custom uninstallation logic
     }
 
+    /**
+     * @inheritdoc
+     */
     public function update()
     {
         if (!$this->canBeUpdated()) {
@@ -163,6 +210,33 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
         // noop - to be implemented on demand for custom update logic
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function isInstalled()
+    {
+        return $this->getInstallMigrationConfiguration()->hasInstallVersionMigrated();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canBeInstalled()
+    {
+        return !$this->isInstalled();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function canBeUninstalled()
+    {
+        return $this->isInstalled();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function canBeUpdated(): bool
     {
         return $this->isInstalled() && $this->getMigrationConfiguration()->getNumberOfNewMigrations() > 0;
@@ -187,6 +261,31 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
     }
 
     /**
+     * Executes install/uninstall migration through InstallConfiguration/InstallVersion/InstallMigration
+     *
+     * @param bool $up
+     * @param bool $dryRun
+     */
+    protected function executeInstallMigration(bool $up = true, bool $dryRun = false)
+    {
+        $configuration = $this->getInstallMigrationConfiguration();
+        $outputWriter  = $configuration->getOutputWriter();
+
+        $output = $up ? 'Installing' : 'Uninstalling';
+        $output .= ' bundle <comment>%s</comment>' . "\n";
+
+        $outputWriter->write(sprintf($output, $this->bundle->getName()));
+
+        $migration = new Migration($configuration);
+
+        if ($up) {
+            $migration->migrate(InstallVersion::INSTALL_VERSION, $dryRun);
+        } else {
+            $migration->migrate(0, $dryRun);
+        }
+    }
+
+    /**
      * Defines any migrations marked as migrated for this bundle should be removed from the
      * migration status table on uninstallation. If the bundle is installed again, migrations
      * would be re-executed.
@@ -199,69 +298,12 @@ abstract class MigrationAwareInstaller extends AbstractInstaller implements Migr
     }
 
     /**
-     * Updates database with custom schema on installation
-     */
-    protected function installSchema()
-    {
-        $this->runSchemaMigration(true);
-    }
-
-    /**
-     * Removes custom schema from database on uninstallation
-     */
-    protected function uninstallSchema()
-    {
-        $this->runSchemaMigration(false);
-    }
-
-    /**
-     * Executes schema changes
+     * Creates a schema instance for the current database.
      *
-     * @param bool $up
+     * @return Schema
      */
-    protected function runSchemaMigration(bool $up = true)
+    protected function createSchema(): Schema
     {
-        $outputWriter = $this->getMigrationConfiguration()->getOutputWriter();
-
-        $fromSchema = $this->connection->getSchemaManager()->createSchema();
-        $toSchema   = clone $fromSchema;
-
-        $output = $up ? 'Installing' : 'Uninstalling';
-        $output .= ' bundle <comment>%s</comment>' . "\n";
-
-        $outputWriter->write(sprintf($output, $this->bundle->getName()));
-
-        if ($up) {
-            $this->populateSchema($toSchema);
-        } else {
-            $this->unpopulateSchema($toSchema);
-        }
-
-        $sql = $fromSchema->getMigrateToSql($toSchema, $this->connection->getDatabasePlatform());
-
-        if (0 === count($sql)) {
-            $outputWriter->write('<comment>No migrations to execute.</comment>');
-        }
-
-        $i = 0;
-        $time = 0;
-        $stopwatch = new Stopwatch();
-
-        foreach ($sql as $query) {
-            $evt = $stopwatch->start('query_' . $i++);
-
-            $outputWriter->write('     <comment>-></comment> ' . $query);
-            $this->connection->executeQuery($query);
-
-            $evt->stop();
-            $time += $evt->getDuration();
-        }
-
-        $time = round($time/1000, 2);
-
-        $outputWriter->write("\n  <comment>------------------------</comment>\n");
-        $outputWriter->write(sprintf("  <info>++</info> finished in %ss", $time));
-        $outputWriter->write(sprintf("  <info>++</info> %s sql queries", count($sql)));
-        $outputWriter->write("\n");
+        return $this->connection->getSchemaManager()->createSchema();
     }
 }

@@ -19,6 +19,7 @@ namespace Pimcore\Migrations\Configuration;
 
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Db\Connection;
+use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class ConfigurationFactory
@@ -38,6 +39,11 @@ class ConfigurationFactory
      */
     private $configurations = [];
 
+    /**
+     * @var InstallConfiguration[]
+     */
+    private $installConfigurations = [];
+
     public function __construct(string $rootDir)
     {
         $this->rootDir = $rootDir;
@@ -51,11 +57,7 @@ class ConfigurationFactory
         OutputWriter $outputWriter = null
     )
     {
-        if (!isset($this->migrationSets[$set])) {
-            throw new \InvalidArgumentException(sprintf('Migration set "%s" is not registered', $set));
-        }
-
-        $migrationSet = $this->migrationSets[$set];
+        $migrationSet = $this->getMigrationSet($set);
 
         return $this->getConfiguration($migrationSet, $connection, $outputWriter);
     }
@@ -87,13 +89,63 @@ class ConfigurationFactory
             $outputWriter
         );
 
-        $configuration->setName($migrationSet->getName());
-        $configuration->setMigrationsNamespace($migrationSet->getNamespace());
-        $configuration->setMigrationsDirectory($migrationSet->getDirectory());
+        $this->configureConfiguration($configuration, $migrationSet);
 
         $this->configurations[$migrationSet->getIdentifier()] = $configuration;
 
         return $configuration;
+    }
+
+    /**
+     * Creates a dedicated install configuration from an existing configuration
+     *
+     * @param Configuration $configuration
+     * @param MigrationInstallerInterface $installer
+     *
+     * @return InstallConfiguration
+     */
+    public function getInstallConfiguration(
+        Configuration $configuration,
+        MigrationInstallerInterface $installer
+    ): InstallConfiguration {
+        $migrationSetId = $configuration->getMigrationSet();
+
+        if (isset($this->installConfigurations[$migrationSetId])) {
+            return $this->installConfigurations[$migrationSetId];
+        }
+
+        $migrationSet = $this->getMigrationSet($migrationSetId);
+
+        // pipe messages to original config output writer
+        $outputWriter = new OutputWriter(function($message) use ($configuration) {
+            $configuration->getOutputWriter()->write($message);
+        });
+
+        $installConfiguration = new InstallConfiguration(
+            $installer,
+            $configuration->getMigrationSet(),
+            $configuration->getConnection(),
+            $outputWriter
+        );
+
+        $this->configureConfiguration($installConfiguration, $migrationSet);
+
+        $this->installConfigurations[$migrationSetId] = $installConfiguration;
+
+        return $installConfiguration;
+    }
+
+    /**
+     * Applies migration set configuration to configuration instance
+     *
+     * @param Configuration $configuration
+     * @param MigrationSetConfiguration $migrationSet
+     */
+    protected function configureConfiguration(Configuration $configuration, MigrationSetConfiguration $migrationSet)
+    {
+        $configuration->setName($migrationSet->getName());
+        $configuration->setMigrationsNamespace($migrationSet->getNamespace());
+        $configuration->setMigrationsDirectory($migrationSet->getDirectory());
     }
 
     protected function buildDefaultMigrationSets()
@@ -134,5 +186,14 @@ class ConfigurationFactory
         }
 
         $this->migrationSets[$migrationSet->getIdentifier()] = $migrationSet;
+    }
+
+    protected function getMigrationSet(string $set): MigrationSetConfiguration
+    {
+        if (!isset($this->migrationSets[$set])) {
+            throw new \InvalidArgumentException(sprintf('Migration set "%s" is not registered', $set));
+        }
+
+        return $this->migrationSets[$set];
     }
 }

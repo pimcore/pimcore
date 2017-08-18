@@ -94,19 +94,25 @@ class Version extends \Doctrine\DBAL\Migrations\Version
     {
         $this->configuration = $configuration;
         $this->outputWriter = $configuration->getOutputWriter();
-        $this->class = $class;
         $this->connection = $configuration->getConnection();
-        $this->migration = new $class($this);
         $this->version = $version;
 
-        if ($schemaProvider !== null) {
-            $this->schemaProvider = $schemaProvider;
-        }
+        $this->class = $class;
+        $this->migration = $this->createMigration();
 
-        if ($schemaProvider === null) {
+        if (null !== $schemaProvider) {
+            $this->schemaProvider = $schemaProvider;
+        } else {
             $schemaProvider = new SchemaDiffProvider($this->connection->getSchemaManager(), $this->connection->getDatabasePlatform());
             $this->schemaProvider = LazySchemaDiffProvider::fromDefaultProxyFacyoryConfiguration($schemaProvider);
         }
+    }
+
+    protected function createMigration()
+    {
+        $class = $this->class;
+
+        return new $class($this);
     }
 
     /**
