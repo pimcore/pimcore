@@ -18,6 +18,8 @@ use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
+use Pimcore\Event\Model\PrintConfigEvent;
+use Pimcore\Event\DocumentEvents;
 
 class PdfReactor8 extends Processor
 {
@@ -135,6 +137,12 @@ class PdfReactor8 extends Processor
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig['document'] = (string)$web2PrintConfig->pdfreactorBaseUrl . $filePath;
 
+
+        $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig]);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+
+        $reactorConfig = $event->getArguments()['reactorConfig'];
+
         try {
             $progress = new \stdClass();
             $progress->finished = false;
@@ -211,6 +219,12 @@ class PdfReactor8 extends Processor
             'default' => \LogLevel::FATAL
         ];
 
-        return $options;
+        $event = new PrintConfigEvent($this, [
+            'options' => $options
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+
+        return (array)$event->getArguments()['options'];
     }
 }
