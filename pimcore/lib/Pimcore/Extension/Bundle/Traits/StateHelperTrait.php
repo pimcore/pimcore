@@ -56,7 +56,7 @@ trait StateHelperTrait
 
         $bundleManager = \Pimcore::getContainer()->get('pimcore.extension.bundle_manager');
 
-        $bundle = $bundleManager->getActiveBundle(__CLASS__);
+        $bundle = $bundleManager->getActiveBundle(__CLASS__, false);
         if (!$bundleManager->isInstalled($bundle)) {
             return false;
         }
