@@ -1271,15 +1271,16 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $detailedInfo = "<b>Message:</b><br>";
+                $detailedInfo = '<b>Message:</b><br>';
                 $detailedInfo .= $e->getMessage();
 
-                $detailedInfo .= "<br><br><b>Trace:</b> " . $e->getTraceAsString();
+                $detailedInfo .= '<br><br><b>Trace:</b> ' . $e->getTraceAsString();
                 if ($e->getPrevious()) {
-                    $detailedInfo .= "<br><br><b>Previous Message:</b><br>";
+                    $detailedInfo .= '<br><br><b>Previous Message:</b><br>';
                     $detailedInfo .= $e->getPrevious()->getMessage();
                     $detailedInfo .= '<br><br><b>Previous Trace:</b><br>' . $e->getPrevious()->getTraceAsString();
                 }
+
                 return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $detailedInfo, 'code' => $e->getCode()]);
             }
             throw $e;

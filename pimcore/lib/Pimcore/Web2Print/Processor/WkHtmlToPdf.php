@@ -15,12 +15,12 @@
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
+use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\PrintConfigEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
-use Pimcore\Event\DocumentEvents;
 
 class WkHtmlToPdf extends Processor
 {
@@ -226,16 +226,13 @@ class WkHtmlToPdf extends Processor
         ]);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
 
-
-
         $params = $event->getArguments();
 
         if ($params['cmd']) {
             $cmd = $params['cmd'];
         } else {
-            $cmd = $params['wkhtmltopdfBin'] . " " . $params['options'] . " " . escapeshellarg($params['srcUrl']) . " " . escapeshellarg($params['dstFile']);
+            $cmd = $params['wkhtmltopdfBin'] . ' ' . $params['options'] . ' ' . escapeshellarg($params['srcUrl']) . ' ' . escapeshellarg($params['dstFile']);
         }
-
 
         exec($cmd, $output, $retVal);
 

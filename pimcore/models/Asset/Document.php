@@ -52,9 +52,6 @@ class Document extends Model\Asset
         parent::update();
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         parent::delete();
@@ -166,7 +163,7 @@ class Document extends Model\Asset
             }
 
             $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 recursiveDelete($file);
             }
         }

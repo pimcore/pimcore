@@ -14,11 +14,9 @@
 
 namespace Pimcore\Event\Model;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Product;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Process\Process;
 
 class PrintConfigEvent extends Event
 {
@@ -51,14 +49,13 @@ class PrintConfigEvent extends Event
 
     /**
      * @param Processor $processor
+     *
      * @return $this
      */
     public function setProcessor($processor)
     {
         $this->processor = $processor;
+
         return $this;
     }
-
-
-
 }

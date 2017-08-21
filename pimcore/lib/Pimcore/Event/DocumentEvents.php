@@ -89,7 +89,6 @@ final class DocumentEvents
      */
     const PRINT_POST_PDF_GENERATION = 'pimcore.document.print.postPdfGeneration';
 
-
     /**
      * Modify the processing options (displayed in the pimcore admin interface)
      *

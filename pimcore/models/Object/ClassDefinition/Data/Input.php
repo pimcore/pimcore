@@ -69,10 +69,9 @@ class Input extends Model\Object\ClassDefinition\Data
     public $regex = '';
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $unique;
-
 
     /**
      * @return int

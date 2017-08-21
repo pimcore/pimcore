@@ -622,9 +622,6 @@ class AbstractObject extends Model\Element\AbstractElement
             } catch (\Exception $e) {
                 try {
                     $this->rollBack();
-
-
-
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
                     Logger::info($er);
@@ -635,7 +632,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 }
 
                 if ($e instanceof UniqueConstraintViolationException) {
-                    throw new Element\ValidationException("unique constraint violation", 0, $e);
+                    throw new Element\ValidationException('unique constraint violation', 0, $e);
                 }
 
                 // set "HideUnpublished" back to the value it was originally

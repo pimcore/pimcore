@@ -76,9 +76,6 @@ class Image extends Model\Asset
         }
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         parent::delete();
@@ -92,7 +89,7 @@ class Image extends Model\Asset
     {
         if ($this->getDataChanged() || $force) {
             $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 recursiveDelete($file);
             }
         }

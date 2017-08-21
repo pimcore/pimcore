@@ -19,7 +19,6 @@ use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
-use Pimcore\Logger;
 use Pimcore\Model\Element\ValidationException;
 
 class Connection extends \Doctrine\DBAL\Connection

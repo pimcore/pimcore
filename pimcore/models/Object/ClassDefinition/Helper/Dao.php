@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Helper;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Pimcore\Logger;
 use Pimcore\Model\Object;
 
 trait Dao
@@ -32,15 +31,15 @@ trait Dao
     {
         $columnType = $field->$columnTypeGetter();
 
-        $prefixes = array(
-            'p_index_' => array("enabled" => $field->getIndex() && ! $field->getUnique(), "unique" => false),
-            'u_index_' => array("enabled" => $field->getUnique(), "unique" => true)
+        $prefixes = [
+            'p_index_' => ['enabled' => $field->getIndex() && ! $field->getUnique(), 'unique' => false],
+            'u_index_' => ['enabled' => $field->getUnique(), 'unique' => true]
 
-        );
+        ];
 
         foreach ($prefixes as $prefix => $config) {
-            $enabled = $config["enabled"];
-            $unique = $config["unique"];
+            $enabled = $config['enabled'];
+            $unique = $config['unique'];
             $uniqueStr = $unique ? ' UNIQUE ' : '';
 
             if ($enabled) {
@@ -52,13 +51,15 @@ trait Dao
                         if ($unique) {
                             if ($isLocalized) {
                                 $columnName .= ',`language`';
-                            } else if ($isFieldcollection) {
+                            } elseif ($isFieldcollection) {
                                 $columnName .= ',`fieldname`';
                             }
                         }
                         $this->db->queryIgnoreError(
-                            'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');'
-                            , [], [UniqueConstraintViolationException::class]);
+                            'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
+                            [],
+                            [UniqueConstraintViolationException::class]
+                        );
                     }
                 } else {
                     // single -column field
@@ -67,13 +68,15 @@ trait Dao
                     if ($unique) {
                         if ($isLocalized) {
                             $columnName .= ',`language`';
-                        } else if ($isFieldcollection) {
+                        } elseif ($isFieldcollection) {
                             $columnName .= ',`fieldname`';
                         }
                     }
                     $this->db->queryIgnoreError(
-                        'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');'
-                    , [], [UniqueConstraintViolationException::class]);
+                        'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
+                        [],
+                        [UniqueConstraintViolationException::class]
+                    );
                 }
             } else {
                 if (is_array($columnType)) {

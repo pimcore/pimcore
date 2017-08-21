@@ -368,12 +368,13 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
-        $newFilename = Element\Service::getValidKey($_FILES["Filedata"]["name"], 'asset');
-        $mimetype = Tool\Mime::detect($_FILES["Filedata"]["tmp_name"], $newFilename);
+        $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
+        $mimetype = Tool\Mime::detect($_FILES['Filedata']['tmp_name'], $newFilename);
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
-        if($newType != $asset->getType()) {
+        if ($newType != $asset->getType()) {
             $translator = $this->get('translator');
+
             return $this->json([
                 'success'=>false,
                 'message'=> sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType)
@@ -384,8 +385,8 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset->setStream($stream);
         $asset->setCustomSetting('thumbnails', null);
         $asset->setUserModification($this->getUser()->getId());
-        $newFilename = Element\Service::getValidKey($_FILES["Filedata"]["name"], 'asset');
-        if($newFilename != $asset->getFilename()) {
+        $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
+        if ($newFilename != $asset->getFilename()) {
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
         }
         $asset->setFilename($newFilename);
