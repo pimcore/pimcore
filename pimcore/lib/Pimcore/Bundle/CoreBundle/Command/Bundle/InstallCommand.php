@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
-use Doctrine\DBAL\Migrations\OutputWriter;
-use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,7 +38,8 @@ class InstallCommand extends AbstractBundleCommand
         $bm     = $this->getBundleManager();
         $bundle = $this->getBundle();
 
-        $this->setupInstallerOutputWriter($bundle);
+        // sets up installer with console output writer
+        $this->setupInstaller($bundle);
 
         try {
             $bm->install($bundle);

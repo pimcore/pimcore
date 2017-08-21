@@ -17,9 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
-use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
+use Pimcore\Extension\Bundle\Installer\OutputWriter;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputOption;
@@ -103,6 +102,21 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $bundle;
     }
 
+    protected function setupInstaller(PimcoreBundleInterface $bundle)
+    {
+        $installer = $this->getBundleManager()->getInstaller($bundle);
+        if (null === $installer) {
+            return null;
+        }
+
+        $io = $this->io;
+        $installer->setOutputWriter(new OutputWriter(function ($message) use ($io) {
+            $io->writeln($message);
+        }));
+
+        return $installer;
+    }
+
     protected function normalizeBundleIdentifier(string $bundleIdentifier): string
     {
         return str_replace('/', '\\', $bundleIdentifier);
@@ -117,26 +131,5 @@ abstract class AbstractBundleCommand extends AbstractCommand
         $parts = explode('\\', $className);
 
         return array_pop($parts);
-    }
-
-    /**
-     * Sets a CLI output writer on the migration configuration
-     *
-     * @param PimcoreBundleInterface $bundle
-     */
-    protected function setupInstallerOutputWriter(PimcoreBundleInterface $bundle)
-    {
-        $installer = $bundle->getInstaller();
-        if (null === $installer || !$installer instanceof MigrationInstallerInterface) {
-            return;
-        }
-
-        $io = $this->io;
-        $outputWriter = new OutputWriter(function ($message) use ($io) {
-            $io->writeln($message);
-        });
-
-        $configuration = $installer->getMigrationConfiguration();
-        $configuration->setOutputWriter($outputWriter);
     }
 }

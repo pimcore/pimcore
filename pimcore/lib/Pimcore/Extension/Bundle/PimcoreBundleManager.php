@@ -454,6 +454,19 @@ class PimcoreBundleManager
     }
 
     /**
+     * Returns the bundle installer if configured
+     *
+     * @param PimcoreBundleInterface $bundle
+     * @param bool $throwException
+     *
+     * @return null|Installer\InstallerInterface
+     */
+    public function getInstaller(PimcoreBundleInterface $bundle, bool $throwException = false)
+    {
+        return $this->loadBundleInstaller($bundle, $throwException);
+    }
+
+    /**
      * Runs install routine for a bundle
      *
      * @param PimcoreBundleInterface $bundle

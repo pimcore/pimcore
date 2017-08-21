@@ -14,14 +14,12 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
-use Doctrine\DBAL\Migrations\OutputWriter;
 use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\LegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
-use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
@@ -30,8 +28,6 @@ use Pimcore\Routing\RouteReferenceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -264,7 +260,6 @@ class ExtensionManagerController extends AdminController implements EventedContr
     {
         try {
             $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
-            $output = $this->setupInstallerOutput($bundle);
 
             $this->bundleManager->update($bundle);
 
@@ -273,8 +268,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 'bundle'  => $this->buildBundleInfo($bundle, true, true)
             ];
 
-            if (!empty($message = $output->fetch())) {
-                $data['message'] = (new AnsiToHtmlConverter())->convert($message);
+            if (!empty($message = $this->getInstallerOutput($bundle))) {
+                $data['message'] = $message;
             }
 
             return $this->json($data);
@@ -339,7 +334,6 @@ class ExtensionManagerController extends AdminController implements EventedContr
     {
         try {
             $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
-            $output = $this->setupInstallerOutput($bundle);
 
             if ($install) {
                 $this->bundleManager->install($bundle);
@@ -352,8 +346,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 'reload'  => $this->bundleManager->needsReloadAfterInstall($bundle)
             ];
 
-            if (!empty($message = $output->fetch())) {
-                $data['message'] = (new AnsiToHtmlConverter())->convert($message);
+            if (!empty($message = $this->getInstallerOutput($bundle))) {
+                $data['message'] = $message;
             }
 
             return $this->json($data);
@@ -472,7 +466,6 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'id'             => $bm->getBundleIdentifier($bundle),
             'type'           => 'bundle',
             'name'           => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
-            'description'    => $bundle->getDescription(),
             'active'         => $enabled,
             'installable'    => false,
             'uninstallable'  => false,
@@ -493,6 +486,18 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 'updateable'    => $bm->canBeUpdated($bundle),
             ]);
         }
+
+        // get description as last item as it may contain installer output
+        $description = $bundle->getDescription();
+        if (!empty($installerOutput = $this->getInstallerOutput($bundle))) {
+            if (!empty($description)) {
+                $description = $description . '. ';
+            }
+
+            $description .= $installerOutput;
+        }
+
+        $info['description'] = $description;
 
         return $info;
     }
@@ -555,29 +560,27 @@ class ExtensionManagerController extends AdminController implements EventedContr
         ];
     }
 
-    /**
-     * Sets a buffered output writer on the migration configuration which can be used
-     * to fetch messages which happened during migration
-     *
-     * @param PimcoreBundleInterface $bundle
-     * @return BufferedOutput
-     */
-    private function setupInstallerOutput(PimcoreBundleInterface $bundle): BufferedOutput
+    private function getInstallerOutput(PimcoreBundleInterface $bundle, bool $decorated = false)
     {
-        $output = new BufferedOutput(Output::VERBOSITY_NORMAL, true);
-
-        $installer = $bundle->getInstaller();
-        if (null === $installer || !$installer instanceof MigrationInstallerInterface) {
-            return $output;
+        if (!$this->bundleManager->isEnabled($bundle)) {
+            return null;
         }
 
-        $outputWriter = new OutputWriter(function ($message) use ($output) {
-            $output->writeln($message);
-        });
+        $installer = $this->bundleManager->getInstaller($bundle);
+        if (null !== $installer) {
+            $output = $installer->getOutputWriter()->getOutput();
+            if (!empty($output)) {
+                $converter = new AnsiToHtmlConverter(null);
 
-        $configuration = $installer->getMigrationConfiguration();
-        $configuration->setOutputWriter($outputWriter);
+                $converted = Encoding::fixUTF8($output);
+                $converted = $converter->convert($converted);
 
-        return $output;
+                if (!$decorated) {
+                    $converted = strip_tags($converted);
+                }
+
+                return $converted;
+            }
+        }
     }
 }

@@ -17,6 +17,33 @@ namespace Pimcore\Extension\Bundle\Installer;
 class AbstractInstaller implements InstallerInterface
 {
     /**
+     * @var OutputWriterInterface
+     */
+    protected $outputWriter;
+
+    /**
+     * @param OutputWriterInterface $outputWriter
+     */
+    public function __construct(OutputWriterInterface $outputWriter = null)
+    {
+        if (null === $outputWriter) {
+            $outputWriter = new OutputWriter();
+        }
+
+        $this->setOutputWriter($outputWriter);
+    }
+
+    public function setOutputWriter(OutputWriterInterface $outputWriter)
+    {
+        $this->outputWriter = $outputWriter;
+    }
+
+    public function getOutputWriter(): OutputWriterInterface
+    {
+        return $this->outputWriter;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function install()

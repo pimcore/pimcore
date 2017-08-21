@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle\Installer;
 
 use Doctrine\DBAL\Migrations\Migration;
+use Doctrine\DBAL\Migrations\OutputWriter as DoctrineOutputWriter;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
@@ -56,15 +57,32 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
      */
     protected $installVersion;
 
+    /**
+     * @var DoctrineOutputWriter
+     */
+    protected $migrationOutputWriter;
+
     public function __construct(
         BundleInterface $bundle,
         Connection $connection,
         MigrationManager $migrationManager
     )
     {
+        parent::__construct();
+
         $this->bundle           = $bundle;
         $this->connection       = $connection;
         $this->migrationManager = $migrationManager;
+    }
+
+    public function setOutputWriter(OutputWriterInterface $outputWriter)
+    {
+        parent::setOutputWriter($outputWriter);
+
+        // create an outputwriter which we can set on the configuration
+        $this->migrationOutputWriter = new DoctrineOutputWriter(function($message) use ($outputWriter) {
+            $outputWriter->write($message);
+        });
     }
 
     /**
@@ -80,7 +98,10 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
      */
     public function getMigrationConfiguration(): Configuration
     {
-        return $this->migrationManager->getBundleConfiguration($this->bundle);
+        $configuration = $this->migrationManager->getBundleConfiguration($this->bundle);
+        $configuration->setOutputWriter($this->migrationOutputWriter);
+
+        return $configuration;
     }
 
     /**
@@ -88,7 +109,10 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
      */
     public function getInstallMigrationConfiguration(): InstallConfiguration
     {
-        return $this->migrationManager->getInstallConfiguration($this->getMigrationConfiguration(), $this);
+        $configuration = $this->migrationManager->getInstallConfiguration($this->getMigrationConfiguration(), $this);
+        $configuration->setOutputWriter($this->migrationOutputWriter);
+
+        return $configuration;
     }
 
     /**
@@ -135,11 +159,8 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
     protected function updateAfterInstall()
     {
         if ($this->canBeUpdated()) {
-            $configuration = $this->getMigrationConfiguration();
-            $outputWriter  = $configuration->getOutputWriter();
-
-            $outputWriter->write("\n" . sprintf('<comment>%s</comment>', str_repeat('#', 70)) . "\n");
-            $outputWriter->write(sprintf(
+            $this->outputWriter->write("\n" . sprintf('<comment>%s</comment>', str_repeat('#', 70)) . "\n");
+            $this->outputWriter->write(sprintf(
                 'Running <comment>%s</comment> updates after installation' . "\n",
                 $this->bundle->getName()
             ));
@@ -269,12 +290,11 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
     protected function executeInstallMigration(bool $up = true, bool $dryRun = false)
     {
         $configuration = $this->getInstallMigrationConfiguration();
-        $outputWriter  = $configuration->getOutputWriter();
 
         $output = $up ? 'Installing' : 'Uninstalling';
         $output .= ' bundle <comment>%s</comment>' . "\n";
 
-        $outputWriter->write(sprintf($output, $this->bundle->getName()));
+        $this->outputWriter->write(sprintf($output, $this->bundle->getName()));
 
         $migration = new Migration($configuration);
 
