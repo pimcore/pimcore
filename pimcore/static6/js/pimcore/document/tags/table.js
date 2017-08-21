@@ -177,6 +177,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
         var selected = this.grid.getSelectionModel();
         if (selected.selection) {
             this.store.remove(selected.selection.record);
+            this.grid.editingPlugin.view.refresh();  // Prevents the editor from being garbage collected
         }
     },
 
