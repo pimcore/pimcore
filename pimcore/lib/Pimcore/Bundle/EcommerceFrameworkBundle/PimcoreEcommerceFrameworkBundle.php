@@ -19,10 +19,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\StateHelperTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
+    use StateHelperTrait;
+
     /**
      * @inheritDoc
      */

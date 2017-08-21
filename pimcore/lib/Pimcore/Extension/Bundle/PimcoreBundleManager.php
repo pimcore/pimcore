@@ -153,6 +153,20 @@ class PimcoreBundleManager
     }
 
     /**
+     * Determines if a bundle exists (is enabled or can be enabled)
+     *
+     * @param string|PimcoreBundleInterface $bundle
+     *
+     * @return bool
+     */
+    public function exists($bundle): bool
+    {
+        $identifier = $this->getBundleIdentifier($bundle);
+
+        return $this->isValidBundleIdentifier($identifier);
+    }
+
+    /**
      * @param string|PimcoreBundleInterface $bundle
      *
      * @return string
@@ -168,19 +182,29 @@ class PimcoreBundleManager
     }
 
     /**
-     * Validates bundle name against list if available and active bundles
+     * @param string $identifier
      *
-     * @param string $bundle
+     * @return bool
      */
-    protected function validateBundleIdentifier(string $bundle)
+    protected function isValidBundleIdentifier(string $identifier): bool
     {
         $validNames = array_merge(
             array_keys($this->getActiveBundles(false)),
             $this->getAvailableBundles()
         );
 
-        if (!in_array($bundle, $validNames)) {
-            throw new BundleNotFoundException(sprintf('Bundle %s is no valid bundle identifier', $bundle));
+        return in_array($identifier, $validNames);
+    }
+
+    /**
+     * Validates bundle name against list if available and active bundles
+     *
+     * @param string $identifier
+     */
+    protected function validateBundleIdentifier(string $identifier)
+    {
+        if (!$this->isValidBundleIdentifier($identifier)) {
+            throw new BundleNotFoundException(sprintf('Bundle "%s" is no valid bundle identifier', $identifier));
         }
     }
 
