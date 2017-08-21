@@ -9,6 +9,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
@@ -105,6 +106,9 @@ class Pimcore extends Module\Symfony
         if ($this->config['cache_router'] === true) {
             $this->persistService('router', true);
         }
+
+        // dispatch kernel booted event - will be used from services which need to reset state between tests
+        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(TestEvents::KERNEL_BOOTED);
     }
 
     protected function setupPimcoreDirectories()

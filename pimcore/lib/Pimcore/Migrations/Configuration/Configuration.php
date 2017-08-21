@@ -189,6 +189,11 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         $migrationsProperty->setAccessible(false);
     }
 
+    public function reset()
+    {
+        $this->migrationTableCreated = false;
+    }
+
     /**
      * Create the migration table to track migrations with.
      *

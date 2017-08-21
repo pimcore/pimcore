@@ -19,11 +19,13 @@ namespace Pimcore\Migrations\Configuration;
 
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Db\Connection;
+use Pimcore\Event\TestEvents;
 use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class ConfigurationFactory
+class ConfigurationFactory implements EventSubscriberInterface
 {
     /**
      * @var string
@@ -50,6 +52,14 @@ class ConfigurationFactory
         $this->rootDir = $rootDir;
 
         $this->buildDefaultMigrationSets();
+    }
+
+    public static function getSubscribedEvents()
+    {
+        // reset configurations when test kernel boots
+        return [
+            TestEvents::KERNEL_BOOTED => 'reset'
+        ];
     }
 
     public function getForSet(
@@ -143,6 +153,20 @@ class ConfigurationFactory
         $this->installConfigurations[$migrationSetId] = $installConfiguration;
 
         return $installConfiguration;
+    }
+
+    /**
+     * Reset all registered configurations. Can be necessary during tests when rebuilding the DB.
+     */
+    public function reset()
+    {
+        foreach ($this->configurations as $configuration) {
+            $configuration->reset();
+        }
+
+        foreach ($this->installConfigurations as $installConfiguration) {
+            $installConfiguration->reset();
+        }
     }
 
     /**
