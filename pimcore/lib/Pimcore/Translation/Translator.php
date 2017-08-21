@@ -221,6 +221,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
     {
+        $lookForFallback = false;
         if (empty($id)) {
             return $translated;
         } elseif ($id != $translated && $translated) {
@@ -264,12 +265,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 // the key would be inserted/updated several times, what would be redundant
                 $this->getCatalogue($locale)->set($id, $id, $domain);
 
-                $translated = '';
+                $lookForFallback = true;
             }
         }
 
         // now check for custom fallback locales, only for shared translations
-        if (empty($translated) && $domain == 'messages') {
+        if ($lookForFallback && $domain == 'messages') {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
