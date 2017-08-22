@@ -32,6 +32,11 @@ class BundleCollection
     private $bundleIdentifiers = [];
 
     /**
+     * @var ItemInterface[]
+     */
+    private $itemsByEnvironment = [];
+
+    /**
      * Adds a collection item
      *
      * @param ItemInterface $item
@@ -49,6 +54,66 @@ class BundleCollection
         $this->items[$item->getPriority()][] = $item;
 
         return $this;
+    }
+
+    /**
+     * Checks if a specific item is registered
+     *
+     * @param string $identifier
+     *
+     * @return bool
+     */
+    public function hasItem(string $identifier)
+    {
+        return in_array($identifier, $this->bundleIdentifiers);
+    }
+
+    /**
+     * Returns all collection items ordered by priority and optionally filtered by matching environment
+     *
+     * @param string|null $environment
+     *
+     * @return ItemInterface[]
+     */
+    public function getItems(string $environment = null): array
+    {
+        $cacheKey = '_all';
+        if (null !== $environment) {
+            $cacheKey = $environment;
+        }
+
+        if (isset($this->itemsByEnvironment[$cacheKey])) {
+            return $this->itemsByEnvironment[$cacheKey];
+        }
+
+        $priorities = array_keys($this->items);
+        rsort($priorities); // highest priority first
+
+        $items = [];
+        foreach ($priorities as $priority) {
+            /** @var Item $item */
+            foreach ($this->items[$priority] as $item) {
+                if (null !== $environment && !$item->matchesEnvironment($environment)) {
+                    continue;
+                }
+
+                $items[] = $item;
+            }
+        }
+
+        $this->itemsByEnvironment[$cacheKey] = $items;
+
+        return $items;
+    }
+
+    /**
+     * Returns all bundle identifiers
+     *
+     * @return array
+     */
+    public function getIdentifiers(): array
+    {
+        return $this->bundleIdentifiers;
     }
 
     /**
@@ -92,18 +157,9 @@ class BundleCollection
      */
     public function getBundles(string $environment): array
     {
-        $priorities = array_keys($this->items);
-        rsort($priorities); // highest priority first
-
         $bundles = [];
-        foreach ($priorities as $priority) {
-
-            /** @var Item $item */
-            foreach ($this->items[$priority] as $item) {
-                if ($item->matchesEnvironment($environment)) {
-                    $bundles[] = $item->getBundle();
-                }
-            }
+        foreach ($this->getItems($environment) as $item) {
+            $bundles[] = $item->getBundle();
         }
 
         return $bundles;

@@ -144,11 +144,11 @@ abstract class Kernel extends SymfonyKernel
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
 
-        // bundles registered in extensions.php
-        $this->registerExtensionManagerBundles($collection);
-
         // custom bundles
         $this->registerBundlesToCollection($collection);
+
+        // bundles registered in extensions.php
+        $this->registerExtensionManagerBundles($collection);
 
         $bundles = $collection->getBundles($this->getEnvironment());
 
@@ -219,6 +219,11 @@ abstract class Kernel extends SymfonyKernel
 
         foreach ($stateConfig->getEnabledBundles() as $className => $options) {
             if (!class_exists($className)) {
+                continue;
+            }
+
+            // do not register bundles twice - skip if it was already loaded manually
+            if ($collection->hasItem($className)) {
                 continue;
             }
 

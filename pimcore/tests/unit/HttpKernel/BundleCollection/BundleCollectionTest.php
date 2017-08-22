@@ -78,6 +78,43 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($this->bundles, $this->collection->getBundles('prod'));
     }
 
+    public function testHasItem()
+    {
+        foreach ($this->bundles as $bundle) {
+            $item = new Item($bundle);
+
+            $this->assertFalse($this->collection->hasItem($item->getBundleIdentifier()));
+            $this->collection->add($item);
+            $this->assertTrue($this->collection->hasItem($item->getBundleIdentifier()));
+        }
+    }
+
+    public function testGetItems()
+    {
+        $items = [];
+        foreach ($this->bundles as $bundle) {
+            $item = new Item($bundle);
+            $items[] = $item;
+
+            $this->collection->add($item);
+        }
+
+        $this->assertEquals($items, $this->collection->getItems());
+    }
+
+    public function testGetIdentifiers()
+    {
+        $identifiers = [];
+        foreach ($this->bundles as $bundle) {
+            $item = new Item($bundle);
+            $identifiers[] = $item->getBundleIdentifier();
+
+            $this->collection->add($item);
+        }
+
+        $this->assertEquals($identifiers, $this->collection->getIdentifiers());
+    }
+
     /**
      * @expectedException \LogicException
      * @expectedExceptionMessage Trying to register the bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" multiple times
