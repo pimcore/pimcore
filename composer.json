@@ -73,7 +73,6 @@
     "defuse/php-encryption": "~2",
     "doctrine/doctrine-bundle": "1.6.*",
     "doctrine/doctrine-migrations-bundle": "^1.2",
-    "doctrine/migrations": "^1.5",
     "egulias/email-validator": "*",
     "endroid/qrcode": "~1.5",
     "geoip2/geoip2": "~2",
