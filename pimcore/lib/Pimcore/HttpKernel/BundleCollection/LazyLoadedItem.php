@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
+use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class LazyLoadedItem extends AbstractItem
@@ -31,16 +32,20 @@ class LazyLoadedItem extends AbstractItem
      */
     private $bundle;
 
-    /**
-     * @param string $className
-     * @param int $priority
-     * @param array $environments
-     */
-    public function __construct(string $className, int $priority = 0, array $environments = [])
+    public function __construct(
+        string $className,
+        int $priority = 0,
+        array $environments = [],
+        string $source = self::SOURCE_PROGRAMATICALLY
+    )
     {
+        if (!class_exists($className)) {
+            throw new \InvalidArgumentException(sprintf('The class "%s" does not exist', $className));
+        }
+
         $this->className = $className;
 
-        parent::__construct($priority, $environments);
+        parent::__construct($priority, $environments, $source);
     }
 
     public function getBundleIdentifier(): string
@@ -52,13 +57,23 @@ class LazyLoadedItem extends AbstractItem
     {
         if (null === $this->bundle) {
             $className = $this->className;
-            if (!class_exists($className)) {
-                throw new \InvalidArgumentException(sprintf('The class "%s" does not exist', $className));
-            }
 
             $this->bundle = new $className;
         }
 
         return $this->bundle;
+    }
+
+    public function isPimcoreBundle(): bool
+    {
+        if (null !== $this->bundle) {
+            return $this->bundle instanceof PimcoreBundleInterface;
+        }
+
+        // do not initialize bundle - check class instead
+        return in_array(
+            PimcoreBundleInterface::class,
+            class_implements($this->className)
+        );
     }
 }

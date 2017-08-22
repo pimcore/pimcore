@@ -21,13 +21,20 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 interface ItemInterface
 {
+    const SOURCE_PROGRAMATICALLY          = 'programatically';
+    const SOURCE_EXTENSION_MANAGER_CONFIG = 'extension_manager_config';
+
     public function getBundleIdentifier(): string;
 
     public function getBundle(): BundleInterface;
+
+    public function isPimcoreBundle(): bool;
 
     public function getPriority(): int;
 
     public function getEnvironments(): array;
 
     public function matchesEnvironment(string $environment): bool;
+
+    public function getSource(): string;
 }

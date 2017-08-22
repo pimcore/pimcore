@@ -17,34 +17,43 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class LazyLoadedItemTest extends TestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+
+        LazyLoadedItemTestBundleA::resetCounter();
+        LazyLoadedItemTestBundleB::resetCounter();
+    }
+
     public function testGetBundle()
     {
-        $item = new LazyLoadedItem(LazyLoadedItemTestBundle::class);
+        $item = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
 
-        $this->assertEquals(0, LazyLoadedItemTestBundle::getCounter());
+        $this->assertEquals(0, LazyLoadedItemTestBundleA::getCounter());
 
         $bundle = $item->getBundle();
 
-        $this->assertEquals(1, LazyLoadedItemTestBundle::getCounter());
+        $this->assertEquals(1, LazyLoadedItemTestBundleA::getCounter());
 
         $item->getBundle();
 
-        $this->assertEquals(1, LazyLoadedItemTestBundle::getCounter());
+        $this->assertEquals(1, LazyLoadedItemTestBundleA::getCounter());
 
-        $this->assertInstanceOf(LazyLoadedItemTestBundle::class, $bundle);
+        $this->assertInstanceOf(LazyLoadedItemTestBundleA::class, $bundle);
     }
 
     public function testGetBundleIdentifier()
     {
-        $item = new LazyLoadedItem(LazyLoadedItemTestBundle::class);
+        $item = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
 
-        $this->assertEquals(LazyLoadedItemTestBundle::class, $item->getBundleIdentifier());
+        $this->assertEquals(LazyLoadedItemTestBundleA::class, $item->getBundleIdentifier());
     }
 
     /**
@@ -53,12 +62,45 @@ class LazyLoadedItemTest extends TestCase
      */
     public function testExceptionOnInvalidClass()
     {
-        $item = new LazyLoadedItem('FooBarBazingaDummyClassName');
-        $item->getBundle();
+        new LazyLoadedItem('FooBarBazingaDummyClassName');
+    }
+
+    public function testIsPimcoreBundle()
+    {
+        $itemA = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
+        $itemB = new LazyLoadedItem(LazyLoadedItemTestBundleB::class);
+
+        $this->assertEquals(0, LazyLoadedItemTestBundleA::getCounter());
+        $this->assertEquals(0, LazyLoadedItemTestBundleB::getCounter());
+
+        $this->assertFalse($itemA->isPimcoreBundle());
+        $this->assertTrue($itemB->isPimcoreBundle());
+
+        // item is not instantiated
+        $this->assertEquals(0, LazyLoadedItemTestBundleA::getCounter());
+        $this->assertEquals(0, LazyLoadedItemTestBundleB::getCounter());
+    }
+
+    public function testIsPimcoreBundleWithBundleInstance()
+    {
+        $itemA = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
+        $itemB = new LazyLoadedItem(LazyLoadedItemTestBundleB::class);
+
+        $this->assertEquals(0, LazyLoadedItemTestBundleA::getCounter());
+        $this->assertEquals(0, LazyLoadedItemTestBundleB::getCounter());
+
+        $itemA->getBundle();
+        $itemB->getBundle();
+
+        $this->assertEquals(1, LazyLoadedItemTestBundleA::getCounter());
+        $this->assertEquals(1, LazyLoadedItemTestBundleB::getCounter());
+
+        $this->assertFalse($itemA->isPimcoreBundle());
+        $this->assertTrue($itemB->isPimcoreBundle());
     }
 }
 
-class LazyLoadedItemTestBundle extends Bundle
+class LazyLoadedItemTestBundleA extends Bundle
 {
     /**
      * @var int
@@ -68,6 +110,34 @@ class LazyLoadedItemTestBundle extends Bundle
     public function __construct()
     {
         static::$counter++;
+    }
+
+    public static function resetCounter()
+    {
+        static::$counter = 0;
+    }
+
+    public static function getCounter(): int
+    {
+        return static::$counter;
+    }
+}
+
+class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
+{
+    /**
+     * @var int
+     */
+    private static $counter = 0;
+
+    public function __construct()
+    {
+        static::$counter++;
+    }
+
+    public static function resetCounter()
+    {
+        static::$counter = 0;
     }
 
     public static function getCounter(): int

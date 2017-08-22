@@ -23,6 +23,7 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
@@ -228,7 +229,12 @@ abstract class Kernel extends SymfonyKernel
             }
 
             // use lazy loaded item to instantiate the bundle only if environment matches
-            $collection->add(new LazyLoadedItem($className, $options['priority'], $options['environments']));
+            $collection->add(new LazyLoadedItem(
+                $className,
+                $options['priority'],
+                $options['environments'],
+                ItemInterface::SOURCE_EXTENSION_MANAGER_CONFIG
+            ));
         }
     }
 
