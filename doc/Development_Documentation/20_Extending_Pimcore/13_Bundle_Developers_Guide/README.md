@@ -25,7 +25,7 @@ possibilities. These bundles provide a similar API as plugins did in previous ve
   database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
 
-See the [Pimcore Bundles](./05_Pimcore_Bundles.md) documentation to getting started with Pimcore bundles.
+See the [Pimcore Bundles](./05_Pimcore_Bundles) documentation to getting started with Pimcore bundles.
 
 ### Generating Pimcore Bundles
 
