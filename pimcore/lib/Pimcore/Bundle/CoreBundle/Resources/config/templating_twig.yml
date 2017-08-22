@@ -51,6 +51,11 @@ services:
         tags:
             - { name: twig.extension }
 
+    Pimcore\Twig\Extension\WebsiteConfigExtension:
+        public: false
+        tags:
+            - { name: twig.extension }
+
     # the deferred extension is needed for placeholder helpers to work
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)

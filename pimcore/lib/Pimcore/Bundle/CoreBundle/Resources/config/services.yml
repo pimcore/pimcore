@@ -254,6 +254,11 @@ services:
         tags:
             - { name: controller.argument_value_resolver }
 
+    Pimcore\Controller\ArgumentValueResolver\WebsiteConfigValueResolver:
+        public: false
+        tags:
+            - { name: controller.argument_value_resolver }
+
     #
     # EXTENSIONS
     #
