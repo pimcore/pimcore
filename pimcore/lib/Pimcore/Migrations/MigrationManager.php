@@ -128,19 +128,36 @@ class MigrationManager
      * Marks version as migrated
      *
      * @param DoctrineVersion $version
+     * @param bool $includePrevious
      */
-    public function markVersionAsMigrated(DoctrineVersion $version)
+    public function markVersionAsMigrated(DoctrineVersion $version, bool $includePrevious = true)
     {
         $configuration = $version->getConfiguration();
 
-        if ($configuration->hasVersionMigrated($version)) {
-            throw new \LogicException(sprintf(
-                'Can\'t mark version "%s" as migrated as it is already migrated.',
-                $version->getVersion()
-            ));
+        if ($includePrevious) {
+            $migrations = $configuration->getMigrations();
+            foreach ($migrations as $migration) {
+                if (version_compare($migration->getVersion(), $version->getVersion(), '<')) {
+                    if (!$configuration->hasVersionMigrated($migration)) {
+                        $configuration->getOutputWriter()->write(sprintf(
+                            '  <info>--</info> Marking version <comment>%s</comment> as migrated',
+                            $migration->getVersion()
+                        ));
+
+                        $migration->markMigrated();
+                    }
+                }
+            }
         }
 
-        $version->markMigrated();
+        if (!$configuration->hasVersionMigrated($version)) {
+            $configuration->getOutputWriter()->write(sprintf(
+                '  <info>--</info> Marking version <comment>%s</comment> as migrated',
+                $version->getVersion()
+            ));
+
+            $version->markMigrated();
+        }
     }
 
     /**
@@ -152,13 +169,13 @@ class MigrationManager
     {
         $configuration = $version->getConfiguration();
 
-        if (!$configuration->hasVersionMigrated($version)) {
-            throw new \LogicException(sprintf(
-                'Can\'t mark version "%s" as not migrated as it does not exist.',
+        if ($configuration->hasVersionMigrated($version)) {
+            $configuration->getOutputWriter()->write(sprintf(
+                '  <info>--</info> Marking version <comment>%s</comment> as not migrated',
                 $version->getVersion()
             ));
-        }
 
-        $version->markNotMigrated();
+            $version->markNotMigrated();
+        }
     }
 }

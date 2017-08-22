@@ -148,11 +148,23 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
 
         // mark migrated version
         if (null !== $installMigrationVersion) {
-            $this->migrationManager->markVersionAsMigrated($installMigrationVersion);
+            $this->markInstallVersionAsMigrated($installMigrationVersion);
         }
 
         // run update (remaining migrations, ...)
         $this->updateAfterInstall();
+    }
+
+    /**
+     * Marks version defined in getMigrationVersion() as migrated
+     *
+     * @param Version $version
+     */
+    protected function markInstallVersionAsMigrated(Version $version)
+    {
+        // this also sets previous migrations lower than the given one as migrated
+        // overwrite this method and change the call if only want to mark this specific version
+        $this->migrationManager->markVersionAsMigrated($version, true);
     }
 
     /**
