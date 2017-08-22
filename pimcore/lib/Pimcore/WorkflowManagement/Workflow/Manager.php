@@ -22,6 +22,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
+use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
@@ -732,18 +733,28 @@ class Manager
     /**
      * Returns whether or not an element can be actioned
      *
-     * @param $element
+     * @param AbstractElement $element
      *
      * @return bool
      */
-    public static function elementCanAction($element)
+    public static function elementCanAction(AbstractElement $element)
     {
         if (!self::elementHasWorkflow($element)) {
             return false;
         }
 
+        $config = Workflow\Config::getElementWorkflowConfig($element);
+        $subject = $config['workflowSubject'];
+
         if ($element instanceof Asset) {
+            if (isset($subject['assetTypes'][0]) && !in_array($element->getType(), $subject['assetTypes'])) {
+                return false;
+            }
             return true;
+        } else if ($element instanceof AbstractObject && isset($subject['objectTypes'][0]) && !in_array($element->getType(), $subject['objectTypes'])) {
+            return false;
+        } else if ($element instanceof Document && isset($subject['documentTypes'][0]) && !in_array($element->getType(), $subject['documentTypes'])) {
+            return false;
         }
 
         /**
