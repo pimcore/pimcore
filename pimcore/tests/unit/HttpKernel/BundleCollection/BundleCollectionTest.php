@@ -89,6 +89,28 @@ class BundleCollectionTest extends TestCase
         }
     }
 
+    public function testGetItem()
+    {
+        foreach ($this->bundles as $bundle) {
+            $item = new Item($bundle);
+
+            $this->collection->add($item);
+            $this->assertEquals($item, $this->collection->getItem($item->getBundleIdentifier()));
+        }
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" is not registered
+     */
+    public function testGetItemThrowsException()
+    {
+        $item = new Item($this->bundles[0]);
+
+        $this->assertFalse($this->collection->hasItem($item->getBundleIdentifier()));
+        $this->collection->getItem($item->getBundleIdentifier());
+    }
+
     public function testGetItems()
     {
         $items = [];

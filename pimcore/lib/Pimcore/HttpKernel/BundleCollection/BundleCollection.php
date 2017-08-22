@@ -27,9 +27,9 @@ class BundleCollection
     private $items = [];
 
     /**
-     * @var array
+     * @var ItemInterface[]
      */
-    private $bundleIdentifiers = [];
+    private $itemsByPriority = [];
 
     /**
      * @var ItemInterface[]
@@ -46,14 +46,30 @@ class BundleCollection
     public function add(ItemInterface $item): self
     {
         $identifier = $item->getBundleIdentifier();
-        if (in_array($identifier, $this->bundleIdentifiers)) {
+        if ($this->hasItem($identifier)) {
             throw new \LogicException(sprintf('Trying to register the bundle "%s" multiple times', $identifier));
         }
 
-        $this->bundleIdentifiers[] = $identifier;
-        $this->items[$item->getPriority()][] = $item;
+        $this->items[$item->getBundleIdentifier()] = $item;
+        $this->itemsByPriority[$item->getPriority()][] = $item;
 
         return $this;
+    }
+
+    /**
+     * Returns a collection item by identifier
+     *
+     * @param string $identifier
+     *
+     * @return ItemInterface
+     */
+    public function getItem(string $identifier): ItemInterface
+    {
+        if (!$this->hasItem($identifier)) {
+            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered', $identifier));
+        }
+
+        return $this->items[$identifier];
     }
 
     /**
@@ -65,7 +81,7 @@ class BundleCollection
      */
     public function hasItem(string $identifier)
     {
-        return in_array($identifier, $this->bundleIdentifiers);
+        return isset($this->items[$identifier]);
     }
 
     /**
@@ -86,13 +102,13 @@ class BundleCollection
             return $this->itemsByEnvironment[$cacheKey];
         }
 
-        $priorities = array_keys($this->items);
+        $priorities = array_keys($this->itemsByPriority);
         rsort($priorities); // highest priority first
 
         $items = [];
         foreach ($priorities as $priority) {
             /** @var Item $item */
-            foreach ($this->items[$priority] as $item) {
+            foreach ($this->itemsByPriority[$priority] as $item) {
                 if (null !== $environment && !$item->matchesEnvironment($environment)) {
                     continue;
                 }
@@ -113,7 +129,7 @@ class BundleCollection
      */
     public function getIdentifiers(): array
     {
-        return $this->bundleIdentifiers;
+        return array_keys($this->items);
     }
 
     /**
