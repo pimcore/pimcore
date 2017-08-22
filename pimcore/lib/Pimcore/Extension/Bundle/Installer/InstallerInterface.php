@@ -74,4 +74,18 @@ interface InstallerInterface
      * @throws UpdateException
      */
     public function update();
+
+    /**
+     * Returns the output writer
+     *
+     * @return OutputWriterInterface
+     */
+    public function getOutputWriter(): OutputWriterInterface;
+
+    /**
+     * Sets the output writer to use
+     *
+     * @param OutputWriterInterface $outputWriter
+     */
+    public function setOutputWriter(OutputWriterInterface $outputWriter);
 }

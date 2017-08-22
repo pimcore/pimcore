@@ -38,6 +38,9 @@ class InstallCommand extends AbstractBundleCommand
         $bm     = $this->getBundleManager();
         $bundle = $this->getBundle();
 
+        // sets up installer with console output writer
+        $this->setupInstaller($bundle);
+
         try {
             $bm->install($bundle);
 

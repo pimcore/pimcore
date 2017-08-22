@@ -37,6 +37,14 @@ class UpdateCommand extends AbstractBundleCommand
         $bm     = $this->getBundleManager();
         $bundle = $this->getBundle();
 
+        // sets up installer with console output writer
+        $installer = $this->setupInstaller($bundle);
+
+        if (!$installer->canBeUpdated()) {
+            $this->io->success(sprintf('No pending updates for bundle "%s"', $bundle->getName()));
+            return 0;
+        }
+
         try {
             $bm->update($bundle);
 

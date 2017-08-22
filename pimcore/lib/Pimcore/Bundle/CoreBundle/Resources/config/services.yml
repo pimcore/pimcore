@@ -143,6 +143,9 @@ services:
     # INFRASTRUCTURE
     #
 
+    # support autowiring on pimcore connection class by creating an alias
+    Pimcore\Db\Connection: '@database_connection'
+
     pimcore.maintenance.schedule_manager:
         class: Pimcore\Model\Schedule\Manager\Procedural
         arguments: ['maintenance.pid', '@logger']
