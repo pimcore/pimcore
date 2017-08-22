@@ -1,5 +1,20 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 96 (2017-09-22)
+
+If you get an error like the following while upgrading to build 96, please run `composer update` manually on the command
+line and continue to upgrade:
+
+```
+Class Doctrine\Bundle\MigrationsBundle\Command\MigrationsExecuteDoctrineCommand not found in ExecuteCommand.php (line 8)
+```
+
+You can avoid this problem by installing the *BEFORE* running the upgrade:
+
+```bash
+$ composer require doctrine/doctrine-migrations-bundle "^1.2"
+```
+
 ## Build 86 (2017-08-02)
 
 E-Commerce Framework configuration was moved to a Symfony Config. For details see 
