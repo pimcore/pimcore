@@ -62,6 +62,11 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
      */
     protected $migrationOutputWriter;
 
+    /**
+     * @var bool
+     */
+    protected $runUpdateAfterInstall = true;
+
     public function __construct(
         BundleInterface $bundle,
         Connection $connection,
@@ -80,7 +85,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         parent::setOutputWriter($outputWriter);
 
         // create an outputwriter which we can set on the configuration
-        $this->migrationOutputWriter = new DoctrineOutputWriter(function($message) use ($outputWriter) {
+        $this->migrationOutputWriter = new DoctrineOutputWriter(function ($message) use ($outputWriter) {
             $outputWriter->write($message);
         });
     }
@@ -137,10 +142,9 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         }
 
         // install initial schema
+        $this->beforeInstallMigration();
         $this->executeInstallMigration(true);
-
-        // custom install logic
-        $this->doInstall();
+        $this->afterInstallMigration();
 
         // mark migrated version
         if (null !== $installMigrationVersion) {
@@ -151,14 +155,12 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         $this->updateAfterInstall();
     }
 
-    protected function doInstall()
-    {
-        // noop - to be implemented on demand for custom installation logic
-    }
-
+    /**
+     * Runs update after a successful installation to make sure remaining migrations are applied
+     */
     protected function updateAfterInstall()
     {
-        if ($this->canBeUpdated()) {
+        if ($this->runUpdateAfterInstall && $this->canBeUpdated()) {
             $this->outputWriter->write("\n" . sprintf('<comment>%s</comment>', str_repeat('#', 70)) . "\n");
             $this->outputWriter->write(sprintf(
                 'Running <comment>%s</comment> updates after installation' . "\n",
@@ -167,6 +169,16 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
 
             $this->update();
         }
+    }
+
+    protected function beforeInstallMigration()
+    {
+        // noop - to be implemented on demand for custom installation logic
+    }
+
+    protected function afterInstallMigration()
+    {
+        // noop - to be implemented on demand for custom installation logic
     }
 
     /**
@@ -178,8 +190,9 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
             throw new InstallationException(sprintf('Bundle "%s" can\'t be uninstalled', $this->bundle->getName()));
         }
 
+        $this->beforeUninstallMigration();
         $this->executeInstallMigration(false);
-        $this->doUninstall();
+        $this->afterUninstallMigration();
 
         if ($this->clearMigratedVersionsOnUninstall()) {
             $configuration = $this->migrationManager->getBundleConfiguration($this->bundle);
@@ -187,7 +200,12 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         }
     }
 
-    protected function doUninstall()
+    protected function beforeUninstallMigration()
+    {
+        // noop - to be implemented on demand for custom uninstallation logic
+    }
+
+    protected function afterUninstallMigration()
     {
         // noop - to be implemented on demand for custom uninstallation logic
     }
@@ -220,13 +238,17 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         }
 
         // migrate to the latest version
-        $migration = new Migration($this->getMigrationConfiguration());
-        $migration->migrate($latestVersion);
-
-        $this->doUpdate();
+        $this->beforeUpdateMigration($latestVersion);
+        $this->migrateToVersion($latestVersion);
+        $this->afterUpdateMigration($latestVersion);
     }
 
-    protected function doUpdate()
+    protected function beforeUpdateMigration(string $version = null)
+    {
+        // noop - to be implemented on demand for custom update logic
+    }
+
+    protected function afterUpdateMigration(string $version = null)
     {
         // noop - to be implemented on demand for custom update logic
     }
@@ -264,6 +286,20 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
     }
 
     /**
+     * Migrates to a specific version
+     *
+     * @param string $versionId
+     * @param bool $dryRun
+     */
+    protected function migrateToVersion(string $versionId, bool $dryRun = false)
+    {
+        $configuration = $this->getMigrationConfiguration();
+
+        $migration = new Migration($configuration);
+        $migration->migrate($versionId, $dryRun);
+    }
+
+    /**
      * Executes a specific migration version. This can be used to execute specific versions (e.g. migrations
      * changing class definitions of other bundles) on every install, even if the migrated version returned
      * from getMigrationVersion() is higher.
@@ -276,7 +312,8 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
      */
     protected function executeMigration(string $versionId, bool $up = true, bool $dryRun = false): array
     {
-        $version = $this->migrationManager->getBundleVersion($this->bundle, $versionId);
+        $configuration = $this->getMigrationConfiguration();
+        $version       = $configuration->getVersion($versionId);
 
         return $this->migrationManager->executeVersion($version, $up, $dryRun);
     }
@@ -301,7 +338,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         if ($up) {
             $migration->migrate(InstallVersion::INSTALL_VERSION, $dryRun);
         } else {
-            $migration->migrate(0, $dryRun);
+            $migration->migrate('0', $dryRun);
         }
     }
 
