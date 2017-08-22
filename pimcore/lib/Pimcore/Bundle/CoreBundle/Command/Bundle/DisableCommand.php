@@ -28,7 +28,8 @@ class DisableCommand extends AbstractBundleCommand
         $this
             ->setName($this->buildName('disable'))
             ->configureDescriptionAndHelp('Disables a bundle')
-            ->addArgument('bundle', InputArgument::REQUIRED, 'The bundle to disable');
+            ->addArgument('bundle', InputArgument::REQUIRED, 'The bundle to disable')
+            ->configureFailWithoutErrorOption();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
