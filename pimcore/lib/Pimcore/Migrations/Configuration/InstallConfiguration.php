@@ -45,8 +45,7 @@ class InstallConfiguration extends Configuration
         Connection $connection,
         OutputWriter $outputWriter = null,
         MigrationFinderInterface $finder = null
-    )
-    {
+    ) {
         $this->installer = $installer;
 
         parent::__construct($migrationSet, $connection, $outputWriter, $finder);

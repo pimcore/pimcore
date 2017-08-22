@@ -66,8 +66,7 @@ class ConfigurationFactory implements EventSubscriberInterface
         string $set,
         Connection $connection,
         OutputWriter $outputWriter = null
-    )
-    {
+    ) {
         $migrationSet = $this->getMigrationSet($set);
 
         return $this->getConfiguration($migrationSet, $connection, $outputWriter);
@@ -77,8 +76,7 @@ class ConfigurationFactory implements EventSubscriberInterface
         BundleInterface $bundle,
         Connection $connection,
         OutputWriter $outputWriter = null
-    ): Configuration
-    {
+    ): Configuration {
         $migrationSet  = $this->getMigrationSetForBundle($bundle);
         $configuration = $this->getConfiguration($migrationSet, $connection, $outputWriter);
 
@@ -97,8 +95,7 @@ class ConfigurationFactory implements EventSubscriberInterface
         MigrationSetConfiguration $migrationSet,
         Connection $connection,
         OutputWriter $outputWriter = null
-    ): Configuration
-    {
+    ): Configuration {
         if (isset($this->configurations[$migrationSet->getIdentifier()])) {
             return $this->configurations[$migrationSet->getIdentifier()];
         }
@@ -137,7 +134,7 @@ class ConfigurationFactory implements EventSubscriberInterface
         $migrationSet = $this->getMigrationSet($migrationSetId);
 
         // pipe messages to original config output writer
-        $outputWriter = new OutputWriter(function($message) use ($configuration) {
+        $outputWriter = new OutputWriter(function ($message) use ($configuration) {
             $configuration->getOutputWriter()->write($message);
         });
 

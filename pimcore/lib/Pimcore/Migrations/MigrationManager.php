@@ -40,8 +40,7 @@ class MigrationManager
     public function __construct(
         Connection $connection,
         ConfigurationFactory $configurationFactory
-    )
-    {
+    ) {
         $this->connection           = $connection;
         $this->configurationFactory = $configurationFactory;
     }

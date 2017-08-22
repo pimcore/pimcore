@@ -71,8 +71,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         BundleInterface $bundle,
         Connection $connection,
         MigrationManager $migrationManager
-    )
-    {
+    ) {
         parent::__construct();
 
         $this->bundle           = $bundle;
@@ -245,7 +244,8 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         if ($currentVersion > $latestVersion) {
             throw new UpdateException(sprintf(
                 'Can\'t migrate down (current version: "%s", latest version: "%s")',
-                $currentVersion, $latestVersion
+                $currentVersion,
+                $latestVersion
             ));
         }
 

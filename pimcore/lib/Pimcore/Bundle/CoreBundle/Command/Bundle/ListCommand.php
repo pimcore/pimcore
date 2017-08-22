@@ -19,8 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableCell;
-use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,7 +31,8 @@ class ListCommand extends AbstractBundleCommand
             ->setName($this->buildName('list'))
             ->setDescription('Lists all pimcore bundles and their enabled/installed state')
             ->addOption(
-                'fully-qualified-classnames', 'f',
+                'fully-qualified-classnames',
+                'f',
                 InputOption::VALUE_NONE,
                 'Show fully qualified class names instead of short names'
             )

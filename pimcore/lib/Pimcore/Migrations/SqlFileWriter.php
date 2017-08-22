@@ -57,6 +57,7 @@ class SqlFileWriter
     /**
      * @param array $queriesByVersion array Keys are versions and values are arrays of SQL queries (they must be castable to string)
      * @param string $direction
+     *
      * @return int|bool
      */
     public function write(array $queriesByVersion, $direction)
@@ -80,7 +81,6 @@ class SqlFileWriter
             foreach ($queries as $query) {
                 $string .= $query . ";\n";
             }
-
 
             $string .= $this->getVersionUpdateQuery($version, $direction);
         }

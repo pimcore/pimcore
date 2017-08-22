@@ -138,7 +138,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
     /**
      * Check if this version has been migrated or not.
      *
-     * @return boolean
+     * @return bool
      */
     public function isMigrated()
     {
@@ -230,6 +230,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
      * @param string $direction The direction to execute.
      *
      * @return bool $written
+     *
      * @throws MigrationException
      */
     public function writeSqlFile($path, $direction = self::DIRECTION_UP)
@@ -269,8 +270,8 @@ class Version extends \Doctrine\DBAL\Migrations\Version
      * connection that can get used trough it allow for the test of the presence of records.
      *
      * @param string  $direction      The direction to execute the migration.
-     * @param boolean $dryRun         Whether to not actually execute the migration SQL and just do a dry run.
-     * @param boolean $timeAllQueries Measuring or not the execution time of each SQL query.
+     * @param bool $dryRun         Whether to not actually execute the migration SQL and just do a dry run.
+     * @param bool $timeAllQueries Measuring or not the execution time of each SQL query.
      *
      * @return array $sql
      *
@@ -356,16 +357,17 @@ class Version extends \Doctrine\DBAL\Migrations\Version
                 }
             }
 
-            $this->outputWriter->write(sprintf("\n  <info>SS</info> skipped (Reason: %s)",  $e->getMessage()));
+            $this->outputWriter->write(sprintf("\n  <info>SS</info> skipped (Reason: %s)", $e->getMessage()));
 
             $this->state = self::STATE_NONE;
 
             return [];
         } catch (\Exception $e) {
-
             $this->outputWriter->write(sprintf(
                 '<error>Migration %s failed during %s. Error %s</error>',
-                $this->version, $this->getExecutionState(), $e->getMessage()
+                $this->version,
+                $this->getExecutionState(),
+                $e->getMessage()
             ));
 
             if ($transaction) {
@@ -398,14 +400,14 @@ class Version extends \Doctrine\DBAL\Migrations\Version
             $queryEnd = microtime(true);
             $queryTime = round($queryEnd - $queryStart, 4);
 
-            $this->outputWriter->write(sprintf("  <info>%ss</info>", $queryTime));
+            $this->outputWriter->write(sprintf('  <info>%ss</info>', $queryTime));
         }
     }
 
     /**
      * Returns the time this migration version took to execute
      *
-     * @return integer $time The time this migration version took to execute
+     * @return int $time The time this migration version took to execute
      */
     public function getTime()
     {
@@ -424,7 +426,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
                 foreach ($this->sql as $key => $query) {
                     $queryStart = microtime(true);
 
-                    if ( ! isset($this->params[$key])) {
+                    if (! isset($this->params[$key])) {
                         $this->outputWriter->write('     <comment>-></comment> ' . $query);
                         $this->connection->executeQuery($query);
                     } else {
@@ -455,6 +457,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
      *
      * @param int $idx The SQL query index. Used to look up params.
      * @param string $query the query to output
+     *
      * @return void
      */
     private function outputSqlQuery($idx, $query)
@@ -476,6 +479,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
      *
      * @param $params The query parameters
      * @param $types The types of the query params. Default type is a string
+     *
      * @return string|null a string of the parameters present.
      */
     private function formatParamsForOutput(array $params, array $types)

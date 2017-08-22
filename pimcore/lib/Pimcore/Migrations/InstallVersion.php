@@ -33,8 +33,7 @@ class InstallVersion extends Version
     public function __construct(
         MigrationInstallerInterface $installer,
         Configuration $configuration
-    )
-    {
+    ) {
         $this->installer = $installer;
 
         parent::__construct($configuration, self::INSTALL_VERSION, get_class($installer));

@@ -39,12 +39,14 @@ class EnableCommand extends AbstractBundleCommand
                 'The bundle to enable as fully qualified class name'
             )
             ->addOption(
-                'priority', 'p',
+                'priority',
+                'p',
                 InputOption::VALUE_REQUIRED,
                 'Optional priority to configure'
             )
             ->addOption(
-                'environments', 'E',
+                'environments',
+                'E',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'If defined, the bundle will be configured to only be loaded in the specified environments'
             )

@@ -41,7 +41,8 @@ abstract class AbstractBundleCommand extends AbstractCommand
     protected function configureFailWithoutErrorOption(): self
     {
         $this->addOption(
-            'fail-without-error', 'f',
+            'fail-without-error',
+            'f',
             InputOption::VALUE_NONE,
             'Just output a warning but do not return an error code if the command can\'t be executed'
         );

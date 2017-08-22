@@ -32,8 +32,7 @@ class Item extends AbstractItem
         int $priority = 0,
         array $environments = [],
         string $source = self::SOURCE_PROGRAMATICALLY
-    )
-    {
+    ) {
         $this->bundle = $bundle;
 
         parent::__construct($priority, $environments, $source);

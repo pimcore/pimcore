@@ -37,8 +37,7 @@ class LazyLoadedItem extends AbstractItem
         int $priority = 0,
         array $environments = [],
         string $source = self::SOURCE_PROGRAMATICALLY
-    )
-    {
+    ) {
         if (!class_exists($className)) {
             throw new \InvalidArgumentException(sprintf('The class "%s" does not exist', $className));
         }

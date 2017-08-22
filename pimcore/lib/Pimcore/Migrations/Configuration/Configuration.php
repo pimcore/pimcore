@@ -52,7 +52,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     /**
      * Flag for whether or not the migration table has been created
      *
-     * @var boolean
+     * @var bool
      */
     private $migrationTableCreated = false;
 
@@ -79,8 +79,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         Connection $connection,
         OutputWriter $outputWriter = null,
         MigrationFinderInterface $finder = null
-    )
-    {
+    ) {
         $this->migrationSet = $migrationSet;
         $this->connection   = $connection;
 
@@ -197,7 +196,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     /**
      * Create the migration table to track migrations with.
      *
-     * @return boolean Whether or not the table was created.
+     * @return bool Whether or not the table was created.
      */
     public function createMigrationTable()
     {
@@ -223,13 +222,15 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         $columns = [
             $setColumn => new Column(
                 $setColumn,
-                Type::getType('string'), [
+                Type::getType('string'),
+                [
                     'length' => 255
                 ]
             ),
             $versionColumn => new Column(
                 $versionColumn,
-                Type::getType('string'), [
+                Type::getType('string'),
+                [
                     'length' => 255
                 ]
             ),
@@ -254,7 +255,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
      *
      * @param Version $version
      *
-     * @return boolean
+     * @return bool
      */
     public function hasVersionMigrated(\Doctrine\DBAL\Migrations\Version $version)
     {
@@ -309,11 +310,11 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
             foreach ($this->getMigrations() as $migration) {
                 $migratedVersions[] = sprintf("'%s'", $migration->getVersion());
             }
-            $where = " WHERE {migration_set} = ? AND {version} IN (" . implode(', ', $migratedVersions) . ")";
+            $where = ' WHERE {migration_set} = ? AND {version} IN (' . implode(', ', $migratedVersions) . ')';
         }
 
         $sql = $this->formatQuery(sprintf(
-            "SELECT {version} FROM {table}%s ORDER BY {version} DESC",
+            'SELECT {version} FROM {table}%s ORDER BY {version} DESC',
             $where
         ));
 
@@ -336,7 +337,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     /**
      * Returns the total number of executed migration versions
      *
-     * @return integer
+     * @return int
      */
     public function getNumberOfExecutedMigrations()
     {
@@ -356,7 +357,9 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
      */
     public function clearMigratedVersions()
     {
-        $this->connection->executeQuery($this->formatQuery('DELETE FROM {table} WHERE {migration_set} = ?'), [
+        $this->connection->executeQuery(
+            $this->formatQuery('DELETE FROM {table} WHERE {migration_set} = ?'),
+            [
                 $this->migrationSet
             ]
         );

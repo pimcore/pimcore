@@ -54,7 +54,8 @@ trait PimcoreMigrationsConfiguration
         $this
             ->setName(sprintf('pimcore:migrations:%s', $name))
             ->addOption(
-                'bundle', 'b',
+                'bundle',
+                'b',
                 InputOption::VALUE_REQUIRED,
                 sprintf(
                     'The bundle to migrate. If no bundle is set it will handle app migrations from <comment>%s</comment>',

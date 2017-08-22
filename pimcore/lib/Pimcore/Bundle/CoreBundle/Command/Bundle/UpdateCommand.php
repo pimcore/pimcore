@@ -42,6 +42,7 @@ class UpdateCommand extends AbstractBundleCommand
 
         if (!$installer->canBeUpdated()) {
             $this->io->success(sprintf('No pending updates for bundle "%s"', $bundle->getName()));
+
             return 0;
         }
 
