@@ -449,19 +449,20 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $state = $bm->getState($bundle);
 
         $info = [
-            'id'            => $bm->getBundleIdentifier($bundle),
-            'type'          => 'bundle',
-            'name'          => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
-            'description'   => $bundle->getDescription(),
-            'active'        => $enabled,
-            'installable'   => false,
-            'uninstallable' => false,
-            'updateable'    => false,
-            'installed'     => $installed,
-            'configuration' => $this->getIframePath($bundle),
-            'version'       => $bundle->getVersion(),
-            'priority'      => $state['priority'],
-            'environments'  => implode(', ', $state['environments'])
+            'id'             => $bm->getBundleIdentifier($bundle),
+            'type'           => 'bundle',
+            'name'           => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
+            'description'    => $bundle->getDescription(),
+            'active'         => $enabled,
+            'installable'    => false,
+            'uninstallable'  => false,
+            'updateable'     => false,
+            'installed'      => $installed,
+            'canChangeState' => $bm->canChangeState($bundle),
+            'configuration'  => $this->getIframePath($bundle),
+            'version'        => $bundle->getVersion(),
+            'priority'       => $state['priority'],
+            'environments'   => implode(', ', $state['environments'])
         ];
 
         // only check for installation specifics if the bundle is enabled
