@@ -210,7 +210,7 @@ final class StateConfig
      *
      * @return array
      */
-    private function normalizeOptions($options): array
+    public function normalizeOptions($options): array
     {
         if (is_bool($options)) {
             $options = ['enabled' => $options];

@@ -50,6 +50,11 @@ abstract class Kernel extends SymfonyKernel
     protected $extensionConfig;
 
     /**
+     * @var BundleCollection
+     */
+    private $bundleCollection;
+
+    /**
      * {@inheritdoc}
      */
     public function getRootDir()
@@ -153,7 +158,19 @@ abstract class Kernel extends SymfonyKernel
 
         $bundles = $collection->getBundles($this->getEnvironment());
 
+        $this->bundleCollection = $collection;
+
         return $bundles;
+    }
+
+    /**
+     * Returns the bundle collection which was used to build the set of used bundles
+     *
+     * @return BundleCollection
+     */
+    public function getBundleCollection(): BundleCollection
+    {
+        return $this->bundleCollection;
     }
 
     /**
