@@ -30,13 +30,15 @@ abstract class AbstractItem implements ItemInterface
     private $environments = [];
 
     /**
-     * @param int $priority
-     * @param array $environments
+     * @var string
      */
-    public function __construct(int $priority = 0, array $environments = [])
+    private $source;
+
+    public function __construct(int $priority = 0, array $environments = [], string $source = self::SOURCE_PROGRAMATICALLY)
     {
         $this->priority     = $priority;
         $this->environments = $environments;
+        $this->source       = $source;
     }
 
     public function getPriority(): int
@@ -56,5 +58,10 @@ abstract class AbstractItem implements ItemInterface
         }
 
         return in_array($environment, $this->environments, true);
+    }
+
+    public function getSource(): string
+    {
+        return $this->source;
     }
 }

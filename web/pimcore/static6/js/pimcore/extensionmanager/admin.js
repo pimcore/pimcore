@@ -82,7 +82,7 @@ pimcore.extensionmanager.admin = Class.create({
                 extend: 'Ext.data.Model',
                 fields: [
                     "id", "extensionId", "type", "name", "description", "installed", "installable", "uninstallable", "active",
-                    "configuration", "updateable", "xmlEditorFile", "version", "priority", "environments"
+                    "configuration", "updateable", "canChangeState", "xmlEditorFile", "version", "priority", "environments"
                 ],
                 proxy: {
                     type: 'ajax',
@@ -238,7 +238,10 @@ pimcore.extensionmanager.admin = Class.create({
                     tooltip: t('enable') + " / " + t("disable"),
                     getClass: function (v, meta, rec) {
                         var klass = "pimcore_action_column ";
-                        if(rec.get("active")) {
+
+                        if ('bundle' === rec.get('type') && !rec.get('canChangeState')) {
+                            klass += "pimcore_icon_lock ";
+                        } else if(rec.get("active")) {
                             klass += "pimcore_icon_stop ";
                         } else {
                             klass += "pimcore_icon_add ";
@@ -249,6 +252,13 @@ pimcore.extensionmanager.admin = Class.create({
 
                         var rec = grid.getStore().getAt(rowIndex);
                         var method = rec.get("active") ? "disable" : "enable";
+
+                        // abort if state changes are not allowed
+                        if ('bundle' === rec.get('type') && !rec.get('canChangeState')) {
+                            self.showMessageWindow(t("error"), t("extension_manager_state_change_not_allowed"), "error");
+
+                            return;
+                        }
 
                         this.panel.setLoading(true);
 
@@ -441,6 +451,11 @@ pimcore.extensionmanager.admin = Class.create({
                         beforeedit: function (editor, context, eOpts) {
                             // only allow editing for bundles
                             if (context.record.data.type !== 'bundle') {
+                                return false;
+                            }
+
+                            // abort if state changes are not allowed
+                            if (!context.record.data.canChangeState) {
                                 return false;
                             }
                         }

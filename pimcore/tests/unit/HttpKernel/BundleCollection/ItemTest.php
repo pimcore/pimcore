@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\BundleCollection\Item;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -25,22 +26,22 @@ class ItemTest extends TestCase
 {
     public function testGetBundle()
     {
-        $bundle = new ItemTestBundle();
-        $item   = new Item(new ItemTestBundle());
+        $bundle = new ItemTestBundleA();
+        $item   = new Item(new ItemTestBundleA());
 
         $this->assertEquals($bundle, $item->getBundle());
     }
 
     public function testGetBundleIdentifier()
     {
-        $item = new Item(new ItemTestBundle());
+        $item = new Item(new ItemTestBundleA());
 
-        $this->assertEquals(ItemTestBundle::class, $item->getBundleIdentifier());
+        $this->assertEquals(ItemTestBundleA::class, $item->getBundleIdentifier());
     }
 
     public function testEmptyEnvironmentsMatchesAnyEnvironment()
     {
-        $item = new Item(new ItemTestBundle(), 0, []);
+        $item = new Item(new ItemTestBundleA(), 0, []);
         foreach (['prod', 'dev', 'test'] as $environment) {
             $this->assertTrue($item->matchesEnvironment($environment));
         }
@@ -48,7 +49,7 @@ class ItemTest extends TestCase
 
     public function testItemMatchesEnvironment()
     {
-        $item = new Item(new ItemTestBundle(), 0, ['dev']);
+        $item = new Item(new ItemTestBundleA(), 0, ['dev']);
 
         $this->assertTrue($item->matchesEnvironment('dev'));
         $this->assertFalse($item->matchesEnvironment('prod'));
@@ -57,14 +58,27 @@ class ItemTest extends TestCase
 
     public function testItemWithMultipleEnvironments()
     {
-        $item = new Item(new ItemTestBundle(), 0, ['dev', 'test']);
+        $item = new Item(new ItemTestBundleA(), 0, ['dev', 'test']);
 
         $this->assertTrue($item->matchesEnvironment('dev'));
         $this->assertTrue($item->matchesEnvironment('test'));
         $this->assertFalse($item->matchesEnvironment('prod'));
     }
+
+    public function testIsPimcoreBundle()
+    {
+        $itemA = new Item(new ItemTestBundleA());
+        $itemB = new Item(new ItemTestBundleB());
+
+        $this->assertFalse($itemA->isPimcoreBundle());
+        $this->assertTrue($itemB->isPimcoreBundle());
+    }
 }
 
-class ItemTestBundle extends Bundle
+class ItemTestBundleA extends Bundle
+{
+}
+
+class ItemTestBundleB extends AbstractPimcoreBundle
 {
 }
