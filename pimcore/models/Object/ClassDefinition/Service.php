@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
+use Pimcore\Logger;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 
@@ -230,6 +231,8 @@ class Service
                             } else {
                                 if ($throwException) {
                                     throw new \Exception('Could not add child ' . var_export($child, true));
+                                } else {
+                                    Logger::err('Could not add child ' . var_export($child, true));
                                 }
 
                                 return false;
