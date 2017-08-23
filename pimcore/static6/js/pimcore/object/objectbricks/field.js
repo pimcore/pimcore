@@ -19,7 +19,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                                                 "objectsMetadata", "keyValue"],
     uploadUrl: '/admin/class/import-objectbrick/',
     exportUrl: "/admin/class/export-objectbrick",
-
+    context: "objectbrick",
     
     getId: function(){
         return  this.data.key;
