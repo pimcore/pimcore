@@ -19,7 +19,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                                                 "objectsMetadata"],
     uploadUrl: '/admin/class/import-objectbrick',
     exportUrl: "/admin/class/export-objectbrick",
-
+    context: "objectbrick",
     
     getId: function(){
         return  this.data.key;
@@ -86,13 +86,13 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     getAddControl: function() {
         var classMenu = [];
 
-        var classNames = Object.keys(this.baseStore);
+        var classIds = Object.keys(this.baseStore);
 
-        for(var i = 0; i < classNames.length; i++) {
-            var rec = this.baseStore[classNames[i]];
+        for(var i = 0; i < classIds.length; i++) {
+            var rec = this.baseStore[classIds[i]];
             classMenu.push({
                 text: ts(rec.data.translatedText),
-                handler: this.addClassDefinition.bind(this, null, rec.data.text),
+                handler: this.addClassDefinition.bind(this, null, rec.data.id),
                 iconCls: "pimcore_icon_class"
             });
         }
@@ -138,13 +138,13 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         s.each(function(rec) {
             var data = new Ext.data.Record({id: rec.id, text: rec.data.text, translatedText: rec.data.translatedText});
-            this.availableClasses[rec.get("text")] = data;
-            this.baseStore[rec.get("text")] = data;
+            this.availableClasses[rec.id] = data;
+            this.baseStore[rec.id] = data;
         }.bind(this));
     },
 
-    removeFromOthers: function(name, store) {
-        delete(this.baseStore[name]);
+    removeFromOthers: function(id, store) {
+        delete(this.baseStore[id]);
     },
 
 
@@ -161,7 +161,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 extraParams: {
                     types: 'objectbricks',
                     gridtype: "all",
-                    name:currentData.classname
+                    id:currentData.classname
                 },
                 reader: {
                     type: 'json',
@@ -220,7 +220,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         });
     },
 
-    addClassDefinition: function (classDefinitionData, className) {
+    addClassDefinition: function (classDefinitionData, classId) {
         this.classDefinitionsItems.remove(this.classDefinitionsItems.items.get(0));
 
         var currentData = {};
@@ -228,7 +228,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         if(classDefinitionData) {
             currentData = classDefinitionData;
         } else {
-            currentData.classname = className;
+            currentData.classname = classId;
             currentData.fieldname = "";
         }
 

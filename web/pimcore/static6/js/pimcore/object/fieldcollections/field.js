@@ -19,6 +19,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                                                                 "objectsMetadata"],
     uploadUrl: '/admin/class/import-fieldcollection',
     exportUrl: "/admin/class/export-fieldcollection",
+    context: "fieldcollection",
 
     
     getId: function(){
