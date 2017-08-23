@@ -154,7 +154,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                 if (type == data.data.elementType) {
                     found = true;
 
-                    if(this.options.subtypes[type] && this.options.subtypes[type].length) {
+                    if((typeof this.options.subtypes !== "undefined") && this.options.subtypes[type] && this.options.subtypes[type].length) {
                         checkSubType = true;
                     }
                     if(data.data.elementType == "object" && this.options.classes) {
