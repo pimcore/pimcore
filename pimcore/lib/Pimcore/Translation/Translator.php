@@ -221,7 +221,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
     {
-        $lookForFallback = false;
+        $lookForFallback = empty($translated);
         if (empty($id)) {
             return $translated;
         } elseif ($id != $translated && $translated) {
@@ -285,7 +285,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             return $id;
         }
 
-        return $translated;
+
+        if(empty($translated)) {
+            return $id;
+        } else {
+            return $translated;
+        }
+
+
     }
 
     /**
