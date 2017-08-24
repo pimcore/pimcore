@@ -1618,8 +1618,8 @@ pimcore.helpers.openImageCropper = function (imageId, data, saveCallback, config
 };
 
 /* this is here so that it can be opened in the parent window when in editmode frame */
-pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCallback) {
-    var editor = new pimcore.element.tag.imagehotspotmarkereditor(imageId, data, saveCallback);
+pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCallback, config) {
+    var editor = new pimcore.element.tag.imagehotspotmarkereditor(imageId, data, saveCallback, config);
     return editor;
 };
 
