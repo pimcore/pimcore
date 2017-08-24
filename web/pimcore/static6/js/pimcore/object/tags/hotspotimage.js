@@ -254,18 +254,25 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     openHotspotWindow: function() {
         if(this.data) {
-            var editor = new pimcore.element.tag.imagehotspotmarkereditor(this.data.id,
-                                    {hotspots: this.hotspots, marker: this.marker}, function (data) {
-                this.hotspots = data["hotspots"];
-                this.marker = data["marker"];
+            var editor = new pimcore.element.tag.imagehotspotmarkereditor(
+                this.data.id,
+                {
+                    hotspots: this.hotspots, marker: this.marker
+                },
+                function (data) {
+                    this.hotspots = data["hotspots"];
+                    this.marker = data["marker"];
 
-                this.showPreview();
+                    this.showPreview();
 
-                this.dirty = true;
-            }.bind(this), {
+                    this.dirty = true;
+                }.bind(this),
+                {
                     context: Ext.apply({scope: "objectEditor"}, this.getContext()),
-                    predefinedDataTemplates: this.predefinedDataTemplates
-                });
+                    predefinedDataTemplates: this.predefinedDataTemplates,
+                    crop: this.crop
+                }
+            );
             editor.open(false);
         }
     },
