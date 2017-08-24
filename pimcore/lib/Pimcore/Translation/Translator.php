@@ -285,14 +285,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             return $id;
         }
 
-
-        if(empty($translated)) {
+        if (empty($translated)) {
             return $id;
         } else {
             return $translated;
         }
-
-
     }
 
     /**
