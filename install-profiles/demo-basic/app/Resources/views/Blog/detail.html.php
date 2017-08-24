@@ -24,7 +24,35 @@ $this->extend('layout.html.php');
     <hr />
 
     <?php if($this->article->getPosterImage()) { ?>
-        <?= $this->article->getPosterImage()->getThumbnail("content")->getHTML() ?>
+        <div class="image-container" style="width:<?= $this->article->getPosterImage()->getThumbnail("content")->getWidth() ?>px">
+            <?= $this->article->getPosterImage()->getThumbnail("content")->getHTML() ?>
+
+            <?php if($this->article->getPosterImage()->getHotspots()) { ?>
+
+                <?php foreach($this->article->getPosterImage()->getHotspots() as $hotspot) { ?>
+
+                    <div class="image-hotspot"
+                         style="top: <?= $hotspot['top'] ?>%; left: <?= $hotspot['left'] ?>%; width: <?= $hotspot['width'] ?>%; height: <?= $hotspot['height'] ?>%">
+                    </div>
+
+                <?php } ?>
+
+            <?php } ?>
+
+            <?php if($this->article->getPosterImage()->getMarker()) { ?>
+
+                <?php foreach($this->article->getPosterImage()->getMarker() as $marker) { ?>
+
+                    <div class="image-marker"
+                         style="top: <?= $marker['top'] ?>%; left: <?= $marker['left'] ?>%">
+                    </div>
+
+                <?php } ?>
+
+            <?php } ?>
+
+        </div>
+
         <br /><br />
     <?php } ?>
 

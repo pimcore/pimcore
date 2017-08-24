@@ -164,6 +164,10 @@ section img {
     background: url(/website/static/img/transparent-background-placeholder.png);
 }
 
+.image-container {
+    position:relative;
+    max-width: 100%;
+}
 
 .image-hotspot {
     position: absolute;
@@ -439,7 +443,6 @@ section img {
 .tabbed-slider .carousel-inner .item-4, .tabbed-slider .nav-pills .item-4.active a { background-color: #2980b9; }
 .tabbed-slider .carousel-inner .item-5, .tabbed-slider .nav-pills .item-5.active a { background-color: #e67e22; }
 
-
 @media (min-width: 768px) {
 
     .teaser {
@@ -529,5 +532,7 @@ section img {
         width: 263px;
     }
 }
+
+
 
 
