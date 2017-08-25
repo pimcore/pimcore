@@ -12,8 +12,8 @@ tasks like
 To give bundles full control over their install routines, Pimcore only defines a basic installer interface which must be 
 implemented by your installer. The methods implemented by your installer drive the extension manager UI and are called when
 an action is triggered from the extension manager or from commands like `pimcore:bundle:install`. The basic installer
-interface can be found in (InstallerInterface)[https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/InstallerInterface.php] which
-is implemented in (AbstractInstaller)[https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/AbstractInstaller.php] which you can take as starting point.
+interface can be found in [InstallerInterface](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/InstallerInterface.php) which
+is implemented in [AbstractInstaller](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/AbstractInstaller.php) which you can take as starting point.
 
 A pimcore bundle is expected to return an installer instance in `getInstaller()`. This method can also return `null` if you
 don't need any installation functionality. In this case, actions which would be handled by an installer will not be available
