@@ -26,12 +26,33 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
+        $currentField = $this->getField($filterDefinition);
         $values = [];
-        foreach ($productList->getGroupByValues($this->getField($filterDefinition), true) as $value) {
-            $values[] = ['from' => $value['parameter']->min,
-                'to' => $value['parameter']->max,
-                'count' => $value['count'],
-            'label' => $value['label']];
+        foreach ($productList->getGroupByValues($currentField, true) as $value) {
+            if($currentField == 'price')
+            {
+                // add min
+                $values[] = [
+                    'from' => $value['parameter']->min,
+                    'to' => $value['parameter']->max,
+                    'value' => $value['parameter']->min,
+                    'count' => 1
+                ];
+                // add max
+                $values[] = [
+                    'from' => $value['parameter']->min,
+                    'to' => $value['parameter']->max,
+                    'value' => $value['parameter']->max,
+                    'count' => 1
+                ];
+            }
+            else
+            {
+                $values[] = [
+                    'value' => $value['value'],
+                    'count' => $value['count']
+                ];
+            }
         }
 
         return $this->render($this->getTemplate($filterDefinition), [
