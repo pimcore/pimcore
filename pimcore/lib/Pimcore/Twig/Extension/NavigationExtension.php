@@ -40,11 +40,11 @@ class NavigationExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new \Twig_SimpleFunction('pimcore_build_nav', [$this, 'buildNavigation']),
-            new \Twig_SimpleFunction('pimcore_render_nav', [$this, 'render'], [
+            new \Twig_Function('pimcore_build_nav', [$this, 'buildNavigation']),
+            new \Twig_Function('pimcore_render_nav', [$this, 'render'], [
                 'is_safe' => ['html']
             ]),
-            new \Twig_SimpleFunction('pimcore_nav_renderer', [$this, 'getRenderer']),
+            new \Twig_Function('pimcore_nav_renderer', [$this, 'getRenderer']),
         ];
     }
 

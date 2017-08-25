@@ -79,7 +79,7 @@ class TemplatingHelperExtension extends \Twig_Extension
                 return $this->callHelper($helperName, func_get_args());
             };
 
-            $functions[] = new \Twig_SimpleFunction($functionName, $callable, $options);
+            $functions[] = new \Twig_Function($functionName, $callable, $options);
         }
 
         return $functions;
