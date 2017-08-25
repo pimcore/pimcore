@@ -2061,7 +2061,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         $urlParts = parse_url($url);
 
-        return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . '&' . $urlParts['query']);
+        return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
     }
 
     /**
