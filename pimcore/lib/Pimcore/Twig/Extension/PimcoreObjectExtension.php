@@ -27,10 +27,10 @@ class PimcoreObjectExtension extends \Twig_Extension
     {
         // simple object access functions in case documents/assets/objects need to be loaded directly in the template
         return [
-            new \Twig_SimpleFunction('pimcore_document', [Document::class, 'getById']),
-            new \Twig_SimpleFunction('pimcore_asset', [Asset::class, 'getById']),
-            new \Twig_SimpleFunction('pimcore_object', [Object\AbstractObject::class, 'getById']),
-            new \Twig_SimpleFunction('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
+            new \Twig_Function('pimcore_document', [Document::class, 'getById']),
+            new \Twig_Function('pimcore_asset', [Asset::class, 'getById']),
+            new \Twig_Function('pimcore_object', [Object\AbstractObject::class, 'getById']),
+            new \Twig_Function('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
         ];
     }
 }

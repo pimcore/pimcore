@@ -24,7 +24,7 @@ class WebsiteConfigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('pimcore_website_config', [$this, 'getWebsiteConfig']),
+            new \Twig_Function('pimcore_website_config', [$this, 'getWebsiteConfig']),
         ];
     }
 

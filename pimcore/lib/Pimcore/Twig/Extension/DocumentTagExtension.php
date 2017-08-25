@@ -39,11 +39,11 @@ class DocumentTagExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('pimcore_*', [$this, 'renderTag'], [
+            new \Twig_Function('pimcore_*', [$this, 'renderTag'], [
                 'needs_context' => true,
                 'is_safe'       => ['html'],
             ]),
-            new \Twig_SimpleFunction('pimcore_iterate_block', [$this, 'getBlockIterator'])
+            new \Twig_Function('pimcore_iterate_block', [$this, 'getBlockIterator'])
         ];
     }
 

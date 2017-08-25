@@ -46,11 +46,11 @@ class SubrequestExtension extends \Twig_Extension
     {
         // as helpers are invokablem, we can pass them directly as callable
         return [
-            new \Twig_SimpleFunction('pimcore_inc', $this->incHelper, [
+            new \Twig_Function('pimcore_inc', $this->incHelper, [
                 'is_safe' => ['html']
             ]),
 
-            new \Twig_SimpleFunction('pimcore_action', $this->actionHelper, [
+            new \Twig_Function('pimcore_action', $this->actionHelper, [
                 'is_safe' => ['html']
             ])
         ];
