@@ -31,6 +31,8 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
     initialize: function (treeNode, initData) {
         this.type = "localizedfields";
 
+        initData = initData || {};
+
         initData.name = "localizedfields";
         treeNode.set("text", "localizedfields");
 
