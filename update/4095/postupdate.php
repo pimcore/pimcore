@@ -8,7 +8,6 @@ function check($fieldDefinitions, $needsSave) {
 
         } else  if ($fieldDefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Relations\AbstractRelations) {
             if (method_exists($fieldDefinition, "getLazyLoading") && $fieldDefinition->getLazyLoading()) {
-                echo($fieldDefinition->getName() . "!!!\n");
                 $needsSave |= true;
                 $fieldDefinition->setLazyLoading(false);
             }
