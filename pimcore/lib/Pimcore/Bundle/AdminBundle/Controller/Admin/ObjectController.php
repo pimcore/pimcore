@@ -312,6 +312,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         Element\Editlock::lock($request->get('id'), 'object');
 
         $object = Object::getById(intval($request->get('id')));
+
+        if ($object instanceof Object) {
+            return $this->json([
+                'success' => false,
+                'message' => 'element_not_found'
+            ]);
+        }
+
         $object = clone $object;
 
         // set the latest available version for editmode
@@ -717,6 +725,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         Element\Editlock::lock($request->get('id'), 'object');
 
         $object = Object::getById(intval($request->get('id')));
+
+        if (!$object instanceof Object\Folder) {
+            return $this->json([
+                'success' => false,
+                'message' => 'element_not_found'
+            ]);
+        }
+
         if ($object->isAllowed('view')) {
             $objectData = [];
 
