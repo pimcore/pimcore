@@ -203,9 +203,9 @@ abstract class AbstractRenderer implements RendererInterface
     {
         if (null === $this->_prefixForId) {
             $prefix             = get_class($this);
-            $this->_prefixForId = strtolower(
+            $this->_prefixForId = str_replace('\\', '-', strtolower(
                     trim(substr($prefix, strrpos($prefix, '_')), '_')
-                ) . '-';
+                )) . '-';
         }
 
         return $this->_prefixForId;
