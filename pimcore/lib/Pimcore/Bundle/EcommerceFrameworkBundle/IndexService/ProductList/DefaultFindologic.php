@@ -641,22 +641,13 @@ class DefaultFindologic implements IProductList
                 foreach (array_slice($categories, 0, -1) as $cat) {
                     $field = $field->items->item;
                 }
-
-            }
-            else if($fieldname === 'price')
-            {
-                $field = $this->groupedValues[ $fieldname ];
+            } elseif ($fieldname === 'price') {
+                $field = $this->groupedValues[$fieldname];
 
                 $groups[] = [
-                    'value' => null
-                    , 'label' => null
-                    , 'count' => null
-                    , 'parameter' => $field->attributes->totalRange
+                    'value' => null, 'label' => null, 'count' => null, 'parameter' => $field->attributes->totalRange
                 ];
-
-            }
-            else if($fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME)
-            {
+            } elseif ($fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
                 $rec = function (array $items) use (&$rec, &$groups) {
                     foreach ($items as $item) {
                         $groups[$item->name] = [

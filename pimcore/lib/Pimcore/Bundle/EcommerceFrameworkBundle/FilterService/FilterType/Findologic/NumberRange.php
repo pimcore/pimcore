@@ -29,8 +29,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $currentField = $this->getField($filterDefinition);
         $values = [];
         foreach ($productList->getGroupByValues($currentField, true) as $value) {
-            if($currentField == 'price')
-            {
+            if ($currentField == 'price') {
                 // add min
                 $values[] = [
                     'from' => $value['parameter']->min,
@@ -45,9 +44,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                     'value' => $value['parameter']->max,
                     'count' => 1
                 ];
-            }
-            else
-            {
+            } else {
                 $values[] = [
                     'value' => $value['value'],
                     'count' => $value['count']
