@@ -313,7 +313,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         $object = Object::getById(intval($request->get('id')));
 
-        if ($object instanceof Object) {
+        if (!$object instanceof Object) {
             return $this->json([
                 'success' => false,
                 'message' => 'element_not_found'
