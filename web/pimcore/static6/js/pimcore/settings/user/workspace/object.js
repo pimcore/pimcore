@@ -135,7 +135,7 @@ pimcore.settings.user.workspace.object = Class.create({
             tbar: [
                 {
                     xtype: "tbtext",
-                    text: "<b>" + t("objects") + "</b>"
+                    text: "<b>" + t("data_objects") + "</b>"
                 },
                 "-","-",
                 {
