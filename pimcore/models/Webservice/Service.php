@@ -889,11 +889,11 @@ class Service
                 $params['groupBy'] = $groupBy;
             }
 
-            $listClassName = '\\Pimcore\\Model\\Object';
+            $listClassName = '\\Pimcore\\Model\\DataObject';
             if (!empty($objectClass)) {
                 $listClassName = '\\Pimcore\\Model\\DataObject\\' . ucfirst($objectClass);
                 if (!\Pimcore\Tool::classExists($listClassName)) {
-                    $listClassName = '\\Pimcore\\Model\\Object';
+                    $listClassName = '\\Pimcore\\Model\\DataObject';
                 }
             }
 
