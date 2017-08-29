@@ -321,7 +321,7 @@ class Slider extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return float
@@ -364,7 +364,7 @@ class Slider extends Model\DataObject\ClassDefinition\Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->minValue = $masterDefinition->minValue;
         $this->maxValue = $masterDefinition->maxValue;

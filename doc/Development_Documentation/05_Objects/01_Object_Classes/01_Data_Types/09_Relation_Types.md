@@ -98,11 +98,11 @@ Internally the setter sets the value to an empty array, regardless if an empty a
 Related items that are unpublished are normally not returned. You can disable this behavior like this:
 ```php
 //also include unpublished relations form now on
-Object\AbstractObject::setHideUnpublished(false);
+DataObject\AbstractObject::setHideUnpublished(false);
 //get a related object that is either published or unpublished
 $relationObject = $relation->getObject();
 //return to normal behavior
-Object\AbstractObject::setHideUnpublished(true);
+DataObject\AbstractObject::setHideUnpublished(true);
 ```
 
 

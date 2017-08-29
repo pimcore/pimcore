@@ -597,12 +597,13 @@ class TranslationController extends AdminController
 
                 if ($element['children']) {
                     $el = Element\Service::getElementById($element['type'], $element['id']);
-                    $listClass = '\\Pimcore\\Model\\' . ucfirst($element['type']) . '\\Listing';
+                    $baseClass = ELement\Service::getBaseClassNameForElement($element['type']);
+                    $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
                     $list = new $listClass();
                     $list->setUnpublished(true);
                     if ($el instanceof DataObject\AbstractObject) {
                         // inlcude variants
-                        $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
+                        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
                     }
                     $list->setCondition(($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?', [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']);
                     $idList = $list->loadIdList();

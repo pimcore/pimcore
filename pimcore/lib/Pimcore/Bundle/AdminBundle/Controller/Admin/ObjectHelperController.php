@@ -708,7 +708,7 @@ class ObjectHelperController extends AdminController
                 }
             } else {
                 $counter = 1;
-                while (Object::getByPath($intendedPath) != null) {
+                while (DataObject::getByPath($intendedPath) != null) {
                     $objectKey .= '_' . $counter;
                     $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
                     $counter++;
@@ -856,7 +856,7 @@ class ObjectHelperController extends AdminController
         $objectType = $request->get('objecttype');
         if ($objectType) {
             if ($objectType == DataObject\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
             } else {
                 $list->setObjectTypes([$objectType]);
             }

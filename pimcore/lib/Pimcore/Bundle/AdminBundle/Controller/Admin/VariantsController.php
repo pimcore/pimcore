@@ -197,7 +197,7 @@ class VariantsController extends AdminController
                 $list->setOffset($start);
                 $list->setOrder($order);
                 $list->setOrderKey($orderKey);
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
 
                 $list->load();
 

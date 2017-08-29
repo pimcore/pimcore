@@ -594,7 +594,7 @@ class ObjectController extends AbstractElementController
      *
      * @return JsonResponse
      */
-    protected function updateObject(Object\AbstractObject $object, $type, array $data)
+    protected function updateObject(DataObject\AbstractObject $object, $type, array $data)
     {
         $this->checkElementPermission($object, 'update');
 

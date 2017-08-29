@@ -30,7 +30,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
      *
      * @return array
      */
-    public function load(Object\Concrete $object)
+    public function load(DataObject\Concrete $object)
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = [];
@@ -99,7 +99,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
      *
      * @param DataObject\Concrete $object
      */
-    public function delete(Object\Concrete $object)
+    public function delete(DataObject\Concrete $object)
     {
         // this is to clean up also the inherited values
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());

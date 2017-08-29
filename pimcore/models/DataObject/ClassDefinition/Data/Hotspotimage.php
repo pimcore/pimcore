@@ -337,7 +337,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param Asset\Image $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -374,7 +374,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed|null|Object\ClassDefinition\Data
+     * @return mixed|null|DataObject\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -519,7 +519,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param array $params
      * @param null $idMapper
      *
-     * @return null|Asset|Object\Data\Hotspotimage
+     * @return null|Asset|DataObject\Data\Hotspotimage
      *
      * @throws \Exception
      */

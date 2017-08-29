@@ -182,7 +182,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param Document|Asset|Object\AbstractObject $element
+     * @param Document|Asset|DataObject\AbstractObject $element
      *
      * @return array
      */
@@ -257,6 +257,28 @@ class Service extends Model\AbstractModel
         }
 
         return $element;
+    }
+
+    /**
+     * @param string|ElementInterface $element
+     * @return string
+     * @throws \Exception
+     */
+    public static function getBaseClassNameForElement($element) {
+        if($element instanceof ElementInterface) {
+            $elementType = self::getElementType($element);
+        } else if (is_string($element)) {
+            $elementType = $element;
+        } else {
+            throw new \Exception('Wrong type given for getBaseClassNameForElement(), ElementInterface and string are allowed');
+        }
+
+        $baseClass = ucfirst($elementType);
+        if($elementType == 'object') {
+            $baseClass = 'DataObject';
+        }
+
+        return $baseClass;
     }
 
     /**
@@ -591,7 +613,7 @@ class Service extends Model\AbstractModel
     /**
      * renews all references, for example after unserializing an ElementInterface
      *
-     * @param Document|Asset|Object\AbstractObject $data
+     * @param Document|Asset|DataObject\AbstractObject $data
      * @param bool $initial
      *
      * @return mixed
@@ -622,7 +644,7 @@ class Service extends Model\AbstractModel
                             $data->setKey($originalElement->getKey());
                         }
 
-                        if (!Object\AbstractObject::doNotRestoreKeyAndPath()) {
+                        if (!DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
                             $data->setPath($originalElement->getRealPath());
                         }
                     }
@@ -707,7 +729,7 @@ class Service extends Model\AbstractModel
      * @param $path
      * @param array $options
      *
-     * @return Asset\Folder|Document\Folder|Object\Folder
+     * @return Asset\Folder|Document\Folder|DataObject\Folder
      *
      * @throws \Exception
      */

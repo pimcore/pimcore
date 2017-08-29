@@ -413,7 +413,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -733,7 +733,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
             $data = $object->{$this->getName()};
         }
 
-        if (Object::doHideUnpublished() and is_array($data)) {
+        if (DataObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -901,7 +901,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->assetUploadPath = $masterDefinition->assetUploadPath;

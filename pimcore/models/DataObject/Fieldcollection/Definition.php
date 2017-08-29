@@ -186,7 +186,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @param array|Object\ClassDefinition\Layout|Object\ClassDefinition\Data $def
+     * @param array|DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
     public function extractDataDefinitions($def)
     {

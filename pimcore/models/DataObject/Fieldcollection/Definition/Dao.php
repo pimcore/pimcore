@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    public function getTableName(Object\ClassDefinition $class)
+    public function getTableName(DataObject\ClassDefinition $class)
     {
         return 'object_collection_' . $this->model->getKey() . '_' . $class->getId();
     }
@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    public function getLocalizedTableName(Object\ClassDefinition $class)
+    public function getLocalizedTableName(DataObject\ClassDefinition $class)
     {
         return 'object_collection_' . $this->model->getKey() . '_localized_' . $class->getId();
     }
@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\ClassDefinition $class
      */
-    public function delete(Object\ClassDefinition $class)
+    public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
         $this->db->query('DROP TABLE IF EXISTS `' . $table . '`');
@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\ClassDefinition $class
      */
-    public function createUpdateTable(Object\ClassDefinition $class)
+    public function createUpdateTable(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
 

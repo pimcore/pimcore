@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Object\Concrete $object, $ownertype, $ownername, $position, $type = 'object')
+    public function save(DataObject\Concrete $object, $ownertype, $ownername, $position, $type = 'object')
     {
         $table = $this->getTablename($object);
 
@@ -76,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = 'object')
+    public function load(DataObject\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = 'object')
     {
         if ($type == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";

@@ -164,7 +164,7 @@ abstract class Data
      * Returns the data for the editmode
      *
      * @param mixed $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return mixed
@@ -175,7 +175,7 @@ abstract class Data
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
      *
      * @param mixed $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return mixed
@@ -1002,7 +1002,7 @@ abstract class Data
 
     /**
      * @param $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -1070,7 +1070,7 @@ abstract class Data
      *
      *
      * @param mixed $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return null|array
@@ -1224,7 +1224,7 @@ abstract class Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         // implement in child classes
     }
@@ -1232,7 +1232,7 @@ abstract class Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function adoptMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $vars = get_object_vars($this);
         $protectedFields = ['noteditable', 'invisible'];

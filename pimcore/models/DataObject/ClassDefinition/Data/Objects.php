@@ -253,7 +253,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -546,7 +546,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -715,7 +715,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->relationType = $masterDefinition->relationType;

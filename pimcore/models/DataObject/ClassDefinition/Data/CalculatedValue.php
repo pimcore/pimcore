@@ -179,7 +179,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
      * @see Object_Class_Data::getDataFromEditmode
      *
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return float
@@ -192,7 +192,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
      * @see Object_Class_Data::getVersionPreview
      *
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return float

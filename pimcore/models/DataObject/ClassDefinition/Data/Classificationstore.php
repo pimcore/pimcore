@@ -349,7 +349,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -499,7 +499,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
      * @param mixed $params
      * @param IdMapper $idMapper
      *
-     * @return mixed|null|Object\Classificationstore
+     * @return mixed|null|DataObject\Classificationstore
      *
      * @throws \Exception
      */

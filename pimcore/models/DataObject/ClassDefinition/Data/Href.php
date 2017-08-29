@@ -234,7 +234,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      * @param mixed $params
      * @param bool $notRelationTable
      *
-     * @return Asset|Document|Object\AbstractObject
+     * @return Asset|Document|DataObject\AbstractObject
      */
     public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
     {
@@ -252,7 +252,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
     /**
      * @see DataObject\ClassDefinition\Data::getDataForQueryResource
      *
-     * @param Asset|Document|Object\AbstractObject $data
+     * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -272,7 +272,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
     /**
      * @see DataObject\ClassDefinition\Data::getDataForEditmode
      *
-     * @param Asset|Document|Object\AbstractObject $data
+     * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -301,7 +301,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset|Document|Object\AbstractObject
+     * @return Asset|Document|DataObject\AbstractObject
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -317,7 +317,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset|Document|Object\AbstractObject
+     * @return Asset|Document|DataObject\AbstractObject
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -340,7 +340,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param Document | Asset | DataObject\AbstractObject $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -568,7 +568,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      * @param $object
      * @param array $params
      *
-     * @return null|Object\Fieldcollection\Data\AbstractData|Object\Concrete|Object\Objectbrick\Data\
+     * @return null|DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|DataObject\Objectbrick\Data\
      */
     public function preGetData($object, $params = [])
     {
@@ -592,7 +592,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
+        if (DataObject\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
@@ -681,7 +681,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;

@@ -230,7 +230,7 @@ class Item extends Model\AbstractModel
         if (method_exists($element, 'getChilds')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChildren([Object::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
+                $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
             } else {
                 $childs = $element->getChilds();
             }

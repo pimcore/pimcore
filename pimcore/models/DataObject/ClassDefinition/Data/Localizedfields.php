@@ -264,7 +264,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -396,7 +396,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      * @param mixed $params
      * @param null $idMapper
      *
-     * @return mixed|null|Object\Localizedfield
+     * @return mixed|null|DataObject\Localizedfield
      *
      * @throws \Exception
      */

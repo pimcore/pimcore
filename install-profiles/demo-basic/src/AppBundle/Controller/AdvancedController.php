@@ -135,7 +135,7 @@ class AdvancedController extends FrontendController
 
                     // first we need to create a new object, and fill some system-related information
                     $person = new DataObject\Person();
-                    $person->setParent(Object\AbstractObject::getByPath('/crm/inquiries')); // we store all objects in /crm
+                    $person->setParent(DataObject\AbstractObject::getByPath('/crm/inquiries')); // we store all objects in /crm
                     $person->setKey($filename); // the filename of the object
                     $person->setPublished(true); // yep, it should be published :)
 
@@ -152,7 +152,7 @@ class AdvancedController extends FrontendController
                 $inquiryFilename = File::getValidFilename(date('Y-m-d') . '~' . $person->getEmail());
 
                 $inquiry = new DataObject\Inquiry();
-                $inquiry->setParent(Object\AbstractObject::getByPath('/inquiries')); // we store all objects in /inquiries
+                $inquiry->setParent(DataObject\AbstractObject::getByPath('/inquiries')); // we store all objects in /inquiries
                 $inquiry->setKey($inquiryFilename); // the filename of the object
                 $inquiry->setPublished(true); // yep, it should be published :)
 

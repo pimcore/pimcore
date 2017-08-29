@@ -31,7 +31,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
      *
      * @return string
      */
-    public function getTableName(Object\ClassDefinition $class, $query = false)
+    public function getTableName(DataObject\ClassDefinition $class, $query = false)
     {
         if ($query) {
             return 'object_brick_query_' . $this->model->getKey() . '_' . $class->getId();
@@ -43,7 +43,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
     /**
      * @param DataObject\ClassDefinition $class
      */
-    public function delete(Object\ClassDefinition $class)
+    public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class, false);
         $this->db->query('DROP TABLE IF EXISTS `' . $table . '`');
@@ -55,7 +55,7 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
     /**
      * @param DataObject\ClassDefinition $class
      */
-    public function createUpdateTable(Object\ClassDefinition $class)
+    public function createUpdateTable(DataObject\ClassDefinition $class)
     {
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);

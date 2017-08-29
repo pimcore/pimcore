@@ -293,7 +293,7 @@ class TestDataHelper extends Module
         $hotspots = $value->getHotspots();
 
         $this->assertCount(2, $hotspots);
-        $this->assertInstanceOf(Object\Data\Hotspotimage::class, $value);
+        $this->assertInstanceOf(DataObject\Data\Hotspotimage::class, $value);
 
         $asset    = Asset::getByPath('/' . static::HOTSPOT_IMAGE);
         $hotspots = $this->createHotspots();
@@ -662,7 +662,7 @@ class TestDataHelper extends Module
         $value  = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(Object\Data\Geopoint::class, $value);
+        $this->assertInstanceOf(DataObject\Data\Geopoint::class, $value);
 
         $expected = $this->getGeopointFixture();
 
@@ -706,7 +706,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(Object\Data\Geobounds::class, $value);
+        $this->assertInstanceOf(DataObject\Data\Geobounds::class, $value);
 
         $expected = $this->getGeoboundsFixture();
 
@@ -771,7 +771,7 @@ class TestDataHelper extends Module
             $expectedPoint = $expected[$i];
 
             $this->assertNotNull($point);
-            $this->assertInstanceOf(Object\Data\Geopoint::class, $point);
+            $this->assertInstanceOf(DataObject\Data\Geopoint::class, $point);
             $this->assertEquals($expectedPoint->__toString(), $point->__toString(), 'String representations are equal');
             $this->assertEquals($expectedPoint, $point, 'Objects are equal');
         }
@@ -873,7 +873,7 @@ class TestDataHelper extends Module
         $link = $object->$getter();
 
         $this->assertNotNull($link);
-        $this->assertInstanceOf(Object\Data\Link::class, $link);
+        $this->assertInstanceOf(DataObject\Data\Link::class, $link);
 
         $document = Document::getByPath($link->getObject());
         $expected = Document::getByPath('/' . static::DOCUMENT . $seed);
@@ -932,7 +932,7 @@ class TestDataHelper extends Module
         $value  = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(Object\Data\StructuredTable::class, $value);
+        $this->assertInstanceOf(DataObject\Data\StructuredTable::class, $value);
 
         $expected = $this->getStructuredTableData($seed);
 

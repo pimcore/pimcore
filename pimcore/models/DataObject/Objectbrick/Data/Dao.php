@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Object\Concrete $object)
+    public function save(DataObject\Concrete $object)
     {
 
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
@@ -204,7 +204,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\Concrete $object
      */
-    public function delete(Object\Concrete $object)
+    public function delete(DataObject\Concrete $object)
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);

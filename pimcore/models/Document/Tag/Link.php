@@ -203,7 +203,7 @@ class Link extends Model\Document\Tag
                     $this->data['path'] = $asset->$method();
                 }
             } elseif ($this->data['internalType'] == 'object') {
-                if ($object = Model\Object::getById($this->data['internalId'])) {
+                if ($object = Model\DataObject::getById($this->data['internalId'])) {
                     if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                         if ($realPath) {
                             $this->data['path'] = $object->getFullPath();

@@ -167,7 +167,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -207,7 +207,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return null|Object\ClassDefinition\Data|Object\Data\Geopoint
+     * @return null|DataObject\ClassDefinition\Data|DataObject\Data\Geopoint
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {

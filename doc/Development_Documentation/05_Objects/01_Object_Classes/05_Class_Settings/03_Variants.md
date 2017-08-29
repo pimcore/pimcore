@@ -41,10 +41,10 @@ type to `Object_Abstract::OBJECT_TYPE_VARIANT`.
 ```php
 
 $objectX = new DataObject\Product();
-$objectX->setParent(Object\Product::getById(362603));
+$objectX->setParent(DataObject\Product::getById(362603));
 $objectX->setKey("variantname");
 $objectX->setColor("black");
-$objectX->setType(Object\AbstractObject::OBJECT_TYPE_VARIANT);
+$objectX->setType(DataObject\AbstractObject::OBJECT_TYPE_VARIANT);
 $objectX->save();
 ```
 
@@ -55,7 +55,7 @@ Getting all variants of an object is quite simple. Just call `getChildren` and p
 If only variants should be returned use following line.
 
 ```php
-$objectX->getChildren([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+$objectX->getChildren([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
 ```
 
 By default, `getChildren` delivers objects and folders but no variants.
@@ -70,14 +70,14 @@ snippets:
 
 ```php
 $list = new DataObject\Product\Listing();
-$list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+$list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
 $list->load();
 
 // or
 
 
-Object\Product::getList([
-    "objectTypes" => [Object\AbstractObject::OBJECT_TYPE_VARIANT]
+DataObject\Product::getList([
+    "objectTypes" => [DataObject\AbstractObject::OBJECT_TYPE_VARIANT]
 ]);
 ```
 
@@ -85,7 +85,7 @@ If you want regular objects and variants, you should use:
 
 ```php
 $list = new DataObject\Product\Listing();
-$list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT,Object\AbstractObject::OBJECT_TYPE_OBJECT]);
+$list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT,DataObject\AbstractObject::OBJECT_TYPE_OBJECT]);
 $list->load();
 
 ```

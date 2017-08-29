@@ -60,12 +60,12 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         if ($object instanceof DataObject\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
-                $objectTypes = [Object\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT];
+                $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT];
             }
         }
 
         if (!$objectTypes) {
-            $objectTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
+            $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
         }
 
         if ($object->hasChildren($objectTypes)) {
@@ -128,7 +128,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             //pagination for custom view
             $total = $cv
                 ? $childsList->count()
-                : $object->getChildAmount([Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
+                : $object->getChildAmount([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
                     DataObject\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser());
         }
 
@@ -173,7 +173,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             'lockOwner' => $child->getLocked() ? true : false
         ];
 
-        $allowedTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
+        $allowedTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
         if ($child instanceof DataObject\Concrete && $child->getClass()->getShowVariants()) {
             $allowedTypes[] = DataObject\AbstractObject::OBJECT_TYPE_VARIANT;
         }
@@ -445,7 +445,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      * @param DataObject\Concrete $object
      * @param bool $objectFromVersion
      */
-    private function getDataForObject(Object\Concrete $object, $objectFromVersion = false)
+    private function getDataForObject(DataObject\Concrete $object, $objectFromVersion = false)
     {
         foreach ($object->getClass()->getFieldDefinitions(['object' => $object]) as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
@@ -585,7 +585,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      *
      * @return bool
      */
-    private function isInheritableField(Object\ClassDefinition\Data $fielddefinition)
+    private function isInheritableField(DataObject\ClassDefinition\Data $fielddefinition)
     {
         if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Fieldcollections
             //            || $fielddefinition instanceof DataObject\ClassDefinition\Data\Localizedfields
@@ -668,7 +668,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      *
      * @return mixed
      */
-    public function filterLocalizedFields(Object\AbstractObject $object, $objectData)
+    public function filterLocalizedFields(DataObject\AbstractObject $object, $objectData)
     {
         if (!($object instanceof DataObject\Concrete)) {
             return $objectData;
@@ -796,7 +796,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         if ($parent->isAllowed('create')) {
             $intendedPath = $parent->getRealFullPath() . '/' . $request->get('key');
 
-            if (!Object\Service::pathExists($intendedPath)) {
+            if (!DataObject\Service::pathExists($intendedPath)) {
                 $object = $this->get('pimcore.model.factory')->build($className);
                 if ($object instanceof DataObject\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
@@ -866,7 +866,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         $parent = DataObject::getById($request->get('parentId'));
         if ($parent->isAllowed('create')) {
-            if (!Object\Service::pathExists($parent->getRealFullPath() . '/' . $request->get('key'))) {
+            if (!DataObject\Service::pathExists($parent->getRealFullPath() . '/' . $request->get('key'))) {
                 $folder = DataObject\Folder::create([
                     'o_parentId' => $request->get('parentId'),
                     'o_creationDate' => time(),
@@ -1768,7 +1768,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $list->setOrder($order);
 
             if ($class->getShowVariants()) {
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
             DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
@@ -1853,13 +1853,13 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 ]
             ]];
 
-            if ($object->hasChildren([Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
+            if ($object->hasChildren([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of children
                 $list = new DataObject\Listing();
                 $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {
@@ -2161,7 +2161,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      *
      * @return DataObject\Concrete
      */
-    protected function getLatestVersion(Object\Concrete $object)
+    protected function getLatestVersion(DataObject\Concrete $object)
     {
         $modificationDate = $object->getModificationDate();
         $latestVersion = $object->getLatestVersion();

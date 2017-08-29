@@ -18,7 +18,7 @@
 namespace {
     if (version_compare(PHP_VERSION, '7.2.0', '<')) {
         // this is just an alias ;-)
-        class_alias('Pimcore\\Model\\CustomObject\\AbstractObject', 'Pimcore\\Model\\Object');
+        class_alias('Pimcore\\Model\\DataObject\\AbstractObject', 'Pimcore\\Model\\Object');
     }
 }
 
@@ -27,7 +27,7 @@ namespace {
 namespace Pimcore\Model {
     if (version_compare(PHP_VERSION, '7.2.0', '<')) {
         if (!\Pimcore\Tool::classExists('Pimcore\\Model\\Object')) {
-            class Object extends \Pimcore\Model\CustomObject\AbstractObject
+            class Object extends \Pimcore\Model\DataObject\AbstractObject
             {
             }
         }

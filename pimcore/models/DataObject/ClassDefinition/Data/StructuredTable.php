@@ -375,7 +375,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -455,7 +455,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed|Object\Data\StructuredTable
+     * @return mixed|DataObject\Data\StructuredTable
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -655,7 +655,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->labelWidth = $masterDefinition->labelWidth;
         $this->labelFirstCell = $masterDefinition->labelFirstCell;

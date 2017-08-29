@@ -84,7 +84,7 @@ $product->save();
 //adding a new Objectbrick to an object
 $product = new DataObject\Product();
 $product->setKey("testproduct");
-$product->setParent(Object\Product::getById(4));
+$product->setParent(DataObject\Product::getById(4));
  
 $product->setName("testproduct");
  

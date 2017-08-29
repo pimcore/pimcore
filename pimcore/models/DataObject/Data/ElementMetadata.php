@@ -128,7 +128,7 @@ class ElementMetadata extends Model\AbstractModel
      *
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType)
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType)
     {
         return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType);
     }

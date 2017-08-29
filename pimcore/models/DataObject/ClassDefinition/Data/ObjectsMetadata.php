@@ -267,7 +267,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -613,7 +613,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement->getObject())) {
@@ -816,7 +816,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedClassId = $masterDefinition->allowedClassId;
         $this->visibleFields = $masterDefinition->visibleFields;

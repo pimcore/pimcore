@@ -33,9 +33,9 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
      * @param $position
      * @param $type
      *
-     * @return null|Object\AbstractObject
+     * @return null|DataObject\AbstractObject
      */
-    public function load(Object\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType = 'object')
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType = 'object')
     {
         if ($destinationType == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";

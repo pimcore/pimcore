@@ -126,7 +126,7 @@ class Dao extends Model\DataObject\Listing\Dao
             $this->firstException = false;
 
             $localizedFields = new DataObject\Localizedfield();
-            $localizedFields->setClass(Object\ClassDefinition::getById($this->model->getClassId()));
+            $localizedFields->setClass(DataObject\ClassDefinition::getById($this->model->getClassId()));
             $localizedFields->createUpdateTable();
 
             return $this->loadIdList();

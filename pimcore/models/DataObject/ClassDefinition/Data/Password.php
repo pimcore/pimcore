@@ -319,7 +319,7 @@ class Password extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -437,7 +437,7 @@ class Password extends Model\DataObject\ClassDefinition\Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;

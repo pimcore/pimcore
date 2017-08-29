@@ -110,7 +110,7 @@ class ObjectMetadata extends Model\AbstractModel
      *
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
+    public function load(DataObject\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
     {
         return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
     }

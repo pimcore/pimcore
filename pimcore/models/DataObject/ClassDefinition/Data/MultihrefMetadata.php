@@ -381,7 +381,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -724,7 +724,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             /** @var $listElement DataObject\Data\ElementMetadata */
             foreach ($data as $listElement) {
@@ -889,7 +889,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         parent::synchronizeWithMasterDefinition($masterDefinition);
         $this->columns = $masterDefinition->columns;

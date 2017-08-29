@@ -79,7 +79,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataForResource
      *
      * @param bool $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return int
@@ -115,7 +115,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataForQueryResource
      *
      * @param bool $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return bool
@@ -129,7 +129,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataForEditmode
      *
      * @param bool $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return bool
@@ -143,7 +143,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataFromEditmode
      *
      * @param bool $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return bool
@@ -161,7 +161,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param bool $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return bool
@@ -266,7 +266,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->defaultValue = $masterDefinition->defaultValue;
     }

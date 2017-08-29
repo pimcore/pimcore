@@ -19,7 +19,7 @@ There are really nearly endless possibilities what to do with Notes & Events.
 ```php
 use Pimcore\Model;
   
-$object = Model\Object::getById(4);
+$object = Model\DataObject::getById(4);
  
 $note = new Model\Element\Note();
 $note->setElement($object);

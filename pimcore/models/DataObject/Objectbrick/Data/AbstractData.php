@@ -43,7 +43,7 @@ abstract class AbstractData extends Model\AbstractModel
     /**
      * @param DataObject\Concrete $object
      */
-    public function __construct(Object\Concrete $object)
+    public function __construct(DataObject\Concrete $object)
     {
         $this->setObject($object);
     }

@@ -1302,7 +1302,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         foreach ($fieldCollections as $fieldCollection) {
             $key = $fieldCollection->key;
-            $fieldCollectionJson = json_decode(Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
+            $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
             $fieldCollectionJson->key = $key;
             $result['fieldcollection'][] = $fieldCollectionJson;
         }
@@ -1323,7 +1323,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         foreach ($objectBricks as $objectBrick) {
             $key = $objectBrick->key;
-            $objectBrickJson = json_decode(Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
+            $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
             $objectBrickJson->key = $key;
             $result['objectbrick'][] = $objectBrickJson;
         }

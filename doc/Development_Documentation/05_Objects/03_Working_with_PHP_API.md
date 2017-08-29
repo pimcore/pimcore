@@ -47,7 +47,7 @@ $city->delete();
 
 > When using your generated classes in the code, the classname always starts with a capital letter.  
 > Example-Classname: `product`  
-> PHP-Class: `Object\Product`
+> PHP-Class: `DataObject\Product`
 
 <a name="objectsListing">&nbsp;</a>
 

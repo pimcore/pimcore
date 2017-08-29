@@ -148,7 +148,7 @@ class Geopolygon extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string

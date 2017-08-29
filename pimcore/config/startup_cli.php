@@ -45,9 +45,9 @@ chdir($workingDirectory);
 //Activate Inheritance for cli-scripts
 \Pimcore::unsetAdminMode();
 Document::setHideUnpublished(true);
-Object\AbstractObject::setHideUnpublished(true);
-Object\AbstractObject::setGetInheritedValues(true);
-Object\Localizedfield::setGetFallbackValues(true);
+DataObject\AbstractObject::setHideUnpublished(true);
+DataObject\AbstractObject::setGetInheritedValues(true);
+DataObject\Localizedfield::setGetFallbackValues(true);
 
 // CLI has no memory/time limits
 @ini_set('memory_limit', -1);

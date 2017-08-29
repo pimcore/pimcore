@@ -64,7 +64,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataForResource
      *
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return int
@@ -98,7 +98,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataForQueryResource
      *
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return int
@@ -114,7 +114,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getDataForEditmode
      *
      * @param \Zend_Date\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -147,7 +147,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
      *
      * @param int $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return \Zend_Date|\DateTime
@@ -197,7 +197,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -268,7 +268,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return null|\Pimcore\Date|Object\ClassDefinition\Data
+     * @return null|\Pimcore\Date|DataObject\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {

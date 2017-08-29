@@ -216,7 +216,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
      * @see DataObject\ClassDefinition\Data::getVersionPreview
      *
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string
@@ -317,7 +317,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
      * @param $object
      * @param array $params
      *
-     * @return null|Object\Fieldcollection
+     * @return null|DataObject\Fieldcollection
      */
     public function load($object, $params = [])
     {
@@ -431,7 +431,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed|Object\Fieldcollection
+     * @return mixed|DataObject\Fieldcollection
      *
      * @param $idMapper
      *
@@ -594,7 +594,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
      * @param $object
      * @param array $params
      *
-     * @return null|Object\Fieldcollection
+     * @return null|DataObject\Fieldcollection
      *
      * @throws \Exception
      */
@@ -823,7 +823,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     /**
      * @param DataObject\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->lazyLoading = $masterDefinition->lazyLoading;

@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\Concrete $object
      */
-    public function save(Object\Concrete $object)
+    public function save(DataObject\Concrete $object)
     {
         $this->delete($object);
     }
@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function load(Object\Concrete $object)
+    public function load(DataObject\Concrete $object)
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $values = [];
@@ -116,7 +116,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\Concrete $object
      */
-    public function delete(Object\Concrete $object)
+    public function delete(DataObject\Concrete $object)
     {
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);

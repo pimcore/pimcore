@@ -618,7 +618,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param bool $decode
      * @param null $idMapper
      *
-     * @return mixed|Object\Folder
+     * @return mixed|DataObject\Folder
      *
      * @throws Exception
      */
@@ -861,7 +861,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      *
      * @return mixed json encoded success value and id
      */
-    public function createObjectConcrete(Object\AbstractObject $object)
+    public function createObjectConcrete(DataObject\AbstractObject $object)
     {
         if ($object->getType() === 'folder') {
             $documentType = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Folder\\Out';
@@ -950,7 +950,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      *
      * @return mixed
      */
-    public function createObjectFolder(Object\Folder $objectFolder)
+    public function createObjectFolder(DataObject\Folder $objectFolder)
     {
         return $this->createObjectConcrete($objectFolder);
     }
@@ -983,7 +983,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param      $id
      * @param bool $decode
      *
-     * @return mixed|null|Object\ClassDefinition|string
+     * @return mixed|null|DataObject\ClassDefinition|string
      *
      * @throws Exception
      */
@@ -1008,7 +1008,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      * @param      $id
      * @param bool $decode
      *
-     * @return mixed|Object\ClassDefinition
+     * @return mixed|DataObject\ClassDefinition
      *
      * @throws Exception
      */
