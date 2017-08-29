@@ -569,7 +569,7 @@ class ObjectController extends AbstractElementController
 
         $wsData = $this->fillWebserviceData($class, $data);
 
-        $object = new Object();
+        $object = new DataObject();
         $object->setId($wsData->parentId);
 
         $this->checkElementPermission($object, 'create');
