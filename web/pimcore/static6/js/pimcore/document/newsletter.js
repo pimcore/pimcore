@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.document.newsletter");
 pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("newsletter");
         this.addLoadingPanel();

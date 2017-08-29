@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.document.email");
 pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("email");
         this.addLoadingPanel();

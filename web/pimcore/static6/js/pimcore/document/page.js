@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.document.page");
 pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("page");
         this.addLoadingPanel();

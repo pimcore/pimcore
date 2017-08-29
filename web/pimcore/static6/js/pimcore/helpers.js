@@ -139,7 +139,7 @@ pimcore.helpers.closeAsset = function (id) {
 pimcore.helpers.openDocument = function (id, type, options) {
     if (pimcore.globalmanager.exists("document_" + id) == false) {
         if (pimcore.document[type]) {
-            pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id));
+            pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id, options));
             pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
 
             if (options !== undefined) {
@@ -905,11 +905,11 @@ pimcore.helpers.openMemorizedTabs = function () {
                 window.setTimeout(function (parts) {
                     if(parts[1] && parts[2]) {
                         if(parts[0] == "asset") {
-                            pimcore.helpers.openAsset(parts[1], parts[2], { ignoreForHistory: true});
+                            pimcore.helpers.openAsset(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
                         } else if(parts[0] == "document") {
-                            pimcore.helpers.openDocument(parts[1], parts[2], { ignoreForHistory: true});
+                            pimcore.helpers.openDocument(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
                         } else if(parts[0] == "object") {
-                            pimcore.helpers.openObject(parts[1], parts[2], { ignoreForHistory: true});
+                            pimcore.helpers.openObject(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
                         }
                     }
                 }.bind(this, parts), 200);
