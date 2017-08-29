@@ -104,7 +104,7 @@ class Service
             } else {
                 $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($type);
             }
-            $parentClassName = '\\Pimcore\\Model\\Object';
+            $parentClassName = '\\Pimcore\\Model\\DataObject';
             $fullPath = $path . $apiElement->key;
         } elseif ($apiElement instanceof Webservice\Data\Document) {
             $maintype = 'document';

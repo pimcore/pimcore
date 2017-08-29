@@ -374,7 +374,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        $className = 'Pimcore\\Model\\Object';
+        $className = 'Pimcore\\Model\\DataObject';
         // get classname
         if (get_called_class() != 'Pimcore\\Model\\DataObject\\AbstractObject' && get_called_class() != 'Pimcore\\Model\\DataObject\\Concrete') {
             $tmpObject = new static();
