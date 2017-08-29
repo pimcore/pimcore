@@ -57,10 +57,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             params.layoutId = this.options.layoutId;
         }
 
+        var options = this.options || {};
+
         Ext.Ajax.request({
             url: "/admin/object/get",
             params: params,
-            ignoreErrors: this.options.ignoreNotFoundError,
+            ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
             failure: function() {
                 this.forgetOpenTab();
