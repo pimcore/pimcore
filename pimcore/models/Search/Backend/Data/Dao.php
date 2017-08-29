@@ -34,7 +34,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 $maintype = 'document';
             } elseif ($element instanceof Model\Asset) {
                 $maintype = 'asset';
-            } elseif ($element instanceof Model\Object\AbstractObject) {
+            } elseif ($element instanceof Model\DataObject\AbstractObject) {
                 $maintype = 'object';
             } else {
                 throw new \Exception('unknown type of element with id [ '.$element->getId().' ] ');

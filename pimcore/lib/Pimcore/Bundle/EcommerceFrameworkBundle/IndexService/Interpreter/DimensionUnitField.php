@@ -25,7 +25,7 @@ class DimensionUnitField implements IInterpreter
     {
         $config = $this->resolveOptions($config ?? []);
 
-        if (!empty($value) && $value instanceof \Pimcore\Model\Object\Data\DimensionUnitField) {
+        if (!empty($value) && $value instanceof \Pimcore\Model\DataObject\Data\DimensionUnitField) {
             if ($config['onlyDimensionValue']) {
                 $unit = $value->getUnit();
                 $value = $value->getValue();

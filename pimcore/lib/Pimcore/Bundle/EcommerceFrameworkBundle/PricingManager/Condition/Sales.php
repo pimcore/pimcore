@@ -18,8 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\OnlineShopOrder;
-use Pimcore\Model\Object\OnlineShopOrderItem;
+use Pimcore\Model\DataObject\OnlineShopOrder;
+use Pimcore\Model\DataObject\OnlineShopOrderItem;
 
 class Sales extends AbstractOrder implements ICondition
 {

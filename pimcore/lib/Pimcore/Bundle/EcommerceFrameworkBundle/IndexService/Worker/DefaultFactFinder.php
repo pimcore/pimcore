@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRela
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\Connection;
 use Pimcore\Logger;
-use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Tool\Text;
 
 /**

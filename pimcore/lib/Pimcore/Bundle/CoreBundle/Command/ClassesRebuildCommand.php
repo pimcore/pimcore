@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -89,7 +89,7 @@ class ClassesRebuildCommand extends AbstractCommand
             $output->writeln('---------------------');
             $output->writeln('Saving all object bricks');
         }
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
         foreach ($list as $brickDefinition) {
             if ($output->isVerbose()) {
@@ -103,7 +103,7 @@ class ClassesRebuildCommand extends AbstractCommand
             $output->writeln('---------------------');
             $output->writeln('Saving all field collections');
         }
-        $list = new Object\Fieldcollection\Definition\Listing();
+        $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
         foreach ($list as $fc) {
             if ($output->isVerbose()) {

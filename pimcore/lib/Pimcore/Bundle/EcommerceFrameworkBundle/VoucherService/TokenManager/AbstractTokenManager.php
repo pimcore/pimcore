@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Pimcore\Model\Object\OnlineShopVoucherSeries;
+use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\View\Helper\TranslateAdmin;
 
 abstract class AbstractTokenManager implements ITokenManager

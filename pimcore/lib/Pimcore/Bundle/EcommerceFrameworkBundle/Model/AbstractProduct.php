@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable, IProduct
+class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IIndexable, ICheckoutable, IProduct
 {
     // =============================================
     //     IIndexable Methods
@@ -223,11 +223,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      *
      * @param int $id
      *
-     * @return null|\Pimcore\Model\Object\AbstractObject
+     * @return null|\Pimcore\Model\DataObject\AbstractObject
      */
     public static function getById($id)
     {
-        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
 
         if ($object instanceof AbstractProduct) {
             return $object;

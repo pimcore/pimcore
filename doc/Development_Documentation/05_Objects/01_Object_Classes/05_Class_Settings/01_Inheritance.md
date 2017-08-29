@@ -43,18 +43,18 @@ the attributes directly, you will not get the inherited values.
 ## Parent Class - Class Inheritance
 
 Pimcore data objects support inheritance, just as any PHP object does. In Pimcore the class from which a specific data 
-class inherits can be changed. By default, a data class inherits from `Pimcore\Model\Object\Concrete`, but if required 
+class inherits can be changed. By default, a data class inherits from `Pimcore\Model\DataObject\Concrete`, but if required 
 otherwise, a data class can extend a different parent class. If the parent class should be changed, this needs to be 
 specified in the class definition as shown in the screen below:
 ![Parent Class](../../../img/classes-class-inheritance.png)
 
 > **Be Careful**  
 > This is a very advanced feature and should only be used by very experienced developers who know what they are doing and 
-> what consequences it might have when the parent class is changed from `Pimcore\Model\Object\Concrete` to something else. 
+> what consequences it might have when the parent class is changed from `Pimcore\Model\DataObject\Concrete` to something else. 
 
 In order to maintain all Pimcore functionalities, it has to be ensured that the special class used in the example 
-above extends `Pimcore\Model\Object\Concrete` and that its methods don't override and clash in unexpected ways 
-with existing methods of `Pimcore\Model\Object\Concrete` or any magic functions of `Pimcore\Model\Object\Concrete`
+above extends `Pimcore\Model\DataObject\Concrete` and that its methods don't override and clash in unexpected ways 
+with existing methods of `Pimcore\Model\DataObject\Concrete` or any magic functions of `Pimcore\Model\DataObject\Concrete`
 or its parent classes.
 </div>
 
@@ -67,12 +67,11 @@ Currently there's one hook available. Hooks can be defined as simple methods in 
 
 ##### Example:
 ```php
+namespace Website\DataObject;
 
-namespace Website\Object;
 use Pimcore\Model;
   
-class Special extends Model\Object\Concrete {
- 
+class Special extends Model\DataObject\Concrete {
  
    public function preGetValue($key) {
       if($key == "myCustomProperty") {

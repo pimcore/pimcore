@@ -19,7 +19,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -165,7 +165,7 @@ class SearchController extends AdminController
 
         // filtering for objects
         if ($allParams['filter'] && $allParams['class']) {
-            $class = Object\ClassDefinition::getByName($allParams['class']);
+            $class = DataObject\ClassDefinition::getByName($allParams['class']);
 
             // add Localized Fields filtering
             $params = $this->decodeJson($allParams['filter']);
@@ -174,7 +174,7 @@ class SearchController extends AdminController
 
             foreach ($params as $paramConditionObject) {
                 //this loop divides filter parameters to localized and unlocalized groups
-                $definitionExists = in_array('o_' . $paramConditionObject['property'], Object\Service::getSystemFields())
+                $definitionExists = in_array('o_' . $paramConditionObject['property'], DataObject\Service::getSystemFields())
                     || $class->getFieldDefinition($paramConditionObject['property']);
                 if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
@@ -187,10 +187,10 @@ class SearchController extends AdminController
 
             //string statements for divided filters
             $conditionFilters = count($unlocalizedFieldsFilters)
-                ? Object\Service::getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
+                ? DataObject\Service::getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
                 : null;
             $localizedConditionFilters = count($localizedFieldsFilters)
-                ? Object\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
+                ? DataObject\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
                 : null;
 
             $join = '';
@@ -302,8 +302,8 @@ class SearchController extends AdminController
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed('list')) {
-                if ($element instanceof Object\AbstractObject) {
-                    $data = Object\Service::gridObjectData($element, $fields);
+                if ($element instanceof DataObject\AbstractObject) {
+                    $data = DataObject\Service::gridObjectData($element, $fields);
                 } elseif ($element instanceof Document) {
                     $data = Document\Service::gridDocumentData($element);
                 } elseif ($element instanceof Asset) {

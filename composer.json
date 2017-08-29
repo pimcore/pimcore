@@ -127,7 +127,7 @@
       "": [
         "src/"
       ],
-      "Pimcore\\Model\\Object\\": "var/classes/Object",
+      "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
       "Website\\": "legacy/website/lib"

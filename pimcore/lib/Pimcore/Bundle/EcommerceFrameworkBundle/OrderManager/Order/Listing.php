@@ -18,8 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
 use Pimcore\Db;
-use Pimcore\Model\Object\OnlineShopOrder;
-use Pimcore\Model\Object\OnlineShopOrderItem;
+use Pimcore\Model\DataObject\OnlineShopOrder;
+use Pimcore\Model\DataObject\OnlineShopOrderItem;
 
 class Listing extends AbstractOrderList implements IOrderList
 {

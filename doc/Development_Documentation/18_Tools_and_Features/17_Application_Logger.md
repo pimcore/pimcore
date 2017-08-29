@@ -46,7 +46,7 @@ There are some context variables with a special functionality: fileObject, relat
 $logger = \Pimcore::getContainer()->get("pimcore.app_logger"); 
  
 $fileObject = new \Pimcore\Log\FileObject("some interesting data");
-$myObject = \Pimcore\Model\Object\AbstractObject::getById(73);
+$myObject = \Pimcore\Model\DataObject\AbstractObject::getById(73);
  
 $logger->error("my error message", [
     "fileObject" => $fileObject,

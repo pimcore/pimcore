@@ -39,7 +39,7 @@
 				"childs":[
 					{
 						"fieldtype":"classificationstore",
-						"phpdocType":"\\Pimcore\\Model\\Object\\Classificationstore",
+						"phpdocType":"\\Pimcore\\Model\\DataObject\\Classificationstore",
 						"childs":[
 
 						],

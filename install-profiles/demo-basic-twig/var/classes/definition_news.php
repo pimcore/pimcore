@@ -20,7 +20,7 @@ Fields Summary:
 */
 
 
-return Pimcore\Model\Object\ClassDefinition::__set_state(array(
+return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'news',
    'description' => '',
    'creationDate' => 1368613289,
@@ -33,7 +33,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowVariants' => false,
    'showVariants' => false,
    'layoutDefinitions' =>
-  Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+  Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
      'layout' => NULL,
@@ -51,7 +51,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'childs' =>
     array (
       0 =>
-      Pimcore\Model\Object\ClassDefinition\Layout\Region::__set_state(array(
+      Pimcore\Model\DataObject\ClassDefinition\Layout\Region::__set_state(array(
          'fieldtype' => 'region',
          'name' => 'Layout',
          'type' => NULL,
@@ -67,13 +67,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'childs' =>
         array (
           0 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields::__set_state(array(
              'fieldtype' => 'localizedfields',
-             'phpdocType' => '\\Pimcore\\Model\\Object\\Localizedfield',
+             'phpdocType' => '\\Pimcore\\Model\\DataObject\\Localizedfield',
              'childs' =>
             array (
               0 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 300,
                  'queryColumnType' => 'varchar',
@@ -97,7 +97,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               1 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Textarea::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Textarea::__set_state(array(
                  'fieldtype' => 'textarea',
                  'width' => 300,
                  'height' => '',
@@ -120,7 +120,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               2 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg::__set_state(array(
                  'fieldtype' => 'wysiwyg',
                  'width' => '',
                  'height' => '',
@@ -158,7 +158,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'fieldDefinitionsCache' =>
             array (
               'title' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 300,
                  'queryColumnType' => 'varchar',
@@ -182,7 +182,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               'shortText' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Textarea::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Textarea::__set_state(array(
                  'fieldtype' => 'textarea',
                  'width' => 300,
                  'height' => '',
@@ -205,7 +205,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               'text' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg::__set_state(array(
                  'fieldtype' => 'wysiwyg',
                  'width' => '',
                  'height' => '',
@@ -245,7 +245,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => true,
           )),
           1 =>
-          Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
              'fieldtype' => 'panel',
              'labelWidth' => 100,
              'layout' => '',
@@ -263,7 +263,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'childs' =>
             array (
               0 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Datetime::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Datetime::__set_state(array(
                  'fieldtype' => 'datetime',
                  'queryColumnType' => 'bigint(20)',
                  'columnType' => 'bigint(20)',
@@ -286,7 +286,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               1 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Image::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Image::__set_state(array(
                  'fieldtype' => 'image',
                  'width' => 350,
                  'height' => 350,
@@ -310,7 +310,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               2 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Image::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Image::__set_state(array(
                  'fieldtype' => 'image',
                  'width' => 350,
                  'height' => 350,
@@ -334,7 +334,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               3 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Image::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Image::__set_state(array(
                  'fieldtype' => 'image',
                  'width' => 350,
                  'height' => 350,

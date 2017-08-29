@@ -40,7 +40,7 @@ type to `Object_Abstract::OBJECT_TYPE_VARIANT`.
 
 ```php
 
-$objectX = new Object\Product();
+$objectX = new DataObject\Product();
 $objectX->setParent(Object\Product::getById(362603));
 $objectX->setKey("variantname");
 $objectX->setColor("black");
@@ -69,7 +69,7 @@ deliver. Per default objects and folders are delivered. To deliver object varian
 snippets:
 
 ```php
-$list = new Object\Product\Listing();
+$list = new DataObject\Product\Listing();
 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
 $list->load();
 
@@ -84,7 +84,7 @@ Object\Product::getList([
 If you want regular objects and variants, you should use:
 
 ```php
-$list = new Object\Product\Listing();
+$list = new DataObject\Product\Listing();
 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT,Object\AbstractObject::OBJECT_TYPE_OBJECT]);
 $list->load();
 

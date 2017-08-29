@@ -2,9 +2,9 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Folder;
-use Pimcore\Model\Object\Inheritance;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 

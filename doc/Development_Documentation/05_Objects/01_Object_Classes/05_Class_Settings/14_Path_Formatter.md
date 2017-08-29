@@ -25,10 +25,10 @@ namespace Website;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Object\BlogArticle;
-use Pimcore\Model\Object\ClassDefinition\Data;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\News;
+use Pimcore\Model\DataObject\BlogArticle;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\News;
 
 class TheFormatter
 {

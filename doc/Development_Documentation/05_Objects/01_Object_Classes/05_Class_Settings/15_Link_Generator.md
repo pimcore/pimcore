@@ -24,8 +24,8 @@ Either simply specify the class name ...
 namespace Website\LinkGenerator;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Object\ClassDefinition\LinkGeneratorInterface;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Staticroute;
 
 class NewsLinkGenerator implements LinkGeneratorInterface {

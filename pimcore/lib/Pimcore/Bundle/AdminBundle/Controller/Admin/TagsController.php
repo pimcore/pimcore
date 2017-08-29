@@ -250,7 +250,7 @@ class TagsController extends AdminController
         $idList = [];
         switch ($elementType) {
             case 'object':
-                $object = \Pimcore\Model\Object\AbstractObject::getById($elementId);
+                $object = \Pimcore\Model\DataObject\AbstractObject::getById($elementId);
                 if ($object) {
                     $idList = $this->getSubObjectIds($object);
                 }
@@ -281,13 +281,13 @@ class TagsController extends AdminController
     }
 
     /**
-     * @param \Pimcore\Model\Object\AbstractObject $object
+     * @param \Pimcore\Model\DataObject\AbstractObject $object
      *
      * @return mixed
      */
-    private function getSubObjectIds(\Pimcore\Model\Object\AbstractObject $object)
+    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object)
     {
-        $childsList = new \Pimcore\Model\Object\Listing();
+        $childsList = new \Pimcore\Model\DataObject\Listing();
         $condition = 'o_path LIKE ?';
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();

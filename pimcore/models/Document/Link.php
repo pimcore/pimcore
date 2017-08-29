@@ -134,7 +134,7 @@ class Link extends Model\Document
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $path = $this->getObject()->getFullPath();
             } else {
-                if ($this->getObject() instanceof Model\Object\Concrete) {
+                if ($this->getObject() instanceof Model\DataObject\Concrete) {
                     if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
                         $path = $linkGenerator->generate(
                             $this->getObject(),
@@ -165,7 +165,7 @@ class Link extends Model\Document
         $rawHref = '';
         if ($this->getLinktype() == 'internal') {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset ||
-                ($this->getObject() instanceof Model\Object\Concrete)
+                ($this->getObject() instanceof Model\DataObject\Concrete)
             ) {
                 $rawHref = $this->getObject()->getFullPath();
             }
@@ -347,7 +347,7 @@ class Link extends Model\Document
      */
     public function getObject()
     {
-        if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Model\Object\Concrete) {
+        if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Model\DataObject\Concrete) {
             return $this->object;
         } else {
             if ($this->setObjectFromId()) {
@@ -371,7 +371,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return Asset|Document|Model\Object\Concrete
+     * @return Asset|Document|Model\DataObject\Concrete
      */
     public function setObjectFromId()
     {
@@ -381,7 +381,7 @@ class Link extends Model\Document
             } elseif ($this->internalType == 'asset') {
                 $this->object = Asset::getById($this->internal);
             } elseif ($this->internalType == 'object') {
-                $this->object = Model\Object\Concrete::getById($this->internal);
+                $this->object = Model\DataObject\Concrete::getById($this->internal);
             }
         }
 

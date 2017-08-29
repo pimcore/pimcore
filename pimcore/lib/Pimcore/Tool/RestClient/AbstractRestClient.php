@@ -17,7 +17,7 @@ namespace Pimcore\Tool\RestClient;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 use Psr\Http\Message\RequestInterface;
@@ -515,11 +515,11 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
         $result = [];
         foreach ($response as $item) {
-            $wsDocument = $this->fillWebserviceData('\\Pimcore\\Model\\Webservice\\Data\\Object\\Listing\\Item', $item);
+            $wsDocument = $this->fillWebserviceData('\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Listing\\Item', $item);
             if (!$decode) {
                 $result[] = $wsDocument;
             } else {
-                $object = new Object\AbstractObject();
+                $object = new DataObject\AbstractObject();
                 $wsDocument->reverseMap($object);
                 $result[] = $object;
             }
@@ -643,23 +643,23 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
         $response = $response->data;
 
-        $wsDocument = $this->fillWebserviceData('\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\In', $response);
+        $wsDocument = $this->fillWebserviceData('\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Concrete\\In', $response);
 
         if (!$decode) {
             return $wsDocument;
         }
 
         if ($wsDocument->type == 'folder') {
-            $object = new Object\Folder();
+            $object = new DataObject\Folder();
             $wsDocument->reverseMap($object);
 
             return $object;
         } elseif ($wsDocument->type == 'object' || $wsDocument->type == 'variant') {
-            $classname = 'Pimcore\\Model\\Object\\' . ucfirst($wsDocument->className);
+            $classname = 'Pimcore\\Model\\DataObject\\' . ucfirst($wsDocument->className);
 
             $object = \Pimcore::getContainer()->get('pimcore.model.factory')->build($classname);
 
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof DataObject\Concrete) {
                 $curTime = microtime(true);
                 $wsDocument->reverseMap($object, $this->getDisableMappingExceptions(), $idMapper);
                 $timeConsumed = round(microtime(true) - $curTime, 3) * 1000;
@@ -857,16 +857,16 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Creates a new object.
      *
-     * @param Object\AbstractObject $object
+     * @param DataObject\AbstractObject $object
      *
      * @return mixed json encoded success value and id
      */
     public function createObjectConcrete(Object\AbstractObject $object)
     {
         if ($object->getType() === 'folder') {
-            $documentType = '\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\Out';
+            $documentType = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Folder\\Out';
         } else {
-            $documentType = '\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\Out';
+            $documentType = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Concrete\\Out';
         }
 
         $wsDocument  = Webservice\Data\Mapper::map($object, $documentType, 'out');
@@ -946,7 +946,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     /**
      * Creates a new object folder.
      *
-     * @param Object\Folder $objectFolder object folder.
+     * @param DataObject\Folder $objectFolder object folder.
      *
      * @return mixed
      */
@@ -998,7 +998,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
         $wsDocument = $this->fillWebserviceData('\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\In', $responseData);
 
-        $class = new Object\ClassDefinition();
+        $class = new DataObject\ClassDefinition();
         $wsDocument->reverseMap($class);
 
         return $class;
@@ -1023,7 +1023,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
             return $wsDocument;
         }
 
-        $class = new Object\ClassDefinition();
+        $class = new DataObject\ClassDefinition();
         $wsDocument->reverseMap($class);
 
         return $class;

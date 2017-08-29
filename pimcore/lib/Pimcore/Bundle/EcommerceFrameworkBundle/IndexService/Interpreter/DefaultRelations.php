@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Object\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 
 class DefaultRelations implements IRelationInterpreter
 {

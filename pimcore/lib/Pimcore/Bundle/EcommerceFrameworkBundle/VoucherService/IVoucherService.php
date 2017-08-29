@@ -69,12 +69,12 @@ interface IVoucherService
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject
      * @param AbstractOrder $order
      *
      * @return mixed
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
 
     /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
@@ -90,11 +90,11 @@ interface IVoucherService
      * Removes all tokens from a voucher series and its reservations,
      * not considering any type of filter.
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherSeries $series
      *
      * @return bool
      */
-    public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series);
+    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series);
 
     /**
      * Removes all statistics, optionally a seriesId can be passed, to only remove from one series.

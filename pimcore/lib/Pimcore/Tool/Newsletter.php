@@ -19,7 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Mail;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 
 class Newsletter
@@ -28,7 +28,7 @@ class Newsletter
     const SENDING_MODE_SINGLE = 'single';
 
     /**
-     * @var Object\ClassDefinition
+     * @var DataObject\ClassDefinition
      */
     protected $class;
 
@@ -143,7 +143,7 @@ class Newsletter
 
     /**
      * @param Model\Tool\Newsletter\Config $newsletter
-     * @param Object\Concrete $object
+     * @param DataObject\Concrete $object
      * @param null $emailAddress
      * @param null $hostUrl
      */
@@ -218,14 +218,14 @@ class Newsletter
     {
         $class = null;
         if (is_string($classId)) {
-            $class = Object\ClassDefinition::getByName($classId);
+            $class = DataObject\ClassDefinition::getByName($classId);
         } elseif (is_int($classId)) {
-            $class = Object\ClassDefinition::getById($classId);
+            $class = DataObject\ClassDefinition::getById($classId);
         } elseif ($classId !== null) {
             throw new \Exception('No valid class identifier given (class name or ID)');
         }
 
-        if ($class instanceof Object\ClassDefinition) {
+        if ($class instanceof DataObject\ClassDefinition) {
             $this->setClass($class);
         }
     }
@@ -235,7 +235,7 @@ class Newsletter
      */
     protected function getClassName()
     {
-        return '\\Pimcore\\Model\\Object\\' . ucfirst($this->getClass()->getName());
+        return '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->getClass()->getName());
     }
 
     /**
@@ -360,7 +360,7 @@ class Newsletter
 
         $data = json_decode(base64_decode($token), true);
         if ($data) {
-            if ($object = Object::getById($data['id'])) {
+            if ($object = DataObject::getById($data['id'])) {
                 if ($version = $object->getLatestVersion()) {
                     $object = $version->getData();
                 }
@@ -496,7 +496,7 @@ class Newsletter
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param DataObject\ClassDefinition $class
      */
     public function setClass($class)
     {
@@ -504,7 +504,7 @@ class Newsletter
     }
 
     /**
-     * @return Object\ClassDefinition
+     * @return DataObject\ClassDefinition
      */
     public function getClass()
     {

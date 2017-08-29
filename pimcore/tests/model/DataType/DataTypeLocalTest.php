@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Model\Object\Unittest;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeTestCase;
 use Pimcore\Tests\Util\TestHelper;
 

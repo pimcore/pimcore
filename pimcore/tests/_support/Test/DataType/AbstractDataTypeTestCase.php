@@ -2,8 +2,8 @@
 
 namespace Pimcore\Tests\Test\DataType;
 
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Unittest;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tests\Util\TestHelper;

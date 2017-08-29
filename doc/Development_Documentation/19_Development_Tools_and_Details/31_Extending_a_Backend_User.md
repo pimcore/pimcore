@@ -17,7 +17,7 @@ has to be defined in *Settings* > *Object* > *Classes*:
 In this example, the class `member` has the three properties `location`, `name` and `user`. 
 The class can have an arbitrary number of properties. What is important in this context is, 
 that it has a property of the type `User`. Speaking in code this would be a 
-`\Pimcore\Model\Object\ClassDefinition\Data\User`.
+`\Pimcore\Model\DataObject\ClassDefinition\Data\User`.
 
 When creating the first object instance of the member class, you can see the input widget 
 for the user property. It is a combo box where a user can be selected from all available 
@@ -39,7 +39,7 @@ the relation to the previously created user:
 
 ```php
 use Pimcore\Model\User;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 ...
  
 //create a new user for Sydney
@@ -54,7 +54,7 @@ $user = User::create([
 ...
  
 //create the Sydney member object
-$object = new Object\Member();
+$object = new DataObject\Member();
 $object->setCreationDate(time());
 $object->setUserOwner($currentUser->getId());
 $object->setUserModification($currentUser->getId());
@@ -75,5 +75,5 @@ Aside from creating these objects, one might need to find out what objects are a
 There is a convenient method available to find all objects associated with a specific user:
 
 ```php
-$objects = \Pimcore\Model\Object\Service::getObjectsReferencingUser($userId);
+$objects = \Pimcore\Model\DataObject\Service::getObjectsReferencingUser($userId);
 ```

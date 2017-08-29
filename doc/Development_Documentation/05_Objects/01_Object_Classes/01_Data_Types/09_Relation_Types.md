@@ -40,13 +40,13 @@ relation column this can be achieved as follows:
 
 ```php
 $relationId = 162;
-$list = new \Pimcore\Model\Object\Example\Listing();
+$list = new \Pimcore\Model\DataObject\Example\Listing();
 $list->setCondition("myHref__id = ".$relationId);
 $objects=$list->load();
  
  
 $relationId = 345;
-$list = new \Pimcore\Model\Object\Example\Listing();
+$list = new \Pimcore\Model\DataObject\Example\Listing();
 $list->setCondition("myMultihref like '%,".$relationId.",%'");
 $objects=$list->load();
 ```
@@ -56,17 +56,17 @@ In order to set a href data field, a single Pimcore element needs to be passed t
 an array of elements is passed to the setter:
 
 ```php
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
   
 $myHrefElement = Document::getById(23);
  
 $myMultihrefElements[] = Asset::getById(350);
-$myMultihrefElements[] = Object::getByPath("/products/testproduct");
+$myMultihrefElements[] = DataObject::getByPath("/products/testproduct");
  
-$myObjectsElements[] = Object\Product::getById(98);
-$myObjectsElements[] = Object\Product::getById(99);
+$myObjectsElements[] = DataObject\Product::getById(98);
+$myObjectsElements[] = DataObject\Product::getById(99);
  
 $object->setHref($myHrefElement);
 $object->setMultihref($myMultihrefElements);
@@ -128,11 +128,11 @@ All the other functionality is the same as with the normal objects data type.
 
 #### Access objects with metadata via PHP API
 ```php
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
   
-$object = Object::getById(73585);
+$object = DataObject::getById(73585);
  
-//getting list of assigned objects with metadata (array of Object\Data\ObjectMetadata)
+//getting list of assigned objects with metadata (array of DataObject\Data\ObjectMetadata)
 $objects = $object->getMetadata();
  
 //get first object of list
@@ -156,10 +156,10 @@ $object->save();
 #### Save objects with metadata
 
 ```php
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
   
 //load your object (in this object we save the metadata objects)
-$object = Object::getById(73585);
+$object = DataObject::getById(73585);
   
 //create a empty array for your metadata objects
 $objectArray = [];
@@ -168,7 +168,7 @@ $objectArray = [];
 foreach( $yourObjectsList as $yourObject ){
   
     //create the objectmetadata Object, "yourObject" is the referenced object
-    $objectMetadata = new Object\Data\ObjectMetadata('metadata', ['text', 'number'],  $yourObject);
+    $objectMetadata = new DataObject\Data\ObjectMetadata('metadata', ['text', 'number'],  $yourObject);
     //set into the metadata field (named text) the value "Metadata"
     $objectMetadata->setText('Metadata');
     //set into the metadata field (named Number) the value 23
@@ -202,11 +202,11 @@ The API is nearly identical. However, instead of dealing with an `ObjectMetadata
 with `ElementMetadata`.
 
 ```php
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
  
 $referencedElement = Document::getById(123);
 $references = [];
-$elementMetadata = new Object\Data\ElementMetadata('metadata', ['text', 'number'], referencedElement );
+$elementMetadata = new DataObject\Data\ElementMetadata('metadata', ['text', 'number'], referencedElement );
  
 //set into the metadata field (named text) the value "my lovely text"
 $elementMetadata->setText('my lovely text');

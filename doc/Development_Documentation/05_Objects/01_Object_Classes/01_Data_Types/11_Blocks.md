@@ -27,10 +27,10 @@ and object data
 The value of the second input field can be retrieved as follows:
 
 ```php
-        $object = Object\BlockClass::getById(48);
-        /** @var  $blockData Object\ClassDefinition\Data\Block */
+        $object = DataObject\BlockClass::getById(48);
+        /** @var  $blockData DataObject\ClassDefinition\Data\Block */
         $blockItems = $object->getBlockElement1();
-        /** @var  $firstBlockItem Object\Data\BlockElement */
+        /** @var  $firstBlockItem DataObject\Data\BlockElement */
         $firstBlockItem = $blockItems[0];
         echo($firstBlockItem["input2"]->getData());
 ```
@@ -50,7 +50,7 @@ Create a Block:
 
 ```php
 /** 
- * @var  $blockElement Object\Data\BlockElement
+ * @var  $blockElement DataObject\Data\BlockElement
  * 
  * BlockElement( name, type, data )
  */

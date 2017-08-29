@@ -20,7 +20,7 @@ use Pimcore\Logger;
 /**
  * Abstract base class for order pimcore objects
  */
-class AbstractOrder extends \Pimcore\Model\Object\Concrete
+class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
 {
     const ORDER_STATE_COMMITTED = 'committed';
     const ORDER_STATE_CANCELLED = 'cancelled';
@@ -229,7 +229,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Model\Object\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection
      */
     public function getPriceModifications()
     {
@@ -237,7 +237,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete
     }
 
     /**
-     * @param \Pimcore\Model\Object\Fieldcollection $priceModifications
+     * @param \Pimcore\Model\DataObject\Fieldcollection $priceModifications
      *
      * @return void
      */
@@ -285,7 +285,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Model\Object\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection
      */
     public function getPaymentInfo()
     {
@@ -293,7 +293,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete
     }
 
     /**
-     * @param \Pimcore\Model\Object\Fieldcollection $paymentInfo
+     * @param \Pimcore\Model\DataObject\Fieldcollection $paymentInfo
      *
      * @return void
      */
@@ -672,7 +672,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete
      *
      * @param array $voucherTokens
      *
-     * @return \Pimcore\Model\Object\OnlineShopOrder
+     * @return \Pimcore\Model\DataObject\OnlineShopOrder
      */
     public function setVoucherTokens($voucherTokens)
     {

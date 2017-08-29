@@ -20,7 +20,7 @@ use Pimcore\Logger;
 /**
  * Abstract base class for order item pimcore objects
  */
-class AbstractOrderItem extends \Pimcore\Model\Object\Concrete
+class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
 {
     /**
      * @throws UnsupportedException
@@ -189,7 +189,7 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Model\Object\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection
      */
     public function getPricingRules()
     {
@@ -197,7 +197,7 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete
     }
 
     /**
-     * @param \Pimcore\Model\Object\Fieldcollection $pricingRules
+     * @param \Pimcore\Model\DataObject\Fieldcollection $pricingRules
      *
      * @throws UnsupportedException
      *

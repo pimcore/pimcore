@@ -19,7 +19,7 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 
 class PimcoreObjectExtension extends \Twig_Extension
 {

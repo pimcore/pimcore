@@ -25,7 +25,7 @@ use Pimcore\Templating\Model\ViewModel;
 class Helper
 {
     /**
-     * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
+     * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
      * @param IProductList $productList
      * @param $params
      * @param ViewModel $viewModel
@@ -34,7 +34,7 @@ class Helper
      * @param bool $excludeLimitOfFirstpage
      */
     public static function setupProductList(
-        \Pimcore\Model\Object\FilterDefinition $filterDefinition,
+        \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
         IProductList $productList,
         $params,
         ViewModel $viewModel,
@@ -172,7 +172,7 @@ class Helper
     {
         if (!empty($conditions)) {
             foreach ($conditions as $c) {
-                if ($c instanceof \Pimcore\Model\Object\Fieldcollection\Data\FilterCategory) {
+                if ($c instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory) {
                     return $c->getPreSelect();
                 }
             }

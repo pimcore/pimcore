@@ -13,7 +13,7 @@
  */
 use Pimcore\Config;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Symfony\Component\Console\Input\ArgvInput;
 
 // determines if we're in Pimcore\Console mode

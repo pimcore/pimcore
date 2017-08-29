@@ -16,10 +16,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
-abstract class AbstractVoucherSeries extends \Pimcore\Model\Object\Concrete
+abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
 {
     /**
-     * @return \Pimcore\Model\Object\Fieldcollection
+     * @return \Pimcore\Model\DataObject\Fieldcollection
      */
     abstract public function getTokenSettings();
 

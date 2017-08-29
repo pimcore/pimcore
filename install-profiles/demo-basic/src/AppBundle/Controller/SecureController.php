@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Form\LoginFormType;
-use AppBundle\Model\Object\User;
+use AppBundle\Model\DataObject\User;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\FrontendController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

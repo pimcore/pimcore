@@ -17,9 +17,9 @@
  * They are used in parts of the code where it isn't possible to outsource them into the Pimcore\Bundle\LegacyBundle
  *
  * See also:
- * pimcore/models/Object/ClassDefinition/Data/Datetime.php
- * pimcore/models/Object/ClassDefinition/Data/Date.php
- * pimcore/models/Object/Listing.php
+ * pimcore/models/DataObject/ClassDefinition/Data/Datetime.php
+ * pimcore/models/DataObject/ClassDefinition/Data/Date.php
+ * pimcore/models/DataObject/Listing.php
  * pimcore/models/Document/Listing.php
  * pimcore/models/Asset/Listing.php
  * pimcore/lib/Pimcore/Log/ApplicationLogger.php

@@ -18,7 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,12 +41,12 @@ class ObjectHelperController extends AdminController
      */
     public function loadObjectDataAction(Request $request)
     {
-        $object = Object\AbstractObject::getById($request->get('id'));
+        $object = DataObject\AbstractObject::getById($request->get('id'));
         $result = [];
         if ($object) {
             $result['success'] = true;
             $fields = $request->get('fields');
-            $result['fields'] = Object\Service::gridObjectData($object, $fields);
+            $result['fields'] = DataObject\Service::gridObjectData($object, $fields);
         } else {
             $result['success'] = false;
         }
@@ -64,9 +64,9 @@ class ObjectHelperController extends AdminController
     public function gridGetColumnConfigAction(Request $request)
     {
         if ($request->get('id')) {
-            $class = Object\ClassDefinition::getById($request->get('id'));
+            $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
-            $class = Object\ClassDefinition::getByName($request->get('name'));
+            $class = DataObject\ClassDefinition::getByName($request->get('name'));
         }
 
         $gridType = 'search';
@@ -77,7 +77,7 @@ class ObjectHelperController extends AdminController
         $objectId = $request->get('objectId');
 
         if ($objectId) {
-            $fields = Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
+            $fields = DataObject\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
         }
 
         $context = ['purpose' => 'gridconfig'];
@@ -86,7 +86,7 @@ class ObjectHelperController extends AdminController
         }
 
         if ($objectId) {
-            $object = Object\AbstractObject::getById($objectId);
+            $object = DataObject\AbstractObject::getById($objectId);
             $context['object'] = $object;
         }
 
@@ -131,9 +131,9 @@ class ObjectHelperController extends AdminController
         $localizedFields = [];
         $objectbrickFields = [];
         foreach ($fields as $key => $field) {
-            if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
+            if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                 $localizedFields[] = $field;
-            } elseif ($field instanceof Object\ClassDefinition\Data\Objectbricks) {
+            } elseif ($field instanceof DataObject\ClassDefinition\Data\Objectbricks) {
                 $objectbrickFields[] = $field;
             }
         }
@@ -165,7 +165,7 @@ class ObjectHelperController extends AdminController
             $includeBricks = !$request->get('no_brick_columns');
 
             foreach ($fields as $key => $field) {
-                if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
+                if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     foreach ($field->getFieldDefinitions($context) as $fd) {
                         if (empty($types) || in_array($fd->getFieldType(), $types)) {
                             $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count, false, null, $class, $objectId);
@@ -175,7 +175,7 @@ class ObjectHelperController extends AdminController
                             }
                         }
                     }
-                } elseif ($field instanceof Object\ClassDefinition\Data\Objectbricks && $includeBricks) {
+                } elseif ($field instanceof DataObject\ClassDefinition\Data\Objectbricks && $includeBricks) {
                     if (in_array($field->getFieldType(), $types)) {
                         $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, false, null, $class, $objectId);
                         if (!empty($fieldConfig)) {
@@ -186,7 +186,7 @@ class ObjectHelperController extends AdminController
                         $allowedTypes = $field->getAllowedTypes();
                         if (!empty($allowedTypes)) {
                             foreach ($allowedTypes as $t) {
-                                $brickClass = Object\Objectbrick\Definition::getByKey($t);
+                                $brickClass = DataObject\Objectbrick\Definition::getByKey($t);
                                 $brickFields = $brickClass->getFieldDefinitions($context);
                                 if (!empty($brickFields)) {
                                     foreach ($brickFields as $bf) {
@@ -235,11 +235,11 @@ class ObjectHelperController extends AdminController
                             $keyId = $groupAndKeyId[1];
 
                             if ($type == 'classificationstore') {
-                                $keyDef = Object\Classificationstore\KeyConfig::getById($keyId);
+                                $keyDef = DataObject\Classificationstore\KeyConfig::getById($keyId);
                                 if ($keyDef) {
                                     $keyFieldDef = json_decode($keyDef->getDefinition(), true);
                                     if ($keyFieldDef) {
-                                        $keyFieldDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($keyFieldDef, $keyDef->getType());
+                                        $keyFieldDef = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($keyFieldDef, $keyDef->getType());
                                         $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true, null, $class, $objectId);
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
@@ -253,7 +253,7 @@ class ObjectHelperController extends AdminController
                             $brick = $keyParts[0];
                             $key = $keyParts[1];
 
-                            $brickClass = Object\Objectbrick\Definition::getByKey($brick);
+                            $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
                             $fd = $brickClass->getFieldDefinition($key);
                             if (!empty($fd)) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . '~', $class, $objectId);
@@ -334,7 +334,7 @@ class ObjectHelperController extends AdminController
      */
     public function gridDeleteColumnConfigAction(Request $request)
     {
-        $object = Object::getById($request->get('id'));
+        $object = DataObject::getById($request->get('id'));
 
         if ($object->isAllowed('list')) {
             try {
@@ -374,7 +374,7 @@ class ObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request)
     {
-        $object = Object::getById($request->get('id'));
+        $object = DataObject::getById($request->get('id'));
 
         if ($object->isAllowed('list')) {
             try {
@@ -455,10 +455,10 @@ class ObjectHelperController extends AdminController
             }
 
             if ($objectId) {
-                $object = Object\AbstractObject::getById($objectId);
+                $object = DataObject\AbstractObject::getById($objectId);
                 $context['object'] = $object;
             }
-            Object\Service::enrichLayoutDefinition($field, null, $context);
+            DataObject\Service::enrichLayoutDefinition($field, null, $context);
 
             return [
                 'key' => $key,
@@ -546,7 +546,7 @@ class ObjectHelperController extends AdminController
         }
 
         // get class data
-        $class = Object\ClassDefinition::getById($request->get('classId'));
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
         $fields = $class->getFieldDefinitions();
 
         $availableFields = [];
@@ -628,7 +628,7 @@ class ObjectHelperController extends AdminController
         $job = $request->get('job');
         $id = $request->get('id');
         $mappingRaw = $this->decodeJson($request->get('mapping'));
-        $class = Object\ClassDefinition::getById($request->get('classId'));
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
         $skipFirstRow = $request->get('skipHeadRow') == 'true';
         $fields = $class->getFieldDefinitions();
 
@@ -672,8 +672,8 @@ class ObjectHelperController extends AdminController
         }
 
         // create new object
-        $className = 'Pimcore\\Model\\Object\\' . ucfirst($request->get('className'));
-        $parent = Object::getById($request->get('parentId'));
+        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($request->get('className'));
+        $parent = DataObject::getById($request->get('parentId'));
 
         $objectKey = 'object_' . $job;
         if ($request->get('filename') == 'id') {
@@ -691,15 +691,15 @@ class ObjectHelperController extends AdminController
             $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
 
             if ($overwrite) {
-                $object = Object::getByPath($intendedPath);
-                if (!$object instanceof Object\Concrete) {
+                $object = DataObject::getByPath($intendedPath);
+                if (!$object instanceof DataObject\Concrete) {
                     //create new object
                     $object = $this->get('pimcore.model.factory')->build($className);
-                } elseif ($object instanceof Object\Concrete and !($object instanceof $className)) {
+                } elseif ($object instanceof DataObject\Concrete and !($object instanceof $className)) {
                     //delete the old object it is of a different class
                     $object->delete();
                     $object = $this->get('pimcore.model.factory')->build($className);
-                } elseif ($object instanceof Object\Folder) {
+                } elseif ($object instanceof DataObject\Folder) {
                     //delete the folder
                     $object->delete();
                     $object = $this->get('pimcore.model.factory')->build($className);
@@ -812,12 +812,12 @@ class ObjectHelperController extends AdminController
     {
         $requestedLanguage = $this->extractLanguage($request);
 
-        $folder = Object\AbstractObject::getById($request->get('folderId'));
-        $class = Object\ClassDefinition::getById($request->get('classId'));
+        $folder = DataObject\AbstractObject::getById($request->get('folderId'));
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
 
         $className = $class->getName();
 
-        $listClass = '\\Pimcore\\Model\\Object\\' . ucfirst($className) . '\\Listing';
+        $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
         if (!empty($folder)) {
             $conditionFilters = ["o_path LIKE '" . $folder->getRealFullPath() . "%'"];
@@ -828,8 +828,8 @@ class ObjectHelperController extends AdminController
         $featureJoins = [];
 
         if ($request->get('filter')) {
-            $conditionFilters[] = Object\Service::getFilterCondition($request->get('filter'), $class);
-            $featureFilters = Object\Service::getFeatureFilters($request->get('filter'), $class);
+            $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
+            $featureFilters = DataObject\Service::getFeatureFilters($request->get('filter'), $class);
             if ($featureFilters) {
                 $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
             }
@@ -838,7 +838,7 @@ class ObjectHelperController extends AdminController
             $conditionFilters[] = '(' . $request->get('condition') . ')';
         }
 
-        /** @var Object\Listing\Concrete $list */
+        /** @var DataObject\Listing\Concrete $list */
         $list = new $listClass();
         $objectTableName = $list->getDao()->getTableName();
         $list->setCondition(implode(' AND ', $conditionFilters));
@@ -855,8 +855,8 @@ class ObjectHelperController extends AdminController
 
         $objectType = $request->get('objecttype');
         if ($objectType) {
-            if ($objectType == Object\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+            if ($objectType == DataObject\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
+                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
             } else {
                 $list->setObjectTypes([$objectType]);
             }
@@ -871,7 +871,7 @@ class ObjectHelperController extends AdminController
         }
 
         $list->setLocale($requestedLanguage);
-        Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
+        DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
         return [$list, $fields, $requestedLanguage];
     }
@@ -919,12 +919,12 @@ class ObjectHelperController extends AdminController
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
 
-        $class = Object\ClassDefinition::getById($request->get('classId'));
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
         $className = $class->getName();
-        $listClass = '\\Pimcore\\Model\\Object\\' . ucfirst($className) . '\\Listing';
+        $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
         /**
-         * @var $list \Pimcore\Model\Object\Listing
+         * @var $list \Pimcore\Model\DataObject\Listing
          */
         $list = new $listClass();
         $list->setObjectTypes(['object', 'folder', 'variant']);
@@ -978,8 +978,8 @@ class ObjectHelperController extends AdminController
                 $groupId = $groupKeyId[0];
                 $keyId = $groupKeyId[1];
 
-                $groupConfig = Object\Classificationstore\GroupConfig::getById($groupId);
-                $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
+                $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
+                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
 
                 $field = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
             }
@@ -1004,7 +1004,7 @@ class ObjectHelperController extends AdminController
         $objects = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
         //add inherited values to objects
-        Object\AbstractObject::setGetInheritedValues(true);
+        DataObject\AbstractObject::setGetInheritedValues(true);
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
@@ -1021,7 +1021,7 @@ class ObjectHelperController extends AdminController
                 /**
                  * @extjs - TODO remove this, when old ext support is removed
                  */
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof DataObject\Concrete) {
                     $o = $this->csvObjectData($object);
                     $objects[] = $o;
                 }
@@ -1099,10 +1099,10 @@ class ObjectHelperController extends AdminController
                         $keyId = $groupKeyId[1];
                         $getter = 'get' . ucfirst($fieldname);
                         if (method_exists($object, $getter)) {
-                            $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
+                            $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
                             $type = $keyConfig->getType();
                             $definition = json_decode($keyConfig->getDefinition());
-                            $fieldDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+                            $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                             return $fieldDefinition->getForCsvExport(
                                 $object,
@@ -1121,9 +1121,9 @@ class ObjectHelperController extends AdminController
                     // brick
                     $brickType = $fieldParts[0];
                     $brickKey = $fieldParts[1];
-                    $key = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                    $key = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
-                    $brickClass = Object\Objectbrick\Definition::getByKey($brickType);
+                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
                     $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
 
                     if ($fieldDefinition) {
@@ -1157,7 +1157,7 @@ class ObjectHelperController extends AdminController
      * Flattens object data to an array with key=>value where
      * value is simply a string representation of the value (for objects, hrefs and assets the full path is used)
      *
-     * @param Object\AbstractObject $object
+     * @param DataObject\AbstractObject $object
      *
      * @return array
      */
@@ -1166,7 +1166,7 @@ class ObjectHelperController extends AdminController
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
-            if (!($value instanceof Object\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
+            if (!($value instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
                 $o[$key] = $value->getForCsvExport($object);
             }
         }
@@ -1193,20 +1193,20 @@ class ObjectHelperController extends AdminController
             $request->setLocale($request->get('language'));
         }
 
-        $folder = Object::getById($request->get('folderId'));
-        $class = Object\ClassDefinition::getById($request->get('classId'));
+        $folder = DataObject::getById($request->get('folderId'));
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
 
         $conditionFilters = ["o_path = ? OR o_path LIKE '" . str_replace('//', '/', $folder->getRealFullPath() . '/') . "%'"];
 
         if ($request->get('filter')) {
-            $conditionFilters[] = Object\Service::getFilterCondition($request->get('filter'), $class);
+            $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
         }
         if ($request->get('condition')) {
             $conditionFilters[] = ' (' . $request->get('condition') . ')';
         }
 
         $className = $class->getName();
-        $listClass = '\\Pimcore\\Model\\Object\\' . ucfirst($className) . '\\Listing';
+        $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
         $list = new $listClass();
         $list->setCondition(implode(' AND ', $conditionFilters), [$folder->getRealFullPath()]);
         $list->setOrder('ASC');
@@ -1233,11 +1233,11 @@ class ObjectHelperController extends AdminController
         $success = true;
 
         try {
-            $object = Object::getById($request->get('job'));
+            $object = DataObject::getById($request->get('job'));
 
             if ($object) {
                 $className = $object->getClassName();
-                $class = Object\ClassDefinition::getByName($className);
+                $class = DataObject\ClassDefinition::getByName($className);
                 $value = $request->get('value');
                 if ($request->get('valueType') == 'object') {
                     $value = $this->decodeJson($value);
@@ -1268,7 +1268,7 @@ class ObjectHelperController extends AdminController
 
                         $getter = 'get'.ucfirst($field);
                         if (method_exists($object, $getter)) {
-                            /** @var $classificationStoreData Object\Classificationstore */
+                            /** @var $classificationStoreData DataObject\Classificationstore */
                             $classificationStoreData = $object->$getter();
                             $classificationStoreData->setLocalizedKeyValue(
                                 $groupId,
@@ -1283,7 +1283,7 @@ class ObjectHelperController extends AdminController
                         $keyValuePairs = $object->$getter();
 
                         if (!$keyValuePairs) {
-                            $keyValuePairs = new Object\Data\KeyValue();
+                            $keyValuePairs = new DataObject\Data\KeyValue();
                             $keyValuePairs->setObjectId($object->getId());
                             $keyValuePairs->setClass($object->getClass());
                         }
@@ -1295,7 +1295,7 @@ class ObjectHelperController extends AdminController
                     // check for bricks
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
-                    $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                    $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
                     $fieldGetter = 'get' . ucfirst($brickField);
                     $brickGetter = 'get' . ucfirst($brickType);
@@ -1303,13 +1303,13 @@ class ObjectHelperController extends AdminController
 
                     $brick = $object->$fieldGetter()->$brickGetter();
                     if (empty($brick)) {
-                        $classname = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($brickType);
+                        $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
                         $brickSetter = 'set' . ucfirst($brickType);
                         $brick = new $classname($object);
                         $object->$fieldGetter()->$brickSetter($brick);
                     }
 
-                    $brickClass = Object\Objectbrick\Definition::getByKey($brickType);
+                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
                     $field = $brickClass->getFieldDefinition($brickKey);
                     $brick->$valueSetter($field->getDataFromEditmode($value, $object));
                 } else {
@@ -1324,7 +1324,7 @@ class ObjectHelperController extends AdminController
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
-                                    /** @var $field Object\ClassDefinition\Data */
+                                    /** @var $field DataObject\ClassDefinition\Data */
                                     $object->{'set' . $name}($field->getDataFromEditmode($value, $object), $request->get('language'));
                                 }
                             }

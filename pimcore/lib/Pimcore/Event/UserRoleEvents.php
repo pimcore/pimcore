@@ -17,42 +17,42 @@ namespace Pimcore\Event;
 final class UserRoleEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Object\UserRoleEvent")
+     * @Event("Pimcore\Event\Model\DataObject\UserRoleEvent")
      *
      * @var string
      */
     const PRE_ADD = 'pimcore.user.preAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\Object\UserRoleEvent")
+     * @Event("Pimcore\Event\Model\DataObject\UserRoleEvent")
      *
      * @var string
      */
     const POST_ADD = 'pimcore.user.postAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\Object\UserRoleEvent")
+     * @Event("Pimcore\Event\Model\DataObject\UserRoleEvent")
      *
      * @var string
      */
     const PRE_UPDATE = 'pimcore.user.preUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\Object\UserRoleEvent")
+     * @Event("Pimcore\Event\Model\DataObject\UserRoleEvent")
      *
      * @var string
      */
     const POST_UPDATE = 'pimcore.user.postUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\Object\UserRoleEvent")
+     * @Event("Pimcore\Event\Model\DataObject\UserRoleEvent")
      *
      * @var string
      */
     const PRE_DELETE = 'pimcore.user.preDelete';
 
     /**
-     * @Event("Pimcore\Event\Model\Object\UserRoleEvent")
+     * @Event("Pimcore\Event\Model\DataObject\UserRoleEvent")
      *
      * @var string
      */

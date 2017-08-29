@@ -16,7 +16,7 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
-use Pimcore\Model\Object\Listing;
+use Pimcore\Model\DataObject\Listing;
 
 class ReportAdapter implements AddressSourceAdapterInterface
 {

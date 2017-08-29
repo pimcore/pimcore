@@ -457,7 +457,7 @@ namespace AppBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition;
 
 class Version20170822160703 extends AbstractPimcoreMigration
 {
@@ -560,7 +560,7 @@ namespace AppBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition;
 
 class Version20170822160703 extends AbstractPimcoreMigration
 {

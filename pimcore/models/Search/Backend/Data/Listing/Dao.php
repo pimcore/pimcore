@@ -17,7 +17,7 @@ namespace Pimcore\Model\Search\Backend\Data\Listing;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Search;
 
 /**
@@ -41,7 +41,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
             } elseif ($entryData['maintype'] == 'asset') {
                 $element = Asset::getById($entryData['id']);
             } elseif ($entryData['maintype'] == 'object') {
-                $element = Object::getById($entryData['id']);
+                $element = DataObject::getById($entryData['id']);
             } else {
                 Logger::err('unknown maintype ');
             }

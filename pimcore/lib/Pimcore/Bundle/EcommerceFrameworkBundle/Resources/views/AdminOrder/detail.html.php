@@ -103,7 +103,7 @@ $regionArray = $locale->getDisplayRegions();
                 <tr class="active">
                     <td colspan="6"></td>
                 </tr>
-                <?php foreach($order->getPriceModifications() ?: [] as $modification): /* @var \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications $modification */ ?>
+                <?php foreach($order->getPriceModifications() ?: [] as $modification): /* @var \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications $modification */ ?>
                     <tr>
                         <td colspan="4" class="text-right"><?= $modification->getName() ?></td>
                         <th class="text-right"><?= $currency->toCurrency($modification->getAmount()) ?: '-' ?></th>
@@ -210,7 +210,7 @@ $regionArray = $locale->getDisplayRegions();
                 <table class="table table-condensed">
                     <tbody>
                     <?php foreach($order->getPaymentInfo() as $item):
-                        /* @var \Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo $item */
+                        /* @var \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo $item */
 
                         if(!$item->getPaymentFinish())
                         {

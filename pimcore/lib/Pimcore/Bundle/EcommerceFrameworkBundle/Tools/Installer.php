@@ -16,10 +16,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\ClassDefinition\Service;
-use Pimcore\Model\Object\Fieldcollection;
-use Pimcore\Model\Object\Objectbrick;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Translation\Admin;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;

@@ -22,9 +22,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
 
 class Manager
@@ -380,7 +380,7 @@ class Manager
         if (is_array($additionalFields)) {
             foreach ($additionalFields as &$field) {
                 if ($field['fieldType'] === 'user') {
-                    $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
+                    $userdata = new \Pimcore\Model\DataObject\ClassDefinition\Data\User();
                     $userdata->configureOptions();
                     $field['options'] = $userdata->getOptions();
                 }

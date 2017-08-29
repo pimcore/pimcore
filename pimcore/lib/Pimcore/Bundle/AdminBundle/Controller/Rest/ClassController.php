@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Http\Exception\ResponseException;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -65,7 +65,7 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $list    = new Object\ClassDefinition\Listing();
+        $list    = new DataObject\ClassDefinition\Listing();
         $classes = $list->load();
 
         $result = [];
@@ -104,7 +104,7 @@ class ClassController extends AbstractRestController
         $e = null;
 
         try {
-            $definition = Object\Objectbrick\Definition::getByKey($id);
+            $definition = DataObject\Objectbrick\Definition::getByKey($id);
 
             return $this->createSuccessResponse($definition);
         } catch (\Exception $e) {
@@ -124,9 +124,9 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new DataObject\Objectbrick\Definition\Listing();
 
-        /** @var Object\Objectbrick\Definition[] $bricks */
+        /** @var DataObject\Objectbrick\Definition[] $bricks */
         $bricks = $list->load();
 
         $result = [];
@@ -164,7 +164,7 @@ class ClassController extends AbstractRestController
         $e = null;
 
         try {
-            $definition = Object\Fieldcollection\Definition::getByKey($id);
+            $definition = DataObject\Fieldcollection\Definition::getByKey($id);
 
             return $this->createSuccessResponse($definition);
         } catch (\Exception $e) {
@@ -184,9 +184,9 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $list = new Object\Fieldcollection\Definition\Listing();
+        $list = new DataObject\Fieldcollection\Definition\Listing();
 
-        /** @var Object\Fieldcollection\Definition[] $fieldCollections */
+        /** @var DataObject\Fieldcollection\Definition[] $fieldCollections */
         $fieldCollections = $list->load();
 
         $result = [];
@@ -219,7 +219,7 @@ class ClassController extends AbstractRestController
 
         $condition = urldecode($request->get('condition'));
 
-        $list = new Object\QuantityValue\Unit\Listing();
+        $list = new DataObject\QuantityValue\Unit\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }
@@ -227,7 +227,7 @@ class ClassController extends AbstractRestController
         $items = $list->load();
         $units = [];
 
-        /** @var Object\QuantityValue\Unit $item */
+        /** @var DataObject\QuantityValue\Unit $item */
         foreach ($items as $item) {
             $units[] = $item->getObjectVars();
         }
@@ -254,7 +254,7 @@ class ClassController extends AbstractRestController
 
         $definition = [];
 
-        $list = new Object\Classificationstore\StoreConfig\Listing();
+        $list = new DataObject\Classificationstore\StoreConfig\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }
@@ -268,7 +268,7 @@ class ClassController extends AbstractRestController
         }
         $definition['stores'] = $stores;
 
-        $list = new Object\Classificationstore\CollectionConfig\Listing();
+        $list = new DataObject\Classificationstore\CollectionConfig\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }
@@ -282,7 +282,7 @@ class ClassController extends AbstractRestController
         }
         $definition['collections'] = $collections;
 
-        $list = new Object\Classificationstore\GroupConfig\Listing();
+        $list = new DataObject\Classificationstore\GroupConfig\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }
@@ -295,7 +295,7 @@ class ClassController extends AbstractRestController
         }
         $definition['groups'] = $groups;
 
-        $list = new Object\Classificationstore\KeyConfig\Listing();
+        $list = new DataObject\Classificationstore\KeyConfig\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }
@@ -308,7 +308,7 @@ class ClassController extends AbstractRestController
         }
         $definition['keys'] = $keys;
 
-        $list = new Object\Classificationstore\CollectionGroupRelation\Listing();
+        $list = new DataObject\Classificationstore\CollectionGroupRelation\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }
@@ -316,13 +316,13 @@ class ClassController extends AbstractRestController
         $items = $list->getList();
 
         $relations = [];
-        /** @var $item Object\Classificationstore\CollectionGroupRelation */
+        /** @var $item DataObject\Classificationstore\CollectionGroupRelation */
         foreach ($items as $item) {
             $relations[] = $item->getObjectVars();
         }
         $definition['collections2groups'] = $relations;
 
-        $list = new Object\Classificationstore\KeyGroupRelation\Listing();
+        $list = new DataObject\Classificationstore\KeyGroupRelation\Listing();
         if ($condition) {
             $list->setCondition($condition);
         }

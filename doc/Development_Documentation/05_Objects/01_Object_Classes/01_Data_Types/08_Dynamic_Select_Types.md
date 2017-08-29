@@ -23,8 +23,8 @@ The services.yml would then look like this one ...
 
 Depending on your datatype you have to implement the appropriate interface.
  
- * `Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options,
- * `Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface` for the Multiselect options 
+ * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface` for the `Select` data type options,
+ * `Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface` for the Multiselect options 
  
  Implement the following methods:
  * `getOptions` should return a list of valid options in the format indicated below
@@ -38,8 +38,8 @@ Depending on your datatype you have to implement the appropriate interface.
 
 namespace Website;
 
-use Pimcore\Model\Object\ClassDefinition\Data;
-use Pimcore\Model\Object\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 
 
 class OptionsProvider implements SelectOptionsProviderInterface

@@ -13,7 +13,7 @@ Fields Summary:
 */
 
 
-return Pimcore\Model\Object\ClassDefinition::__set_state(array(
+return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'blogCategory',
    'description' => '',
    'creationDate' => 1388389401,
@@ -26,7 +26,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowVariants' => false,
    'showVariants' => false,
    'layoutDefinitions' =>
-  Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+  Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
      'layout' => NULL,
@@ -44,7 +44,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'childs' =>
     array (
       0 =>
-      Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+      Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
          'fieldtype' => 'panel',
          'labelWidth' => 100,
          'layout' => '',
@@ -62,13 +62,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'childs' =>
         array (
           0 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields::__set_state(array(
              'fieldtype' => 'localizedfields',
-             'phpdocType' => '\\Pimcore\\Model\\Object\\Localizedfield',
+             'phpdocType' => '\\Pimcore\\Model\\DataObject\\Localizedfield',
              'childs' =>
             array (
               0 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => '',
                  'queryColumnType' => 'varchar',
@@ -106,7 +106,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'fieldDefinitionsCache' =>
             array (
               'name' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => '',
                  'queryColumnType' => 'varchar',

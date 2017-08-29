@@ -21,8 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle;
-use Pimcore\Model\Object\OnlineShopVoucherToken;
+use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle;
+use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -204,19 +204,19 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
      * @param ICart $cart
      * @param AbstractOrder $order
      *
-     * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
+     * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
      */
     public function applyToken($code, ICart $cart, AbstractOrder $order)
     {
         if ($token = Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages(), true)) {
                 if ($token->apply()) {
-                    $orderToken = \Pimcore\Model\Object\OnlineShopVoucherToken::getByToken($code, 1);
-                    if (!$orderToken instanceof \Pimcore\Model\Object\OnlineShopVoucherToken) {
-                        $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();
+                    $orderToken = \Pimcore\Model\DataObject\OnlineShopVoucherToken::getByToken($code, 1);
+                    if (!$orderToken instanceof \Pimcore\Model\DataObject\OnlineShopVoucherToken) {
+                        $orderToken = new \Pimcore\Model\DataObject\OnlineShopVoucherToken();
                         $orderToken->setTokenId($token->getId());
                         $orderToken->setToken($token->getToken());
-                        $series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
+                        $series = \Pimcore\Model\DataObject\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
                         $orderToken->setVoucherSeries($series);
                         $orderToken->setParent($series);        // TODO set correct parent for applied tokens
                         $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken()));
@@ -279,7 +279,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * @return \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle
+     * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
      */
     public function getConfiguration()
     {
@@ -287,7 +287,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * @param \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle $configuration
+     * @param \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle $configuration
      */
     public function setConfiguration($configuration)
     {

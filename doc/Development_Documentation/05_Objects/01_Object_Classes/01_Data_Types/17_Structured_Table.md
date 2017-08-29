@@ -26,7 +26,7 @@ Now, you can use the table in your object, like below:
 In the code, the data of this field can be accessed as shown in the code snippets, below:
 
 ```php
-/** @var \Pimcore\Model\Object\Data\StructuredTable $structuredData */
+/** @var \Pimcore\Model\DataObject\Data\StructuredTable $structuredData */
 $structuredData = $object->getAdditionalinfo();
 
 //Returns an associated array of row CommunityEdition with all columns

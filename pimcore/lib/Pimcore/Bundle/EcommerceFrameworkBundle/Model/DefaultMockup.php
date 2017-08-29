@@ -148,7 +148,7 @@ class DefaultMockup implements IProduct
     {
         Logger::notice("Getting original object {$this->id}.");
 
-        return \Pimcore\Model\Object\AbstractObject::getById($this->id);
+        return \Pimcore\Model\DataObject\AbstractObject::getById($this->id);
     }
 
     /**

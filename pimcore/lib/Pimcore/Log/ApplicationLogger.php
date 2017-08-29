@@ -120,13 +120,13 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @deprecated
      *
-     * @param \\Pimcore\Model\Object\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
+     * @param \\Pimcore\Model\DataObject\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
      */
     public function setRelatedObject($relatedObject)
     {
         $this->relatedObject = $relatedObject;
 
-        if ($this->relatedObject instanceof \Pimcore\Model\Object\AbstractObject) {
+        if ($this->relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject) {
             $this->relatedObjectType = 'object';
         } elseif ($this->relatedObject instanceof \Pimcore\Model\Asset) {
             $this->relatedObjectType = 'asset';
@@ -173,7 +173,7 @@ class ApplicationLogger implements LoggerInterface
         }
 
         if ($relatedObject) {
-            if ($relatedObject instanceof \Pimcore\Model\Object\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
+            if ($relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
                 $relatedObject = $relatedObject->getId();
             }
             if (is_numeric($relatedObject)) {

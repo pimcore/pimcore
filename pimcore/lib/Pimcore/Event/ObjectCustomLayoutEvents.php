@@ -17,14 +17,14 @@ namespace Pimcore\Event;
 final class ObjectCustomLayoutEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Object\CustomLayoutEvent")
+     * @Event("Pimcore\Event\Model\DataObject\CustomLayoutEvent")
      *
      * @var string
      */
     const PRE_ADD = 'pimcore.object.customLayout.preAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\Object\CustomLayoutEvent")
+     * @Event("Pimcore\Event\Model\DataObject\CustomLayoutEvent")
      *
      * @var string
      */

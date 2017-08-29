@@ -13,7 +13,7 @@ $this->extend('layout.html.php');
 <?= $this->areablock('content'); ?>
 
 <?php
-/** @var \Pimcore\Model\Object\News $news */
+/** @var \Pimcore\Model\DataObject\News $news */
 foreach ($this->news as $news) { ?>
     <div class="media">
 

@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,7 +36,7 @@ class VariantsController extends AdminController
     {
         $id = $request->get('id');
         $key = $request->get('key');
-        $object = Object\Concrete::getById($id);
+        $object = DataObject\Concrete::getById($id);
 
         try {
             if (!empty($object)) {
@@ -73,7 +73,7 @@ class VariantsController extends AdminController
             $data = $this->decodeJson($request->get('data'));
 
             // save
-            $object = Object::getById($data['id']);
+            $object = DataObject::getById($data['id']);
 
             if ($object->isAllowed('publish')) {
                 $objectData = [];
@@ -83,7 +83,7 @@ class VariantsController extends AdminController
                     if (count($parts) > 1) {
                         $brickType = $parts[0];
                         $brickKey = $parts[1];
-                        $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                        $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
                         $fieldGetter = 'get' . ucfirst($brickField);
                         $brickGetter = 'get' . ucfirst($brickType);
@@ -91,7 +91,7 @@ class VariantsController extends AdminController
 
                         $brick = $object->$fieldGetter()->$brickGetter();
                         if (empty($brick)) {
-                            $classname = '\\Pimcore\\Model\\Object\\Objectbrick\\Data\\' . ucfirst($brickType);
+                            $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
                             $brickSetter = 'set' . ucfirst($brickType);
                             $brick = new $classname($object);
                             $object->$fieldGetter()->$brickSetter($brick);
@@ -107,7 +107,7 @@ class VariantsController extends AdminController
                 try {
                     $object->save();
 
-                    return $this->json(['data' => Object\Service::gridObjectData($object, $request->get('fields')), 'success' => true]);
+                    return $this->json(['data' => DataObject\Service::gridObjectData($object, $request->get('fields')), 'success' => true]);
                 } catch (\Exception $e) {
                     return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
@@ -115,7 +115,7 @@ class VariantsController extends AdminController
                 throw new \Exception('Permission denied');
             }
         } else {
-            $parentObject = Object\Concrete::getById($request->get('objectId'));
+            $parentObject = DataObject\Concrete::getById($request->get('objectId'));
 
             if (empty($parentObject)) {
                 throw new \Exception('No Object found with id ' . $request->get('objectId'));
@@ -175,12 +175,12 @@ class VariantsController extends AdminController
                     $order = $request->get('dir');
                 }
 
-                $listClass = '\\Pimcore\\Model\\Object\\' . ucfirst($className) . '\\Listing';
+                $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
                 $conditionFilters = ['o_parentId = ' . $parentObject->getId()];
                 // create filter condition
                 if ($request->get('filter')) {
-                    $conditionFilters[] =  Object\Service::getFilterCondition($request->get('filter'), $class);
+                    $conditionFilters[] =  DataObject\Service::getFilterCondition($request->get('filter'), $class);
                 }
                 if ($request->get('condition')) {
                     $conditionFilters[] = '(' . $request->get('condition') . ')';
@@ -204,7 +204,7 @@ class VariantsController extends AdminController
                 $objects = [];
                 foreach ($list->getObjects() as $object) {
                     if ($object->isAllowed('view')) {
-                        $o = Object\Service::gridObjectData($object, $fields);
+                        $o = DataObject\Service::gridObjectData($object, $fields);
                         $objects[] = $o;
                     }
                 }

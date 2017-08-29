@@ -21,7 +21,7 @@ use Pimcore\Model;
 abstract class AbstractDao extends Model\Dao\AbstractDao
 {
     /**
-     * @var Model\Object\Listing
+     * @var Model\DataObject\Listing
      */
     protected $model;
 

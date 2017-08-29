@@ -18,11 +18,11 @@ Put the following script into the file `/bin/example.php` (or any other PHP file
 
 include_once(__DIR__ . "/../pimcore/config/startup_cli.php");
 
-use \Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 
 //create single object 
 
-$object = new Object\Myclass();
+$object = new DataObject\Myclass();
 $object->setKey(1);
 $object->setParentId(1);
 $object->setPublished(true);
@@ -34,7 +34,7 @@ $object->save();
 
 // or create multiple objects
 for ($i = 0; $i < 60; $i++) {
-    $o = new Object\News();
+    $o = new DataObject\News();
     $o->setKey(uniqid() . "-" . $i);
     $o->setParentId(1);
     $o->setPublished(true);
@@ -54,7 +54,7 @@ few lines of code.
  
  $file = fopen("export.csv","w");
  
- $entries = new Object\Myclassname\Listing();
+ $entries = new DataObject\Myclassname\Listing();
  $entries->setCondition("name LIKE ?", "%bernie%");
   
  foreach($entries as $entry) { 

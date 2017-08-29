@@ -22,24 +22,24 @@ $object->setCheckbox(true);
 In the UI a link is displayed as text. Its details can be edited by clicking on the button next to the link text. In the 
 object class definition there are no special configurations available for an object field link.
 
-The link object field has its own data class which is `Pimcore\Model\Object\Data\Link`. In order to set a link 
-programmatically an `Pimcore\Model\Object\Data\Link` object needs to be instantiated and passed to the setter:
+The link object field has its own data class which is `Pimcore\Model\DataObject\Data\Link`. In order to set a link 
+programmatically an `Pimcore\Model\DataObject\Data\Link` object needs to be instantiated and passed to the setter:
 
 ```php
-$l = new Object\Data\Link();               
+$l = new DataObject\Data\Link();               
 $l->setPath("http://www.pimcore.org");    
 $l->setText("pimcore.org");            
 $l->setTitle("Visit pimcore.org");               
 $object->setLink($l);
 ```
 
-In the database the link is stored in a TEXT column which holds the serialized data of an ```Pimcore\Model\Object\Data\Link```.
+In the database the link is stored in a TEXT column which holds the serialized data of an ```Pimcore\Model\DataObject\Data\Link```.
 
 In the frontend (template) you can use the following code to the the html for the link. 
 
 ```php
 <?php
-$object = Object::getById(234);
+$object = DataObject::getById(234);
 ?>
  
 <ul>

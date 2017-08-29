@@ -14,7 +14,7 @@ $this->extend('layout.html.php');
 $this->headTitle()->set($this->news->getTitle());
 $this->headMeta()->setDescription($this->news->getShortText(), 160);
 
-/** @var \Pimcore\Model\Object\News $news */
+/** @var \Pimcore\Model\DataObject\News $news */
 $news = $this->news;
 ?>
 

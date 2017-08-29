@@ -272,7 +272,7 @@ $navigation = $this->navigation()->buildNavigation($this->document, $navStartNod
     /** @var $document \Pimcore\Model\Document */
     /** @var \Pimcore\Navigation\Page\Document $page */
     if($document->getProperty("templateType") == "news") {
-        $list = new \Pimcore\Model\Object\News\Listing;
+        $list = new \Pimcore\Model\DataObject\News\Listing;
         $list->load();
         foreach($list as $news) {
             $detailLink = $this->url([
