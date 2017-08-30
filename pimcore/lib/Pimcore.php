@@ -353,7 +353,7 @@ class Pimcore
         self::$inShutdown = true;
 
         // write and clean up cache
-        if(php_sapi_name() != 'cli') {
+        if (php_sapi_name() != 'cli') {
             Cache::shutdown();
         }
 
