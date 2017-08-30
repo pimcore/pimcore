@@ -39,12 +39,17 @@ class DataObjectCompatibility
             if(!class_exists($realClassName, false)) {
                 $this->composerAutoloader->loadClass($realClassName);
             }
-            class_alias($realClassName, $class);
-            return true;
+
+            if(class_exists($realClassName, false)) {
+                class_alias($realClassName, $class);
+                return true;
+            }
         } else if (strpos($class, 'Pimcore\\Model\\DataObject\\') === 0) {
-            $oldClassName = str_replace('Pimcore\\Model\\DataObject\\', 'Pimcore\\Model\\Object\\', $class);
-            $this->composerAutoloader->loadClass($class);
-            class_alias($class, $oldClassName, false);
+            if($this->composerAutoloader->loadClass($class)) {
+                $oldClassName = str_replace('Pimcore\\Model\\DataObject\\', 'Pimcore\\Model\\Object\\', $class);
+                class_alias($class, $oldClassName, false);
+                return true;
+            }
         }
     }
 
