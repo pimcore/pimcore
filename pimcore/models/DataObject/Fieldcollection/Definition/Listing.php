@@ -17,10 +17,12 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
 
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
+
 class Listing
 {
     /**
-     * @return array
+     * @return Definition[]
      */
     public function load()
     {

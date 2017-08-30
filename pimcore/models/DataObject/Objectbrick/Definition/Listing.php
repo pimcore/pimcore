@@ -17,10 +17,12 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick\Definition;
 
+use Pimcore\Model\DataObject\Objectbrick\Definition;
+
 class Listing
 {
     /**
-     * @return array
+     * @return Definition[]
      */
     public function load()
     {
