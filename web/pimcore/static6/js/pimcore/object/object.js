@@ -79,6 +79,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 throw "object is locked";
             }
 
+            if (this.data.hasOwnProperty('success') && !this.data.success) {
+                Ext.MessageBox.alert(t(this.data.message), t(this.data.message));
+
+                throw this.data.message;
+            }
+
             this.addTab();
 
             this.startChangeDetector();
