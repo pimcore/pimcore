@@ -22,7 +22,7 @@
 /var/*
 !/var/.gitkeep
 !/var/classes/
-/var/classes/Object
+/var/classes/DataObject
 
 !/var/config
 /var/config/system.php
