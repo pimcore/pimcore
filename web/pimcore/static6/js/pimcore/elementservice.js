@@ -765,7 +765,7 @@ pimcore.elementservice.reloadVersions = function(options) {
 };
 
 pimcore.elementservice.showLocateInTreeButton = function(elementType) {
-    if (pimcore.globalmanager.get("layout_" + elementType + "_tree")) {
+    if (pimcore.globalmanager.get("layout_" + elementType + "s_locateintree_tree")) {
         return true;
     }
     return false;
