@@ -1528,5 +1528,6 @@
   "link_generator_reference": "Link Provider Class or Service Name",
   "unique": "Unique",
   "unique_qtip": "Unique constraint will added. No needed to check 'index' as well",
-  "temporarily_disabled": "Temporarily disabled"
+  "temporarily_disabled": "Temporarily disabled",
+  "search_for": "Search for"
 }

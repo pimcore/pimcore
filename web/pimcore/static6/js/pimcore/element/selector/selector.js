@@ -67,9 +67,15 @@ pimcore.element.selector.selector = Class.create({
             windowWidth = 1250;
         }
 
+        var title = t('search');
+        if (this.restrictions.type && this.restrictions.type.length == 1) {
+            title = t(this.restrictions.type[0] + '_search');
+        }
+
         var windowConfig = {
             width: windowWidth,
             height: 550,
+            title: title,
             modal: true,
             layout: "fit",
             items: [this.panel]
