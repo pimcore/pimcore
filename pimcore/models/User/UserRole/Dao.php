@@ -18,6 +18,7 @@
 namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
+use Pimcore\Model\Element;
 
 /**
  * @property \Pimcore\Model\User\UserRole\Folder $model
@@ -58,7 +59,8 @@ class Dao extends Model\User\AbstractUser\Dao
 
         foreach ($types as $type) {
             $workspaces = [];
-            $className = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($type);
+            $baseClassName = Element\Service::getBaseClassNameForElement($type);
+            $className = '\\Pimcore\\Model\\User\\Workspace\\' . $baseClassName;
             $result = $this->db->fetchAll('SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ?', [$this->model->getId()]);
             foreach ($result as $row) {
                 $workspace = new $className();
