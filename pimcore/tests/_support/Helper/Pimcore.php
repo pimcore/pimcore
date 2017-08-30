@@ -11,8 +11,8 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Tool\Setup;
 use Symfony\Component\Filesystem\Filesystem;
 

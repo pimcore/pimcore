@@ -19,9 +19,9 @@ use Pimcore\Event\Model\SearchBackendEvent;
 use Pimcore\Event\SearchBackendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\DataObject;
 
 class Data extends \Pimcore\Model\AbstractModel
 {

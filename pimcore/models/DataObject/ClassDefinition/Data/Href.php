@@ -20,9 +20,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\DataObject;
 
 class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
 {

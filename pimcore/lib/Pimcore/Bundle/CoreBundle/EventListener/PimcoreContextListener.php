@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

@@ -21,6 +21,7 @@ namespace {
 }
 
 // the following is for IDEs to support auto-complete
+
 namespace Pimcore\Model {
     if (!\Pimcore\Tool::classExists('Pimcore\\Model\\DataObject')) {
         class DataObject extends \Pimcore\Model\DataObject\AbstractObject

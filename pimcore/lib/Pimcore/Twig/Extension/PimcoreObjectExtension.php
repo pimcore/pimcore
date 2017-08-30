@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 
 class PimcoreObjectExtension extends \Twig_Extension
 {

@@ -27,12 +27,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
-use Pimcore\Model\Element\Note;
-use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\DataObject\Objectbrick\Data as ObjectbrickData;
+use Pimcore\Model\Element\Note;
+use Pimcore\Model\Element\Note\Listing as NoteListing;
 
 class Agent implements IOrderAgent
 {

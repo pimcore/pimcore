@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
 
 class Link
 {

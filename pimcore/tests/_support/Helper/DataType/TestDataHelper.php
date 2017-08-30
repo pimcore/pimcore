@@ -4,11 +4,11 @@ namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Tests\Util\TestHelper;

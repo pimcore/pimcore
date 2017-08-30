@@ -21,9 +21,9 @@ use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()

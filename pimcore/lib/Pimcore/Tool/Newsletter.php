@@ -18,8 +18,8 @@ use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Logger;
 use Pimcore\Mail;
 use Pimcore\Model;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Tool;
 
 class Newsletter

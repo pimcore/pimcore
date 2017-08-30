@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 use Pimcore\Config;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
 
 // determines if we're in Pimcore\Console mode

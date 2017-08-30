@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
+use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Event\ObjectClassDefinitionEvents;
 use Pimcore\Event\ObjectEvents;
 use Symfony\Component\EventDispatcher\Event;

@@ -20,8 +20,8 @@ namespace Pimcore\Model\Element;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\User;
 
 class PermissionChecker

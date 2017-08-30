@@ -16,8 +16,8 @@ namespace Pimcore\Tool\RestClient;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 use Psr\Http\Message\RequestInterface;

@@ -18,13 +18,13 @@ use Pimcore\Event\Model\WorkflowEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
 
 class Manager

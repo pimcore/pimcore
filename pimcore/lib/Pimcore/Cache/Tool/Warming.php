@@ -17,10 +17,10 @@ namespace Pimcore\Cache\Tool;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Listing\AbstractListing;
-use Pimcore\Model\DataObject;
 
 class Warming
 {

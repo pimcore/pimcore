@@ -23,9 +23,9 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
-use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -261,20 +261,23 @@ class Service extends Model\AbstractModel
 
     /**
      * @param string|ElementInterface $element
+     *
      * @return string
+     *
      * @throws \Exception
      */
-    public static function getBaseClassNameForElement($element) {
-        if($element instanceof ElementInterface) {
+    public static function getBaseClassNameForElement($element)
+    {
+        if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
-        } else if (is_string($element)) {
+        } elseif (is_string($element)) {
             $elementType = $element;
         } else {
             throw new \Exception('Wrong type given for getBaseClassNameForElement(), ElementInterface and string are allowed');
         }
 
         $baseClass = ucfirst($elementType);
-        if($elementType == 'object') {
+        if ($elementType == 'object') {
             $baseClass = 'DataObject';
         }
 

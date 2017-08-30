@@ -19,8 +19,8 @@ namespace Pimcore\Model\Element\Import;
 
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 

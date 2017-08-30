@@ -19,8 +19,8 @@ namespace Pimcore\Model\Element\Note;
 
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 
 /**
  * @property \Pimcore\Model\Element\Note $model

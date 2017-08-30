@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element;
 use Pimcore\Tool;
 
 class Classificationstore extends Model\DataObject\ClassDefinition\Data

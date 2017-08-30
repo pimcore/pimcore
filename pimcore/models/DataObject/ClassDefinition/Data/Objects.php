@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element;
 
 class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
 {

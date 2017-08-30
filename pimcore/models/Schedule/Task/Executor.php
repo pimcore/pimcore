@@ -19,8 +19,8 @@ namespace Pimcore\Model\Schedule\Task;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Version;
 
 class Executor
